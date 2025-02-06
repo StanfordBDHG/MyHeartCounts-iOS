@@ -1,0 +1,40 @@
+#
+# This source file is part of the Stanford Spezi Template Application open-source project
+#
+# SPDX-FileCopyrightText: 2023 Stanford University
+#
+# SPDX-License-Identifier: MIT
+#
+
+name: Build and Test
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: Build-and-Test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  buildandtest:
+    name: Build and Test
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    permissions:
+      contents: read
+    with:
+      artifactname: TemplateApplication.xcresult
+      runsonlabels: '["macOS", "self-hosted"]'
+      setupfirebaseemulator: true
+      customcommand: "firebase emulators:exec 'fastlane test'"
+  uploadcoveragereport:
+    name: Upload Coverage Report
+    needs: buildandtest
+    uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
+    permissions:
+      contents: read
+    with:
+      coveragereports: TemplateApplication.xcresult
+    secrets:
+      token: ${{ secrets.CODECOV_TOKEN }}
