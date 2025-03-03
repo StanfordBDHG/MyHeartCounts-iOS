@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "35e4a4a1171d113e477591ed01f0ba5ec6d5a19d",
-        "version" : "1.0.0-beta.3"
+        "branch" : "lukas/mhc-changes",
+        "revision" : "35e4a4a1171d113e477591ed01f0ba5ec6d5a19d"
       }
     },
     {
