@@ -1,5 +1,5 @@
 {
-  "originHash" : "a55791312e73e93fb24660b37fb32409a0676eb6d087ec716e0261841be42703",
+  "originHash" : "1e0156af081aab648e2854b0b390f75ad0f87782cee09b6e2eb798931d00fb7c",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -236,15 +236,6 @@
       }
     },
     {
-      "identity" : "spezihealthkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
-      "state" : {
-        "branch" : "lukas/mhc-changes",
-        "revision" : "35e4a4a1171d113e477591ed01f0ba5ec6d5a19d"
-      }
-    },
-    {
       "identity" : "spezilicense",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziLicense.git",
@@ -263,15 +254,6 @@
       }
     },
     {
-      "identity" : "spezionboarding",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
-      "state" : {
-        "branch" : "lukas/mhc-changes",
-        "revision" : "3b177346924974acfea03ecd3bab3c45563f07b4"
-      }
-    },
-    {
       "identity" : "speziquestionnaire",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziQuestionnaire.git",
@@ -281,30 +263,12 @@
       }
     },
     {
-      "identity" : "spezischeduler",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
-      "state" : {
-        "branch" : "lukas/mhc-changes",
-        "revision" : "42be6ab2c7dfad0554d765c37a5256234565cfa9"
-      }
-    },
-    {
       "identity" : "spezistorage",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
       "state" : {
         "revision" : "b5dfb4a551d3f4243e2798133d6da2414a70e274",
         "version" : "2.1.0"
-      }
-    },
-    {
-      "identity" : "spezistudy",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
-      "state" : {
-        "branch" : "lukas/exploration",
-        "revision" : "8392591625683f236fe90865f5b30f4f6abb3df6"
       }
     },
     {

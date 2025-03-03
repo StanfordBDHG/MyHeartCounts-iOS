@@ -57,6 +57,9 @@ struct RootView: View {
                     Button("Reload Root View") {
                         reloadRootView()
                     }
+                    Button("Debug Scheduler Stuff") {
+                        reloadRootView()
+                    }
                 } label: {
                     Image(systemSymbol: .ladybug)
                         .tint(.red)

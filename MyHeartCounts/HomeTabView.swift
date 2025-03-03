@@ -9,6 +9,7 @@ import Foundation
 import Spezi
 import SpeziAccount
 import SpeziQuestionnaire
+@_spi(TestingSupport)
 import SpeziScheduler
 import SpeziSchedulerUI
 import SpeziStudy
@@ -29,7 +30,7 @@ struct HomeTabView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(MHC.self) private var mhc
     @Environment(Account.self) private var account: Account?
-//    @Environment(MyHeartCountsScheduler.self) private var scheduler: MyHeartCountsScheduler
+    @Environment(Scheduler.self) private var scheduler
     
     @EventQuery(in: Calendar.current.rangeOfWeek(for: .now)) private var events
     
@@ -80,8 +81,25 @@ struct HomeTabView: View {
                         break
                     }
                 }
-
             }
+            #if DEBUG
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+//                        Button("Reload Root View") {
+//                            reloadRootView()
+//                        }
+                        AsyncButton("Debug Scheduler Stuff", state: $viewState) {
+                            try await debugSchedulerStuff()
+                        }
+                    } label: {
+                        Image(systemSymbol: .ladybug)
+                            .tint(.red)
+                            .accessibilityLabel("Debug Menu")
+                    }
+                }
+            }
+            #endif
         }
     }
     
@@ -181,6 +199,16 @@ struct HomeTabView: View {
         } catch {
             viewState = .error(AnyLocalizedError(error: error))
         }
+    }
+    
+    
+    func debugSchedulerStuff() async throws {
+        let outcomes = try scheduler.queryAllOutcomes()
+        print("#outcomes: \(outcomes.count)")
+        for outcome in outcomes {
+            print(outcome)
+        }
+        fatalError()
     }
 }
 
