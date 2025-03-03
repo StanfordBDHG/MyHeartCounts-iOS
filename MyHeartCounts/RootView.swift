@@ -8,6 +8,7 @@
 
 import Spezi
 import SpeziAccount
+import SpeziScheduler
 import SpeziViews
 import SwiftData
 import SwiftUI
@@ -26,6 +27,7 @@ struct RootView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage(StorageKeys.onboardingFlowComplete) var completedOnboardingFlow = false
     @Environment(MHC.self) private var mhc
+    @Environment(Scheduler.self) private var scheduler
     
     @State private var swiftDataAutosaveTask: _Concurrency.Task<Void, Never>?
     
@@ -73,6 +75,7 @@ struct RootView: View {
             swiftDataAutosaveTask = _Concurrency.Task.detached {
                 while true {
                     try? await self.saveModelContext()
+                    try? await self.scheduler._saveModelContext()
                     try? await _Concurrency.Task.sleep(for: .seconds(0.25))
                 }
             }
