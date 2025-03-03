@@ -65,7 +65,7 @@ struct RootView: View {
         #endif
         .onAppear {
             // TODO THIS SHOULD NOT BE NECESSARY
-            // WHY THE FUCK IS THIS REQUIRED??????
+            // WHY IS THIS REQUIRED??????
             // WHY DOESN'T THE MODELCONTEXT AUTOSAVE, EVEN THOUGH THAT'S ENABLED BY DEFAULT????
             guard swiftDataAutosaveTask == nil else {
                 return
