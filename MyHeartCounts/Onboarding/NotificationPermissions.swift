@@ -13,7 +13,6 @@ import SwiftUI
 
 struct NotificationPermissions: View {
     @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
-
     @Environment(\.requestNotificationAuthorization) private var requestNotificationAuthorization
 
     @State private var notificationProcessing = false
@@ -45,7 +44,7 @@ struct NotificationPermissions: View {
                             notificationProcessing = true
                             // Notification Authorization is not available in the preview simulator.
                             if ProcessInfo.processInfo.isPreviewSimulator {
-                                try await _Concurrency.Task.sleep(for: .seconds(5))
+                                try await _Concurrency.Task.sleep(for: .seconds(0.75))
                             } else {
                                 try await requestNotificationAuthorization(options: [.alert, .sound, .badge])
                             }
@@ -66,13 +65,13 @@ struct NotificationPermissions: View {
 }
 
 
-#if DEBUG
-#Preview {
-    OnboardingStack {
-        NotificationPermissions()
-    }
-        .previewWith {
-            MyHeartCountsScheduler()
-        }
-}
-#endif
+//#if DEBUG
+//#Preview {
+//    OnboardingStack {
+//        NotificationPermissions()
+//    }
+//        .previewWith {
+//            MyHeartCountsScheduler()
+//        }
+//}
+//#endif

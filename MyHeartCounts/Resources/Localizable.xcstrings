@@ -1,6 +1,18 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
+    "– %@" : {
+
+    },
+    "[DEBUG] enter past date" : {
+
+    },
+    "%@" : {
+
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -31,6 +43,9 @@
         }
       }
     },
+    "All of today's tasks have been completed" : {
+
+    },
     "Allow Notifications" : {
       "localizations" : {
         "en" : {
@@ -41,6 +56,24 @@
         }
       }
     },
+    "Allow Push Notifications" : {
+
+    },
+    "Already Enrolled" : {
+
+    },
+    "Are you sure you want to leave the '%@' study?" : {
+
+    },
+    "Available Studies" : {
+
+    },
+    "Before we can continue, we need to learn a little about you" : {
+
+    },
+    "Cancel" : {
+
+    },
     "Close" : {
       "localizations" : {
         "en" : {
@@ -50,6 +83,9 @@
           }
         }
       }
+    },
+    "Consent Export Title" : {
+
     },
     "CONSENT_LOADING_ERROR" : {
       "localizations" : {
@@ -81,6 +117,21 @@
         }
       }
     },
+    "Continue" : {
+
+    },
+    "Debug Menu" : {
+
+    },
+    "End Study Participation" : {
+
+    },
+    "Enroll in Study" : {
+
+    },
+    "Get Started" : {
+
+    },
     "Grant Access" : {
       "localizations" : {
         "en" : {
@@ -90,6 +141,9 @@
           }
         }
       }
+    },
+    "Health Data" : {
+
     },
     "HealthKit Access" : {
       "localizations" : {
@@ -140,6 +194,12 @@
           }
         }
       }
+    },
+    "If you have entered your date of birth into the Health app, we can try to read it from there." : {
+
+    },
+    "Informational" : {
+
     },
     "Interesting Modules" : {
       "localizations" : {
@@ -231,6 +291,22 @@
         }
       }
     },
+    "MORE" : {
+
+    },
+    "My Heart Counts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts"
+          }
+        }
+      }
+    },
+    "My Heart Counts is only available to persons 18 and older." : {
+
+    },
     "Next" : {
       "localizations" : {
         "en" : {
@@ -240,6 +316,9 @@
           }
         }
       }
+    },
+    "No Tasks Scheduled for Today" : {
+
     },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
@@ -271,7 +350,14 @@
         }
       }
     },
+    "Onboarding Consent Title" : {
+
+    },
+    "Participation Criteria" : {
+
+    },
     "Please fill out the Social Support Questionnaire every day." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -280,6 +366,12 @@
           }
         }
       }
+    },
+    "Read Article" : {
+
+    },
+    "Reload Root View" : {
+
     },
     "Schedule" : {
       "localizations" : {
@@ -291,7 +383,11 @@
         }
       }
     },
+    "Skip for now" : {
+
+    },
     "Social Support Questionnaire" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -321,17 +417,8 @@
         }
       }
     },
-    "My Heart Counts" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spezi\nMy Heart Counts"
-          }
-        }
-      }
-    },
     "Start Questionnaire" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -340,6 +427,9 @@
           }
         }
       }
+    },
+    "Study Participations" : {
+
     },
     "Swift Package Manager" : {
       "localizations" : {
@@ -361,7 +451,14 @@
         }
       }
     },
+    "This is the content view" : {
+
+    },
+    "This study will request read-access to collect the following Health samples:" : {
+
+    },
     "This type of event is currently unsupported. Please contact the developer of this app." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -371,7 +468,32 @@
         }
       }
     },
+    "Today's Tasks" : {
+
+    },
+    "TODO come up w/ smth to put here!!!" : {
+
+    },
+    "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
+
+    },
+    "TODO: make this look pretty!" : {
+
+    },
+    "TODO: rough information about (at least some) key study components here?" : {
+
+    },
+    "Try to read from Health app" : {
+
+    },
+    "Unavailable: not enrolled into parent(dep) study." : {
+
+    },
+    "Unenroll" : {
+
+    },
     "Unsupported Event" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -380,6 +502,12 @@
           }
         }
       }
+    },
+    "Usage Limitations" : {
+
+    },
+    "Welcome to\n%@" : {
+
     },
     "WELCOME_AREA1_DESCRIPTION" : {
       "localizations" : {
@@ -416,10 +544,16 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This application demonstrates several Spezi features & modules."
+            "value" : "Welcome to the My Heart Counts study"
           }
         }
       }
+    },
+    "When were you born?" : {
+
+    },
+    "You're all set and ready to go 🚀" : {
+
     },
     "Your Account" : {
       "localizations" : {

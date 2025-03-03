@@ -13,7 +13,6 @@ import SwiftUI
 struct Welcome: View {
     @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
     
-    
     var body: some View {
         OnboardingView(
             title: "My Heart Counts",
@@ -49,7 +48,7 @@ struct Welcome: View {
                 onboardingNavigationPath.nextStep()
             }
         )
-            .padding(.top, 24)
+//            .padding(.top, 24)
     }
 }
 

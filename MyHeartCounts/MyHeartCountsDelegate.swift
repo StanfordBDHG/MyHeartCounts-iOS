@@ -24,6 +24,7 @@ import SwiftUI
 class MyHeartCountsDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
+            MHC()
             if !FeatureFlags.disableFirebase {
                 AccountConfiguration(
                     service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: accountEmulator),
@@ -37,7 +38,6 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
                         .collects(\.dateOfBirth)
                     ]
                 )
-
                 firestore
                 if FeatureFlags.useFirebaseEmulator {
                     FirebaseStorageConfiguration(emulatorSettings: (host: "localhost", port: 9199))
@@ -45,15 +45,11 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
                     FirebaseStorageConfiguration()
                 }
             }
-
-            if HKHealthStore.isHealthDataAvailable() {
-                healthKit
+            HealthKit {
+                // ???
             }
-            
-            MyHeartCountsScheduler()
+//            MyHeartCountsScheduler()
             Scheduler()
-            OnboardingDataSource()
-
             Notifications()
         }
     }
@@ -78,15 +74,5 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
         return Firestore(
             settings: settings
         )
-    }
-    
-    
-    private var healthKit: HealthKit {
-        HealthKit {
-            CollectSample(
-                HKQuantityType(.stepCount),
-                deliverySetting: .anchorQuery(.automatic)
-            )
-        }
     }
 }

@@ -8,6 +8,7 @@
 
 @_spi(TestingSupport) import SpeziAccount
 import SpeziLicense
+import SwiftData
 import SwiftUI
 
 
@@ -21,17 +22,15 @@ struct AccountSheet: View {
     
     @State var isInSetup = false
     
+    @Query private var SPCs: [StudyParticipationContext]
+    
     
     var body: some View {
         NavigationStack {
             ZStack {
                 if account.signedIn && !isInSetup {
                     AccountOverview(close: .showCloseButton) {
-                        NavigationLink {
-                            ContributionsList(projectLicense: .mit)
-                        } label: {
-                            Text("License Information")
-                        }
+                        accountSheetExtraContent
                     }
                 } else {
                     AccountSetup { _ in
@@ -61,9 +60,44 @@ struct AccountSheet: View {
             }
         }
     }
+    
+    @ViewBuilder private var accountSheetExtraContent: some View {
+        if !SPCs.isEmpty {
+            Section("Study Participations") {
+                ForEach(SPCs) { SPC in
+                    NavigationLink {
+                        StudyInfoView(study: SPC.study)
+                    } label: {
+                        makeEnrolledStudyRow(for: SPC)
+                    }
+                }
+            }
+        }
+        Section {
+            NavigationLink {
+                ContributionsList(projectLicense: .mit)
+            } label: {
+                Text("License Information")
+            }
+        }
+    }
 
     init(dismissAfterSignIn: Bool = true) {
         self.dismissAfterSignIn = dismissAfterSignIn
+    }
+    
+    
+    @ViewBuilder
+    private func makeEnrolledStudyRow(for SPC: StudyParticipationContext) -> some View {
+        let study = SPC.study
+        VStack(alignment: .leading) {
+            Text(study.metadata.title)
+                .font(.headline)
+            Text(study.metadata.shortExplanationText)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            Text("TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected")
+        }
     }
 }
 

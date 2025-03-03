@@ -1,5 +1,5 @@
 {
-  "originHash" : "db91c54ac80b4652c5d1b19cb32a4d0a53d2e435c933b5bd074867152f598a36",
+  "originHash" : "a55791312e73e93fb24660b37fb32409a0676eb6d087ec716e0261841be42703",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -173,6 +173,15 @@
       }
     },
     {
+      "identity" : "sfsafesymbols",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SFSafeSymbols/SFSafeSymbols",
+      "state" : {
+        "revision" : "3dd282d3269b061853a3b3bcd23a509d2aa166ce",
+        "version" : "6.2.0"
+      }
+    },
+    {
       "identity" : "sourcekitten",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpsim/SourceKitten.git",
@@ -231,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "837979e4201b924bc781dd7ab777e217dac05a38",
-        "version" : "1.0.0-beta.2"
+        "revision" : "35e4a4a1171d113e477591ed01f0ba5ec6d5a19d",
+        "version" : "1.0.0-beta.3"
       }
     },
     {
@@ -249,8 +258,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziNotifications.git",
       "state" : {
-        "revision" : "b886f192282a925f600ec5ecbc94acfc75460293",
-        "version" : "1.0.3"
+        "revision" : "21427fff437e6bc17db74b125fa43970a2ab9b0b",
+        "version" : "1.0.5"
       }
     },
     {
@@ -258,8 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
       "state" : {
-        "revision" : "a3d7bc15e6803b2205eb8dca010a48b1a40215be",
-        "version" : "1.2.2"
+        "branch" : "lukas/changes",
+        "revision" : "54ca73bbf03884558e783298a2dd433065666c1a"
       }
     },
     {
@@ -276,8 +285,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "d2059174c05b25ae284f26288154b7d2dd46e44c",
-        "version" : "1.1.2"
+        "revision" : "42be6ab2c7dfad0554d765c37a5256234565cfa9",
+        "version" : "1.2.0"
       }
     },
     {
@@ -287,6 +296,15 @@
       "state" : {
         "revision" : "b5dfb4a551d3f4243e2798133d6da2414a70e274",
         "version" : "2.1.0"
+      }
+    },
+    {
+      "identity" : "spezistudy",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
+      "state" : {
+        "branch" : "lukas/exploration",
+        "revision" : "8392591625683f236fe90865f5b30f4f6abb3df6"
       }
     },
     {
@@ -395,6 +413,15 @@
       "state" : {
         "revision" : "a853604c9e9a83ad9954c7e3d2a565273982471f",
         "version" : "7.0.2"
+      }
+    },
+    {
+      "identity" : "tppdf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/techprimate/TPPDF",
+      "state" : {
+        "revision" : "975049c0e1022922580b7927e030901604024925",
+        "version" : "2.6.1"
       }
     },
     {

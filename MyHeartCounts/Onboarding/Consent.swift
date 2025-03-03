@@ -10,10 +10,9 @@ import SpeziOnboarding
 import SwiftUI
 
 
-/// - Note: The `OnboardingConsentView` exports the signed consent form as PDF to the Spezi `Standard`, necessitating the conformance of the `Standard` to the `OnboardingConstraint`.
 struct Consent: View {
-    @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
-    
+    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(MHC.self) private var mhc
     
     private var consentDocument: Data {
         guard let path = Bundle.main.url(forResource: "ConsentDocument", withExtension: "md"),
@@ -27,11 +26,35 @@ struct Consent: View {
     var body: some View {
         OnboardingConsentView(
             markdown: {
-                consentDocument
+                """
+                # My Heart Counts
+                Welcome to **MHC** (the _app_ that *will* xxx)
+                
+                ## Heading2
+                - This
+                - is
+                - a
+                - List!!!
+                
+                We need you to agree to the following things:
+                - [] one
+                - [] two
+                - [] three
+                - [] four
+                """.data(using: .utf8)!
             },
-            action: {
-                onboardingNavigationPath.nextStep()
-            }
+            action: { document in
+                mhc.importConsentDocument(document, for: .generalAppUsage)
+                path.nextStep()
+            },
+            title: "Onboarding Consent Title",
+            currentDateInSignature: true,
+            exportConfiguration: .init(
+                paperSize: .usLetter,
+                consentTitle: "Consent Export Title",
+                includingTimestamp: true,
+                fontSettings: .defaultExportFontSettings
+            )
         )
     }
 }
@@ -42,8 +65,8 @@ struct Consent: View {
     OnboardingStack {
         Consent()
     }
-        .previewWith(standard: MyHeartCountsStandard()) {
-            OnboardingDataSource()
-        }
+    .previewWith(standard: MyHeartCountsStandard()) {
+//        OnboardingDataSource()
+    }
 }
 #endif

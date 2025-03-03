@@ -9,29 +9,45 @@
 import Spezi
 import SpeziFirebaseAccount
 import SpeziViews
+import SwiftData
 import SwiftUI
+import class ModelsR4.QuestionnaireResponse
 
 
 @main
 struct MyHeartCounts: App {
     @UIApplicationDelegateAdaptor(MyHeartCountsDelegate.self) var appDelegate
-    @AppStorage(StorageKeys.onboardingFlowComplete) var completedOnboardingFlow = false
-
+    
+    var sharedModelContainer: ModelContainer = {
+        ValueTransformer.setValueTransformer(
+            JSONEncodingValueTransformer<QuestionnaireResponse>(),
+            forName: .init("JSONEncodingValueTransformer<QuestionnaireResponse>")
+        )
+        let schema = Schema([
+            StudyParticipationContext.self, SPCQuestionnaireEntry.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        print("USING SWIFTDATA MODEL CONTAINER AT \(modelConfiguration.url.path)")
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
+    
+    @State private var counter: UInt8 = 0
     
     var body: some Scene {
+        let _ = counter
         WindowGroup {
-            ZStack {
-                if completedOnboardingFlow {
-                    HomeView()
-                } else {
-                    EmptyView()
-                }
-            }
-                .sheet(isPresented: !$completedOnboardingFlow) {
-                    OnboardingFlow()
-                }
+            RootView(reloadRootView: reloadRootView)
                 .testingSetup()
                 .spezi(appDelegate)
         }
+        .modelContainer(sharedModelContainer)
+    }
+    
+    private func reloadRootView() {
+        counter &+= 1
     }
 }
