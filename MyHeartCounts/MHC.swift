@@ -49,6 +49,14 @@ final class MHC: Module, EnvironmentAccessible, Sendable {
     func configure() {
         updateActionCards()
     }
+    
+    
+    var mhcStudy: StudyDefinition {
+        get async {
+            // TODO IRL this would be fetched from a server! (or a local cache, as a fallback)
+            mockMHCStudy
+        }
+    }
 }
 
 
@@ -127,7 +135,7 @@ extension MHC {
 extension MHC {
     private func updateActionCards() {
         actionCards = Array {
-            ActionCard.enrollInStudy
+//            ActionCard.enrollInStudy
             // TODO have more suff here? maybe somehow allow the server to show these non-schedule-managed in-app action cards?
         }
     }

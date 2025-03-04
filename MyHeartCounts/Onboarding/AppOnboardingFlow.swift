@@ -21,6 +21,7 @@ import SwiftUI
 ///
 /// - Note: This is the general app onboarding flow, **not** the study-specific onboarding
 struct AppOnboardingFlow: View {
+    @Environment(MHC.self) private var mhc
     @Environment(HealthKit.self) private var healthKitDataSource
     
     @Environment(\.scenePhase) private var scenePhase
@@ -42,18 +43,15 @@ struct AppOnboardingFlow: View {
     var body: some View {
         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
             Welcome()
-//                .background(Color.orange)
-//            InterestingModules()
-            
-            AppUsageRestrictions()
-//                .background(Color.green)
-            
+            for (idx, view) in try! screeningOnboardingSteps(forParticipationCriteriaIn: mockMHCStudy).enumerated() { // swiftlint:disable:this force_try line_length
+                view.onboardingIdentifier("dynamicScreeningStep#\(idx)")
+            }
+            LanguageCheck()
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
             }
-            
             #if !(targetEnvironment(simulator) && (arch(i386) || arch(x86_64)))
-                Consent()
+            Consent()
             #endif
             
             if HKHealthStore.isHealthDataAvailable() && !healthKitAuthorization {
@@ -62,6 +60,19 @@ struct AppOnboardingFlow: View {
             
             if !localNotificationAuthorization {
                 NotificationPermissions()
+            }
+            
+            withOnboardingStackPath { path in
+                OnboardingView {
+                    OnboardingTitleView(title: "My Heart Counts")
+                } contentView: {
+                    Text("You're all set.\n\nGreat to have you on board!")
+                } actionView: {
+                    OnboardingActionsView("Complete") {
+                        try await mhc.enroll(in: mockMHCStudy) // TODO have this show a spinner in the button? in case this takes a little longer?
+                        path.nextStep()
+                    }
+                }
             }
         }
         .interactiveDismissDisabled(!completedOnboardingFlow)

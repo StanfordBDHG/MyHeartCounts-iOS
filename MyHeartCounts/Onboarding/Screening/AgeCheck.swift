@@ -10,14 +10,16 @@
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziOnboarding
-import SwiftUI
 import SpeziViews
+import SwiftUI
 
 
-struct AppUsageRestrictions: View {
+struct AgeCheck: View {
     @Environment(\.calendar) private var cal
     @Environment(HealthKit.self) private var healthKit
     @Environment(OnboardingNavigationPath.self) private var onboardingPath
+    
+    let requiredMinAgeInYears: Int
     
     @State private var viewState: ViewState = .idle
     @State private var isAllowedToContinue = false
@@ -29,8 +31,8 @@ struct AppUsageRestrictions: View {
     var body: some View {
         OnboardingView {
             OnboardingTitleView(
-                title: "Usage Limitations",
-                subtitle: "Before we can continue, we need to learn a little about you"
+                title: "Screening: Age",
+                subtitle: "Before we can continue,\nwe need to learn a little about you"
             )
         } contentView: {
             Form {
@@ -82,8 +84,10 @@ struct AppUsageRestrictions: View {
 //            }
 //        }
         .onChange(of: dateOfBirth) { _, newValue in
-            if let age = cal.dateComponents([.year], from: newValue, to: .now).year {
-                isAllowedToContinue = age >= 18
+            // we compute the age relative to tomorrow in case the person is just turning 18 some time today...
+            // TODO(@lukas) test that this is correct!
+            if let age = cal.dateComponents([.year], from: newValue, to: .tomorrow).year {
+                isAllowedToContinue = age >= requiredMinAgeInYears
             } else {
                 isAllowedToContinue = false
             }

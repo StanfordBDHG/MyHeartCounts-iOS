@@ -68,7 +68,7 @@
     "Available Studies" : {
 
     },
-    "Before we can continue, we need to learn a little about you" : {
+    "Before we can continue,\nwe need to learn a little about you" : {
 
     },
     "Cancel" : {
@@ -83,6 +83,9 @@
           }
         }
       }
+    },
+    "Complete" : {
+
     },
     "Consent Export Title" : {
 
@@ -124,6 +127,9 @@
 
     },
     "Debug Scheduler Stuff" : {
+
+    },
+    "Do you speak English?" : {
 
     },
     "End Study Participation" : {
@@ -173,7 +179,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This onboarding step allows you to customize the onboarding flow to explain how the application uses the HealthKit data and allows a user to customize the selection."
+            "value" : "My Heart Counts needs read-access to some of the Health data collected by your iPhone and Apple Watch. We will automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside the My Heart Counts study [@Paul how should we phrase this exactly].\n\nYou can revoke this access at any time."
           }
         }
       }
@@ -183,7 +189,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spezi can access data from HealthKit using the HealthKitDataSource module."
+            "value" : "Allow read-only Health data access"
           }
         }
       }
@@ -307,6 +313,15 @@
         }
       }
     },
+    "My Heart Counts is available to residents in %@" : {
+
+    },
+    "My Heart Counts is available to residents in any of the following regions: %@" : {
+
+    },
+    "My Heart Counts is currently only available in English" : {
+
+    },
     "My Heart Counts is only available to persons 18 and older." : {
 
     },
@@ -319,6 +334,9 @@
           }
         }
       }
+    },
+    "No" : {
+
     },
     "No Tasks Scheduled for Today" : {
 
@@ -386,6 +404,15 @@
         }
       }
     },
+    "Screening: Age" : {
+
+    },
+    "Screening: Language" : {
+
+    },
+    "Screening: Region" : {
+
+    },
     "Skip for now" : {
 
     },
@@ -399,6 +426,9 @@
           }
         }
       }
+    },
+    "Somewhere else" : {
+
     },
     "Spezi Modules" : {
       "localizations" : {
@@ -495,6 +525,12 @@
     "Unenroll" : {
 
     },
+    "United Kingdom" : {
+
+    },
+    "United States" : {
+
+    },
     "Unsupported Event" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -505,9 +541,6 @@
           }
         }
       }
-    },
-    "Usage Limitations" : {
-
     },
     "Welcome to\n%@" : {
 
@@ -555,7 +588,16 @@
     "When were you born?" : {
 
     },
+    "Where do you currently live?" : {
+
+    },
+    "Yes" : {
+
+    },
     "You're all set and ready to go 🚀" : {
+
+    },
+    "You're all set.\n\nGreat to have you on board!" : {
 
     },
     "Your Account" : {

@@ -31,7 +31,8 @@ let mockMHCStudy = StudyDefinition(
         explanationText: "TODO",
         studyDependency: nil,
         participationCriteria: .init(
-            criterion: .ageAtLeast(18) && (.isFromRegion(.unitedStates) || .isFromRegion(.unitedKingdom))
+//            criterion: .ageAtLeast(18) && (.isFromRegion(.unitedStates) || .isFromRegion(.unitedKingdom))
+            criterion: .ageAtLeast(18) && (.isFromRegion([.unitedStates, .unitedKingdom]))
         ),
         enrollmentConditions: .requiresInvitation(verificationEndpoint: URL(string: "https://mhc.spezi.stanford.edu/api/invite/")!)
     ),
