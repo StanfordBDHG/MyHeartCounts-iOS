@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SFSafeSymbols
 import Spezi
 import SpeziAccount
 import SpeziQuestionnaire
@@ -19,7 +20,7 @@ import class ModelsR4.Questionnaire
 
 
 /// The View for the "Home" tab in the root tab view.
-struct HomeTabView: View {
+struct HomeTabView: RootViewTab {
     private struct QuestionnaireBeingAnswered: Identifiable {
         let questionnaire: Questionnaire
         let SPC: StudyParticipationContext
@@ -27,14 +28,18 @@ struct HomeTabView: View {
         var id: Questionnaire.ID { questionnaire.id }
     }
     
+    // TODO we could also call it "Schedule", but depending on whether we want
+    // eg the Health Charts in here or in a fully separate tab, this might not be the best idea?
+    static var tabTitle: LocalizedStringKey { "Home" }
+    static var tabSymbol: SFSymbol { .cubeTransparent }
+    
     @Environment(\.modelContext) private var modelContext
     @Environment(MHC.self) private var mhc
-    @Environment(Account.self) private var account: Account?
+//    @Environment(Account.self) private var account: Account?
     @Environment(Scheduler.self) private var scheduler
     
-    @EventQuery(in: Calendar.current.rangeOfWeek(for: .now)) private var events
+    @EventQuery(in: Calendar.current.rangeOfMonth(for: .now)) private var events
     
-    @Binding var presentingAccount: Bool
     //@State private var presentedEvent: Event?
     
     @State private var isStudyEnrollmentSheetPresented = false
@@ -51,9 +56,7 @@ struct HomeTabView: View {
             }
             .navigationTitle("My Heart Counts")
             .toolbar {
-                if account != nil {
-                    AccountButton(isPresented: $presentingAccount)
-                }
+                accountToolbarItem
             }
             .viewStateAlert(state: $viewState)
             .sheet(isPresented: $isStudyEnrollmentSheetPresented) {

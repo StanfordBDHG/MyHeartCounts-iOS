@@ -35,19 +35,12 @@ struct MyHeartCounts: App {
         }
     }()
     
-    @State private var counter: UInt8 = 0
-    
     var body: some Scene {
-        let _ = counter
         WindowGroup {
-            RootView(reloadRootView: reloadRootView)
+            RootView()
                 .testingSetup()
                 .spezi(appDelegate)
         }
         .modelContainer(sharedModelContainer)
-    }
-    
-    private func reloadRootView() {
-        counter &+= 1
     }
 }

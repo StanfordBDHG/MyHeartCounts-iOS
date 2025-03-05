@@ -28,6 +28,10 @@ struct SimpleError: Error, LocalizedError {
     init(_ message: String) {
         self.message = message
     }
+    
+    var errorDescription: String? {
+        message
+    }
 }
 
 

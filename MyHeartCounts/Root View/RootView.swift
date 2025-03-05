@@ -12,6 +12,7 @@ import SpeziScheduler
 import SpeziViews
 import SwiftData
 import SwiftUI
+import SFSafeSymbols
 
 
 // TODO(@lukas) can we somehow prevent the account sheet from:
@@ -19,10 +20,13 @@ import SwiftUI
 // - somwtimes not getting dismissed (and needing to manually be dismissed by the user)
 
 struct RootView: View {
-    private enum TabId: String {
-        case homepage
-        case contact
-    }
+    private static let tabs: [any RootViewTab.Type] = [
+        HomeTabView.self, Contacts.self
+    ]
+//    private enum TabId: String {
+//        case homepage
+//        case contact
+//    }
     
     @Environment(\.modelContext) private var modelContext
     @AppStorage(StorageKeys.onboardingFlowComplete) var completedOnboardingFlow = false
@@ -31,12 +35,8 @@ struct RootView: View {
     
     @State private var swiftDataAutosaveTask: _Concurrency.Task<Void, Never>?
     
-    @AppStorage(StorageKeys.homeTabSelection) private var selectedTab = TabId.homepage
+    @AppStorage(StorageKeys.homeTabSelection) private var selectedTab: String = HomeTabView.tabId
     @AppStorage(StorageKeys.tabViewCustomization) private var tabViewCustomization = TabViewCustomization()
-
-    @State private var presentingAccount = false
-    
-    let reloadRootView: @MainActor () -> Void
     
     var body: some View {
         LabeledContent("now", value: Date.now, format: .iso8601)
@@ -54,12 +54,7 @@ struct RootView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button("Reload Root View") {
-                        reloadRootView()
-                    }
-                    Button("Debug Scheduler Stuff") {
-                        reloadRootView()
-                    }
+                    // ???
                 } label: {
                     Image(systemSymbol: .ladybug)
                         .tint(.red)
@@ -89,29 +84,64 @@ struct RootView: View {
         }
     }
     
-    
     @ViewBuilder private var content: some View {
         TabView(selection: $selectedTab) {
-            Tab("Schedule", systemImage: "cube.transparent", value: .homepage) { // list.clipboard
-                HomeTabView(presentingAccount: $presentingAccount)
-            }
-                .customizationID("tabs.home")
-            Tab("Contacts", systemImage: "person.fill", value: .contact) {
-                Contacts(presentingAccount: $presentingAccount)
-            }
-                .customizationID("tabs.contacts")
+            makeTab(HomeTabView.self)
+            makeTab(Contacts.self)
+            makeTab(NewsTabView.self)
+//            ForEach(Self.tabs, id: \.tabId) { tab in
+//                Tab(tab.tabTitle, systemImage: tab.tabSymbol.rawValue, value: tab.tabId) {
+//                    tab.init().intoAnyView()
+//                }
+//                .customizationID(tab.tabId)
+//            }
+//            Tab("Schedule", systemImage: "cube.transparent", value: .homepage) { // list.clipboard
+//                HomeTabView(presentingAccount: $presentingAccount)
+//            }
+//                .customizationID("tabs.home")
+//            Tab("Contacts", systemImage: "person.fill", value: .contact) {
+//                Contacts(presentingAccount: $presentingAccount)
+//            }
+//                .customizationID("tabs.contacts")
         }
             .tabViewStyle(.sidebarAdaptable)
             .tabViewCustomization($tabViewCustomization)
-            .sheet(isPresented: $presentingAccount) {
-                AccountSheet(dismissAfterSignIn: false) // presentation was user initiated, do not automatically dismiss
-            }
+//            .sheet(isPresented: $presentingAccount) {
+//                AccountSheet(dismissAfterSignIn: false) // presentation was user initiated, do not automatically dismiss
+//            }
             .accountRequired(!FeatureFlags.disableFirebase && !FeatureFlags.skipOnboarding) {
                 AccountSheet()
             }
+    }
+    
+    
+//    @ViewBuilder
+    private func makeTab(_ ty: (some RootViewTab).Type) -> some TabContent<String> { // swiftlint:disable:this identifier_name
+        Tab(ty.tabTitle, systemImage: ty.tabSymbol.rawValue, value: ty.tabId) {
+            ty.init()
+        }
+        .customizationID(ty.tabId)
     }
     
     func saveModelContext() throws {
         try self.modelContext.save()
     }
 }
+
+
+
+//struct T1: RootViewTab {
+//    static var tabId: String { String(describing: Self.self) }
+//    static var tabIitle: LocalizedStringResource { "T1" }
+//    static var tabSymbol: SFSymbol { ._1Brakesignal }
+//    
+//    @Binding var isPresentingAccount: Bool
+//    
+//    init(isPresentingAccount: Binding<Bool>) {
+//        self._isPresentingAccount = isPresentingAccount
+//    }
+//    
+//    var body: some View {
+//        
+//    }
+//}

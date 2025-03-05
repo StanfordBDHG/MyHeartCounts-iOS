@@ -65,6 +65,9 @@
     "Are you sure you want to leave the '%@' study?" : {
 
     },
+    "Article" : {
+
+    },
     "Available Studies" : {
 
     },
@@ -138,6 +141,9 @@
     "Enroll in Study" : {
 
     },
+    "Fetching…" : {
+
+    },
     "Get Started" : {
 
     },
@@ -203,6 +209,9 @@
           }
         }
       }
+    },
+    "Home" : {
+
     },
     "If you have entered your date of birth into the Health app, we can try to read it from there." : {
 
@@ -325,6 +334,9 @@
     "My Heart Counts is only available to persons 18 and older." : {
 
     },
+    "News" : {
+
+    },
     "Next" : {
       "localizations" : {
         "en" : {
@@ -336,6 +348,9 @@
       }
     },
     "No" : {
+
+    },
+    "No Internet" : {
 
     },
     "No Tasks Scheduled for Today" : {
@@ -391,10 +406,8 @@
     "Read Article" : {
 
     },
-    "Reload Root View" : {
-
-    },
     "Schedule" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

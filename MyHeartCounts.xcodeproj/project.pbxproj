@@ -85,6 +85,10 @@
 		8086FFF52D7504310044A054 /* MHC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086FFF42D7504310044A054 /* MHC.swift */; };
 		8086FFFC2D7506340044A054 /* StudyParticipationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086FFFB2D7506340044A054 /* StudyParticipationContext.swift */; };
 		8086FFFF2D7506960044A054 /* AppStorageKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086FFFE2D7506960044A054 /* AppStorageKey.swift */; };
+		808A7BB92D78906B0014D0E1 /* RootViewTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BB82D78906B0014D0E1 /* RootViewTab.swift */; };
+		808A7BC52D789C980014D0E1 /* NewsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BC42D789C980014D0E1 /* NewsTabView.swift */; };
+		808A7BE02D78DD450014D0E1 /* RelativeTimeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BDF2D78DD450014D0E1 /* RelativeTimeLabel.swift */; };
+		808A7BE32D78E01A0014D0E1 /* InformationalComponentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BE22D78E01A0014D0E1 /* InformationalComponentSheet.swift */; };
 		809D60372D754D8500F98CA9 /* StudyEnrollmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809D60362D754D8500F98CA9 /* StudyEnrollmentView.swift */; };
 		809D603C2D754F2900F98CA9 /* AsyncImage2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809D603B2D754F2900F98CA9 /* AsyncImage2.swift */; };
 		80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */; };
@@ -171,6 +175,10 @@
 		8086FFF42D7504310044A054 /* MHC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MHC.swift; sourceTree = "<group>"; };
 		8086FFFB2D7506340044A054 /* StudyParticipationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyParticipationContext.swift; sourceTree = "<group>"; };
 		8086FFFE2D7506960044A054 /* AppStorageKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKey.swift; sourceTree = "<group>"; };
+		808A7BB82D78906B0014D0E1 /* RootViewTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewTab.swift; sourceTree = "<group>"; };
+		808A7BC42D789C980014D0E1 /* NewsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTabView.swift; sourceTree = "<group>"; };
+		808A7BDF2D78DD450014D0E1 /* RelativeTimeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeTimeLabel.swift; sourceTree = "<group>"; };
+		808A7BE22D78E01A0014D0E1 /* InformationalComponentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationalComponentSheet.swift; sourceTree = "<group>"; };
 		809D60362D754D8500F98CA9 /* StudyEnrollmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyEnrollmentView.swift; sourceTree = "<group>"; };
 		809D603B2D754F2900F98CA9 /* AsyncImage2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncImage2.swift; sourceTree = "<group>"; };
 		80D612F82D67A88600FAE750 /* AgeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgeCheck.swift; sourceTree = "<group>"; };
@@ -348,10 +356,12 @@
 				2F4E23822989D51F0013F3D9 /* MyHeartCountsTestingSetup.swift */,
 				2FF53D8C2A8729D600042B76 /* MyHeartCountsStandard.swift */,
 				8086FFF42D7504310044A054 /* MHC.swift */,
-				8086000F2D750E5F0044A054 /* RootView.swift */,
-				808600172D7510920044A054 /* HomeTabView.swift */,
-				803F41672D75354D00BD1233 /* ActionCardView.swift */,
+				808A7BB72D7890500014D0E1 /* Root View */,
+				808A7BC22D789C860014D0E1 /* Home Tab */,
+				808A7BC32D789C8D0014D0E1 /* News Tab */,
 				809D60362D754D8500F98CA9 /* StudyEnrollmentView.swift */,
+				803F41672D75354D00BD1233 /* ActionCardView.swift */,
+				808A7BE22D78E01A0014D0E1 /* InformationalComponentSheet.swift */,
 				8086FFFD2D7506380044A054 /* Model */,
 				807F99F02D6D3FA000C747D0 /* Utils */,
 				80EF164B2D67F42300B894D1 /* Study Manager */,
@@ -411,6 +421,7 @@
 				809D603B2D754F2900F98CA9 /* AsyncImage2.swift */,
 				8086002F2D751EFA0044A054 /* FHIR+Utils.swift */,
 				8086FFFE2D7506960044A054 /* AppStorageKey.swift */,
+				808A7BDF2D78DD450014D0E1 /* RelativeTimeLabel.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -421,6 +432,31 @@
 				8086FFFB2D7506340044A054 /* StudyParticipationContext.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		808A7BB72D7890500014D0E1 /* Root View */ = {
+			isa = PBXGroup;
+			children = (
+				8086000F2D750E5F0044A054 /* RootView.swift */,
+				808A7BB82D78906B0014D0E1 /* RootViewTab.swift */,
+			);
+			path = "Root View";
+			sourceTree = "<group>";
+		};
+		808A7BC22D789C860014D0E1 /* Home Tab */ = {
+			isa = PBXGroup;
+			children = (
+				808600172D7510920044A054 /* HomeTabView.swift */,
+			);
+			path = "Home Tab";
+			sourceTree = "<group>";
+		};
+		808A7BC32D789C8D0014D0E1 /* News Tab */ = {
+			isa = PBXGroup;
+			children = (
+				808A7BC42D789C980014D0E1 /* NewsTabView.swift */,
+			);
+			path = "News Tab";
 			sourceTree = "<group>";
 		};
 		80EF164B2D67F42300B894D1 /* Study Manager */ = {
@@ -666,6 +702,7 @@
 				2FE5DC3A29EDD7CA004B9AB4 /* Welcome.swift in Sources */,
 				2FE5DC3829EDD7CA004B9AB4 /* InterestingModules.swift in Sources */,
 				80270D292D68051D0022251E /* StudyOnboardingFlow.swift in Sources */,
+				808A7BB92D78906B0014D0E1 /* RootViewTab.swift in Sources */,
 				807F99F22D6D3FAC00C747D0 /* Utils.swift in Sources */,
 				807669B62D775046001B980B /* LanguageCheck.swift in Sources */,
 				8086FFFF2D7506960044A054 /* AppStorageKey.swift in Sources */,
@@ -679,7 +716,9 @@
 				2F1AC9DF2B4E840E00C24973 /* MyHeartCounts.docc in Sources */,
 				2FF53D8D2A8729D600042B76 /* MyHeartCountsStandard.swift in Sources */,
 				8086FFFC2D7506340044A054 /* StudyParticipationContext.swift in Sources */,
+				808A7BC52D789C980014D0E1 /* NewsTabView.swift in Sources */,
 				A9720E432ABB68CC00872D23 /* AccountSetupHeader.swift in Sources */,
+				808A7BE32D78E01A0014D0E1 /* InformationalComponentSheet.swift in Sources */,
 				2FE5DC4029EDD7EE004B9AB4 /* FeatureFlags.swift in Sources */,
 				809D603C2D754F2900F98CA9 /* AsyncImage2.swift in Sources */,
 				80D612F92D67A88600FAE750 /* AgeCheck.swift in Sources */,
@@ -699,6 +738,7 @@
 				2FE5DC3629EDD7CA004B9AB4 /* HealthKitPermissions.swift in Sources */,
 				808600302D751EFA0044A054 /* FHIR+Utils.swift in Sources */,
 				808600182D7510920044A054 /* HomeTabView.swift in Sources */,
+				808A7BE02D78DD450014D0E1 /* RelativeTimeLabel.swift in Sources */,
 				2F65B44E2A3B8B0600A36932 /* NotificationPermissions.swift in Sources */,
 				2FE5DC2629EDD38A004B9AB4 /* Contacts.swift in Sources */,
 			);
@@ -860,6 +900,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Test;
@@ -1063,6 +1104,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1109,6 +1151,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

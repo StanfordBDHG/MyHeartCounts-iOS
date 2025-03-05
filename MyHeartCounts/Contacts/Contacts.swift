@@ -7,13 +7,18 @@
 //
 
 import Foundation
+import SFSafeSymbols
 import SpeziAccount
 import SpeziContact
 import SwiftUI
 
 
 /// Displays the contacts for the My Heart Counts.
-struct Contacts: View {
+struct Contacts: RootViewTab {
+    static var tabId: String { String(describing: Self.self) }
+    static var tabTitle: LocalizedStringKey { "Contacts" }
+    static var tabSymbol: SFSymbol { .personFill }
+    
     let contacts = [
         Contact(
             name: PersonNameComponents(
@@ -49,10 +54,6 @@ struct Contacts: View {
             ]
         )
     ]
-
-    @Environment(Account.self) private var account: Account?
-
-    @Binding var presentingAccount: Bool
     
     
     var body: some View {
@@ -60,22 +61,15 @@ struct Contacts: View {
             ContactsList(contacts: contacts)
                 .navigationTitle("Contacts")
                 .toolbar {
-                    if account != nil {
-                        AccountButton(isPresented: $presentingAccount)
-                    }
+                    accountToolbarItem
                 }
         }
-    }
-    
-    
-    init(presentingAccount: Binding<Bool>) {
-        self._presentingAccount = presentingAccount
     }
 }
 
 
 #if DEBUG
 #Preview {
-    Contacts(presentingAccount: .constant(false))
+    Contacts()
 }
 #endif
