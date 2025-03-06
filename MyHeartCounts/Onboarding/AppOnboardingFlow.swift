@@ -11,6 +11,7 @@ import SpeziFirebaseAccount
 import SpeziHealthKit
 import SpeziNotifications
 import SpeziOnboarding
+import SpeziStudy
 import SwiftUI
 
 // TODO(@lukas) it's a btit absurd that, if the user was logged in before deleting and reinstallng the app, we have an onboarding
@@ -31,22 +32,34 @@ struct AppOnboardingFlow: View {
     
     @State private var localNotificationAuthorization = false
     
-    @MainActor private var healthKitAuthorization: Bool {
-        // As HealthKit not available in preview simulator
-        if ProcessInfo.processInfo.isPreviewSimulator {
-            return false
-        }
-        return healthKitDataSource.isFullyAuthorized
-    }
+//    @MainActor private var healthKitAuthorization: Bool {
+//        // As HealthKit not available in preview simulator
+//        if ProcessInfo.processInfo.isPreviewSimulator {
+//            return false
+//        }
+//        return healthKitDataSource.isFullyAuthorized
+//    }
     
     
     var body: some View {
         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
             Welcome()
-            for (idx, view) in try! screeningOnboardingSteps(forParticipationCriteriaIn: mockMHCStudy).enumerated() { // swiftlint:disable:this force_try line_length
-                view.onboardingIdentifier("dynamicScreeningStep#\(idx)")
-            }
-            LanguageCheck()
+//            for (idx, view) in try! screeningOnboardingSteps(for: .ageAtLeast(18) && ).enumerated() { // swiftlint:disable:this force_try line_length
+//                view.onboardingIdentifier("dynamicScreeningStep#\(idx)")
+//            }
+////            for (idx, view) in try! screeningOnboardingSteps(forParticipationCriteriaIn: mockMHCStudy).enumerated() { // swiftlint:disable:this force_try line_length
+////                view.onboardingIdentifier("dynamicScreeningStep#\(idx)")
+////            }
+            
+            AgeCheck(requiredMinAgeInYears: 18)
+            LanguageCheck(language: Locale.Language(identifier: "en"))
+            RegionCheck(allowedRegions: [.unitedStates, .unitedKingdom])
+            BooleanScreeningStep(
+                title: "Activity",
+                question: "Are you able to perform physical activity?",
+                explanation: "As part of the My Heart Counts study, participants will be required to perform [moderate?] amounts of physical activity"
+            )
+            
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
             }
@@ -54,7 +67,7 @@ struct AppOnboardingFlow: View {
             Consent()
             #endif
             
-            if HKHealthStore.isHealthDataAvailable() && !healthKitAuthorization {
+            if HKHealthStore.isHealthDataAvailable() /*&& !healthKitAuthorization*/ {
                 HealthKitPermissions()
             }
             

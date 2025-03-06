@@ -67,6 +67,8 @@
 		803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
 		803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
 		803F41682D75354D00BD1233 /* ActionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803F41672D75354D00BD1233 /* ActionCardView.swift */; };
+		805BAA182D79F5E800115B39 /* ScreeningStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA172D79F5E800115B39 /* ScreeningStep.swift */; };
+		805BAA382D7A0A0200115B39 /* HeartHealthDashboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */; };
 		807669672D7725CD001B980B /* ParticipantScreening.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807669662D7725CD001B980B /* ParticipantScreening.swift */; };
 		8076696E2D772C07001B980B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 8076696D2D772C07001B980B /* Algorithms */; };
 		807669712D772C40001B980B /* BitCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 807669702D772C40001B980B /* BitCollections */; };
@@ -164,6 +166,8 @@
 		80270D282D68051D0022251E /* StudyOnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyOnboardingFlow.swift; sourceTree = "<group>"; };
 		80270D2C2D680BA90022251E /* StudyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyInfoView.swift; sourceTree = "<group>"; };
 		803F41672D75354D00BD1233 /* ActionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCardView.swift; sourceTree = "<group>"; };
+		805BAA172D79F5E800115B39 /* ScreeningStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreeningStep.swift; sourceTree = "<group>"; };
+		805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartHealthDashboardTab.swift; sourceTree = "<group>"; };
 		807669662D7725CD001B980B /* ParticipantScreening.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantScreening.swift; sourceTree = "<group>"; };
 		807669842D77317B001B980B /* RegionCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCheck.swift; sourceTree = "<group>"; };
 		807669B52D775046001B980B /* LanguageCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageCheck.swift; sourceTree = "<group>"; };
@@ -362,6 +366,7 @@
 				809D60362D754D8500F98CA9 /* StudyEnrollmentView.swift */,
 				803F41672D75354D00BD1233 /* ActionCardView.swift */,
 				808A7BE22D78E01A0014D0E1 /* InformationalComponentSheet.swift */,
+				805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */,
 				8086FFFD2D7506380044A054 /* Model */,
 				807F99F02D6D3FA000C747D0 /* Utils */,
 				80EF164B2D67F42300B894D1 /* Study Manager */,
@@ -410,6 +415,7 @@
 				807669842D77317B001B980B /* RegionCheck.swift */,
 				807669B52D775046001B980B /* LanguageCheck.swift */,
 				807669662D7725CD001B980B /* ParticipantScreening.swift */,
+				805BAA172D79F5E800115B39 /* ScreeningStep.swift */,
 			);
 			path = Screening;
 			sourceTree = "<group>";
@@ -718,6 +724,7 @@
 				8086FFFC2D7506340044A054 /* StudyParticipationContext.swift in Sources */,
 				808A7BC52D789C980014D0E1 /* NewsTabView.swift in Sources */,
 				A9720E432ABB68CC00872D23 /* AccountSetupHeader.swift in Sources */,
+				805BAA182D79F5E800115B39 /* ScreeningStep.swift in Sources */,
 				808A7BE32D78E01A0014D0E1 /* InformationalComponentSheet.swift in Sources */,
 				2FE5DC4029EDD7EE004B9AB4 /* FeatureFlags.swift in Sources */,
 				809D603C2D754F2900F98CA9 /* AsyncImage2.swift in Sources */,
@@ -734,6 +741,7 @@
 				80EF164D2D67F44E00B894D1 /* MockStudy.swift in Sources */,
 				2FE5DC5229EDD7FA004B9AB4 /* MyHeartCountsScheduler.swift in Sources */,
 				A9FE7AD02AA39BAB0077B045 /* AccountSheet.swift in Sources */,
+				805BAA382D7A0A0200115B39 /* HeartHealthDashboardTab.swift in Sources */,
 				653A2551283387FE005D4D48 /* MyHeartCounts.swift in Sources */,
 				2FE5DC3629EDD7CA004B9AB4 /* HealthKitPermissions.swift in Sources */,
 				808600302D751EFA0044A054 /* FHIR+Utils.swift in Sources */,

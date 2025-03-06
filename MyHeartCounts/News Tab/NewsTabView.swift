@@ -52,11 +52,11 @@ struct NewsTabView: RootViewTab {
     
     private func fetchContent() async {
         do {
-            #if targetEnvironment(simulator)
+            #if true || targetEnvironment(simulator)
             try await Task.sleep(for: .seconds(0.5))
             entries = .loaded([
-                .init(date: .yesterday, category: "Research", title: "Title1", lede: "Lede1", body: "Body1"),
-                .init(date: .today, category: "Impact", title: "Title2", lede: "Lede2", body: "Body2")
+                .init(date: .yesterday, category: "Research", title: "Title1", image: "image1", lede: "Lede1", body: "Body1"),
+                .init(date: .today, category: "Impact", title: "Title2", image: "image2", lede: "Lede2", body: "Body2")
             ])
             #else
             entries = .error(SimpleError("Server not found")) // TODO implement this!
@@ -121,6 +121,7 @@ struct NewsEntry: Hashable, Codable, Sendable {
     let date: Date
     let category: String
     let title: String
+    let image: String?
     let lede: String
     let body: String
 }

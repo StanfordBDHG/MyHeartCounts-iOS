@@ -39,7 +39,7 @@ struct RootView: View {
     @AppStorage(StorageKeys.tabViewCustomization) private var tabViewCustomization = TabViewCustomization()
     
     var body: some View {
-        LabeledContent("now", value: Date.now, format: .iso8601)
+//        LabeledContent("now", value: Date.now, format: .iso8601)
         ZStack {
             if completedOnboardingFlow {
                 content
@@ -73,7 +73,7 @@ struct RootView: View {
             swiftDataAutosaveTask = _Concurrency.Task.detached {
                 while true {
                     try? await self.saveModelContext()
-                    try? await self.scheduler._saveModelContext()
+//                    try? await self.scheduler._saveModelContext()
                     try? await _Concurrency.Task.sleep(for: .seconds(0.25))
                 }
             }
@@ -87,6 +87,7 @@ struct RootView: View {
     @ViewBuilder private var content: some View {
         TabView(selection: $selectedTab) {
             makeTab(HomeTabView.self)
+            makeTab(HeartHealthDashboardTab.self)
             makeTab(Contacts.self)
             makeTab(NewsTabView.self)
 //            ForEach(Self.tabs, id: \.tabId) { tab in

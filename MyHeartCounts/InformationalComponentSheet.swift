@@ -111,13 +111,24 @@ struct ArticleSheet: View {
 }
 
 
-extension ArticleView.Content {
+extension ArticleSheet.Content {
     init(_ other: NewsEntry) {
-        self.init(title: other.title, date: other.date, categories: [other.category], lede: other.lede, body: other.body)
+        self.init(
+            title: other.title,
+            date: other.date,
+            categories: [other.category],
+            lede: other.lede,
+            headerImage: other.image.map { Image($0) },
+            body: other.body
+        )
     }
     
     init(_ other: StudyDefinition.InformationalComponent) {
-        self.init(title: other.title, body: other.body)
+        self.init(
+            title: other.title,
+            headerImage: Image(other.headerImage),
+            body: other.body
+        )
     }
 }
 

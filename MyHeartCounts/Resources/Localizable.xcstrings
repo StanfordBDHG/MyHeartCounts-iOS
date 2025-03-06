@@ -43,6 +43,12 @@
         }
       }
     },
+    "Activity" : {
+
+    },
+    "Age" : {
+
+    },
     "All of today's tasks have been completed" : {
 
     },
@@ -62,10 +68,13 @@
     "Already Enrolled" : {
 
     },
+    "Are you able to perform physical activity?" : {
+
+    },
     "Are you sure you want to leave the '%@' study?" : {
 
     },
-    "Article" : {
+    "As part of the My Heart Counts study, participants will be required to perform [moderate?] amounts of physical activity" : {
 
     },
     "Available Studies" : {
@@ -132,7 +141,7 @@
     "Debug Scheduler Stuff" : {
 
     },
-    "Do you speak English?" : {
+    "Do you speak %@?" : {
 
     },
     "End Study Participation" : {
@@ -199,6 +208,9 @@
           }
         }
       }
+    },
+    "Heart Health" : {
+
     },
     "HL7 FHIR" : {
       "localizations" : {
@@ -279,6 +291,9 @@
         }
       }
     },
+    "Language" : {
+
+    },
     "Learn More" : {
       "localizations" : {
         "en" : {
@@ -328,7 +343,7 @@
     "My Heart Counts is available to residents in any of the following regions: %@" : {
 
     },
-    "My Heart Counts is currently only available in English" : {
+    "My Heart Counts is currently only available in %@" : {
 
     },
     "My Heart Counts is only available to persons 18 and older." : {
@@ -406,6 +421,9 @@
     "Read Article" : {
 
     },
+    "Region" : {
+
+    },
     "Schedule" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -417,13 +435,7 @@
         }
       }
     },
-    "Screening: Age" : {
-
-    },
-    "Screening: Language" : {
-
-    },
-    "Screening: Region" : {
+    "Screening: %@" : {
 
     },
     "Skip for now" : {
@@ -536,12 +548,6 @@
 
     },
     "Unenroll" : {
-
-    },
-    "United Kingdom" : {
-
-    },
-    "United States" : {
 
     },
     "Unsupported Event" : {

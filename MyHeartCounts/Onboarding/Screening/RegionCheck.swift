@@ -15,16 +15,10 @@ import SwiftUI
 
 
 struct RegionCheck: View {
-    private struct RegionWithDisplayTitle {
-        let region: Locale.Region
-        let displayTitle: LocalizedStringResource
-    }
-    
     @Environment(\.locale) private var locale
-    @Environment(OnboardingNavigationPath.self) private var path
     
     private let allowedRegions: Set<Locale.Region>
-    private let regionsToChooseFrom: [RegionWithDisplayTitle]
+    private let regionsToChooseFrom: [Locale.Region]
     // lets hope we never run any arctic studies using this app...
     private let somewhereElseRegion: Locale.Region = .antarctica
     
@@ -32,21 +26,15 @@ struct RegionCheck: View {
     @State private var isAllowedToContinue = false
     
     var body: some View {
-        OnboardingView {
-            OnboardingTitleView(
-                title: "Screening: Region",
-                subtitle: "Before we can continue,\nwe need to learn a little about you"
-            )
-        } contentView: {
+        ScreeningStep(title: "Region", canContinue: isAllowedToContinue) {
             Form {
                 Section {
                     Text("Where do you currently live?")
                 }
                 Section {
                     Picker("", selection: $selection) {
-                        ForEach(regionsToChooseFrom, id: \.region) { (entry: RegionWithDisplayTitle) in
-                            Text(entry.displayTitle)
-                                .tag(entry.region)
+                        ForEach(regionsToChooseFrom, id: \.identifier) { region in
+                            Text(displayTitle(for: region)).tag(region)
                         }
                         Text("Somewhere else")
                             .tag(somewhereElseRegion)
@@ -55,18 +43,14 @@ struct RegionCheck: View {
                     .labelsHidden()
                 } footer: {
                     if allowedRegions.count == 1 {
-                        Text("My Heart Counts is available to residents in \(allowedRegions.first!.identifier)")
+                        Text("My Heart Counts is available to residents in \(displayTitle(for: allowedRegions.first!))")
                     } else { // count > 1
-                        Text("My Heart Counts is available to residents in any of the following regions: \(allowedRegions.map(\.identifier).sorted().joined(separator: ", "))")
+                        Text("My Heart Counts is available to residents in any of the following regions: \(allowedRegions.map(displayTitle(for:)).sorted().joined(separator: ", "))")
                     }
                 }
             }
-        } actionView: {
-            OnboardingActionsView("Continue") {
-                path.nextStep()
-            }
-            .disabled(!isAllowedToContinue)
         }
+        
         .onAppear {
             guard selection == nil else {
                 return
@@ -88,8 +72,11 @@ struct RegionCheck: View {
         precondition(!allowedRegions.isEmpty)
         self.allowedRegions = allowedRegions
         self.regionsToChooseFrom = [
-            .init(region: .unitedStates, displayTitle: "United States"),
-            .init(region: .unitedKingdom, displayTitle: "United Kingdom")
+            .unitedStates, .unitedKingdom
         ]
+    }
+    
+    private func displayTitle(for region: Locale.Region) -> String {
+        locale.localizedString(forRegionCode: region.identifier) ?? region.identifier
     }
 }

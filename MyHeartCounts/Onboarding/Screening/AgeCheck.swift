@@ -14,10 +14,10 @@ import SpeziViews
 import SwiftUI
 
 
+
 struct AgeCheck: View {
     @Environment(\.calendar) private var cal
     @Environment(HealthKit.self) private var healthKit
-    @Environment(OnboardingNavigationPath.self) private var onboardingPath
     
     let requiredMinAgeInYears: Int
     
@@ -29,12 +29,7 @@ struct AgeCheck: View {
     
     
     var body: some View {
-        OnboardingView {
-            OnboardingTitleView(
-                title: "Screening: Age",
-                subtitle: "Before we can continue,\nwe need to learn a little about you"
-            )
-        } contentView: {
+        ScreeningStep(title: "Age", canContinue: isAllowedToContinue) {
             Form {
                 Section {
                     DatePicker("When were you born?", selection: $dateOfBirth, in: ...Date(), displayedComponents: .date)
@@ -61,11 +56,7 @@ struct AgeCheck: View {
                     Text("If you have entered your date of birth into the Health app, we can try to read it from there.")
                 }
             }
-        } actionView: {
-            OnboardingActionsView("Continue") {
-                onboardingPath.nextStep()
-            }
-            .disabled(!isAllowedToContinue)
+        } footer: {
             #if DEBUG
             HStack {
                 Spacer()
@@ -76,13 +67,10 @@ struct AgeCheck: View {
                 }
                 Spacer()
             }
+            #else
+            EmptyView()
             #endif
         }
-//        .onChange(of: healthKitDateOfBirth, initial: true) { _, newValue in
-//            if let newValue {
-//                dateOfBirth = newValue
-//            }
-//        }
         .onChange(of: dateOfBirth) { _, newValue in
             // we compute the age relative to tomorrow in case the person is just turning 18 some time today...
             // TODO(@lukas) test that this is correct!
