@@ -1,8 +1,9 @@
 //
-//  HomeTabView.swift
-//  MyHeartCounts
+// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
 //
-//  Created by Lukas Kollmer on 2025-03-02.
+// SPDX-FileCopyrightText: 2025 Stanford University
+//
+// SPDX-License-Identifier: MIT
 //
 
 import Foundation
