@@ -31,11 +31,11 @@ struct HomeTabView: RootViewTab {
     
     // TODO we could also call it "Schedule", but depending on whether we want
     // eg the Health Charts in here or in a fully separate tab, this might not be the best idea?
-    static var tabTitle: LocalizedStringKey { "Home" }
+    static var tabTitle: LocalizedStringResource { "Home" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
     @Environment(\.modelContext) private var modelContext
-    @Environment(MHC.self) private var mhc
+    @Environment(StudyManager.self) private var mhc
 //    @Environment(Account.self) private var account: Account?
     @Environment(Scheduler.self) private var scheduler
     
@@ -177,7 +177,7 @@ struct HomeTabView: RootViewTab {
     }
     
     
-    private func handleAction(_ action: MHC.ActionCard.Action, for event: Event?) async {
+    private func handleAction(_ action: StudyManager.ActionCard.Action, for event: Event?) async {
         switch action {
         case .listAllAvailableStudies:
             isStudyEnrollmentSheetPresented = true

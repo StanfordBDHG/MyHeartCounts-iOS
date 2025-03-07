@@ -7,12 +7,13 @@
 //
 
 import SpeziOnboarding
+import SpeziStudy
 import SwiftUI
 
 
 struct Consent: View {
     @Environment(OnboardingNavigationPath.self) private var path
-    @Environment(MHC.self) private var mhc
+    @Environment(StudyManager.self) private var studyManager
     
     private var consentDocument: Data {
         guard let path = Bundle.main.url(forResource: "ConsentDocument", withExtension: "md"),
@@ -44,7 +45,8 @@ struct Consent: View {
                 """.data(using: .utf8)!
             },
             action: { document in
-                mhc.importConsentDocument(document, for: .generalAppUsage)
+                // TOOD deliver this to the standard instead?!
+                studyManager.importConsentDocument(document, for: .generalAppUsage)
                 path.nextStep()
             },
             title: "Onboarding Consent Title",

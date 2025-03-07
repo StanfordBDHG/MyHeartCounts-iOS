@@ -9,12 +9,13 @@
 
 import Foundation
 import SFSafeSymbols
+import SpeziStudy
 import SpeziViews
 import SwiftUI
 
 
 struct NewsTabView: RootViewTab {
-    static var tabTitle: LocalizedStringKey { "News" }
+    static var tabTitle: LocalizedStringResource { "News" }
     static var tabSymbol: SFSymbol { .newspaper }
     
     @State private var entries: PossiblyLoading<[NewsEntry]> = .loading
@@ -137,8 +138,20 @@ extension NewsEntry: Identifiable {
         }
     }
     
-    var id: ID {
-        .init(self)
+    var id: ID { .init(self) }
+}
+
+
+extension ArticleSheet.Content {
+    init(_ other: NewsEntry) {
+        self.init(
+            title: other.title,
+            date: other.date,
+            categories: [other.category],
+            lede: other.lede,
+            headerImage: other.image.map { Image($0) },
+            body: other.body
+        )
     }
 }
 

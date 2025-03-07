@@ -18,13 +18,14 @@ import SpeziHealthKit
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziScheduler
+import SpeziStudy
 import SwiftUI
 
 
 class MyHeartCountsDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
-            MHC()
+            StudyManager()
             if !FeatureFlags.disableFirebase {
                 AccountConfiguration(
                     service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: accountEmulator),

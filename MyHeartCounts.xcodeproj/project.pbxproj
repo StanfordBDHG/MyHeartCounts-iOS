@@ -55,16 +55,19 @@
 		8004CE412D75BCAA00CC3008 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE402D75BCAA00CC3008 /* SpeziOnboarding */; };
 		8004CE442D75BCBE00CC3008 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE432D75BCBE00CC3008 /* SpeziStudy */; };
 		80270CFB2D67F68F0022251E /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80270CFA2D67F68F0022251E /* SpeziStudy */; };
-		80270D2D2D680BA90022251E /* StudyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80270D2C2D680BA90022251E /* StudyInfoView.swift */; };
 		803166A32D75DE6100E9173B /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A22D75DE6100E9173B /* SpeziOnboarding */; };
 		803166A62D75DE7700E9173B /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A52D75DE7700E9173B /* SpeziScheduler */; };
 		803166A82D75DE7700E9173B /* SpeziSchedulerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A72D75DE7700E9173B /* SpeziSchedulerUI */; };
 		803166AB2D75DE8B00E9173B /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 803166AA2D75DE8B00E9173B /* SpeziStudy */; };
 		803166B72D75E22E00E9173B /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803166B62D75E22E00E9173B /* SpeziHealthKit */; };
 		803166B92D75E22E00E9173B /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803166B82D75E22E00E9173B /* SpeziHealthKitUI */; };
+		803241D52D7B53C800F7DE8B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803241D42D7B53C800F7DE8B /* Utils.swift */; };
+		803241E02D7B599300F7DE8B /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 803241DF2D7B599300F7DE8B /* SpeziScheduler */; };
+		803241E22D7B599300F7DE8B /* SpeziSchedulerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803241E12D7B599300F7DE8B /* SpeziSchedulerUI */; };
+		803241EA2D7B5D5600F7DE8B /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803241E92D7B5D5600F7DE8B /* SpeziHealthKit */; };
+		803241EC2D7B5D5600F7DE8B /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */; };
 		803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
 		803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
-		803F41682D75354D00BD1233 /* ActionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803F41672D75354D00BD1233 /* ActionCardView.swift */; };
 		805BAA182D79F5E800115B39 /* ScreeningStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA172D79F5E800115B39 /* ScreeningStep.swift */; };
 		805BAA382D7A0A0200115B39 /* HeartHealthDashboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */; };
 		805BAA422D7A283E00115B39 /* BetaDisclaimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */; };
@@ -80,20 +83,13 @@
 		807669852D77317B001B980B /* RegionCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807669842D77317B001B980B /* RegionCheck.swift */; };
 		807669B62D775046001B980B /* LanguageCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807669B52D775046001B980B /* LanguageCheck.swift */; };
 		807F99E12D6D39E800C747D0 /* OnboardingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807F99E02D6D39DF00C747D0 /* OnboardingUtils.swift */; };
-		807F99F22D6D3FAC00C747D0 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807F99F12D6D3FAC00C747D0 /* Utils.swift */; };
 		808600102D750E5F0044A054 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086000F2D750E5F0044A054 /* RootView.swift */; };
 		808600182D7510920044A054 /* HomeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808600172D7510920044A054 /* HomeTabView.swift */; };
 		8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 8086001C2D75133B0044A054 /* SFSafeSymbols */; };
 		808600302D751EFA0044A054 /* FHIR+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086002F2D751EFA0044A054 /* FHIR+Utils.swift */; };
-		8086FFF52D7504310044A054 /* MHC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086FFF42D7504310044A054 /* MHC.swift */; };
-		8086FFFC2D7506340044A054 /* StudyParticipationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086FFFB2D7506340044A054 /* StudyParticipationContext.swift */; };
-		8086FFFF2D7506960044A054 /* AppStorageKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8086FFFE2D7506960044A054 /* AppStorageKey.swift */; };
 		808A7BB92D78906B0014D0E1 /* RootViewTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BB82D78906B0014D0E1 /* RootViewTab.swift */; };
 		808A7BC52D789C980014D0E1 /* NewsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BC42D789C980014D0E1 /* NewsTabView.swift */; };
 		808A7BE02D78DD450014D0E1 /* RelativeTimeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BDF2D78DD450014D0E1 /* RelativeTimeLabel.swift */; };
-		808A7BE32D78E01A0014D0E1 /* InformationalComponentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 808A7BE22D78E01A0014D0E1 /* InformationalComponentSheet.swift */; };
-		809D60372D754D8500F98CA9 /* StudyEnrollmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809D60362D754D8500F98CA9 /* StudyEnrollmentView.swift */; };
-		809D603C2D754F2900F98CA9 /* AsyncImage2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809D603B2D754F2900F98CA9 /* AsyncImage2.swift */; };
 		80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */; };
 		80D612F02D67A5D200FAE750 /* SpeziKeychainStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 80D612EF2D67A5D200FAE750 /* SpeziKeychainStorage */; };
 		80D612F92D67A88600FAE750 /* AgeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D612F82D67A88600FAE750 /* AgeCheck.swift */; };
@@ -163,8 +159,7 @@
 		653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		653A256B28338800005D4D48 /* SchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulerTests.swift; sourceTree = "<group>"; };
 		653A258928339462005D4D48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		80270D2C2D680BA90022251E /* StudyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyInfoView.swift; sourceTree = "<group>"; };
-		803F41672D75354D00BD1233 /* ActionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCardView.swift; sourceTree = "<group>"; };
+		803241D42D7B53C800F7DE8B /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		805BAA172D79F5E800115B39 /* ScreeningStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreeningStep.swift; sourceTree = "<group>"; };
 		805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartHealthDashboardTab.swift; sourceTree = "<group>"; };
 		805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaDisclaimer.swift; sourceTree = "<group>"; };
@@ -174,19 +169,12 @@
 		807669842D77317B001B980B /* RegionCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCheck.swift; sourceTree = "<group>"; };
 		807669B52D775046001B980B /* LanguageCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageCheck.swift; sourceTree = "<group>"; };
 		807F99E02D6D39DF00C747D0 /* OnboardingUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingUtils.swift; sourceTree = "<group>"; };
-		807F99F12D6D3FAC00C747D0 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8086000F2D750E5F0044A054 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		808600172D7510920044A054 /* HomeTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabView.swift; sourceTree = "<group>"; };
 		8086002F2D751EFA0044A054 /* FHIR+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FHIR+Utils.swift"; sourceTree = "<group>"; };
-		8086FFF42D7504310044A054 /* MHC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MHC.swift; sourceTree = "<group>"; };
-		8086FFFB2D7506340044A054 /* StudyParticipationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyParticipationContext.swift; sourceTree = "<group>"; };
-		8086FFFE2D7506960044A054 /* AppStorageKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageKey.swift; sourceTree = "<group>"; };
 		808A7BB82D78906B0014D0E1 /* RootViewTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewTab.swift; sourceTree = "<group>"; };
 		808A7BC42D789C980014D0E1 /* NewsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTabView.swift; sourceTree = "<group>"; };
 		808A7BDF2D78DD450014D0E1 /* RelativeTimeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeTimeLabel.swift; sourceTree = "<group>"; };
-		808A7BE22D78E01A0014D0E1 /* InformationalComponentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationalComponentSheet.swift; sourceTree = "<group>"; };
-		809D60362D754D8500F98CA9 /* StudyEnrollmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyEnrollmentView.swift; sourceTree = "<group>"; };
-		809D603B2D754F2900F98CA9 /* AsyncImage2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncImage2.swift; sourceTree = "<group>"; };
 		80D612F82D67A88600FAE750 /* AgeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgeCheck.swift; sourceTree = "<group>"; };
 		80EF164C2D67F44E00B894D1 /* MockStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStudy.swift; sourceTree = "<group>"; };
 		A9720E422ABB68CC00872D23 /* AccountSetupHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSetupHeader.swift; sourceTree = "<group>"; };
@@ -216,6 +204,7 @@
 				807669712D772C40001B980B /* BitCollections in Frameworks */,
 				A94DDFFD2CBD1190004930BD /* SpeziNotifications in Frameworks */,
 				807669772D772C40001B980B /* HashTreeCollections in Frameworks */,
+				803241E22D7B599300F7DE8B /* SpeziSchedulerUI in Frameworks */,
 				803166B92D75E22E00E9173B /* SpeziHealthKitUI in Frameworks */,
 				A9D83F962B083794000D0C78 /* SpeziFirebaseAccountStorage in Frameworks */,
 				2FB099B62A875E2B00B20952 /* HealthKitOnFHIR in Frameworks */,
@@ -224,12 +213,15 @@
 				8004CE442D75BCBE00CC3008 /* SpeziStudy in Frameworks */,
 				8076696E2D772C07001B980B /* Algorithms in Frameworks */,
 				56E708352BB06B7100B08F0A /* SpeziLicense in Frameworks */,
+				803241EC2D7B5D5600F7DE8B /* SpeziHealthKitUI in Frameworks */,
 				803166AB2D75DE8B00E9173B /* SpeziStudy in Frameworks */,
+				803241E02D7B599300F7DE8B /* SpeziScheduler in Frameworks */,
 				2FE5DC8A29EDD972004B9AB4 /* SpeziLocalStorage in Frameworks */,
 				2FE5DC7529EDD8E6004B9AB4 /* SpeziFirebaseAccount in Frameworks */,
 				807669752D772C40001B980B /* DequeModule in Frameworks */,
 				80D612F02D67A5D200FAE750 /* SpeziKeychainStorage in Frameworks */,
 				9739A0C62AD7B5730084BEA5 /* FirebaseStorage in Frameworks */,
+				803241EA2D7B5D5600F7DE8B /* SpeziHealthKit in Frameworks */,
 				803166B72D75E22E00E9173B /* SpeziHealthKit in Frameworks */,
 				803166A82D75DE7700E9173B /* SpeziSchedulerUI in Frameworks */,
 				807669792D772C40001B980B /* HeapModule in Frameworks */,
@@ -360,15 +352,10 @@
 				2F5E32BC297E05EA003432F8 /* MyHeartCountsDelegate.swift */,
 				2F4E23822989D51F0013F3D9 /* MyHeartCountsTestingSetup.swift */,
 				2FF53D8C2A8729D600042B76 /* MyHeartCountsStandard.swift */,
-				8086FFF42D7504310044A054 /* MHC.swift */,
 				808A7BB72D7890500014D0E1 /* Root View */,
 				808A7BC22D789C860014D0E1 /* Home Tab */,
 				808A7BC32D789C8D0014D0E1 /* News Tab */,
-				809D60362D754D8500F98CA9 /* StudyEnrollmentView.swift */,
-				803F41672D75354D00BD1233 /* ActionCardView.swift */,
-				808A7BE22D78E01A0014D0E1 /* InformationalComponentSheet.swift */,
 				805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */,
-				8086FFFD2D7506380044A054 /* Model */,
 				807F99F02D6D3FA000C747D0 /* Utils */,
 				80EF164B2D67F42300B894D1 /* Study Manager */,
 				A9720E412ABB68B300872D23 /* Account */,
@@ -424,23 +411,13 @@
 		807F99F02D6D3FA000C747D0 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				807F99F12D6D3FAC00C747D0 /* Utils.swift */,
 				805BAA882D7A497900115B39 /* DisclosureIndicator.swift */,
 				805BAABF2D7AF84F00115B39 /* ListSelectionSheet.swift */,
-				809D603B2D754F2900F98CA9 /* AsyncImage2.swift */,
+				803241D42D7B53C800F7DE8B /* Utils.swift */,
 				8086002F2D751EFA0044A054 /* FHIR+Utils.swift */,
-				8086FFFE2D7506960044A054 /* AppStorageKey.swift */,
 				808A7BDF2D78DD450014D0E1 /* RelativeTimeLabel.swift */,
 			);
 			path = Utils;
-			sourceTree = "<group>";
-		};
-		8086FFFD2D7506380044A054 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				8086FFFB2D7506340044A054 /* StudyParticipationContext.swift */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		808A7BB72D7890500014D0E1 /* Root View */ = {
@@ -472,7 +449,6 @@
 			isa = PBXGroup;
 			children = (
 				80EF164C2D67F44E00B894D1 /* MockStudy.swift */,
-				80270D2C2D680BA90022251E /* StudyInfoView.swift */,
 			);
 			path = "Study Manager";
 			sourceTree = "<group>";
@@ -553,6 +529,10 @@
 				807669742D772C40001B980B /* DequeModule */,
 				807669762D772C40001B980B /* HashTreeCollections */,
 				807669782D772C40001B980B /* HeapModule */,
+				803241DF2D7B599300F7DE8B /* SpeziScheduler */,
+				803241E12D7B599300F7DE8B /* SpeziSchedulerUI */,
+				803241E92D7B5D5600F7DE8B /* SpeziHealthKit */,
+				803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -653,11 +633,11 @@
 				A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */,
 				8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
 				803166A12D75DE6100E9173B /* XCLocalSwiftPackageReference "../SpeziOnboarding" */,
-				803166A42D75DE7700E9173B /* XCLocalSwiftPackageReference "../SpeziScheduler" */,
 				803166A92D75DE8B00E9173B /* XCLocalSwiftPackageReference "../SpeziStudy" */,
-				803166B52D75E22E00E9173B /* XCLocalSwiftPackageReference "../SpeziHealthKit" */,
 				8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */,
+				803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */,
+				803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -706,37 +686,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FE5DC4129EDD7EE004B9AB4 /* StorageKeys.swift in Sources */,
-				809D60372D754D8500F98CA9 /* StudyEnrollmentView.swift in Sources */,
 				2FE5DCB129EE6107004B9AB4 /* AccountOnboarding.swift in Sources */,
 				2FE5DC3A29EDD7CA004B9AB4 /* Welcome.swift in Sources */,
 				808A7BB92D78906B0014D0E1 /* RootViewTab.swift in Sources */,
-				807F99F22D6D3FAC00C747D0 /* Utils.swift in Sources */,
 				807669B62D775046001B980B /* LanguageCheck.swift in Sources */,
-				8086FFFF2D7506960044A054 /* AppStorageKey.swift in Sources */,
 				2FE5DC3529EDD7CA004B9AB4 /* Consent.swift in Sources */,
 				2FE5DC4E29EDD7FA004B9AB4 /* ScheduleView.swift in Sources */,
 				A9DFE8A92ABE551400428242 /* AccountButton.swift in Sources */,
 				A9A3DCC82C75CBBD00FC9B69 /* FirebaseConfiguration.swift in Sources */,
-				80270D2D2D680BA90022251E /* StudyInfoView.swift in Sources */,
 				2FE5DC3729EDD7CA004B9AB4 /* AppOnboardingFlow.swift in Sources */,
 				807669672D7725CD001B980B /* ParticipantScreening.swift in Sources */,
 				2F1AC9DF2B4E840E00C24973 /* MyHeartCounts.docc in Sources */,
 				2FF53D8D2A8729D600042B76 /* MyHeartCountsStandard.swift in Sources */,
-				8086FFFC2D7506340044A054 /* StudyParticipationContext.swift in Sources */,
 				808A7BC52D789C980014D0E1 /* NewsTabView.swift in Sources */,
 				A9720E432ABB68CC00872D23 /* AccountSetupHeader.swift in Sources */,
 				805BAA182D79F5E800115B39 /* ScreeningStep.swift in Sources */,
-				808A7BE32D78E01A0014D0E1 /* InformationalComponentSheet.swift in Sources */,
 				2FE5DC4029EDD7EE004B9AB4 /* FeatureFlags.swift in Sources */,
-				809D603C2D754F2900F98CA9 /* AsyncImage2.swift in Sources */,
 				80D612F92D67A88600FAE750 /* AgeCheck.swift in Sources */,
 				807669852D77317B001B980B /* RegionCheck.swift in Sources */,
 				808600102D750E5F0044A054 /* RootView.swift in Sources */,
 				2F4E23832989D51F0013F3D9 /* MyHeartCountsTestingSetup.swift in Sources */,
-				803F41682D75354D00BD1233 /* ActionCardView.swift in Sources */,
 				805BAA892D7A497900115B39 /* DisclosureIndicator.swift in Sources */,
+				803241D52D7B53C800F7DE8B /* Utils.swift in Sources */,
 				805BAAC02D7AF84F00115B39 /* ListSelectionSheet.swift in Sources */,
-				8086FFF52D7504310044A054 /* MHC.swift in Sources */,
 				A98FF2B12CD131F500DFC949 /* EventView.swift in Sources */,
 				2FE5DC5329EDD7FA004B9AB4 /* Bundle+Questionnaire.swift in Sources */,
 				2F5E32BD297E05EA003432F8 /* MyHeartCountsDelegate.swift in Sources */,
@@ -1288,17 +1260,9 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../SpeziOnboarding;
 		};
-		803166A42D75DE7700E9173B /* XCLocalSwiftPackageReference "../SpeziScheduler" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SpeziScheduler;
-		};
 		803166A92D75DE8B00E9173B /* XCLocalSwiftPackageReference "../SpeziStudy" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../SpeziStudy;
-		};
-		803166B52D75E22E00E9173B /* XCLocalSwiftPackageReference "../SpeziHealthKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SpeziHealthKit;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -1413,6 +1377,22 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 0.1.1;
+			};
+		};
+		803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
+			requirement = {
+				branch = "lukas/mhc-changes";
+				kind = branch;
 			};
 		};
 		8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
@@ -1581,6 +1561,26 @@
 		};
 		803166B82D75E22E00E9173B /* SpeziHealthKitUI */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKitUI;
+		};
+		803241DF2D7B599300F7DE8B /* SpeziScheduler */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */;
+			productName = SpeziScheduler;
+		};
+		803241E12D7B599300F7DE8B /* SpeziSchedulerUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */;
+			productName = SpeziSchedulerUI;
+		};
+		803241E92D7B5D5600F7DE8B /* SpeziHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
+			productName = SpeziHealthKit;
+		};
+		803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
 			productName = SpeziHealthKitUI;
 		};
 		803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */ = {

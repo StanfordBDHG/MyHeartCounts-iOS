@@ -22,7 +22,7 @@ import SwiftUI
 ///
 /// - Note: This is the general app onboarding flow, **not** the study-specific onboarding
 struct AppOnboardingFlow: View {
-    @Environment(MHC.self) private var mhc
+    @Environment(StudyManager.self) private var mhc
     @Environment(HealthKit.self) private var healthKitDataSource
     
     @Environment(\.scenePhase) private var scenePhase

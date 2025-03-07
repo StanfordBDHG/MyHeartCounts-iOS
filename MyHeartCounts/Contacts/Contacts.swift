@@ -16,7 +16,7 @@ import SwiftUI
 /// Displays the contacts for the My Heart Counts.
 struct Contacts: RootViewTab {
     static var tabId: String { String(describing: Self.self) }
-    static var tabTitle: LocalizedStringKey { "Contacts" }
+    static var tabTitle: LocalizedStringResource { "Contacts" }
     static var tabSymbol: SFSymbol { .personFill }
     
     let contacts = [

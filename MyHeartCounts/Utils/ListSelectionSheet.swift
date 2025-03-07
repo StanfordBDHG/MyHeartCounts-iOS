@@ -18,7 +18,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
     
-    private let title: LocalizedStringKey
+    private let title: LocalizedStringResource
     private let items: Items
     @State private var displayedItems: [Item]
     @Binding private var selection: Item?
@@ -55,7 +55,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
                     }
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle(LocalizedStringKey(title.key))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -78,7 +78,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
     
     
     init(
-        _ title: LocalizedStringKey,
+        _ title: LocalizedStringResource,
         items: Items,
         selection: Binding<Item?>,
         dismissAfterSelection: Bool = true,

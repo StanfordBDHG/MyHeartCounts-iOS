@@ -9,8 +9,8 @@
 import Spezi
 import SpeziAccount
 import SpeziScheduler
+import SpeziStudy
 import SpeziViews
-import SwiftData
 import SwiftUI
 import SFSafeSymbols
 
@@ -20,17 +20,8 @@ import SFSafeSymbols
 // - somwtimes not getting dismissed (and needing to manually be dismissed by the user)
 
 struct RootView: View {
-    private static let tabs: [any RootViewTab.Type] = [
-        HomeTabView.self, Contacts.self
-    ]
-//    private enum TabId: String {
-//        case homepage
-//        case contact
-//    }
-    
-    @Environment(\.modelContext) private var modelContext
     @AppStorage(StorageKeys.onboardingFlowComplete) var completedOnboardingFlow = false
-    @Environment(MHC.self) private var mhc
+    @Environment(StudyManager.self) private var studyManager
     @Environment(Scheduler.self) private var scheduler
     
     @State private var swiftDataAutosaveTask: _Concurrency.Task<Void, Never>?
@@ -63,25 +54,6 @@ struct RootView: View {
             }
         }
         #endif
-        .onAppear {
-            // TODO THIS SHOULD NOT BE NECESSARY
-            // WHY IS THIS REQUIRED??????
-            // WHY DOESN'T THE MODELCONTEXT AUTOSAVE, EVEN THOUGH THAT'S ENABLED BY DEFAULT????
-            guard swiftDataAutosaveTask == nil else {
-                return
-            }
-            swiftDataAutosaveTask = _Concurrency.Task.detached {
-                while true {
-                    try? await self.saveModelContext()
-//                    try? await self.scheduler._saveModelContext()
-                    try? await _Concurrency.Task.sleep(for: .seconds(0.25))
-                }
-            }
-        }
-        .task {
-            // not perfect, but we need to inject it somehow...
-            try! await mhc.initialize(with: modelContext) // swiftlint:disable:this force_try
-        }
     }
     
     @ViewBuilder private var content: some View {
@@ -116,16 +88,11 @@ struct RootView: View {
     }
     
     
-//    @ViewBuilder
-    private func makeTab(_ ty: (some RootViewTab).Type) -> some TabContent<String> { // swiftlint:disable:this identifier_name
-        Tab(ty.tabTitle, systemImage: ty.tabSymbol.rawValue, value: ty.tabId) {
-            ty.init()
+    private func makeTab(_ tab: (some RootViewTab).Type) -> some TabContent<String> {
+        Tab(String(localized: tab.tabTitle), systemImage: tab.tabSymbol.rawValue, value: tab.tabId) {
+            tab.init()
         }
-        .customizationID(ty.tabId)
-    }
-    
-    func saveModelContext() throws {
-        try self.modelContext.save()
+        .customizationID(tab.tabId)
     }
 }
 

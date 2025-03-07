@@ -15,7 +15,7 @@ import SFSafeSymbols
 
 
 struct HeartHealthDashboardTab: RootViewTab {
-    static var tabTitle: LocalizedStringKey {
+    static var tabTitle: LocalizedStringResource {
         "Heart Health"
     }
     static var tabSymbol: SFSymbol {

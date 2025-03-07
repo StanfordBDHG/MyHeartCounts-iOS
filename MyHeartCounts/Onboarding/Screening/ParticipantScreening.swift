@@ -166,7 +166,7 @@ struct EligibilityScreening: View {
     
     
     @ViewBuilder
-    private func makeBooleanSelectionSection(_ title: LocalizedStringKey, _ binding: Binding<Bool?>) -> some View {
+    private func makeBooleanSelectionSection(_ title: LocalizedStringResource, _ binding: Binding<Bool?>) -> some View {
         Text(title).fontWeight(.medium)
         makeBooleanButton(true, boundTo: binding)
         makeBooleanButton(false, boundTo: binding)

@@ -14,7 +14,7 @@ import SFSafeSymbols
 
 protocol RootViewTab: View {
     static var tabId: String { get }
-    static var tabTitle: LocalizedStringKey { get }
+    static var tabTitle: LocalizedStringResource { get }
     static var tabSymbol: SFSymbol { get }
     
     init()

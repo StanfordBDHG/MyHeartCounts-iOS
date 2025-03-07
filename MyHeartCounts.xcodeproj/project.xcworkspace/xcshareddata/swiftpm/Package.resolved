@@ -1,5 +1,5 @@
 {
-  "originHash" : "1e0156af081aab648e2854b0b390f75ad0f87782cee09b6e2eb798931d00fb7c",
+  "originHash" : "950b2038a2d71fa09f557cc22ce8902f7e7d6e483bb2c61d94e166f8e489c7ec",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -236,6 +236,15 @@
       }
     },
     {
+      "identity" : "spezihealthkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
+      "state" : {
+        "branch" : "lukas/mhc-changes",
+        "revision" : "f21f4cebae01ac374121c5a8f619291cc7922577"
+      }
+    },
+    {
       "identity" : "spezilicense",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziLicense.git",
@@ -263,6 +272,15 @@
       }
     },
     {
+      "identity" : "spezischeduler",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordSpezi/SpeziScheduler",
+      "state" : {
+        "revision" : "eeb6e0cdec93837993d88b9bbf6496875074ffa2",
+        "version" : "1.2.1"
+      }
+    },
+    {
       "identity" : "spezistorage",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
@@ -276,8 +294,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "80c7cdfd5e50c3e279ab889cc90bbcfc88c4f24c",
-        "version" : "1.9.0"
+        "revision" : "76be1e28a88c9a102524aded45f6c76850266110",
+        "version" : "1.9.1"
       }
     },
     {

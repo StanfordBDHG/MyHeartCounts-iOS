@@ -8,6 +8,7 @@
 
 @_spi(TestingSupport) import SpeziAccount
 import SpeziLicense
+import SpeziStudy
 import SwiftData
 import SwiftUI
 
@@ -22,7 +23,9 @@ struct AccountSheet: View {
     
     @State var isInSetup = false
     
-    @Query private var SPCs: [StudyParticipationContext]
+    @StudyManagerQuery private var SPCs: [StudyParticipationContext]
+    
+//    @Query private var SPCs: [StudyParticipationContext]
     
     
     var body: some View {

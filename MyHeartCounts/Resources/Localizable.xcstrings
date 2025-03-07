@@ -4,13 +4,7 @@
     "" : {
 
     },
-    "– %@" : {
-
-    },
     "[DEBUG] enter past date" : {
-
-    },
-    "%@" : {
 
     },
     "ACCOUNT_SETUP_DESCRIPTION" : {
@@ -59,22 +53,10 @@
         }
       }
     },
-    "Already Enrolled" : {
-
-    },
     "Are you able to perform physical activies?" : {
 
     },
-    "Are you sure you want to leave the '%@' study?" : {
-
-    },
-    "Available Studies" : {
-
-    },
     "Before we can continue,\nwe need to learn a little about you" : {
-
-    },
-    "Cancel" : {
 
     },
     "Close" : {
@@ -145,12 +127,6 @@
     "Do you speak English?" : {
 
     },
-    "End Study Participation" : {
-
-    },
-    "Enroll in Study" : {
-
-    },
     "Fetching…" : {
 
     },
@@ -163,9 +139,6 @@
           }
         }
       }
-    },
-    "Health Data" : {
-
     },
     "HealthKit Access" : {
       "localizations" : {
@@ -226,9 +199,6 @@
 
     },
     "If you have entered your date of birth into the Health app, we can try to read it from there." : {
-
-    },
-    "Informational" : {
 
     },
     "Interesting Modules" : {
@@ -330,9 +300,6 @@
         }
       }
     },
-    "MORE" : {
-
-    },
     "My Heart Counts" : {
       "localizations" : {
         "en" : {
@@ -409,9 +376,6 @@
       }
     },
     "Onboarding Consent Title" : {
-
-    },
-    "Participation Criteria" : {
 
     },
     "Physical Activity" : {
@@ -528,9 +492,6 @@
     "This is the TestFlight beta version of My Heart Counts.\nUpdates may fully reset the app, especially in early stages of development." : {
 
     },
-    "This study will request read-access to collect the following Health samples:" : {
-
-    },
     "This type of event is currently unsupported. Please contact the developer of this app." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -548,22 +509,10 @@
     "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
 
     },
-    "TODO: make this look pretty!" : {
-
-    },
-    "TODO: rough information about (at least some) key study components here?" : {
-
-    },
     "Try to read from Health app" : {
 
     },
-    "Unavailable: not enrolled into parent(dep) study." : {
-
-    },
     "Understood" : {
-
-    },
-    "Unenroll" : {
 
     },
     "Unsupported Event" : {
