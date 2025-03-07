@@ -43,9 +43,6 @@
         }
       }
     },
-    "Activity" : {
-
-    },
     "Age" : {
 
     },
@@ -62,19 +59,13 @@
         }
       }
     },
-    "Allow Push Notifications" : {
-
-    },
     "Already Enrolled" : {
 
     },
-    "Are you able to perform physical activity?" : {
+    "Are you able to perform physical activies?" : {
 
     },
     "Are you sure you want to leave the '%@' study?" : {
-
-    },
-    "As part of the My Heart Counts study, participants will be required to perform [moderate?] amounts of physical activity" : {
 
     },
     "Available Studies" : {
@@ -113,6 +104,7 @@
       }
     },
     "Contact" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -135,13 +127,22 @@
     "Continue" : {
 
     },
+    "Date of Birth" : {
+
+    },
     "Debug Menu" : {
 
     },
     "Debug Scheduler Stuff" : {
 
     },
+    "Disclaimer" : {
+
+    },
     "Do you speak %@?" : {
+
+    },
+    "Do you speak English?" : {
 
     },
     "End Study Participation" : {
@@ -151,9 +152,6 @@
 
     },
     "Fetching…" : {
-
-    },
-    "Get Started" : {
 
     },
     "Grant Access" : {
@@ -180,6 +178,7 @@
       }
     },
     "HealthKit Data Source" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -213,6 +212,7 @@
 
     },
     "HL7 FHIR" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -232,6 +232,7 @@
 
     },
     "Interesting Modules" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -242,6 +243,7 @@
       }
     },
     "INTERESTING_MODULES_AREA1_DESCRIPTION" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -252,6 +254,7 @@
       }
     },
     "INTERESTING_MODULES_AREA2_DESCRIPTION" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -262,6 +265,7 @@
       }
     },
     "INTERESTING_MODULES_AREA3_DESCRIPTION" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -272,6 +276,7 @@
       }
     },
     "INTERESTING_MODULES_AREA4_DESCRIPTION" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -282,6 +287,7 @@
       }
     },
     "INTERESTING_MODULES_SUBTITLE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -392,6 +398,7 @@
       }
     },
     "Onboarding" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -405,6 +412,9 @@
 
     },
     "Participation Criteria" : {
+
+    },
+    "Physical Activity" : {
 
     },
     "Please fill out the Social Support Questionnaire every day." : {
@@ -435,10 +445,13 @@
         }
       }
     },
+    "Screening" : {
+
+    },
     "Screening: %@" : {
 
     },
-    "Skip for now" : {
+    "Select a Region" : {
 
     },
     "Social Support Questionnaire" : {
@@ -509,7 +522,10 @@
         }
       }
     },
-    "This is the content view" : {
+    "This is the TestFlight beta version of My Heart Counts.\n\nUpdates may fully reset the app and delete all previously collected data, especially in early stages of development.\n\nMy Heart Counts will **never** delete anything outside the app itself (e.g., data from Health.app)." : {
+
+    },
+    "This is the TestFlight beta version of My Heart Counts.\nUpdates may fully reset the app, especially in early stages of development." : {
 
     },
     "This study will request read-access to collect the following Health samples:" : {
@@ -529,9 +545,6 @@
     "Today's Tasks" : {
 
     },
-    "TODO come up w/ smth to put here!!!" : {
-
-    },
     "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
 
     },
@@ -547,6 +560,9 @@
     "Unavailable: not enrolled into parent(dep) study." : {
 
     },
+    "Understood" : {
+
+    },
     "Unenroll" : {
 
     },
@@ -560,9 +576,6 @@
           }
         }
       }
-    },
-    "Welcome to\n%@" : {
-
     },
     "WELCOME_AREA1_DESCRIPTION" : {
       "localizations" : {
@@ -607,13 +620,13 @@
     "When were you born?" : {
 
     },
+    "Where are you currently living?" : {
+
+    },
     "Where do you currently live?" : {
 
     },
     "Yes" : {
-
-    },
-    "You're all set and ready to go 🚀" : {
 
     },
     "You're all set.\n\nGreat to have you on board!" : {

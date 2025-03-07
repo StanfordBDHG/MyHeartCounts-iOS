@@ -68,3 +68,12 @@ extension ViewState {
         Self.error(AnyLocalizedError(error: error))
     }
 }
+
+
+/// marks a code path as being unreachable.
+///
+/// - Important: only use this in cases where you can prove that the path is actually unreachable; otherwise, this will introduce UB.
+@_transparent
+func unsafeUnreachable() -> Never {
+    unsafeBitCast((), to: Never.self)
+}

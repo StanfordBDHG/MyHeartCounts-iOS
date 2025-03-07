@@ -31,34 +31,25 @@ struct AppOnboardingFlow: View {
     @AppStorage(StorageKeys.onboardingFlowComplete) private var completedOnboardingFlow = false
     
     @State private var localNotificationAuthorization = false
-    
-//    @MainActor private var healthKitAuthorization: Bool {
-//        // As HealthKit not available in preview simulator
-//        if ProcessInfo.processInfo.isPreviewSimulator {
-//            return false
-//        }
-//        return healthKitDataSource.isFullyAuthorized
-//    }
+    @State private var data = ScreeningDataCollection()
     
     
     var body: some View {
         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
+            // TOOD include smth like this?
+//            BetaDisclaimer()
             Welcome()
-//            for (idx, view) in try! screeningOnboardingSteps(for: .ageAtLeast(18) && ).enumerated() { // swiftlint:disable:this force_try line_length
-//                view.onboardingIdentifier("dynamicScreeningStep#\(idx)")
-//            }
-////            for (idx, view) in try! screeningOnboardingSteps(forParticipationCriteriaIn: mockMHCStudy).enumerated() { // swiftlint:disable:this force_try line_length
-////                view.onboardingIdentifier("dynamicScreeningStep#\(idx)")
-////            }
             
-            AgeCheck(requiredMinAgeInYears: 18)
-            LanguageCheck(language: Locale.Language(identifier: "en"))
-            RegionCheck(allowedRegions: [.unitedStates, .unitedKingdom])
-            BooleanScreeningStep(
-                title: "Activity",
-                question: "Are you able to perform physical activity?",
-                explanation: "As part of the My Heart Counts study, participants will be required to perform [moderate?] amounts of physical activity"
-            )
+            
+//            AgeCheck(requiredMinAgeInYears: 18)
+//            LanguageCheck(language: Locale.Language(identifier: "en"))
+//            RegionCheck(allowedRegions: [.unitedStates, .unitedKingdom])
+//            BooleanScreeningStep(
+//                title: "Activity",
+//                question: "Are you able to perform physical activity?",
+//                explanation: "As part of the My Heart Counts study, participants will be required to perform [moderate?] amounts of physical activity"
+//            )
+            EligibilityScreening()
             
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
@@ -67,7 +58,8 @@ struct AppOnboardingFlow: View {
             Consent()
             #endif
             
-            if HKHealthStore.isHealthDataAvailable() /*&& !healthKitAuthorization*/ {
+            if HKHealthStore.isHealthDataAvailable() {
+                // TODO instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()
             }
             
@@ -75,19 +67,9 @@ struct AppOnboardingFlow: View {
                 NotificationPermissions()
             }
             
-            withOnboardingStackPath { path in
-                OnboardingView {
-                    OnboardingTitleView(title: "My Heart Counts")
-                } contentView: {
-                    Text("You're all set.\n\nGreat to have you on board!")
-                } actionView: {
-                    OnboardingActionsView("Complete") {
-                        try await mhc.enroll(in: mockMHCStudy) // TODO have this show a spinner in the button? in case this takes a little longer?
-                        path.nextStep()
-                    }
-                }
-            }
+            finalWelcomeStep
         }
+        .environment(data)
         .interactiveDismissDisabled(!completedOnboardingFlow)
         .onChange(of: scenePhase, initial: true) {
             guard case .active = scenePhase else {
@@ -98,18 +80,20 @@ struct AppOnboardingFlow: View {
             }
         }
     }
+    
+    
+    @ViewBuilder private var finalWelcomeStep: some View {
+        withOnboardingStackPath { path in
+            OnboardingView {
+                OnboardingTitleView(title: "My Heart Counts")
+            } contentView: {
+                Text("You're all set.\n\nGreat to have you on board!")
+            } actionView: {
+                OnboardingActionsView("Complete") {
+                    try await mhc.enroll(in: mockMHCStudy) // TODO have this show a spinner in the button? in case this takes a little longer?
+                    path.nextStep()
+                }
+            }
+        }
+    }
 }
-
-
-//#if DEBUG
-//#Preview {
-//    AppOnboardingFlow()
-//        .previewWith(standard: MyHeartCountsStandard()) {
-//            AccountConfiguration(service: InMemoryAccountService())
-//            HealthKit {
-//                // TODO do we need anything in here, this early in the lifecycle?
-//            }
-//            MyHeartCountsScheduler()
-//        }
-//}
-//#endif

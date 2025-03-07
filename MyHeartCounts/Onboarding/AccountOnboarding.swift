@@ -14,7 +14,6 @@ import SwiftUI
 struct AccountOnboarding: View {
     @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
     
-    
     var body: some View {
         AccountSetup { _ in
             Task {

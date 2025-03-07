@@ -35,6 +35,7 @@ struct SimpleError: Error, LocalizedError {
 }
 
 
+// TODO rename this (StudyManager?) and move this into SpeziStudy once the API is stabilized!
 @Observable
 @MainActor // TODO can we easily make this sendable w/out it also being MainActor-constrained?
 final class MHC: Module, EnvironmentAccessible, Sendable {

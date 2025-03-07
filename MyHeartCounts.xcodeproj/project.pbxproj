@@ -27,7 +27,6 @@
 		2FE5DC3529EDD7CA004B9AB4 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5DC2F29EDD7CA004B9AB4 /* Consent.swift */; };
 		2FE5DC3629EDD7CA004B9AB4 /* HealthKitPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5DC3029EDD7CA004B9AB4 /* HealthKitPermissions.swift */; };
 		2FE5DC3729EDD7CA004B9AB4 /* AppOnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5DC3129EDD7CA004B9AB4 /* AppOnboardingFlow.swift */; };
-		2FE5DC3829EDD7CA004B9AB4 /* InterestingModules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5DC3229EDD7CA004B9AB4 /* InterestingModules.swift */; };
 		2FE5DC3A29EDD7CA004B9AB4 /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5DC3429EDD7CA004B9AB4 /* Welcome.swift */; };
 		2FE5DC4029EDD7EE004B9AB4 /* FeatureFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5DC3E29EDD7ED004B9AB4 /* FeatureFlags.swift */; };
 		2FE5DC4129EDD7EE004B9AB4 /* StorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5DC3F29EDD7EE004B9AB4 /* StorageKeys.swift */; };
@@ -56,7 +55,6 @@
 		8004CE412D75BCAA00CC3008 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE402D75BCAA00CC3008 /* SpeziOnboarding */; };
 		8004CE442D75BCBE00CC3008 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE432D75BCBE00CC3008 /* SpeziStudy */; };
 		80270CFB2D67F68F0022251E /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80270CFA2D67F68F0022251E /* SpeziStudy */; };
-		80270D292D68051D0022251E /* StudyOnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80270D282D68051D0022251E /* StudyOnboardingFlow.swift */; };
 		80270D2D2D680BA90022251E /* StudyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80270D2C2D680BA90022251E /* StudyInfoView.swift */; };
 		803166A32D75DE6100E9173B /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A22D75DE6100E9173B /* SpeziOnboarding */; };
 		803166A62D75DE7700E9173B /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A52D75DE7700E9173B /* SpeziScheduler */; };
@@ -69,6 +67,9 @@
 		803F41682D75354D00BD1233 /* ActionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 803F41672D75354D00BD1233 /* ActionCardView.swift */; };
 		805BAA182D79F5E800115B39 /* ScreeningStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA172D79F5E800115B39 /* ScreeningStep.swift */; };
 		805BAA382D7A0A0200115B39 /* HeartHealthDashboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */; };
+		805BAA422D7A283E00115B39 /* BetaDisclaimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */; };
+		805BAA892D7A497900115B39 /* DisclosureIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA882D7A497900115B39 /* DisclosureIndicator.swift */; };
+		805BAAC02D7AF84F00115B39 /* ListSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAABF2D7AF84F00115B39 /* ListSelectionSheet.swift */; };
 		807669672D7725CD001B980B /* ParticipantScreening.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807669662D7725CD001B980B /* ParticipantScreening.swift */; };
 		8076696E2D772C07001B980B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 8076696D2D772C07001B980B /* Algorithms */; };
 		807669712D772C40001B980B /* BitCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 807669702D772C40001B980B /* BitCollections */; };
@@ -144,7 +145,6 @@
 		2FE5DC2F29EDD7CA004B9AB4 /* Consent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Consent.swift; sourceTree = "<group>"; };
 		2FE5DC3029EDD7CA004B9AB4 /* HealthKitPermissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthKitPermissions.swift; sourceTree = "<group>"; };
 		2FE5DC3129EDD7CA004B9AB4 /* AppOnboardingFlow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppOnboardingFlow.swift; sourceTree = "<group>"; };
-		2FE5DC3229EDD7CA004B9AB4 /* InterestingModules.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterestingModules.swift; sourceTree = "<group>"; };
 		2FE5DC3429EDD7CA004B9AB4 /* Welcome.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
 		2FE5DC3E29EDD7ED004B9AB4 /* FeatureFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureFlags.swift; sourceTree = "<group>"; };
 		2FE5DC3F29EDD7EE004B9AB4 /* StorageKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageKeys.swift; sourceTree = "<group>"; };
@@ -163,11 +163,13 @@
 		653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		653A256B28338800005D4D48 /* SchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulerTests.swift; sourceTree = "<group>"; };
 		653A258928339462005D4D48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		80270D282D68051D0022251E /* StudyOnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyOnboardingFlow.swift; sourceTree = "<group>"; };
 		80270D2C2D680BA90022251E /* StudyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyInfoView.swift; sourceTree = "<group>"; };
 		803F41672D75354D00BD1233 /* ActionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCardView.swift; sourceTree = "<group>"; };
 		805BAA172D79F5E800115B39 /* ScreeningStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreeningStep.swift; sourceTree = "<group>"; };
 		805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartHealthDashboardTab.swift; sourceTree = "<group>"; };
+		805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaDisclaimer.swift; sourceTree = "<group>"; };
+		805BAA882D7A497900115B39 /* DisclosureIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclosureIndicator.swift; sourceTree = "<group>"; };
+		805BAABF2D7AF84F00115B39 /* ListSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSelectionSheet.swift; sourceTree = "<group>"; };
 		807669662D7725CD001B980B /* ParticipantScreening.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantScreening.swift; sourceTree = "<group>"; };
 		807669842D77317B001B980B /* RegionCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCheck.swift; sourceTree = "<group>"; };
 		807669B52D775046001B980B /* LanguageCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageCheck.swift; sourceTree = "<group>"; };
@@ -285,9 +287,8 @@
 			isa = PBXGroup;
 			children = (
 				2FE5DC3129EDD7CA004B9AB4 /* AppOnboardingFlow.swift */,
-				80270D282D68051D0022251E /* StudyOnboardingFlow.swift */,
+				805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */,
 				2FE5DC3429EDD7CA004B9AB4 /* Welcome.swift */,
-				2FE5DC3229EDD7CA004B9AB4 /* InterestingModules.swift */,
 				2FE5DCAC29EE6107004B9AB4 /* AccountOnboarding.swift */,
 				2FE5DC2F29EDD7CA004B9AB4 /* Consent.swift */,
 				2FE5DC3029EDD7CA004B9AB4 /* HealthKitPermissions.swift */,
@@ -424,6 +425,8 @@
 			isa = PBXGroup;
 			children = (
 				807F99F12D6D3FAC00C747D0 /* Utils.swift */,
+				805BAA882D7A497900115B39 /* DisclosureIndicator.swift */,
+				805BAABF2D7AF84F00115B39 /* ListSelectionSheet.swift */,
 				809D603B2D754F2900F98CA9 /* AsyncImage2.swift */,
 				8086002F2D751EFA0044A054 /* FHIR+Utils.swift */,
 				8086FFFE2D7506960044A054 /* AppStorageKey.swift */,
@@ -706,8 +709,6 @@
 				809D60372D754D8500F98CA9 /* StudyEnrollmentView.swift in Sources */,
 				2FE5DCB129EE6107004B9AB4 /* AccountOnboarding.swift in Sources */,
 				2FE5DC3A29EDD7CA004B9AB4 /* Welcome.swift in Sources */,
-				2FE5DC3829EDD7CA004B9AB4 /* InterestingModules.swift in Sources */,
-				80270D292D68051D0022251E /* StudyOnboardingFlow.swift in Sources */,
 				808A7BB92D78906B0014D0E1 /* RootViewTab.swift in Sources */,
 				807F99F22D6D3FAC00C747D0 /* Utils.swift in Sources */,
 				807669B62D775046001B980B /* LanguageCheck.swift in Sources */,
@@ -733,6 +734,8 @@
 				808600102D750E5F0044A054 /* RootView.swift in Sources */,
 				2F4E23832989D51F0013F3D9 /* MyHeartCountsTestingSetup.swift in Sources */,
 				803F41682D75354D00BD1233 /* ActionCardView.swift in Sources */,
+				805BAA892D7A497900115B39 /* DisclosureIndicator.swift in Sources */,
+				805BAAC02D7AF84F00115B39 /* ListSelectionSheet.swift in Sources */,
 				8086FFF52D7504310044A054 /* MHC.swift in Sources */,
 				A98FF2B12CD131F500DFC949 /* EventView.swift in Sources */,
 				2FE5DC5329EDD7FA004B9AB4 /* Bundle+Questionnaire.swift in Sources */,
@@ -742,6 +745,7 @@
 				2FE5DC5229EDD7FA004B9AB4 /* MyHeartCountsScheduler.swift in Sources */,
 				A9FE7AD02AA39BAB0077B045 /* AccountSheet.swift in Sources */,
 				805BAA382D7A0A0200115B39 /* HeartHealthDashboardTab.swift in Sources */,
+				805BAA422D7A283E00115B39 /* BetaDisclaimer.swift in Sources */,
 				653A2551283387FE005D4D48 /* MyHeartCounts.swift in Sources */,
 				2FE5DC3629EDD7CA004B9AB4 /* HealthKitPermissions.swift in Sources */,
 				808600302D751EFA0044A054 /* FHIR+Utils.swift in Sources */,
