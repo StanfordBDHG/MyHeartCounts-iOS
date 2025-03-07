@@ -68,11 +68,13 @@
 		803241EC2D7B5D5600F7DE8B /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */; };
 		803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
 		803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
+		8055F2152D7B5F7900CD7884 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2142D7B5F7900CD7884 /* SpeziOnboarding */; };
 		805BAA182D79F5E800115B39 /* ScreeningStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA172D79F5E800115B39 /* ScreeningStep.swift */; };
 		805BAA382D7A0A0200115B39 /* HeartHealthDashboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */; };
 		805BAA422D7A283E00115B39 /* BetaDisclaimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */; };
 		805BAA892D7A497900115B39 /* DisclosureIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA882D7A497900115B39 /* DisclosureIndicator.swift */; };
 		805BAAC02D7AF84F00115B39 /* ListSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAABF2D7AF84F00115B39 /* ListSelectionSheet.swift */; };
+		806A166D2D7B5F2F0085452E /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 806A166C2D7B5F2F0085452E /* SpeziStudy */; };
 		807669672D7725CD001B980B /* ParticipantScreening.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807669662D7725CD001B980B /* ParticipantScreening.swift */; };
 		8076696E2D772C07001B980B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 8076696D2D772C07001B980B /* Algorithms */; };
 		807669712D772C40001B980B /* BitCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 807669702D772C40001B980B /* BitCollections */; };
@@ -207,6 +209,7 @@
 				803241E22D7B599300F7DE8B /* SpeziSchedulerUI in Frameworks */,
 				803166B92D75E22E00E9173B /* SpeziHealthKitUI in Frameworks */,
 				A9D83F962B083794000D0C78 /* SpeziFirebaseAccountStorage in Frameworks */,
+				8055F2152D7B5F7900CD7884 /* SpeziOnboarding in Frameworks */,
 				2FB099B62A875E2B00B20952 /* HealthKitOnFHIR in Frameworks */,
 				80270CFB2D67F68F0022251E /* SpeziStudy in Frameworks */,
 				56E7083B2BB06F6F00B08F0A /* SwiftPackageList in Frameworks */,
@@ -231,6 +234,7 @@
 				2FBD738C2A3BD150004228E7 /* SpeziScheduler in Frameworks */,
 				2FE5DC7929EDD8E6004B9AB4 /* SpeziFirestore in Frameworks */,
 				80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */,
+				806A166D2D7B5F2F0085452E /* SpeziStudy in Frameworks */,
 				2FE5DC7729EDD8E6004B9AB4 /* SpeziFirebaseConfiguration in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -533,6 +537,8 @@
 				803241E12D7B599300F7DE8B /* SpeziSchedulerUI */,
 				803241E92D7B5D5600F7DE8B /* SpeziHealthKit */,
 				803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */,
+				806A166C2D7B5F2F0085452E /* SpeziStudy */,
+				8055F2142D7B5F7900CD7884 /* SpeziOnboarding */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -632,12 +638,12 @@
 				A945FCD32C9C6BFA00B9EBC7 /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */,
 				A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */,
 				8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
-				803166A12D75DE6100E9173B /* XCLocalSwiftPackageReference "../SpeziOnboarding" */,
-				803166A92D75DE8B00E9173B /* XCLocalSwiftPackageReference "../SpeziStudy" */,
 				8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */,
 				803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */,
 				803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
+				806A166B2D7B5F2F0085452E /* XCRemoteSwiftPackageReference "SpeziStudy" */,
+				8055F2132D7B5F7900CD7884 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1255,17 +1261,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		803166A12D75DE6100E9173B /* XCLocalSwiftPackageReference "../SpeziOnboarding" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SpeziOnboarding;
-		};
-		803166A92D75DE8B00E9173B /* XCLocalSwiftPackageReference "../SpeziStudy" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SpeziStudy;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		2F49B7742980407B00BCB272 /* XCRemoteSwiftPackageReference "Spezi" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1392,6 +1387,22 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
 				branch = "lukas/mhc-changes";
+				kind = branch;
+			};
+		};
+		8055F2132D7B5F7900CD7884 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziOnboarding.git";
+			requirement = {
+				branch = "lukas/mhc-changes";
+				kind = branch;
+			};
+		};
+		806A166B2D7B5F2F0085452E /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
+			requirement = {
+				branch = lukas/exploration;
 				kind = branch;
 			};
 		};
@@ -1590,6 +1601,16 @@
 		803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziHealthKitUI;
+		};
+		8055F2142D7B5F7900CD7884 /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8055F2132D7B5F7900CD7884 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */;
+			productName = SpeziOnboarding;
+		};
+		806A166C2D7B5F2F0085452E /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 806A166B2D7B5F2F0085452E /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudy;
 		};
 		8076696D2D772C07001B980B /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
