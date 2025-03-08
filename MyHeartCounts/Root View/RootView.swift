@@ -59,7 +59,6 @@ struct RootView: View {
         TabView(selection: $selectedTab) {
             makeTab(HomeTabView.self)
             makeTab(HeartHealthDashboardTab.self)
-            makeTab(Contacts.self)
             makeTab(NewsTabView.self)
         }
         .tabViewStyle(.sidebarAdaptable)
