@@ -7,11 +7,11 @@
 //
 
 import Foundation
-import SpeziViews
+import SFSafeSymbols
 import SpeziHealthKit
 import SpeziHealthKitUI
+import SpeziViews
 import SwiftUI
-import SFSafeSymbols
 
 
 struct HeartHealthDashboardTab: RootViewTab {

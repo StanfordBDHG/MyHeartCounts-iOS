@@ -12,8 +12,10 @@ import SwiftUI
 
 
 struct NotificationPermissions: View {
-    @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
-    @Environment(\.requestNotificationAuthorization) private var requestNotificationAuthorization
+    @Environment(OnboardingNavigationPath.self)
+    private var onboardingNavigationPath
+    @Environment(\.requestNotificationAuthorization)
+    private var requestNotificationAuthorization
 
     @State private var notificationProcessing = false
     

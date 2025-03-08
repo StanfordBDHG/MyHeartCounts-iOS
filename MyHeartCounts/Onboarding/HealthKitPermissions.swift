@@ -12,8 +12,10 @@ import SwiftUI
 
 
 struct HealthKitPermissions: View {
-    @Environment(HealthKit.self) private var healthKitDataSource
-    @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
+    @Environment(HealthKit.self)
+    private var healthKitDataSource
+    @Environment(OnboardingNavigationPath.self)
+    private var onboardingNavigationPath
     
     @State private var healthKitProcessing = false
     

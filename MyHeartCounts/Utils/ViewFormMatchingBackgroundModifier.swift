@@ -1,8 +1,9 @@
 //
-//  ViewFormMatchingBackgroundModifier.swift
-//  MyHeartCounts
+// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
 //
-//  Created by Lukas Kollmer on 08.03.25.
+// SPDX-FileCopyrightText: 2025 Stanford University
+//
+// SPDX-License-Identifier: MIT
 //
 
 import SwiftUI
@@ -10,7 +11,8 @@ import class UIKit.UIColor
 
 
 private struct ViewFormMatchingBackgroundModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorScheme)
+    private var colorScheme
     
     func body(content: Content) -> some View {
         // It seems that this (using background vs backgroundStyle) depending on light/dark mode is what we need to do

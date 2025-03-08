@@ -1,8 +1,9 @@
 //
-//  File.swift
-//  MyHeartCounts
+// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
 //
-//  Created by Lukas Kollmer on 08.03.25.
+// SPDX-FileCopyrightText: 2025 Stanford University
+//
+// SPDX-License-Identifier: MIT
 //
 
 import Foundation
@@ -24,6 +25,9 @@ extension Locale.Region {
         return string
     }
     
+    /// Returns the localized name of the region, based on the specified locale, is possible.
+    ///
+    /// If no localized name can be determined, the region's underlying identifier is returned.
     func localizedName(in locale: Locale) -> String {
         locale.localizedString(forRegionCode: self.identifier) ?? self.identifier
     }

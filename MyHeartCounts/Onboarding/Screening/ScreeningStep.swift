@@ -13,7 +13,8 @@ import SwiftUI
 
 
 struct ScreeningStep<Content: View, Footer: View>: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingNavigationPath.self)
+    private var path
     
     private let title: LocalizedStringResource
     private let content: @MainActor () -> Content

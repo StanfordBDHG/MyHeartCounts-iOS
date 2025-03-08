@@ -15,7 +15,8 @@ import SwiftUI
 
 
 struct RegionCheck: View {
-    @Environment(\.locale) private var locale
+    @Environment(\.locale)
+    private var locale
     
     private let allowedRegions: Set<Locale.Region>
     private let regionsToChooseFrom: [Locale.Region]
@@ -42,8 +43,8 @@ struct RegionCheck: View {
                     .pickerStyle(.inline)
                     .labelsHidden()
                 } footer: {
-                    if allowedRegions.count == 1 {
-                        Text("My Heart Counts is available to residents in \(displayTitle(for: allowedRegions.first!))")
+                    if let region = allowedRegions.first, allowedRegions.count == 1 {
+                        Text("My Heart Counts is available to residents in \(displayTitle(for: region))")
                     } else { // count > 1
                         Text("My Heart Counts is available to residents in any of the following regions: \(allowedRegions.map(displayTitle(for:)).sorted().joined(separator: ", "))")
                     }

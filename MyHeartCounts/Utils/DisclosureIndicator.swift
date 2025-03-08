@@ -32,11 +32,11 @@ extension UIColor {
     static let disclosureIndicator = UIColor { traitCollection in
         switch traitCollection.userInterfaceStyle {
         case .dark:
-            return UIColor(red: 84/255, green: 84/255, blue: 86/255, alpha: 1)
+            return UIColor(red: 84 / 255, green: 84 / 255, blue: 86 / 255, alpha: 1) // swiftlint:disable:this object_literal
         case .light, .unspecified:
             fallthrough
         @unknown default:
-            return UIColor(red: 187/255, green: 187/255, blue: 187/255, alpha: 1)
+            return UIColor(red: 187 / 255, green: 187 / 255, blue: 187 / 255, alpha: 1) // swiftlint:disable:this object_literal
         }
     }
 }

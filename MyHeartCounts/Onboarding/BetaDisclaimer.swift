@@ -12,7 +12,8 @@ import SwiftUI
 
 
 struct BetaDisclaimer: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingNavigationPath.self)
+    private var path
     
     var body: some View {
         if false {

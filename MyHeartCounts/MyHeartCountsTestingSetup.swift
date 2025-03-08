@@ -10,7 +10,8 @@ import SwiftUI
 
 
 private struct MyHeartCountsAppTestingSetup: ViewModifier {
-    @AppStorage(StorageKeys.onboardingFlowComplete) var completedOnboardingFlow = false
+    @AppStorage(StorageKeys.onboardingFlowComplete)
+    private var completedOnboardingFlow = false
     
     
     func body(content: Content) -> some View {

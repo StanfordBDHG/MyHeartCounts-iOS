@@ -16,8 +16,10 @@ import SwiftUI
 
 
 struct AgeCheck: View {
-    @Environment(\.calendar) private var cal
-    @Environment(HealthKit.self) private var healthKit
+    @Environment(\.calendar)
+    private var cal
+    @Environment(HealthKit.self)
+    private var healthKit
     
     let requiredMinAgeInYears: Int
     
@@ -25,7 +27,8 @@ struct AgeCheck: View {
     @State private var isAllowedToContinue = false
     @State private var dateOfBirth = Date()
     
-    @HealthKitCharacteristicQuery(.dateOfBirth) private var healthKitDateOfBirth
+    @HealthKitCharacteristicQuery(.dateOfBirth)
+    private var healthKitDateOfBirth
     
     
     var body: some View {

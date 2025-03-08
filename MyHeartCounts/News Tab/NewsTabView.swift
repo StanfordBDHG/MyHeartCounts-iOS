@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-
 import Foundation
 import SFSafeSymbols
 import SpeziStudy
@@ -27,8 +26,6 @@ struct NewsTabView: RootViewTab {
                 switch entries {
                 case .loading:
                     ProgressView("Fetching…")
-//                    ProgressView()
-//                        .progressViewStyle(.circular)
                 case .loaded(let entries):
                     makeContent(for: entries)
                 case .error(let error):
@@ -75,27 +72,18 @@ struct NewsTabView: RootViewTab {
                     Button {
                         presentedEntry = entry
                     } label: {
-                        NewsEntryCard(entry: entry)
+                        makeCard(for: entry)
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-//                    NavigationLink {
-//                        // TODO reuse the InformationalStudyComponentSheet!
-//                        Text("TODO")
-//                    } label: {
-//                        NewsEntryCard(entry: entry)
-//                    }
                 }
             }
         }
     }
-}
-
-
-private struct NewsEntryCard: View {
-    let entry: NewsEntry
     
-    var body: some View {
+    
+    @ViewBuilder
+    private func makeCard(for entry: NewsEntry) -> some View {
         // TODO make this look nice!
         // maybe have like transparency/vibrancy/etc?
         VStack(alignment: .leading) {
@@ -105,7 +93,6 @@ private struct NewsEntryCard: View {
                 Spacer()
                 RelativeTimeLabel(date: entry.date)
                     .foregroundStyle(.secondary)
-//                Text(entry.date, format: .dateTime) // TODO have this be formatted in a "smart" way, ie so that we use the time for <24h, then day (text) and time, and then after a threshold just the date?! (also make this generic! maybe have a RelativeTimeLabel in SpeziViews?!
             }
             Text(entry.title)
                 .font(.headline)
@@ -114,56 +101,3 @@ private struct NewsEntryCard: View {
         }
     }
 }
-
-
-
-
-struct NewsEntry: Hashable, Codable, Sendable {
-    let date: Date
-    let category: String
-    let title: String
-    let image: String?
-    let lede: String
-    let body: String
-}
-
-extension NewsEntry: Identifiable {
-    struct ID: Hashable {
-        private let date: Date
-        private let title: String
-        
-        fileprivate init(_ entry: NewsEntry) {
-            date = entry.date
-            title = entry.title
-        }
-    }
-    
-    var id: ID { .init(self) }
-}
-
-
-extension ArticleSheet.Content {
-    init(_ other: NewsEntry) {
-        self.init(
-            title: other.title,
-            date: other.date,
-            categories: [other.category],
-            lede: other.lede,
-            headerImage: other.image.map { Image($0) },
-            body: other.body
-        )
-    }
-}
-
-
-
-// MARK: Utilities (TODO maybe move this somewhere else and turn it into a more general type/thing?)
-
-
-enum PossiblyLoading<Value> {
-    case loading
-    case loaded(Value)
-    case error(any Error)
-}
-
-extension PossiblyLoading: Sendable where Value: Sendable {}

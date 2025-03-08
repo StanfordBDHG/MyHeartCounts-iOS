@@ -23,12 +23,17 @@ final class ScreeningDataCollection: Sendable {
 
 
 struct EligibilityScreening: View {
-    @Environment(\.locale) private var locale
-    @Environment(\.calendar) private var cal
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.locale)
+    private var locale
+    @Environment(\.calendar)
+    private var cal
+    @Environment(\.colorScheme)
+    private var colorScheme
     
-    @Environment(OnboardingNavigationPath.self) private var path
-    @Environment(ScreeningDataCollection.self) private var data
+    @Environment(OnboardingNavigationPath.self)
+    private var path
+    @Environment(ScreeningDataCollection.self)
+    private var data
     
     @State private var isPresentingRegionPicker = false
     

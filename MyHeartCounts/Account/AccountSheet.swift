@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-@_spi(TestingSupport) import SpeziAccount
+@_spi(TestingSupport)
+import SpeziAccount
 import SpeziLicense
 import SpeziStudy
 import SwiftData
@@ -16,12 +17,15 @@ import SwiftUI
 struct AccountSheet: View {
     private let dismissAfterSignIn: Bool
 
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss)
+    private var dismiss
     
-    @Environment(Account.self) private var account
-    @Environment(\.accountRequired) var accountRequired
+    @Environment(Account.self)
+    private var account
+    @Environment(\.accountRequired)
+    private var accountRequired
     
-    @State var isInSetup = false
+    @State private var isInSetup = false
     
     @StudyManagerQuery private var SPCs: [StudyParticipationContext]
     

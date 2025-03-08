@@ -1,5 +1,5 @@
 {
-  "originHash" : "d96b183c1b9b22bf16564d7527367b4cb49d46346041861b4e4122dbbb72068d",
+  "originHash" : "9a9e247138df4d9dcb7283b53cc14ca745a137bdd467079bd1de2358f4c9e01a",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -263,15 +263,6 @@
       }
     },
     {
-      "identity" : "spezionboarding",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
-      "state" : {
-        "branch" : "lukas/mhc-changes",
-        "revision" : "bcb1745aa9385a3f41a9b901be0964ec9494ae03"
-      }
-    },
-    {
       "identity" : "speziquestionnaire",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziQuestionnaire.git",
@@ -296,15 +287,6 @@
       "state" : {
         "revision" : "b5dfb4a551d3f4243e2798133d6da2414a70e274",
         "version" : "2.1.0"
-      }
-    },
-    {
-      "identity" : "spezistudy",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
-      "state" : {
-        "branch" : "lukas/exploration",
-        "revision" : "d5395e0a826516d6b597ac30e9709fcd12346404"
       }
     },
     {

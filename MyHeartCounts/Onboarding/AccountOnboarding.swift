@@ -6,13 +6,15 @@
 // SPDX-License-Identifier: MIT
 //
 
-@_spi(TestingSupport) import SpeziAccount
+@_spi(TestingSupport)
+import SpeziAccount
 import SpeziOnboarding
 import SwiftUI
 
 
 struct AccountOnboarding: View {
-    @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
+    @Environment(OnboardingNavigationPath.self)
+    private var onboardingNavigationPath
     
     var body: some View {
         AccountSetup { _ in

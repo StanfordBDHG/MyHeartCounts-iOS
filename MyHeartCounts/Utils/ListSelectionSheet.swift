@@ -15,8 +15,10 @@ import SwiftUI
 struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Element: Hashable {
     typealias Item = Items.Element
     
-    @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme)
+    private var colorScheme
+    @Environment(\.dismiss)
+    private var dismiss
     
     private let title: LocalizedStringResource
     private let items: Items
@@ -49,6 +51,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
                                 Spacer()
                                 Image(systemSymbol: .checkmark)
                                     .foregroundStyle(.blue)
+                                    .accessibilityLabel("Selection Checkmark")
                             }
                         }
                         .contentShape(Rectangle())
@@ -71,7 +74,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
                     return
                 }
                 displayedItems = items.filter { item in
-                    // TODO does this do stuff like allowing eg an 'e' to compare equal to an 'é'?
+                    // QUESTION does this do stuff like allowing eg an 'e' to compare equal to an 'é'?
                     makeTitle(item).localizedCaseInsensitiveContains(newValue)
                 }
             }

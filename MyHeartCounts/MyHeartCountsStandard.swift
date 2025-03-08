@@ -21,9 +21,11 @@ import SwiftUI
 
 
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, HealthKitConstraint, AccountNotifyConstraint {
-    @Application(\.logger) private var logger
+    @Application(\.logger)
+    private var logger
 
-    @Dependency(FirebaseConfiguration.self) private var configuration
+    @Dependency(FirebaseConfiguration.self)
+    private var configuration
 
     init() {}
 

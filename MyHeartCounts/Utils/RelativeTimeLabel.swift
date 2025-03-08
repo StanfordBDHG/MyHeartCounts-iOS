@@ -10,11 +10,12 @@ import Foundation
 import SwiftUI
 
 
-// TODO put this into SpeziViews?!
+// TODO: make this more advanced (some options) and maybe put it into SpeziViews?
 public struct RelativeTimeLabel: View {
     private let date: Date
     
-    @Environment(\.calendar) private var cal
+    @Environment(\.calendar)
+    private var cal
     
     public var body: some View {
         TimelineView(.everyMinute) { _ in

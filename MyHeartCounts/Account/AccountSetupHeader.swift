@@ -6,13 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
-@_spi(TestingSupport) import SpeziAccount
+@_spi(TestingSupport)
+import SpeziAccount
 import SwiftUI
 
 
 struct AccountSetupHeader: View {
-    @Environment(Account.self) private var account
-    @Environment(\.accountSetupState) private var setupState
+    @Environment(Account.self)
+    private var account
+    @Environment(\.accountSetupState)
+    private var setupState
     
     
     var body: some View {

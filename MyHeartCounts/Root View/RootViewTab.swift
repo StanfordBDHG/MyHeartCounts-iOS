@@ -7,12 +7,12 @@
 //
 
 import Foundation
+import SFSafeSymbols
 import SpeziAccount
 import SwiftUI
-import SFSafeSymbols
 
 
-protocol RootViewTab: View {
+protocol RootViewTab: View { // swiftlint:disable:this file_types_order
     static var tabId: String { get }
     static var tabTitle: LocalizedStringResource { get }
     static var tabSymbol: SFSymbol { get }
@@ -21,14 +21,14 @@ protocol RootViewTab: View {
 }
 
 
-extension RootViewTab {
+extension RootViewTab { // swiftlint:disable:this file_types_order
     static var tabId: String {
         String(describing: Self.self)
     }
 }
 
 
-extension RootViewTab {
+extension RootViewTab { // swiftlint:disable:this file_types_order
     /// A `ToolbarItem` consisting of a Button which will present the account management sheet.
     ///
     /// ``RootViewTab``s should include this in their respective toolbars.
@@ -41,8 +41,9 @@ extension RootViewTab {
 
 
 private struct AccountToolbarButton: View {
-    @Environment(Account.self) private var account: Account?
-    @State var isPresentingAccount = false
+    @Environment(Account.self)
+    private var account: Account?
+    @State private var isPresentingAccount = false
     
     var body: some View {
         if account != nil {

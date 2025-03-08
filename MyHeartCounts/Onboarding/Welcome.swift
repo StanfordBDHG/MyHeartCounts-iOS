@@ -11,7 +11,8 @@ import SwiftUI
 
 
 struct Welcome: View {
-    @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
+    @Environment(OnboardingNavigationPath.self)
+    private var onboardingNavigationPath
     
     var body: some View {
         OnboardingView(

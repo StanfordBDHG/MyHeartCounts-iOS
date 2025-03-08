@@ -29,25 +29,20 @@ struct HomeTabView: RootViewTab {
         var id: Questionnaire.ID { questionnaire.id }
     }
     
-    // TODO we could also call it "Schedule", but depending on whether we want
-    // eg the Health Charts in here or in a fully separate tab, this might not be the best idea?
-    static var tabTitle: LocalizedStringResource { "Home" }
+    static var tabTitle: LocalizedStringResource { "My Heart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
-    @Environment(\.modelContext) private var modelContext
-    @Environment(StudyManager.self) private var mhc
-//    @Environment(Account.self) private var account: Account?
-    @Environment(Scheduler.self) private var scheduler
+    @Environment(StudyManager.self)
+    private var studyManager
+    @Environment(Scheduler.self)
+    private var scheduler
     
-    @EventQuery(in: Calendar.current.rangeOfMonth(for: .now)) private var events
+    @EventQuery(in: Calendar.current.rangeOfMonth(for: .now))
+    private var events
     
-    //@State private var presentedEvent: Event?
-    
-    @State private var isStudyEnrollmentSheetPresented = false
-    @State private var informationalStudyComponentBeingDisplayed: StudyDefinition.InformationalComponent?
+    @State private var presentedInformationalStudyComponent: StudyDefinition.InformationalComponent?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
     @State private var viewState: ViewState = .idle
-    
     
     var body: some View {
         NavigationStack { // swiftlint:disable:this closure_body_length
@@ -60,11 +55,6 @@ struct HomeTabView: RootViewTab {
                 accountToolbarItem
             }
             .viewStateAlert(state: $viewState)
-            .sheet(isPresented: $isStudyEnrollmentSheetPresented) {
-                StudyEnrollmentView { study in
-                    fatalError()
-                }
-            }
             .sheet(item: $questionnaireBeingAnswered) { input in
                 QuestionnaireView(
                     questionnaire: input.questionnaire,
@@ -76,8 +66,7 @@ struct HomeTabView: RootViewTab {
                     case .completed(let response):
                         do {
                             try input.event.complete()
-                            let entry = SPCQuestionnaireEntry(SPC: input.SPC, response: response)
-                            modelContext.insert(entry) // TODO QUESTION: does this cause the property in the SPC class to get updated???
+                            try studyManager.saveQuestionnaireResponse(response, for: input.SPC)
                         } catch {
                             viewState = .error(error)
                         }
@@ -90,12 +79,6 @@ struct HomeTabView: RootViewTab {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-//                        Button("Reload Root View") {
-//                            reloadRootView()
-//                        }
-                        AsyncButton("Debug Scheduler Stuff", state: $viewState) {
-                            try await debugSchedulerStuff()
-                        }
                     } label: {
                         Image(systemSymbol: .ladybug)
                             .tint(.red)
@@ -109,7 +92,7 @@ struct HomeTabView: RootViewTab {
     
     
     @ViewBuilder private var topActionsFormContent: some View {
-        ForEach(mhc.actionCards) { card in
+        ForEach(studyManager.actionCards) { card in
             Section {
                 ActionCardView(card: card) { action in
                     await handleAction(action, for: nil)
@@ -120,7 +103,7 @@ struct HomeTabView: RootViewTab {
     
     
     @ViewBuilder private var scheduleFormContent: some View {
-        makeSection("Today's Tasks") { } // swiftlint:disable:this closure_body_length
+        makeSection("Today's Tasks") { }
         if !events.isEmpty {
             ForEach(events) { event in
                 Section {
@@ -180,39 +163,40 @@ struct HomeTabView: RootViewTab {
     private func handleAction(_ action: StudyManager.ActionCard.Action, for event: Event?) async {
         switch action {
         case .listAllAvailableStudies:
-            isStudyEnrollmentSheetPresented = true
+            break
         case .enrollInStudy(let study):
             await enroll(in: study)
         case .presentInformationalStudyComponent(let component):
-            informationalStudyComponentBeingDisplayed = component
+            presentedInformationalStudyComponent = component
             // we consider simply presenting the component as being sufficient to complete the event.
             // TODO ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
             // BUT: in this case, we do wanna allow this to happen again! how should we go about this?
-            try? event?.complete()
-        case .answerQuestionnaire(let questionnaire, let spcId):
-            //path.append(questionnaire)
-            let SPC: StudyParticipationContext = modelContext.registeredModel(for: spcId)!
-            questionnaireBeingAnswered = .init(questionnaire: questionnaire, SPC: SPC, event: event!)
+            if let event {
+                do {
+                    try event.complete()
+                } catch {
+                    logger.error("Was unable to complete() event: \(error)")
+                }
+            }
+        case let .answerQuestionnaire(questionnaire, spcId):
+            guard let event else {
+                return
+            }
+            guard let SPC = studyManager.SPC(withId: spcId) else {
+                logger.error("Unable to find SPC")
+                return
+            }
+            questionnaireBeingAnswered = .init(questionnaire: questionnaire, SPC: SPC, event: event)
         }
     }
     
     private func enroll(in study: StudyDefinition) async {
         do {
             try await _Concurrency.Task.sleep(for: .seconds(1))
-            try await mhc.enroll(in: study)
+            try await studyManager.enroll(in: study)
         } catch {
             viewState = .error(AnyLocalizedError(error: error))
         }
-    }
-    
-    
-    func debugSchedulerStuff() async throws {
-        let outcomes = try scheduler.queryAllOutcomes()
-        print("#outcomes: \(outcomes.count)")
-        for outcome in outcomes {
-            print(outcome)
-        }
-        fatalError()
     }
 }
 

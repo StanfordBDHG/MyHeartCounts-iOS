@@ -12,8 +12,10 @@ import SwiftUI
 
 
 struct Consent: View {
-    @Environment(OnboardingNavigationPath.self) private var path
-    @Environment(StudyManager.self) private var studyManager
+    @Environment(OnboardingNavigationPath.self)
+    private var path
+    @Environment(StudyManager.self)
+    private var studyManager
     
     private var consentDocument: Data {
         guard let path = Bundle.main.url(forResource: "ConsentDocument", withExtension: "md"),
@@ -42,7 +44,7 @@ struct Consent: View {
                 - [] two
                 - [] three
                 - [] four
-                """.data(using: .utf8)!
+                """.data(using: .utf8)! // swiftlint:disable:this force_unwrapping
             },
             action: { document in
                 // TOOD deliver this to the standard instead?!

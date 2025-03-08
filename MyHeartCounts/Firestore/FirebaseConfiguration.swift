@@ -43,10 +43,13 @@ final class FirebaseConfiguration: Module, DefaultInitializable, @unchecked Send
         }
     }
 
-    @Application(\.logger) private var logger
+    @Application(\.logger)
+    private var logger
 
-    @Dependency(Account.self) private var account: Account? // optional, as Firebase might be disabled
-    @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
+    @Dependency(Account.self)
+    private var account: Account? // optional, as Firebase might be disabled
+    @Dependency(FirebaseAccountService.self)
+    private var accountService: FirebaseAccountService?
 
     init() {}
 
