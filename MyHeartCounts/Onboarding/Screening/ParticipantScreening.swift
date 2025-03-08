@@ -39,7 +39,11 @@ struct EligibilityScreening: View {
             @Bindable var data = data
             Form {
                 Section("Date of Birth") {
-                    DatePicker(selection: $data.dateOfBirth, in: Date.distantPast...Date.now, displayedComponents: .date) {
+                    DatePicker(
+                        selection: $data.dateOfBirth,
+                        in: Date.distantPast...Date.now,
+                        displayedComponents: .date
+                    ) {
                         Text("When were you born?")
                             .fontWeight(.medium)
                     }
