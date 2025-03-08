@@ -59,6 +59,8 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
+                    // TODO why doesn't this look good in light mode? (can't see the circle surrounding the cross.)
+                    // how does Apple do this, in eg the Maps app?
                     DismissButton()
                 }
             }

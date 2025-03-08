@@ -50,3 +50,14 @@ extension ViewState {
 func unsafeUnreachable() -> Never {
     unsafeBitCast((), to: Never.self)
 }
+
+
+extension View {
+    consuming func intoAnyView() -> AnyView {
+        AnyView(self)
+    }
+    
+    consuming func transforming(@ViewBuilder _ transform: (Self) -> some View) -> some View {
+        transform(self)
+    }
+}

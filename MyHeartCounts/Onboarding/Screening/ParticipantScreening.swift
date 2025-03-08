@@ -8,54 +8,12 @@
 
 import Foundation
 import SpeziOnboarding
-import SpeziStudy
 import SpeziViews
 import SwiftUI
 
 
-///// Attempts to convert
-//@MainActor
-//func screeningOnboardingSteps(forParticipationCriteriaIn study: StudyDefinition) throws -> [AnyView] {
-////    let leafCriteria = study.metadata.participationCriteria.criterion.allLeafs
-////    guard !leafCriteria.isEmpty else {
-////        return []
-////    }
-//    try screeningOnboardingSteps(for: study.metadata.participationCriteria.criterion)
-//}
-//
-//
-//@MainActor
-//func screeningOnboardingSteps(for criterion: StudyDefinition.ParticipationCriteria.Criterion) throws -> [AnyView] {
-////    let leafCriteria = study.metadata.participationCriteria.criterion.allLeafs
-////    guard !leafCriteria.isEmpty else {
-////        return []
-////    }
-//    switch criterion {
-//    case /*.any([]),*/ .all([]):
-//        return []
-//    case .all(let nested):
-//        guard nested.allSatisfy(\.isLeaf) else {
-//            throw SimpleError("Not-Yet-Supported Criteria Definition!")
-//        }
-//        return try nested.map { criterion in
-//            switch criterion {
-//            case .ageAtLeast(let minAge):
-//                AgeCheck(requiredMinAgeInYears: minAge).intoAnyView()
-//            case .isFromRegion(let region):
-//                RegionCheck(allowedRegions: region).intoAnyView()
-//            case .custom:
-//                throw SimpleError("Not-Yet-Supported Criteria Definition!")
-//            case .all:
-//                fatalError()
-//            }
-//        }
-//    case .ageAtLeast, .isFromRegion, .custom:
-//        return try screeningOnboardingSteps(for: .all([criterion]))
-//    }
-//}
-
-
-@Observable @MainActor
+@Observable
+@MainActor
 final class ScreeningDataCollection: Sendable {
     var dateOfBirth: Date = .now
     var region: Locale.Region?
@@ -71,6 +29,8 @@ struct EligibilityScreening: View {
     
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ScreeningDataCollection.self) private var data
+    
+    @State private var isPresentingRegionPicker = false
     
     var body: some View {
         OnboardingView {
@@ -116,22 +76,11 @@ struct EligibilityScreening: View {
     }
     
     
-    @State private var isPresentingRegionPicker = false
-    
     @ViewBuilder private var regionPicker: some View {
         @Bindable var data = data
         let allRegions = Locale.Region.isoRegions
             .filter { $0.subRegions.isEmpty }
-            .map { ($0, name(for: $0)) }
-            .sorted(using: KeyPathComparator(\.1))
-            .map(\.0)
-        let highlightedRegions: [Locale.Region] = [
-            .unitedStates, .unitedKingdom
-        ]
-        let remainingRegions = allRegions
-            .filter { !highlightedRegions.contains($0) }
-            .map { ($0, name(for: $0)) }
-            .sorted(using: KeyPathComparator(\.1))
+            .sorted { $0.localizedName(in: locale) < $1.localizedName(in: locale) }
         Button {
             isPresentingRegionPicker = true
         } label: {
@@ -141,7 +90,7 @@ struct EligibilityScreening: View {
                     .foregroundStyle(buttonLabelForegroundStyle)
                 Spacer()
                 if let region = data.region {
-                    Text(name(for: region))
+                    Text(region.localizedName(in: locale))
                         .foregroundStyle(buttonLabelForegroundStyle.secondary)
                 }
                 DisclosureIndicator()
@@ -150,7 +99,11 @@ struct EligibilityScreening: View {
         }
         .sheet(isPresented: $isPresentingRegionPicker) {
             ListSelectionSheet("Select a Region", items: allRegions, selection: $data.region) { region in
-                name(for: region)
+                if let emoji = region.flagEmoji {
+                    "\(emoji) \(region.localizedName(in: locale))"
+                } else {
+                    region.localizedName(in: locale)
+                }
             }
         }
     }
@@ -160,19 +113,21 @@ struct EligibilityScreening: View {
         colorScheme == .dark ? .white : .black
     }
     
-    private func name(for region: Locale.Region) -> String {
-        locale.localizedString(forRegionCode: region.identifier) ?? region.identifier
-    }
-    
     
     @ViewBuilder
-    private func makeBooleanSelectionSection(_ title: LocalizedStringResource, _ binding: Binding<Bool?>) -> some View {
+    private func makeBooleanSelectionSection(
+        _ title: LocalizedStringResource,
+        _ binding: Binding<Bool?> // swiftlint:disable:this discouraged_optional_boolean
+    ) -> some View {
         Text(title).fontWeight(.medium)
         makeBooleanButton(true, boundTo: binding)
         makeBooleanButton(false, boundTo: binding)
     }
     
-    private func makeBooleanButton(_ option: Bool, boundTo binding: Binding<Bool?>) -> some View {
+    private func makeBooleanButton(
+        _ option: Bool,
+        boundTo binding: Binding<Bool?> // swiftlint:disable:this discouraged_optional_boolean
+    ) -> some View {
         Button {
             switch binding.wrappedValue {
             case nil, !option:
@@ -196,15 +151,5 @@ struct EligibilityScreening: View {
             }
             .contentShape(Rectangle())
         }
-    }
-}
-
-extension View {
-    consuming func intoAnyView() -> AnyView {
-        AnyView(self)
-    }
-    
-    consuming func transforming(@ViewBuilder _ transform: (Self) -> some View) -> some View {
-        transform(self)
     }
 }
