@@ -54,25 +54,20 @@ struct EligibilityScreening: View {
                 Section("Physical Activity") {
                     makeBooleanSelectionSection("Are you able to perform physical activies?", $data.physicalActivity)
                 }
+                Section {
+                    OnboardingActionsView("Continue") {
+                        evaluateEligibilityAndProceed()
+                    }
+                    .disabled(cal.isDateInToday(data.dateOfBirth) || data.region == nil || data.speaksEnglish == nil || data.physicalActivity == nil)
+                    .listRowInsets(.zero)
+                    // TODO(@lukas) can we somehow make it so that the scroll view fills the entire screen? ie, all the way to the bottom?
+                }
             }
         } actionView: {
-            OnboardingActionsView("Continue") {
-                path.nextStep()
-            }
-            .padding(.horizontal, 24)
-            .disabled(cal.isDateInToday(data.dateOfBirth) || data.region == nil || data.speaksEnglish == nil || data.physicalActivity == nil)
+            EmptyView()
         }
-        .disablePadding(.horizontal)
-        .transforming { view in
-            // It seems that this (using background vs backgroundStyle) depending on light/dark mode is what we need to do
-            // in order to have the view background match the form background...
-            // TODO(@lukas) why is this the case?
-            if colorScheme == .dark {
-                view.backgroundStyle(Color(uiColor: UIColor.secondarySystemBackground))
-            } else {
-                view.background(Color(uiColor: UIColor.secondarySystemBackground))
-            }
-        }
+        .disablePadding([.horizontal, .bottom])
+        .makeBackgroundMatchFormBackground()
     }
     
     
@@ -146,10 +141,51 @@ struct EligibilityScreening: View {
                     Image(systemSymbol: .checkmark)
                         .foregroundStyle(.blue)
                         .fontWeight(.medium)
-                    
+                        .accessibilityLabel("Selection Checkmark")
                 }
             }
             .contentShape(Rectangle())
         }
+    }
+    
+    private func evaluateEligibilityAndProceed() {
+        let age = cal.dateComponents([.year], from: data.dateOfBirth, to: .tomorrow).year ?? 0
+        
+        let isEligible = age >= 18
+            && (data.region == .unitedStates || data.region == .unitedKingdom) // TODO(@lukas) check for only one, and allow injecting it!
+            && data.speaksEnglish == true
+            && data.physicalActivity == true
+        
+        if isEligible {
+            path.nextStep()
+        } else {
+            path.append(customView: NotEligibleView())
+        }
+    }
+}
+
+
+// TODO make this look pretty!
+private struct NotEligibleView: View {
+    var body: some View {
+        OnboardingView {
+            OnboardingTitleView(title: "Screening Results")
+                .padding(.top, 47)
+        } contentView: {
+            Form {
+                Section {
+                    Text("You're sadly not eligible to participate in the My Heart Counts study.")
+                }
+                .listRowBackground(Color.clear)
+                .listRowInsets(.zero)
+                Section {
+                    Link("Check out our other work", destination: URL(string: "https://bdh.stanford.edu")!)
+                }
+            }
+        } actionView: {
+            EmptyView()
+        }
+        .makeBackgroundMatchFormBackground()
+        .navigationBarBackButtonHidden()
     }
 }

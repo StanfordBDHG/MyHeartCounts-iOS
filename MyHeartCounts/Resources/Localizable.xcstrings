@@ -59,6 +59,9 @@
     "Before we can continue,\nwe need to learn a little about you" : {
 
     },
+    "Check out our other work" : {
+
+    },
     "Close" : {
       "localizations" : {
         "en" : {
@@ -412,10 +415,16 @@
     "Screening" : {
 
     },
+    "Screening Results" : {
+
+    },
     "Screening: %@" : {
 
     },
     "Select a Region" : {
+
+    },
+    "Selection Checkmark" : {
 
     },
     "Social Support Questionnaire" : {
@@ -579,6 +588,9 @@
 
     },
     "You're all set.\n\nGreat to have you on board!" : {
+
+    },
+    "You're sadly not eligible to participate in the My Heart Counts study." : {
 
     },
     "Your Account" : {

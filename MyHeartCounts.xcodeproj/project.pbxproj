@@ -70,6 +70,7 @@
 		803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
 		8055F2152D7B5F7900CD7884 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2142D7B5F7900CD7884 /* SpeziOnboarding */; };
 		8055F2212D7C489F00CD7884 /* LocaleUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8055F2202D7C489F00CD7884 /* LocaleUtils.swift */; };
+		8055F23D2D7C5A0900CD7884 /* ViewFormMatchingBackgroundModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8055F23C2D7C5A0900CD7884 /* ViewFormMatchingBackgroundModifier.swift */; };
 		805BAA182D79F5E800115B39 /* ScreeningStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA172D79F5E800115B39 /* ScreeningStep.swift */; };
 		805BAA382D7A0A0200115B39 /* HeartHealthDashboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */; };
 		805BAA422D7A283E00115B39 /* BetaDisclaimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */; };
@@ -164,6 +165,7 @@
 		653A258928339462005D4D48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		803241D42D7B53C800F7DE8B /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8055F2202D7C489F00CD7884 /* LocaleUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleUtils.swift; sourceTree = "<group>"; };
+		8055F23C2D7C5A0900CD7884 /* ViewFormMatchingBackgroundModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFormMatchingBackgroundModifier.swift; sourceTree = "<group>"; };
 		805BAA172D79F5E800115B39 /* ScreeningStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreeningStep.swift; sourceTree = "<group>"; };
 		805BAA372D7A0A0200115B39 /* HeartHealthDashboardTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartHealthDashboardTab.swift; sourceTree = "<group>"; };
 		805BAA412D7A283E00115B39 /* BetaDisclaimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaDisclaimer.swift; sourceTree = "<group>"; };
@@ -419,6 +421,7 @@
 			children = (
 				805BAA882D7A497900115B39 /* DisclosureIndicator.swift */,
 				805BAABF2D7AF84F00115B39 /* ListSelectionSheet.swift */,
+				8055F23C2D7C5A0900CD7884 /* ViewFormMatchingBackgroundModifier.swift */,
 				803241D42D7B53C800F7DE8B /* Utils.swift */,
 				8055F2202D7C489F00CD7884 /* LocaleUtils.swift */,
 				8086002F2D751EFA0044A054 /* FHIR+Utils.swift */,
@@ -718,6 +721,7 @@
 				2F4E23832989D51F0013F3D9 /* MyHeartCountsTestingSetup.swift in Sources */,
 				805BAA892D7A497900115B39 /* DisclosureIndicator.swift in Sources */,
 				803241D52D7B53C800F7DE8B /* Utils.swift in Sources */,
+				8055F23D2D7C5A0900CD7884 /* ViewFormMatchingBackgroundModifier.swift in Sources */,
 				805BAAC02D7AF84F00115B39 /* ListSelectionSheet.swift in Sources */,
 				A98FF2B12CD131F500DFC949 /* EventView.swift in Sources */,
 				2FE5DC5329EDD7FA004B9AB4 /* Bundle+Questionnaire.swift in Sources */,

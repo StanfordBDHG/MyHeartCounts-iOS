@@ -19,7 +19,6 @@ extension RangeReplaceableCollection {
         return copy
     }
     
-    
     func appending(contentsOf other: some Sequence<Element>) -> Self {
         var copy = self
         copy.append(contentsOf: other)
@@ -60,4 +59,8 @@ extension View {
     consuming func transforming(@ViewBuilder _ transform: (Self) -> some View) -> some View {
         transform(self)
     }
+}
+
+extension EdgeInsets {
+    static let zero = Self(top: 0, leading: 0, bottom: 0, trailing: 0)
 }
