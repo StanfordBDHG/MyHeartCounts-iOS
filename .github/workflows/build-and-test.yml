@@ -1,5 +1,5 @@
 #
-# This source file is part of the Stanford Spezi Template Application open-source project
+# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
 #
 # SPDX-FileCopyrightText: 2023 Stanford University
 #
@@ -24,7 +24,7 @@ jobs:
     permissions:
       contents: read
     with:
-      artifactname: TemplateApplication.xcresult
+      artifactname: MyHeartCounts.xcresult
       runsonlabels: '["macOS", "self-hosted"]'
       setupfirebaseemulator: true
       customcommand: "firebase emulators:exec 'fastlane test'"
@@ -35,6 +35,6 @@ jobs:
     permissions:
       contents: read
     with:
-      coveragereports: TemplateApplication.xcresult
+      coveragereports: MyHeartCounts.xcresult
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}
