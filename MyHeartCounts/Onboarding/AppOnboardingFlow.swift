@@ -46,15 +46,6 @@ struct AppOnboardingFlow: View {
 //            BetaDisclaimer()
             Welcome()
             
-            
-//            AgeCheck(requiredMinAgeInYears: 18)
-//            LanguageCheck(language: Locale.Language(identifier: "en"))
-//            RegionCheck(allowedRegions: [.unitedStates, .unitedKingdom])
-//            BooleanScreeningStep(
-//                title: "Activity",
-//                question: "Are you able to perform physical activity?",
-//                explanation: "As part of the My Heart Counts study, participants will be required to perform [moderate?] amounts of physical activity"
-//            )
             EligibilityScreening()
             
             if !FeatureFlags.disableFirebase {

@@ -12,8 +12,7 @@ import SpeziViews
 import SwiftUI
 
 
-@Observable
-@MainActor
+@Observable @MainActor
 final class ScreeningDataCollection: Sendable {
     var dateOfBirth: Date = .now
     var region: Locale.Region?

@@ -1,12 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
-    "[DEBUG] enter past date" : {
-
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -36,9 +30,6 @@
           }
         }
       }
-    },
-    "Age" : {
-
     },
     "All of today's tasks have been completed" : {
 
@@ -100,9 +91,6 @@
     "Disclaimer" : {
 
     },
-    "Do you speak %@?" : {
-
-    },
     "Do you speak English?" : {
 
     },
@@ -152,9 +140,6 @@
     "Heart Health" : {
 
     },
-    "If you have entered your date of birth into the Health app, we can try to read it from there." : {
-
-    },
     "Language" : {
 
     },
@@ -187,18 +172,6 @@
           }
         }
       }
-    },
-    "My Heart Counts is available to residents in %@" : {
-
-    },
-    "My Heart Counts is available to residents in any of the following regions: %@" : {
-
-    },
-    "My Heart Counts is currently only available in %@" : {
-
-    },
-    "My Heart Counts is only available to persons 18 and older." : {
-
     },
     "News" : {
 
@@ -260,16 +233,10 @@
     "Screening Results" : {
 
     },
-    "Screening: %@" : {
-
-    },
     "Select a Region" : {
 
     },
     "Selection Checkmark" : {
-
-    },
-    "Somewhere else" : {
 
     },
     "Spezi Modules" : {
@@ -327,9 +294,6 @@
     "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
 
     },
-    "Try to read from Health app" : {
-
-    },
     "Understood" : {
 
     },
@@ -377,9 +341,6 @@
 
     },
     "Where are you currently living?" : {
-
-    },
-    "Where do you currently live?" : {
 
     },
     "Yes" : {
