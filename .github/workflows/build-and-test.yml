@@ -31,7 +31,7 @@ jobs:
       firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
       setupfirebaseemulator: true
       checkout_submodules: true
-      customcommand: npm --prefix MyHeartCounts-Firebase run prepare && firebase emulators:exec -c ./MyHeartCounts-Firebase/firebase.json --export-on-exit=./firebase 'npm --prefix ./MyHeartCounts-Firebase/functions run serve:seed && sleep 10'
+      customcommand: "firebase emulators:exec 'fastlane test'"
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
