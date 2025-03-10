@@ -16,7 +16,7 @@ import SpeziStudy
 import SwiftUI
 
 
-/// Displays an multi-step onboarding flow for the My Heart Counts iOS app
+/// Displays a multi-step onboarding flow for the My Heart Counts iOS app
 ///
 /// - Note: This is the general app onboarding flow, **not** the study-specific onboarding
 struct AppOnboardingFlow: View {
