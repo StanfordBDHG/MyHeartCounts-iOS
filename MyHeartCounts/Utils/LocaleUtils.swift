@@ -32,3 +32,13 @@ extension Locale.Region {
         locale.localizedString(forRegionCode: self.identifier) ?? self.identifier
     }
 }
+
+
+extension Locale.Language {
+    /// Returns the localized name of the language, based on the specified locale, is possible.
+    ///
+    /// If no localized name can be determined, the language's underlying identifier is returned.
+    func localizedName(in locale: Locale) -> String {
+        locale.localizedString(forLanguageCode: self.maximalIdentifier) ?? self.minimalIdentifier
+    }
+}

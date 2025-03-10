@@ -44,7 +44,7 @@
         }
       }
     },
-    "Are you able to perform physical activies?" : {
+    "Are you able to perform physical activities?" : {
 
     },
     "Before we can continue,\nwe need to learn a little about you" : {
@@ -91,7 +91,7 @@
     "Disclaimer" : {
 
     },
-    "Do you speak English?" : {
+    "Do you speak %@?" : {
 
     },
     "Fetching…" : {

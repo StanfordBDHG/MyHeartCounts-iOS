@@ -46,7 +46,14 @@ struct AppOnboardingFlow: View {
 //            BetaDisclaimer()
             Welcome()
             
-            EligibilityScreening()
+            SinglePageScreening(title: "Screening", subtitle: "Before we can continue,\nwe need to learn a little about you") {
+                AgeAtLeast(minAge: 18)
+                IsFromRegion(allowedRegion: .unitedStates)
+                SpeaksLanguage(allowedLanguage: .init(identifier: "en_US"))
+                CanPerformPhysicalActivity()
+            }
+            
+//            EligibilityScreening()
             
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
