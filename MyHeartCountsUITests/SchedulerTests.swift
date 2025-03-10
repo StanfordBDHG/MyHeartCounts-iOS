@@ -13,7 +13,6 @@ import XCTestExtensions
 class SchedulerTests: XCTestCase {
     @MainActor
     override func setUp() async throws {
-        try await super.setUp()
         continueAfterFailure = false
         
         let app = XCUIApplication()
