@@ -12,6 +12,7 @@ My Heart Counts Contributors
 =================================
 
 * [Paul Schmiedmayer](https://github.com/PSchmiedmayer)
+* [Lukas Kollmer](https://github.com/lukaskollmer)
 * [Andreas Bauer](https://github.com/Supereg)
 * [Philipp Zagar](https://github.com/philippzagar)
 * [Nikolai Madlener](https://github.com/NikolaiMadlener)
