@@ -40,7 +40,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
                 )
                 firestore
                 if FeatureFlags.useFirebaseEmulator {
-                    FirebaseStorageConfiguration(emulatorSettings: (host: "192.168.2.129", port: 9199))
+                    FirebaseStorageConfiguration(emulatorSettings: (host: "localhost", port: 9199))
                 } else {
                     FirebaseStorageConfiguration()
                 }
@@ -48,7 +48,6 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
             HealthKit {
                 // ???
             }
-//            MyHeartCountsScheduler()
             Scheduler()
             Notifications()
         }
@@ -56,7 +55,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
 
     private var accountEmulator: (host: String, port: Int)? {
         if FeatureFlags.useFirebaseEmulator {
-            (host: "192.168.2.129", port: 9099)
+            (host: "localhost", port: 9099)
         } else {
             nil
         }
@@ -66,7 +65,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
     private var firestore: Firestore {
         let settings = FirestoreSettings()
         if FeatureFlags.useFirebaseEmulator {
-            settings.host = "192.168.2.129:8080"
+            settings.host = "localhost:8080"
             settings.cacheSettings = MemoryCacheSettings()
             settings.isSSLEnabled = false
         }
