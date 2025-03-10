@@ -27,11 +27,12 @@ jobs:
       artifactname: MyHeartCounts.xcresult
       runsonlabels: '["macOS", "self-hosted"]'
       fastlanelane: test
-      firebaseemulatorimport: ./firebase
-      firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
-      setupfirebaseemulator: true
-      checkout_submodules: true
-      customcommand: "firebase emulators:exec 'fastlane test'"
+      # firebaseemulatorimport: ./firebase
+      # firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
+      # setupfirebaseemulator: true
+      # checkout_submodules: true
+      # customcommand: "firebase emulators:exec 'fastlane test'"
+      customcommand: "fastlane test"
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
