@@ -35,7 +35,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
                     Button {
                         if selection == item {
                             // if we're re-selecting the currently selected item, we clear the selection
-                            // TODO add an option for enabling/disabling this behaviour?
+                            // maybe add an option for enabling/disabling this behaviour?
                             selection = nil
                         } else {
                             selection = item
@@ -62,7 +62,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    // TODO why doesn't this look good in light mode? (can't see the circle surrounding the cross.)
+                    // ISSUE why doesn't this look good in light mode? (can't see the circle surrounding the cross.)
                     // how does Apple do this, in eg the Maps app?
                     DismissButton()
                 }

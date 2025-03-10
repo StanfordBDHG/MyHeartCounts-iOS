@@ -13,7 +13,7 @@ import ModelsR4
 import SpeziStudy
 
 
-extension UUID { // TODO use reverse-dns-strings instead of UUIDs?!
+extension UUID { // QUESTION maybe use reverse-dns-strings instead of UUIDs?!
     fileprivate static let mhcStudy = UUID(uuidString: "5D464372-C9A3-4018-A789-47149D934BFC")!
     fileprivate static let mhcStudyComponentHealthDataCollection = UUID(uuidString: "BA29517B-92BB-483E-908E-7E5046C05A6C")!
     fileprivate static let mhcStudyComponentQuestionnaire1 = UUID(uuidString: "CFCB212A-F31C-403F-9FF7-F8A4340DB849")!
@@ -67,7 +67,7 @@ let mockMHCStudy = StudyDefinition(
         ),
         .init(
             componentId: .mhcStudyComponentQuestionnaire1,
-            // TODO(@lukas) look into how the weekday and startOffset work with each oither!
+            // ISSUE(@lukas) look into how the weekday and startOffset work with each oither!
             // eg: if we configure this as a weekly task on tuesdays, and set the startOffset to 1 and start on a monday,
             // does it start correctly on the 2nd overall day?
             // what about if we start on a monday and set the offset to 4? we;d intuetively expect it to start the following week?

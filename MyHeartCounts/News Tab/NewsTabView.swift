@@ -57,7 +57,7 @@ struct NewsTabView: RootViewTab {
                 .init(date: .today, category: "Impact", title: "Title2", image: "image2", lede: "Lede2", body: "Body2")
             ])
             #else
-            entries = .error(SimpleError("Server not found")) // TODO implement this!
+            entries = .error(SimpleError("Not yet implemented"))
             #endif
         } catch {
             entries = .error(error)
@@ -84,7 +84,7 @@ struct NewsTabView: RootViewTab {
     
     @ViewBuilder
     private func makeCard(for entry: NewsEntry) -> some View {
-        // TODO make this look nice!
+        // make this look nice!
         // maybe have like transparency/vibrancy/etc?
         VStack(alignment: .leading) {
             HStack {

@@ -37,24 +37,21 @@ struct HealthKitPermissions: View {
                 Spacer()
             }
         } actionView: {
-            OnboardingActionsView(
-                "Grant Access",
-                action: {
-                    do {
-                        healthKitProcessing = true
-                        // HealthKit is not available in the preview simulator.
-                        if ProcessInfo.processInfo.isPreviewSimulator {
-                            try await _Concurrency.Task.sleep(for: .seconds(5))
-                        } else {
-                            try await healthKitDataSource.askForAuthorization(for: .init(mockMHCStudy.allCollectedHealthData))
-                        }
-                    } catch {
-                        print("Could not request HealthKit permissions.")
+            OnboardingActionsView("Grant Access") {
+                do {
+                    healthKitProcessing = true
+                    // HealthKit is not available in the preview simulator.
+                    if ProcessInfo.processInfo.isPreviewSimulator {
+                        try await _Concurrency.Task.sleep(for: .seconds(5))
+                    } else {
+                        try await healthKitDataSource.askForAuthorization(for: .init(mockMHCStudy.allCollectedHealthData))
                     }
-                    healthKitProcessing = false
-                    onboardingNavigationPath.nextStep()
+                } catch {
+                    print("Could not request HealthKit permissions.")
                 }
-            )
+                healthKitProcessing = false
+                onboardingNavigationPath.nextStep()
+            }
         }
         .navigationBarBackButtonHidden(healthKitProcessing)
         // Small fix as otherwise "Login" or "Sign up" is still shown in the nav bar
@@ -63,13 +60,13 @@ struct HealthKitPermissions: View {
 }
 
 
-//#if DEBUG
-//#Preview {
-//    OnboardingStack {
-//        HealthKitPermissions()
-//    }
-//        .previewWith(standard: MyHeartCountsStandard()) {
-//            HealthKit()
-//        }
-//}
-//#endif
+#if DEBUG
+#Preview {
+    OnboardingStack {
+        HealthKitPermissions()
+    }
+    .previewWith(standard: MyHeartCountsStandard()) {
+        HealthKit()
+    }
+}
+#endif

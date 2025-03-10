@@ -15,9 +15,6 @@ import SpeziOnboarding
 import SpeziStudy
 import SwiftUI
 
-// TODO(@lukas) it's a btit absurd that, if the user was logged in before deleting and reinstallng the app, we have an onboarding
-// step showing the account (incl the user's first&last name) and offering a big beautify stay logged in button, only to then in the next
-// step (the consent) ask the user to please manually enter their first&last name...
 
 /// Displays an multi-step onboarding flow for the My Heart Counts iOS app
 ///
@@ -53,8 +50,6 @@ struct AppOnboardingFlow: View {
                 CanPerformPhysicalActivity()
             }
             
-//            EligibilityScreening()
-            
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
             }
@@ -63,7 +58,7 @@ struct AppOnboardingFlow: View {
             #endif
             
             if HKHealthStore.isHealthDataAvailable() {
-                // TODO instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
+                // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()
             }
             
@@ -71,7 +66,7 @@ struct AppOnboardingFlow: View {
                 NotificationPermissions()
             }
             
-            finalWelcomeStep
+            FinalEnrollmentStep()
         }
         .environment(data)
         .interactiveDismissDisabled(!completedOnboardingFlow)
@@ -81,22 +76,6 @@ struct AppOnboardingFlow: View {
             }
             Task {
                 localNotificationAuthorization = await notificationSettings().authorizationStatus == .authorized
-            }
-        }
-    }
-    
-    
-    @ViewBuilder private var finalWelcomeStep: some View {
-        withOnboardingStackPath { path in
-            OnboardingView {
-                OnboardingTitleView(title: "My Heart Counts")
-            } contentView: {
-                Text("You're all set.\n\nGreat to have you on board!")
-            } actionView: {
-                OnboardingActionsView("Complete") {
-                    try await mhc.enroll(in: mockMHCStudy) // TODO have this show a spinner in the button? in case this takes a little longer?
-                    path.nextStep()
-                }
             }
         }
     }

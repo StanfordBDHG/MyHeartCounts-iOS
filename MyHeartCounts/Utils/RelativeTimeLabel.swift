@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 
-// TODO: make this more advanced (some options) and maybe put it into SpeziViews?
+// make this more advanced (some options) and maybe put it into SpeziViews?
 public struct RelativeTimeLabel: View {
     private let date: Date
     

@@ -109,7 +109,7 @@ struct HomeTabView: RootViewTab {
                 Section {
                     if let action = event.task.studyScheduledTaskAction {
                         InstructionsTile(event) {
-                            // TODO(@lukas):
+                            // IDEA(@lukas):
                             // - add an official overload with an optional label text?
                             // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
                             EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
@@ -169,7 +169,7 @@ struct HomeTabView: RootViewTab {
         case .presentInformationalStudyComponent(let component):
             presentedInformationalStudyComponent = component
             // we consider simply presenting the component as being sufficient to complete the event.
-            // TODO ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
+            // NOTE ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
             // BUT: in this case, we do wanna allow this to happen again! how should we go about this?
             if let event {
                 do {

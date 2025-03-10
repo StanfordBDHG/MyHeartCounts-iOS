@@ -91,6 +91,9 @@
     "Disclaimer" : {
 
     },
+    "Disclosure Indicator" : {
+
+    },
     "Do you speak %@?" : {
 
     },
@@ -285,9 +288,6 @@
     "This is the TestFlight beta version of My Heart Counts.\n\nUpdates may fully reset the app and delete all previously collected data, especially in early stages of development.\n\nMy Heart Counts will **never** delete anything outside the app itself (e.g., data from Health.app)." : {
 
     },
-    "This is the TestFlight beta version of My Heart Counts.\nUpdates may fully reset the app, especially in early stages of development." : {
-
-    },
     "Today's Tasks" : {
 
     },
@@ -295,6 +295,9 @@
 
     },
     "Understood" : {
+
+    },
+    "Warning Sign Exclamation Mark Symbol" : {
 
     },
     "WELCOME_AREA1_DESCRIPTION" : {

@@ -19,7 +19,6 @@ struct NotificationPermissions: View {
 
     @State private var notificationProcessing = false
     
-    
     var body: some View {
         OnboardingView(
             contentView: {
@@ -54,26 +53,22 @@ struct NotificationPermissions: View {
                             print("Could not request notification permissions.")
                         }
                         notificationProcessing = false
-                        
                         onboardingNavigationPath.nextStep()
                     }
                 )
             }
         )
-            .navigationBarBackButtonHidden(notificationProcessing)
-            // Small fix as otherwise "Login" or "Sign up" is still shown in the nav bar
-            .navigationTitle(Text(verbatim: ""))
+        .navigationBarBackButtonHidden(notificationProcessing)
+        // Small fix as otherwise "Login" or "Sign up" is still shown in the nav bar
+        .navigationTitle(Text(verbatim: ""))
     }
 }
 
 
-//#if DEBUG
-//#Preview {
-//    OnboardingStack {
-//        NotificationPermissions()
-//    }
-//        .previewWith {
-//            MyHeartCountsScheduler()
-//        }
-//}
-//#endif
+#if DEBUG
+#Preview {
+    OnboardingStack {
+        NotificationPermissions()
+    }
+}
+#endif
