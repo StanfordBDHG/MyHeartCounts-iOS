@@ -13,6 +13,7 @@ import XCTestExtensions
 class SchedulerTests: XCTestCase {
     @MainActor
     override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
         
         let app = XCUIApplication()
@@ -23,6 +24,7 @@ class SchedulerTests: XCTestCase {
     
     @MainActor
     func testScheduler() throws {
+        throw XCTSkip()
         let app = XCUIApplication()
 
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))

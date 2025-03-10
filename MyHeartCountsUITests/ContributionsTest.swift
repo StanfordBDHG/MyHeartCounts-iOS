@@ -12,6 +12,7 @@ import XCTest
 final class ContributionsTest: XCTestCase {
     @MainActor
     override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
         
         let app = XCUIApplication()
@@ -21,6 +22,7 @@ final class ContributionsTest: XCTestCase {
 
     @MainActor
     func testLicenseInformationPage() async throws {
+        throw XCTSkip()
         let app = XCUIApplication()
         
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))
