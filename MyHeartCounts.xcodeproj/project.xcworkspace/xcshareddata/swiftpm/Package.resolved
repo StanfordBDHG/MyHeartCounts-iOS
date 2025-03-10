@@ -1,5 +1,5 @@
 {
-  "originHash" : "d96b183c1b9b22bf16564d7527367b4cb49d46346041861b4e4122dbbb72068d",
+  "originHash" : "2f04aa6bf3c61541574d21ff0dd0af7a26d2dae905ce7926da3014d3b45e45d9",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -304,7 +304,7 @@
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
         "branch" : "lukas/exploration",
-        "revision" : "49756ef39639d50d2e59b6aa69aca1d396aff0de"
+        "revision" : "cc854b3cd649a3f3f3b1503eba6434431c620aac"
       }
     },
     {
