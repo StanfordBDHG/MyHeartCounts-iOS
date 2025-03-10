@@ -20,14 +20,20 @@ concurrency:
 jobs:
   buildandtest:
     name: Build and Test
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     permissions:
       contents: read
     with:
       artifactname: MyHeartCounts.xcresult
       runsonlabels: '["macOS", "self-hosted"]'
+      fastlanelane: test
+      firebaseemulatorimport: ./firebase
+      firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
       setupfirebaseemulator: true
-      customcommand: "firebase emulators:exec 'fastlane test'"
+      checkout_submodules: true
+      customcommand: npm --prefix MyHeartCounts-Firebase run prepare && firebase emulators:exec -c ./MyHeartCounts-Firebase/firebase.json --export-on-exit=./firebase 'npm --prefix ./MyHeartCounts-Firebase/functions run serve:seed && sleep 10'
+    secrets:
+      GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: buildandtest
