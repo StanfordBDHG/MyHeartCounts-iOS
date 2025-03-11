@@ -30,11 +30,12 @@ jobs:
       contents: read
   periphery:
     name: Periphery
-    uses: StanfordBDHG/.github/.github/workflows/periphery.yml@lukaskollmer/periphery-strictness-flag
+    uses: StanfordBDHG/.github/.github/workflows/periphery.yml@v2
     permissions:
       contents: read
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      strict: false
   markdownlinkcheck:
     name: Markdown Link Check
     uses: StanfordBDHG/.github/.github/workflows/markdown-link-check.yml@v2
