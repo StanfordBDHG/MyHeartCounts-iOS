@@ -14,7 +14,7 @@ import class ModelsR4.QuestionnaireResponse
 import OSLog
 
 
-let logger = Logger(subsystem: "edu.stanford.BDHG.MyHeartCounts", category: "")
+let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "")
 
 
 @main

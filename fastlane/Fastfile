@@ -57,7 +57,7 @@ platform :ios do
       ],
       export_options: {
         provisioningProfiles: {
-          "edu.stanford.BDHG.MyHeartCounts" => "My Heart Counts"
+          "edu.stanford.MyHeartCounts" => "My Heart Counts"
         }
       }
     )
