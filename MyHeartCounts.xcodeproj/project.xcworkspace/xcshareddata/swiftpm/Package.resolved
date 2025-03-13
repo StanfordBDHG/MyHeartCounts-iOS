@@ -1,5 +1,5 @@
 {
-  "originHash" : "37b681ec27750ed8fe3eea8ca054a129220b0e61f44f33c6316c4fb9a65f1500",
+  "originHash" : "d96b183c1b9b22bf16564d7527367b4cb49d46346041861b4e4122dbbb72068d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -218,6 +218,15 @@
       }
     },
     {
+      "identity" : "spezifirebase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordSpezi/SpeziFirebase.git",
+      "state" : {
+        "branch" : "lukas/alternative-configuration",
+        "revision" : "d8322c242eff0384ed460194714c013a398a7c64"
+      }
+    },
+    {
       "identity" : "spezifoundation",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation",
@@ -251,6 +260,15 @@
       "state" : {
         "revision" : "21427fff437e6bc17db74b125fa43970a2ab9b0b",
         "version" : "1.0.5"
+      }
+    },
+    {
+      "identity" : "spezionboarding",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
+      "state" : {
+        "branch" : "lukas/mhc-changes",
+        "revision" : "712f59797a9c51c642c002a356349824592520c3"
       }
     },
     {
