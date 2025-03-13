@@ -22,11 +22,21 @@ struct MyHeartCounts: App {
     @UIApplicationDelegateAdaptor(MyHeartCountsDelegate.self)
     private var appDelegate
     
+    @AppStorage(StorageKeys.onboardingFlowComplete)
+    private var completedOnboardingFlow: Bool = false
+    
+    @State private var onboardingPath: [String] = []
+    
     var body: some Scene {
+        let _ = appDelegate
         WindowGroup {
-            RootView()
+            RootView(/*completedOnboardingFlow: $completedOnboardingFlow*/)
                 .testingSetup()
                 .spezi(appDelegate)
+////            RootViewWrapper(appDelegate: appDelegate)
+            OnboardingSheetWrapper(completedOnboardingFlow: $completedOnboardingFlow, path: $onboardingPath)
+//                .equatable()
+//                .spezi(appDelegate)
         }
     }
 }

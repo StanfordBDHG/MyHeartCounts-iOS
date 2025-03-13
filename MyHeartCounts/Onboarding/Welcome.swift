@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+@_spi(APISupport)
+import Spezi
 import SpeziOnboarding
 import SwiftUI
 
@@ -14,10 +16,15 @@ struct Welcome: View {
     @Environment(OnboardingNavigationPath.self)
     private var onboardingNavigationPath
     
+//    @Environment(TestModule.self)
+//    private var testModule: TestModule?
+    
     var body: some View {
+        let _ = Self._printChanges()
         OnboardingView(
             title: "My Heart Counts",
-            subtitle: "WELCOME_SUBTITLE",
+            subtitle: "\(unsafeBitCast(onboardingNavigationPath, to: uintptr_t.self))" as String,
+//            subtitle: "WELCOME_SUBTITLE",
             areas: [
                 OnboardingInformationView.Content(
                     icon: {
@@ -47,9 +54,13 @@ struct Welcome: View {
             actionText: "Learn More",
             action: {
                 onboardingNavigationPath.nextStep()
+//                try await Task.sleep(for: .seconds(10))
             }
         )
-//            .padding(.top, 24)
+        NavigationLink("NEXT", value: "\(TMPTestView.self)")
+//        NavigationLink("NEXT") {
+//            TMPTestView()
+//        }
     }
 }
 

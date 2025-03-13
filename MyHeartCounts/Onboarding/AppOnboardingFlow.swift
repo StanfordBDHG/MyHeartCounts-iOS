@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Spezi
 @_spi(TestingSupport)
 import SpeziAccount
 import SpeziFirebaseAccount
@@ -16,14 +17,43 @@ import SpeziStudy
 import SwiftUI
 
 
+//@Observable
+//final class Counter {
+//    var value: UInt64 = 0
+//}
+//
+//
+//struct TestPage: View {
+//    @Environment(Counter.self)
+//    private var counter
+//    
+//    var body: some View {
+//        Form {
+//            
+//        }
+//    }
+//}
+
+
+
+@Observable
+final class ObservableBox<Value> {
+    var value: Value
+    
+    init(_ value: Value) {
+        print("-[\(Self.self) \(#function)]")
+        self.value = value
+    }
+}
+
 /// Displays a multi-step onboarding flow for the My Heart Counts iOS app
 ///
 /// - Note: This is the general app onboarding flow, **not** the study-specific onboarding
 struct AppOnboardingFlow: View {
-    @Environment(StudyManager.self)
-    private var mhc
-    @Environment(HealthKit.self)
-    private var healthKitDataSource
+//    @Environment(StudyManager.self)
+//    private var mhc
+//    @Environment(HealthKit.self)
+//    private var healthKitDataSource
     
     @Environment(\.scenePhase)
     private var scenePhase
@@ -37,11 +67,52 @@ struct AppOnboardingFlow: View {
     @State private var data = ScreeningDataCollection()
     
     
+//    func makePage(@ViewBuilder _ content: () -> some View) -> some View {
+//        Form {
+//            NavigationLink {
+//                LazyView {
+//                    makePage {
+//                        Text("Next")
+//                    }
+//                }
+//            } label: {
+//                content()
+//            }
+//        }
+//    }
+    
+    @Binding private var path: [String]
+    
+//    @State private var path = ObservableBox<[String]>([])
+    
+    
+    init(path: Binding<[String]>) {
+        print("-[\(Self.self) \(#function)]")
+        _path = path
+    }
+    
     var body: some View {
+        let _ = Self._printChanges()
+        let _ = print("path: \(path)")
+//        @Bindable var path = path
+//        NavigationStack(path: $path) {
+//            Welcome()
+//                .navigationDestination(for: String.self) { value in
+//                    if value == "\(TMPTestView.self)" {
+//                        TMPTestView()
+//                    } else {
+//                        ContentUnavailableView("Uh Oh", systemSymbol: .partyPopper)
+//                    }
+//                }
+//        }
+//        .onChange(of: path, initial: true) { oldValue, newValue in
+//            print("PATH CHANGED: \(oldValue) --> \(newValue)")
+//        }
         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
             // TOOD include smth like this?
 //            BetaDisclaimer()
             Welcome()
+//            TMPTestView()
             
             SinglePageScreening(title: "Screening", subtitle: "Before we can continue,\nwe need to learn a little about you") {
                 AgeAtLeast(minAge: 18)
@@ -66,8 +137,11 @@ struct AppOnboardingFlow: View {
                 NotificationPermissions()
             }
             
-            FinalEnrollmentStep()
+//            TMPTestView()
+            
+//            FinalEnrollmentStep()
         }
+        .id("OnboardingViewStack")
         .environment(data)
         .interactiveDismissDisabled(!completedOnboardingFlow)
         .onChange(of: scenePhase, initial: true) {
@@ -76,6 +150,41 @@ struct AppOnboardingFlow: View {
             }
             Task {
                 localNotificationAuthorization = await notificationSettings().authorizationStatus == .authorized
+            }
+        }
+    }
+}
+
+
+
+@Observable
+@MainActor
+final class SpeziAccessorModule: Module, EnvironmentAccessible, Sendable {
+    @ObservationIgnored @Application(\.spezi) var spezi
+}
+
+
+struct TMPTestView: View {
+    @Environment(OnboardingNavigationPath.self)
+    private var onboardingNavigationPath
+    @Environment(SpeziAccessorModule.self)
+    private var speziAccessor
+    
+    @Environment(TestModule.self)
+    private var testModule: TestModule?
+    
+    var body: some View {
+        Form {
+            Section {
+                Text("\(unsafeBitCast(onboardingNavigationPath, to: uintptr_t.self))")
+            }
+            Section {
+                Button("Inject Module") {
+                    speziAccessor.spezi.loadModule(TestModule())
+                }
+            }
+            Section {
+                LabeledContent("Is TestModule injected?", value: "\(testModule != nil)")
             }
         }
     }

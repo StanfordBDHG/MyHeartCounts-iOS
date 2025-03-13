@@ -12,6 +12,19 @@ import SpeziViews
 import SwiftUI
 
 
+struct LazyView<Body: View>: View {
+    private let makeBody: @MainActor () -> Body
+    
+    init(@ViewBuilder makeBody: @MainActor @escaping () -> Body) {
+        self.makeBody = makeBody
+    }
+    
+    var body: Body {
+        makeBody()
+    }
+}
+
+
 extension RangeReplaceableCollection {
     func appending(_ element: Element) -> Self {
         var copy = self

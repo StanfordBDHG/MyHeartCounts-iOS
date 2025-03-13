@@ -7,20 +7,54 @@
 //
 
 import SFSafeSymbols
-import Spezi
+@testable @_spi(APISupport) import Spezi
 import SpeziAccount
 import SpeziScheduler
 import SpeziStudy
 import SpeziViews
 import SwiftUI
 
+
+struct OnboardingSheetWrapper: View {
+    @Binding var completedOnboardingFlow: Bool
+    @Binding var path: [String]
+    
+    var body: some View {
+        let _ = Self._printChanges()
+        if !completedOnboardingFlow {
+            Color.red.frame(height: 0)
+                .sheet(isPresented: !$completedOnboardingFlow) {
+                    AppOnboardingFlow(path: $path)
+                        .inspectingType("1")
+                        .spezi(SpeziAppDelegate.appDelegate!) // swiftlint:disable:this force_cast force_unwrapping
+                        .inspectingType("2")
+                    //                Text("hmmm")
+                    //                    .task {
+                    //                        try? await _Concurrency.Task.sleep(for: .seconds(3))
+                    //                        SpeziAppDelegate.spezi?.loadModule(TestModule())
+                    //                    }
+                }
+        }
+    }
+    
+//    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
+//        true
+//    }
+}
+
+
+extension View {
+    func inspectingType(_ label: String) -> Self {
+        print("TYPE", label, type(of: self))
+        return self
+    }
+}
+
+
+
 struct RootView: View {
     @AppStorage(StorageKeys.onboardingFlowComplete)
     private var completedOnboardingFlow = false
-    @Environment(StudyManager.self)
-    private var studyManager
-    @Environment(Scheduler.self)
-    private var scheduler
     
     @State private var swiftDataAutosaveTask: _Concurrency.Task<Void, Never>?
     
@@ -36,9 +70,6 @@ struct RootView: View {
             } else {
                 EmptyView()
             }
-        }
-        .sheet(isPresented: !$completedOnboardingFlow) {
-            AppOnboardingFlow()
         }
         #if DEBUG
         .toolbar {
@@ -74,5 +105,12 @@ struct RootView: View {
             tab.init()
         }
         .customizationID(tab.tabId)
+    }
+}
+
+
+extension RootView: Equatable {
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
+        true
     }
 }

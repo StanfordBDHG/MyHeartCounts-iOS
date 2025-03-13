@@ -46,11 +46,13 @@ private struct AccountToolbarButton: View {
     @State private var isPresentingAccount = false
     
     var body: some View {
-        if account != nil {
-            AccountButton(isPresented: $isPresentingAccount)
-                .sheet(isPresented: $isPresentingAccount) {
-                    AccountSheet()
-                }
+        Group {
+            if account != nil {
+                AccountButton(isPresented: $isPresentingAccount)
+            }
+        }
+        .sheet(isPresented: $isPresentingAccount) {
+            AccountSheet()
         }
     }
 }
