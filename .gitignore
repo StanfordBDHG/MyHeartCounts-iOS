@@ -26,6 +26,7 @@ xcuserdata/
 # Other files
 .DS_Store
 .env
+GoogleService-Info*.plist
 
 # Tests
 report.junit
