@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%llu" : {
-
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -146,17 +143,10 @@
     "Heart Health" : {
 
     },
-    "Inject Module" : {
-
-    },
-    "Is TestModule injected?" : {
-
-    },
     "Language" : {
 
     },
     "Learn More" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -198,9 +188,6 @@
           }
         }
       }
-    },
-    "NEXT" : {
-
     },
     "No" : {
 
@@ -250,6 +237,9 @@
 
     },
     "Select a Region" : {
+
+    },
+    "Select Region" : {
 
     },
     "Selection Checkmark" : {
@@ -310,6 +300,9 @@
     "Understood" : {
 
     },
+    "Use alternative region picker" : {
+
+    },
     "Warning Sign Exclamation Mark Symbol" : {
 
     },
@@ -344,7 +337,6 @@
       }
     },
     "WELCOME_SUBTITLE" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -358,6 +350,9 @@
 
     },
     "Where are you currently living?" : {
+
+    },
+    "World" : {
 
     },
     "Yes" : {

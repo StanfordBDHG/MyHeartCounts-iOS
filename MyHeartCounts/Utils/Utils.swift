@@ -15,12 +15,12 @@ import SwiftUI
 struct LazyView<Body: View>: View {
     private let makeBody: @MainActor () -> Body
     
-    init(@ViewBuilder makeBody: @MainActor @escaping () -> Body) {
-        self.makeBody = makeBody
-    }
-    
     var body: Body {
         makeBody()
+    }
+    
+    init(@ViewBuilder makeBody: @MainActor @escaping () -> Body) {
+        self.makeBody = makeBody
     }
 }
 
@@ -76,4 +76,15 @@ extension View {
 
 extension EdgeInsets {
     static let zero = Self(top: 0, leading: 0, bottom: 0, trailing: 0)
+}
+
+
+extension URL: @retroactive ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        if let url = URL(string: value) {
+            self = url
+        } else {
+            fatalError("Unable to create URL from string '\(value)'")
+        }
+    }
 }

@@ -14,22 +14,36 @@ extension Locale.Region {
     ///
     /// Based on https://stackoverflow.com/a/30403199
     var flagEmoji: String? {
-        let base: UInt32 = 127397
-        var string = ""
-        for scalar in self.identifier.unicodeScalars {
-            guard let scalar = UnicodeScalar(base + scalar.value), scalar.properties.isEmoji else {
-                return nil
+        switch self {
+        case .europe, .northernEurope, .westernEurope, .easternEurope, .southernEurope:
+            return "🇪🇺"
+        case .world:
+            return "🇺🇳"
+        case .unknown:
+            return nil
+        default:
+            let base: UInt32 = 127397
+            var string = ""
+            for scalar in self.identifier.unicodeScalars {
+                guard let scalar = UnicodeScalar(base + scalar.value), scalar.properties.isEmoji else {
+                    return nil
+                }
+                string.unicodeScalars.append(scalar)
             }
-            string.unicodeScalars.append(scalar)
+            return string
         }
-        return string
     }
     
     /// Returns the localized name of the region, based on the specified locale, is possible.
     ///
     /// If no localized name can be determined, the region's underlying identifier is returned.
     func localizedName(in locale: Locale) -> String {
-        locale.localizedString(forRegionCode: self.identifier) ?? self.identifier
+        switch self {
+        case .world:
+            String(localized: "World")
+        default:
+            locale.localizedString(forRegionCode: self.identifier) ?? self.identifier
+        }
     }
 }
 

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Spezi
 import SpeziFoundation
 import SpeziOnboarding
 import SpeziViews
@@ -41,7 +42,7 @@ struct SinglePageScreening: View {
                 }
                 Section {
                     OnboardingActionsView("Continue") {
-                        evaluateEligibilityAndProceed()
+                        await evaluateEligibilityAndProceed()
                     }
                     .disabled(!screeningData.allPropertiesAreNonnil)
                     .listRowInsets(.zero)
@@ -65,9 +66,17 @@ struct SinglePageScreening: View {
         self.components = components()
     }
     
-    private func evaluateEligibilityAndProceed() {
+    private func evaluateEligibilityAndProceed() async {
         let isEligible = components.allSatisfy { $0.evaluate(screeningData) }
         if isEligible {
+            guard let region = screeningData.region else {
+                // IDEA(@lukas) maybe show an alert? (we will never end up in here)
+                return
+            }
+            _ = await Task.detached {
+                await Spezi.loadFirebase(for: region)
+                try await Task.sleep(for: .seconds(5))
+            }.result
             path.nextStep()
         } else {
             path.append(customView: NotEligibleView())

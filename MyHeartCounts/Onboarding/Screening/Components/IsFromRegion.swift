@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziViews
 import SwiftUI
 
 
@@ -21,17 +22,26 @@ struct IsFromRegion: ScreeningComponent {
     @Environment(ScreeningDataCollection.self)
     private var data
     
-    let allowedRegion: Locale.Region
+    let allowedRegions: Set<Locale.Region>
     
-    @State private var isPresentingRegionPicker = false
+    @State private var isPresentingRegionPicker1 = false
+    @State private var isPresentingRegionPicker2 = false
     
     var body: some View {
         @Bindable var data = data
         let allRegions = Locale.Region.isoRegions
             .filter { $0.subRegions.isEmpty }
             .sorted { $0.localizedName(in: locale) < $1.localizedName(in: locale) }
+        let regionsList: [Locale.Region] = Array {
+            if let currentRegion = locale.region {
+                currentRegion
+                allRegions.filter { $0 != currentRegion }
+            } else {
+                allRegions
+            }
+        }
         Button {
-            isPresentingRegionPicker = true
+            isPresentingRegionPicker1 = true
         } label: {
             HStack {
                 Text("Where are you currently living?")
@@ -46,8 +56,13 @@ struct IsFromRegion: ScreeningComponent {
             }
             .contentShape(Rectangle())
         }
-        .sheet(isPresented: $isPresentingRegionPicker) {
-            ListSelectionSheet("Select a Region", items: allRegions, selection: $data.region) { region in
+        .contextMenu {
+            Button("Use alternative region picker") {
+                isPresentingRegionPicker2 = true
+            }
+        }
+        .sheet(isPresented: $isPresentingRegionPicker1) {
+            ListSelectionSheet("Select a Region", items: regionsList, selection: $data.region) { region in
                 if let emoji = region.flagEmoji {
                     "\(emoji) \(region.localizedName(in: locale))"
                 } else {
@@ -55,9 +70,50 @@ struct IsFromRegion: ScreeningComponent {
                 }
             }
         }
+        .sheet(isPresented: $isPresentingRegionPicker2) {
+            altRegionPicker
+        }
+    }
+    
+    
+    @ViewBuilder private var altRegionPicker: some View {
+        NavigationStack {
+            let options: [RegionPickerEntry] = [
+                .region(.unitedStates),
+                .region(.unitedKingdom),
+                .region(.europe),
+                .region(.unknown),
+                .somewhereElse
+            ]
+            FancyItemSelectionView(
+                options,
+                selection: Binding<RegionPickerEntry?> {
+                    data.region.map { .region($0) } ?? .somewhereElse
+                } set: {
+                    data.region = $0?.region
+                }
+            ) { entry in
+                HStack {
+                    if let emoji = entry.region?.flagEmoji {
+                        Text(emoji)
+                    }
+                    Text(entry.region?.localizedName(in: locale) ?? "Somewhere Else")
+                        .font(.headline)
+                    Spacer()
+                }
+            }
+            .navigationTitle("Select Region")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                DismissButton()
+            }
+        }
     }
     
     func evaluate(_ data: ScreeningDataCollection) -> Bool {
-        data.region == allowedRegion
+        guard let region = data.region else {
+            return false
+        }
+        return allowedRegions.contains(region)
     }
 }

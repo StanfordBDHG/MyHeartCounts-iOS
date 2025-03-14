@@ -6,50 +6,55 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable type_contents_order
+
 import class FirebaseCore.FirebaseOptions
 import class FirebaseFirestore.FirestoreSettings
 import class FirebaseFirestore.MemoryCacheSettings
 import Foundation
 import Observation
+@_spi(APISupport)
 import Spezi
-import SpeziFoundation
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziFirebaseAccountStorage
-import SpeziFirebaseStorage
 import SpeziFirebaseConfiguration
+import SpeziFirebaseStorage
 import SpeziFirestore
+import SpeziFoundation
 
 
 extension LocalPreferenceKey {
-    static var selectedFirebaseConfig: LocalPreferenceKey<String?> { .make("selectedFirebaseConfig", makeDefault: { nil })}
+    static var selectedFirebaseConfig: LocalPreferenceKey<String?> {
+        .make("selectedFirebaseConfig", makeDefault: { nil })
+    }
 }
 
 
-@MainActor
-final class FirebaseLoader: Module, EnvironmentAccessible, Sendable {
-    @Application(\.spezi)
-    private var spezi
-    
-    @Application(\.logger)
-    private var logger
-    
-    func configure() {
-        DispatchQueue.main.async {
-            self.loadFirebase(for: .unitedStates)
+extension Spezi {
+    @MainActor
+    static func loadFirebase(for region: Locale.Region) {
+        guard let spezi = SpeziAppDelegate.spezi else {
+            fatalError("Spezi not loaded")
         }
-//        switch LocalPreferencesStore.shared[.selectedFirebaseConfig] {
-//        case nil:
-//            break
-//        case "us":
-//            loadFirebase(for: .unitedStates)
-//        case "uk":
-//            loadFirebase(for: .unitedKingdom)
-//        case .some(let value):
-//            logger.error("Unknown value for selectedFirebaseConfig: \(value)")
-//        }
+        spezi.loadFirebase(for: region)
     }
     
+    @MainActor
+    func loadLastUsedFirebaseConfigIfPossible() {
+        switch LocalPreferencesStore.shared[.selectedFirebaseConfig] {
+        case nil:
+            break
+        case "us":
+            loadFirebase(for: .unitedStates)
+        case "uk":
+            loadFirebase(for: .unitedKingdom)
+        case .some(let value):
+            logger.error("Unknown value for selectedFirebaseConfig: \(value)")
+        }
+    }
+    
+    @MainActor
     func loadFirebase(for region: Locale.Region) {
         let firebaseOptions: FirebaseOptions
         switch region {
@@ -58,7 +63,8 @@ final class FirebaseLoader: Module, EnvironmentAccessible, Sendable {
         case .unitedKingdom:
             firebaseOptions = FirebaseOptions(plistInBundle: "GoogleService-Info-UK")
         default:
-            fatalError() // TODO
+            logger.error("Invalid region. Not loading firebase.")
+            return
         }
         let modules: [any Module] = Array {
             ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
@@ -81,7 +87,7 @@ final class FirebaseLoader: Module, EnvironmentAccessible, Sendable {
             }
         }
         for module in modules {
-            spezi.loadModule(module)
+            self.loadModule(module)
         }
     }
     
@@ -93,7 +99,7 @@ final class FirebaseLoader: Module, EnvironmentAccessible, Sendable {
             nil
         }
     }
-
+    
     
     private var firestore: Firestore {
         let settings = FirestoreSettings()
@@ -115,32 +121,6 @@ extension FirebaseOptions {
         guard let path = Bundle.main.path(forResource: filename, ofType: "plist") else {
             preconditionFailure("Unable to find '\(filename).plist' in bundle")
         }
-        self.init(contentsOfFile: path)!
-//        guard let options = self.init(contentsOfFile: path) else {
-//            preconditionFailure("Unable to create \(Self.self) from plist at \(path)")
-//        }
+        self.init(contentsOfFile: path)! // swiftlint:disable:this force_unwrapping
     }
-    
-//    convenience init(
-//        clientId: String,
-//        reversedClientId: String,
-//        gcmSenderId: String,
-//        bundleId: String = Bundle.main.bundleIdentifier,
-//        projectId: String,
-//        storageBucket: String,
-//        googleAppId: String
-//    ) {
-//        self.init(googleAppID: googleAppId, gcmSenderID: gcmSenderId)
-//        self.clientID = clientId
-////        self.reverseClientId = reversedClientId // TODO? what to do about this? it's a bit weird that there are 0 references to REVERSED_CLIENT_ID (the plist key) in the Firebase iOS SDK...
-//        self.bundleID = bundleId
-//        self.projectID = projectId
-//        self.storageBucket = storageBucket
-//    }
-}
-
-
-@Observable
-@MainActor
-final class TestModule: Module, EnvironmentAccessible, Sendable {
 }

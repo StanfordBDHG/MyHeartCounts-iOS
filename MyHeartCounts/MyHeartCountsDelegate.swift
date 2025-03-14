@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable attributes
+
 import Spezi
 import SpeziFirebaseConfiguration
 import SpeziHealthKit
@@ -16,13 +18,12 @@ import SpeziStudy
 import SwiftUI
 
 
-class MyHeartCountsDelegate: SpeziAppDelegate {
+@Observable
+class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_types_order
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
-            let _ = ConfigureFirebaseApp.disallowDefaultConfiguration()
-            SpeziAccessorModule()
+            SpeziInjector()
             StudyManager()
-            FirebaseLoader()
             HealthKit {
                 // ???
             }
@@ -30,4 +31,22 @@ class MyHeartCountsDelegate: SpeziAppDelegate {
             Notifications()
         }
     }
+}
+
+
+/// Internal helper module which allows us to access the shared `Spezi` instance via `@Environment(Spezi.self)`.
+@Observable
+@MainActor
+private final class SpeziInjector: Module, EnvironmentAccessible {
+    private struct InjectionModifier: ViewModifier {
+        @Environment(SpeziInjector.self)
+        private var speziInjector
+        
+        func body(content: Content) -> some View {
+            content.environment(speziInjector.spezi)
+        }
+    }
+    
+    @ObservationIgnored @Application(\.spezi) private var spezi
+    @ObservationIgnored @Modifier private var speziInjector = InjectionModifier()
 }

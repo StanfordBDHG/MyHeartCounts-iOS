@@ -8,6 +8,7 @@
 
 import Spezi
 import SpeziFirebaseAccount
+import class SpeziOnboarding.OnboardingNavigationPath
 import SpeziViews
 import SwiftUI
 import class ModelsR4.QuestionnaireResponse
@@ -23,20 +24,17 @@ struct MyHeartCounts: App {
     private var appDelegate
     
     @AppStorage(StorageKeys.onboardingFlowComplete)
-    private var completedOnboardingFlow: Bool = false
-    
-    @State private var onboardingPath: [String] = []
+    private var didCompleteOnboarding: Bool = false
     
     var body: some Scene {
-        let _ = appDelegate
         WindowGroup {
-            RootView(/*completedOnboardingFlow: $completedOnboardingFlow*/)
+            RootView()
                 .testingSetup()
                 .spezi(appDelegate)
-////            RootViewWrapper(appDelegate: appDelegate)
-            OnboardingSheetWrapper(completedOnboardingFlow: $completedOnboardingFlow, path: $onboardingPath)
-//                .equatable()
-//                .spezi(appDelegate)
+            OnboardingSheet(
+                didCompleteOnboarding: $didCompleteOnboarding
+            )
         }
+        .environment(appDelegate)
     }
 }

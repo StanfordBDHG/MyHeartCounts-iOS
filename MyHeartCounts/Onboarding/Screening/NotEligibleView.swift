@@ -24,7 +24,14 @@ struct NotEligibleView: View {
                 .listRowBackground(Color.clear)
                 .listRowInsets(.zero)
                 Section {
-                    Link("Check out our other work", destination: URL(string: "https://bdh.stanford.edu").unsafelyUnwrapped)
+                    Link(destination: "https://bdh.stanford.edu") {
+                        HStack {
+                            Text("Check out our other work")
+                            Spacer()
+                            Image(systemSymbol: .arrowUpRight)
+                                .accessibilityLabel("Link Arrow Symbol")
+                        }
+                    }
                 }
             }
         } actionView: {

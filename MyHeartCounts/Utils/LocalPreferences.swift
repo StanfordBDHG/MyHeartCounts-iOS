@@ -273,17 +273,6 @@ struct LocalPreference<T: Codable>: DynamicProperty {
     private let store: LocalPreferencesStore
     @State private var kvoObserver = UserDefaultsKeyObserver()
     
-    init(_ key: LocalPreferenceKey<T>, store: LocalPreferencesStore = .shared) {
-        self.key = key
-        self.store = store
-//        _kvoObserver = .init(wrappedValue: .init(defaults: store.defaultsStore, key: key.key))
-    }
-    
-    nonisolated func update() {
-        MainActor.assumeIsolated {
-            kvoObserver.configure(for: key.key, in: store.defaultsStore)
-        }
-    }
     
     var wrappedValue: T {
         get { store[key] }
@@ -295,6 +284,17 @@ struct LocalPreference<T: Codable>: DynamicProperty {
             store[key]
         } set: {
             store[key] = $0
+        }
+    }
+    
+    init(_ key: LocalPreferenceKey<T>, store: LocalPreferencesStore = .shared) {
+        self.key = key
+        self.store = store
+    }
+    
+    nonisolated func update() {
+        MainActor.assumeIsolated {
+            kvoObserver.configure(for: key.key, in: store.defaultsStore)
         }
     }
 }
