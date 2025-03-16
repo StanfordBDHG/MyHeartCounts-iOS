@@ -229,7 +229,7 @@ private final class UserDefaultsKeyObserver: NSObject {
         let key: String
     }
     @ObservationIgnored private var context: ObservationContext?
-    private var triggerUpdate = false
+    private(set) var viewUpdate = false
     
     func configure(for key: String, in userDefaults: UserDefaults) {
         let newContext = ObservationContext(defaults: userDefaults, key: key)
@@ -243,9 +243,8 @@ private final class UserDefaultsKeyObserver: NSObject {
     
     // swiftlint:disable:next block_based_kvo discouraged_optional_collection
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        // QUESTION why does this seem to sometimes get triggered twice?
         if keyPath == self.context?.key {
-            triggerUpdate.toggle()
+            viewUpdate.toggle()
         } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
@@ -266,6 +265,7 @@ private final class UserDefaultsKeyObserver: NSObject {
 }
 
 
+/// A type-safe alternative to SwiftUI's `AppStorage`.
 @MainActor
 @propertyWrapper
 struct LocalPreference<T: Codable>: DynamicProperty {
@@ -275,12 +275,18 @@ struct LocalPreference<T: Codable>: DynamicProperty {
     
     
     var wrappedValue: T {
-        get { store[key] }
-        nonmutating set { store[key] = newValue }
+        get {
+            _ = kvoObserver.viewUpdate
+            return store[key]
+        }
+        nonmutating set {
+            store[key] = newValue
+        }
     }
     
     var projectedValue: Binding<T> {
-        Binding<T> {
+        _ = kvoObserver.viewUpdate
+        return Binding<T> {
             store[key]
         } set: {
             store[key] = $0

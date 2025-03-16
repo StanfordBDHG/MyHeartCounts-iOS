@@ -6,7 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-@_spi(APISupport)
+
+// swiftlint:disable all
+
 import Spezi
 @_spi(TestingSupport)
 import SpeziAccount
@@ -46,39 +48,50 @@ struct AppOnboardingFlow: View {
     @State private var screeningData = ScreeningDataCollection()
     @State private var localNotificationAuthorization = false
     
+    @State private var tmpHideSomeScreens = false
+    
     
     var body: some View {
         OnboardingStack(onboardingFlowComplete: $didCompleteOnboarding) {
-            Welcome()
-            SinglePageScreening(
-                title: "Screening",
-                subtitle: "Before we can continue,\nwe need to learn a little about you"
-            ) {
-                AgeAtLeast(minAge: 18)
-                IsFromRegion(allowedRegions: [.unitedStates])
-                SpeaksLanguage(allowedLanguage: .init(identifier: "en_US"))
-                CanPerformPhysicalActivity()
+            if true /*|| !tmpHideSomeScreens*/ {
+                Welcome()
+                //                .intoAnyView()
+                SinglePageScreening(
+                    title: "Screening",
+                    subtitle: "Before we can continue,\nwe need to learn a little about you"
+                ) {
+                    AgeAtLeast(minAge: 18)
+                    IsFromRegion(allowedRegions: [.unitedStates])
+                    SpeaksLanguage(allowedLanguage: .init(identifier: "en_US"))
+                    CanPerformPhysicalActivity()
+                }
             }
+//            .intoAnyView()
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
                     .injectingSpezi()
                     .navigationBarBackButtonHidden()
+//                    .intoAnyView()
             }
             #if !(targetEnvironment(simulator) && (arch(i386) || arch(x86_64)))
             Consent()
                 .injectingSpezi()
+//                .intoAnyView()
             #endif
             if HKHealthStore.isHealthDataAvailable() {
                 // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()
                     .injectingSpezi()
+//                    .intoAnyView()
             }
             if !localNotificationAuthorization {
                 NotificationPermissions()
                     .injectingSpezi()
+//                    .intoAnyView()
             }
             FinalEnrollmentStep()
                 .injectingSpezi()
+//                .intoAnyView()
         }
         .environment(screeningData)
         .interactiveDismissDisabled(!didCompleteOnboarding)
@@ -86,8 +99,12 @@ struct AppOnboardingFlow: View {
             guard case .active = scenePhase else {
                 return
             }
-            Task {
-                localNotificationAuthorization = await notificationSettings().authorizationStatus == .authorized
+            Task.detached {
+//                try await Task.sleep(for: .seconds(25))
+                Task { @MainActor in
+                    localNotificationAuthorization = await notificationSettings().authorizationStatus == .authorized
+                    tmpHideSomeScreens = true
+                }
             }
         }
     }

@@ -17,8 +17,8 @@ import SwiftUI
 
 
 struct RootView: View {
-    @AppStorage(StorageKeys.onboardingFlowComplete)
-    private var completedOnboardingFlow = false
+    @LocalPreference(.onboardingFlowComplete)
+    private var didCompleteOnboarding
     
     @State private var swiftDataAutosaveTask: _Concurrency.Task<Void, Never>?
     
@@ -29,7 +29,7 @@ struct RootView: View {
     
     var body: some View {
         ZStack {
-            if completedOnboardingFlow {
+            if didCompleteOnboarding {
                 content
             } else {
                 EmptyView()

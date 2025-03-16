@@ -23,13 +23,12 @@ struct MyHeartCounts: App {
     @UIApplicationDelegateAdaptor(MyHeartCountsDelegate.self)
     private var appDelegate
     
-    @AppStorage(StorageKeys.onboardingFlowComplete)
-    private var didCompleteOnboarding: Bool = false
+    @LocalPreference(.onboardingFlowComplete)
+    private var didCompleteOnboarding
     
     var body: some Scene {
         WindowGroup {
             RootView()
-                .testingSetup()
                 .spezi(appDelegate)
             OnboardingSheet(
                 didCompleteOnboarding: $didCompleteOnboarding

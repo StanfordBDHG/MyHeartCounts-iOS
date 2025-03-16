@@ -22,17 +22,37 @@ import SpeziFirebaseConfiguration
 import SpeziFirebaseStorage
 import SpeziFirestore
 import SpeziFoundation
+import SpeziStudy
+import SwiftUI
 
 
 extension LocalPreferenceKey {
-    static var selectedFirebaseConfig: LocalPreferenceKey<String?> {
+    static var selectedFirebaseConfig: LocalPreferenceKey<Locale.Region?> {
         .make("selectedFirebaseConfig", makeDefault: { nil })
     }
 }
 
 
+final class FirebaseLoader: Module {
+    @Application(\.spezi)
+    private var spezi
+    
+    private let region: Locale.Region
+    
+    init(region: Locale.Region) {
+        self.region = region
+    }
+    
+    func configure() {
+        DispatchQueue.main.async {
+            self.spezi.loadFirebase(for: self.region)
+        }
+    }
+}
+
+
 extension Spezi {
-    @MainActor
+    @MainActor // TODO rename (here and elsewhere (it's not just firebase any more))
     static func loadFirebase(for region: Locale.Region) {
         guard let spezi = SpeziAppDelegate.spezi else {
             fatalError("Spezi not loaded")
@@ -45,12 +65,10 @@ extension Spezi {
         switch LocalPreferencesStore.shared[.selectedFirebaseConfig] {
         case nil:
             break
-        case "us":
-            loadFirebase(for: .unitedStates)
-        case "uk":
-            loadFirebase(for: .unitedKingdom)
-        case .some(let value):
-            logger.error("Unknown value for selectedFirebaseConfig: \(value)")
+        case .some(let region) where region == .unitedStates || region == .unitedKingdom:
+            loadFirebase(for: region)
+        case .some(let region):
+            logger.error("Invalid region for selectedFirebaseConfig: \(region.debugDescription)")
         }
     }
     
@@ -86,9 +104,11 @@ extension Spezi {
                 FirebaseStorageConfiguration()
             }
         }
+        
         for module in modules {
             self.loadModule(module)
         }
+        LocalPreferencesStore.shared[.selectedFirebaseConfig] = region
     }
     
     
@@ -108,7 +128,6 @@ extension Spezi {
             settings.cacheSettings = MemoryCacheSettings()
             settings.isSSLEnabled = false
         }
-        
         return Firestore(
             settings: settings
         )
@@ -124,3 +143,30 @@ extension FirebaseOptions {
         self.init(contentsOfFile: path)! // swiftlint:disable:this force_unwrapping
     }
 }
+
+
+//private struct LoadFirebaseModifier: ViewModifier {
+//    @Environment(Spezi.self)
+//    private var spezi
+//    
+//    @State private var didRun = false
+//    
+//    func body(content: Content) -> some View {
+//        if didRun {
+//            content
+//        } else {
+//            content
+//                .onAppear {
+//                    didRun = true
+//                    print("WILL CONFIGURE FIREBASE")
+//                    spezi.loadLastUsedFirebaseConfigIfPossible()
+//                }
+//        }
+//    }
+//}
+//
+//extension View {
+//    func loadingLastUsedFirebaseConfigIfPossible() -> some View {
+//        self.modifier(LoadFirebaseModifier())
+//    }
+//}

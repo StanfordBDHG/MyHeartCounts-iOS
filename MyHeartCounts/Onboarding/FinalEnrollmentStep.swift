@@ -26,8 +26,14 @@ struct FinalEnrollmentStep: View {
             Text("You're all set.\n\nGreat to have you on board!")
         } actionView: {
             OnboardingActionsView("Complete") {
+                do {
+                    try await studyManager.enroll(in: mockMHCStudy)
+                } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInStudy {
+                    // NOTE(@lukas) make this an error in non-debug versions!
+                } catch {
+                    throw error
+                }
                 path.nextStep()
-                try await studyManager.enroll(in: mockMHCStudy)
             }
         }
     }

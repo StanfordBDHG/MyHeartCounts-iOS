@@ -74,8 +74,9 @@ struct SinglePageScreening: View {
                 return
             }
             _ = await Task.detached {
+                // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
                 await Spezi.loadFirebase(for: region)
-                try await Task.sleep(for: .seconds(5))
+                try await Task.sleep(for: .seconds(4))
             }.result
             path.nextStep()
         } else {
