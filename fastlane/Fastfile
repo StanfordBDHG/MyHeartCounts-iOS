@@ -12,7 +12,7 @@ APP_CONFIG = {
   default_environment: "staging",
   default_app_identifier: "edu.stanford.MyHeartCounts",
   default_provisioningProfile: "MyHeart Counts - Biodesign Digital Health",
-  default_version_name: "2.0.0",
+  default_version_name: "3.0.0",
   default_release_notes: "Bug fixes and performance improvements.",
   scheme: "MyHeartCounts",
   plist_path: "MyHeartCounts/Supporting Files/Info.plist"
