@@ -15,6 +15,7 @@ import SpeziQuestionnaire
 import SpeziScheduler
 import SpeziSchedulerUI
 import SpeziStudy
+import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
 import class ModelsR4.Questionnaire
@@ -43,6 +44,8 @@ struct HomeTabView: RootViewTab {
     @State private var presentedInformationalStudyComponent: StudyDefinition.InformationalComponent?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
     @State private var viewState: ViewState = .idle
+    
+    @State private var isShowingHealthBulkUploadSheet = false
     
     var body: some View {
         NavigationStack { // swiftlint:disable:this closure_body_length
@@ -79,6 +82,9 @@ struct HomeTabView: RootViewTab {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button("HK Bulk Upload") {
+                            isShowingHealthBulkUploadSheet = true
+                        }
                     } label: {
                         Image(systemSymbol: .ladybug)
                             .tint(.red)
@@ -87,6 +93,11 @@ struct HomeTabView: RootViewTab {
                 }
             }
             #endif
+            .sheet(isPresented: $isShowingHealthBulkUploadSheet) {
+                NavigationStack {
+                    TmpHealthKitBulkImportView()
+                }
+            }
         }
     }
     

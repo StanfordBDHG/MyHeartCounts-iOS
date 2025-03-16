@@ -48,7 +48,7 @@ struct Consent: View {
             },
             action: { document in
                 // TOOD deliver this to the standard instead?!
-                studyManager.importConsentDocument(document, for: .generalAppUsage)
+                try! await studyManager.importConsentDocument(document, for: .generalAppUsage) // swiftlint:disable:this force_try
                 path.nextStep()
             },
             title: "Onboarding Consent Title",

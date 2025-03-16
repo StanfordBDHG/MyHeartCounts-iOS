@@ -10,7 +10,7 @@
 
 import Foundation
 import ModelsR4
-import SpeziStudy
+import SpeziStudyDefinition
 
 
 extension UUID { // QUESTION maybe use reverse-dns-strings instead of UUIDs?!

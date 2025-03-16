@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "#heartRateSamples" : {
+
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -120,6 +123,9 @@
         }
       }
     },
+    "HealthKit Bulk Upload" : {
+
+    },
     "HEALTHKIT_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -141,6 +147,9 @@
       }
     },
     "Heart Health" : {
+
+    },
+    "HK Bulk Upload" : {
 
     },
     "Language" : {
@@ -227,6 +236,9 @@
     "Physical Activity" : {
 
     },
+    "Progress" : {
+
+    },
     "Read Article" : {
 
     },
@@ -301,6 +313,9 @@
 
     },
     "Understood" : {
+
+    },
+    "Upload" : {
 
     },
     "Use alternative region picker" : {

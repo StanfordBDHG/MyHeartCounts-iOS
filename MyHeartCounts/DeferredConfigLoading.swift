@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable type_contents_order
+// swiftlint:disable type_contents_order file_types_order
 
 import class FirebaseCore.FirebaseOptions
 import class FirebaseFirestore.FirestoreSettings
@@ -33,58 +33,39 @@ extension LocalPreferenceKey {
 }
 
 
-final class FirebaseLoader: Module {
-    @Application(\.spezi)
-    private var spezi
-    
-    private let region: Locale.Region
-    
-    init(region: Locale.Region) {
-        self.region = region
+enum DeferredConfigLoading {
+    enum FirebaseRegionSelector {
+        case lastUsed
+        case specific(Locale.Region)
     }
     
-    func configure() {
-        DispatchQueue.main.async {
-            self.spezi.loadFirebase(for: self.region)
+    private static func firebaseOptions(for regionSelector: FirebaseRegionSelector) -> FirebaseOptions? {
+        let region: Locale.Region?
+        switch regionSelector {
+        case .lastUsed:
+            region = LocalPreferencesStore.shared[.selectedFirebaseConfig]
+        case .specific(let region2):
+            region = region2
         }
-    }
-}
-
-
-extension Spezi {
-    @MainActor // TODO rename (here and elsewhere (it's not just firebase any more))
-    static func loadFirebase(for region: Locale.Region) {
-        guard let spezi = SpeziAppDelegate.spezi else {
-            fatalError("Spezi not loaded")
+        #if DEBUG_LUKAS
+        if region != nil {
+            return FirebaseOptions(plistInBundle: "GoogleService-Info-US2")
         }
-        spezi.loadFirebase(for: region)
-    }
-    
-    @MainActor
-    func loadLastUsedFirebaseConfigIfPossible() {
-        switch LocalPreferencesStore.shared[.selectedFirebaseConfig] {
-        case nil:
-            break
-        case .some(let region) where region == .unitedStates || region == .unitedKingdom:
-            loadFirebase(for: region)
-        case .some(let region):
-            logger.error("Invalid region for selectedFirebaseConfig: \(region.debugDescription)")
-        }
-    }
-    
-    @MainActor
-    func loadFirebase(for region: Locale.Region) {
-        let firebaseOptions: FirebaseOptions
+        #endif
         switch region {
         case .unitedStates:
-            firebaseOptions = FirebaseOptions(plistInBundle: "GoogleService-Info-US")
+            return FirebaseOptions(plistInBundle: "GoogleService-Info-US")
         case .unitedKingdom:
-            firebaseOptions = FirebaseOptions(plistInBundle: "GoogleService-Info-UK")
+            return FirebaseOptions(plistInBundle: "GoogleService-Info-UK")
         default:
-            logger.error("Invalid region. Not loading firebase.")
-            return
+            return nil
         }
-        let modules: [any Module] = Array {
+    }
+    
+    @MainActor
+    @ArrayBuilder<any Module>
+    static func config(for regionSelector: FirebaseRegionSelector) -> [any Module] {
+        if let firebaseOptions = firebaseOptions(for: regionSelector) {
             ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
             AccountConfiguration(
                 service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: accountEmulator),
@@ -103,16 +84,11 @@ extension Spezi {
             } else {
                 FirebaseStorageConfiguration()
             }
+            StudyManager()
         }
-        
-        for module in modules {
-            self.loadModule(module)
-        }
-        LocalPreferencesStore.shared[.selectedFirebaseConfig] = region
     }
     
-    
-    private var accountEmulator: (host: String, port: Int)? {
+    private static var accountEmulator: (host: String, port: Int)? {
         if FeatureFlags.useFirebaseEmulator {
             (host: "localhost", port: 9099)
         } else {
@@ -121,7 +97,7 @@ extension Spezi {
     }
     
     
-    private var firestore: Firestore {
+    private static var firestore: Firestore {
         let settings = FirestoreSettings()
         if FeatureFlags.useFirebaseEmulator {
             settings.host = "localhost:8080"
@@ -135,6 +111,29 @@ extension Spezi {
 }
 
 
+extension Spezi {
+    @MainActor // TODO rename (here and elsewhere (it's not just firebase any more))
+    static func loadFirebase(for region: Locale.Region) {
+        guard let spezi = SpeziAppDelegate.spezi else {
+            fatalError("Spezi not loaded")
+        }
+        spezi.loadFirebase(for: region)
+    }
+    
+    @MainActor
+    func loadFirebase(for region: Locale.Region) {
+        let config = DeferredConfigLoading.config(for: .specific(region))
+        guard !config.isEmpty else {
+            return
+        }
+        for module in config {
+            self.loadModule(module)
+        }
+        LocalPreferencesStore.shared[.selectedFirebaseConfig] = region
+    }
+}
+
+
 extension FirebaseOptions {
     convenience init(plistInBundle filename: String) {
         guard let path = Bundle.main.path(forResource: filename, ofType: "plist") else {
@@ -143,30 +142,3 @@ extension FirebaseOptions {
         self.init(contentsOfFile: path)! // swiftlint:disable:this force_unwrapping
     }
 }
-
-
-//private struct LoadFirebaseModifier: ViewModifier {
-//    @Environment(Spezi.self)
-//    private var spezi
-//    
-//    @State private var didRun = false
-//    
-//    func body(content: Content) -> some View {
-//        if didRun {
-//            content
-//        } else {
-//            content
-//                .onAppear {
-//                    didRun = true
-//                    print("WILL CONFIGURE FIREBASE")
-//                    spezi.loadLastUsedFirebaseConfigIfPossible()
-//                }
-//        }
-//    }
-//}
-//
-//extension View {
-//    func loadingLastUsedFirebaseConfigIfPossible() -> some View {
-//        self.modifier(LoadFirebaseModifier())
-//    }
-//}

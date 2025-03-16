@@ -17,44 +17,37 @@ import SpeziFirebaseAccount
 import SpeziFirestore
 import SpeziHealthKit
 import SpeziQuestionnaire
+import SpeziStudy
 import SwiftUI
 
 
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, HealthKitConstraint, AccountNotifyConstraint {
     @Application(\.logger)
     private var logger
-
+    
     @Dependency(FirebaseConfiguration.self)
     private var configuration
-
+    
+    @Dependency(StudyManager.self)
+    private var studyManager: StudyManager?
+    
     init() {}
-
-
+    
+    
     func add(sample: HKSample) async {
-        if FeatureFlags.disableFirebase {
+        guard !FeatureFlags.disableFirebase else {
             logger.debug("Received new HealthKit sample: \(sample)")
             return
         }
-        
-        do {
-            try await healthKitDocument(id: sample.id)
-                .setData(from: sample.resource)
-        } catch {
-            logger.error("Could not store HealthKit sample: \(error)")
-        }
+        await studyManager?.handleNewHealthSample(sample)
     }
     
     func remove(sample: HKDeletedObject) async {
-        if FeatureFlags.disableFirebase {
+        guard !FeatureFlags.disableFirebase else {
             logger.debug("Received new removed healthkit sample with id \(sample.uuid)")
             return
         }
-        
-        do {
-            try await healthKitDocument(id: sample.uuid).delete()
-        } catch {
-            logger.error("Could not remove HealthKit sample: \(error)")
-        }
+        await studyManager?.handleDeletedHealthObject(sample)
     }
 
     // periphery:ignore:parameters isolation
@@ -78,56 +71,23 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, HealthKitConstrain
     }
     
     
-    private func healthKitDocument(id uuid: UUID) async throws -> DocumentReference {
-        try await configuration.userDocumentReference
-            .collection("HealthKit") // Add all HealthKit sources in a /HealthKit collection.
-            .document(uuid.uuidString) // Set the document identifier to the UUID of the document.
-    }
+//    private func healthKitDocument(id uuid: UUID) async throws -> DocumentReference {
+//        try await configuration.userDocumentReference
+//            .collection("HealthKit") // Add all HealthKit sources in a /HealthKit collection.
+//            .document(uuid.uuidString) // Set the document identifier to the UUID of the document.
+//    }
 
     func respondToEvent(_ event: AccountNotifications.Event) async {
-        if case let .deletingAccount(accountId) = event {
+        switch event {
+        case .deletingAccount(let accountId):
+            // TODO we probably also need to delete some more stuff? what about the uploaded HealthKit samples?
             do {
-                try await configuration.userDocumentReference(for: accountId).delete()
+                try await configuration.userDocumentReference.delete()
             } catch {
                 logger.error("Could not delete user document: \(error)")
             }
+        case .associatedAccount, .detailsChanged, .disassociatingAccount:
+            break
         }
     }
-    
-//    /// Stores the given consent form in the user's document directory with a unique timestamped filename.
-//    ///
-//    /// - Parameter consent: The consent form's data to be stored as a `PDFDocument`.
-//    @MainActor
-//    func store(consent: ConsentDocumentExport) async throws {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "yyyy-MM-dd_HHmmss"
-//        let dateString = formatter.string(from: Date())
-//
-//        guard !FeatureFlags.disableFirebase else {
-//            guard let basePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-//                await logger.error("Could not create path for writing consent form to user document directory.")
-//                return
-//            }
-//            
-//            let filePath = basePath.appending(path: "consentForm_\(dateString).pdf")
-//            await consent.pdf.write(to: filePath)
-//            
-//            return
-//        }
-//        
-//        do {
-//            guard let consentData = await consent.pdf.dataRepresentation() else {
-//                await logger.error("Could not store consent form.")
-//                return
-//            }
-//
-//            let metadata = StorageMetadata()
-//            metadata.contentType = "application/pdf"
-//            _ = try await configuration.userBucketReference
-//                .child("consent/\(dateString).pdf")
-//                .putDataAsync(consentData, metadata: metadata) { @Sendable _ in }
-//        } catch {
-//            await logger.error("Could not store consent form: \(error)")
-//        }
-//    }
 }

@@ -29,8 +29,6 @@ struct AccountSheet: View {
     
     @StudyManagerQuery private var SPCs: [StudyParticipationContext]
     
-//    @Query private var SPCs: [StudyParticipationContext]
-    
     
     var body: some View {
         NavigationStack {

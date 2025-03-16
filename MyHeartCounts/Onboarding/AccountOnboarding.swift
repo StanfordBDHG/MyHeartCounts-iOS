@@ -14,14 +14,14 @@ import SwiftUI
 
 struct AccountOnboarding: View {
     @Environment(OnboardingNavigationPath.self)
-    private var onboardingNavigationPath
+    private var path
     
     var body: some View {
         AccountSetup { _ in
             Task {
                 // Placing the nextStep() call inside this task will ensure that the sheet dismiss animation is
                 // played till the end before we navigate to the next step.
-                onboardingNavigationPath.nextStep()
+                path.nextStep()
             }
         } header: {
             AccountSetupHeader()
