@@ -29,7 +29,7 @@ struct AccountOnboarding: View {
             OnboardingActionsView(
                 "Next",
                 action: {
-                    onboardingNavigationPath.nextStep()
+                    path.nextStep()
                 }
             )
         }
