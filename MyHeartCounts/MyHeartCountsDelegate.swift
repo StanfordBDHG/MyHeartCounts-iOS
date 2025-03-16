@@ -16,12 +16,6 @@ import SpeziOnboarding
 import SpeziScheduler
 import SpeziStudy
 import SwiftUI
-//import FirebaseCore
-//import SpeziAccount
-//import SpeziFirebaseAccount
-//import SpeziFirebaseAccountStorage
-//import SpeziFirestore
-//import SpeziFirebaseStorage
 
 
 @Observable
@@ -29,32 +23,8 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
             SpeziInjector()
-////            if let region = LocalPreferencesStore.shared[.selectedFirebaseConfig] {
-////                FirebaseLoader(region: region)
-////            }
-////            FirebaseLoader(region: .unitedStates)
-//            StudyManager()
-////            let firebaseOptions = FirebaseOptions(plistInBundle: "GoogleService-Info-US")
-////            ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
-////            AccountConfiguration(
-////                service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: nil),
-////                storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.userCollection),
-////                configuration: [
-////                    .requires(\.userId),
-////                    .requires(\.name),
-////                    // additional values stored using the `FirestoreAccountStorage` within our Standard implementation
-////                    .collects(\.genderIdentity),
-////                    .collects(\.dateOfBirth)
-////                ]
-////            )
-////            Firestore()
-////            FirebaseStorageConfiguration()
-            
             DeferredConfigLoading.config(for: .lastUsed)
-            
-            HealthKit {
-                // ???
-            }
+            HealthKit()
             Scheduler()
             Notifications()
         }
@@ -62,7 +32,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
     
     override func application(
         _ application: UIApplication,
-        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? // swiftlint:disable:this discouraged_optional_collection
     ) -> Bool {
         let prefs = LocalPreferencesStore.shared
         if FeatureFlags.showOnboarding {
@@ -72,11 +42,6 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
         if FeatureFlags.skipOnboarding {
             prefs[.onboardingFlowComplete] = true
         }
-//        let FM = FileManager.default
-//        let url = URL.documentsDirectory.appending(path: "edu.stanford.spezi.scheduler.storage.sqliteeee")
-//        try! "Hello World".write(to: url, atomically: true, encoding: .utf8) // swiftlint:disable:this force_try
-//        print(try? String(contentsOf: url, encoding: .utf8))
-        // NOTE: we're intentionally calling super at the end here.
         return super.application(application, willFinishLaunchingWithOptions: launchOptions)
     }
 }

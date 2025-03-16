@@ -112,7 +112,7 @@ enum DeferredConfigLoading {
 
 
 extension Spezi {
-    @MainActor // TODO rename (here and elsewhere (it's not just firebase any more))
+    @MainActor // IDEA maybe rename this? (here and elsewhere (it's not just firebase any more))
     static func loadFirebase(for region: Locale.Region) {
         guard let spezi = SpeziAppDelegate.spezi else {
             fatalError("Spezi not loaded")

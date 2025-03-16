@@ -50,37 +50,30 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, HealthKitConstrain
         await studyManager?.handleDeletedHealthObject(sample)
     }
 
-    // periphery:ignore:parameters isolation
-    func add(response: ModelsR4.QuestionnaireResponse, isolation: isolated (any Actor)? = #isolation) async {
-        let id = response.identifier?.value?.value?.string ?? UUID().uuidString
-        
-        if FeatureFlags.disableFirebase {
-            let jsonRepresentation = (try? String(data: JSONEncoder().encode(response), encoding: .utf8)) ?? ""
-            await logger.debug("Received questionnaire response: \(jsonRepresentation)")
-            return
-        }
-        
-        do {
-            try await configuration.userDocumentReference
-                .collection("QuestionnaireResponse") // Add all HealthKit sources in a /QuestionnaireResponse collection.
-                .document(id) // Set the document identifier to the id of the response.
-                .setData(from: response)
-        } catch {
-            await logger.error("Could not store questionnaire response: \(error)")
-        }
-    }
-    
-    
-//    private func healthKitDocument(id uuid: UUID) async throws -> DocumentReference {
-//        try await configuration.userDocumentReference
-//            .collection("HealthKit") // Add all HealthKit sources in a /HealthKit collection.
-//            .document(uuid.uuidString) // Set the document identifier to the UUID of the document.
+//    // periphery:ignore:parameters isolation
+//    func add(response: ModelsR4.QuestionnaireResponse, isolation: isolated (any Actor)? = #isolation) async {
+//        let id = response.identifier?.value?.value?.string ?? UUID().uuidString
+//        
+//        if FeatureFlags.disableFirebase {
+//            let jsonRepresentation = (try? String(data: JSONEncoder().encode(response), encoding: .utf8)) ?? ""
+//            await logger.debug("Received questionnaire response: \(jsonRepresentation)")
+//            return
+//        }
+//        
+//        do {
+//            try await configuration.userDocumentReference
+//                .collection("HealthKit") // Add all HealthKit sources in a /QuestionnaireResponse collection.
+//                .document(id) // Set the document identifier to the id of the response.
+//                .setData(from: response)
+//        } catch {
+//            await logger.error("Could not store questionnaire response: \(error)")
+//        }
 //    }
 
     func respondToEvent(_ event: AccountNotifications.Event) async {
         switch event {
         case .deletingAccount(let accountId):
-            // TODO we probably also need to delete some more stuff? what about the uploaded HealthKit samples?
+            // QUESTION we probably also need to delete some more stuff? what about the uploaded HealthKit samples?
             do {
                 try await configuration.userDocumentReference.delete()
             } catch {
