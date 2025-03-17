@@ -303,6 +303,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
+        "branch" : "lukas/exploration",
         "revision" : "ce3b54b13f0db77caa87986a9a2f0143eac25bef"
       }
     },

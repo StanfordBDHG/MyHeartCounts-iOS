@@ -11,7 +11,6 @@ import SFSafeSymbols
 import Spezi
 import SpeziAccount
 import SpeziQuestionnaire
-@_spi(TestingSupport)
 import SpeziScheduler
 import SpeziSchedulerUI
 import SpeziStudy
@@ -35,8 +34,6 @@ struct HomeTabView: RootViewTab {
     
     @Environment(StudyManager.self)
     private var studyManager
-    @Environment(Scheduler.self)
-    private var scheduler
     
     @EventQuery(in: Calendar.current.rangeOfMonth(for: .now))
     private var events

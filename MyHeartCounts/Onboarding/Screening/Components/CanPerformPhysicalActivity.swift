@@ -11,8 +11,6 @@ import SwiftUI
 
 
 struct CanPerformPhysicalActivity: ScreeningComponent {
-    @Environment(\.locale)
-    private var locale
     @Environment(ScreeningDataCollection.self)
     private var data
     

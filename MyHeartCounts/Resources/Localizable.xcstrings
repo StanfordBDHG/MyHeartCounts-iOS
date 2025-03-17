@@ -88,12 +88,6 @@
     "Date of Birth" : {
 
     },
-    "Debug Menu" : {
-
-    },
-    "Disclaimer" : {
-
-    },
     "Disclosure Indicator" : {
 
     },
@@ -147,9 +141,6 @@
       }
     },
     "Heart Health" : {
-
-    },
-    "HK Bulk Upload" : {
 
     },
     "Language" : {
@@ -303,25 +294,16 @@
         }
       }
     },
-    "This is the TestFlight beta version of My Heart Counts.\n\nUpdates may fully reset the app and delete all previously collected data, especially in early stages of development.\n\nMy Heart Counts will **never** delete anything outside the app itself (e.g., data from Health.app)." : {
-
-    },
     "Today's Tasks" : {
 
     },
     "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
 
     },
-    "Understood" : {
-
-    },
     "Upload" : {
 
     },
     "Use alternative region picker" : {
-
-    },
-    "Warning Sign Exclamation Mark Symbol" : {
 
     },
     "WELCOME_AREA1_DESCRIPTION" : {

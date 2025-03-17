@@ -20,8 +20,6 @@ struct RootView: View {
     @LocalPreference(.onboardingFlowComplete)
     private var didCompleteOnboarding
     
-    @State private var swiftDataAutosaveTask: _Concurrency.Task<Void, Never>?
-    
     @AppStorage(StorageKeys.homeTabSelection)
     private var selectedTab: String = HomeTabView.tabId
     @AppStorage(StorageKeys.tabViewCustomization)

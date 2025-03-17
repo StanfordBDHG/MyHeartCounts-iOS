@@ -22,7 +22,6 @@ import SwiftUI
 class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_types_order
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
-            SpeziInjector()
             DeferredConfigLoading.config(for: .lastUsed)
             HealthKit()
             Scheduler()
@@ -47,25 +46,8 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
 }
 
 
-/// Internal helper module which allows us to access the shared `Spezi` instance via `@Environment(Spezi.self)`.
-@Observable
-@MainActor
-private final class SpeziInjector: Module, EnvironmentAccessible {
-    private struct InjectionModifier: ViewModifier {
-        @Environment(SpeziInjector.self)
-        private var speziInjector
-        
-        func body(content: Content) -> some View {
-            content.environment(speziInjector.spezi)
-        }
-    }
-    
-    @ObservationIgnored @Application(\.spezi) private var spezi
-    @ObservationIgnored @Modifier private var speziInjector = InjectionModifier()
-}
-
-
 extension ModuleBuilder {
+    // periphery:ignore - implicitly called
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
     }

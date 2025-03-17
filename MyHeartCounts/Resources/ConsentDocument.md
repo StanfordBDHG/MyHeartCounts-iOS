@@ -1,1 +1,3 @@
-Spezi can render consent documents in the markdown format: This is a *markdown* **example**.
+As part of participating in the My Heart Counts study, this app will collect Health data from you
+
+[TODO: Ask Anders et al what the exact consent text should be!]

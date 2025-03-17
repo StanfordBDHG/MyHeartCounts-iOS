@@ -29,22 +29,7 @@ struct Consent: View {
     var body: some View {
         OnboardingConsentView(
             markdown: {
-                """
-                # My Heart Counts
-                Welcome to **MHC** (the _app_ that *will* xxx)
-                
-                ## Heading2
-                - This
-                - is
-                - a
-                - List!!!
-                
-                We need you to agree to the following things:
-                - [] one
-                - [] two
-                - [] three
-                - [] four
-                """.data(using: .utf8)! // swiftlint:disable:this force_unwrapping
+                consentDocument
             },
             action: { document in
                 // TOOD deliver this to the standard instead?!
