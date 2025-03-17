@@ -26,12 +26,9 @@ struct AccountOnboarding: View {
         } header: {
             AccountSetupHeader()
         } continue: {
-            OnboardingActionsView(
-                "Next",
-                action: {
-                    path.nextStep()
-                }
-            )
+            OnboardingActionsView("Next") {
+                path.nextStep()
+            }
         }
     }
 }
