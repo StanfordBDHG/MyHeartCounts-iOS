@@ -8,6 +8,7 @@
 
 import Foundation
 import Spezi
+import SpeziFirebaseConfiguration
 import SpeziFoundation
 import SpeziOnboarding
 import SpeziViews
@@ -73,11 +74,13 @@ struct SinglePageScreening: View {
                 // IDEA(@lukas) maybe show an alert? (we will never end up in here)
                 return
             }
-            _ = await Task.detached {
-                // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
-                await Spezi.loadFirebase(for: region)
-                try await Task.sleep(for: .seconds(4))
-            }.result
+            if !Spezi.didLoadFirebase {
+                _ = await Task.detached {
+                    // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
+                    await Spezi.loadFirebase(for: region)
+                    try await Task.sleep(for: .seconds(4))
+                }.result
+            }
             path.nextStep()
         } else {
             path.append(customView: NotEligibleView())

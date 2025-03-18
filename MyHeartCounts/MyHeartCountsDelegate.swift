@@ -22,10 +22,11 @@ import SwiftUI
 class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_types_order
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
-            DeferredConfigLoading.config(for: .lastUsed)
+            DeferredConfigLoading.config(for: .lastUsedRegion)
             HealthKit()
             Scheduler()
             Notifications()
+            ConfigureFirebaseAppAccessor()
         }
     }
     
@@ -51,4 +52,11 @@ extension ModuleBuilder {
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
     }
+}
+
+
+@Observable
+final class ConfigureFirebaseAppAccessor: Module, DefaultInitializable, EnvironmentAccessible {
+    @ObservationIgnored @Dependency(ConfigureFirebaseApp.self)
+    var configureFirebase: ConfigureFirebaseApp?
 }

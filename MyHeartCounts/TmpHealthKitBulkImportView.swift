@@ -18,8 +18,8 @@ struct TmpHealthKitBulkImportView: View {
     @Environment(MyHeartCountsStandard.self)
     private var standard
     
-    @HealthKitQuery(.heartRate, timeRange: .last(weeks: 1))
-    private var heartRateSamples
+    @HealthKitQuery(.activeEnergyBurned, timeRange: .last(weeks: 4))
+    private var samples
     
     @State private var viewState: ViewState = .idle
     @State private var currentUploadIdx = 0
@@ -27,18 +27,20 @@ struct TmpHealthKitBulkImportView: View {
     var body: some View {
         Form {
             Section {
-                LabeledContent("#heartRateSamples", value: "\(heartRateSamples.count)")
+                LabeledContent("#samples", value: "\(samples.count)")
             }
             Section {
                 AsyncButton("Upload", state: $viewState) {
-                    for sample in heartRateSamples {
+                    currentUploadIdx = 0
+                    for sample in samples {
                         try await standard.add(sample: sample)
+                        currentUploadIdx += 1
                     }
                 }
             }
             Section {
                 Text("Progress")
-                ProgressView(value: Double(currentUploadIdx) / Double(heartRateSamples.count))
+                ProgressView(value: Double(currentUploadIdx) / Double(samples.count))
                     .progressViewStyle(.linear)
             }
         }
