@@ -52,7 +52,7 @@ enum DeferredConfigLoading {
         #endif
     }
     
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     private static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         #if TEST
         // in a test build, we always load the US config.
@@ -215,7 +215,6 @@ extension FirebaseOptions {
         self.init(contentsOfFile: path)! // swiftlint:disable:this force_unwrapping
     }
 }
-
 
 
 private final class LoadFirebaseTracking: Module {
