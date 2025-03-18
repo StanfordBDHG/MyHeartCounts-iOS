@@ -1,7 +1,7 @@
 #
-# This source file is part of the Stanford Spezi Template Application open-source project
+# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
 #
-# SPDX-FileCopyrightText: 2023 Stanford University
+# SPDX-FileCopyrightText: 2025 Stanford University and the project authors (see CONTRIBUTORS.md)
 #
 # SPDX-License-Identifier: MIT
 #
@@ -20,14 +20,21 @@ concurrency:
 jobs:
   buildandtest:
     name: Build and Test
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     permissions:
       contents: read
     with:
-      artifactname: TemplateApplication.xcresult
+      artifactname: MyHeartCounts.xcresult
       runsonlabels: '["macOS", "self-hosted"]'
-      setupfirebaseemulator: true
-      customcommand: "firebase emulators:exec 'fastlane test'"
+      fastlanelane: test
+      # firebaseemulatorimport: ./firebase
+      # firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
+      # setupfirebaseemulator: true
+      # checkout_submodules: true
+      # customcommand: "firebase emulators:exec 'fastlane test'"
+      customcommand: "fastlane test"
+    secrets:
+      GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: buildandtest
@@ -35,6 +42,6 @@ jobs:
     permissions:
       contents: read
     with:
-      coveragereports: TemplateApplication.xcresult
+      coveragereports: MyHeartCounts.xcresult
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}
