@@ -13,7 +13,6 @@ import XCTest
 class MyHeartCountsTests: XCTestCase {
     @MainActor
     func testContactsCount() throws {
-        throw XCTSkip()
         XCTAssertTrue(true)
     }
 }

@@ -46,10 +46,8 @@ enum DeferredConfigLoading {
         case lastUsedRegion
         /// the firebase config for the specified region should be loaded
         case specific(Locale.Region)
-        #if DEBUG
         /// the firebase config plist at the specified url should be loaded
         case custom(URL)
-        #endif
     }
     
     private static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
@@ -78,14 +76,12 @@ enum DeferredConfigLoading {
             region = LocalPreferencesStore.shared[.selectedFirebaseConfig]
         case .specific(let region2):
             region = region2
-        #if DEBUG
         case .custom(let url):
             if let options = FirebaseOptions(contentsOfFile: url.path) {
                 return options
             } else {
                 throw .unableToLoadFirebaseConfigPlist(underlying: nil)
             }
-        #endif
         }
         guard let bundlePlistUrl = Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist") else {
             // this should be practically unreachable...
