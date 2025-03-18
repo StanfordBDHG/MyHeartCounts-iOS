@@ -52,16 +52,24 @@ enum DeferredConfigLoading {
         #endif
     }
     
-    // swiftlint:disable:next function_body_length cyclomatic_complexity
     private static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         #if TEST
         // in a test build, we always load the US config.
-        return try firebaseOptions(for: .specific(.unitedStates))
+        return try _firebaseOptions(for: .specific(.unitedStates))
         #endif
-        #if DEBUG_LUKAS
-        logger.notice("Loading custom plist")
-        return FirebaseOptions(plistInBundle: "GoogleService-Info-US2")
+        #if !targetEnvironment(simulator)
+        if FeatureFlags.overrideFirebaseConfigOnDevice {
+            guard let url = Bundle.main.url(forResource: "GoogleService-Info-Override", withExtension: "plist") else {
+                throw .unableToLoadFirebaseConfigPlist(underlying: nil)
+            }
+            return try _firebaseOptions(for: .custom(url))
+        }
         #endif
+        return try _firebaseOptions(for: configSelector)
+    }
+    
+    // swiftlint:disable:next identifier function_body_length cyclomatic_complexity
+    private static func _firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         // swiftlint:disable legacy_objc_type
         // FirebaseOptions is an NSDictionary-based API...
         let region: Locale.Region?
