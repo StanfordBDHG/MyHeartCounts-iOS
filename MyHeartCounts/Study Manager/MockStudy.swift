@@ -62,7 +62,7 @@ let mockMHCStudy = StudyDefinition(
     schedule: .init(elements: [
         .init(
             componentId: .mhcStudyComponentHealthDataCollection,
-            scheduleKind: .once(.studyBegin, offset: .zero),
+            componentSchedule: .once(.studyBegin, offset: .zero),
             completionPolicy: .afterStart
         ),
         .init(
@@ -71,17 +71,17 @@ let mockMHCStudy = StudyDefinition(
             // eg: if we configure this as a weekly task on tuesdays, and set the startOffset to 1 and start on a monday,
             // does it start correctly on the 2nd overall day?
             // what about if we start on a monday and set the offset to 4? we;d intuetively expect it to start the following week?
-            scheduleKind: .repeated(.weekly(weekday: .tuesday, hour: 09, minute: 00), startOffsetInDays: 0),
+            componentSchedule: .repeated(.weekly(weekday: .tuesday, hour: 09, minute: 00), startOffsetInDays: 0),
             completionPolicy: .sameDayAfterStart
         ),
         .init(
             componentId: .mhcStudyComponentInformationalBlock1,
-            scheduleKind: .repeated(.weekly(weekday: .thursday, hour: 09, minute: 00), startOffsetInDays: 0),
+            componentSchedule: .repeated(.weekly(weekday: .thursday, hour: 09, minute: 00), startOffsetInDays: 0),
             completionPolicy: .sameDay
         ),
         .init(
             componentId: .mhcStudyComponentInformationalBlock2,
-            scheduleKind: .repeated(.weekly(weekday: .saturday, hour: 09, minute: 00), startOffsetInDays: 0),
+            componentSchedule: .repeated(.weekly(weekday: .saturday, hour: 09, minute: 00), startOffsetInDays: 0),
             completionPolicy: .sameDay
         )
     ])

@@ -21,34 +21,22 @@ import SpeziStudy
 import SwiftUI
 
 
-actor MyHeartCountsStandard: Standard, EnvironmentAccessible, HealthKitConstraint, AccountNotifyConstraint {
+actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConstraint {
     @Application(\.logger)
     private var logger
     
     @Dependency(FirebaseConfiguration.self)
-    private var configuration
+    var firebaseConfiguration
     
     @Dependency(StudyManager.self)
     private var studyManager: StudyManager?
     
+    @Dependency(Account.self)
+    var account: Account?
+    
     init() {}
     
     
-    func add(sample: HKSample) async {
-        guard !FeatureFlags.disableFirebase else {
-            logger.debug("Received new HealthKit sample: \(sample)")
-            return
-        }
-        await studyManager?.handleNewHealthSample(sample)
-    }
-    
-    func remove(sample: HKDeletedObject) async {
-        guard !FeatureFlags.disableFirebase else {
-            logger.debug("Received new removed healthkit sample with id \(sample.uuid)")
-            return
-        }
-        await studyManager?.handleDeletedHealthObject(sample)
-    }
 
 //    // periphery:ignore:parameters isolation
 //    func add(response: ModelsR4.QuestionnaireResponse, isolation: isolated (any Actor)? = #isolation) async {
@@ -75,7 +63,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, HealthKitConstrain
         case .deletingAccount(let accountId):
             // QUESTION we probably also need to delete some more stuff? what about the uploaded HealthKit samples?
             do {
-                try await configuration.userDocumentReference.delete()
+                try await firebaseConfiguration.userDocumentReference.delete()
             } catch {
                 logger.error("Could not delete user document: \(error)")
             }

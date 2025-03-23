@@ -33,7 +33,7 @@ struct TmpHealthKitBulkImportView: View {
                 AsyncButton("Upload", state: $viewState) {
                     currentUploadIdx = 0
                     for sample in samples {
-                        try await standard.add(sample: sample)
+                        await standard.handleNewSamples(CollectionOfOne(sample), ofType: $samples.sampleType)
                         currentUploadIdx += 1
                     }
                 }

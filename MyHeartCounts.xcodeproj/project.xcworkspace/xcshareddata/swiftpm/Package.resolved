@@ -1,5 +1,5 @@
 {
-  "originHash" : "2f04aa6bf3c61541574d21ff0dd0af7a26d2dae905ce7926da3014d3b45e45d9",
+  "originHash" : "19e168207e6a986b050313b1b7685a3cdec95a1baef130421634c14050de1fc1",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "c898c0bace660ecae37fc682d629f7883f92e700",
-        "version" : "0.2.13"
+        "revision" : "aff3db17e2276963d56fff0bac67bdf00da1c00a",
+        "version" : "0.2.14"
       }
     },
     {
@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "130b71ffe6713cf3c05698e2c651958ef47ad9cf",
-        "version" : "1.0.0-beta.4"
+        "revision" : "151149eee0f7161bc3abd2a25500d1c7cb9cdb37",
+        "version" : "1.0.0-beta.5"
       }
     },
     {
@@ -304,7 +304,7 @@
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
         "branch" : "lukas/exploration",
-        "revision" : "e474ca1e764140504991991d00a8e0217ba35e54"
+        "revision" : "7d5ba66ba1f8c41fa31f6ab5c9014930f7393a75"
       }
     },
     {
