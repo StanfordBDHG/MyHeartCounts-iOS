@@ -37,7 +37,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     init() {}
     
     
-
 //    // periphery:ignore:parameters isolation
 //    func add(response: ModelsR4.QuestionnaireResponse, isolation: isolated (any Actor)? = #isolation) async {
 //        let id = response.identifier?.value?.value?.string ?? UUID().uuidString

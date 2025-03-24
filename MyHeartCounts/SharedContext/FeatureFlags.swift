@@ -17,14 +17,8 @@ enum FeatureFlags {
     /// Disables the Firebase interactions, including the login/sign-up step and the Firebase Firestore upload.
     static let disableFirebase = CommandLine.arguments.contains("--disableFirebase")
     
-    /// Defines if the application should connect to the local firebase emulator. Always set to true when using the iOS simulator.
-    static let useFirebaseEmulator: Bool = {
-        #if targetEnvironment(simulator)
-        true
-        #else
-        CommandLine.arguments.contains("--useFirebaseEmulator")
-        #endif
-    }()
+    /// Defines if the application should connect to the local firebase emulator.
+    static let useFirebaseEmulator = CommandLine.arguments.contains("--useFirebaseEmulator")
     
     /// Automatically sign in into a test account upon app launch.
     ///
