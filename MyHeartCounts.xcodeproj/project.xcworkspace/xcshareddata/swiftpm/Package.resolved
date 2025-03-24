@@ -1,5 +1,5 @@
 {
-  "originHash" : "19e168207e6a986b050313b1b7685a3cdec95a1baef130421634c14050de1fc1",
+  "originHash" : "d96b183c1b9b22bf16564d7527367b4cb49d46346041861b4e4122dbbb72068d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation",
       "state" : {
-        "branch" : "lukas/hashable-staticstring",
-        "revision" : "d239c58e59e2f1e4e83022623143bbc942fc9aac"
+        "revision" : "2eef4bdacc8d03560f2c2bce292f7524ea477515",
+        "version" : "2.1.2"
       }
     },
     {
@@ -267,8 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
       "state" : {
-        "branch" : "lukas/mhc-changes",
-        "revision" : "2c6d7c38ef0772c0e20deac3b5f8664642e171cf"
+        "revision" : "a9d3f92478d11f98db5ec3c8a0ae0377df95e315",
+        "version" : "2.0.0-alpha.3"
       }
     },
     {

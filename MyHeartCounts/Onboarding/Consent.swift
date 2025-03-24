@@ -6,16 +6,20 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SpeziAccount
 import SpeziOnboarding
-import SpeziStudy
 import SwiftUI
 
 
 struct Consent: View {
     @Environment(OnboardingNavigationPath.self)
     private var path
-    @Environment(StudyManager.self)
-    private var studyManager
+    
+    @Environment(MyHeartCountsStandard.self)
+    private var standard
+    
+    @Environment(Account.self)
+    private var account
     
     private var consentDocument: Data {
         guard let path = Bundle.main.url(forResource: "ConsentDocument", withExtension: "md"),
@@ -34,10 +38,11 @@ struct Consent: View {
             action: { document in
                 // TOOD deliver this to the standard instead?!
                 nonisolated(unsafe) let document = document
-                try! await studyManager.importConsentDocument(document, for: .generalAppUsage) // swiftlint:disable:this force_try
+                try! await standard.importConsentDocument(document, for: .generalAppUsage) // swiftlint:disable:this force_try
                 path.nextStep()
             },
             title: "Onboarding Consent Title",
+            initialNameComponents: account.details?.name,
             currentDateInSignature: true,
             exportConfiguration: .init(
                 paperSize: .usLetter,
