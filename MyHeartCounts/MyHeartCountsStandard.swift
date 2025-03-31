@@ -25,8 +25,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Application(\.logger)
     private var logger
     
-    @Dependency(FirebaseConfiguration.self)
-    var firebaseConfiguration
+    @Dependency var firebaseConfiguration = FirebaseConfiguration(setupTestAccount: FeatureFlags.setupTestAccount)
     
     @Dependency(StudyManager.self)
     private var studyManager: StudyManager?
