@@ -32,6 +32,9 @@ struct HomeTabView: RootViewTab {
     static var tabTitle: LocalizedStringResource { "My Heart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
+    @Environment(MyHeartCountsStandard.self)
+    private var standard
+    
     @Environment(StudyManager.self)
     private var studyManager
     
@@ -41,6 +44,8 @@ struct HomeTabView: RootViewTab {
     @State private var presentedInformationalStudyComponent: StudyDefinition.InformationalComponent?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
     @State private var viewState: ViewState = .idle
+    
+    @State private var actionCards: [ActionCard] = []
     
     @State private var isShowingHealthBulkUploadSheet = false
     
@@ -66,7 +71,7 @@ struct HomeTabView: RootViewTab {
                     case .completed(let response):
                         do {
                             try input.event.complete()
-                            try studyManager.saveQuestionnaireResponse(response, for: input.SPC)
+                            try await standard.add(response: response)
                         } catch {
                             viewState = .error(error)
                         }
@@ -100,7 +105,7 @@ struct HomeTabView: RootViewTab {
     
     
     @ViewBuilder private var topActionsFormContent: some View {
-        ForEach(studyManager.actionCards) { card in
+        ForEach(actionCards) { card in
             Section {
                 ActionCardView(card: card) { action in
                     await handleAction(action, for: nil)
@@ -122,7 +127,7 @@ struct HomeTabView: RootViewTab {
                             // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
                             EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
                                 _Concurrency.Task {
-                                    await handleAction(action, for: event)
+                                    await handleAction(.scheduledTaskAction(action), for: event)
                                 }
                             }
                         }
@@ -168,13 +173,9 @@ struct HomeTabView: RootViewTab {
     }
     
     
-    private func handleAction(_ action: StudyManager.ActionCard.Action, for event: Event?) async {
+    private func handleAction(_ action: ActionCard.Action, for event: Event?) async {
         switch action {
-        case .listAllAvailableStudies:
-            break
-        case .enrollInStudy(let study):
-            await enroll(in: study)
-        case .presentInformationalStudyComponent(let component):
+        case .scheduledTaskAction(.presentInformationalStudyComponent(let component)):
             presentedInformationalStudyComponent = component
             // we consider simply presenting the component as being sufficient to complete the event.
             // NOTE ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
@@ -186,7 +187,7 @@ struct HomeTabView: RootViewTab {
                     logger.error("Was unable to complete() event: \(error)")
                 }
             }
-        case let .answerQuestionnaire(questionnaire, spcId):
+        case let .scheduledTaskAction(.answerQuestionnaire(questionnaire, spcId)):
             guard let event else {
                 return
             }
@@ -195,7 +196,15 @@ struct HomeTabView: RootViewTab {
                 return
             }
             questionnaireBeingAnswered = .init(questionnaire: questionnaire, SPC: SPC, event: event)
+        case .custom(let action):
+            await action()
         }
+//        switch action {
+//        case .listAllAvailableStudies:
+//            break
+//        case .enrollInStudy(let study):
+//            await enroll(in: study)
+//        }
     }
     
     private func enroll(in study: StudyDefinition) async {

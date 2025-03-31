@@ -71,10 +71,16 @@ struct AccountSheet: View {
             Section("Study Participations") {
                 ForEach(SPCs) { SPC in
                     NavigationLink {
-                        StudyInfoView(study: SPC.study)
+                        if let study = SPC.study {
+                            StudyInfoView(study: study)
+                        } else {
+                            Text("Study not available")
+                                .foregroundStyle(.secondary)
+                        }
                     } label: {
                         makeEnrolledStudyRow(for: SPC)
                     }
+                    .disabled(SPC.study == nil)
                 }
             }
         }
@@ -94,14 +100,18 @@ struct AccountSheet: View {
     
     @ViewBuilder
     private func makeEnrolledStudyRow(for SPC: StudyParticipationContext) -> some View {
-        let study = SPC.study
-        VStack(alignment: .leading) {
-            Text(study.metadata.title)
-                .font(.headline)
-            Text(study.metadata.shortExplanationText)
-                .font(.footnote)
+        if let study = SPC.study {
+            VStack(alignment: .leading) {
+                Text(study.metadata.title)
+                    .font(.headline)
+                Text(study.metadata.shortExplanationText)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Text("TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected")
+            }
+        } else {
+            Text("Study not available")
                 .foregroundStyle(.secondary)
-            Text("TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected")
         }
     }
 }

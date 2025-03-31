@@ -28,8 +28,8 @@ import SwiftUI
 
 
 extension LocalPreferenceKey {
-    static var selectedFirebaseConfig: LocalPreferenceKey<Locale.Region?> {
-        .make("selectedFirebaseConfig", makeDefault: { nil })
+    static var lastUsedFirebaseConfig: LocalPreferenceKey<DeferredConfigLoading.FirebaseConfigSelector?> {
+        .make("lastUsedFirebaseConfig", makeDefault: { nil })
     }
 }
 
@@ -41,26 +41,22 @@ enum DeferredConfigLoading {
         case unableToLoadFirebaseConfigPlist(underlying: (any Error)? = nil)
     }
     
-    enum FirebaseConfigSelector {
-        /// the firebase config for the last-used region should be loaded
-        case lastUsedRegion
+    enum FirebaseConfigSelector: Codable {
         /// the firebase config for the specified region should be loaded
-        case specific(Locale.Region)
-        /// the firebase config plist at the specified url should be loaded
-        case custom(URL)
+        case region(Locale.Region)
+        /// the firebase config plist with the specified name should be loaded from the main bundle
+        case custom(plistNameInBundle: String)
     }
     
     private static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         #if TEST
         // in a test build, we always load the US config.
-        return try _firebaseOptions(for: .specific(.unitedStates))
+        return try _firebaseOptions(for: .region(.unitedStates))
         #endif
         #if !targetEnvironment(simulator)
         if FeatureFlags.overrideFirebaseConfigOnDevice {
-            guard let url = Bundle.main.url(forResource: "GoogleService-Info-Override", withExtension: "plist") else {
-                throw .unableToLoadFirebaseConfigPlist(underlying: nil)
-            }
-            return try _firebaseOptions(for: .custom(url))
+            LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = .custom(plistNameInBundle: "GoogleService-Info-Override")
+            return try _firebaseOptions(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
         }
         #endif
         return try _firebaseOptions(for: configSelector)
@@ -70,52 +66,61 @@ enum DeferredConfigLoading {
     private static func _firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         // swiftlint:disable legacy_objc_type
         // FirebaseOptions is an NSDictionary-based API...
-        let region: Locale.Region?
         switch configSelector {
-        case .lastUsedRegion:
-            region = LocalPreferencesStore.shared[.selectedFirebaseConfig]
-        case .specific(let region2):
-            region = region2
-        case .custom(let url):
-            if let options = FirebaseOptions(contentsOfFile: url.path) {
-                return options
-            } else {
-                throw .unableToLoadFirebaseConfigPlist(underlying: nil)
+        case .region(let region):
+            guard let bundlePlistUrl = Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist") else {
+                // this should be practically unreachable...
+                throw .unableToLoadFirebaseConfigPlist()
+            }
+            let combinedConfig: NSDictionary
+            do {
+                combinedConfig = try NSDictionary(contentsOf: bundlePlistUrl, error: ())
+            } catch {
+                throw .unableToLoadFirebaseConfigPlist(underlying: error)
+            }
+            let tmpUrl = URL.temporaryDirectory.appendingPathComponent("GoogleService-Info.tmp", conformingTo: .propertyList)
+            defer {
+                try? FileManager.default.removeItem(at: tmpUrl)
+            }
+            let key: String
+            switch region {
+            case .unitedStates:
+                key = "US"
+            case .unitedKingdom:
+                key = "UK"
+            default:
+                return nil
+            }
+            guard let configDict = combinedConfig[key] as? NSDictionary else {
+                throw .unableToLoadFirebaseConfigPlist()
+            }
+            do {
+                try configDict.write(to: tmpUrl)
+            } catch {
+                throw .unableToLoadFirebaseConfigPlist(underlying: error)
+            }
+            return FirebaseOptions(contentsOfFile: tmpUrl.path)
+        case .custom(let plistNameInBundle):
+            guard let bundlePlistUrl = Bundle.main.url(forResource: plistNameInBundle, withExtension: "plist") else {
+                return nil
+            }
+            return FirebaseOptions(contentsOfFile: bundlePlistUrl.path)
+        }
+        // swiftlint:enable legacy_objc_type
+    }
+    
+    
+    @MainActor static var initialAppLaunchConfig: [any Module] {
+        if FeatureFlags.overrideFirebaseConfigOnDevice {
+            config(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
+        } else {
+            switch LocalPreferencesStore.shared[.lastUsedFirebaseConfig] {
+            case .none:
+                []
+            case .some(let selector):
+                config(for: selector)
             }
         }
-        guard let bundlePlistUrl = Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist") else {
-            // this should be practically unreachable...
-            throw .unableToLoadFirebaseConfigPlist()
-        }
-        let combinedConfig: NSDictionary
-        do {
-            combinedConfig = try NSDictionary(contentsOf: bundlePlistUrl, error: ())
-        } catch {
-            throw .unableToLoadFirebaseConfigPlist(underlying: error)
-        }
-        let tmpUrl = URL.temporaryDirectory.appendingPathComponent("GoogleService-Info.tmp", conformingTo: .propertyList)
-        defer {
-            try? FileManager.default.removeItem(at: tmpUrl)
-        }
-        let key: String
-        switch region {
-        case .unitedStates:
-            key = "US"
-        case .unitedKingdom:
-            key = "UK"
-        default:
-            return nil
-        }
-        guard let configDict = combinedConfig[key] as? NSDictionary else {
-            throw .unableToLoadFirebaseConfigPlist()
-        }
-        do {
-            try configDict.write(to: tmpUrl)
-        } catch {
-            throw .unableToLoadFirebaseConfigPlist(underlying: error)
-        }
-        return FirebaseOptions(contentsOfFile: tmpUrl.path)
-        // swiftlint:enable legacy_objc_type
     }
     
     /// Constructs an Array of Spezi Modules for loading Firebase and the other related modules, configured based on the specified selector.
@@ -199,14 +204,14 @@ extension Spezi {
     
     @MainActor
     private func loadFirebase(for region: Locale.Region) {
-        let config = DeferredConfigLoading.config(for: .specific(region))
+        let config = DeferredConfigLoading.config(for: .region(region))
         guard !config.isEmpty else {
             return
         }
         for module in config {
             self.loadModule(module)
         }
-        LocalPreferencesStore.shared[.selectedFirebaseConfig] = region
+        LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = .region(region)
     }
 }
 
