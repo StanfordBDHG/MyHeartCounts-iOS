@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "151149eee0f7161bc3abd2a25500d1c7cb9cdb37",
-        "version" : "1.0.0-beta.5"
+        "branch" : "lukas/visionOS",
+        "revision" : "9d032ca2b3ee99bb3a286488e4f139d31e05bf4e"
       }
     },
     {
@@ -283,10 +283,10 @@
     {
       "identity" : "spezischeduler",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziScheduler",
+      "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "eeb6e0cdec93837993d88b9bbf6496875074ffa2",
-        "version" : "1.2.1"
+        "branch" : "lukas/improve-task-creation",
+        "revision" : "3bcc164dd87ea9c18e08e1020675abf22997057a"
       }
     },
     {
@@ -304,7 +304,7 @@
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
         "branch" : "lukas/exploration",
-        "revision" : "d2ee37071772bbf5f76a438038eea193389547ab"
+        "revision" : "5d9cb73c9096c9a8d6564230d07d5ad04f62770a"
       }
     },
     {

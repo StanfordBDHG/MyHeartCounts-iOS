@@ -16,14 +16,18 @@ import SpeziHealthKit
 
 
 extension MyHeartCountsStandard: HealthKitConstraint {
+    private var sendLocalNotifications: Bool {
+        LocalPreferencesStore.shared[.sendHealthKitUploadNotifications]
+    }
+    
     func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample>, ofType sampleType: SampleType<Sample>) async {
 //        let db: Firestore = FirebaseFirestore.Firestore.firestore()
         // IDEA instead of performing the upload right in here, maybe add it to a queue and
         // have a background task that just goes over the queue until its empty?
         // IDEA have a look at the batch/transaction APIs firebase gives us
-        #if DEBUG
-        await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .willUpload)
-        #endif
+        if sendLocalNotifications {
+            await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .willUpload)
+        }
         for sample in addedSamples {
             do {
                 logger.debug("Will upload \(sample)")
@@ -35,15 +39,15 @@ extension MyHeartCountsStandard: HealthKitConstraint {
                 // (probably not needed, since firebase already seems to be doing this for us...)
             }
         }
-        #if DEBUG
-        await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
-        #endif
+        if sendLocalNotifications {
+            await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
+        }
     }
     
     func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
-        #if DEBUG
-        await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .willUpload)
-        #endif
+        if sendLocalNotifications {
+            await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .willUpload)
+        }
         for object in deletedObjects {
             do {
                 logger.debug("Will delete \(object)")
@@ -53,9 +57,9 @@ extension MyHeartCountsStandard: HealthKitConstraint {
                 // (probably not needed, since firebase already seems to be doing this for us...)
             }
         }
-        #if DEBUG
-        await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .didUpload)
-        #endif
+        if sendLocalNotifications {
+            await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .didUpload)
+        }
     }
     
     
@@ -99,3 +103,10 @@ extension MyHeartCountsStandard {
     }
 }
 #endif
+
+
+extension LocalPreferenceKey {
+    static var sendHealthKitUploadNotifications: LocalPreferenceKey<Bool> {
+        .make("sendHealthKitUploadNotifications", makeDefault: { false })
+    }
+}

@@ -71,7 +71,7 @@ struct HomeTabView: RootViewTab {
                     case .completed(let response):
                         do {
                             try input.event.complete()
-                            try await standard.add(response: response)
+                            await standard.add(response: response)
                         } catch {
                             viewState = .error(error)
                         }
@@ -199,13 +199,8 @@ struct HomeTabView: RootViewTab {
         case .custom(let action):
             await action()
         }
-//        switch action {
-//        case .listAllAvailableStudies:
-//            break
-//        case .enrollInStudy(let study):
-//            await enroll(in: study)
-//        }
     }
+    
     
     private func enroll(in study: StudyDefinition) async {
         do {

@@ -111,10 +111,9 @@ enum DeferredConfigLoading {
     
     
     @MainActor static var initialAppLaunchConfig: [any Module] {
-        #if TEST
-        config(for: .region(.unitedStates))
-        #else
-        if FeatureFlags.overrideFirebaseConfigOnDevice {
+        if FeatureFlags.useFirebaseEmulator {
+            config(for: .region(.unitedStates))
+        } else if FeatureFlags.overrideFirebaseConfigOnDevice {
             config(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
         } else {
             switch LocalPreferencesStore.shared[.lastUsedFirebaseConfig] {
@@ -124,7 +123,6 @@ enum DeferredConfigLoading {
                 config(for: selector)
             }
         }
-        #endif
     }
     
     /// Constructs an Array of Spezi Modules for loading Firebase and the other related modules, configured based on the specified selector.

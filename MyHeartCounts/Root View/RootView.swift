@@ -53,6 +53,9 @@ struct RootView: View {
             makeTab(HomeTabView.self)
             makeTab(HeartHealthDashboardTab.self)
             makeTab(NewsTabView.self)
+            if ProcessInfo.isDebugBuildOrTestFlight {
+                makeTab(DebugOptionsView.self)
+            }
         }
         .tabViewStyle(.sidebarAdaptable)
         .tabViewCustomization($tabViewCustomization)

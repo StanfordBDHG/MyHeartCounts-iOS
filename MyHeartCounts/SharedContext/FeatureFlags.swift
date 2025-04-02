@@ -6,6 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Foundation
+
+
 /// A collection of feature flags for the My Heart Counts.
 enum FeatureFlags {
     /// Skips the onboarding flow to enable easier development of features in the application and to allow UI tests to skip the onboarding flow.
@@ -15,21 +18,17 @@ enum FeatureFlags {
     static let showOnboarding = CommandLine.arguments.contains("--showOnboarding")
     
     /// Disables the Firebase interactions, including the login/sign-up step and the Firebase Firestore upload.
-    static let disableFirebase = CommandLine.arguments.contains("--disableFirebase")
+    static let disableFirebase = !useFirebaseEmulator && CommandLine.arguments.contains("--disableFirebase")
     
     /// Defines if the application should connect to the local firebase emulator.
+    ///
     /// Always `true` in test builds.
-    static let useFirebaseEmulator: Bool = {
-        #if TEST
-        true
-        #else
-        CommandLine.arguments.contains("--useFirebaseEmulator")
-        #endif
-    }()
+    /// Specifying this flag implicitly also sets the ``disableFirebase`` to `false`.
+    static let useFirebaseEmulator = ProcessInfo.isTestBuild || setupTestAccount || CommandLine.arguments.contains("--useFirebaseEmulator")
     
     /// Automatically sign in into a test account upon app launch.
     ///
-    /// Requires ``disableFirebase`` to be `false`.
+    /// Specifying this flag implicitly also sets the ``useFirebaseEmulator`` flag to `true`.
     static let setupTestAccount = CommandLine.arguments.contains("--setupTestAccount")
     
     /// Whether, when running on a real device, we should load a special, different Firebase config instead of the one that would regularly get loaded.

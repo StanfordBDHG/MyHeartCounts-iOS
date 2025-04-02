@@ -88,6 +88,12 @@
     "Date of Birth" : {
 
     },
+    "Debug Menu" : {
+
+    },
+    "Debug Stuff" : {
+
+    },
     "Disclosure Indicator" : {
 
     },
@@ -120,6 +126,9 @@
     "HealthKit Bulk Upload" : {
 
     },
+    "HealthKit Upload" : {
+
+    },
     "HEALTHKIT_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -141,6 +150,9 @@
       }
     },
     "Heart Health" : {
+
+    },
+    "HK Bulk Upload" : {
 
     },
     "Language" : {
@@ -252,6 +264,9 @@
 
     },
     "Selection Checkmark" : {
+
+    },
+    "Send local notifications" : {
 
     },
     "Spezi Modules" : {

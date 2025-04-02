@@ -46,6 +46,8 @@
 		805C02F62D832EFB005B38D9 /* SpeziFirebaseConfiguration in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F52D832EFB005B38D9 /* SpeziFirebaseConfiguration */; };
 		805C02F82D832EFB005B38D9 /* SpeziFirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F72D832EFB005B38D9 /* SpeziFirebaseStorage */; };
 		805C02FA2D832EFB005B38D9 /* SpeziFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F92D832EFB005B38D9 /* SpeziFirestore */; };
+		8067823B2D9AD89600B40482 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823A2D9AD89600B40482 /* SpeziStudy */; };
+		8067823D2D9AD89600B40482 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823C2D9AD89600B40482 /* SpeziStudyDefinition */; };
 		80713BE52D93F48C00A2DB0A /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE42D93F48C00A2DB0A /* SpeziStudy */; };
 		80713BE72D93F48C00A2DB0A /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE62D93F48C00A2DB0A /* SpeziStudyDefinition */; };
 		8076696E2D772C07001B980B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 8076696D2D772C07001B980B /* Algorithms */; };
@@ -56,9 +58,9 @@
 		807669792D772C40001B980B /* HeapModule in Frameworks */ = {isa = PBXBuildFile; productRef = 807669782D772C40001B980B /* HeapModule */; };
 		8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 8086001C2D75133B0044A054 /* SFSafeSymbols */; };
 		8097DCB52D918B56000351D3 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8097DCB42D918B56000351D3 /* SpeziOnboarding */; };
+		809BEC482D9D720C00169F02 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 809BEC472D9D720C00169F02 /* SpeziStudy */; };
+		809BEC4A2D9D720C00169F02 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 809BEC492D9D720C00169F02 /* SpeziStudyDefinition */; };
 		80A81C692D7C89D400444A17 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80A81C682D7C89D400444A17 /* SpeziStudy */; };
-		80C17F0A2D9AADC600EBEE2E /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80C17F092D9AADC600EBEE2E /* SpeziStudy */; };
-		80C17F0C2D9AADC600EBEE2E /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80C17F0B2D9AADC600EBEE2E /* SpeziStudyDefinition */; };
 		80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */; };
 		80D612F02D67A5D200FAE750 /* SpeziKeychainStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 80D612EF2D67A5D200FAE750 /* SpeziKeychainStorage */; };
 		80E6EFC72D83502000D513D4 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80E6EFC62D83502000D513D4 /* SpeziOnboarding */; };
@@ -121,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */,
+				809BEC4A2D9D720C00169F02 /* SpeziStudyDefinition in Frameworks */,
 				2FE5DC6429EDD883004B9AB4 /* SpeziAccount in Frameworks */,
 				80713BE52D93F48C00A2DB0A /* SpeziStudy in Frameworks */,
 				803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */,
@@ -134,7 +137,8 @@
 				807669732D772C40001B980B /* Collections in Frameworks */,
 				2FE5DC6729EDD894004B9AB4 /* SpeziContact in Frameworks */,
 				80E774A62D81B4B20035A0EE /* SpeziFirestore in Frameworks */,
-				80C17F0A2D9AADC600EBEE2E /* SpeziStudy in Frameworks */,
+				809BEC482D9D720C00169F02 /* SpeziStudy in Frameworks */,
+				8067823B2D9AD89600B40482 /* SpeziStudy in Frameworks */,
 				80E862142D8C630D0089B8E1 /* SpeziStudy in Frameworks */,
 				2FE5DC8429EDD934004B9AB4 /* SpeziQuestionnaire in Frameworks */,
 				805C02FA2D832EFB005B38D9 /* SpeziFirestore in Frameworks */,
@@ -153,7 +157,7 @@
 				80E774A02D81B4B20035A0EE /* SpeziFirebaseAccountStorage in Frameworks */,
 				802141592D81F14000BF5D35 /* SpeziOnboarding in Frameworks */,
 				8004CE442D75BCBE00CC3008 /* SpeziStudy in Frameworks */,
-				80C17F0C2D9AADC600EBEE2E /* SpeziStudyDefinition in Frameworks */,
+				8067823D2D9AD89600B40482 /* SpeziStudyDefinition in Frameworks */,
 				8097DCB52D918B56000351D3 /* SpeziOnboarding in Frameworks */,
 				80713BE72D93F48C00A2DB0A /* SpeziStudyDefinition in Frameworks */,
 				80E774A22D81B4B20035A0EE /* SpeziFirebaseConfiguration in Frameworks */,
@@ -317,8 +321,10 @@
 				8097DCB42D918B56000351D3 /* SpeziOnboarding */,
 				80713BE42D93F48C00A2DB0A /* SpeziStudy */,
 				80713BE62D93F48C00A2DB0A /* SpeziStudyDefinition */,
-				80C17F092D9AADC600EBEE2E /* SpeziStudy */,
-				80C17F0B2D9AADC600EBEE2E /* SpeziStudyDefinition */,
+				8067823A2D9AD89600B40482 /* SpeziStudy */,
+				8067823C2D9AD89600B40482 /* SpeziStudyDefinition */,
+				809BEC472D9D720C00169F02 /* SpeziStudy */,
+				809BEC492D9D720C00169F02 /* SpeziStudyDefinition */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -429,7 +435,7 @@
 				803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
 				805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */,
 				8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */,
-				80C17F082D9AADC600EBEE2E /* XCRemoteSwiftPackageReference "SpeziStudy" */,
+				809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1149,8 +1155,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
-				kind = exactVersion;
-				version = "1.0.0-beta.5";
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {
@@ -1193,7 +1199,7 @@
 				version = "2.0.0-alpha.3";
 			};
 		};
-		80C17F082D9AADC600EBEE2E /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
+		809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
@@ -1403,6 +1409,14 @@
 			package = 805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */;
 			productName = SpeziFirestore;
 		};
+		8067823A2D9AD89600B40482 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		8067823C2D9AD89600B40482 /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudyDefinition;
+		};
 		80713BE42D93F48C00A2DB0A /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;
@@ -1451,19 +1465,19 @@
 			package = 8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */;
 			productName = SpeziOnboarding;
 		};
+		809BEC472D9D720C00169F02 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudy;
+		};
+		809BEC492D9D720C00169F02 /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudyDefinition;
+		};
 		80A81C682D7C89D400444A17 /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;
-		};
-		80C17F092D9AADC600EBEE2E /* SpeziStudy */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 80C17F082D9AADC600EBEE2E /* XCRemoteSwiftPackageReference "SpeziStudy" */;
-			productName = SpeziStudy;
-		};
-		80C17F0B2D9AADC600EBEE2E /* SpeziStudyDefinition */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 80C17F082D9AADC600EBEE2E /* XCRemoteSwiftPackageReference "SpeziStudy" */;
-			productName = SpeziStudyDefinition;
 		};
 		80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
