@@ -8,14 +8,15 @@
 
 import SpeziHealthKit
 import SpeziOnboarding
+import SpeziViews
 import SwiftUI
 
 
 struct HealthKitPermissions: View {
     @Environment(HealthKit.self)
     private var healthKitDataSource
-    @Environment(OnboardingNavigationPath.self)
-    private var onboardingNavigationPath
+    @Environment(ManagedNavigationStack.Path.self)
+    private var onboardingPath
     
     @State private var healthKitProcessing = false
     
@@ -36,7 +37,7 @@ struct HealthKitPermissions: View {
                     .padding(.vertical, 16)
                 Spacer()
             }
-        } actionView: {
+        } footer: {
             OnboardingActionsView("Grant Access") {
                 do {
                     healthKitProcessing = true
@@ -50,7 +51,7 @@ struct HealthKitPermissions: View {
                     print("Could not request HealthKit permissions.")
                 }
                 healthKitProcessing = false
-                onboardingNavigationPath.nextStep()
+                onboardingPath.nextStep()
             }
         }
         .navigationBarBackButtonHidden(healthKitProcessing)
@@ -62,7 +63,7 @@ struct HealthKitPermissions: View {
 
 #if DEBUG
 #Preview {
-    OnboardingStack {
+    ManagedNavigationStack {
         HealthKitPermissions()
     }
     .previewWith(standard: MyHeartCountsStandard()) {

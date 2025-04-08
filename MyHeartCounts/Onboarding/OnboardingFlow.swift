@@ -50,7 +50,7 @@ struct AppOnboardingFlow: View {
     
     
     var body: some View {
-        OnboardingStack(onboardingFlowComplete: $didCompleteOnboarding/*, startAtStep: "Consent"*/) {
+        ManagedNavigationStack(didComplete: $didCompleteOnboarding/*, startAtStep: "Consent"*/) {
             Welcome()
             SinglePageScreening(
                 title: "Screening",
@@ -69,7 +69,7 @@ struct AppOnboardingFlow: View {
             #if !(targetEnvironment(simulator) && (arch(i386) || arch(x86_64)))
             Consent()
                 .injectingSpezi()
-                .onboardingIdentifier("Consent")
+                .navigationStepIdentifier("Consent")
             #endif
             if HKHealthStore.isHealthDataAvailable() {
                 // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?

@@ -8,11 +8,12 @@
 
 import SpeziAccount
 import SpeziOnboarding
+import SpeziViews
 import SwiftUI
 
 
 struct Consent: View {
-    @Environment(OnboardingNavigationPath.self)
+    @Environment(ManagedNavigationStack.Path.self)
     private var path
     
     @Environment(MyHeartCountsStandard.self)
@@ -57,7 +58,7 @@ struct Consent: View {
 
 #if DEBUG
 #Preview {
-    OnboardingStack {
+    ManagedNavigationStack {
         Consent()
     }
     .previewWith(standard: MyHeartCountsStandard()) {

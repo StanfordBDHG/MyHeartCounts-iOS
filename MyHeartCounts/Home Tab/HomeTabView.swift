@@ -24,7 +24,7 @@ import class ModelsR4.Questionnaire
 struct HomeTabView: RootViewTab {
     private struct QuestionnaireBeingAnswered: Identifiable {
         let questionnaire: Questionnaire
-        let SPC: StudyParticipationContext
+        let enrollment: StudyEnrollment
         let event: Event
         var id: Questionnaire.ID { questionnaire.id }
     }
@@ -191,11 +191,11 @@ struct HomeTabView: RootViewTab {
             guard let event else {
                 return
             }
-            guard let SPC = studyManager.SPC(withId: spcId) else {
+            guard let enrollment = studyManager.enrollment(withId: spcId) else {
                 logger.error("Unable to find SPC")
                 return
             }
-            questionnaireBeingAnswered = .init(questionnaire: questionnaire, SPC: SPC, event: event)
+            questionnaireBeingAnswered = .init(questionnaire: questionnaire, enrollment: enrollment, event: event)
         case .custom(let action):
             await action()
         }

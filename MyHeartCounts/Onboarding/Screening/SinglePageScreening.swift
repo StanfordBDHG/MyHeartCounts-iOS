@@ -19,7 +19,7 @@ import SwiftUI
 ///
 /// Intended to be used in an `OnboardingStack`.
 struct SinglePageScreening: View {
-    @Environment(OnboardingNavigationPath.self)
+    @Environment(ManagedNavigationStack.Path.self)
     private var path
     @Environment(ScreeningDataCollection.self)
     private var screeningData
@@ -31,7 +31,7 @@ struct SinglePageScreening: View {
     var body: some View {
         OnboardingView {
             OnboardingTitleView(title: title, subtitle: subtitle)
-        } contentView: {
+        } content: {
             Form {
                 ForEach(0..<components.endIndex, id: \.self) { idx in
                     let component = components[idx]
@@ -50,7 +50,7 @@ struct SinglePageScreening: View {
                     // ISSUE(@lukas) can we somehow make it so that the scroll view fills the entire screen? ie, all the way to the bottom?
                 }
             }
-        } actionView: {
+        } footer: {
             EmptyView()
         }
         .disablePadding([.horizontal, .bottom])

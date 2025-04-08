@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
+    "– %@" : {
+
+    },
     "#samples" : {
 
     },
@@ -50,7 +56,13 @@
     "Are you able to perform physical activities?" : {
 
     },
+    "Are you sure you want to leave the '%@' study?" : {
+
+    },
     "Before we can continue,\nwe need to learn a little about you" : {
+
+    },
+    "Cancel" : {
 
     },
     "Check out our other work" : {
@@ -100,6 +112,12 @@
     "Do you speak %@?" : {
 
     },
+    "End Study Participation" : {
+
+    },
+    "Enroll in Study" : {
+
+    },
     "Fetching…" : {
 
     },
@@ -112,6 +130,9 @@
           }
         }
       }
+    },
+    "Health Data" : {
+
     },
     "HealthKit Access" : {
       "localizations" : {
@@ -239,6 +260,9 @@
     "Onboarding Consent Title" : {
 
     },
+    "Participation Criteria" : {
+
+    },
     "Physical Activity" : {
 
     },
@@ -315,10 +339,22 @@
         }
       }
     },
+    "This study will request read-access to collect the following Health samples:" : {
+
+    },
     "Today's Tasks" : {
 
     },
     "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
+
+    },
+    "TODO: make this look pretty!" : {
+
+    },
+    "TODO: rough information about (at least some) key study components here?" : {
+
+    },
+    "Unenroll" : {
 
     },
     "Upload" : {

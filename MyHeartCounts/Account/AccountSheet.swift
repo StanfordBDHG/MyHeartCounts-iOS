@@ -27,7 +27,7 @@ struct AccountSheet: View {
     
     @State private var isInSetup = false
     
-    @StudyManagerQuery private var SPCs: [StudyParticipationContext]
+    @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     
     var body: some View {
@@ -67,20 +67,20 @@ struct AccountSheet: View {
     }
     
     @ViewBuilder private var accountSheetExtraContent: some View {
-        if !SPCs.isEmpty {
+        if !enrollments.isEmpty {
             Section("Study Participations") {
-                ForEach(SPCs) { SPC in
+                ForEach(enrollments) { enrollment in
                     NavigationLink {
-                        if let study = SPC.study {
+                        if let study = enrollment.study {
                             StudyInfoView(study: study)
                         } else {
                             Text("Study not available")
                                 .foregroundStyle(.secondary)
                         }
                     } label: {
-                        makeEnrolledStudyRow(for: SPC)
+                        makeEnrolledStudyRow(for: enrollment)
                     }
-                    .disabled(SPC.study == nil)
+                    .disabled(enrollment.study == nil)
                 }
             }
         }
@@ -99,8 +99,8 @@ struct AccountSheet: View {
     
     
     @ViewBuilder
-    private func makeEnrolledStudyRow(for SPC: StudyParticipationContext) -> some View {
-        if let study = SPC.study {
+    private func makeEnrolledStudyRow(for enrollment: StudyEnrollment) -> some View {
+        if let study = enrollment.study {
             VStack(alignment: .leading) {
                 Text(study.metadata.title)
                     .font(.headline)

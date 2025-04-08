@@ -9,11 +9,12 @@
 @_spi(TestingSupport)
 import SpeziAccount
 import SpeziOnboarding
+import SpeziViews
 import SwiftUI
 
 
 struct AccountOnboarding: View {
-    @Environment(OnboardingNavigationPath.self)
+    @Environment(ManagedNavigationStack.Path.self)
     private var path
     
     var body: some View {
@@ -36,7 +37,7 @@ struct AccountOnboarding: View {
 
 #if DEBUG
 #Preview("Account Onboarding SignIn") {
-    OnboardingStack {
+    ManagedNavigationStack {
         AccountOnboarding()
     }
         .previewWith {
@@ -49,7 +50,7 @@ struct AccountOnboarding: View {
     details.userId = "lelandstanford@stanford.edu"
     details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
     
-    return OnboardingStack {
+    return ManagedNavigationStack {
         AccountOnboarding()
     }
         .previewWith {

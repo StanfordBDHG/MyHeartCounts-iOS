@@ -29,8 +29,8 @@ let mockMHCStudy = StudyDefinition(
         title: "My Heart Counts",
         shortTitle: "MHC",
         icon: .systemSymbol("cube.transparent"),
-        shortExplanationText: "Improve your cardiovascular health",
         explanationText: "TODO",
+        shortExplanationText: "Improve your cardiovascular health",
         studyDependency: nil,
         participationCriteria: .init(
             criterion: .ageAtLeast(18) && (.isFromRegion(.unitedStates) || .isFromRegion(.unitedKingdom))
@@ -60,32 +60,27 @@ let mockMHCStudy = StudyDefinition(
             body: "TODO: have some more fancy content here"
         ))
     ],
-    schedule: .init(elements: [
-        .init(
-            componentId: .mhcStudyComponentHealthDataCollection,
-            componentSchedule: .once(.studyBegin, offset: .zero),
-            completionPolicy: .afterStart
-        ),
+    componentSchedules: [
         .init(
             componentId: .mhcStudyComponentQuestionnaire1,
             // ISSUE(@lukas) look into how the weekday and startOffset work with each oither!
             // eg: if we configure this as a weekly task on tuesdays, and set the startOffset to 1 and start on a monday,
             // does it start correctly on the 2nd overall day?
             // what about if we start on a monday and set the offset to 4? we;d intuetively expect it to start the following week?
-            componentSchedule: .repeated(.weekly(weekday: .tuesday, hour: 09, minute: 00), startOffsetInDays: 0),
+            scheduleDefinition: .repeated(.weekly(weekday: .tuesday, hour: 09, minute: 00), startOffsetInDays: 0),
             completionPolicy: .sameDayAfterStart
         ),
         .init(
             componentId: .mhcStudyComponentInformationalBlock1,
-            componentSchedule: .repeated(.weekly(weekday: .thursday, hour: 09, minute: 00), startOffsetInDays: 0),
+            scheduleDefinition: .repeated(.weekly(weekday: .thursday, hour: 09, minute: 00), startOffsetInDays: 0),
             completionPolicy: .sameDay
         ),
         .init(
             componentId: .mhcStudyComponentInformationalBlock2,
-            componentSchedule: .repeated(.weekly(weekday: .saturday, hour: 09, minute: 00), startOffsetInDays: 0),
+            scheduleDefinition: .repeated(.weekly(weekday: .saturday, hour: 09, minute: 00), startOffsetInDays: 0),
             completionPolicy: .sameDay
         )
-    ])
+    ]
 )
 
 

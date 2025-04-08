@@ -16,7 +16,7 @@ struct NotEligibleView: View {
         OnboardingView {
             OnboardingTitleView(title: "Screening Results")
                 .padding(.top, 47)
-        } contentView: {
+        } content: {
             Form {
                 Section {
                     Text("You're sadly not eligible to participate in the My Heart Counts study.")
@@ -34,7 +34,7 @@ struct NotEligibleView: View {
                     }
                 }
             }
-        } actionView: {
+        } footer: {
             EmptyView()
         }
         .makeBackgroundMatchFormBackground()

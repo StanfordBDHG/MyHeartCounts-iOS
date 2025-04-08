@@ -10,11 +10,12 @@ import Foundation
 import Spezi
 import SpeziOnboarding
 import SpeziStudy
+import SpeziViews
 import SwiftUI
 
 
 struct FinalEnrollmentStep: View {
-    @Environment(OnboardingNavigationPath.self)
+    @Environment(ManagedNavigationStack.Path.self)
     private var path
     @Environment(StudyManager.self)
     private var studyManager
@@ -22,13 +23,13 @@ struct FinalEnrollmentStep: View {
     var body: some View {
         OnboardingView {
             OnboardingTitleView(title: "My Heart Counts")
-        } contentView: {
+        } content: {
             Text("You're all set.\n\nGreat to have you on board!")
-        } actionView: {
+        } footer: {
             OnboardingActionsView("Complete") {
                 do {
                     try await studyManager.enroll(in: mockMHCStudy)
-                } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInStudy {
+                } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
                     // NOTE(@lukas) make this an error in non-debug versions!
                 } catch {
                     throw error
