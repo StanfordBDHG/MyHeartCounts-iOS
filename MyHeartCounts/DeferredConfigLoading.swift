@@ -62,7 +62,7 @@ enum DeferredConfigLoading {
         return try _firebaseOptions(for: configSelector)
     }
     
-    // swiftlint:disable:next cyclomatic_complexity
+    
     private static func _firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         // swiftlint:disable legacy_objc_type
         // FirebaseOptions is an NSDictionary-based API...

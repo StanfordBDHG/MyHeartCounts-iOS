@@ -37,10 +37,18 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
 
     func respondToEvent(_ event: AccountNotifications.Event) async {
         switch event {
-        case .deletingAccount(let accountId):
-            // QUESTION we probably also need to delete some more stuff? what about the uploaded HealthKit samples?
+        case .deletingAccount:
+            // QUESTION deleting the userDocument will probably also delete everything nested w/in it (eg: Questionnaire Resonse
             do {
                 try await firebaseConfiguration.userDocumentReference.delete()
+                if let studyManager {
+                    try await MainActor.run {
+                        guard let enrollment = studyManager.studyEnrollments.first(where: { $0.studyId == mockMHCStudy.id }) else {
+                            return
+                        }
+                        try studyManager.unenroll(from: enrollment)
+                    }
+                }
             } catch {
                 logger.error("Could not delete user document: \(error)")
             }

@@ -57,28 +57,14 @@ public struct ArticleSheet: View {
                     .padding()
                     .background(Color.primary.colorInvert().opacity(0.75))
                 }
-                // TODO we need to somehow give the text portion of the ZStack a gradual blur background!
+                // IDEA what if we somehow give the text portion of the ZStack a gradual blur background?
             }
             Divider()
-//            Text(try! AttributedString(markdown: content.body))
             Group {
-                if true {
-//                    Text(try! AttributedString(
-//                        markdown: "# ABCABC\n\nHello **There** uwuu",
-////                        markdown: content.body,
-//                        options: .init(allowsExtendedAttributes: false, interpretedSyntax: .full, failurePolicy: .returnPartiallyParsedIfPossible, languageCode: nil)
-//                    ))
-                    Text(try! AttributedString(styledMarkdown: content.body)) // swiftlint:disable:this force_try
-//                        .font(.system(.body))
-                        .font(.system(size: 19))
-//                    Text(AttributedString(try! NSAttributedString(
-//                        markdown: content.body,
-//                        options: AttributedString.MarkdownParsingOptions.init(interpretedSyntax: .full),
-//                        baseURL: nil
-//                    )))
+                if let text = try? AttributedString(styledMarkdown: content.body) {
+                    Text(text)
                 } else {
-                    Text(content.body)
-                        .font(.body.monospaced())
+                    ContentUnavailableView("Unable to process text", systemSymbol: .textPage)
                 }
             }
             .padding([.horizontal, .top])
@@ -119,7 +105,7 @@ extension ArticleSheet {
 }
 
 extension ArticleSheet.Content {
-    public init(_ other: StudyDefinition.InformationalComponent) {
+    init(_ other: StudyDefinition.InformationalComponent) {
         self.init(
             title: other.title,
             headerImage: Image(other.headerImage),

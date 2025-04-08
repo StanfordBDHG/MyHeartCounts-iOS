@@ -14,7 +14,7 @@ import SwiftData
 import SwiftUI
 
 
-public struct StudyInfoView: View {
+public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     @Environment(StudyManager.self)
     private var mhc
     @Environment(\.dismiss)
@@ -59,7 +59,7 @@ public struct StudyInfoView: View {
                 mainAction
             }
         }
-        // TODO(@lukas) disable dismissal (incl swipe back) while viewState != .idle!
+        .interactiveDismissDisabled(viewState != .idle)
     }
     
     
@@ -109,13 +109,16 @@ public struct StudyInfoView: View {
                         isPresentingUnenrollConfirmationDialog = false
                     }
                     Button("Unenroll", role: .destructive) {
+                        if true {
+                            // intentionally disabled atm.
+                            // https://www.notion.so/stanfordbdhg/MHC-questions-thoughts-1a1008f9653880c68ffbefeaf050609f?pvs=4#1c9008f965388097a5a4d2e137ec3f4e
+                            return
+                        }
                         _Concurrency.Task {
                             viewState = .processing
                             do {
-                                // intentionally disabled atm.
-                                // https://www.notion.so/stanfordbdhg/MHC-questions-thoughts-1a1008f9653880c68ffbefeaf050609f?pvs=4#1c9008f965388097a5a4d2e137ec3f4e
-//                                try await mhc.unenroll(from: enrollment)
-//                                dismiss()
+                                try mhc.unenroll(from: enrollment)
+                                dismiss()
                             } catch {
                                 viewState = .error(AnyLocalizedError(error: error))
                             }
@@ -151,7 +154,7 @@ public struct StudyInfoView: View {
 }
 
 
-struct StudyParticipationCriteriaView: View {
+private struct StudyParticipationCriteriaView: View {
     let criterion: StudyDefinition.ParticipationCriteria.Criterion
     
     var body: some View {
