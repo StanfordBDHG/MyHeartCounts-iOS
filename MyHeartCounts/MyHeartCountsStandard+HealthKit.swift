@@ -71,18 +71,13 @@ extension MyHeartCountsStandard: HealthKitConstraint {
 }
 
 
-#if DEBUG
 extension MyHeartCountsStandard {
-    enum HealthKitUploadStage: String {
+    private enum HealthKitUploadStage: String {
         case willUpload = "will"
         case didUpload = "did"
     }
     
-//    struct TrackedBackgroundHealthKitEvent {
-//        
-//    }
-    
-    enum HealthKitChange<Sample: _HKSampleWithSampleType> {
+    private enum HealthKitChange<Sample: _HKSampleWithSampleType> {
         case newSamples(SampleType<Sample>, [Sample])
         case deletedSamples(SampleType<Sample>, [HKDeletedObject])
     }
@@ -102,7 +97,6 @@ extension MyHeartCountsStandard {
         try? await notificationCenter.add(request)
     }
 }
-#endif
 
 
 extension LocalPreferenceKey {
