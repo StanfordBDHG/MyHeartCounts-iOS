@@ -31,7 +31,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         for sample in addedSamples {
             do {
                 logger.debug("Will upload \(sample)")
-                try await healthKitDocument(id: sample.uuid)
+                try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
                     .setData(from: sample.resource)
             } catch {
                 logger.error("Error saving HealthKit sample to Firebase: \(error)")
@@ -51,7 +51,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         for object in deletedObjects {
             do {
                 logger.debug("Will delete \(object)")
-                try await healthKitDocument(id: object.uuid).delete()
+                try await healthKitDocument(for: sampleType, sampleId: object.uuid).delete()
             } catch {
                 logger.error("Error saving HealthKit sample to Firebase: \(error)")
                 // (probably not needed, since firebase already seems to be doing this for us...)
@@ -63,10 +63,10 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     }
     
     
-    private func healthKitDocument(id uuid: UUID) async throws -> DocumentReference {
+    private func healthKitDocument(for sampleType: SampleType<some Any>, sampleId uuid: UUID) async throws -> DocumentReference {
         try await firebaseConfiguration.userDocumentReference
-            .collection("HealthKitObservations") // Add all HealthKit sources in a /HealthKit collection.
-            .document(uuid.uuidString) // Set the document identifier to the UUID of the document.
+            .collection("HealthKitObservations_\(sampleType.hkSampleType.identifier)")
+            .document(uuid.uuidString)
     }
 }
 
