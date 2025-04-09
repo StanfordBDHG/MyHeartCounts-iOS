@@ -253,8 +253,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				A9E1D3432C67A3F800CED217 /* PBXTargetDependency */,
-				56E7083D2BB06FCA00B08F0A /* PBXTargetDependency */,
+				805B42252DA6BDC4004C690D /* PBXTargetDependency */,
+				805B42232DA6BDBF004C690D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
@@ -497,10 +497,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		56E7083D2BB06FCA00B08F0A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 56E7083C2BB06FCA00B08F0A /* SwiftPackageListPlugin */;
-		};
 		653A255F28338800005D4D48 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 653A254C283387FE005D4D48 /* MyHeartCounts */;
@@ -511,9 +507,13 @@
 			target = 653A254C283387FE005D4D48 /* MyHeartCounts */;
 			targetProxy = 653A256828338800005D4D48 /* PBXContainerItemProxy */;
 		};
-		A9E1D3432C67A3F800CED217 /* PBXTargetDependency */ = {
+		805B42232DA6BDBF004C690D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = A9E1D3422C67A3F800CED217 /* SwiftLintBuildToolPlugin */;
+			productRef = 805B42222DA6BDBF004C690D /* SwiftLintBuildToolPlugin */;
+		};
+		805B42252DA6BDC4004C690D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 805B42242DA6BDC4004C690D /* SwiftPackageListPlugin */;
 		};
 		A9E1D3462C67B0A300CED217 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
