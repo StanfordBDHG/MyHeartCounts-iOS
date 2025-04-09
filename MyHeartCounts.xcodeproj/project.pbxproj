@@ -1206,8 +1206,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				branch = lukas/exploration;
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.0;
 			};
 		};
 		A945FCD32C9C6BFA00B9EBC7 /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {

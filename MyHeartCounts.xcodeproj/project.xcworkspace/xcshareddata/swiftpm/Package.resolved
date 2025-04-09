@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "branch" : "lukas/exploration",
-        "revision" : "42702251e1735076fc1c4a87b4f8735138ff383c"
+        "revision" : "e20a81de83f511d359c108231de3752a838054ad",
+        "version" : "0.1.0"
       }
     },
     {
@@ -418,7 +418,7 @@
     {
       "identity" : "tppdf",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/techprimate/TPPDF",
+      "location" : "https://github.com/techprimate/TPPDF.git",
       "state" : {
         "revision" : "975049c0e1022922580b7927e030901604024925",
         "version" : "2.6.1"
