@@ -49,5 +49,6 @@ jobs:
       actions: read
       contents: read
     with:
+      xcodeversion: '16.2'
       codeql: true
       fastlanelane: codeql
