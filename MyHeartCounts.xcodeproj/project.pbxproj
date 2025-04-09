@@ -1134,8 +1134,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/FelixHerrmann/swift-package-list";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.7.1;
+				kind = exactVersion;
+				version = 4.6.0;
 			};
 		};
 		56E708332BB06B7100B08F0A /* XCRemoteSwiftPackageReference "SpeziLicense" */ = {
@@ -1298,11 +1298,6 @@
 			package = 5661551B2AB8384200209B80 /* XCRemoteSwiftPackageReference "swift-package-list" */;
 			productName = SwiftPackageList;
 		};
-		56E7083C2BB06FCA00B08F0A /* SwiftPackageListPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5661551B2AB8384200209B80 /* XCRemoteSwiftPackageReference "swift-package-list" */;
-			productName = "plugin:SwiftPackageListPlugin";
-		};
 		8004CE402D75BCAA00CC3008 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziOnboarding;
@@ -1386,6 +1381,16 @@
 		8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziOnboarding;
+		};
+		805B42222DA6BDBF004C690D /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		805B42242DA6BDC4004C690D /* SwiftPackageListPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5661551B2AB8384200209B80 /* XCRemoteSwiftPackageReference "swift-package-list" */;
+			productName = "plugin:SwiftPackageListPlugin";
 		};
 		805C02F12D832EFB005B38D9 /* SpeziFirebaseAccount */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1542,11 +1547,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */;
 			productName = XCTSpeziNotifications;
-		};
-		A9E1D3422C67A3F800CED217 /* SwiftLintBuildToolPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		A9E1D3452C67B0A300CED217 /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;

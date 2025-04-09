@@ -49,13 +49,13 @@ let mockMHCStudy = StudyDefinition(
         .questionnaire(.init(id: .mhcStudyComponentQuestionnaire1, questionnaire: mhcQuestionnaire)),
         .informational(.init(
             id: .mhcStudyComponentInformationalBlock1,
-            title: "Learn About Cardiovascular Diseases",
+            title: "Stand-in Informational Content Block #1",
             headerImage: "abc",
             body: "TODO: have fancy content here"
         )),
         .informational(.init(
             id: .mhcStudyComponentInformationalBlock2,
-            title: "The Benefits of Walking for Countering Cardiovascular Issues",
+            title: "Stand-in Informational Content Block #2",
             headerImage: "def",
             body: "TODO: have some more fancy content here"
         ))
