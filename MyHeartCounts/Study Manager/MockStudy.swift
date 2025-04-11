@@ -32,16 +32,14 @@ let mockMHCStudy = StudyDefinition(
         explanationText: "TODO",
         shortExplanationText: "Improve your cardiovascular health",
         studyDependency: nil,
-        participationCriteria: .init(
-            criterion: .ageAtLeast(18) && (.isFromRegion(.unitedStates) || .isFromRegion(.unitedKingdom))
-        ),
+        participationCriterion: .ageAtLeast(18) && (.isFromRegion(.unitedStates) || .isFromRegion(.unitedKingdom)),
         enrollmentConditions: .requiresInvitation(verificationEndpoint: URL(string: "https://mhc.spezi.stanford.edu/api/invite/")!)
     ),
     components: [
         .healthDataCollection(.init(
             id: .mhcStudyComponentHealthDataCollection,
             sampleTypes: .init(
-                quantityTypes: [.heartRate, .stepCount, .activeEnergyBurned],
+                quantityTypes: [.heartRate, .stepCount, .activeEnergyBurned, .bloodOxygen],
                 correlationTypes: [.bloodPressure, .food],
                 categoryTypes: [.sleepAnalysis]
             )

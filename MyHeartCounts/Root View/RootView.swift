@@ -21,7 +21,7 @@ struct RootView: View {
     private var didCompleteOnboarding
     
     @AppStorage(StorageKeys.homeTabSelection)
-    private var selectedTab: String = HomeTabView.tabId
+    private var selectedTab: String = HomeTab.tabId
     @AppStorage(StorageKeys.tabViewCustomization)
     private var tabViewCustomization = TabViewCustomization()
     
@@ -33,29 +33,14 @@ struct RootView: View {
                 EmptyView()
             }
         }
-        #if DEBUG
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    // ???
-                } label: {
-                    Image(systemSymbol: .ladybug)
-                        .tint(.red)
-                        .accessibilityLabel("Debug Menu")
-                }
-            }
-        }
-        #endif
     }
     
     @ViewBuilder private var content: some View {
         TabView(selection: $selectedTab) {
-            makeTab(HomeTabView.self)
+            makeTab(HomeTab.self)
+            makeTab(UpcomingTasksTab.self)
             makeTab(HeartHealthDashboardTab.self)
-            makeTab(NewsTabView.self)
-            #if DEBUG
-            makeTab(DebugOptionsView.self)
-            #endif
+            makeTab(NewsTab.self)
         }
         .tabViewStyle(.sidebarAdaptable)
         .tabViewCustomization($tabViewCustomization)
@@ -70,12 +55,5 @@ struct RootView: View {
             tab.init()
         }
         .customizationID(tab.tabId)
-    }
-}
-
-
-extension RootView: Equatable {
-    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
-        true
     }
 }

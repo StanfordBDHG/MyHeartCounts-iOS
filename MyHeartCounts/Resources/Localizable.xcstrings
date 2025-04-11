@@ -7,9 +7,6 @@
     "– %@" : {
 
     },
-    "#samples" : {
-
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -40,7 +37,7 @@
         }
       }
     },
-    "All of today's tasks have been completed" : {
+    "All tasks have already been completed!" : {
 
     },
     "Allow Notifications" : {
@@ -100,9 +97,6 @@
     "Date of Birth" : {
 
     },
-    "Debug Stuff" : {
-
-    },
     "Disclosure Indicator" : {
 
     },
@@ -140,12 +134,6 @@
           }
         }
       }
-    },
-    "HealthKit Bulk Upload" : {
-
-    },
-    "HealthKit Upload" : {
-
     },
     "HEALTHKIT_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
@@ -196,9 +184,6 @@
     "Link Arrow Symbol" : {
 
     },
-    "MORE" : {
-
-    },
     "My Heart Counts" : {
       "localizations" : {
         "en" : {
@@ -222,13 +207,16 @@
         }
       }
     },
+    "Next 2 weeks" : {
+
+    },
     "No" : {
 
     },
     "No Internet" : {
 
     },
-    "No Tasks Scheduled for Today" : {
+    "No Upcoming Tasks" : {
 
     },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
@@ -260,9 +248,6 @@
     "Physical Activity" : {
 
     },
-    "Progress" : {
-
-    },
     "Read Article" : {
 
     },
@@ -282,9 +267,6 @@
 
     },
     "Selection Checkmark" : {
-
-    },
-    "Send local notifications" : {
 
     },
     "Spezi Modules" : {
@@ -348,10 +330,13 @@
     "TODO: rough information about (at least some) key study components here?" : {
 
     },
+    "Unable to process text" : {
+
+    },
     "Unenroll" : {
 
     },
-    "Upload" : {
+    "Upcoming Tasks" : {
 
     },
     "Use alternative region picker" : {

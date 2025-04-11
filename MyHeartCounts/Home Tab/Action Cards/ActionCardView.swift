@@ -22,37 +22,28 @@ struct ActionCardView: View {
     private let actionHandler: @MainActor (ActionCard.Action) async -> Void
     @State private var viewState: ViewState = .idle
     
+    
     var body: some View {
         switch card.content {
-        case .event(let event):
-            content(for: event)
         case .custom(let simpleContent):
             content(for: simpleContent)
+        }
+    }
+    
+    private var buttonTint: Color {
+        switch colorScheme {
+        case .light:
+            Color.black
+        case .dark:
+            Color.white
+        @unknown default:
+            Color.black
         }
     }
     
     init(card: ActionCard, actionHandler: @MainActor @escaping (ActionCard.Action) async -> Void) {
         self.card = card
         self.actionHandler = actionHandler
-    }
-    
-    private func content(for event: Event) -> some View {
-        InstructionsTile(event, alignment: .leading) {
-            DefaultTileHeader(event, alignment: .leading)
-        } footer: {
-            EventActionButton(event: event) {
-                guard let action = event.task.studyScheduledTaskAction else {
-                    print("Unable to fetch associated action.")
-                    return
-                }
-                // https://github.com/StanfordSpezi/SpeziScheduler/issues/54
-                _Concurrency.Task {
-                    await actionHandler(.scheduledTaskAction(action))
-                }
-            }
-        } more: {
-            Text("MORE")
-        }
     }
     
     private func content(for content: ActionCard.SimpleContent) -> some View {
@@ -80,15 +71,6 @@ struct ActionCardView: View {
                 }
             }
         }
-        .tint({ () -> Color in
-            switch colorScheme {
-            case .light:
-                Color.black
-            case .dark:
-                Color.white
-            @unknown default:
-                Color.black
-            }
-        }())
+        .tint(buttonTint)
     }
 }

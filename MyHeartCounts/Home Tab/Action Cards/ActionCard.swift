@@ -13,24 +13,19 @@ import SpeziStudy
 
 struct ActionCard: Identifiable {
     enum Action {
-        case scheduledTaskAction(StudyManager.ScheduledTaskAction)
         case custom(() async -> Void)
     }
     
     enum Content: Identifiable {
-        case event(Event)
         case custom(SimpleContent)
         
         var id: AnyHashable {
             switch self {
-            case .event(let event):
-                event.id
             case .custom(let content):
                 content.id
             }
         }
     }
-    
     
     struct SimpleContent: Identifiable, Hashable {
         let id: String

@@ -49,7 +49,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
             }
             healthDataCollectionSection
             Section {
-                StudyParticipationCriteriaView(criterion: study.metadata.participationCriteria.criterion)
+                StudyParticipationCriteriaView(criterion: study.metadata.participationCriterion)
             } header: {
                 Text("Participation Criteria")
             } footer: {
@@ -155,7 +155,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
 
 
 private struct StudyParticipationCriteriaView: View {
-    let criterion: StudyDefinition.ParticipationCriteria.Criterion
+    let criterion: StudyDefinition.ParticipationCriterion
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -164,7 +164,7 @@ private struct StudyParticipationCriteriaView: View {
     }
     
     
-    private func subView(for criterion: StudyDefinition.ParticipationCriteria.Criterion, indentLevel: Int) -> AnyView {
+    private func subView(for criterion: StudyDefinition.ParticipationCriterion, indentLevel: Int) -> AnyView {
         AnyView {
             switch criterion {
             case .ageAtLeast(let minAge):

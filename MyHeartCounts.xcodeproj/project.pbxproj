@@ -1070,8 +1070,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
-				branch = "lukas/swift-syntax-update-2nd-attempt";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.6;
 			};
 		};
 		2FE5DC6529EDD894004B9AB4 /* XCRemoteSwiftPackageReference "SpeziContact" */ = {
@@ -1150,8 +1150,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				branch = "lukas/swift-syntax-update-2nd-attempt";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.5;
 			};
 		};
 		803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
@@ -1207,7 +1207,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.0;
+				minimumVersion = 0.1.1;
 			};
 		};
 		A945FCD32C9C6BFA00B9EBC7 /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {

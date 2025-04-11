@@ -13,7 +13,7 @@ import SpeziViews
 import SwiftUI
 
 
-struct NewsTabView: RootViewTab {
+struct NewsTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "News" }
     static var tabSymbol: SFSymbol { .newspaper }
     
