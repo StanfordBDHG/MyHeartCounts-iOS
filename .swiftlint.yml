@@ -1,5 +1,5 @@
 #
-# This source file is part of the Stanford Spezi Template Application open-source project
+# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
 #
 # SPDX-FileCopyrightText: 2023 Stanford University
 #
@@ -370,11 +370,11 @@ only_rules:
   - yoda_condition
 
 attributes:
-  attributes_with_arguments_always_on_line_above: false
+  attributes_with_arguments_always_on_line_above: true
 
 deployment_target: # Availability checks or attributes shouldn’t be using older versions that are satisfied by the deployment target.
-  iOSApplicationExtension_deployment_target: 16.0
-  iOS_deployment_target: 16.0
+  iOSApplicationExtension_deployment_target: 18.0
+  iOS_deployment_target: 18.0
 
 excluded: # paths to ignore during linting. Takes precedence over `included`.
   - .build
@@ -413,6 +413,7 @@ identifier_name:
     - at
     - to
     - in
+    - db
 
 large_tuple: # Tuples shouldn't have too many members. Create a custom type instead.
   - 2 # warning - default: 2

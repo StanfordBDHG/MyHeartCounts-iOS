@@ -1,0 +1,1564 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 70;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2F49B7762980407C00BCB272 /* Spezi in Frameworks */ = {isa = PBXBuildFile; productRef = 2F49B7752980407B00BCB272 /* Spezi */; };
+		2FB099AF2A875DF100B20952 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2FB099AE2A875DF100B20952 /* FirebaseAuth */; };
+		2FB099B12A875DF100B20952 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2FB099B02A875DF100B20952 /* FirebaseFirestore */; };
+		2FB099B62A875E2B00B20952 /* HealthKitOnFHIR in Frameworks */ = {isa = PBXBuildFile; productRef = 2FB099B52A875E2B00B20952 /* HealthKitOnFHIR */; };
+		2FBD738C2A3BD150004228E7 /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 2FBD738B2A3BD150004228E7 /* SpeziScheduler */; };
+		2FE5DC6429EDD883004B9AB4 /* SpeziAccount in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE5DC6329EDD883004B9AB4 /* SpeziAccount */; };
+		2FE5DC6729EDD894004B9AB4 /* SpeziContact in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE5DC6629EDD894004B9AB4 /* SpeziContact */; };
+		2FE5DC8429EDD934004B9AB4 /* SpeziQuestionnaire in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE5DC8329EDD934004B9AB4 /* SpeziQuestionnaire */; };
+		2FE5DC8A29EDD972004B9AB4 /* SpeziLocalStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE5DC8929EDD972004B9AB4 /* SpeziLocalStorage */; };
+		2FE5DC8F29EDD980004B9AB4 /* SpeziViews in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE5DC8E29EDD980004B9AB4 /* SpeziViews */; };
+		2FE5DC9929EDD9D9004B9AB4 /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE5DC9829EDD9D9004B9AB4 /* XCTestExtensions */; };
+		2FE5DC9C29EDD9EF004B9AB4 /* XCTHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2FE5DC9B29EDD9EF004B9AB4 /* XCTHealthKit */; };
+		56E708352BB06B7100B08F0A /* SpeziLicense in Frameworks */ = {isa = PBXBuildFile; productRef = 56E708342BB06B7100B08F0A /* SpeziLicense */; };
+		56E7083B2BB06F6F00B08F0A /* SwiftPackageList in Frameworks */ = {isa = PBXBuildFile; productRef = 56E7083A2BB06F6F00B08F0A /* SwiftPackageList */; };
+		8004CE412D75BCAA00CC3008 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE402D75BCAA00CC3008 /* SpeziOnboarding */; };
+		8004CE442D75BCBE00CC3008 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE432D75BCBE00CC3008 /* SpeziStudy */; };
+		802141592D81F14000BF5D35 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 802141582D81F14000BF5D35 /* SpeziOnboarding */; };
+		80270CFB2D67F68F0022251E /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80270CFA2D67F68F0022251E /* SpeziStudy */; };
+		803166A32D75DE6100E9173B /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A22D75DE6100E9173B /* SpeziOnboarding */; };
+		803166A62D75DE7700E9173B /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A52D75DE7700E9173B /* SpeziScheduler */; };
+		803166A82D75DE7700E9173B /* SpeziSchedulerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A72D75DE7700E9173B /* SpeziSchedulerUI */; };
+		803166AB2D75DE8B00E9173B /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 803166AA2D75DE8B00E9173B /* SpeziStudy */; };
+		803166B72D75E22E00E9173B /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803166B62D75E22E00E9173B /* SpeziHealthKit */; };
+		803166B92D75E22E00E9173B /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803166B82D75E22E00E9173B /* SpeziHealthKitUI */; };
+		803241E02D7B599300F7DE8B /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 803241DF2D7B599300F7DE8B /* SpeziScheduler */; };
+		803241E22D7B599300F7DE8B /* SpeziSchedulerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803241E12D7B599300F7DE8B /* SpeziSchedulerUI */; };
+		803241EA2D7B5D5600F7DE8B /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803241E92D7B5D5600F7DE8B /* SpeziHealthKit */; };
+		803241EC2D7B5D5600F7DE8B /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */; };
+		803D2B422D8981EA00DAEF9B /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 803D2B412D8981EA00DAEF9B /* SpeziStudy */; };
+		803D2B442D8981EA00DAEF9B /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 803D2B432D8981EA00DAEF9B /* SpeziStudyDefinition */; };
+		803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
+		803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
+		804B90222D86F10F00F9F431 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 804B90212D86F10F00F9F431 /* SpeziStudy */; };
+		8055F2342D7C4E0D00CD7884 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */; };
+		805C02F22D832EFB005B38D9 /* SpeziFirebaseAccount in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F12D832EFB005B38D9 /* SpeziFirebaseAccount */; };
+		805C02F42D832EFB005B38D9 /* SpeziFirebaseAccountStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F32D832EFB005B38D9 /* SpeziFirebaseAccountStorage */; };
+		805C02F62D832EFB005B38D9 /* SpeziFirebaseConfiguration in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F52D832EFB005B38D9 /* SpeziFirebaseConfiguration */; };
+		805C02F82D832EFB005B38D9 /* SpeziFirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F72D832EFB005B38D9 /* SpeziFirebaseStorage */; };
+		805C02FA2D832EFB005B38D9 /* SpeziFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F92D832EFB005B38D9 /* SpeziFirestore */; };
+		8067823B2D9AD89600B40482 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823A2D9AD89600B40482 /* SpeziStudy */; };
+		8067823D2D9AD89600B40482 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823C2D9AD89600B40482 /* SpeziStudyDefinition */; };
+		80713BE52D93F48C00A2DB0A /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE42D93F48C00A2DB0A /* SpeziStudy */; };
+		80713BE72D93F48C00A2DB0A /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE62D93F48C00A2DB0A /* SpeziStudyDefinition */; };
+		8076696E2D772C07001B980B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 8076696D2D772C07001B980B /* Algorithms */; };
+		807669712D772C40001B980B /* BitCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 807669702D772C40001B980B /* BitCollections */; };
+		807669732D772C40001B980B /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 807669722D772C40001B980B /* Collections */; };
+		807669752D772C40001B980B /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = 807669742D772C40001B980B /* DequeModule */; };
+		807669772D772C40001B980B /* HashTreeCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 807669762D772C40001B980B /* HashTreeCollections */; };
+		807669792D772C40001B980B /* HeapModule in Frameworks */ = {isa = PBXBuildFile; productRef = 807669782D772C40001B980B /* HeapModule */; };
+		8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 8086001C2D75133B0044A054 /* SFSafeSymbols */; };
+		8097DCB52D918B56000351D3 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8097DCB42D918B56000351D3 /* SpeziOnboarding */; };
+		809BEC482D9D720C00169F02 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 809BEC472D9D720C00169F02 /* SpeziStudy */; };
+		809BEC4A2D9D720C00169F02 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 809BEC492D9D720C00169F02 /* SpeziStudyDefinition */; };
+		80A81C692D7C89D400444A17 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80A81C682D7C89D400444A17 /* SpeziStudy */; };
+		80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */; };
+		80D612F02D67A5D200FAE750 /* SpeziKeychainStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 80D612EF2D67A5D200FAE750 /* SpeziKeychainStorage */; };
+		80E6EFC72D83502000D513D4 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80E6EFC62D83502000D513D4 /* SpeziOnboarding */; };
+		80E7749E2D81B4B20035A0EE /* SpeziFirebaseAccount in Frameworks */ = {isa = PBXBuildFile; productRef = 80E7749D2D81B4B20035A0EE /* SpeziFirebaseAccount */; };
+		80E774A02D81B4B20035A0EE /* SpeziFirebaseAccountStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 80E7749F2D81B4B20035A0EE /* SpeziFirebaseAccountStorage */; };
+		80E774A22D81B4B20035A0EE /* SpeziFirebaseConfiguration in Frameworks */ = {isa = PBXBuildFile; productRef = 80E774A12D81B4B20035A0EE /* SpeziFirebaseConfiguration */; };
+		80E774A42D81B4B20035A0EE /* SpeziFirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 80E774A32D81B4B20035A0EE /* SpeziFirebaseStorage */; };
+		80E774A62D81B4B20035A0EE /* SpeziFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 80E774A52D81B4B20035A0EE /* SpeziFirestore */; };
+		80E862142D8C630D0089B8E1 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80E862132D8C630D0089B8E1 /* SpeziStudy */; };
+		80E862162D8C630D0089B8E1 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80E862152D8C630D0089B8E1 /* SpeziStudyDefinition */; };
+		9739A0C62AD7B5730084BEA5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9739A0C52AD7B5730084BEA5 /* FirebaseStorage */; };
+		A94DDFFD2CBD1190004930BD /* SpeziNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = A94DDFFC2CBD1190004930BD /* SpeziNotifications */; };
+		A994264E2CD25EB3002F8BD5 /* XCTSpeziAccount in Frameworks */ = {isa = PBXBuildFile; productRef = A994264D2CD25EB3002F8BD5 /* XCTSpeziAccount */; };
+		A9947BF42CC142BD0068AA8A /* XCTSpeziNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = A9947BF32CC142BD0068AA8A /* XCTSpeziNotifications */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		653A255E28338800005D4D48 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 653A254C283387FE005D4D48;
+			remoteInfo = MyHeartCounts;
+		};
+		653A256828338800005D4D48 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 653A254C283387FE005D4D48;
+			remoteInfo = MyHeartCounts;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2FC94CD4298B0A1D009C8209 /* MyHeartCounts.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = MyHeartCounts.xctestplan; sourceTree = "<group>"; };
+		653A254D283387FE005D4D48 /* MyHeartCounts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHeartCounts.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Supporting Files/Info.plist",
+			);
+			target = 653A254C283387FE005D4D48 /* MyHeartCounts */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		80F72BA52D7E008E00150FE3 /* MyHeartCounts */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCounts; sourceTree = "<group>"; };
+		80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsTests; sourceTree = "<group>"; };
+		80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsUITests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		653A254A283387FE005D4D48 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */,
+				809BEC4A2D9D720C00169F02 /* SpeziStudyDefinition in Frameworks */,
+				2FE5DC6429EDD883004B9AB4 /* SpeziAccount in Frameworks */,
+				80713BE52D93F48C00A2DB0A /* SpeziStudy in Frameworks */,
+				803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */,
+				80E6EFC72D83502000D513D4 /* SpeziOnboarding in Frameworks */,
+				80E774A42D81B4B20035A0EE /* SpeziFirebaseStorage in Frameworks */,
+				803166A32D75DE6100E9173B /* SpeziOnboarding in Frameworks */,
+				8004CE412D75BCAA00CC3008 /* SpeziOnboarding in Frameworks */,
+				805C02F82D832EFB005B38D9 /* SpeziFirebaseStorage in Frameworks */,
+				2FB099AF2A875DF100B20952 /* FirebaseAuth in Frameworks */,
+				803D2B442D8981EA00DAEF9B /* SpeziStudyDefinition in Frameworks */,
+				807669732D772C40001B980B /* Collections in Frameworks */,
+				2FE5DC6729EDD894004B9AB4 /* SpeziContact in Frameworks */,
+				80E774A62D81B4B20035A0EE /* SpeziFirestore in Frameworks */,
+				809BEC482D9D720C00169F02 /* SpeziStudy in Frameworks */,
+				8067823B2D9AD89600B40482 /* SpeziStudy in Frameworks */,
+				80E862142D8C630D0089B8E1 /* SpeziStudy in Frameworks */,
+				2FE5DC8429EDD934004B9AB4 /* SpeziQuestionnaire in Frameworks */,
+				805C02FA2D832EFB005B38D9 /* SpeziFirestore in Frameworks */,
+				805C02F42D832EFB005B38D9 /* SpeziFirebaseAccountStorage in Frameworks */,
+				803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */,
+				2FB099B12A875DF100B20952 /* FirebaseFirestore in Frameworks */,
+				807669712D772C40001B980B /* BitCollections in Frameworks */,
+				A94DDFFD2CBD1190004930BD /* SpeziNotifications in Frameworks */,
+				807669772D772C40001B980B /* HashTreeCollections in Frameworks */,
+				803241E22D7B599300F7DE8B /* SpeziSchedulerUI in Frameworks */,
+				803166B92D75E22E00E9173B /* SpeziHealthKitUI in Frameworks */,
+				8055F2342D7C4E0D00CD7884 /* SpeziOnboarding in Frameworks */,
+				2FB099B62A875E2B00B20952 /* HealthKitOnFHIR in Frameworks */,
+				80270CFB2D67F68F0022251E /* SpeziStudy in Frameworks */,
+				56E7083B2BB06F6F00B08F0A /* SwiftPackageList in Frameworks */,
+				80E774A02D81B4B20035A0EE /* SpeziFirebaseAccountStorage in Frameworks */,
+				802141592D81F14000BF5D35 /* SpeziOnboarding in Frameworks */,
+				8004CE442D75BCBE00CC3008 /* SpeziStudy in Frameworks */,
+				8067823D2D9AD89600B40482 /* SpeziStudyDefinition in Frameworks */,
+				8097DCB52D918B56000351D3 /* SpeziOnboarding in Frameworks */,
+				80713BE72D93F48C00A2DB0A /* SpeziStudyDefinition in Frameworks */,
+				80E774A22D81B4B20035A0EE /* SpeziFirebaseConfiguration in Frameworks */,
+				80A81C692D7C89D400444A17 /* SpeziStudy in Frameworks */,
+				8076696E2D772C07001B980B /* Algorithms in Frameworks */,
+				56E708352BB06B7100B08F0A /* SpeziLicense in Frameworks */,
+				803241EC2D7B5D5600F7DE8B /* SpeziHealthKitUI in Frameworks */,
+				803166AB2D75DE8B00E9173B /* SpeziStudy in Frameworks */,
+				803241E02D7B599300F7DE8B /* SpeziScheduler in Frameworks */,
+				2FE5DC8A29EDD972004B9AB4 /* SpeziLocalStorage in Frameworks */,
+				807669752D772C40001B980B /* DequeModule in Frameworks */,
+				80D612F02D67A5D200FAE750 /* SpeziKeychainStorage in Frameworks */,
+				9739A0C62AD7B5730084BEA5 /* FirebaseStorage in Frameworks */,
+				803241EA2D7B5D5600F7DE8B /* SpeziHealthKit in Frameworks */,
+				803166B72D75E22E00E9173B /* SpeziHealthKit in Frameworks */,
+				80E7749E2D81B4B20035A0EE /* SpeziFirebaseAccount in Frameworks */,
+				803166A82D75DE7700E9173B /* SpeziSchedulerUI in Frameworks */,
+				807669792D772C40001B980B /* HeapModule in Frameworks */,
+				2F49B7762980407C00BCB272 /* Spezi in Frameworks */,
+				2FE5DC8F29EDD980004B9AB4 /* SpeziViews in Frameworks */,
+				803166A62D75DE7700E9173B /* SpeziScheduler in Frameworks */,
+				805C02F22D832EFB005B38D9 /* SpeziFirebaseAccount in Frameworks */,
+				804B90222D86F10F00F9F431 /* SpeziStudy in Frameworks */,
+				2FBD738C2A3BD150004228E7 /* SpeziScheduler in Frameworks */,
+				805C02F62D832EFB005B38D9 /* SpeziFirebaseConfiguration in Frameworks */,
+				80E862162D8C630D0089B8E1 /* SpeziStudyDefinition in Frameworks */,
+				803D2B422D8981EA00DAEF9B /* SpeziStudy in Frameworks */,
+				80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		653A255A28338800005D4D48 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		653A256428338800005D4D48 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FE5DC9929EDD9D9004B9AB4 /* XCTestExtensions in Frameworks */,
+				2FE5DC9C29EDD9EF004B9AB4 /* XCTHealthKit in Frameworks */,
+				A994264E2CD25EB3002F8BD5 /* XCTSpeziAccount in Frameworks */,
+				A9947BF42CC142BD0068AA8A /* XCTSpeziNotifications in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		653A2544283387FE005D4D48 = {
+			isa = PBXGroup;
+			children = (
+				2FC94CD4298B0A1D009C8209 /* MyHeartCounts.xctestplan */,
+				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
+				80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */,
+				80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */,
+				653A254E283387FE005D4D48 /* Products */,
+				653A258B283395A7005D4D48 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		653A254E283387FE005D4D48 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				653A254D283387FE005D4D48 /* MyHeartCounts.app */,
+				653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */,
+				653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		653A258B283395A7005D4D48 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		653A254C283387FE005D4D48 /* MyHeartCounts */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 653A257128338800005D4D48 /* Build configuration list for PBXNativeTarget "MyHeartCounts" */;
+			buildPhases = (
+				653A2549283387FE005D4D48 /* Sources */,
+				653A254A283387FE005D4D48 /* Frameworks */,
+				653A254B283387FE005D4D48 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				805B42252DA6BDC4004C690D /* PBXTargetDependency */,
+				805B42232DA6BDBF004C690D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
+			);
+			name = MyHeartCounts;
+			packageProductDependencies = (
+				2F49B7752980407B00BCB272 /* Spezi */,
+				2FE5DC6329EDD883004B9AB4 /* SpeziAccount */,
+				2FE5DC6629EDD894004B9AB4 /* SpeziContact */,
+				2FE5DC8329EDD934004B9AB4 /* SpeziQuestionnaire */,
+				2FE5DC8929EDD972004B9AB4 /* SpeziLocalStorage */,
+				2FE5DC8E29EDD980004B9AB4 /* SpeziViews */,
+				2FBD738B2A3BD150004228E7 /* SpeziScheduler */,
+				2FB099AE2A875DF100B20952 /* FirebaseAuth */,
+				2FB099B02A875DF100B20952 /* FirebaseFirestore */,
+				2FB099B52A875E2B00B20952 /* HealthKitOnFHIR */,
+				9739A0C52AD7B5730084BEA5 /* FirebaseStorage */,
+				56E708342BB06B7100B08F0A /* SpeziLicense */,
+				56E7083A2BB06F6F00B08F0A /* SwiftPackageList */,
+				A94DDFFC2CBD1190004930BD /* SpeziNotifications */,
+				80D612EF2D67A5D200FAE750 /* SpeziKeychainStorage */,
+				803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */,
+				803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */,
+				80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */,
+				80270CFA2D67F68F0022251E /* SpeziStudy */,
+				8086001C2D75133B0044A054 /* SFSafeSymbols */,
+				8004CE402D75BCAA00CC3008 /* SpeziOnboarding */,
+				8004CE432D75BCBE00CC3008 /* SpeziStudy */,
+				803166A22D75DE6100E9173B /* SpeziOnboarding */,
+				803166A52D75DE7700E9173B /* SpeziScheduler */,
+				803166A72D75DE7700E9173B /* SpeziSchedulerUI */,
+				803166AA2D75DE8B00E9173B /* SpeziStudy */,
+				803166B62D75E22E00E9173B /* SpeziHealthKit */,
+				803166B82D75E22E00E9173B /* SpeziHealthKitUI */,
+				8076696D2D772C07001B980B /* Algorithms */,
+				807669702D772C40001B980B /* BitCollections */,
+				807669722D772C40001B980B /* Collections */,
+				807669742D772C40001B980B /* DequeModule */,
+				807669762D772C40001B980B /* HashTreeCollections */,
+				807669782D772C40001B980B /* HeapModule */,
+				803241DF2D7B599300F7DE8B /* SpeziScheduler */,
+				803241E12D7B599300F7DE8B /* SpeziSchedulerUI */,
+				803241E92D7B5D5600F7DE8B /* SpeziHealthKit */,
+				803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */,
+				8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */,
+				80A81C682D7C89D400444A17 /* SpeziStudy */,
+				80E7749D2D81B4B20035A0EE /* SpeziFirebaseAccount */,
+				80E7749F2D81B4B20035A0EE /* SpeziFirebaseAccountStorage */,
+				80E774A12D81B4B20035A0EE /* SpeziFirebaseConfiguration */,
+				80E774A32D81B4B20035A0EE /* SpeziFirebaseStorage */,
+				80E774A52D81B4B20035A0EE /* SpeziFirestore */,
+				802141582D81F14000BF5D35 /* SpeziOnboarding */,
+				805C02F12D832EFB005B38D9 /* SpeziFirebaseAccount */,
+				805C02F32D832EFB005B38D9 /* SpeziFirebaseAccountStorage */,
+				805C02F52D832EFB005B38D9 /* SpeziFirebaseConfiguration */,
+				805C02F72D832EFB005B38D9 /* SpeziFirebaseStorage */,
+				805C02F92D832EFB005B38D9 /* SpeziFirestore */,
+				80E6EFC62D83502000D513D4 /* SpeziOnboarding */,
+				804B90212D86F10F00F9F431 /* SpeziStudy */,
+				803D2B412D8981EA00DAEF9B /* SpeziStudy */,
+				803D2B432D8981EA00DAEF9B /* SpeziStudyDefinition */,
+				80E862132D8C630D0089B8E1 /* SpeziStudy */,
+				80E862152D8C630D0089B8E1 /* SpeziStudyDefinition */,
+				8097DCB42D918B56000351D3 /* SpeziOnboarding */,
+				80713BE42D93F48C00A2DB0A /* SpeziStudy */,
+				80713BE62D93F48C00A2DB0A /* SpeziStudyDefinition */,
+				8067823A2D9AD89600B40482 /* SpeziStudy */,
+				8067823C2D9AD89600B40482 /* SpeziStudyDefinition */,
+				809BEC472D9D720C00169F02 /* SpeziStudy */,
+				809BEC492D9D720C00169F02 /* SpeziStudyDefinition */,
+			);
+			productName = MyHeartCounts;
+			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
+			productType = "com.apple.product-type.application";
+		};
+		653A255C28338800005D4D48 /* MyHeartCountsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 653A257428338800005D4D48 /* Build configuration list for PBXNativeTarget "MyHeartCountsTests" */;
+			buildPhases = (
+				653A255928338800005D4D48 /* Sources */,
+				653A255A28338800005D4D48 /* Frameworks */,
+				653A255B28338800005D4D48 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A9E1D3462C67B0A300CED217 /* PBXTargetDependency */,
+				653A255F28338800005D4D48 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */,
+			);
+			name = MyHeartCountsTests;
+			productName = MyHeartCountsTests;
+			productReference = 653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		653A256628338800005D4D48 /* MyHeartCountsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 653A257728338800005D4D48 /* Build configuration list for PBXNativeTarget "MyHeartCountsUITests" */;
+			buildPhases = (
+				653A256328338800005D4D48 /* Sources */,
+				653A256428338800005D4D48 /* Frameworks */,
+				653A256528338800005D4D48 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A9E1D3482C67B0A700CED217 /* PBXTargetDependency */,
+				653A256928338800005D4D48 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */,
+			);
+			name = MyHeartCountsUITests;
+			packageProductDependencies = (
+				2FE5DC9829EDD9D9004B9AB4 /* XCTestExtensions */,
+				2FE5DC9B29EDD9EF004B9AB4 /* XCTHealthKit */,
+				A9947BF32CC142BD0068AA8A /* XCTSpeziNotifications */,
+				A994264D2CD25EB3002F8BD5 /* XCTSpeziAccount */,
+			);
+			productName = MyHeartCountsUITests;
+			productReference = 653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		653A2545283387FE005D4D48 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1340;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					653A254C283387FE005D4D48 = {
+						CreatedOnToolsVersion = 13.4;
+					};
+					653A255C28338800005D4D48 = {
+						CreatedOnToolsVersion = 13.4;
+						TestTargetID = 653A254C283387FE005D4D48;
+					};
+					653A256628338800005D4D48 = {
+						CreatedOnToolsVersion = 13.4;
+						TestTargetID = 653A254C283387FE005D4D48;
+					};
+				};
+			};
+			buildConfigurationList = 653A2548283387FE005D4D48 /* Build configuration list for PBXProject "MyHeartCounts" */;
+			compatibilityVersion = "Xcode 15.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 653A2544283387FE005D4D48;
+			packageReferences = (
+				2F49B7742980407B00BCB272 /* XCRemoteSwiftPackageReference "Spezi" */,
+				2FE5DC6229EDD883004B9AB4 /* XCRemoteSwiftPackageReference "SpeziAccount" */,
+				2FE5DC6529EDD894004B9AB4 /* XCRemoteSwiftPackageReference "SpeziContact" */,
+				2FE5DC8229EDD934004B9AB4 /* XCRemoteSwiftPackageReference "SpeziQuestionnaire" */,
+				2FE5DC8829EDD972004B9AB4 /* XCRemoteSwiftPackageReference "SpeziStorage" */,
+				2FE5DC8D29EDD980004B9AB4 /* XCRemoteSwiftPackageReference "SpeziViews" */,
+				2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				2FE5DC9729EDD9D9004B9AB4 /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
+				2FE5DC9A29EDD9EF004B9AB4 /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
+				2FB099B42A875E2B00B20952 /* XCRemoteSwiftPackageReference "HealthKitOnFHIR" */,
+				5661551B2AB8384200209B80 /* XCRemoteSwiftPackageReference "swift-package-list" */,
+				56E708332BB06B7100B08F0A /* XCRemoteSwiftPackageReference "SpeziLicense" */,
+				2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */,
+				A945FCD32C9C6BFA00B9EBC7 /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */,
+				A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */,
+				8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
+				8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */,
+				803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */,
+				803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
+				805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */,
+				8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */,
+				809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */,
+			);
+			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				653A254C283387FE005D4D48 /* MyHeartCounts */,
+				653A255C28338800005D4D48 /* MyHeartCountsTests */,
+				653A256628338800005D4D48 /* MyHeartCountsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		653A254B283387FE005D4D48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		653A255B28338800005D4D48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		653A256528338800005D4D48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		653A2549283387FE005D4D48 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		653A255928338800005D4D48 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		653A256328338800005D4D48 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		653A255F28338800005D4D48 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 653A254C283387FE005D4D48 /* MyHeartCounts */;
+			targetProxy = 653A255E28338800005D4D48 /* PBXContainerItemProxy */;
+		};
+		653A256928338800005D4D48 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 653A254C283387FE005D4D48 /* MyHeartCounts */;
+			targetProxy = 653A256828338800005D4D48 /* PBXContainerItemProxy */;
+		};
+		805B42232DA6BDBF004C690D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 805B42222DA6BDBF004C690D /* SwiftLintBuildToolPlugin */;
+		};
+		805B42252DA6BDC4004C690D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 805B42242DA6BDC4004C690D /* SwiftPackageListPlugin */;
+		};
+		A9E1D3462C67B0A300CED217 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = A9E1D3452C67B0A300CED217 /* SwiftLintBuildToolPlugin */;
+		};
+		A9E1D3482C67B0A700CED217 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = A9E1D3472C67B0A700CED217 /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2FEE10302998C89C000822E1 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TEST;
+				SWIFT_ENABLE_OPAQUE_TYPE_ERASURE = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Test;
+		};
+		2FEE10312998C89C000822E1 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.0.0;
+				OTHER_SWIFT_FLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Test;
+		};
+		2FEE10322998C89C000822E1 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 637867499T;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyHeartCounts.app/MyHeartCounts";
+			};
+			name = Test;
+		};
+		2FEE10332998C89C000822E1 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 637867499T;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = MyHeartCounts;
+			};
+			name = Test;
+		};
+		653A256F28338800005D4D48 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_ENABLE_OPAQUE_TYPE_ERASURE = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		653A257028338800005D4D48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_ENABLE_OPAQUE_TYPE_ERASURE = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		653A257228338800005D4D48 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.0.0;
+				OTHER_SWIFT_FLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		653A257328338800005D4D48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = CQRZ4E7K9U;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIMyHeartCountslicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIMyHeartCountslicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.0.0;
+				OTHER_SWIFT_FLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MyHeart Counts - Biodesign Digital Health";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		653A257528338800005D4D48 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 637867499T;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCountsn_LOC_STRINGS" = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyHeartCounts.app/MyHeartCounts";
+			};
+			name = Debug;
+		};
+		653A257628338800005D4D48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 637867499T;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyHeartCounts.app/MyHeartCounts";
+			};
+			name = Release;
+		};
+		653A257828338800005D4D48 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 637867499T;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = MyHeartCounts;
+			};
+			name = Debug;
+		};
+		653A257928338800005D4D48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 637867499T;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = MyHeartCounts;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		653A2548283387FE005D4D48 /* Build configuration list for PBXProject "MyHeartCounts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				653A256F28338800005D4D48 /* Debug */,
+				2FEE10302998C89C000822E1 /* Test */,
+				653A257028338800005D4D48 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		653A257128338800005D4D48 /* Build configuration list for PBXNativeTarget "MyHeartCounts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				653A257228338800005D4D48 /* Debug */,
+				2FEE10312998C89C000822E1 /* Test */,
+				653A257328338800005D4D48 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		653A257428338800005D4D48 /* Build configuration list for PBXNativeTarget "MyHeartCountsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				653A257528338800005D4D48 /* Debug */,
+				2FEE10322998C89C000822E1 /* Test */,
+				653A257628338800005D4D48 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		653A257728338800005D4D48 /* Build configuration list for PBXNativeTarget "MyHeartCountsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				653A257828338800005D4D48 /* Debug */,
+				2FEE10332998C89C000822E1 /* Test */,
+				653A257928338800005D4D48 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2F49B7742980407B00BCB272 /* XCRemoteSwiftPackageReference "Spezi" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.0;
+			};
+		};
+		2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.59.0;
+			};
+		};
+		2FB099B42A875E2B00B20952 /* XCRemoteSwiftPackageReference "HealthKitOnFHIR" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/HealthKitOnFHIR.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.2.13;
+			};
+		};
+		2FE5DC6229EDD883004B9AB4 /* XCRemoteSwiftPackageReference "SpeziAccount" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.6;
+			};
+		};
+		2FE5DC6529EDD894004B9AB4 /* XCRemoteSwiftPackageReference "SpeziContact" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziContact.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.2;
+			};
+		};
+		2FE5DC8229EDD934004B9AB4 /* XCRemoteSwiftPackageReference "SpeziQuestionnaire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziQuestionnaire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.3;
+			};
+		};
+		2FE5DC8829EDD972004B9AB4 /* XCRemoteSwiftPackageReference "SpeziStorage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziStorage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+		2FE5DC8D29EDD980004B9AB4 /* XCRemoteSwiftPackageReference "SpeziViews" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziViews.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.10.0;
+			};
+		};
+		2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+		2FE5DC9729EDD9D9004B9AB4 /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		2FE5DC9A29EDD9EF004B9AB4 /* XCRemoteSwiftPackageReference "XCTHealthKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
+		5661551B2AB8384200209B80 /* XCRemoteSwiftPackageReference "swift-package-list" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/FelixHerrmann/swift-package-list";
+			requirement = {
+				kind = exactVersion;
+				version = 4.6.0;
+			};
+		};
+		56E708332BB06B7100B08F0A /* XCRemoteSwiftPackageReference "SpeziLicense" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziLicense.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.1;
+			};
+		};
+		803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.5;
+			};
+		};
+		803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziFirebase.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.4;
+			};
+		};
+		8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.4;
+			};
+		};
+		8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SFSafeSymbols/SFSafeSymbols";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.2.0;
+			};
+		};
+		8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziOnboarding.git";
+			requirement = {
+				kind = exactVersion;
+				version = "2.0.0-alpha.5";
+			};
+		};
+		809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.1;
+			};
+		};
+		A945FCD32C9C6BFA00B9EBC7 /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/ResearchKitOnFHIR.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.3;
+			};
+		};
+		A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziNotifications.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2F49B7752980407B00BCB272 /* Spezi */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F49B7742980407B00BCB272 /* XCRemoteSwiftPackageReference "Spezi" */;
+			productName = Spezi;
+		};
+		2FB099AE2A875DF100B20952 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		2FB099B02A875DF100B20952 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		2FB099B52A875E2B00B20952 /* HealthKitOnFHIR */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FB099B42A875E2B00B20952 /* XCRemoteSwiftPackageReference "HealthKitOnFHIR" */;
+			productName = HealthKitOnFHIR;
+		};
+		2FBD738B2A3BD150004228E7 /* SpeziScheduler */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziScheduler;
+		};
+		2FE5DC6329EDD883004B9AB4 /* SpeziAccount */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC6229EDD883004B9AB4 /* XCRemoteSwiftPackageReference "SpeziAccount" */;
+			productName = SpeziAccount;
+		};
+		2FE5DC6629EDD894004B9AB4 /* SpeziContact */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC6529EDD894004B9AB4 /* XCRemoteSwiftPackageReference "SpeziContact" */;
+			productName = SpeziContact;
+		};
+		2FE5DC8329EDD934004B9AB4 /* SpeziQuestionnaire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC8229EDD934004B9AB4 /* XCRemoteSwiftPackageReference "SpeziQuestionnaire" */;
+			productName = SpeziQuestionnaire;
+		};
+		2FE5DC8929EDD972004B9AB4 /* SpeziLocalStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC8829EDD972004B9AB4 /* XCRemoteSwiftPackageReference "SpeziStorage" */;
+			productName = SpeziLocalStorage;
+		};
+		2FE5DC8E29EDD980004B9AB4 /* SpeziViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC8D29EDD980004B9AB4 /* XCRemoteSwiftPackageReference "SpeziViews" */;
+			productName = SpeziViews;
+		};
+		2FE5DC9829EDD9D9004B9AB4 /* XCTestExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC9729EDD9D9004B9AB4 /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
+			productName = XCTestExtensions;
+		};
+		2FE5DC9B29EDD9EF004B9AB4 /* XCTHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC9A29EDD9EF004B9AB4 /* XCRemoteSwiftPackageReference "XCTHealthKit" */;
+			productName = XCTHealthKit;
+		};
+		56E708342BB06B7100B08F0A /* SpeziLicense */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 56E708332BB06B7100B08F0A /* XCRemoteSwiftPackageReference "SpeziLicense" */;
+			productName = SpeziLicense;
+		};
+		56E7083A2BB06F6F00B08F0A /* SwiftPackageList */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5661551B2AB8384200209B80 /* XCRemoteSwiftPackageReference "swift-package-list" */;
+			productName = SwiftPackageList;
+		};
+		8004CE402D75BCAA00CC3008 /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziOnboarding;
+		};
+		8004CE432D75BCBE00CC3008 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		802141582D81F14000BF5D35 /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziOnboarding;
+		};
+		80270CFA2D67F68F0022251E /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		803166A22D75DE6100E9173B /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziOnboarding;
+		};
+		803166A52D75DE7700E9173B /* SpeziScheduler */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziScheduler;
+		};
+		803166A72D75DE7700E9173B /* SpeziSchedulerUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziSchedulerUI;
+		};
+		803166AA2D75DE8B00E9173B /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		803166B62D75E22E00E9173B /* SpeziHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKit;
+		};
+		803166B82D75E22E00E9173B /* SpeziHealthKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKitUI;
+		};
+		803241DF2D7B599300F7DE8B /* SpeziScheduler */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */;
+			productName = SpeziScheduler;
+		};
+		803241E12D7B599300F7DE8B /* SpeziSchedulerUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */;
+			productName = SpeziSchedulerUI;
+		};
+		803241E92D7B5D5600F7DE8B /* SpeziHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
+			productName = SpeziHealthKit;
+		};
+		803241EB2D7B5D5600F7DE8B /* SpeziHealthKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 803241E82D7B5D5600F7DE8B /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
+			productName = SpeziHealthKitUI;
+		};
+		803D2B412D8981EA00DAEF9B /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		803D2B432D8981EA00DAEF9B /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudyDefinition;
+		};
+		803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKit;
+		};
+		803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKitUI;
+		};
+		804B90212D86F10F00F9F431 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziOnboarding;
+		};
+		805B42222DA6BDBF004C690D /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		805B42242DA6BDC4004C690D /* SwiftPackageListPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5661551B2AB8384200209B80 /* XCRemoteSwiftPackageReference "swift-package-list" */;
+			productName = "plugin:SwiftPackageListPlugin";
+		};
+		805C02F12D832EFB005B38D9 /* SpeziFirebaseAccount */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */;
+			productName = SpeziFirebaseAccount;
+		};
+		805C02F32D832EFB005B38D9 /* SpeziFirebaseAccountStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */;
+			productName = SpeziFirebaseAccountStorage;
+		};
+		805C02F52D832EFB005B38D9 /* SpeziFirebaseConfiguration */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */;
+			productName = SpeziFirebaseConfiguration;
+		};
+		805C02F72D832EFB005B38D9 /* SpeziFirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */;
+			productName = SpeziFirebaseStorage;
+		};
+		805C02F92D832EFB005B38D9 /* SpeziFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */;
+			productName = SpeziFirestore;
+		};
+		8067823A2D9AD89600B40482 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		8067823C2D9AD89600B40482 /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudyDefinition;
+		};
+		80713BE42D93F48C00A2DB0A /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		80713BE62D93F48C00A2DB0A /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudyDefinition;
+		};
+		8076696D2D772C07001B980B /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+		807669702D772C40001B980B /* BitCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = BitCollections;
+		};
+		807669722D772C40001B980B /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		807669742D772C40001B980B /* DequeModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = DequeModule;
+		};
+		807669762D772C40001B980B /* HashTreeCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = HashTreeCollections;
+		};
+		807669782D772C40001B980B /* HeapModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = HeapModule;
+		};
+		8086001C2D75133B0044A054 /* SFSafeSymbols */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
+			productName = SFSafeSymbols;
+		};
+		8097DCB42D918B56000351D3 /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */;
+			productName = SpeziOnboarding;
+		};
+		809BEC472D9D720C00169F02 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudy;
+		};
+		809BEC492D9D720C00169F02 /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 809BEC462D9D720C00169F02 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudyDefinition;
+		};
+		80A81C682D7C89D400444A17 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziOnboarding;
+		};
+		80D612EF2D67A5D200FAE750 /* SpeziKeychainStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC8829EDD972004B9AB4 /* XCRemoteSwiftPackageReference "SpeziStorage" */;
+			productName = SpeziKeychainStorage;
+		};
+		80E6EFC62D83502000D513D4 /* SpeziOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziOnboarding;
+		};
+		80E7749D2D81B4B20035A0EE /* SpeziFirebaseAccount */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziFirebaseAccount;
+		};
+		80E7749F2D81B4B20035A0EE /* SpeziFirebaseAccountStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziFirebaseAccountStorage;
+		};
+		80E774A12D81B4B20035A0EE /* SpeziFirebaseConfiguration */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziFirebaseConfiguration;
+		};
+		80E774A32D81B4B20035A0EE /* SpeziFirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziFirebaseStorage;
+		};
+		80E774A52D81B4B20035A0EE /* SpeziFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziFirestore;
+		};
+		80E862132D8C630D0089B8E1 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		80E862152D8C630D0089B8E1 /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudyDefinition;
+		};
+		9739A0C52AD7B5730084BEA5 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		A94DDFFC2CBD1190004930BD /* SpeziNotifications */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */;
+			productName = SpeziNotifications;
+		};
+		A994264D2CD25EB3002F8BD5 /* XCTSpeziAccount */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC6229EDD883004B9AB4 /* XCRemoteSwiftPackageReference "SpeziAccount" */;
+			productName = XCTSpeziAccount;
+		};
+		A9947BF32CC142BD0068AA8A /* XCTSpeziNotifications */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */;
+			productName = XCTSpeziNotifications;
+		};
+		A9E1D3452C67B0A300CED217 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		A9E1D3472C67B0A700CED217 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 653A2545283387FE005D4D48 /* Project object */;
+}

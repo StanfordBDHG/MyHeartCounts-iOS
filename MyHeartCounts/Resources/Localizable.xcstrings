@@ -1,0 +1,415 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "– %@" : {
+
+    },
+    "ACCOUNT_SETUP_DESCRIPTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You may login to your existing account. Or create a new one if you don't have one already."
+          }
+        }
+      }
+    },
+    "ACCOUNT_SIGNED_IN_DESCRIPTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are already logged in with the account shown below. Continue or change your account by logging out."
+          }
+        }
+      }
+    },
+    "ACCOUNT_SUBTITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The My Heart Counts iOS application demonstrates the usage of the Firebase Account Module."
+          }
+        }
+      }
+    },
+    "All tasks have already been completed!" : {
+
+    },
+    "Allow Notifications" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Notifications"
+          }
+        }
+      }
+    },
+    "Are you able to perform physical activities?" : {
+
+    },
+    "Are you sure you want to leave the '%@' study?" : {
+
+    },
+    "Before we can continue,\nwe need to learn a little about you" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Check out our other work" : {
+
+    },
+    "Close" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "Complete" : {
+
+    },
+    "Consent Export Title" : {
+
+    },
+    "CONSENT_LOADING_ERROR" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please include a markdown based document named \"ConsentDocument\" in your module Bundle."
+          }
+        }
+      }
+    },
+    "Continue" : {
+
+    },
+    "Date of Birth" : {
+
+    },
+    "Disclosure Indicator" : {
+
+    },
+    "Do you speak %@?" : {
+
+    },
+    "End Study Participation" : {
+
+    },
+    "Enroll in Study" : {
+
+    },
+    "Fetching…" : {
+
+    },
+    "Grant Access" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grant Access"
+          }
+        }
+      }
+    },
+    "Health Data" : {
+
+    },
+    "HealthKit Access" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthKit Access"
+          }
+        }
+      }
+    },
+    "HEALTHKIT_PERMISSIONS_DESCRIPTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts needs read-access to some of the Health data collected by your iPhone and Apple Watch. We will automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside the My Heart Counts study [@Paul how should we phrase this exactly].\n\nYou can revoke this access at any time."
+          }
+        }
+      }
+    },
+    "HEALTHKIT_PERMISSIONS_SUBTITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow read-only Health data access"
+          }
+        }
+      }
+    },
+    "Heart Health" : {
+
+    },
+    "Language" : {
+
+    },
+    "Learn More" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn More"
+          }
+        }
+      }
+    },
+    "License Information" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "License Information"
+          }
+        }
+      }
+    },
+    "Link Arrow Symbol" : {
+
+    },
+    "My Heart Counts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts"
+          }
+        }
+      }
+    },
+    "News" : {
+
+    },
+    "Next" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "Next 2 weeks" : {
+
+    },
+    "No" : {
+
+    },
+    "No Internet" : {
+
+    },
+    "No Upcoming Tasks" : {
+
+    },
+    "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Spezi Scheduler module enables to send out local notifications when a new event of a task is scheduled."
+          }
+        }
+      }
+    },
+    "Notifications" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "Onboarding Consent Title" : {
+
+    },
+    "Participation Criteria" : {
+
+    },
+    "Physical Activity" : {
+
+    },
+    "Read Article" : {
+
+    },
+    "Region" : {
+
+    },
+    "Screening" : {
+
+    },
+    "Screening Results" : {
+
+    },
+    "Select a Region" : {
+
+    },
+    "Select Region" : {
+
+    },
+    "Selection Checkmark" : {
+
+    },
+    "Spezi Modules" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spezi Modules"
+          }
+        }
+      }
+    },
+    "Spezi Scheduler Notifications." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spezi Scheduler Notifications."
+          }
+        }
+      }
+    },
+    "Study not available" : {
+
+    },
+    "Study Participations" : {
+
+    },
+    "Swift Package Manager" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swift Package Manager"
+          }
+        }
+      }
+    },
+    "The Spezi Framework" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Spezi Framework"
+          }
+        }
+      }
+    },
+    "This study will request read-access to collect the following Health samples:" : {
+
+    },
+    "Today's Tasks" : {
+
+    },
+    "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
+
+    },
+    "TODO: make this look pretty!" : {
+
+    },
+    "TODO: rough information about (at least some) key study components here?" : {
+
+    },
+    "Unable to process text" : {
+
+    },
+    "Unenroll" : {
+
+    },
+    "Upcoming Tasks" : {
+
+    },
+    "Use alternative region picker" : {
+
+    },
+    "WELCOME_AREA1_DESCRIPTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Spezi Framework builds the foundation of this application."
+          }
+        }
+      }
+    },
+    "WELCOME_AREA2_DESCRIPTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spezi uses the Swift Package Manager to import it as a dependency."
+          }
+        }
+      }
+    },
+    "WELCOME_AREA3_DESCRIPTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spezi offers several modules including HealthKit integration, questionnaires, and more ..."
+          }
+        }
+      }
+    },
+    "WELCOME_SUBTITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to the My Heart Counts study"
+          }
+        }
+      }
+    },
+    "When were you born?" : {
+
+    },
+    "Where are you currently living?" : {
+
+    },
+    "World" : {
+
+    },
+    "Yes" : {
+
+    },
+    "You're all set.\n\nGreat to have you on board!" : {
+
+    },
+    "You're sadly not eligible to participate in the My Heart Counts study." : {
+
+    },
+    "Your Account" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Account"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

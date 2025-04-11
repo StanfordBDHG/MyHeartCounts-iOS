@@ -1,7 +1,7 @@
 #
-# This source file is part of the Stanford Spezi open source project
+# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
 #
-# SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
+# SPDX-FileCopyrightText: 2025 Stanford University and the project authors (see CONTRIBUTORS.md)
 #
 # SPDX-License-Identifier: MIT
 #
@@ -30,11 +30,12 @@ jobs:
       contents: read
   periphery:
     name: Periphery
-    uses: StanfordSpezi/.github/.github/workflows/periphery.yml@v2
+    uses: StanfordBDHG/.github/.github/workflows/periphery.yml@v2
     permissions:
       contents: read
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      strict: false
   markdownlinkcheck:
     name: Markdown Link Check
     uses: StanfordBDHG/.github/.github/workflows/markdown-link-check.yml@v2
@@ -48,6 +49,6 @@ jobs:
       actions: read
       contents: read
     with:
+      xcodeversion: '16.2'
       codeql: true
       fastlanelane: codeql
-      xcodeversion: "16.1" # Temporary workaround for: https://github.com/actions/runner-images/issues/11335. Remove when resolved.
