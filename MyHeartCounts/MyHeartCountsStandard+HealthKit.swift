@@ -9,6 +9,8 @@
 import FirebaseFirestore
 import Foundation
 import HealthKit
+import HealthKitOnFHIR
+import enum ModelsR4.ResourceProxy
 #if DEBUG
 import UserNotifications
 #endif
@@ -21,27 +23,29 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         // have a background task that just goes over the queue until its empty?
         // IDEA have a look at the batch/transaction APIs firebase gives us
         #if DEBUG
-            await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .willUpload)
+        await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .willUpload)
         #endif
         do {
             let batch = Firestore.firestore().batch()
             for sample in addedSamples {
                 do {
-                    logger.notice("Will upload \(sample)")
+                    logger.notice("Adding sample to batch \(sample)")
                     let document = try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
-                    try batch.setData(from: sample.resource, forDocument: document)
+                    try batch.setData(from: sample.resource(), forDocument: document)
                 } catch {
                     logger.error("Error saving HealthKit sample to Firebase: \(error)")
                     // maybe queue sample for later retry?
                     // (probably not needed, since firebase already seems to be doing this for us...)
                 }
             }
+            logger.notice("Will commit batch")
             try await batch.commit()
+            logger.notice("Did commit batch")
         } catch {
             logger.error("Error committing Firestore batch: \(error)")
         }
         #if DEBUG
-            await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
+        await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
         #endif
     }
     
@@ -65,7 +69,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     }
     
     
-    private func healthKitDocument(for sampleType: SampleType<some Any>, sampleId uuid: UUID) async throws -> DocumentReference {
+    private func healthKitDocument(for sampleType: SampleType<some Any>, sampleId uuid: UUID) async throws -> FirebaseFirestore.DocumentReference {
         try await firebaseConfiguration.userDocumentReference
             .collection("HealthKitObservations_\(sampleType.hkSampleType.identifier)")
             .document(uuid.uuidString)

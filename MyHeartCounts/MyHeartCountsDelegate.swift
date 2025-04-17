@@ -28,6 +28,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
             Scheduler()
             Notifications()
             ConfigureFirebaseAppAccessor()
+            BulkHealthExporter()
         }
     }
     

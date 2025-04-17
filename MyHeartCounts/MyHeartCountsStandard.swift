@@ -39,18 +39,16 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         switch event {
         case .deletingAccount:
             // QUESTION deleting the userDocument will probably also delete everything nested w/in it (eg: Questionnaire Resonse
-            do {
-                try await firebaseConfiguration.userDocumentReference.delete()
-                if let studyManager {
-                    try await MainActor.run {
-                        guard let enrollment = studyManager.studyEnrollments.first(where: { $0.studyId == mockMHCStudy.id }) else {
-                            return
-                        }
-                        try studyManager.unenroll(from: enrollment)
+            // NOTE: we want as many of these as possible to succeed; hence why we use try? everywhere...
+            try? FileManager.default.removeItem(at: .scheduledHealthKitUploads)
+            try? await firebaseConfiguration.userDocumentReference.delete()
+            if let studyManager {
+                await MainActor.run {
+                    guard let enrollment = studyManager.studyEnrollments.first(where: { $0.studyId == mockMHCStudy.id }) else {
+                        return
                     }
+                    try? studyManager.unenroll(from: enrollment)
                 }
-            } catch {
-                logger.error("Could not delete user document: \(error)")
             }
         case .associatedAccount, .detailsChanged, .disassociatingAccount:
             break

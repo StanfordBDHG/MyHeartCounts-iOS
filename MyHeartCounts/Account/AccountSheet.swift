@@ -84,6 +84,13 @@ struct AccountSheet: View {
                 }
             }
         }
+        #if DEBUG
+        Section {
+            NavigationLink("Health Data Bulk Upload") {
+                HealthImporterControlView()
+            }
+        }
+        #endif
         Section {
             NavigationLink {
                 ContributionsList(projectLicense: .mit)

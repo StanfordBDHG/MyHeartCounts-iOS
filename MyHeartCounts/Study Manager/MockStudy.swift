@@ -39,9 +39,9 @@ let mockMHCStudy = StudyDefinition(
         .healthDataCollection(.init(
             id: .mhcStudyComponentHealthDataCollection,
             sampleTypes: .init(
-                quantityTypes: [.heartRate, .stepCount, .activeEnergyBurned, .bloodOxygen],
-                correlationTypes: [.bloodPressure, .food],
-                categoryTypes: [.sleepAnalysis]
+                quantity: [.heartRate, .stepCount, .activeEnergyBurned, .bloodOxygen],
+                correlation: [.bloodPressure, .food],
+                category: [.sleepAnalysis]
             )
         )),
         .questionnaire(.init(id: .mhcStudyComponentQuestionnaire1, questionnaire: mhcQuestionnaire)),

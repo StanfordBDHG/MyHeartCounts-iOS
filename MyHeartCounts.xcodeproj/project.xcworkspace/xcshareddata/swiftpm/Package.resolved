@@ -1,5 +1,5 @@
 {
-  "originHash" : "2f04aa6bf3c61541574d21ff0dd0af7a26d2dae905ce7926da3014d3b45e45d9",
+  "originHash" : "d5125ba4602a7064162138105173f13295564848b0aff813a74bb29b8c46ef89",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "aff3db17e2276963d56fff0bac67bdf00da1c00a",
-        "version" : "0.2.14"
+        "revision" : "a0b6a7393894be173b3052f4735e59f712ed729c",
+        "version" : "0.2.15"
       }
     },
     {
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "342e463af6694bc279a8c0aa24791f81254dfe6c",
-        "version" : "2.1.4"
+        "branch" : "lukas/sequence-map-into-set",
+        "revision" : "7315c4c3784430a333370d2b9359cd229b7c9010"
       }
     },
     {
@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "d48e0709e8da72b578e354559872cfd92cbc6473",
-        "version" : "1.0.1"
+        "branch" : "lukas/bulk-exporter",
+        "revision" : "c5947ee54ec4f2e1a135898e93d085ff0d7d9c18"
       }
     },
     {
@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "badd0563462ac1983ed75f06649e7e9ab1e73c1e",
-        "version" : "0.1.1"
+        "branch" : "lukas/healthkit-updates",
+        "revision" : "00db281b6f279f9e83336edfb7c73add5503a577"
       }
     },
     {
