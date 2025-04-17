@@ -6,15 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Spezi
-import SpeziFirebaseAccount
-import class SpeziOnboarding.OnboardingNavigationPath
-import SpeziViews
-import SwiftUI
-import class ModelsR4.QuestionnaireResponse
 import OSLog
+import Spezi
+import SwiftUI
 
 
+// intentionally a global variable
 let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "")
 
 

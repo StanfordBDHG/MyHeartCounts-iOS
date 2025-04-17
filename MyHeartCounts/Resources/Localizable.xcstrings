@@ -7,6 +7,16 @@
     "– %@" : {
 
     },
+    "%lld / %lld complete" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld / %2$lld complete"
+          }
+        }
+      }
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -59,6 +69,9 @@
     "Before we can continue,\nwe need to learn a little about you" : {
 
     },
+    "Bulk Export Manager" : {
+
+    },
     "Cancel" : {
 
     },
@@ -94,13 +107,25 @@
     "Continue" : {
 
     },
+    "Create Session" : {
+
+    },
+    "Current batch: %@" : {
+
+    },
     "Date of Birth" : {
+
+    },
+    "Delete ~/HealthKitUploads/*" : {
 
     },
     "Disclosure Indicator" : {
 
     },
     "Do you speak %@?" : {
+
+    },
+    "done" : {
 
     },
     "End Study Participation" : {
@@ -123,6 +148,9 @@
       }
     },
     "Health Data" : {
+
+    },
+    "Health Data Bulk Upload" : {
 
     },
     "HealthKit Access" : {
@@ -245,6 +273,12 @@
     "Participation Criteria" : {
 
     },
+    "Pause session" : {
+
+    },
+    "paused" : {
+
+    },
     "Physical Activity" : {
 
     },
@@ -252,6 +286,15 @@
 
     },
     "Region" : {
+
+    },
+    "Request full read access (Q)" : {
+
+    },
+    "running" : {
+
+    },
+    "scheduled" : {
 
     },
     "Screening" : {
@@ -288,6 +331,15 @@
           }
         }
       }
+    },
+    "Start session" : {
+
+    },
+    "State" : {
+
+    },
+    "Status" : {
+
     },
     "Study not available" : {
 
@@ -338,6 +390,22 @@
     },
     "Upcoming Tasks" : {
 
+    },
+    "Upload ~/HealthKitUploads/*" : {
+
+    },
+    "Upload Progress" : {
+
+    },
+    "Uploading batch %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Uploading batch %1$lld of %2$lld"
+          }
+        }
+      }
     },
     "Use alternative region picker" : {
 
