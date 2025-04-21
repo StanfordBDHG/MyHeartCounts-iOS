@@ -69,9 +69,6 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
             Section("Health Data") {
                 VStack(alignment: .leading) {
                     Text("This study will request read-access to collect the following Health samples:")
-//                    let allSampleTypes: [any AnySampleType] = (Array(collectedSampleTypes.quantityTypes) as [any AnySampleType])
-//                        .appending(contentsOf: Array(collectedSampleTypes.correlationTypes) as [any AnySampleType])
-//                        .appending(contentsOf: Array(collectedSampleTypes.categoryTypes) as [any AnySampleType])
                     let allSampleTypes = collectedSampleTypes
                         .sorted(by: { $0.displayTitle < $1.displayTitle })
                     ForEach(0..<allSampleTypes.endIndex, id: \.self) { (sampleTypeIdx: Int) in
