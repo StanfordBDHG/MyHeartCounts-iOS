@@ -7,16 +7,6 @@
     "– %@" : {
 
     },
-    "%lld / %lld complete" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld / %2$lld complete"
-          }
-        }
-      }
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -91,6 +81,9 @@
     "Complete" : {
 
     },
+    "completed" : {
+
+    },
     "Consent Export Title" : {
 
     },
@@ -107,25 +100,22 @@
     "Continue" : {
 
     },
-    "Create Session" : {
-
-    },
-    "Current batch: %@" : {
-
-    },
     "Date of Birth" : {
 
     },
+    "Debug Stuff" : {
+
+    },
     "Delete ~/HealthKitUploads/*" : {
+
+    },
+    "Delete&Reset Session" : {
 
     },
     "Disclosure Indicator" : {
 
     },
     "Do you speak %@?" : {
-
-    },
-    "done" : {
 
     },
     "End Study Participation" : {
@@ -135,6 +125,9 @@
 
     },
     "Fetching…" : {
+
+    },
+    "Files" : {
 
     },
     "Grant Access" : {
@@ -273,9 +266,6 @@
     "Participation Criteria" : {
 
     },
-    "Pause session" : {
-
-    },
     "paused" : {
 
     },
@@ -288,13 +278,10 @@
     "Region" : {
 
     },
-    "Request full read access (Q)" : {
+    "Replace Root View Controller" : {
 
     },
     "running" : {
-
-    },
-    "scheduled" : {
 
     },
     "Screening" : {
@@ -332,13 +319,7 @@
         }
       }
     },
-    "Start session" : {
-
-    },
     "State" : {
-
-    },
-    "Status" : {
 
     },
     "Study not available" : {
@@ -356,6 +337,9 @@
           }
         }
       }
+    },
+    "terminated" : {
+
     },
     "The Spezi Framework" : {
       "localizations" : {
@@ -391,21 +375,8 @@
     "Upcoming Tasks" : {
 
     },
-    "Upload ~/HealthKitUploads/*" : {
+    "Update Files" : {
 
-    },
-    "Upload Progress" : {
-
-    },
-    "Uploading batch %lld of %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Uploading batch %1$lld of %2$lld"
-          }
-        }
-      }
     },
     "Use alternative region picker" : {
 

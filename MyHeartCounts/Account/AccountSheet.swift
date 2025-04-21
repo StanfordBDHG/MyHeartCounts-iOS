@@ -90,6 +90,11 @@ struct AccountSheet: View {
                 HealthImporterControlView()
             }
         }
+        Section {
+            NavigationLink("Debug Stuff") {
+                DebugStuffView()
+            }
+        }
         #endif
         Section {
             NavigationLink {

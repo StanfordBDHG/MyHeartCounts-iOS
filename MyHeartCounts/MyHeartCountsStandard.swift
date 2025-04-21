@@ -34,6 +34,15 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     var account: Account?
     
     init() {}
+    
+    @MainActor
+    func configure() {
+        Task {
+            if let studyManager = await self.studyManager {
+                try await studyManager.informAboutStudies([mockMHCStudy])
+            }
+        }
+    }
 
     func respondToEvent(_ event: AccountNotifications.Event) async {
         switch event {

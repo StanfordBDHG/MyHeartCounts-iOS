@@ -23,7 +23,7 @@ extension UUID { // QUESTION maybe use reverse-dns-strings instead of UUIDs?!
 
 
 let mockMHCStudy = StudyDefinition(
-    studyRevision: 0,
+    studyRevision: 1,
     metadata: .init(
         id: .mhcStudy,
         title: "My Heart Counts",

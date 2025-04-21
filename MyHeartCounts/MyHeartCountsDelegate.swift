@@ -11,6 +11,7 @@
 import Spezi
 import SpeziFirebaseConfiguration
 import SpeziHealthKit
+import SpeziHealthKitBulkExport
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziScheduler
@@ -29,6 +30,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
             Notifications()
             ConfigureFirebaseAppAccessor()
             BulkHealthExporter()
+            HistoricalHealthSamplesExportManager()
         }
     }
     

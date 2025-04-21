@@ -9,16 +9,17 @@
 import Foundation
 import HealthKitOnFHIR
 import SpeziHealthKit
+import SpeziHealthKitBulkExport
 
 
-struct FirebaseUploadHealthExportProcessor: BulkHealthExporter.BatchProcessor {
-    typealias Output = Void
+struct HistoricalSamplesToFHIRJSONProcessor: BatchProcessor {
+    typealias Output = URL?
     
-    func process<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) async throws {
+    func process<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) async throws -> URL? {
         guard !samples.isEmpty else {
-            return
+            return nil
         }
-        _ = try storeSamples(samples, of: sampleType)
+        return try storeSamples(samples, of: sampleType)
     }
     
     private func storeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {

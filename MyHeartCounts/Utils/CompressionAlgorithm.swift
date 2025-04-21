@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order type_contents_order
+
 import Foundation
 import zlib
 
@@ -116,8 +118,7 @@ enum Zlib: CompressionAlgorithm {
         do {
             return try result.get()
         } catch DecompressionError.other(Z_BUF_ERROR) {
-            return try Self.decompress(input, expectedOutputLength: expectedOutputLength + (expectedOutputLength / 2)
-            )
+            return try Self.decompress(input, expectedOutputLength: expectedOutputLength + (expectedOutputLength / 2))
         } catch {
             throw error
         }

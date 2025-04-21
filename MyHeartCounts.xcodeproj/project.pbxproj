@@ -38,8 +38,11 @@
 		803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
 		803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
 		804B90222D86F10F00F9F431 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 804B90212D86F10F00F9F431 /* SpeziStudy */; };
-		8053A9E22DB13DEF003B4EA4 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8053A9E12DB13DEF003B4EA4 /* SpeziStudy */; };
-		8053A9E42DB13DEF003B4EA4 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8053A9E32DB13DEF003B4EA4 /* SpeziStudyDefinition */; };
+		805363772DB6997600D7E8A3 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 805363762DB6997600D7E8A3 /* SpeziHealthKit */; };
+		805363792DB6997600D7E8A3 /* SpeziHealthKitBulkExport in Frameworks */ = {isa = PBXBuildFile; productRef = 805363782DB6997600D7E8A3 /* SpeziHealthKitBulkExport */; };
+		8053637B2DB6997600D7E8A3 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637A2DB6997600D7E8A3 /* SpeziHealthKitUI */; };
+		8053637E2DB699C200D7E8A3 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637D2DB699C200D7E8A3 /* SpeziStudy */; };
+		805363802DB699C200D7E8A3 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637F2DB699C200D7E8A3 /* SpeziStudyDefinition */; };
 		8055F2342D7C4E0D00CD7884 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */; };
 		805C02F22D832EFB005B38D9 /* SpeziFirebaseAccount in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F12D832EFB005B38D9 /* SpeziFirebaseAccount */; };
 		805C02F42D832EFB005B38D9 /* SpeziFirebaseAccountStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F32D832EFB005B38D9 /* SpeziFirebaseAccountStorage */; };
@@ -48,6 +51,11 @@
 		805C02FA2D832EFB005B38D9 /* SpeziFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F92D832EFB005B38D9 /* SpeziFirestore */; };
 		8067823B2D9AD89600B40482 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823A2D9AD89600B40482 /* SpeziStudy */; };
 		8067823D2D9AD89600B40482 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823C2D9AD89600B40482 /* SpeziStudyDefinition */; };
+		806EB94D2DB5029B000D78A5 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB94C2DB5029B000D78A5 /* SpeziHealthKit */; };
+		806EB94F2DB5029B000D78A5 /* SpeziHealthKitBulkExport in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB94E2DB5029B000D78A5 /* SpeziHealthKitBulkExport */; };
+		806EB9512DB5029B000D78A5 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB9502DB5029B000D78A5 /* SpeziHealthKitUI */; };
+		806EB9542DB502A9000D78A5 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB9532DB502A9000D78A5 /* SpeziStudy */; };
+		806EB9562DB502A9000D78A5 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB9552DB502A9000D78A5 /* SpeziStudyDefinition */; };
 		80713BE52D93F48C00A2DB0A /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE42D93F48C00A2DB0A /* SpeziStudy */; };
 		80713BE72D93F48C00A2DB0A /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE62D93F48C00A2DB0A /* SpeziStudyDefinition */; };
 		8076696E2D772C07001B980B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 8076696D2D772C07001B980B /* Algorithms */; };
@@ -123,7 +131,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */,
-				8053A9E42DB13DEF003B4EA4 /* SpeziStudyDefinition in Frameworks */,
 				2FE5DC6429EDD883004B9AB4 /* SpeziAccount in Frameworks */,
 				80713BE52D93F48C00A2DB0A /* SpeziStudy in Frameworks */,
 				803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */,
@@ -132,17 +139,20 @@
 				803166A32D75DE6100E9173B /* SpeziOnboarding in Frameworks */,
 				8004CE412D75BCAA00CC3008 /* SpeziOnboarding in Frameworks */,
 				805C02F82D832EFB005B38D9 /* SpeziFirebaseStorage in Frameworks */,
+				805363802DB699C200D7E8A3 /* SpeziStudyDefinition in Frameworks */,
 				808E10052DAD48F300DB240D /* SpeziHealthKit in Frameworks */,
+				806EB94D2DB5029B000D78A5 /* SpeziHealthKit in Frameworks */,
+				8053637E2DB699C200D7E8A3 /* SpeziStudy in Frameworks */,
 				2FB099AF2A875DF100B20952 /* FirebaseAuth in Frameworks */,
 				803D2B442D8981EA00DAEF9B /* SpeziStudyDefinition in Frameworks */,
 				807669732D772C40001B980B /* Collections in Frameworks */,
 				2FE5DC6729EDD894004B9AB4 /* SpeziContact in Frameworks */,
-				8053A9E22DB13DEF003B4EA4 /* SpeziStudy in Frameworks */,
 				80E774A62D81B4B20035A0EE /* SpeziFirestore in Frameworks */,
 				8067823B2D9AD89600B40482 /* SpeziStudy in Frameworks */,
 				80E862142D8C630D0089B8E1 /* SpeziStudy in Frameworks */,
 				2FE5DC8429EDD934004B9AB4 /* SpeziQuestionnaire in Frameworks */,
 				805C02FA2D832EFB005B38D9 /* SpeziFirestore in Frameworks */,
+				806EB9542DB502A9000D78A5 /* SpeziStudy in Frameworks */,
 				805C02F42D832EFB005B38D9 /* SpeziFirebaseAccountStorage in Frameworks */,
 				803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */,
 				2FB099B12A875DF100B20952 /* FirebaseFirestore in Frameworks */,
@@ -172,17 +182,23 @@
 				80D612F02D67A5D200FAE750 /* SpeziKeychainStorage in Frameworks */,
 				9739A0C62AD7B5730084BEA5 /* FirebaseStorage in Frameworks */,
 				803166B72D75E22E00E9173B /* SpeziHealthKit in Frameworks */,
+				806EB94F2DB5029B000D78A5 /* SpeziHealthKitBulkExport in Frameworks */,
 				80E7749E2D81B4B20035A0EE /* SpeziFirebaseAccount in Frameworks */,
 				803166A82D75DE7700E9173B /* SpeziSchedulerUI in Frameworks */,
 				807669792D772C40001B980B /* HeapModule in Frameworks */,
 				2F49B7762980407C00BCB272 /* Spezi in Frameworks */,
 				2FE5DC8F29EDD980004B9AB4 /* SpeziViews in Frameworks */,
 				808E10072DAD48F300DB240D /* SpeziHealthKitUI in Frameworks */,
+				8053637B2DB6997600D7E8A3 /* SpeziHealthKitUI in Frameworks */,
 				803166A62D75DE7700E9173B /* SpeziScheduler in Frameworks */,
+				806EB9512DB5029B000D78A5 /* SpeziHealthKitUI in Frameworks */,
 				805C02F22D832EFB005B38D9 /* SpeziFirebaseAccount in Frameworks */,
 				804B90222D86F10F00F9F431 /* SpeziStudy in Frameworks */,
+				805363792DB6997600D7E8A3 /* SpeziHealthKitBulkExport in Frameworks */,
 				2FBD738C2A3BD150004228E7 /* SpeziScheduler in Frameworks */,
 				805C02F62D832EFB005B38D9 /* SpeziFirebaseConfiguration in Frameworks */,
+				805363772DB6997600D7E8A3 /* SpeziHealthKit in Frameworks */,
+				806EB9562DB502A9000D78A5 /* SpeziStudyDefinition in Frameworks */,
 				80E862162D8C630D0089B8E1 /* SpeziStudyDefinition in Frameworks */,
 				803D2B422D8981EA00DAEF9B /* SpeziStudy in Frameworks */,
 				80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */,
@@ -323,8 +339,16 @@
 				8067823C2D9AD89600B40482 /* SpeziStudyDefinition */,
 				808E10042DAD48F300DB240D /* SpeziHealthKit */,
 				808E10062DAD48F300DB240D /* SpeziHealthKitUI */,
-				8053A9E12DB13DEF003B4EA4 /* SpeziStudy */,
-				8053A9E32DB13DEF003B4EA4 /* SpeziStudyDefinition */,
+				806EB94C2DB5029B000D78A5 /* SpeziHealthKit */,
+				806EB94E2DB5029B000D78A5 /* SpeziHealthKitBulkExport */,
+				806EB9502DB5029B000D78A5 /* SpeziHealthKitUI */,
+				806EB9532DB502A9000D78A5 /* SpeziStudy */,
+				806EB9552DB502A9000D78A5 /* SpeziStudyDefinition */,
+				805363762DB6997600D7E8A3 /* SpeziHealthKit */,
+				805363782DB6997600D7E8A3 /* SpeziHealthKitBulkExport */,
+				8053637A2DB6997600D7E8A3 /* SpeziHealthKitUI */,
+				8053637D2DB699C200D7E8A3 /* SpeziStudy */,
+				8053637F2DB699C200D7E8A3 /* SpeziStudyDefinition */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -392,6 +416,7 @@
 				TargetAttributes = {
 					653A254C283387FE005D4D48 = {
 						CreatedOnToolsVersion = 13.4;
+						LastSwiftMigration = 1620;
 					};
 					653A255C28338800005D4D48 = {
 						CreatedOnToolsVersion = 13.4;
@@ -434,7 +459,8 @@
 				803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */,
 				805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */,
 				8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */,
-				8053A9E02DB13DEF003B4EA4 /* XCRemoteSwiftPackageReference "SpeziStudy" */,
+				805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
+				8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -596,6 +622,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -634,7 +661,9 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Test;
@@ -813,12 +842,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A485NLSB8K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
@@ -851,7 +881,9 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -861,6 +893,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
@@ -905,6 +938,7 @@
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -1153,12 +1187,20 @@
 				minimumVersion = 1.2.5;
 			};
 		};
-		8053A9E02DB13DEF003B4EA4 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
+		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+		8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				branch = "lukas/healthkit-updates";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.2;
 			};
 		};
 		805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {
@@ -1359,14 +1401,29 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;
 		};
-		8053A9E12DB13DEF003B4EA4 /* SpeziStudy */ = {
+		805363762DB6997600D7E8A3 /* SpeziHealthKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8053A9E02DB13DEF003B4EA4 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			package = 805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
+			productName = SpeziHealthKit;
+		};
+		805363782DB6997600D7E8A3 /* SpeziHealthKitBulkExport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
+			productName = SpeziHealthKitBulkExport;
+		};
+		8053637A2DB6997600D7E8A3 /* SpeziHealthKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
+			productName = SpeziHealthKitUI;
+		};
+		8053637D2DB699C200D7E8A3 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
 			productName = SpeziStudy;
 		};
-		8053A9E32DB13DEF003B4EA4 /* SpeziStudyDefinition */ = {
+		8053637F2DB699C200D7E8A3 /* SpeziStudyDefinition */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8053A9E02DB13DEF003B4EA4 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			package = 8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
 			productName = SpeziStudyDefinition;
 		};
 		8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */ = {
@@ -1413,6 +1470,26 @@
 			productName = SpeziStudy;
 		};
 		8067823C2D9AD89600B40482 /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudyDefinition;
+		};
+		806EB94C2DB5029B000D78A5 /* SpeziHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKit;
+		};
+		806EB94E2DB5029B000D78A5 /* SpeziHealthKitBulkExport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKitBulkExport;
+		};
+		806EB9502DB5029B000D78A5 /* SpeziHealthKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziHealthKitUI;
+		};
+		806EB9532DB502A9000D78A5 /* SpeziStudy */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziStudy;
+		};
+		806EB9552DB502A9000D78A5 /* SpeziStudyDefinition */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudyDefinition;
 		};
