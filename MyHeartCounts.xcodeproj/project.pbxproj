@@ -903,6 +903,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = CQRZ4E7K9U;
 				ENABLE_PREVIEWS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
