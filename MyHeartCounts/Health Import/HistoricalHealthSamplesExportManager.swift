@@ -33,11 +33,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     
     
     func configure() {
-        if !FeatureFlags.disableAutomaticBulkHealthExport {
-            Task {
-                await setupAndStartExportSession()
-            }
-        }
+        startAutomaticExportingIfNeeded()
         scheduleOrphanedExportsForUpload()
     }
     
@@ -58,6 +54,15 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                     }
                 }
             }
+        }
+    }
+    
+    
+    /// Starts the automatic collection of historical health data,
+    /// unless it's already running, or automatic collection is disabled via ``FeatureFlags/disableAutomaticBulkHealthExport``.
+    nonisolated func startAutomaticExportingIfNeeded() {
+        Task {
+            await setupAndStartExportSession()
         }
     }
     
