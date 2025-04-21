@@ -17,8 +17,12 @@ import SwiftUI
 struct FinalEnrollmentStep: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var path
+    
     @Environment(StudyManager.self)
     private var studyManager
+    
+    @Environment(HistoricalHealthSamplesExportManager.self)
+    private var historicalUploadManager
     
     var body: some View {
         OnboardingView {
@@ -29,6 +33,9 @@ struct FinalEnrollmentStep: View {
             OnboardingActionsView("Complete") {
                 do {
                     try await studyManager.enroll(in: mockMHCStudy)
+                    Task(priority: .background) {
+                        historicalUploadManager.startAutomaticExportingIfNeeded()
+                    }
                 } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
                     // NOTE(@lukas) make this an error in non-debug versions!
                 } catch {

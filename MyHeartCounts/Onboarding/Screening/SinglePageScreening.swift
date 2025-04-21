@@ -77,8 +77,9 @@ struct SinglePageScreening: View {
             if !Spezi.didLoadFirebase {
                 _ = await Task.detached {
                     // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
+                    // the crux here is that there isn't a mechanism by which Firebase would let us know when it
                     await Spezi.loadFirebase(for: region)
-                    try await Task.sleep(for: .seconds(4))
+                    try await Task.sleep(for: .seconds(3))
                 }.result
             }
             path.nextStep()

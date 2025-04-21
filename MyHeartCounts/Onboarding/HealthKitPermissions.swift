@@ -19,9 +19,6 @@ struct HealthKitPermissions: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
-    @Environment(HistoricalHealthSamplesExportManager.self)
-    private var historicalUploadManager
-    
     @State private var healthKitProcessing = false
     
     var body: some View {
@@ -50,9 +47,6 @@ struct HealthKitPermissions: View {
                         try await _Concurrency.Task.sleep(for: .seconds(5))
                     } else {
                         try await healthKit.askForAuthorization(for: .init(read: mockMHCStudy.allCollectedHealthData))
-                        Task(priority: .background) {
-                            historicalUploadManager.startAutomaticExportingIfNeeded()
-                        }
                     }
                 } catch {
                     print("Could not request HealthKit permissions.")
