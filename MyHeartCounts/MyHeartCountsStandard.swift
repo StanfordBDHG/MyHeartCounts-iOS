@@ -33,6 +33,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Account.self)
     var account: Account?
     
+    var enableDebugMode: Bool {
+        UserDefaults.standard.bool(forKey: "enableDebugMode")
+    }
+    
     init() {}
     
     @MainActor

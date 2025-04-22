@@ -29,6 +29,9 @@ struct AccountSheet: View {
     
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
+    @AppStorage("enableDebugMode") private var enableDebugMode = true
+    
+    @State private var debugModeLabelId = UUID()
     
     var body: some View {
         NavigationStack {
@@ -84,18 +87,17 @@ struct AccountSheet: View {
                 }
             }
         }
-        #if true || DEBUG
-        Section {
-            NavigationLink("Health Data Bulk Upload") {
-                HealthImporterControlView()
+        Section("Debug Mode") {
+            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
+            if enableDebugMode {
+                NavigationLink("Health Data Bulk Upload") {
+                    HealthImporterControlView()
+                }
+                NavigationLink("Debug Stuff") {
+                    DebugStuffView()
+                }
             }
         }
-        Section {
-            NavigationLink("Debug Stuff") {
-                DebugStuffView()
-            }
-        }
-        #endif
         Section {
             NavigationLink {
                 ContributionsList(projectLicense: .mit)

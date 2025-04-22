@@ -31,11 +31,14 @@ struct HomeTab: RootViewTab {
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var historicalDataExportMgr
     
+    @AppStorage("enableDebugMode")
+    private var enableDebugMode = true
+    
     var body: some View {
         NavigationStack {
             Form {
                 topActionsFormContent
-                if let session = historicalDataExportMgr.session, session.state == .running {
+                if enableDebugMode, let session = historicalDataExportMgr.session, session.state == .running {
                     Section("[DEBUG] Historical Data Bulk Export") {
                         sectionContent(for: session)
                     }

@@ -103,6 +103,9 @@
     "Date of Birth" : {
 
     },
+    "Debug Mode" : {
+
+    },
     "Debug Stuff" : {
 
     },
@@ -116,6 +119,9 @@
 
     },
     "Do you speak %@?" : {
+
+    },
+    "Enable Debug Mode" : {
 
     },
     "End Study Participation" : {
