@@ -15,19 +15,22 @@ import SpeziHealthKitBulkExport
 import SpeziStudy
 
 
+@Observable
 @MainActor
 final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible, Sendable {
-    @Dependency(Account.self)
+    // swiftlint:disable attributes
+    @ObservationIgnored @Dependency(Account.self)
     private var account: Account?
     
-    @Dependency(StudyManager.self)
+    @ObservationIgnored @Dependency(StudyManager.self)
     private var studyManager
     
-    @Dependency(BulkHealthExporter.self)
+    @ObservationIgnored @Dependency(BulkHealthExporter.self)
     private var bulkExporter
     
-    @Application(\.logger)
+    @ObservationIgnored @Application(\.logger)
     private var logger
+    // swiftlint:enable attributes
     
     private(set) var session: (any BulkExportSession<HistoricalSamplesToFHIRJSONProcessor>)?
     
@@ -89,7 +92,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                 session = try await bulkExporter.session(
                     withId: .mhcHistoricalDataExport,
                     for: study.allCollectedHealthData,
-                    startDate: .oldestSample,
+                    startDate: .last(DateComponents(year: 5)),
                     using: HistoricalSamplesToFHIRJSONProcessor()
                 )
             } catch {

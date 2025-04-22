@@ -10,6 +10,7 @@ import Foundation
 import SFSafeSymbols
 import Spezi
 import SpeziAccount
+import SpeziHealthKitBulkExport
 import SpeziQuestionnaire
 import SpeziScheduler
 import SpeziSchedulerUI
@@ -27,10 +28,18 @@ struct HomeTab: RootViewTab {
     
     @State private var actionCards: [ActionCard] = []
     
+    @Environment(HistoricalHealthSamplesExportManager.self)
+    private var historicalDataExportMgr
+    
     var body: some View {
         NavigationStack {
             Form {
                 topActionsFormContent
+                if let session = historicalDataExportMgr.session, session.state == .running {
+                    Section("[DEBUG] Historical Data Bulk Export") {
+                        sectionContent(for: session)
+                    }
+                }
                 scheduleFormContent
             }
             .navigationTitle("My Heart Counts")
@@ -56,6 +65,16 @@ struct HomeTab: RootViewTab {
     @ViewBuilder private var scheduleFormContent: some View {
         makeSection("Today's Tasks") {
             UpcomingTasksList(timeRange: .today)
+        }
+    }
+    
+    @ViewBuilder
+    private func sectionContent(for session: any BulkExportSession) -> some View {
+        LabeledContent("State") {
+            Text(session.state.displayTitle)
+        }
+        if let progress = session.progress {
+            ProgressView(progress)
         }
     }
     

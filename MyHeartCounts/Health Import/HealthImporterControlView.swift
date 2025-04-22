@@ -78,7 +78,7 @@ extension Sequence {
 }
 
 extension BulkExportSessionState {
-    fileprivate var displayTitle: String {
+    var displayTitle: String {
         switch self {
         case .paused:
             "paused"
