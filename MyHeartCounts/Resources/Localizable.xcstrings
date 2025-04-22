@@ -7,6 +7,9 @@
     "– %@" : {
 
     },
+    "[DEBUG] Historical Data Bulk Export" : {
+
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -59,6 +62,9 @@
     "Before we can continue,\nwe need to learn a little about you" : {
 
     },
+    "Bulk Export Manager" : {
+
+    },
     "Cancel" : {
 
     },
@@ -97,10 +103,25 @@
     "Date of Birth" : {
 
     },
+    "Debug Mode" : {
+
+    },
+    "Debug Stuff" : {
+
+    },
+    "Delete ~/HealthKitUploads/*" : {
+
+    },
+    "Delete&Reset Session" : {
+
+    },
     "Disclosure Indicator" : {
 
     },
     "Do you speak %@?" : {
+
+    },
+    "Enable Debug Mode" : {
 
     },
     "End Study Participation" : {
@@ -123,6 +144,9 @@
       }
     },
     "Health Data" : {
+
+    },
+    "Health Data Bulk Upload" : {
 
     },
     "HealthKit Access" : {
@@ -254,6 +278,9 @@
     "Region" : {
 
     },
+    "Replace Root View Controller" : {
+
+    },
     "Screening" : {
 
     },
@@ -288,6 +315,9 @@
           }
         }
       }
+    },
+    "State" : {
+
     },
     "Study not available" : {
 

@@ -31,6 +31,9 @@ enum FeatureFlags {
     /// Specifying this flag implicitly also sets the ``useFirebaseEmulator`` flag to `true`.
     static let setupTestAccount = CommandLine.arguments.contains("--setupTestAccount")
     
+    /// Disables the automatic bulk export and upload of historical Health data
+    static let disableAutomaticBulkHealthExport = CommandLine.arguments.contains("--disableAutomaticHistoricalHealthExport")
+    
     /// Whether, when running on a real device, we should load a special, different Firebase config instead of the one that would regularly get loaded.
     ///
     /// If this flag is present, the ``DeferredConfigLoading`` module will unconditionally attempt to load

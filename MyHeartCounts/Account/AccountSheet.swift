@@ -29,6 +29,10 @@ struct AccountSheet: View {
     
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
+    @LocalPreference(.enableDebugMode)
+    private var enableDebugMode
+    
+    @State private var debugModeLabelId = UUID()
     
     var body: some View {
         NavigationStack {
@@ -81,6 +85,17 @@ struct AccountSheet: View {
                         makeEnrolledStudyRow(for: enrollment)
                     }
                     .disabled(enrollment.study == nil)
+                }
+            }
+        }
+        Section("Debug Mode") {
+            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
+            if enableDebugMode {
+                NavigationLink("Health Data Bulk Upload") {
+                    HealthImporterControlView()
+                }
+                NavigationLink("Debug Stuff") {
+                    DebugStuffView()
                 }
             }
         }

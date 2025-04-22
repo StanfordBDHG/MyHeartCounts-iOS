@@ -9,10 +9,10 @@
 import FirebaseFirestore
 import Foundation
 import HealthKit
-#if DEBUG
-import UserNotifications
-#endif
+import HealthKitOnFHIR
+import enum ModelsR4.ResourceProxy
 import SpeziHealthKit
+import UserNotifications
 
 
 extension MyHeartCountsStandard: HealthKitConstraint {
@@ -20,36 +20,38 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         // IDEA instead of performing the upload right in here, maybe add it to a queue and
         // have a background task that just goes over the queue until its empty?
         // IDEA have a look at the batch/transaction APIs firebase gives us
-        #if DEBUG
+        if enableDebugMode {
             await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .willUpload)
-        #endif
+        }
         do {
             let batch = Firestore.firestore().batch()
             for sample in addedSamples {
                 do {
-                    logger.notice("Will upload \(sample)")
+                    logger.notice("Adding sample to batch \(sample)")
                     let document = try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
-                    try batch.setData(from: sample.resource, forDocument: document)
+                    try batch.setData(from: sample.resource(), forDocument: document)
                 } catch {
                     logger.error("Error saving HealthKit sample to Firebase: \(error)")
                     // maybe queue sample for later retry?
                     // (probably not needed, since firebase already seems to be doing this for us...)
                 }
             }
+            logger.notice("Will commit batch")
             try await batch.commit()
+            logger.notice("Did commit batch")
         } catch {
             logger.error("Error committing Firestore batch: \(error)")
         }
-        #if DEBUG
+        if enableDebugMode {
             await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
-        #endif
+        }
     }
     
     
     func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
-        #if DEBUG
+        if enableDebugMode {
             await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .willUpload)
-        #endif
+        }
         for object in deletedObjects {
             do {
                 logger.debug("Will delete \(object)")
@@ -59,13 +61,13 @@ extension MyHeartCountsStandard: HealthKitConstraint {
                 // (probably not needed, since firebase already seems to be doing this for us...)
             }
         }
-        #if DEBUG
+        if enableDebugMode {
             await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .didUpload)
-        #endif
+        }
     }
     
     
-    private func healthKitDocument(for sampleType: SampleType<some Any>, sampleId uuid: UUID) async throws -> DocumentReference {
+    private func healthKitDocument(for sampleType: SampleType<some Any>, sampleId uuid: UUID) async throws -> FirebaseFirestore.DocumentReference {
         try await firebaseConfiguration.userDocumentReference
             .collection("HealthKitObservations_\(sampleType.hkSampleType.identifier)")
             .document(uuid.uuidString)
@@ -73,7 +75,6 @@ extension MyHeartCountsStandard: HealthKitConstraint {
 }
 
 
-#if DEBUG
 extension MyHeartCountsStandard {
     private enum HealthKitUploadStage: String {
         case willUpload = "will"
@@ -100,4 +101,3 @@ extension MyHeartCountsStandard {
         try? await notificationCenter.add(request)
     }
 }
-#endif

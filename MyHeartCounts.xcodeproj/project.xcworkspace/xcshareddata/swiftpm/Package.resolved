@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "aff3db17e2276963d56fff0bac67bdf00da1c00a",
-        "version" : "0.2.14"
+        "revision" : "a0b6a7393894be173b3052f4735e59f712ed729c",
+        "version" : "0.2.15"
       }
     },
     {
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "342e463af6694bc279a8c0aa24791f81254dfe6c",
-        "version" : "2.1.4"
+        "revision" : "6e66cc6a843ef3e1273c6370c04183f0c5325e68",
+        "version" : "2.1.5"
       }
     },
     {
@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "d48e0709e8da72b578e354559872cfd92cbc6473",
-        "version" : "1.0.1"
+        "revision" : "34ac3eb64f8c966bd034496753653915b760be02",
+        "version" : "1.1.1"
       }
     },
     {
@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "badd0563462ac1983ed75f06649e7e9ab1e73c1e",
-        "version" : "0.1.1"
+        "revision" : "a8110d69073eb385a44e405478ffa3942b1bf0a8",
+        "version" : "0.1.2"
       }
     },
     {

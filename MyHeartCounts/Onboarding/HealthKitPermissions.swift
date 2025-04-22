@@ -8,13 +8,14 @@
 
 import SpeziHealthKit
 import SpeziOnboarding
+import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
 
 
 struct HealthKitPermissions: View {
     @Environment(HealthKit.self)
-    private var healthKitDataSource
+    private var healthKit
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
@@ -45,7 +46,7 @@ struct HealthKitPermissions: View {
                     if ProcessInfo.processInfo.isPreviewSimulator {
                         try await _Concurrency.Task.sleep(for: .seconds(5))
                     } else {
-                        try await healthKitDataSource.askForAuthorization(for: .init(mockMHCStudy.allCollectedHealthData))
+                        try await healthKit.askForAuthorization(for: .init(read: mockMHCStudy.allCollectedHealthData))
                     }
                 } catch {
                     print("Could not request HealthKit permissions.")
