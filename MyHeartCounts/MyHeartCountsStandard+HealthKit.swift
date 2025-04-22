@@ -22,7 +22,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         // IDEA instead of performing the upload right in here, maybe add it to a queue and
         // have a background task that just goes over the queue until its empty?
         // IDEA have a look at the batch/transaction APIs firebase gives us
-        #if DEBUG
+        #if true || DEBUG
         await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .willUpload)
         #endif
         do {
@@ -44,15 +44,15 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         } catch {
             logger.error("Error committing Firestore batch: \(error)")
         }
-        #if DEBUG
+        #if true || DEBUG
         await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
         #endif
     }
     
     
     func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
-        #if DEBUG
-            await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .willUpload)
+        #if true || DEBUG
+        await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .willUpload)
         #endif
         for object in deletedObjects {
             do {
@@ -63,8 +63,8 @@ extension MyHeartCountsStandard: HealthKitConstraint {
                 // (probably not needed, since firebase already seems to be doing this for us...)
             }
         }
-        #if DEBUG
-            await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .didUpload)
+        #if true || DEBUG
+        await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .didUpload)
         #endif
     }
     

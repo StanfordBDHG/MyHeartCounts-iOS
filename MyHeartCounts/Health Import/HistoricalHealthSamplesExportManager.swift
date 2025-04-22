@@ -70,15 +70,10 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     /// Cancels the session, deletes all progress associated with it, and restarts it
     ///
     /// - Note: This is intended primarily for debugging purposes
-    func fullyResetSession() throws {
-        try bulkExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
-        Task { @Sendable in
-            while let session = self.session, session.state != .terminated {
-                try await Task.sleep(for: .seconds(1))
-            }
-            self.session = nil
-            await self.setupAndStartExportSession()
-        }
+    func fullyResetSession() async throws {
+        try await bulkExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
+        self.session = nil
+        await self.setupAndStartExportSession()
     }
     
     

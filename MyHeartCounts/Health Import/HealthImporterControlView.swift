@@ -29,7 +29,7 @@ struct HealthImporterControlView: View {
         Form {
             actionsSection
             AsyncButton("Delete&Reset Session", state: $viewState) {
-                try exportManager.fullyResetSession()
+                try await exportManager.fullyResetSession()
             }
             if let session = exportManager.session {
                 section(for: session)

@@ -1193,7 +1193,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
+				minimumVersion = 1.1.1;
 			};
 		};
 		8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {

@@ -84,7 +84,7 @@ struct AccountSheet: View {
                 }
             }
         }
-        #if DEBUG
+        #if true || DEBUG
         Section {
             NavigationLink("Health Data Bulk Upload") {
                 HealthImporterControlView()
