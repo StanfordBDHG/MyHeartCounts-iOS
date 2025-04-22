@@ -29,7 +29,8 @@ struct AccountSheet: View {
     
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
-    @AppStorage("enableDebugMode") private var enableDebugMode = true
+    @LocalPreference(.enableDebugMode)
+    private var enableDebugMode
     
     @State private var debugModeLabelId = UUID()
     

@@ -11,8 +11,8 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 import enum ModelsR4.ResourceProxy
-import UserNotifications
 import SpeziHealthKit
+import UserNotifications
 
 
 extension MyHeartCountsStandard: HealthKitConstraint {

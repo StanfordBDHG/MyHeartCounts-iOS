@@ -31,8 +31,8 @@ struct HomeTab: RootViewTab {
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var historicalDataExportMgr
     
-    @AppStorage("enableDebugMode")
-    private var enableDebugMode = true
+    @LocalPreference(.enableDebugMode)
+    private var enableDebugMode
     
     var body: some View {
         NavigationStack {

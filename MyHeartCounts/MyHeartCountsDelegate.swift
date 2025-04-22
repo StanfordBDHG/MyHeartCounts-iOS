@@ -39,9 +39,6 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? // swiftlint:disable:this discouraged_optional_collection
     ) -> Bool {
         UNUserNotificationCenter.current().delegate = self
-        UserDefaults.standard.register(defaults: [
-            "enableDebugMode": true
-        ])
         let prefs = LocalPreferencesStore.shared
         if FeatureFlags.showOnboarding {
             prefs[.onboardingFlowComplete] = false

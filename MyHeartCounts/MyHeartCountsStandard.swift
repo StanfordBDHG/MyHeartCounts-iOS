@@ -34,7 +34,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     var account: Account?
     
     var enableDebugMode: Bool {
-        UserDefaults.standard.bool(forKey: "enableDebugMode")
+        LocalPreferencesStore.shared[.enableDebugMode]
     }
     
     init() {}
