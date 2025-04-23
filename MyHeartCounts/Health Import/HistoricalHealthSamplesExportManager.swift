@@ -170,7 +170,6 @@ extension HistoricalHealthSamplesExportManager {
     /// Uploads the specified file into the current user's `bulkHealthKitUploads` Firebase Storage directory, and deletes the local file afterwards.
     private nonisolated func uploadAndDelete(_ url: URL) async throws(UploadError) {
         await MainActor.run {
-            logger.notice("Asked to upload \(url)")
             incrementTotalNumUploads()
         }
         guard let accountId = await account?.details?.accountId else {
@@ -180,9 +179,7 @@ extension HistoricalHealthSamplesExportManager {
         let metadata = StorageMetadata()
         metadata.contentType = "application/octet-stream"
         do {
-            await logger.notice("Will upload \(url)")
             _ = try await storageRef.putFileAsync(from: url, metadata: metadata)
-            await logger.notice(" Did upload \(url)")
             await incrementNumCompletedUploads()
         } catch {
             throw .uploadFailed(error)
