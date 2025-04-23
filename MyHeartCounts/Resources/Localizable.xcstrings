@@ -7,9 +7,6 @@
     "– %@" : {
 
     },
-    "[DEBUG] Historical Data Bulk Export" : {
-
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -189,6 +186,9 @@
       }
     },
     "Heart Health" : {
+
+    },
+    "Historical Data Bulk Export" : {
 
     },
     "Label?" : {
@@ -400,6 +400,9 @@
 
     },
     "Upcoming Tasks" : {
+
+    },
+    "Uploading Collected Health Data" : {
 
     },
     "Use alternative region picker" : {

@@ -38,11 +38,7 @@ struct HomeTab: RootViewTab {
         NavigationStack {
             Form {
                 topActionsFormContent
-                if let session = historicalDataExportMgr.session, session.state == .running {
-                    Section("Historical Data Bulk Export") {
-                        sectionContent(for: session)
-                    }
-                }
+                historicalHealthDataUploadSection
                 scheduleFormContent
             }
             .navigationTitle("My Heart Counts")
@@ -68,6 +64,26 @@ struct HomeTab: RootViewTab {
     @ViewBuilder private var scheduleFormContent: some View {
         makeSection("Today's Tasks") {
             UpcomingTasksList(timeRange: .today)
+        }
+    }
+        
+    @ViewBuilder private var historicalHealthDataUploadSection: some View {
+        switch (historicalDataExportMgr.exportProgress, historicalDataExportMgr.uploadProgress) {
+        case (nil, nil):
+            EmptyView()
+        case (.some(let exportProgress), nil):
+            Section("Historical Data Bulk Export") {
+                ProgressView(exportProgress)
+            }
+        case (nil, .some(let uploadProgress)):
+            Section("Historical Data Bulk Export") {
+                ProgressView(uploadProgress)
+            }
+        case let (.some(exportProgress), .some(uploadProgress)):
+            Section("Historical Data Bulk Export") {
+                ProgressView(exportProgress)
+                ProgressView(uploadProgress)
+            }
         }
     }
     

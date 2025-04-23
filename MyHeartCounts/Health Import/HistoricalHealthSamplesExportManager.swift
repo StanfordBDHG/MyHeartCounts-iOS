@@ -34,6 +34,16 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     
     private(set) var session: (any BulkExportSession<HistoricalSamplesToFHIRJSONProcessor>)?
     
+    /// A `Progress` instance representing the current health data export progress,
+    /// i.e. the progress of fetching historical samples, converting them into FHIR observations, and compressing them.
+    var exportProgress: Progress? {
+        session?.progress
+    }
+    
+    /// A `Progress` instance representing the current health upload progress,
+    /// i.e. the progress uploading collected historical health samples into the Firebase Storage.
+    @MainActor private(set) var uploadProgress: Progress?
+    
     
     func configure() {
         startAutomaticExportingIfNeeded()
@@ -138,9 +148,31 @@ extension HistoricalHealthSamplesExportManager {
         }
     }
     
+    @MainActor
+    private func incrementTotalNumUploads() {
+        if let uploadProgress = self.uploadProgress {
+            uploadProgress.totalUnitCount += 1
+        } else {
+            let progress = Progress(totalUnitCount: 1)
+            progress.localizedDescription = String(localized: "Uploading Collected Health Data")
+            self.uploadProgress = progress
+        }
+    }
+    
+    @MainActor
+    private func incrementNumCompletedUploads() {
+        uploadProgress?.completedUnitCount += 1
+        if uploadProgress?.isFinished == true {
+            uploadProgress = nil
+        }
+    }
+    
     /// Uploads the specified file into the current user's `bulkHealthKitUploads` Firebase Storage directory, and deletes the local file afterwards.
     private nonisolated func uploadAndDelete(_ url: URL) async throws(UploadError) {
-        await logger.notice("Asked to upload \(url)")
+        await MainActor.run {
+            logger.notice("Asked to upload \(url)")
+            incrementTotalNumUploads()
+        }
         guard let accountId = await account?.details?.accountId else {
             throw .noAccount
         }
@@ -151,6 +183,7 @@ extension HistoricalHealthSamplesExportManager {
             await logger.notice("Will upload \(url)")
             _ = try await storageRef.putFileAsync(from: url, metadata: metadata)
             await logger.notice(" Did upload \(url)")
+            await incrementNumCompletedUploads()
         } catch {
             throw .uploadFailed(error)
         }
