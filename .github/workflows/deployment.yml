@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - lukas/dynamic-study-loading
   workflow_dispatch:
     inputs:
       environment:
