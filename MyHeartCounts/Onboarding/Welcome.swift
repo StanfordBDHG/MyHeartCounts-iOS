@@ -16,6 +16,9 @@ struct Welcome: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
+    @Environment(StudyDefinitionLoader.self)
+    private var studyLoader
+    
     var body: some View {
         OnboardingView(
             title: "My Heart Counts",
@@ -48,9 +51,23 @@ struct Welcome: View {
             ],
             actionText: "Learn More",
             action: {
-                onboardingPath.nextStep()
+                goToNextStep()
             }
         )
+    }
+    
+    private func goToNextStep() {
+        switch studyLoader.studyDefinition {
+        case .success:
+            // we have successfully loaded a study definition and can safely proceed to the next step.
+            // all upcoming ordinary navigation steps are allowed to assume that there exists a non-nil
+            // study definition in the `StudyDefinitionLoader`.
+            // Note that we don't actually need to perform any loading on our own here; the StudyDefinitionLoader
+            // will automatically try to load the study as part of its configuration() step.
+            onboardingPath.nextStep()
+        case nil, .failure:
+            onboardingPath.append(customView: UnableToLoadStudyDefinitionStep())
+        }
     }
 }
 

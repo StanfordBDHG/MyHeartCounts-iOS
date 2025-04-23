@@ -130,6 +130,15 @@
     "Enroll in Study" : {
 
     },
+    "Error Fetching Study Info" : {
+
+    },
+    "Failed to Download Study Information" : {
+
+    },
+    "Failed to Load Study into App" : {
+
+    },
     "Fetching…" : {
 
     },
@@ -182,6 +191,9 @@
     "Heart Health" : {
 
     },
+    "Label?" : {
+
+    },
     "Language" : {
 
     },
@@ -208,6 +220,12 @@
     "Link Arrow Symbol" : {
 
     },
+    "Make sure your device is connected to the internet and try again" : {
+
+    },
+    "Message?" : {
+
+    },
     "My Heart Counts" : {
       "localizations" : {
         "en" : {
@@ -217,6 +235,9 @@
           }
         }
       }
+    },
+    "Network Issue" : {
+
     },
     "News" : {
 
@@ -281,6 +302,9 @@
     "Replace Root View Controller" : {
 
     },
+    "Retry" : {
+
+    },
     "Screening" : {
 
     },
@@ -325,6 +349,9 @@
     "Study Participations" : {
 
     },
+    "Subject?" : {
+
+    },
     "Swift Package Manager" : {
       "localizations" : {
         "en" : {
@@ -334,6 +361,12 @@
           }
         }
       }
+    },
+    "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
+
+    },
+    "The app was unable to load the study, but we're no sure why" : {
+
     },
     "The Spezi Framework" : {
       "localizations" : {

@@ -31,6 +31,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
             ConfigureFirebaseAppAccessor()
             BulkHealthExporter()
             HistoricalHealthSamplesExportManager()
+            StudyDefinitionLoader.shared
         }
     }
     

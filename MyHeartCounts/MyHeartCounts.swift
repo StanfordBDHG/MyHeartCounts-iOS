@@ -32,5 +32,6 @@ struct MyHeartCounts: App {
             )
         }
         .environment(appDelegate)
+        .environment(StudyDefinitionLoader.shared)
     }
 }

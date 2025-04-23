@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "a8110d69073eb385a44e405478ffa3942b1bf0a8",
-        "version" : "0.1.2"
+        "branch" : "lukas/historical-health-data-collection",
+        "revision" : "95ebbdd065b44b1c41038a1959db316b5a0bce5c"
       }
     },
     {
