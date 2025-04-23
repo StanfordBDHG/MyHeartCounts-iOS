@@ -81,6 +81,7 @@ struct UnableToLoadStudyDefinitionStep: View {
     ) -> some View {
         ContentUnavailableView {
             Image(systemSymbol: symbol)
+                .accessibilityHidden(true)
             Text(title)
                 .font(.headline)
         } description: {

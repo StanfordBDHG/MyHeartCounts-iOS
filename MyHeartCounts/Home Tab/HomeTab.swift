@@ -38,8 +38,8 @@ struct HomeTab: RootViewTab {
         NavigationStack {
             Form {
                 topActionsFormContent
-                if enableDebugMode, let session = historicalDataExportMgr.session, session.state == .running {
-                    Section("[DEBUG] Historical Data Bulk Export") {
+                if let session = historicalDataExportMgr.session, session.state == .running {
+                    Section("Historical Data Bulk Export") {
                         sectionContent(for: session)
                     }
                 }
