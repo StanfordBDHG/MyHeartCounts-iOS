@@ -23,7 +23,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     private var account: Account?
     
     @ObservationIgnored @Dependency(StudyManager.self)
-    private var studyManager
+    private var studyManager: StudyManager?
     
     @ObservationIgnored @Dependency(BulkHealthExporter.self)
     private var bulkExporter
@@ -84,7 +84,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     @discardableResult
     private func setupAndStartExportSession() async -> Bool {
         if session == nil {
-            guard let study = studyManager.studyEnrollments.first?.study else {
+            guard let study = studyManager?.studyEnrollments.first?.study else {
                 logger.error("\(#function) aborting: no study")
                 return false
             }
