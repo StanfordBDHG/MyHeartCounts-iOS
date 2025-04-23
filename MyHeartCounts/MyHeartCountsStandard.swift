@@ -42,6 +42,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     init() {}
     
+    
     @MainActor
     func configure() {
         Task {
