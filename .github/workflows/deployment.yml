@@ -12,15 +12,13 @@ on:
   push:
     branches:
       - main
-      - lukas/dynamic-study-loading
   workflow_dispatch:
     inputs:
       environment:
         description: |
           The GitHub deployment environment.
         required: true
-        default: 'staging'
-        type: choice
+        default: 'staging'        type: choice
         options:
           - staging
           - production
