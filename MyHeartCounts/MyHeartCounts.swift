@@ -30,8 +30,8 @@ struct MyHeartCounts: App {
             OnboardingSheet(
                 didCompleteOnboarding: $didCompleteOnboarding
             )
+            .environment(StudyDefinitionLoader.shared)
         }
         .environment(appDelegate)
-        .environment(StudyDefinitionLoader.shared)
     }
 }
