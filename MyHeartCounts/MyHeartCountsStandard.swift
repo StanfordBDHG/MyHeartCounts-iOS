@@ -47,7 +47,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func configure() {
         Task {
             if let studyManager = await self.studyManager,
-               let study = try? await studyLoader.reload() {
+               let study = try? await studyLoader.update() {
                 try await studyManager.informAboutStudies([study])
             }
         }

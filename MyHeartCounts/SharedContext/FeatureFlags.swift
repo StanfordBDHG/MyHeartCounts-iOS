@@ -38,5 +38,7 @@ enum FeatureFlags {
     ///
     /// If this flag is present, the ``DeferredConfigLoading`` module will unconditionally attempt to load
     /// the Firebase configuration file called `GoogleService-Info-Override.plist` stored in the main bundle.
+    ///
+    /// - Note: When this flag is specified, the app will always load the Study Definition for the US region.
     static let overrideFirebaseConfigOnDevice = CommandLine.arguments.contains("--overrideFirebaseConfigOnDevice")
 }

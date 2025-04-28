@@ -13,17 +13,19 @@ import SwiftUI
 
 /// Onboarding step intended to be used to signal to the user that the app was unable to fetch its study definition; most likely due to network connectivity issues.
 struct UnableToLoadStudyDefinitionStep: View {
+    @Environment(\.locale)
+    private var locale
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
-    
     @Environment(StudyDefinitionLoader.self)
     private var studyLoader
     
     @State private var viewState: ViewState = .idle
+    @State private var viewWidth: CGFloat = 0
     
     var body: some View {
         switch studyLoader.studyDefinition {
-        case nil:
+        case nil, .failure(.noLastUsedRegion):
             // the StudyLoader, for whatever reason, hasn't yet loaded the study.
             // it is extremely unlikely, if not even outright impossible, for us to end up in this View
             // with the loader being in this state, but just in case, we treat it as an unknown error and offer a retry functionality.
@@ -32,22 +34,37 @@ struct UnableToLoadStudyDefinitionStep: View {
                 title: "Failed to Download Study Information",
                 message: "The app was unable to load the study, but we're no sure why"
             ) {
-                AsyncButton("Retry", state: $viewState) {
-                    _ = try? await studyLoader.reload()
-                }
+                retryButton
             }
         case .failure(.unableToFetchFromServer(let error)):
-            makeBody(symbol: .wifiSlash, title: "Network Issue", message: "Make sure your device is connected to the internet and try again") {
-                Text("\(error)")
-                AsyncButton("Retry", state: $viewState) {
-                    _ = try? await studyLoader.reload()
-                }
+            makeBody(
+                symbol: .wifiSlash,
+                title: "Network Issue",
+                message: "Make sure your device is connected to the internet and try again",
+                additionalErrorInfo: error.localizedDescription
+            ) {
+                retryButton
             }
         case .failure(.unableToDecode(let error)):
             makeBody(
                 symbol: .xmarkOctagon,
                 title: "Failed to Load Study into App",
-                message: "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed."
+                message: "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed.",
+                additionalErrorInfo: error.localizedDescription
+            ) {
+                ShareLink(
+                    item: "https://spezi.stanford.edu",
+                    subject: Text("Subject?"),
+                    message: Text("Message?")
+                ) {
+                    Text("Label?")
+                }
+            }
+        case .failure(.unsupportedRegion(let region)):
+            makeBody(
+                symbol: .xmarkOctagon,
+                title: "Failed to Load Study into App",
+                message: "Your selected region (\(region.localizedName(in: locale, includeEmoji: .none))) currently isn't supported by MyHeart Counts"
             ) {
                 ShareLink(
                     item: "https://spezi.stanford.edu",
@@ -64,30 +81,46 @@ struct UnableToLoadStudyDefinitionStep: View {
                 onboardingPath.removeLast()
             }
         }
-        ContentUnavailableView(
-            "Error Fetching Study Info",
-            systemSymbol: .xmarkOctagon,
-            description: Text("")
-        )
     }
     
+    @ViewBuilder private var retryButton: some View {
+        AsyncButton(state: $viewState) {
+            // We don't need to handle the result here; the update() call will
+            // end up writing its result into the StudyDefinitionLoader, which is Observable,
+            // and will trigger a view update here.
+            _ = try? await studyLoader.update()
+        } label: {
+            Text("Retry")
+                // we need to manually set a min width here, since the parent ContentUnavailableView will otherwise
+                // try to make its actions subview as narrow as possible (which we don't want).
+                .frame(minWidth: viewWidth / 3, maxWidth: .infinity, minHeight: 38)
+        }
+        .buttonStyle(.borderedProminent)
+    }
     
     @ViewBuilder
     private func makeBody(
         symbol: SFSymbol,
         title: LocalizedStringResource,
         message: LocalizedStringResource,
-        @ViewBuilder actionButton: () -> some View
+        additionalErrorInfo: String? = nil,
+        @ViewBuilder actionButton: @escaping () -> some View
     ) -> some View {
-        ContentUnavailableView {
-            Image(systemSymbol: symbol)
-                .accessibilityHidden(true)
-            Text(title)
-                .font(.headline)
-        } description: {
-            Text(message)
-        } actions: {
-            actionButton()
+        HorizontalGeometryReader { width in
+            ContentUnavailableView {
+                Label(String(localized: title), systemSymbol: symbol)
+            } description: {
+                Text(message)
+                if let additionalErrorInfo {
+                    Text(additionalErrorInfo)
+                        .font(.footnote)
+                }
+            } actions: {
+                actionButton()
+            }
+            .onChange(of: width, initial: true) { _, width in
+                self.viewWidth = width
+            }
         }
     }
 }

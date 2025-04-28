@@ -45,8 +45,9 @@ enum DeferredConfigLoading {
         /// the firebase config for the specified region should be loaded
         case region(Locale.Region)
         /// the firebase config plist with the specified name should be loaded from the main bundle
-        case custom(plistNameInBundle: String)
+        case custom(plistNameInBundle: String, region: Locale.Region)
     }
+    
     
     private static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         #if TEST
@@ -55,8 +56,12 @@ enum DeferredConfigLoading {
         #endif
         #if !targetEnvironment(simulator)
         if FeatureFlags.overrideFirebaseConfigOnDevice {
-            LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = .custom(plistNameInBundle: "GoogleService-Info-Override")
-            return try _firebaseOptions(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
+            let selector = FirebaseConfigSelector.custom(
+                plistNameInBundle: "GoogleService-Info-Override",
+                region: .unitedStates
+            )
+            LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = selector
+            return try _firebaseOptions(for: selector)
         }
         #endif
         return try _firebaseOptions(for: configSelector)
@@ -100,7 +105,7 @@ enum DeferredConfigLoading {
                 throw .unableToLoadFirebaseConfigPlist(underlying: error)
             }
             return FirebaseOptions(contentsOfFile: tmpUrl.path)
-        case .custom(let plistNameInBundle):
+        case .custom(let plistNameInBundle, region: _):
             guard let bundlePlistUrl = Bundle.main.url(forResource: plistNameInBundle, withExtension: "plist") else {
                 return nil
             }
@@ -114,7 +119,7 @@ enum DeferredConfigLoading {
         if FeatureFlags.useFirebaseEmulator {
             config(for: .region(.unitedStates))
         } else if FeatureFlags.overrideFirebaseConfigOnDevice {
-            config(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
+            config(for: .custom(plistNameInBundle: "GoogleService-Info-Override", region: .unitedStates))
         } else {
             switch LocalPreferencesStore.shared[.lastUsedFirebaseConfig] {
             case .none:
