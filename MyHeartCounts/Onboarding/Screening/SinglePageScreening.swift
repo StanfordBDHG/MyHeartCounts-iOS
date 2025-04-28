@@ -23,6 +23,8 @@ struct SinglePageScreening: View {
     private var path
     @Environment(ScreeningDataCollection.self)
     private var screeningData
+    @Environment(StudyDefinitionLoader.self)
+    private var studyLoader
     
     private let title: LocalizedStringResource
     private let subtitle: LocalizedStringResource
@@ -75,12 +77,16 @@ struct SinglePageScreening: View {
                 return
             }
             if !Spezi.didLoadFirebase {
-                _ = await Task.detached {
-                    // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
-                    // the crux here is that there isn't a mechanism by which Firebase would let us know when it
-                    await Spezi.loadFirebase(for: region)
-                    try await Task.sleep(for: .seconds(3))
-                }.result
+                // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
+                // the crux here is that there isn't a mechanism by which Firebase would let us know when it
+                Spezi.loadFirebase(for: region)
+                try? await Task.sleep(for: .seconds(3))
+            }
+            do {
+                try await studyLoader.update()
+            } catch {
+                path.append(customView: UnableToLoadStudyDefinitionStep())
+                return
             }
             path.nextStep()
         } else {

@@ -79,7 +79,7 @@ extension EdgeInsets {
 }
 
 
-extension URL: @retroactive ExpressibleByStringLiteral {
+extension URL: @retroactive ExpressibleByStringLiteral, @retroactive ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         if let url = URL(string: value) {
             self = url

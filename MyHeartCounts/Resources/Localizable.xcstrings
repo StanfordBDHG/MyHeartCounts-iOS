@@ -7,9 +7,6 @@
     "– %@" : {
 
     },
-    "[DEBUG] Historical Data Bulk Export" : {
-
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -130,6 +127,12 @@
     "Enroll in Study" : {
 
     },
+    "Failed to Download Study Information" : {
+
+    },
+    "Failed to Load Study into App" : {
+
+    },
     "Fetching…" : {
 
     },
@@ -182,6 +185,12 @@
     "Heart Health" : {
 
     },
+    "Historical Data Bulk Export" : {
+
+    },
+    "Label?" : {
+
+    },
     "Language" : {
 
     },
@@ -208,6 +217,12 @@
     "Link Arrow Symbol" : {
 
     },
+    "Make sure your device is connected to the internet and try again" : {
+
+    },
+    "Message?" : {
+
+    },
     "My Heart Counts" : {
       "localizations" : {
         "en" : {
@@ -217,6 +232,9 @@
           }
         }
       }
+    },
+    "Network Issue" : {
+
     },
     "News" : {
 
@@ -281,6 +299,9 @@
     "Replace Root View Controller" : {
 
     },
+    "Retry" : {
+
+    },
     "Screening" : {
 
     },
@@ -288,9 +309,6 @@
 
     },
     "Select a Region" : {
-
-    },
-    "Select Region" : {
 
     },
     "Selection Checkmark" : {
@@ -325,6 +343,9 @@
     "Study Participations" : {
 
     },
+    "Subject?" : {
+
+    },
     "Swift Package Manager" : {
       "localizations" : {
         "en" : {
@@ -334,6 +355,12 @@
           }
         }
       }
+    },
+    "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
+
+    },
+    "The app was unable to load the study, but we're no sure why" : {
+
     },
     "The Spezi Framework" : {
       "localizations" : {
@@ -369,7 +396,7 @@
     "Upcoming Tasks" : {
 
     },
-    "Use alternative region picker" : {
+    "Uploading Collected Health Data" : {
 
     },
     "WELCOME_AREA1_DESCRIPTION" : {

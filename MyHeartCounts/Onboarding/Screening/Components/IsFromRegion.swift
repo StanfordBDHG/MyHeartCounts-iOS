@@ -24,14 +24,13 @@ struct IsFromRegion: ScreeningComponent {
     
     let allowedRegions: Set<Locale.Region>
     
-    @State private var isPresentingRegionPicker1 = false
-    @State private var isPresentingRegionPicker2 = false
+    @State private var isPresentingRegionPicker = false
     
     var body: some View {
         @Bindable var data = data
         let allRegions = Locale.Region.isoRegions
             .filter { $0.subRegions.isEmpty }
-            .sorted { $0.localizedName(in: locale) < $1.localizedName(in: locale) }
+            .sorted { $0.localizedName(in: locale, includeEmoji: .none) < $1.localizedName(in: locale, includeEmoji: .none) }
         let regionsList: [Locale.Region] = Array {
             if let currentRegion = locale.region {
                 currentRegion
@@ -41,7 +40,7 @@ struct IsFromRegion: ScreeningComponent {
             }
         }
         Button {
-            isPresentingRegionPicker1 = true
+            isPresentingRegionPicker = true
         } label: {
             HStack {
                 Text("Where are you currently living?")
@@ -49,63 +48,16 @@ struct IsFromRegion: ScreeningComponent {
                     .foregroundStyle(colorScheme.buttonLabelForegroundStyle)
                 Spacer()
                 if let region = data.region {
-                    Text(region.localizedName(in: locale))
+                    Text(region.localizedName(in: locale, includeEmoji: .none))
                         .foregroundStyle(colorScheme.buttonLabelForegroundStyle.secondary)
                 }
                 DisclosureIndicator()
             }
             .contentShape(Rectangle())
         }
-        .contextMenu {
-            Button("Use alternative region picker") {
-                isPresentingRegionPicker2 = true
-            }
-        }
-        .sheet(isPresented: $isPresentingRegionPicker1) {
+        .sheet(isPresented: $isPresentingRegionPicker) {
             ListSelectionSheet("Select a Region", items: regionsList, selection: $data.region) { region in
-                if let emoji = region.flagEmoji {
-                    "\(emoji) \(region.localizedName(in: locale))"
-                } else {
-                    region.localizedName(in: locale)
-                }
-            }
-        }
-        .sheet(isPresented: $isPresentingRegionPicker2) {
-            altRegionPicker
-        }
-    }
-    
-    
-    @ViewBuilder private var altRegionPicker: some View {
-        NavigationStack {
-            let options: [RegionPickerEntry] = [
-                .region(.unitedStates),
-                .region(.unitedKingdom),
-                .region(.europe),
-                .region(.unknown),
-                .somewhereElse
-            ]
-            FancyItemSelectionView(
-                options,
-                selection: Binding<RegionPickerEntry?> {
-                    data.region.map { .region($0) } ?? .somewhereElse
-                } set: {
-                    data.region = $0?.region
-                }
-            ) { entry in
-                HStack {
-                    if let emoji = entry.region?.flagEmoji {
-                        Text(emoji)
-                    }
-                    Text(entry.region?.localizedName(in: locale) ?? "Somewhere Else")
-                        .font(.headline)
-                    Spacer()
-                }
-            }
-            .navigationTitle("Select Region")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                DismissButton()
+                region.localizedName(in: locale, includeEmoji: .front)
             }
         }
     }

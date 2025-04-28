@@ -90,7 +90,7 @@ protocol HasDirectUserDefaultsSupport {
 
 extension Bool: HasDirectUserDefaultsSupport {
     static func load(from defaults: UserDefaults, forKey key: String) -> Bool? { // swiftlint:disable:this discouraged_optional_boolean
-        defaults.bool(forKey: key)
+        defaults.hasEntry(for: key) ? defaults.bool(forKey: key) : nil
     }
     func store(to defaults: UserDefaults, forKey key: String) {
         defaults.set(self, forKey: key)
@@ -99,7 +99,7 @@ extension Bool: HasDirectUserDefaultsSupport {
 
 extension Int: HasDirectUserDefaultsSupport {
     static func load(from defaults: UserDefaults, forKey key: String) -> Int? {
-        defaults.integer(forKey: key)
+        defaults.hasEntry(for: key) ? defaults.integer(forKey: key) : nil
     }
     func store(to defaults: UserDefaults, forKey key: String) {
         defaults.set(self, forKey: key)
@@ -117,7 +117,7 @@ extension String: HasDirectUserDefaultsSupport {
 
 extension Double: HasDirectUserDefaultsSupport {
     static func load(from defaults: UserDefaults, forKey key: String) -> Double? {
-        defaults.double(forKey: key)
+        defaults.hasEntry(for: key) ? defaults.double(forKey: key) : nil
     }
     func store(to defaults: UserDefaults, forKey key: String) {
         defaults.set(self, forKey: key)
@@ -126,7 +126,7 @@ extension Double: HasDirectUserDefaultsSupport {
 
 extension Float: HasDirectUserDefaultsSupport {
     static func load(from defaults: UserDefaults, forKey key: String) -> Float? {
-        defaults.float(forKey: key)
+        defaults.hasEntry(for: key) ? defaults.float(forKey: key) : nil
     }
     func store(to defaults: UserDefaults, forKey key: String) {
         defaults.set(self, forKey: key)
@@ -302,5 +302,12 @@ struct LocalPreference<T: Codable>: DynamicProperty {
         MainActor.assumeIsolated {
             kvoObserver.configure(for: key.key, in: store.defaultsStore)
         }
+    }
+}
+
+
+extension UserDefaults {
+    fileprivate func hasEntry(for key: String) -> Bool {
+        object(forKey: key) != nil
     }
 }

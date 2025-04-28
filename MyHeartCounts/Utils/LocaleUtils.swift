@@ -10,6 +10,12 @@ import Foundation
 
 
 extension Locale.Region {
+    enum EmojiPosition {
+        case none
+        case front
+        case back
+    }
+    
     /// Returns, if possible, the region's corresponding flag emoji.
     ///
     /// Based on https://stackoverflow.com/a/30403199
@@ -37,12 +43,23 @@ extension Locale.Region {
     /// Returns the localized name of the region, based on the specified locale, is possible.
     ///
     /// If no localized name can be determined, the region's underlying identifier is returned.
-    func localizedName(in locale: Locale) -> String {
-        switch self {
+    func localizedName(in locale: Locale, includeEmoji emojiPosition: EmojiPosition) -> String {
+        let name = switch self {
         case .world:
             String(localized: "World")
         default:
             locale.localizedString(forRegionCode: self.identifier) ?? self.identifier
+        }
+        guard let flagEmoji else {
+            return name
+        }
+        return switch emojiPosition {
+        case .none:
+            name
+        case .front:
+            "\(flagEmoji) \(name)"
+        case .back:
+            "\(name) \(flagEmoji)"
         }
     }
 }

@@ -33,17 +33,22 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Account.self)
     var account: Account?
     
+    @Dependency(StudyDefinitionLoader.self)
+    private var studyLoader
+    
     var enableDebugMode: Bool {
         LocalPreferencesStore.shared[.enableDebugMode]
     }
     
     init() {}
     
+    
     @MainActor
     func configure() {
         Task {
-            if let studyManager = await self.studyManager {
-                try await studyManager.informAboutStudies([mockMHCStudy])
+            if let studyManager = await self.studyManager,
+               let study = try? await studyLoader.update() {
+                try await studyManager.informAboutStudies([study])
             }
         }
     }
@@ -57,7 +62,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             try? await firebaseConfiguration.userDocumentReference.delete()
             if let studyManager {
                 await MainActor.run {
-                    guard let enrollment = studyManager.studyEnrollments.first(where: { $0.studyId == mockMHCStudy.id }) else {
+                    guard let enrollment = studyManager.studyEnrollments.first else { // this works bc we only ever enroll into the MHC study.
                         return
                     }
                     try? studyManager.unenroll(from: enrollment)

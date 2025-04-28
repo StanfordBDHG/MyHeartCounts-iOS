@@ -24,6 +24,11 @@ struct FinalEnrollmentStep: View {
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var historicalUploadManager
     
+    @Environment(StudyDefinitionLoader.self)
+    private var studyLoader
+    
+    @State private var viewState: ViewState = .idle
+    
     var body: some View {
         OnboardingView {
             OnboardingTitleView(title: "My Heart Counts")
@@ -31,18 +36,27 @@ struct FinalEnrollmentStep: View {
             Text("You're all set.\n\nGreat to have you on board!")
         } footer: {
             OnboardingActionsView("Complete") {
-                do {
-                    try await studyManager.enroll(in: mockMHCStudy)
-                    Task(priority: .background) {
-                        historicalUploadManager.startAutomaticExportingIfNeeded()
-                    }
-                } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
-                    // NOTE(@lukas) make this an error in non-debug versions!
-                } catch {
-                    throw error
-                }
-                path.nextStep()
+                await completeStudyEnrollment()
             }
+            .disabled(viewState != .idle)
         }
+    }
+    
+    private func completeStudyEnrollment() async {
+        guard let study = try? studyLoader.studyDefinition?.get() else {
+            // guaranteed to be non-nil if we end up in this view
+            return
+        }
+        do {
+            try await studyManager.enroll(in: study)
+            Task(priority: .background) {
+                historicalUploadManager.startAutomaticExportingIfNeeded()
+            }
+        } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
+            // NOTE(@lukas) make this an error in non-debug versions!
+        } catch {
+            viewState = .error(error)
+        }
+        path.nextStep()
     }
 }

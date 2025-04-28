@@ -48,15 +48,19 @@ enum DeferredConfigLoading {
         case custom(plistNameInBundle: String)
     }
     
-    private static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
+    
+    static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
         #if TEST
         // in a test build, we always load the US config.
         return try _firebaseOptions(for: .region(.unitedStates))
         #endif
         #if !targetEnvironment(simulator)
         if FeatureFlags.overrideFirebaseConfigOnDevice {
-            LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = .custom(plistNameInBundle: "GoogleService-Info-Override")
-            return try _firebaseOptions(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
+            let selector = FirebaseConfigSelector.custom(
+                plistNameInBundle: "GoogleService-Info-Override"
+            )
+            LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = selector
+            return try _firebaseOptions(for: selector)
         }
         #endif
         return try _firebaseOptions(for: configSelector)

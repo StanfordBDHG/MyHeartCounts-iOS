@@ -19,6 +19,9 @@ struct HealthKitPermissions: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
+    @Environment(StudyDefinitionLoader.self)
+    private var studyLoader
+    
     @State private var healthKitProcessing = false
     
     var body: some View {
@@ -40,13 +43,17 @@ struct HealthKitPermissions: View {
             }
         } footer: {
             OnboardingActionsView("Grant Access") {
+                guard let study = try? studyLoader.studyDefinition?.get() else {
+                    // guaranteed to be non-nil if we end up in this view
+                    return
+                }
                 do {
                     healthKitProcessing = true
                     // HealthKit is not available in the preview simulator.
                     if ProcessInfo.processInfo.isPreviewSimulator {
                         try await _Concurrency.Task.sleep(for: .seconds(5))
                     } else {
-                        try await healthKit.askForAuthorization(for: .init(read: mockMHCStudy.allCollectedHealthData))
+                        try await healthKit.askForAuthorization(for: .init(read: study.allCollectedHealthData))
                     }
                 } catch {
                     print("Could not request HealthKit permissions.")
