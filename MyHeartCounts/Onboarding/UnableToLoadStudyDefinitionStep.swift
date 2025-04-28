@@ -60,20 +60,6 @@ struct UnableToLoadStudyDefinitionStep: View {
                     Text("Label?")
                 }
             }
-        case .failure(.unsupportedRegion(let region)):
-            makeBody(
-                symbol: .xmarkOctagon,
-                title: "Failed to Load Study into App",
-                message: "Your selected region (\(region.localizedName(in: locale, includeEmoji: .none))) currently isn't supported by MyHeart Counts"
-            ) {
-                ShareLink(
-                    item: "https://spezi.stanford.edu",
-                    subject: Text("Subject?"),
-                    message: Text("Message?")
-                ) {
-                    Text("Label?")
-                }
-            }
         case .success:
             // we were able to load the study, but somehow ended up in here regardless.
             // this should never happen, but if it does we simply go back to the previous step.

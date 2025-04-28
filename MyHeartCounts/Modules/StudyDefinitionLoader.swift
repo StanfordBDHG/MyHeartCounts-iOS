@@ -18,7 +18,6 @@ final class StudyDefinitionLoader: Module, Sendable {
         case unableToFetchFromServer(any Error)
         case unableToDecode(any Error)
         case noLastUsedRegion
-        case unsupportedRegion(Locale.Region)
     }
     
     static let shared = StudyDefinitionLoader()
@@ -35,11 +34,9 @@ final class StudyDefinitionLoader: Module, Sendable {
     
     
     @discardableResult
-    func load(for region: Locale.Region) async throws(LoadError) -> StudyDefinition {
-        guard let url = Self.studyDefinitionUrl(for: region) else {
-            throw .unsupportedRegion(region)
-        }
-        logger.debug("Fetching study definition for locale \(region.debugDescription)")
+    func load(fromBucket bucketName: String) async throws(LoadError) -> StudyDefinition {
+        let url = Self.studyDefinitionUrl(inBucket: bucketName)
+        logger.debug("Fetching study definition from bucket '\(bucketName)'")
         let retval: Result<StudyDefinition, LoadError>
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
@@ -83,25 +80,19 @@ final class StudyDefinitionLoader: Module, Sendable {
     
     @discardableResult
     func update() async throws(LoadError) -> StudyDefinition {
-        switch LocalPreferencesStore.shared[.lastUsedFirebaseConfig] {
-        case nil:
+        if let selector = LocalPreferencesStore.shared[.lastUsedFirebaseConfig],
+           let firebaseOptions = try? DeferredConfigLoading.firebaseOptions(for: selector),
+           let storageBucket = firebaseOptions.storageBucket {
+            return try await load(fromBucket: storageBucket)
+        } else {
             throw .noLastUsedRegion
-        case .region(let region), .custom(plistNameInBundle: _, let region):
-            return try await load(for: region)
         }
     }
 }
 
 
 extension StudyDefinitionLoader {
-    static func studyDefinitionUrl(for region: Locale.Region) -> URL? {
-        switch region {
-        case .unitedStates:
-            "https://firebasestorage.googleapis.com/v0/b/myheart-counts-development.firebasestorage.app/o/public%2FmhcStudyDefinition_US.json?alt=media"
-        case .unitedKingdom:
-            "https://firebasestorage.googleapis.com/v0/b/myheart-counts-development.firebasestorage.app/o/public%2FmhcStudyDefinition_UK.json?alt=media"
-        default:
-            nil
-        }
+    static func studyDefinitionUrl(inBucket bucketName: String) -> URL {
+        "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2FmhcStudyDefinition.json?alt=media"
     }
 }

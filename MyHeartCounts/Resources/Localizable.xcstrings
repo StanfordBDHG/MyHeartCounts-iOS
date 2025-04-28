@@ -466,9 +466,6 @@
           }
         }
       }
-    },
-    "Your selected region (%@) currently isn't supported by MyHeart Counts" : {
-
     }
   },
   "version" : "1.0"
