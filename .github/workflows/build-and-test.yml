@@ -32,7 +32,6 @@ jobs:
       # setupfirebaseemulator: true
       # checkout_submodules: true
       # customcommand: "firebase emulators:exec 'fastlane test'"
-      customcommand: "fastlane test"
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
