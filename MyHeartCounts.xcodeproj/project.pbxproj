@@ -37,6 +37,7 @@
 		803D2B442D8981EA00DAEF9B /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 803D2B432D8981EA00DAEF9B /* SpeziStudyDefinition */; };
 		803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
 		803EAC1D2D67AB5300DA6E62 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
+		8043DD7A2DC0CBE500E0DF01 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8043DD792DC0CBE500E0DF01 /* FirebaseMessaging */; };
 		804B90222D86F10F00F9F431 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 804B90212D86F10F00F9F431 /* SpeziStudy */; };
 		805363772DB6997600D7E8A3 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 805363762DB6997600D7E8A3 /* SpeziHealthKit */; };
 		805363792DB6997600D7E8A3 /* SpeziHealthKitBulkExport in Frameworks */ = {isa = PBXBuildFile; productRef = 805363782DB6997600D7E8A3 /* SpeziHealthKitBulkExport */; };
@@ -167,6 +168,7 @@
 				56E7083B2BB06F6F00B08F0A /* SwiftPackageList in Frameworks */,
 				80E774A02D81B4B20035A0EE /* SpeziFirebaseAccountStorage in Frameworks */,
 				802141592D81F14000BF5D35 /* SpeziOnboarding in Frameworks */,
+				8043DD7A2DC0CBE500E0DF01 /* FirebaseMessaging in Frameworks */,
 				8004CE442D75BCBE00CC3008 /* SpeziStudy in Frameworks */,
 				8067823D2D9AD89600B40482 /* SpeziStudyDefinition in Frameworks */,
 				8097DCB52D918B56000351D3 /* SpeziOnboarding in Frameworks */,
@@ -349,6 +351,7 @@
 				8053637A2DB6997600D7E8A3 /* SpeziHealthKitUI */,
 				8053637D2DB699C200D7E8A3 /* SpeziStudy */,
 				8053637F2DB699C200D7E8A3 /* SpeziStudyDefinition */,
+				8043DD792DC0CBE500E0DF01 /* FirebaseMessaging */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -1397,6 +1400,11 @@
 		803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziHealthKitUI;
+		};
+		8043DD792DC0CBE500E0DF01 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		804B90212D86F10F00F9F431 /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;
