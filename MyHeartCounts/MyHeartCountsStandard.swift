@@ -56,6 +56,15 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func respondToEvent(_ event: AccountNotifications.Event) async {
         switch event {
         case .deletingAccount:
+            break
+        case .disassociatingAccount:
+            // upon logging out, we want to throw the user back to the onboarding.
+            // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
+            // since the Firebase SDK and all related Spezi modules will still be loaded.
+            // we could look into using the `FirebaseApp.deleteApp(_:)` API in combination with attempting to unload the related Spezi modules, but that
+            // would be anything but trivial.
+            // if the user wants to switch to a different region, the easiest approach currently is to just kill and relaunch the app.
+            LocalPreferencesStore.standard[.onboardingFlowComplete] = false
             // QUESTION deleting the userDocument will probably also delete everything nested w/in it (eg: Questionnaire Resonse
             // NOTE: we want as many of these as possible to succeed; hence why we use try? everywhere...
             try? FileManager.default.removeItem(at: .scheduledHealthKitUploads)
@@ -68,7 +77,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                     try? studyManager.unenroll(from: enrollment)
                 }
             }
-        case .associatedAccount, .detailsChanged, .disassociatingAccount:
+        case .associatedAccount, .detailsChanged:
             break
         }
     }
