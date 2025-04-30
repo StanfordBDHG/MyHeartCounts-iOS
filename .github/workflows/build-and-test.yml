@@ -28,25 +28,25 @@ jobs:
       scheme: MyHeartCounts
       testplan: MyHeart Counts Unit Tests
       artifactname: MyHeartCounts-UnitTests.xcresult
-  buildandtest_uitests:
-    name: Build and Test (UI Tests)
-    if: ${{ false }}
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@lukas/testplans
-    permissions:
-      contents: read
-    with:
-      runsonlabels: '["macOS", "self-hosted"]'
-      fastlanelane: uitest
-      # firebaseemulatorimport: ./firebase
-      # firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
-      # setupfirebaseemulator: true
-      # checkout_submodules: true
-      # customcommand: "firebase emulators:exec 'fastlane test'"
-    secrets:
-      GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+  # buildandtest_uitests:
+  #   name: Build and Test (UI Tests)
+  #   if: ${{ false }}
+  #   uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@lukas/testplans
+  #   permissions:
+  #     contents: read
+  #   with:
+  #     runsonlabels: '["macOS", "self-hosted"]'
+  #     fastlanelane: uitest
+  #     # firebaseemulatorimport: ./firebase
+  #     # firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
+  #     # setupfirebaseemulator: true
+  #     # checkout_submodules: true
+  #     # customcommand: "firebase emulators:exec 'fastlane test'"
+  #   secrets:
+  #     GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [buildandtest_unittests, buildandtest_uitests]
+    needs: [buildandtest_unittests]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     permissions:
       contents: read
