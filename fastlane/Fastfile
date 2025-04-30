@@ -24,10 +24,11 @@ platform :ios do
     ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] = "6"
   end
 
-  desc "Build and test"
-  lane :test do
+  desc "Build and Test UI Tests"
+  lane :uitest do
     run_tests(
       skip_build: true,
+      testplan: "MyHeartCounts UI Tests",
       derived_data_path: ".derivedData",
       code_coverage: true,
       devices: ["iPhone 16 Pro Max"],

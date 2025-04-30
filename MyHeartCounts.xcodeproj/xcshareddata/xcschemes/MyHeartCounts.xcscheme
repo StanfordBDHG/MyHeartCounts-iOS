@@ -29,7 +29,10 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:MyHeartCounts.xctestplan"
+            reference = "container:MyHeartCounts UI Tests.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:MyHeartCounts Unit Tests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -83,11 +86,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfigOnDevice"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--showOnboarding"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--disableAutomaticHistoricalHealthExport"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--skipOnboarding"

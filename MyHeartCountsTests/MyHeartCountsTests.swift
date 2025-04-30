@@ -7,12 +7,12 @@
 //
 
 @testable import MyHeartCounts
-import XCTest
+import Testing
 
 
-class MyHeartCountsTests: XCTestCase {
-    @MainActor
-    func testContactsCount() throws {
-        XCTAssertTrue(true)
-    }
+extension Tag {
+    /// The `unitTest` Tag identifies tags that are **non-UI** Unit Tests.
+    ///
+    /// TODO explain why we have this, and what it does!
+    @Tag static var unitTest: Self
 }

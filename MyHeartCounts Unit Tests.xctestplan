@@ -18,6 +18,11 @@
         }
       ]
     },
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "--disableFirebase"
+      }
+    ],
     "targetForVariableExpansion" : {
       "containerPath" : "container:MyHeartCounts.xcodeproj",
       "identifier" : "653A254C283387FE005D4D48",
@@ -26,6 +31,11 @@
   },
   "testTargets" : [
     {
+      "selectedTags" : {
+        "tags" : [
+          ".unitTest"
+        ]
+      },
       "target" : {
         "containerPath" : "container:MyHeartCounts.xcodeproj",
         "identifier" : "653A255C28338800005D4D48",
@@ -33,6 +43,11 @@
       }
     },
     {
+      "selectedTags" : {
+        "tags" : [
+          ".unitTest"
+        ]
+      },
       "target" : {
         "containerPath" : "container:MyHeartCounts.xcodeproj",
         "identifier" : "653A256628338800005D4D48",
