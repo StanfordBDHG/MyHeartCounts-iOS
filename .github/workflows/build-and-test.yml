@@ -26,7 +26,7 @@ jobs:
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: MyHeartCounts
-      testplan: MyHeart Counts Unit Tests
+      testplan: MyHeartCounts Unit Tests
       artifactname: MyHeartCounts-UnitTests.xcresult
   # buildandtest_uitests:
   #   name: Build and Test (UI Tests)
