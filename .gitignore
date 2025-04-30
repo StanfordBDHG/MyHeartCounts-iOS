@@ -31,7 +31,7 @@ GoogleService-Info*.plist
 # Tests
 report.junit
 report.html
-MyHeartCounts.xcresult
+*.xcresult
 
 # Logs
 logs
