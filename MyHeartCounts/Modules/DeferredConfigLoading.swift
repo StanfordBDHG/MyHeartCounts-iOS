@@ -63,11 +63,11 @@ enum DeferredConfigLoading {
             return try _firebaseOptions(for: selector)
         }
         #endif
-        #if targetEnvironment(simulator)
-        let selector = FirebaseConfigSelector.custom(plistNameInBundle: "GoogleService-Info-Override2")
-        LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
-        return try _firebaseOptions(for: selector)
-        #endif
+//        #if targetEnvironment(simulator)
+//        let selector = FirebaseConfigSelector.custom(plistNameInBundle: "GoogleService-Info-Override")
+//        LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
+//        return try _firebaseOptions(for: selector)
+//        #endif
         return try _firebaseOptions(for: configSelector)
     }
     

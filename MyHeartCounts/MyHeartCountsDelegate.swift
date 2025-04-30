@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable attributes
-
 import Spezi
 import SpeziFirebaseConfiguration
 import SpeziHealthKit
@@ -21,7 +19,7 @@ import UserNotifications
 
 
 @Observable
-final class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_types_order
+final class MyHeartCountsDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
             DeferredConfigLoading.initialAppLaunchConfig
@@ -51,7 +49,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this 
 }
 
 
-extension ModuleBuilder { // swiftlint:disable:this file_types_order
+extension ModuleBuilder {
     // periphery:ignore - implicitly called
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
