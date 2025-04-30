@@ -34,7 +34,7 @@ jobs:
       contents: read
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      fastlanelane: uitest
+      # fastlanelane: uitest
       artifactname: MyHeartCounts-UITests.xcresult
       firebaseemulatorimport: ./firebase
       firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
