@@ -14,7 +14,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: Build-and-Test-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -36,7 +36,6 @@ jobs:
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       fastlanelane: uitest
-      artifactname: MyHeartCounts-UITests.xcresult
       # firebaseemulatorimport: ./firebase
       # firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
       # setupfirebaseemulator: true
