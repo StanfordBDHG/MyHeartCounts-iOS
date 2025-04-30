@@ -63,6 +63,11 @@ enum DeferredConfigLoading {
             return try _firebaseOptions(for: selector)
         }
         #endif
+        #if targetEnvironment(simulator)
+        let selector = FirebaseConfigSelector.custom(plistNameInBundle: "GoogleService-Info-Override2")
+        LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
+        return try _firebaseOptions(for: selector)
+        #endif
         return try _firebaseOptions(for: configSelector)
     }
     
@@ -115,7 +120,9 @@ enum DeferredConfigLoading {
     
     
     @MainActor static var initialAppLaunchConfig: [any Module] {
-        if FeatureFlags.useFirebaseEmulator {
+        if FeatureFlags.disableFirebase {
+            [StudyManager()]
+        } else if FeatureFlags.useFirebaseEmulator {
             config(for: .region(.unitedStates))
         } else if FeatureFlags.overrideFirebaseConfigOnDevice {
             config(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
@@ -134,6 +141,11 @@ enum DeferredConfigLoading {
     /// Returns nil if there was an issue resolving the selector.
     @MainActor
     static func config(for configSelector: FirebaseConfigSelector) -> [any Module] {
+        logger.notice("CLI args: \(CommandLine.arguments)")
+        guard !FeatureFlags.disableFirebase else {
+            // if firebase is disabled, we return only the subset of the config we have below that doesn't require firebase.
+            return [StudyManager()]
+        }
         do {
             guard let firebaseOptions = try firebaseOptions(for: configSelector) else {
                 logger.notice("FirebaseOptions fetch returned nil. Not initializing anything.")
@@ -160,6 +172,7 @@ enum DeferredConfigLoading {
                     FirebaseStorageConfiguration()
                 }
                 StudyManager()
+                NotificationsManager()
             }
         } catch {
             logger.error("""

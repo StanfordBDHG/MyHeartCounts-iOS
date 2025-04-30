@@ -21,7 +21,7 @@ import UserNotifications
 
 
 @Observable
-class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_types_order
+final class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_types_order
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
             DeferredConfigLoading.initialAppLaunchConfig
@@ -39,7 +39,6 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
         _ application: UIApplication,
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? // swiftlint:disable:this discouraged_optional_collection
     ) -> Bool {
-        UNUserNotificationCenter.current().delegate = self
         let prefs = LocalPreferencesStore.standard
         if FeatureFlags.showOnboarding {
             prefs[.onboardingFlowComplete] = false
@@ -50,17 +49,25 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
         }
         return super.application(application, willFinishLaunchingWithOptions: launchOptions)
     }
+    
+//    override func application(_ application: _Application, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        <#code#>
+//    }
+    
+//    override func application(_ application: _Application, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        <#code#>
+//    }
 }
 
 
-extension MyHeartCountsDelegate: UNUserNotificationCenterDelegate { // swiftlint:disable:this file_types_order
-    nonisolated func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification
-    ) async -> UNNotificationPresentationOptions {
-        [.badge, .banner, .list, .sound]
-    }
-}
+//extension MyHeartCountsDelegate: UNUserNotificationCenterDelegate { // swiftlint:disable:this file_types_order
+//    nonisolated func userNotificationCenter(
+//        _ center: UNUserNotificationCenter,
+//        willPresent notification: UNNotification
+//    ) async -> UNNotificationPresentationOptions {
+//        [.badge, .banner, .list, .sound]
+//    }
+//}
 
 
 extension ModuleBuilder { // swiftlint:disable:this file_types_order

@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziNotifications
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
@@ -15,8 +14,8 @@ import SwiftUI
 struct NotificationPermissions: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
-    @Environment(\.requestNotificationAuthorization)
-    private var requestNotificationAuthorization
+    @Environment(NotificationsManager.self)
+    private var notificationsManager
 
     @State private var notificationProcessing = false
     
@@ -47,7 +46,7 @@ struct NotificationPermissions: View {
                         if ProcessInfo.processInfo.isPreviewSimulator {
                             try await _Concurrency.Task.sleep(for: .seconds(0.75))
                         } else {
-                            try await requestNotificationAuthorization(options: [.alert, .sound, .badge])
+                            try await notificationsManager.requestNotificationPermissions()
                         }
                     } catch {
                         print("Could not request notification permissions.")
