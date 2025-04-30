@@ -80,7 +80,7 @@ final class StudyDefinitionLoader: Module, Sendable {
     
     @discardableResult
     func update() async throws(LoadError) -> StudyDefinition {
-        if let selector = LocalPreferencesStore.shared[.lastUsedFirebaseConfig],
+        if let selector = LocalPreferencesStore.standard[.lastUsedFirebaseConfig],
            let firebaseOptions = try? DeferredConfigLoading.firebaseOptions(for: selector),
            let storageBucket = firebaseOptions.storageBucket {
             return try await load(fromBucket: storageBucket)

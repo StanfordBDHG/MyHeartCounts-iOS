@@ -40,7 +40,7 @@ class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this file_t
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? // swiftlint:disable:this discouraged_optional_collection
     ) -> Bool {
         UNUserNotificationCenter.current().delegate = self
-        let prefs = LocalPreferencesStore.shared
+        let prefs = LocalPreferencesStore.standard
         if FeatureFlags.showOnboarding {
             prefs[.onboardingFlowComplete] = false
             prefs[.lastUsedFirebaseConfig] = nil

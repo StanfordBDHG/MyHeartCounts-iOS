@@ -37,7 +37,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     private var studyLoader
     
     var enableDebugMode: Bool {
-        LocalPreferencesStore.shared[.enableDebugMode]
+        LocalPreferencesStore.standard[.enableDebugMode]
     }
     
     init() {}

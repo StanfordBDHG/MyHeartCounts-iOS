@@ -29,7 +29,7 @@ import SwiftUI
 
 extension LocalPreferenceKey {
     static var lastUsedFirebaseConfig: LocalPreferenceKey<DeferredConfigLoading.FirebaseConfigSelector?> {
-        .make("lastUsedFirebaseConfig", makeDefault: { nil })
+        .make("lastUsedFirebaseConfig", default: nil)
     }
 }
 
@@ -59,7 +59,7 @@ enum DeferredConfigLoading {
             let selector = FirebaseConfigSelector.custom(
                 plistNameInBundle: "GoogleService-Info-Override"
             )
-            LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = selector
+            LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
             return try _firebaseOptions(for: selector)
         }
         #endif
@@ -120,7 +120,7 @@ enum DeferredConfigLoading {
         } else if FeatureFlags.overrideFirebaseConfigOnDevice {
             config(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
         } else {
-            switch LocalPreferencesStore.shared[.lastUsedFirebaseConfig] {
+            switch LocalPreferencesStore.standard[.lastUsedFirebaseConfig] {
             case .none:
                 []
             case .some(let selector):
@@ -217,7 +217,7 @@ extension Spezi {
         for module in config {
             self.loadModule(module)
         }
-        LocalPreferencesStore.shared[.lastUsedFirebaseConfig] = .region(region)
+        LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = .region(region)
     }
 }
 
