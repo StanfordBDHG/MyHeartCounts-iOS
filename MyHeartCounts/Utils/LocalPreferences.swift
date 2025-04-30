@@ -151,19 +151,6 @@ extension URL: HasDirectUserDefaultsSupport {
     }
 }
 
-//extension Array: HasDirectUserDefaultsSupport where Element: HasDirectUserDefaultsSupport {
-//    static func load(from defaults: UserDefaults, forKey key: String) -> Array? {
-//        defaults.array(forKey: key)
-//    }
-//    func store(to defaults: UserDefaults, forKey key: String) {
-//        defaults.set(self, forKey: key)
-//    }
-//}
-
-//extension Dictionary: HasDirectUserDefaultsSupport where Key == String, Value: HasDirectUserDefaultsSupport {
-//    
-//}
-
 extension Optional: HasDirectUserDefaultsSupport where Wrapped: HasDirectUserDefaultsSupport {
     static func load(from defaults: UserDefaults, forKey key: String) -> Self? {
         if let value = Wrapped.load(from: defaults, forKey: key) {

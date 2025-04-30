@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable empty_string
+
 import Foundation
 @testable import MyHeartCounts
 import Testing

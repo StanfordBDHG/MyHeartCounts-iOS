@@ -49,25 +49,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this 
         }
         return super.application(application, willFinishLaunchingWithOptions: launchOptions)
     }
-    
-//    override func application(_ application: _Application, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-//        <#code#>
-//    }
-    
-//    override func application(_ application: _Application, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-//        <#code#>
-//    }
 }
-
-
-//extension MyHeartCountsDelegate: UNUserNotificationCenterDelegate { // swiftlint:disable:this file_types_order
-//    nonisolated func userNotificationCenter(
-//        _ center: UNUserNotificationCenter,
-//        willPresent notification: UNNotification
-//    ) async -> UNNotificationPresentationOptions {
-//        [.badge, .banner, .list, .sound]
-//    }
-//}
 
 
 extension ModuleBuilder { // swiftlint:disable:this file_types_order
