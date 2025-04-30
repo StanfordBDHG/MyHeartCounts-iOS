@@ -28,7 +28,6 @@ final class MyHeartCountsDelegate: SpeziAppDelegate { // swiftlint:disable:this 
             HealthKit()
             Scheduler()
             Notifications()
-            ConfigureFirebaseAppAccessor()
             BulkHealthExporter()
             HistoricalHealthSamplesExportManager()
             StudyDefinitionLoader.shared
@@ -57,11 +56,4 @@ extension ModuleBuilder { // swiftlint:disable:this file_types_order
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
     }
-}
-
-
-@Observable
-final class ConfigureFirebaseAppAccessor: Module, DefaultInitializable, EnvironmentAccessible {
-    @ObservationIgnored @Dependency(ConfigureFirebaseApp.self)
-    var configureFirebase: ConfigureFirebaseApp?
 }
