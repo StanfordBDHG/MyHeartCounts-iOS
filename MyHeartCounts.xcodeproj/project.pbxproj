@@ -1408,6 +1408,11 @@
 			package = 2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
 		};
+		8043E0222DC2769500E0DF01 /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudyDefinition;
+		};
 		804B90212D86F10F00F9F431 /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;

@@ -13,7 +13,7 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
-class OnboardingTests: XCTestCase {
+final class OnboardingTests: MHCTestCase {
     @MainActor
     override func setUp() async throws {
         continueAfterFailure = false

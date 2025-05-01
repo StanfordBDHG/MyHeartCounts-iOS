@@ -41,38 +41,64 @@ enum DeferredConfigLoading {
         case unableToLoadFirebaseConfigPlist(underlying: (any Error)? = nil)
     }
     
-    enum FirebaseConfigSelector: Codable {
+    enum FirebaseConfigSelector: Codable, LaunchOptionDecodable {
         /// the firebase config for the specified region should be loaded
         case region(Locale.Region)
         /// the firebase config plist with the specified name should be loaded from the main bundle
         case custom(plistNameInBundle: String)
+        /// the firebase config plist at the specified URL should be loaded
+        case customUrl(URL)
+        
+        /// Decodes a `FirebaseConfigSelector` from a launch option value
+        ///
+        /// `--firebaseConfig region=US`
+        /// `--firebaseConfig plist=GoogleService-Info_UK.plist`
+        /// `--firebaseConfig plist=/Users/lukas/Desktop/MHC.plist`
+        /// `--firebaseConfig plist=https://mhc.spezi.stanford.edu/config.plist`
+        init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+            try context.assertNumRawArgs(.equal(1))
+            let components = context.rawArgs[0].split(separator: "=")
+            guard components.count == 2 else {
+                throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: context.rawArgs[0])
+            }
+            switch components[0] {
+            case "region":
+                let regionIdentifier = String(components[1])
+                guard Locale.Region.isoRegions.contains(where: { $0.identifier == regionIdentifier }) else {
+                    throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: context.rawArgs[0])
+                }
+                self = .region(Locale.Region(regionIdentifier))
+            case "plist":
+                let location = String(components[1])
+                if location.starts(with: "https://") {
+                    // https --> treat as internet url (which isn't allowed)
+                    throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: context.rawArgs[0])
+                } else if location.starts(with: "/") {
+                    // / --> treat as local file system url
+                    self = .customUrl(URL(filePath: location))
+                } else {
+                    // location is not a URL and not an absolute path --> treat it as a plist in the bundle
+                    self = .custom(plistNameInBundle: location)
+                }
+            default:
+                throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: context.rawArgs[0])
+            }
+        }
     }
     
     
     static func firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
-        #if TEST
-        // in a test build, we always load the US config.
-        return try _firebaseOptions(for: .region(.unitedStates))
-        #endif
-        #if !targetEnvironment(simulator)
-        if FeatureFlags.overrideFirebaseConfigOnDevice {
-            let selector = FirebaseConfigSelector.custom(
-                plistNameInBundle: "GoogleService-Info-Override"
-            )
-            LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
-            return try _firebaseOptions(for: selector)
+        if let overrideSelector = FeatureFlags.overrideFirebaseConfig {
+            try _firebaseOptions(for: overrideSelector)
+        } else {
+            try _firebaseOptions(for: configSelector)
         }
-        #endif
-//        #if targetEnvironment(simulator)
-//        let selector = FirebaseConfigSelector.custom(plistNameInBundle: "GoogleService-Info-Override")
-//        LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
-//        return try _firebaseOptions(for: selector)
-//        #endif
-        return try _firebaseOptions(for: configSelector)
     }
     
     
+    // swiftlint:disable:next cyclomatic_complexity
     private static func _firebaseOptions(for configSelector: FirebaseConfigSelector) throws(LoadingError) -> FirebaseOptions? {
+        logger.notice("[\(#function)] selector: \(String(describing: configSelector))")
         // swiftlint:disable legacy_objc_type
         // FirebaseOptions is an NSDictionary-based API...
         switch configSelector {
@@ -98,6 +124,7 @@ enum DeferredConfigLoading {
             case .unitedKingdom:
                 key = "UK"
             default:
+                logger.error("[\(#function)] invalid region input '\(region.identifier)'. returning nil")
                 return nil
             }
             guard let configDict = combinedConfig[key] as? NSDictionary else {
@@ -108,12 +135,21 @@ enum DeferredConfigLoading {
             } catch {
                 throw .unableToLoadFirebaseConfigPlist(underlying: error)
             }
+            logger.notice("[\(#function)] returning config for '\(region.identifier)' in local GoogleService-Info.plist file")
             return FirebaseOptions(contentsOfFile: tmpUrl.path)
         case .custom(let plistNameInBundle):
             guard let bundlePlistUrl = Bundle.main.url(forResource: plistNameInBundle, withExtension: "plist") else {
+                logger.error("[\(#function)] unable to find '\(plistNameInBundle).plist' in bundle. returning nil")
                 return nil
             }
+            logger.notice("[\(#function)] returning config for '\(plistNameInBundle).plist' in bundle")
             return FirebaseOptions(contentsOfFile: bundlePlistUrl.path)
+        case .customUrl(let url):
+            guard url.isFileURL else {
+                preconditionFailure("Only file urls are supported when loading external firebase configs!")
+            }
+            logger.notice("[\(#function)] returning config for plist at '\(url.path)'")
+            return FirebaseOptions(contentsOfFile: url.path)
         }
         // swiftlint:enable legacy_objc_type
     }
@@ -121,11 +157,9 @@ enum DeferredConfigLoading {
     
     @MainActor static var initialAppLaunchConfig: [any Module] {
         if FeatureFlags.disableFirebase {
-            [StudyManager()]
-        } else if FeatureFlags.useFirebaseEmulator {
-            config(for: .region(.unitedStates))
-        } else if FeatureFlags.overrideFirebaseConfigOnDevice {
-            config(for: .custom(plistNameInBundle: "GoogleService-Info-Override"))
+            baseModules
+        } else if let selector = FeatureFlags.overrideFirebaseConfig {
+            config(for: selector)
         } else {
             switch LocalPreferencesStore.standard[.lastUsedFirebaseConfig] {
             case .none:
@@ -136,6 +170,12 @@ enum DeferredConfigLoading {
         }
     }
     
+    /// The set of modules which we always want to load, regardless of whether Firebase is enabled or disabled.
+    @MainActor @ArrayBuilder<any Module> private static var baseModules: [any Module] {
+        StudyManager()
+        NotificationsManager()
+    }
+    
     /// Constructs an Array of Spezi Modules for loading Firebase and the other related modules, configured based on the specified selector.
     ///
     /// Returns nil if there was an issue resolving the selector.
@@ -143,8 +183,7 @@ enum DeferredConfigLoading {
     static func config(for configSelector: FirebaseConfigSelector) -> [any Module] {
         logger.notice("CLI args: \(CommandLine.arguments)")
         guard !FeatureFlags.disableFirebase else {
-            // if firebase is disabled, we return only the subset of the config we have below that doesn't require firebase.
-            return [StudyManager()]
+            return baseModules
         }
         do {
             guard let firebaseOptions = try firebaseOptions(for: configSelector) else {
@@ -171,8 +210,7 @@ enum DeferredConfigLoading {
                 } else {
                     FirebaseStorageConfiguration()
                 }
-                StudyManager()
-                NotificationsManager()
+                baseModules
             }
         } catch {
             logger.error("""
@@ -246,7 +284,13 @@ extension FirebaseOptions {
 
 
 private final class LoadFirebaseTracking: Module {
+    @Dependency(StudyDefinitionLoader.self)
+    private var studyLoader
+    
     func configure() {
         Spezi.didLoadFirebase = true
+        Task {
+            try await studyLoader.update()
+        }
     }
 }

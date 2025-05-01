@@ -15,8 +15,7 @@ import SpeziNotifications
 
 @Observable
 @MainActor
-final class NotificationsManager:
-    NSObject, Module, EnvironmentAccessible, Sendable, NotificationHandler, NotificationTokenHandler, MessagingDelegate {
+final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger)
     private var logger
@@ -32,11 +31,7 @@ final class NotificationsManager:
     
     
     func configure() {
-        logger.notice("-[\(Self.self) \(#function)]")
-        logger.trace("-[\(Self.self) \(#function)]")
-        logger.notice("-[\(Self.self) \(#function)]")
         guard LocalPreferencesStore.standard[.onboardingFlowComplete] else {
-            logger.notice("uh oh")
             return
         }
         Messaging.messaging().delegate = self
@@ -79,10 +74,10 @@ final class NotificationsManager:
             isAuthorized = false
         }
     }
-    
-    
-    // MARK: NotificationHandler
-    
+}
+
+
+extension NotificationsManager: NotificationHandler {
     func handleNotificationAction(_ response: UNNotificationResponse) async {
         logger.notice("\(#function) \(response)")
     }
@@ -96,16 +91,17 @@ final class NotificationsManager:
         logger.notice("\(#function) \(remoteNotification)")
         return .noData
     }
-    
-    
-    // MARK: NotificationTokenHandler
-    
+}
+
+
+extension NotificationsManager: NotificationTokenHandler {
     func receiveUpdatedDeviceToken(_ deviceToken: Data) {
         logger.notice("\(#function) \(deviceToken)")
     }
-    
-    // MARK: MessagingDelegate
-    
+}
+
+
+extension NotificationsManager: MessagingDelegate {
     nonisolated func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         let messagingDesc = String(reflecting: messaging)
         Task {

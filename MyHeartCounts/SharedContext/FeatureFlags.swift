@@ -12,33 +12,61 @@ import Foundation
 /// A collection of feature flags for the My Heart Counts.
 enum FeatureFlags {
     /// Skips the onboarding flow to enable easier development of features in the application and to allow UI tests to skip the onboarding flow.
-    static let skipOnboarding = CommandLine.arguments.contains("--skipOnboarding")
+    static var skipOnboarding: Bool {
+        LaunchOptions.launchOptions[.skipOnboarding]
+    }
     
     /// Always show the onboarding when the application is launched. Makes it easy to modify and test the onboarding flow without the need to manually remove the application or reset the simulator.
-    static let showOnboarding = CommandLine.arguments.contains("--showOnboarding")
+    static var showOnboarding: Bool {
+        LaunchOptions.launchOptions[.showOnboarding]
+    }
     
     /// Disables the Firebase interactions, including the login/sign-up step and the Firebase Firestore upload.
-    static let disableFirebase = CommandLine.arguments.contains("--disableFirebase")
+    ///
+    /// - Note: This takes precedence over all other firebase-related flags. I.e., if you
+    static var disableFirebase: Bool {
+        LaunchOptions.launchOptions[.disableFirebase]
+    }
     
     /// Defines if the application should connect to the local firebase emulator.
     ///
     /// Always `true` in test builds.
     /// Specifying this flag implicitly also sets the ``disableFirebase`` to `false`.
-    static let useFirebaseEmulator = ProcessInfo.isTestBuild || setupTestAccount || CommandLine.arguments.contains("--useFirebaseEmulator")
+    static var useFirebaseEmulator: Bool {
+        ProcessInfo.isTestBuild || setupTestAccount || LaunchOptions.launchOptions[.useFirebaseEmulator]
+    }
     
     /// Automatically sign in into a test account upon app launch.
     ///
     /// Specifying this flag implicitly also sets the ``useFirebaseEmulator`` flag to `true`.
-    static let setupTestAccount = CommandLine.arguments.contains("--setupTestAccount")
+    static var setupTestAccount: Bool {
+        LaunchOptions.launchOptions[.setupTestAccount]
+    }
     
     /// Disables the automatic bulk export and upload of historical Health data
-    static let disableAutomaticBulkHealthExport = CommandLine.arguments.contains("--disableAutomaticHistoricalHealthExport")
+    static var disableAutomaticBulkHealthExport: Bool {
+        LaunchOptions.launchOptions[.disableAutomaticBulkHealthExport]
+    }
     
-    /// Whether, when running on a real device, we should load a special, different Firebase config instead of the one that would regularly get loaded.
+    /// Whether the should load a special, different Firebase config instead of the one that would regularly get loaded.
     ///
-    /// If this flag is present, the ``DeferredConfigLoading`` module will unconditionally attempt to load
-    /// the Firebase configuration file called `GoogleService-Info-Override.plist` stored in the main bundle.
-    ///
-    /// - Note: When this flag is specified, the app will always load the Study Definition for the US region.
-    static let overrideFirebaseConfigOnDevice = CommandLine.arguments.contains("--overrideFirebaseConfigOnDevice")
+    /// If specified, the ``DeferredConfigLoading`` module will unconditionally attempt to load the override config.
+    static var overrideFirebaseConfig: DeferredConfigLoading.FirebaseConfigSelector? {
+        LaunchOptions.launchOptions[.overrideFirebaseConfig]
+    }
+}
+
+
+extension LaunchOptions {
+    static let skipOnboarding = LaunchOption<Bool>("--skipOnboarding", default: false)
+    static let showOnboarding = LaunchOption<Bool>("--showOnboarding", default: false)
+    
+    static let disableFirebase = LaunchOption<Bool>("--disableFirebase", default: false)
+    static let useFirebaseEmulator = LaunchOption<Bool>("--useFirebaseEmulator", default: false)
+    static let setupTestAccount = LaunchOption<Bool>("--setupTestAccount", default: false)
+    static let overrideFirebaseConfig = LaunchOption<DeferredConfigLoading.FirebaseConfigSelector?>("--overrideFirebaseConfig", default: nil)
+    
+    static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)
+    
+    static let overrideStudyDefinitionLocation = LaunchOption<URL?>("--overrideStudyDefinitionLocation", default: nil)
 }

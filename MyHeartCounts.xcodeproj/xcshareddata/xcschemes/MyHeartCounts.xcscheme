@@ -108,6 +108,14 @@
             argument = "--useFirebaseEmulator"
             isEnabled = "NO">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--overrideFirebaseConfig plist=/Users/lukas/Desktop/MHC.plist"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--dump-cli-options-and-exit"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable

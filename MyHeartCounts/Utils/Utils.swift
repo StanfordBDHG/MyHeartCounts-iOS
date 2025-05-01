@@ -88,3 +88,10 @@ extension URL: @retroactive ExpressibleByStringLiteral, @retroactive Expressible
         }
     }
 }
+
+
+extension Collection {
+    subscript(safe idx: Index) -> Element? {
+        idx >= startIndex && idx < endIndex ? self[idx] : nil
+    }
+}
