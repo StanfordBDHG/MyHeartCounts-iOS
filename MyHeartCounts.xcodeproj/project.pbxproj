@@ -466,6 +466,7 @@
 				8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */,
 				805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
 				8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */,
+				8043E0092DC2348600E0DF01 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -637,6 +638,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
@@ -857,6 +859,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
@@ -911,6 +914,7 @@
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses the step count to demonstrate Spezi's integration with HealthKit.";
