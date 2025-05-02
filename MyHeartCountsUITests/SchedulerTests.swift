@@ -12,9 +12,9 @@ import XCTestExtensions
 
 class SchedulerTests: XCTestCase {
     @MainActor
-    override func setUp() async throws {
+    override func setUp() {
+        super.setUp()
         continueAfterFailure = false
-        
         let app = XCUIApplication()
         app.launchArguments = ["--skipOnboarding"]
         app.deleteAndLaunch(withSpringboardAppName: "MyHeartCounts")

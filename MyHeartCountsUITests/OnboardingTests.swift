@@ -15,9 +15,9 @@ import XCTSpeziNotifications
 
 final class OnboardingTests: MHCTestCase {
     @MainActor
-    override func setUp() async throws {
+    override func setUp() {
+        super.setUp()
         continueAfterFailure = false
-        
         let app = XCUIApplication()
         app.launchArguments = ["--showOnboarding"]
         app.deleteAndLaunch(withSpringboardAppName: "MyHeartCounts")
