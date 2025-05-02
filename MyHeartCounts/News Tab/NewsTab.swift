@@ -53,8 +53,22 @@ struct NewsTab: RootViewTab {
             #if true || targetEnvironment(simulator)
             try await Task.sleep(for: .seconds(0.5))
             entries = .loaded([
-                .init(date: .yesterday, category: "Research", title: "Title1", image: "image1", lede: "Lede1", body: "Body1"),
-                .init(date: .today, category: "Impact", title: "Title2", image: "image2", lede: "Lede2", body: "Body2")
+                .init(
+                    date: .yesterday,
+                    tags: [.init(title: "Research", color: .blue)],
+                    title: "Title1",
+                    image: "image1",
+                    lede: "Lede1",
+                    body: "Body1"
+                ),
+                .init(
+                    date: .today,
+                    tags: [.init(title: "Impact", color: .orange)],
+                    title: "Title2",
+                    image: "image2",
+                    lede: "Lede2",
+                    body: "Body2"
+                )
             ])
             #else
             entries = .error(SimpleError("Not yet implemented"))
@@ -88,8 +102,8 @@ struct NewsTab: RootViewTab {
         // maybe have like transparency/vibrancy/etc?
         VStack(alignment: .leading) {
             HStack {
-                Text(entry.category)
-                    .foregroundStyle(.tertiary)
+//                Text(entry.category) // TODO!!!
+//                    .foregroundStyle(.tertiary)
                 Spacer()
                 RelativeTimeLabel(date: entry.date)
                     .foregroundStyle(.secondary)

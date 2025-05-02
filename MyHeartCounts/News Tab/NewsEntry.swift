@@ -12,7 +12,7 @@ import SwiftUI
 
 struct NewsEntry: Hashable, Codable, Sendable {
     let date: Date
-    let category: String
+    let tags: [ArticleSheet.Content.Tag]
     let title: String
     let image: String?
     let lede: String
@@ -39,7 +39,7 @@ extension ArticleSheet.Content {
         self.init(
             title: other.title,
             date: other.date,
-            categories: [other.category],
+            tags: other.tags,
             lede: other.lede,
             headerImage: other.image.map { Image($0) },
             body: other.body

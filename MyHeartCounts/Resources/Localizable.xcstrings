@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "– %@" : {
 
     },
@@ -385,9 +382,6 @@
 
     },
     "TODO: rough information about (at least some) key study components here?" : {
-
-    },
-    "Unable to process text" : {
 
     },
     "Unenroll" : {
