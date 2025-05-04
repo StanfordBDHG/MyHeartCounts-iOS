@@ -211,6 +211,7 @@ enum DeferredConfigLoading {
                     FirebaseStorageConfiguration()
                 }
                 baseModules
+                NewsManager()
             }
         } catch {
             logger.error("""
