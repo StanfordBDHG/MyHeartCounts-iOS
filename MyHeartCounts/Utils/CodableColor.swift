@@ -12,27 +12,6 @@ import struct SwiftUI.EnvironmentValues
 
 
 enum CodableColor: Codable, Hashable, Sendable {
-    enum SystemColor: String, Codable, Hashable {
-        case red
-        case orange
-        case yellow
-        case green
-        case mint
-        case teal
-        case cyan
-        case blue
-        case indigo
-        case purple
-        case pink
-        case brown
-        case white
-        case gray
-        case black
-        case clear
-        case primary
-        case secondary
-    }
-    
     case systemColor(SystemColor)
     case resolved(Color.Resolved)
     
@@ -77,6 +56,30 @@ enum CodableColor: Codable, Hashable, Sendable {
         default:
             self = .resolved(color.resolve(in: environment))
         }
+    }
+}
+
+
+extension CodableColor {
+    enum SystemColor: String, Codable, Hashable {
+        case red
+        case orange
+        case yellow
+        case green
+        case mint
+        case teal
+        case cyan
+        case blue
+        case indigo
+        case purple
+        case pink
+        case brown
+        case white
+        case gray
+        case black
+        case clear
+        case primary
+        case secondary
     }
 }
 
