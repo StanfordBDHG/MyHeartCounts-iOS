@@ -1,5 +1,5 @@
 {
-  "originHash" : "e606ee5e4248dea59c77875b3903e5036d8470b32f293d226ecb003f6e994e3f",
+  "originHash" : "c1500468d6f9bd9b2a5cb24f251fb3144b007e66dd8c542bf7842676274ebdc2",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -393,8 +393,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FelixHerrmann/swift-package-list",
       "state" : {
-        "revision" : "b3ee4748096984ea58dade510f63b12027e0de84",
-        "version" : "4.6.0"
+        "revision" : "5153e3246195215e2d2402e7ffa5ae6ec6e3fc5f",
+        "version" : "4.7.2"
       }
     },
     {
