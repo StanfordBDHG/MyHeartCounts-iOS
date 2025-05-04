@@ -23,13 +23,13 @@ final class NewsManager: Module, EnvironmentAccessible {
     
     func configure() {
         Task {
-            _ = try await refresh()
+            try await refresh()
         }
     }
     
     
     @discardableResult
-    func refresh() async throws -> [Article] { // TODO do we really want to expose the error here?
+    func refresh() async throws -> [Article] {
         let query = try await newsCollection.getDocuments()
         articles = query.documents
             .compactMap { try? $0.data(as: Article.self) }

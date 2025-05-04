@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import MarkdownUI
 import SpeziFoundation
@@ -23,23 +21,25 @@ struct ArticleSheet: View {
     @State private var scrollViewOffset: CGPoint = .zero
     
     var body: some View {
-        NavigationStack { // swiftlint:disable:this closure_body_length
+        NavigationStack {
             ScrollView {
-                GeometryReader {
-                    Color.clear.preference(
-                        key: ScrollViewOffsetKey.self,
-                        value: $0.frame(in: .named("SCROLLVIEW")).origin
-                    )
-                }
-                .onPreferenceChange(ScrollViewOffsetKey.self) { offset in
-                    runOrScheduleOnMainActor {
-                        self.scrollViewOffset = offset
+                VStack(spacing: 0) {
+                    GeometryReader {
+                        Color.red.preference(
+                            key: ScrollViewOffsetKey.self,
+                            value: $0.frame(in: .scrollView).origin
+                        )
                     }
+                    .frame(height: 0)
+                    .onPreferenceChange(ScrollViewOffsetKey.self) { offset in
+                        runOrScheduleOnMainActor {
+                            self.scrollViewOffset = offset
+                        }
+                    }
+                    scrollViewContent
+                        .coordinateSpace(.named("scrollViewContent"))
                 }
-                scrollViewContent
-                    .coordinateSpace(.named("scrollViewContent"))
             }
-            .coordinateSpace(.named("SCROLLVIEW"))
             // telling the scroll view to ignore the top safe area causes it to place its content underneath the navigation bar,
             // which we want since that in turn causes SwiftUI to make the navigation bar transparent when the scroll view is
             // scrolled all the way to the top, and to gradually make it opaque as you scroll down.
@@ -52,9 +52,7 @@ struct ArticleSheet: View {
                     DismissButton()
                 }
                 ToolbarItem(placement: .principal) {
-                    HStack {
-                        navigationTitleView
-                    }
+                    navigationTitleView
                 }
             }
         }
@@ -62,7 +60,7 @@ struct ArticleSheet: View {
     
     @ViewBuilder private var navigationTitleView: some View {
         let navBarHeight: CGFloat = 56
-        VStack(spacing: 0) {
+        VStack(spacing: 0) { // swiftlint:disable:this closure_body_length
             Color.clear
                 .frame(width: 0, height: { () -> CGFloat in
                     guard let navbarTitleViewHeight else {
@@ -96,7 +94,7 @@ struct ArticleSheet: View {
                         .font(.subheadline)
                 }
             }
-            .background(
+            .background {
                 GeometryReader { geometry in
                     Color.clear.preference(key: NavbarTitleViewHeight.self, value: geometry.size.height)
                 }
@@ -105,7 +103,7 @@ struct ArticleSheet: View {
                         self.navbarTitleViewHeight = height
                     }
                 }
-            )
+            }
         }
         .frame(height: navbarTitleViewHeight, alignment: .top)
         .clipped()
@@ -121,52 +119,65 @@ struct ArticleSheet: View {
     }
     
     @ViewBuilder private var headlineImage: some View {
-        ZStack { // swiftlint:disable:this closure_body_length
-            article.imageView
-                .frame(height: 271)
-                .clipped()
-            VStack {
-                Spacer()
-                VStack(alignment: .leading, spacing: 7) {
-                    Text(article.title)
-                        .font(.title.bold())
-                        .frame(alignment: .leading)
-                        .background(GeometryReader {
-                            Color.clear.preference(key: ArticleTitleLabelFrame.self, value: $0.frame(in: .named("scrollViewContent")))
-                        }.onPreferenceChange(ArticleTitleLabelFrame.self) { frame in
+        // swiftlint:disable closure_body_length
+        VStack {
+            Spacer()
+            VStack(alignment: .leading, spacing: 7) {
+                Text(article.title)
+                    .font(.title.bold())
+                    .frame(alignment: .leading)
+                    .background {
+                        GeometryReader {
+                            Color.clear.preference(
+                                key: ArticleTitleLabelFrame.self,
+                                value: $0.frame(in: .named("scrollViewContent"))
+                            )
+                        }
+                        .frame(height: 0)
+                        .onPreferenceChange(ArticleTitleLabelFrame.self) { frame in
                             runOrScheduleOnMainActor {
                                 self.articleTitleLabelFrame = frame
                             }
-                        })
-                    HStack {
-                        if let date = article.date {
-                            Text(DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .none))
-                                .foregroundStyle(.secondary)
-                                .layoutPriority(1)
-                        }
-                        Spacer()
-                        let tags = HStack {
-                            ForEach(article.tags.indices, id: \.self) { tagIdx in
-                                TagView(tag: article.tags[tagIdx])
-                            }
-                        }
-                        ViewThatFits {
-                            tags
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                tags
-                            }
-                            .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
                         }
                     }
+                HStack {
+                    if let date = article.date {
+                        Text(DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .none))
+                            .foregroundStyle(.secondary)
+                            .layoutPriority(1)
+                    }
+                    Spacer()
+                    let tags = HStack {
+                        ForEach(article.tags.indices, id: \.self) { tagIdx in
+                            TagView(tag: article.tags[tagIdx])
+                        }
+                    }
+                    ViewThatFits {
+                        tags
+                        ScrollView(.horizontal) {
+                            tags
+                        }
+                        .scrollIndicators(.hidden)
+                        .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+                    }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(.thinMaterial)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(.thinMaterial)
         }
+        .frame(height: 271)
+        .background {
+            article.imageView
+                .frame(height: 271) // this shouldn't be necessary???!!!
+                .clipped()
+        }
+        // swiftlint:enable closure_body_length
     }
-    
-    
+}
+
+
+extension ArticleSheet {
     private struct ArticleTitleLabelFrame: PreferenceKey {
         static let defaultValue: CGRect? = nil
         static func reduce(value: inout CGRect?, nextValue: () -> CGRect?) {
