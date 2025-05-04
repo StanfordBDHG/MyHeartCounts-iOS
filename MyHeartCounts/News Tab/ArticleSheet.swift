@@ -6,26 +6,44 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable all
+
 import Foundation
 import MarkdownUI
+import SpeziFoundation
 import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
 
 
 struct ArticleSheet: View {
-    let content: Content
+    let article: Article
+    @State private var navbarTitleViewHeight: CGFloat?
+    @State private var articleTitleLabelFrame: CGRect?
+    @State private var scrollViewOffset: CGPoint = .zero
     
     var body: some View {
-        NavigationStack {
+        NavigationStack { // swiftlint:disable:this closure_body_length
             ScrollView {
+                GeometryReader {
+                    Color.clear.preference(
+                        key: ScrollViewOffsetKey.self,
+                        value: $0.frame(in: .named("SCROLLVIEW")).origin
+                    )
+                }
+                .onPreferenceChange(ScrollViewOffsetKey.self) { offset in
+                    runOrScheduleOnMainActor {
+                        self.scrollViewOffset = offset
+                    }
+                }
                 scrollViewContent
+                    .coordinateSpace(.named("scrollViewContent"))
             }
+            .coordinateSpace(.named("SCROLLVIEW"))
             // telling the scroll view to ignore the top safe area causes it to place its content underneath the navigation bar,
             // which we want since that in turn causes SwiftUI to make the navigation bar transparent when the scroll view is
             // scrolled all the way to the top, and to gradually make it opaque as you scroll down.
             .ignoresSafeArea(edges: .top)
-//            .navigationTitle(content.title)
             #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -34,67 +52,102 @@ struct ArticleSheet: View {
                     DismissButton()
                 }
                 ToolbarItem(placement: .principal) {
-                    navigationTitleView
+                    HStack {
+                        navigationTitleView
+                    }
                 }
             }
         }
     }
     
     @ViewBuilder private var navigationTitleView: some View {
-        VStack {
-            Text(content.title)
-                .font(.headline)
-            // do we really want the date here?
-            if let date = content.date {
-                Text(DateFormatter.localizedString(from: date, dateStyle: .short, timeStyle: .none))
-                    .font(.subheadline)
+        let navBarHeight: CGFloat = 56
+        VStack(spacing: 0) {
+            Color.clear
+                .frame(width: 0, height: { () -> CGFloat in
+                    guard let navbarTitleViewHeight else {
+                        return 0
+                    }
+                    guard let articleTitleLabelFrame = articleTitleLabelFrame.map({
+                        CGRect(
+                            x: $0.minX,
+                            y: $0.midY - 0.5 * navbarTitleViewHeight,
+                            width: $0.width,
+                            height: navbarTitleViewHeight
+                        )
+                    }) else {
+                        return 0
+                    }
+                    let scrollViewY = -scrollViewOffset.y + navBarHeight
+                    if scrollViewY < articleTitleLabelFrame.minY {
+                        return navbarTitleViewHeight
+                    } else if scrollViewY >= articleTitleLabelFrame.maxY {
+                        return 0
+                    } else {
+                        let diff = scrollViewY - articleTitleLabelFrame.minY
+                        return navbarTitleViewHeight - diff
+                    }
+                }())
+            VStack {
+                Text(article.title)
+                    .font(.headline)
+                if let date = article.date {
+                    Text(DateFormatter.localizedString(from: date, dateStyle: .short, timeStyle: .none))
+                        .font(.subheadline)
+                }
             }
+            .background(
+                GeometryReader { geometry in
+                    Color.clear.preference(key: NavbarTitleViewHeight.self, value: geometry.size.height)
+                }
+                .onPreferenceChange(NavbarTitleViewHeight.self) { height in
+                    runOrScheduleOnMainActor {
+                        self.navbarTitleViewHeight = height
+                    }
+                }
+            )
         }
+        .frame(height: navbarTitleViewHeight, alignment: .top)
+        .clipped()
     }
     
     @ViewBuilder private var scrollViewContent: some View {
         VStack(spacing: 0) {
             headlineImage
             Divider()
-            Group {
-                Markdown(.init(content.body))
-            }
-            .padding([.horizontal, .top])
+            Markdown(.init(article.body))
+                .padding([.horizontal, .top])
         }
     }
     
     @ViewBuilder private var headlineImage: some View {
-        // TODO ZStack vs .overlay here?
         ZStack { // swiftlint:disable:this closure_body_length
-            Group {
-                if let headerImage = content.headerImage {
-                    headerImage
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipped()
-                } else {
-                    Color.clear
-                }
-            }
-            .frame(height: 271)
-            .clipped()
-            .background(.red)
+            article.imageView
+                .frame(height: 271)
+                .clipped()
             VStack {
                 Spacer()
-                VStack(alignment: .leading) {
-                        Text(content.title)
-                            .font(.title.bold())
-                            .frame(alignment: .leading)
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(article.title)
+                        .font(.title.bold())
+                        .frame(alignment: .leading)
+                        .background(GeometryReader {
+                            Color.clear.preference(key: ArticleTitleLabelFrame.self, value: $0.frame(in: .named("scrollViewContent")))
+                        }.onPreferenceChange(ArticleTitleLabelFrame.self) { frame in
+                            runOrScheduleOnMainActor {
+                                self.articleTitleLabelFrame = frame
+                            }
+                        })
                     HStack {
-                        if let date = content.date {
+                        if let date = article.date {
                             Text(DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .none))
-//                                .frame(alignment: .leading)
+                                .foregroundStyle(.secondary)
                                 .layoutPriority(1)
                         }
                         Spacer()
                         let tags = HStack {
-                            ForEach(content.tags.indices, id: \.self) { tagIdx in
-                                TagView(tag: content.tags[tagIdx])
+                            ForEach(article.tags.indices, id: \.self) { tagIdx in
+                                TagView(tag: article.tags[tagIdx])
                             }
                         }
                         ViewThatFits {
@@ -108,141 +161,30 @@ struct ArticleSheet: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(Color.primary.colorInvert().opacity(0.75))
+                .background(.thinMaterial)
             }
-            // IDEA what if we somehow give the text portion of the ZStack a gradual blur background?
+        }
+    }
+    
+    
+    private struct ArticleTitleLabelFrame: PreferenceKey {
+        static let defaultValue: CGRect? = nil
+        static func reduce(value: inout CGRect?, nextValue: () -> CGRect?) {
+            value = nextValue()
         }
     }
     
-    
-    init(content: Content) {
-        self.content = content
-    }
-}
-
-
-extension ArticleSheet {
-    struct Content: Sendable {
-        struct Tag: Sendable, Codable, Hashable {
-            let title: String
-            let color: Color
-            
-            init(title: String, color: Color) {
-                self.title = String(title.trimmingLeadingAndTrailingWhitespace())
-                self.color = color
-            }
-        }
-        let title: String
-        let date: Date?
-        let tags: [Tag]
-        let lede: String?
-        let headerImage: Image?
-        let body: String
-        
-        init(
-            title: String,
-            date: Date? = nil,
-            tags: [Tag] = [],
-            lede: String? = nil,
-            headerImage: Image? = nil, // swiftlint:disable:this function_default_parameter_at_end
-            body: String
-        ) {
-            self.title = title
-            self.date = date
-            self.tags = tags.filter { !$0.title.isEmpty }
-            self.lede = lede
-            self.headerImage = headerImage
-            self.body = body
+    private struct NavbarTitleViewHeight: PreferenceKey {
+        static let defaultValue: CGFloat? = nil
+        static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
+            value = nextValue()
         }
     }
-}
-
-
-extension ArticleSheet.Content.Tag {
-    private enum CodingKeys: CodingKey {
-        case title
-        case color
-    }
     
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        title = try container.decode(String.self, forKey: .title)
-        color = Color(try container.decode(CodableColor.self, forKey: .color))
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(title, forKey: .title)
-        try container.encode(CodableColor(color), forKey: .color)
-    }
-}
-
-
-extension ArticleSheet.Content {
-    init(_ other: StudyDefinition.InformationalComponent) {
-        self.init(
-            title: other.title,
-            headerImage: Image(other.headerImage),
-            body: other.body
-        )
-    }
-}
-
-
-extension AttributedString {
-    // stolen from https://stackoverflow.com/a/74430546
-    init(styledMarkdown markdownString: String) throws {
-        var output = try AttributedString(
-            markdown: markdownString,
-            options: .init(
-                allowsExtendedAttributes: true,
-                interpretedSyntax: .full,
-                failurePolicy: .returnPartiallyParsedIfPossible
-            ),
-            baseURL: nil
-        )
-
-        for (intentBlock, intentRange) in output.runs[AttributeScopes.FoundationAttributes.PresentationIntentAttribute.self].reversed() {
-            guard let intentBlock = intentBlock else { continue }
-            for intent in intentBlock.components {
-                switch intent.kind {
-                case .header(level: let level):
-                    switch level {
-                    case 1:
-                        output[intentRange].font = .system(.title).bold()
-                    case 2:
-                        output[intentRange].font = .system(.title2).bold()
-                    case 3:
-                        output[intentRange].font = .system(.title3).bold()
-                    default:
-                        break
-                    }
-                default:
-                    break
-                }
-            }
-            
-            if intentRange.lowerBound != output.startIndex {
-                output.characters.insert(contentsOf: "\n\n", at: intentRange.lowerBound)
-            }
+    private struct ScrollViewOffsetKey: PreferenceKey {
+        static let defaultValue: CGPoint = .zero
+        static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+            value = nextValue()
         }
-
-        self = output
-    }
-}
-
-
-// MARK: Utility Views
-
-private struct TagView: View {
-    private static let cornerRadius: CGFloat = 7
-    let tag: ArticleSheet.Content.Tag
-    
-    var body: some View {
-        Text(tag.title)
-            .font(.footnote.weight(.medium))
-            .foregroundStyle(.white) // TODO make this dependent on how dark/bright the tag color is?
-            .padding(EdgeInsets(horizontal: 7, vertical: 3))
-            .background(tag.color, in: RoundedRectangle(cornerRadius: Self.cornerRadius))
     }
 }
