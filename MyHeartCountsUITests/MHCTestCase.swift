@@ -10,7 +10,6 @@ import XCTest
 
 
 class MHCTestCase: XCTestCase {
-    @MainActor
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
@@ -20,7 +19,7 @@ class MHCTestCase: XCTestCase {
         super.tearDown()
         MainActor.assumeIsolated {
             // After each test, we want the app to get fully reset.
-            let app = XCUIApplication(launchArguments: ["--collectedSamplesOnly"])
+            let app = XCUIApplication()
             app.terminate()
             app.delete(app: "MyHeart Counts")
         }

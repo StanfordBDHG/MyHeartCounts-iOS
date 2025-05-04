@@ -393,8 +393,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FelixHerrmann/swift-package-list",
       "state" : {
-        "revision" : "5153e3246195215e2d2402e7ffa5ae6ec6e3fc5f",
-        "version" : "4.7.2"
+        "branch" : "improvement/generalize-plugin-source-packages-location-fix",
+        "revision" : "e4b4b87f87a2d582c64dec4b0356fd4566cb2c8b"
       }
     },
     {

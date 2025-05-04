@@ -1183,8 +1183,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/FelixHerrmann/swift-package-list";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.7.2;
+				branch = "improvement/generalize-plugin-source-packages-location-fix";
+				kind = branch;
 			};
 		};
 		56E708332BB06B7100B08F0A /* XCRemoteSwiftPackageReference "SpeziLicense" */ = {

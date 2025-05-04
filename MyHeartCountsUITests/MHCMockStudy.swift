@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziHealthKit
 import SpeziStudyDefinition
 
 
@@ -60,7 +61,7 @@ func mockStudy(revision: MockStudyRevision) -> StudyDefinition {
             case .v1:
                 StudyDefinition.ComponentSchedule(
                     componentId: .article1,
-                    scheduleDefinition: .repeated(.weekly(weekday: .wednesday, hour: 9, minute: 0)),
+                    scheduleDefinition: .repeated(.weekly(weekday: .wednesday, hour: 9, minute: 0), startOffsetInDays: 0),
                     completionPolicy: .sameDayAfterStart
                 )
             }
