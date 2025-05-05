@@ -196,14 +196,15 @@ platform :ios do
     else
       upload_to_testflight(
         app_identifier: appidentifier,
-        distribute_external: true,
+        distribute_external: false,
         reject_build_waiting_for_review: true,
-        expire_previous_builds: true,
+        expire_previous_builds: false,
         groups: [
-          "External Testers"
+          "Internal Testers",
+          # "External Testers"
         ],
         submit_beta_review: true,
-        notify_external_testers: true,
+        notify_external_testers: false,
         changelog: commit[:message]
       )
     end

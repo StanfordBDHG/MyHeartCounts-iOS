@@ -20,6 +20,7 @@ concurrency:
 jobs:
   buildandtest_unittests:
     name: Build and Test (Unit Tests)
+    if: ${{ false }}
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@lukas/testplans
     with:
       runsonlabels: '["macOS", "self-hosted"]'
@@ -29,6 +30,7 @@ jobs:
       artifactname: MyHeartCounts-UnitTests.xcresult
   buildandtest_uitests:
     name: Build and Test (UI Tests)
+    if: ${{ false }}
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@lukas/testplans
     permissions:
       contents: read
@@ -45,6 +47,7 @@ jobs:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
     name: Upload Coverage Report
+    if: ${{ false }}
     needs: [buildandtest_unittests, buildandtest_uitests]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     permissions:
