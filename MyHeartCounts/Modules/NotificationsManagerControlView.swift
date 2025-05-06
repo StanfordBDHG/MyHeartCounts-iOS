@@ -48,6 +48,12 @@ struct NotificationsManagerControlView: View {
                 )
             }
         }
+        .onAppear {
+            update()
+        }
+        .refreshable {
+            update()
+        }
     }
     
     

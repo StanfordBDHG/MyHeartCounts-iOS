@@ -47,14 +47,16 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
         }
     }
     
-    
     func requestNotificationPermissions() async throws {
-        try await notifications.requestNotificationAuthorization(options: [.alert, .badge, .sound])
-        try await setup()
+        try await notifications.requestNotificationAuthorization(options: [.alert, .badge, .sound, .providesAppNotificationSettings])
+        try await _setup(requestPermissionsIfNotDetermined: false)
     }
     
-    
     func setup() async throws {
+        try await _setup(requestPermissionsIfNotDetermined: true)
+    }
+    
+    private func _setup(requestPermissionsIfNotDetermined: Bool) async throws {
         let settings = await notifications.notificationSettings()
         logger.notice("in setup. settings.authStatus: \(settings.authorizationStatus.description)")
         switch settings.authorizationStatus {
@@ -77,9 +79,11 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
         case .denied:
             isAuthorized = false
         case .notDetermined:
-            // shouldn't really end up here since we request notification permissions as part of the onboarding,
-            // but we'll simply trigger it again, just in case.
-            try await requestNotificationPermissions()
+            if requestPermissionsIfNotDetermined {
+                // shouldn't really end up here since we request notification permissions as part of the onboarding,
+                // but we'll simply trigger it again, just in case.
+                try await requestNotificationPermissions()
+            }
         @unknown default:
             isAuthorized = false
         }
