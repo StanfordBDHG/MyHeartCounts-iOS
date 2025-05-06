@@ -16,6 +16,11 @@ import SpeziNotifications
 @Observable
 @MainActor
 final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Sendable {
+    struct RemoteNotificationsToken: Sendable {
+        let apns: Data?
+        let fcm: String?
+    }
+    
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger)
     private var logger
@@ -28,6 +33,8 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
     // swiftlint:enable attributes
     
     private(set) var isAuthorized = false
+    
+    private(set) var remoteNotificationsToken: RemoteNotificationsToken?
     
     
     func configure() {
@@ -56,10 +63,13 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
             #if !TEST
             logger.notice("Will fetch token")
             do {
-                let token = try await registerRemoteNotifications()
+                let messaging = Messaging.messaging()
+                let apnsToken = try await registerRemoteNotifications()
                 logger.notice("Did fetch token")
-                logger.notice("got remote notifications token: \(token)")
-                Messaging.messaging().apnsToken = token
+                logger.notice("got remote notifications token: \(apnsToken)")
+                messaging.apnsToken = apnsToken
+                let fcmToken = try? await messaging.token()
+                self.remoteNotificationsToken = .init(apns: apnsToken, fcm: fcmToken)
             } catch {
                 logger.error("Unable to register for remote notifications: \(error)")
             }
