@@ -53,6 +53,9 @@
     "Are you sure you want to leave the '%@' study?" : {
 
     },
+    "AuthorizationStatus" : {
+
+    },
     "Before we can continue,\nwe need to learn a little about you" : {
 
     },
@@ -128,6 +131,9 @@
 
     },
     "Failed to Load Study into App" : {
+
+    },
+    "FCM Token" : {
 
     },
     "Fetching…" : {
@@ -214,6 +220,9 @@
     "Link Arrow Symbol" : {
 
     },
+    "Local Notifications Status" : {
+
+    },
     "Make sure your device is connected to the internet and try again" : {
 
     },
@@ -278,6 +287,9 @@
         }
       }
     },
+    "NotificationsManager" : {
+
+    },
     "Onboarding Consent Title" : {
 
     },
@@ -291,6 +303,9 @@
 
     },
     "Region" : {
+
+    },
+    "Remote Notifications Registration" : {
 
     },
     "Replace Root View Controller" : {

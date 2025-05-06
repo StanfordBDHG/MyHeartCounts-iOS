@@ -41,7 +41,6 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
         guard LocalPreferencesStore.standard[.onboardingFlowComplete] else {
             return
         }
-        Messaging.messaging().delegate = self
         Task {
             try await setup()
         }
@@ -58,20 +57,12 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
     
     private func _setup(requestPermissionsIfNotDetermined: Bool) async throws {
         let settings = await notifications.notificationSettings()
-        logger.notice("in setup. settings.authStatus: \(settings.authorizationStatus.description)")
         switch settings.authorizationStatus {
         case .authorized, .provisional, .ephemeral:
             isAuthorized = true
             #if !TEST
-            logger.notice("Will fetch token")
             do {
-                let messaging = Messaging.messaging()
-                let apnsToken = try await registerRemoteNotifications()
-                logger.notice("Did fetch token")
-                logger.notice("got remote notifications token: \(apnsToken)")
-                messaging.apnsToken = apnsToken
-                let fcmToken = try? await messaging.token()
-                self.remoteNotificationsToken = .init(apns: apnsToken, fcm: fcmToken)
+                try await registerRemoteNotifications()
             } catch {
                 logger.error("Unable to register for remote notifications: \(error)")
             }
@@ -110,16 +101,18 @@ extension NotificationsManager: NotificationHandler {
 
 extension NotificationsManager: NotificationTokenHandler {
     func receiveUpdatedDeviceToken(_ deviceToken: Data) {
-        logger.notice("\(#function) \(deviceToken)")
-    }
-}
-
-
-extension NotificationsManager: MessagingDelegate {
-    nonisolated func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        let messagingDesc = String(reflecting: messaging)
+        guard let account else {
+            return
+        }
         Task {
-            await self.logger.notice("\(#function) \(messagingDesc) \(fcmToken ?? "<nil>")")
+            let messaging = Messaging.messaging()
+            messaging.apnsToken = deviceToken
+            guard let fcmToken = try? await messaging.token() else {
+                return
+            }
+            var newDetails = AccountDetails()
+            newDetails.fcmToken = fcmToken
+            try await account.accountService.updateAccountDetails(.init(modifiedDetails: newDetails))
         }
     }
 }
