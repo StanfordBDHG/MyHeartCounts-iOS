@@ -28,7 +28,7 @@ final class StudyDefinitionLoader: Module, Sendable {
     
     private init() {
         Task {
-            _ = try? await update()
+            _ = try await update()
         }
     }
     
@@ -37,9 +37,11 @@ final class StudyDefinitionLoader: Module, Sendable {
     func load(fromBucket bucketName: String) async throws(LoadError) -> StudyDefinition {
         let url = Self.studyLocation(inBucket: bucketName)
         logger.debug("Fetching study definition from bucket '\(bucketName)'")
+        logger.debug("Fetching study definition from '\(url.absoluteString)'")
         let retval: Result<StudyDefinition, LoadError>
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let session = URLSession(configuration: .ephemeral)
+            let (data, response) = try await session.data(from: url)
             guard let response = response as? HTTPURLResponse else {
                 throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
                     NSLocalizedDescriptionKey: "Unable to decode HTTP response"
