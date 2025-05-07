@@ -6,13 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable file_types_order
 
 import Foundation
-import MarkdownUI
 import SpeziFoundation
 import SpeziStudyDefinition
-import SpeziViews
 import SwiftUI
 
 
@@ -21,7 +19,6 @@ struct Article: Codable, Hashable, Identifiable, Sendable {
         case url(URL)
         case asset(String)
     }
-    
     
     struct Tag: Codable, Hashable, Sendable {
         let title: String
@@ -32,7 +29,14 @@ struct Article: Codable, Hashable, Identifiable, Sendable {
             self.color = color
         }
     }
+    
+    enum Status: String, Codable, Hashable, Sendable {
+        case draft
+        case published
+    }
+    
     let id: UUID
+    let status: Status
     let title: String
     let date: Date?
     let tags: [Tag]
@@ -42,6 +46,7 @@ struct Article: Codable, Hashable, Identifiable, Sendable {
     
     init(
         id: UUID,
+        status: Status,
         title: String,
         date: Date? = nil,
         tags: [Tag] = [],
@@ -50,6 +55,7 @@ struct Article: Codable, Hashable, Identifiable, Sendable {
         body: String
     ) {
         self.id = id
+        self.status = status
         self.title = title
         self.date = date
         self.tags = tags.filter { !$0.title.isEmpty }
@@ -83,6 +89,10 @@ extension Article.Tag {
 extension Article.ImageReference: RawRepresentable, Codable {
     typealias RawValue = String
     
+    private enum DecodingError: Error {
+        case unableToDecode(rawValue: String)
+    }
+    
     var rawValue: String {
         switch self {
         case .url(let url):
@@ -102,12 +112,10 @@ extension Article.ImageReference: RawRepresentable, Codable {
     
     init(from decoder: any Decoder) throws {
         let rawValue = try decoder.singleValueContainer().decode(RawValue.self)
-        if let _self = Self(rawValue: rawValue) {
-            self = _self
+        if let value = Self(rawValue: rawValue) {
+            self = value
         } else {
-            throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "Unable to decode '\(Self.self)' from rawValue '\(rawValue)'"
-            ])
+            throw DecodingError.unableToDecode(rawValue: rawValue)
         }
     }
     
@@ -122,6 +130,7 @@ extension Article {
     init(_ other: StudyDefinition.InformationalComponent) {
         self.init(
             id: other.id,
+            status: .published,
             title: other.title,
             headerImage: .asset(other.headerImage), // we'll need to switch this over to a (file?) URL once we have study bundles!
             body: other.body
@@ -139,7 +148,7 @@ struct TagView: View {
     var body: some View {
         Text(tag.title)
             .font(.footnote.weight(.medium))
-            .foregroundStyle(.white) // TODO make this dependent on how dark/bright the tag color is?
+            .foregroundStyle(.white) // IDEA make this dependent on how dark/bright the tag color is?
             .padding(EdgeInsets(horizontal: 7, vertical: 3))
             .background(tag.color, in: RoundedRectangle(cornerRadius: Self.cornerRadius))
     }

@@ -113,6 +113,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "--overrideFirebaseConfig plist=GoogleService-Info-Override"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--dump-cli-options-and-exit"
             isEnabled = "NO">
          </CommandLineArgument>

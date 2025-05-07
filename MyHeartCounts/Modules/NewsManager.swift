@@ -16,7 +16,6 @@ import Spezi
 final class NewsManager: Module, EnvironmentAccessible {
     private(set) var articles: [Article] = []
     
-    
     private var newsCollection: CollectionReference {
         Firestore.firestore().collection("news")
     }
@@ -31,8 +30,11 @@ final class NewsManager: Module, EnvironmentAccessible {
     @discardableResult
     func refresh() async throws -> [Article] {
         let query = try await newsCollection.getDocuments()
+        let decoder = Firestore.Decoder()
+        decoder.dateDecodingStrategy = .iso8601
         articles = query.documents
-            .compactMap { try? $0.data(as: Article.self) }
+            .compactMap { try? $0.data(as: Article.self, decoder: decoder) }
+            .filter { $0.status == .published }
             .sorted(using: KeyPathComparator(\.date, order: .reverse))
         return articles
     }
