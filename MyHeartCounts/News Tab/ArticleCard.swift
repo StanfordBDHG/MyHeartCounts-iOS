@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import SpeziFoundation
 import SpeziViews
@@ -37,10 +35,6 @@ struct ArticleCard: View {
         .background(Material.regular)
         .background {
             article.imageView
-//            Image("stanford")
-//                .resizable()
-//                .aspectRatio(contentMode: .fill)
-//                .blur(radius: 5, opaque: false)
         }
     }
 }

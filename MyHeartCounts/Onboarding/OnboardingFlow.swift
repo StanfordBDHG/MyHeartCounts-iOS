@@ -6,9 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-
-// swiftlint:disable all
-
 import Spezi
 @_spi(TestingSupport)
 import SpeziAccount
@@ -50,7 +47,7 @@ struct AppOnboardingFlow: View {
     
     
     var body: some View {
-        ManagedNavigationStack(didComplete: $didCompleteOnboarding/*, startAtStep: "Consent"*/) {
+        ManagedNavigationStack(didComplete: $didCompleteOnboarding) {
             Welcome()
             SinglePageScreening(
                 title: "Screening",
