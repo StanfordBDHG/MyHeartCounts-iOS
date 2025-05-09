@@ -8,6 +8,7 @@
 
 import Foundation
 import Spezi
+import SpeziNotifications
 import SpeziOnboarding
 import SpeziStudy
 import SpeziViews

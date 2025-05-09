@@ -36,7 +36,7 @@ struct LocalPreferenceKey<Value>: Sendable {
     
     static func make(
         _ key: String,
-        makeDefault: @escaping @Sendable () -> Value
+        default makeDefault: @autoclosure @escaping @Sendable () -> Value
     ) -> Self where Value: HasDirectUserDefaultsSupport {
         Self(key: key, makeDefault: makeDefault) { key, defaults in
             Value.load(from: defaults, forKey: key) ?? makeDefault()
@@ -47,7 +47,7 @@ struct LocalPreferenceKey<Value>: Sendable {
     
     static func make(
         _ key: String,
-        makeDefault: @escaping @Sendable () -> Value
+        default makeDefault: @autoclosure @escaping @Sendable () -> Value
     ) -> Self where Value: RawRepresentable, Value.RawValue: HasDirectUserDefaultsSupport {
         Self(key: key, makeDefault: makeDefault) { key, defaults in
             Value.RawValue.load(from: defaults, forKey: key).flatMap(Value.init(rawValue:)) ?? makeDefault()
@@ -63,7 +63,7 @@ struct LocalPreferenceKey<Value>: Sendable {
     @_disfavoredOverload
     static func make(
         _ key: String,
-        makeDefault: @escaping @Sendable () -> Value
+        default makeDefault: @autoclosure @escaping @Sendable () -> Value
     ) -> Self where Value: Codable {
         Self(key: key, makeDefault: makeDefault) { key, defaults in
             let decoder = JSONDecoder()
@@ -170,52 +170,28 @@ extension Optional: HasDirectUserDefaultsSupport where Wrapped: HasDirectUserDef
 }
 
 
-private struct _LKDirectUserDefaultsSupportAdapter<Value: Codable>: HasDirectUserDefaultsSupport {
-    let value: Value
-    
-    static func load(from defaults: UserDefaults, forKey key: String) -> _LKDirectUserDefaultsSupportAdapter<Value>? {
-        guard let data = defaults.data(forKey: key) else {
-            return nil
-        }
-        let decoder = JSONDecoder()
-        if let value = try? decoder.decode(Value.self, from: data) {
-            return .init(value: value)
-        } else {
-            return nil
-        }
-    }
-    
-    func store(to defaults: UserDefaults, forKey key: String) throws {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .withoutEscapingSlashes]
-        let data = try encoder.encode(value)
-        defaults.set(data, forKey: key)
-    }
-}
-
-
 /// Preferences which are stored at device-level, rather than database-package-level
 struct LocalPreferencesStore: @unchecked Sendable {
-    static let shared = LocalPreferencesStore()
+    static let standard = LocalPreferencesStore(defaults: .standard)
     
-    fileprivate let defaultsStore: UserDefaults
+    fileprivate let defaults: UserDefaults
     
-    private init() {
-        defaultsStore = UserDefaults.standard
+    init(defaults: UserDefaults) {
+        self.defaults = defaults
     }
     
     subscript<T>(key: LocalPreferenceKey<T>) -> T {
-        get { key.read(defaultsStore) }
+        get { key.read(defaults) }
         nonmutating set {
-            try? key.write(newValue, defaultsStore)
+            try? key.write(newValue, defaults)
         }
     }
     
     @_disfavoredOverload
     subscript<T>(key: LocalPreferenceKey<T>) -> T? { // we always return nonil values, but allow nil-resetting
-        get { key.read(defaultsStore) }
+        get { key.read(defaults) }
         nonmutating set {
-            try? key.write(newValue, defaultsStore)
+            try? key.write(newValue, defaults)
         }
     }
 }
@@ -293,14 +269,14 @@ struct LocalPreference<T: Codable>: DynamicProperty {
         }
     }
     
-    init(_ key: LocalPreferenceKey<T>, store: LocalPreferencesStore = .shared) {
+    init(_ key: LocalPreferenceKey<T>, store: LocalPreferencesStore = .standard) {
         self.key = key
         self.store = store
     }
     
     nonisolated func update() {
         MainActor.assumeIsolated {
-            kvoObserver.configure(for: key.key, in: store.defaultsStore)
+            kvoObserver.configure(for: key.key, in: store.defaults)
         }
     }
 }

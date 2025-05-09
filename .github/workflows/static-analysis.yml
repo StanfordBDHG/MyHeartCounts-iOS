@@ -14,7 +14,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: Static-Analysis-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -49,6 +49,5 @@ jobs:
       actions: read
       contents: read
     with:
-      xcodeversion: '16.2'
       codeql: true
       fastlanelane: codeql

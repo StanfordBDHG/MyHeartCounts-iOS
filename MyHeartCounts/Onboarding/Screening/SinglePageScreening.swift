@@ -30,6 +30,8 @@ struct SinglePageScreening: View {
     private let subtitle: LocalizedStringResource
     private let components: [any ScreeningComponent]
     
+    @State private var viewState: ViewState = .idle
+    
     var body: some View {
         OnboardingView {
             OnboardingTitleView(title: title, subtitle: subtitle)
@@ -44,12 +46,27 @@ struct SinglePageScreening: View {
                     }
                 }
                 Section {
-                    OnboardingActionsView("Continue") {
+                    AsyncButton(state: $viewState) {
                         await evaluateEligibilityAndProceed()
+                    } label: {
+                        Text("Continue")
+                            .frame(maxWidth: .infinity, minHeight: 38)
                     }
-                    .disabled(!screeningData.allPropertiesAreNonnil)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(!canAdvanceToNextStep)
                     .listRowInsets(.zero)
                     // ISSUE(@lukas) can we somehow make it so that the scroll view fills the entire screen? ie, all the way to the bottom?
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    // IDEA: have this button always be active, but if the screening hasn't been filled out yet entirely,
+                    // it is grey (to appear disabled), but tapping it simply scrolls down to the first-non-completed screennig section?
+                    AsyncButton("Continue", state: $viewState) {
+                        await evaluateEligibilityAndProceed()
+                    }
+                    .bold()
+                    .disabled(!canAdvanceToNextStep)
                 }
             }
         } footer: {
@@ -57,6 +74,10 @@ struct SinglePageScreening: View {
         }
         .disablePadding([.horizontal, .bottom])
         .makeBackgroundMatchFormBackground()
+    }
+    
+    private var canAdvanceToNextStep: Bool {
+        screeningData.allPropertiesAreNonnil
     }
     
     init(

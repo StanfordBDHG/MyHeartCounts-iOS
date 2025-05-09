@@ -88,3 +88,39 @@ extension URL: @retroactive ExpressibleByStringLiteral, @retroactive Expressible
         }
     }
 }
+
+
+extension Collection {
+    subscript(safe idx: Index) -> Element? {
+        idx >= startIndex && idx < endIndex ? self[idx] : nil
+    }
+}
+
+
+extension StringProtocol {
+    /// Returns a Substring with the receiver's leading and trailing whitespace removed
+    public func trimmingLeadingAndTrailingWhitespace() -> SubSequence {
+        trimmingLeadingWhitespace().trimmingTrailingWhitespace()
+    }
+    
+    /// Returns a Substring with the receiver's leading whitespace removed
+    public func trimmingLeadingWhitespace() -> SubSequence {
+        drop(while: \.isWhitespace)
+    }
+    
+    /// Returns a Substring with the receiver's trailing whitespace removed
+    public func trimmingTrailingWhitespace() -> SubSequence {
+        if let last = self.last, last.isWhitespace {
+            dropLast().trimmingTrailingWhitespace()
+        } else {
+            self[...]
+        }
+    }
+}
+
+
+extension EdgeInsets {
+    init(horizontal: CGFloat, vertical: CGFloat) {
+        self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
+    }
+}

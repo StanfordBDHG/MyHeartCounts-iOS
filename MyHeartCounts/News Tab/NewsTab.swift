@@ -17,17 +17,20 @@ struct NewsTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "News" }
     static var tabSymbol: SFSymbol { .newspaper }
     
-    @State private var entries: PossiblyLoading<[NewsEntry]> = .loading
-    @State private var presentedEntry: NewsEntry?
+    @Environment(NewsManager.self)
+    private var newsManager
+    
+    @State private var articles: PossiblyLoading<[Article]> = .loading
+    @State private var presentedArticle: Article?
     
     var body: some View {
         NavigationStack {
             Group {
-                switch entries {
+                switch articles {
                 case .loading:
                     ProgressView("Fetching…")
-                case .loaded(let entries):
-                    makeContent(for: entries)
+                case .loaded(let articles):
+                    makeContent(for: articles)
                 case .error(let error):
                     ContentUnavailableView("No Internet", systemSymbol: .networkSlash, description: Text("\(error)"))
                 }
@@ -42,62 +45,35 @@ struct NewsTab: RootViewTab {
             .refreshable {
                 await fetchContent()
             }
-            .sheet(item: $presentedEntry) { entry in
-                ArticleSheet(content: .init(entry))
+            .sheet(item: $presentedArticle) { article in
+                ArticleSheet(article: article)
             }
         }
     }
     
     private func fetchContent() async {
         do {
-            #if true || targetEnvironment(simulator)
-            try await Task.sleep(for: .seconds(0.5))
-            entries = .loaded([
-                .init(date: .yesterday, category: "Research", title: "Title1", image: "image1", lede: "Lede1", body: "Body1"),
-                .init(date: .today, category: "Impact", title: "Title2", image: "image2", lede: "Lede2", body: "Body2")
-            ])
-            #else
-            entries = .error(SimpleError("Not yet implemented"))
-            #endif
+            articles = .loaded(try await newsManager.refresh())
         } catch {
-            entries = .error(error)
+            articles = .error(error)
         }
     }
     
     @ViewBuilder
-    private func makeContent(for entries: [NewsEntry]) -> some View {
+    private func makeContent(for articles: [Article]) -> some View {
         Form {
-            ForEach(entries) { entry in
+            ForEach(articles) { article in
                 Section {
                     Button {
-                        presentedEntry = entry
+                        presentedArticle = article
                     } label: {
-                        makeCard(for: entry)
-                            .contentShape(Rectangle())
+                        ArticleCard(article: article)
+                            .frame(height: 117)
                     }
                     .buttonStyle(.plain)
+                    .listRowInsets(.zero)
                 }
             }
-        }
-    }
-    
-    
-    @ViewBuilder
-    private func makeCard(for entry: NewsEntry) -> some View {
-        // make this look nice!
-        // maybe have like transparency/vibrancy/etc?
-        VStack(alignment: .leading) {
-            HStack {
-                Text(entry.category)
-                    .foregroundStyle(.tertiary)
-                Spacer()
-                RelativeTimeLabel(date: entry.date)
-                    .foregroundStyle(.secondary)
-            }
-            Text(entry.title)
-                .font(.headline)
-            Text(entry.lede)
-                .font(.body)
         }
     }
 }

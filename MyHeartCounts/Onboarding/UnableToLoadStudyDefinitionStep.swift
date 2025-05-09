@@ -25,14 +25,14 @@ struct UnableToLoadStudyDefinitionStep: View {
     
     var body: some View {
         switch studyLoader.studyDefinition {
-        case nil, .failure(.noLastUsedRegion):
+        case nil, .failure(.noLastUsedFirebaseConfig):
             // the StudyLoader, for whatever reason, hasn't yet loaded the study.
             // it is extremely unlikely, if not even outright impossible, for us to end up in this View
             // with the loader being in this state, but just in case, we treat it as an unknown error and offer a retry functionality.
             makeBody(
                 symbol: .xmarkOctagon,
                 title: "Failed to Download Study Information",
-                message: "The app was unable to load the study, but we're no sure why"
+                message: "The app was unable to load the study, but we're not sure why"
             ) {
                 retryButton
             }
@@ -77,6 +77,7 @@ struct UnableToLoadStudyDefinitionStep: View {
             _ = try? await studyLoader.update()
         } label: {
             Text("Retry")
+                .font(.headline.bold())
                 // we need to manually set a min width here, since the parent ContentUnavailableView will otherwise
                 // try to make its actions subview as narrow as possible (which we don't want).
                 .frame(minWidth: viewWidth / 3, maxWidth: .infinity, minHeight: 38)

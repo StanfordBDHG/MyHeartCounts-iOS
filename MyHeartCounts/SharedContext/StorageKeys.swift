@@ -19,11 +19,11 @@ enum StorageKeys {
 extension LocalPreferenceKey {
     /// A `Bool` flag indicating of the onboarding was completed.
     static var onboardingFlowComplete: LocalPreferenceKey<Bool> {
-        .make("onboardingFlowComplete", makeDefault: { false })
+        .make("onboardingFlowComplete", default: false)
     }
     
     /// A `Bool` flag indicating whether the app should enable its debug mode.
     static var enableDebugMode: LocalPreferenceKey<Bool> {
-        .make("enableDebugMode", makeDefault: { true })
+        .make("enableDebugMode", default: true)
     }
 }

@@ -17,7 +17,7 @@ final class StudyDefinitionLoader: Module, Sendable {
     enum LoadError: Error {
         case unableToFetchFromServer(any Error)
         case unableToDecode(any Error)
-        case noLastUsedRegion
+        case noLastUsedFirebaseConfig
     }
     
     static let shared = StudyDefinitionLoader()
@@ -28,18 +28,20 @@ final class StudyDefinitionLoader: Module, Sendable {
     
     private init() {
         Task {
-            _ = try? await update()
+            _ = try await update()
         }
     }
     
     
     @discardableResult
     func load(fromBucket bucketName: String) async throws(LoadError) -> StudyDefinition {
-        let url = Self.studyDefinitionUrl(inBucket: bucketName)
+        let url = Self.studyLocation(inBucket: bucketName)
         logger.debug("Fetching study definition from bucket '\(bucketName)'")
+        logger.debug("Fetching study definition from '\(url.absoluteString)'")
         let retval: Result<StudyDefinition, LoadError>
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let session = URLSession(configuration: .ephemeral)
+            let (data, response) = try await session.data(from: url)
             guard let response = response as? HTTPURLResponse else {
                 throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
                     NSLocalizedDescriptionKey: "Unable to decode HTTP response"
@@ -80,19 +82,25 @@ final class StudyDefinitionLoader: Module, Sendable {
     
     @discardableResult
     func update() async throws(LoadError) -> StudyDefinition {
-        if let selector = LocalPreferencesStore.shared[.lastUsedFirebaseConfig],
+        if let selector = FeatureFlags.overrideFirebaseConfig ?? LocalPreferencesStore.standard[.lastUsedFirebaseConfig],
            let firebaseOptions = try? DeferredConfigLoading.firebaseOptions(for: selector),
            let storageBucket = firebaseOptions.storageBucket {
+            logger.notice("Attempting to load study definition from firebase storage bucket '\(storageBucket)'")
             return try await load(fromBucket: storageBucket)
         } else {
-            throw .noLastUsedRegion
+            logger.error("No last-used firebase config")
+            throw .noLastUsedFirebaseConfig
         }
     }
 }
 
 
 extension StudyDefinitionLoader {
-    static func studyDefinitionUrl(inBucket bucketName: String) -> URL {
-        "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2FmhcStudyDefinition.json?alt=media"
+    private static func studyLocation(inBucket bucketName: String) -> URL {
+        if let url = LaunchOptions.launchOptions[.overrideStudyDefinitionLocation] {
+            url
+        } else {
+            "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2FmhcStudyDefinition.json?alt=media"
+        }
     }
 }
