@@ -23,6 +23,7 @@ extension UUID {
     static let mhcMockStudy = UUID()
     static let healthCollectionComponent = UUID()
     static let article1 = UUID()
+    static let scheduleId = UUID()
 }
 
 
@@ -60,9 +61,11 @@ func mockStudy(revision: MockStudyRevision) -> StudyDefinition {
             switch revision {
             case .v1:
                 StudyDefinition.ComponentSchedule(
+                    id: .scheduleId,
                     componentId: .article1,
-                    scheduleDefinition: .repeated(.weekly(weekday: .wednesday, hour: 9, minute: 0), startOffsetInDays: 0),
-                    completionPolicy: .sameDayAfterStart
+                    scheduleDefinition: .repeated(.weekly(weekday: .wednesday, hour: 9, minute: 0)),
+                    completionPolicy: .sameDayAfterStart,
+                    notifications: .disabled
                 )
             }
         }
