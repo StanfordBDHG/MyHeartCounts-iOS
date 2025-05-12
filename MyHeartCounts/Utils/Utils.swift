@@ -124,3 +124,14 @@ extension EdgeInsets {
         self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
     }
 }
+
+
+extension Color {
+    static func random() -> Color {
+        Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
+    }
+}
