@@ -72,7 +72,7 @@ struct UpcomingTasksList: View {
                 }
             }
             .sheet(item: $presentedInformationalStudyComponent) { component in
-                ArticleSheet(content: .init(component))
+                ArticleSheet(article: .init(component))
             }
     }
     

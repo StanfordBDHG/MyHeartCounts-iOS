@@ -93,6 +93,9 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     /// - returns: A Boolean indicating whether the session was successfully set up and started
     @discardableResult
     private func setupAndStartExportSession() async -> Bool {
+        guard !FeatureFlags.disableAutomaticBulkHealthExport else {
+            return false
+        }
         if session == nil {
             guard let study = studyManager?.studyEnrollments.first?.study else {
                 logger.error("\(#function) aborting: no study")

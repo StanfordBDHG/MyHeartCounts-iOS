@@ -15,13 +15,28 @@ import SpeziHealthKit
 import UserNotifications
 
 
+extension LocalPreferenceKey {
+    static var sendHealthSampleUploadNotifications: LocalPreferenceKey<Bool> {
+        .make("sendHealthSampleUploadNotifications", default: false)
+    }
+}
+
+
 extension MyHeartCountsStandard: HealthKitConstraint {
+    private var enableNotifications: Bool {
+        enableDebugMode && LocalPreferencesStore.standard[.sendHealthSampleUploadNotifications]
+    }
+    
     func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample>, ofType sampleType: SampleType<Sample>) async {
         // IDEA instead of performing the upload right in here, maybe add it to a queue and
         // have a background task that just goes over the queue until its empty?
         // IDEA have a look at the batch/transaction APIs firebase gives us
-        if enableDebugMode {
-            await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .willUpload)
+        var willUploadNotificationId: String?
+        if enableNotifications {
+            willUploadNotificationId = await showDebugHealthKitEventNotification(
+                for: .newSamples(sampleType, Array(addedSamples)),
+                stage: .willUpload
+            )
         }
         do {
             let batch = Firestore.firestore().batch()
@@ -42,15 +57,22 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         } catch {
             logger.error("Error committing Firestore batch: \(error)")
         }
-        if enableDebugMode {
+        if enableNotifications {
+            if let willUploadNotificationId {
+                UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [willUploadNotificationId])
+            }
             await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
         }
     }
     
     
     func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
-        if enableDebugMode {
-            await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .willUpload)
+        var willUploadNotificationId: String?
+        if enableNotifications {
+            willUploadNotificationId = await showDebugHealthKitEventNotification(
+                for: .deletedSamples(sampleType, Array(deletedObjects)),
+                stage: .willUpload
+            )
         }
         for object in deletedObjects {
             do {
@@ -61,7 +83,10 @@ extension MyHeartCountsStandard: HealthKitConstraint {
                 // (probably not needed, since firebase already seems to be doing this for us...)
             }
         }
-        if enableDebugMode {
+        if enableNotifications {
+            if let willUploadNotificationId {
+                UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [willUploadNotificationId])
+            }
             await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .didUpload)
         }
     }
@@ -86,7 +111,7 @@ extension MyHeartCountsStandard {
         case deletedSamples(SampleType<Sample>, [HKDeletedObject])
     }
     
-    private func showDebugHealthKitEventNotification<Sample>(for change: HealthKitChange<Sample>, stage: HealthKitUploadStage) async {
+    private func showDebugHealthKitEventNotification<Sample>(for change: HealthKitChange<Sample>, stage: HealthKitUploadStage) async -> String {
         let notificationCenter = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
         switch change {
@@ -97,7 +122,9 @@ extension MyHeartCountsStandard {
             content.title = "[MHC] HealthKit Samples Deleted (\(stage.rawValue) upload)"
             content.body = "\(samples.count) deleted samples for \(sampleType.displayTitle)"
         }
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        let identifier = UUID().uuidString
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
         try? await notificationCenter.add(request)
+        return identifier
     }
 }

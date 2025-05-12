@@ -14,34 +14,41 @@ on:
   workflow_call:
 
 concurrency:
-  group: Build-and-Test-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  buildandtest:
-    name: Build and Test
+  buildandtest_unittests:
+    name: Build and Test (Unit Tests)
+    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    with:
+      runsonlabels: '["macOS", "self-hosted"]'
+      scheme: MyHeartCounts
+      testplan: MyHeartCounts Unit Tests
+      resultBundle: MyHeartCounts-UnitTests.xcresult
+      artifactname: MyHeartCounts-UnitTests.xcresult
+  buildandtest_uitests:
+    name: Build and Test (UI Tests)
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     permissions:
       contents: read
     with:
-      artifactname: MyHeartCounts.xcresult
       runsonlabels: '["macOS", "self-hosted"]'
-      fastlanelane: test
-      # firebaseemulatorimport: ./firebase
-      # firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
-      # setupfirebaseemulator: true
-      # checkout_submodules: true
-      # customcommand: "firebase emulators:exec 'fastlane test'"
-      customcommand: "fastlane test"
+      artifactname: MyHeartCounts-UITests.xcresult
+      firebaseemulatorimport: ./firebase
+      firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
+      setupfirebaseemulator: true
+      checkout_submodules: true
+      customcommand: "firebase emulators:exec 'fastlane uitest'"
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: buildandtest
+    needs: [buildandtest_unittests, buildandtest_uitests]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     permissions:
       contents: read
     with:
-      coveragereports: MyHeartCounts.xcresult
+      coveragereports: MyHeartCounts-UnitTests.xcresult MyHeartCounts-UITests.xcresult
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}

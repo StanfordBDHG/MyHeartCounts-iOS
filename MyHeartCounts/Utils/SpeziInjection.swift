@@ -26,14 +26,4 @@ extension View {
     func injectingSpezi() -> some View {
         self.modifier(SpeziInjectionModifier())
     }
-    
-    /// Injects the default `Spezi` instance into the view hierarchy.
-    @ViewBuilder
-    func injectingSpezi(if condition: Bool) -> some View {
-        if condition {
-            self.modifier(SpeziInjectionModifier())
-        } else {
-            self
-        }
-    }
 }

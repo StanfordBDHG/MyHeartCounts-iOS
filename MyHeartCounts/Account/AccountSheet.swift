@@ -94,6 +94,9 @@ struct AccountSheet: View {
                 NavigationLink("Health Data Bulk Upload") {
                     HealthImporterControlView()
                 }
+                NavigationLink("NotificationsManager") {
+                    NotificationsManagerControlView()
+                }
                 NavigationLink("Debug Stuff") {
                     DebugStuffView()
                 }
