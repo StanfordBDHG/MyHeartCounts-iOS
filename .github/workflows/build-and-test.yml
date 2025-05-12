@@ -20,7 +20,7 @@ concurrency:
 jobs:
   buildandtest_unittests:
     name: Build and Test (Unit Tests)
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@lukas/testplans
+    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: MyHeartCounts
@@ -29,7 +29,7 @@ jobs:
       artifactname: MyHeartCounts-UnitTests.xcresult
   buildandtest_uitests:
     name: Build and Test (UI Tests)
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@lukas/testplans
+    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     permissions:
       contents: read
     with:
