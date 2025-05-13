@@ -1,5 +1,5 @@
 {
-  "originHash" : "8aebb82f7726da2026ae6d7595bb4c6bc41c37815c8eabb1a3ebf10139645e25",
+  "originHash" : "72d22c0f9e4a54e3aba7161dc8379232959fe5bfc67f1266bc060ffa4635b064",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -240,17 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "6e66cc6a843ef3e1273c6370c04183f0c5325e68",
-        "version" : "2.1.5"
-      }
-    },
-    {
-      "identity" : "spezihealthkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
-      "state" : {
-        "branch" : "lukas/changes",
-        "revision" : "0f7d816c47977e443b8c782b3ab2be74543d1784"
+        "branch" : "lukas/orderedarray-unsafe-operations",
+        "revision" : "dfbe8c3c473a734b01a66adebb15b217bb4bc6e4"
       }
     },
     {

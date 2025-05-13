@@ -22,11 +22,28 @@ struct HeartHealthDashboardTab: RootViewTab {
         .heartTextSquare
     }
     
+    @Environment(HeartHealthManager.self)
+    private var manager
+    
     var body: some View {
         NavigationStack {
-            HealthDashboard()
+            HealthDashboard(layout: manager.layout)
                 .navigationTitle("Heart Health")
                 .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            manager.tmpRemoveSection()
+                        } label: {
+                            Image(systemSymbol: .minusSquare)
+                        }
+                    }
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            manager.tmpAddSection()
+                        } label: {
+                            Image(systemSymbol: .plusSquare)
+                        }
+                    }
                     accountToolbarItem
                 }
         }

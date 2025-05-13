@@ -78,7 +78,7 @@ struct Gauge: View {
                         startAngle: .degrees(0),
                         endAngle: .degrees(progress * 360.0)
                     ),
-                    style: StrokeStyle(lineWidth: 20, lineCap: .round)
+                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
                 .padding(lineWidth / 2)

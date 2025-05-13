@@ -32,28 +32,46 @@ final class HeartHealthManager: Module, EnvironmentAccessible {
     
     func configure() {
         layout = [
-            .largeChart(
-                sectionTitle: nil,
-                sampleType: .heartRate
-            ),
+//            .largeChart(
+//                sectionTitle: nil,
+//                component: .init(sampleType: .heartRate, timeRange: <#T##HealthKitQueryTimeRange#>, chartConfig: <#T##HealthDashboardLayout.ChartConfig#>)
+//                sampleType: .heartRate,
+//                chartConfig: .automatic
+//            ),
             .grid(sectionTitle: "General", components: [
-                .init(sampleType: SampleType.activeEnergyBurned),
-                .init(sampleType: SampleType.stepCount),
-                .init(sampleType: SampleType.distanceWalkingRunning),
-                .init(sampleType: SampleType.heartRate)
+                .init(SampleType.activeEnergyBurned, chartConfig: .automatic),
+                .init(SampleType.stepCount, chartConfig: .automatic),
+                .init(SampleType.distanceWalkingRunning, chartConfig: .automatic),
+                .init(SampleType.heartRate, chartConfig: .automatic)
             ]),
-            .grid(sectionTitle: "Vitals", components: [
-                .init(sampleType: SampleType.bodyTemperature),
-                .init(sampleType: SampleType.heartRate),
-                .init(sampleType: SampleType.respiratoryRate),
-                .init(sampleType: SampleType.bloodPressure),
-                .init(sampleType: SampleType.bloodOxygen)
+            .grid(sectionTitle: "Additional", components: [
+                .sleepAnalysis(),
+                .init(SampleType.respiratoryRate, chartConfig: .automatic),
+                .init(SampleType.bodyTemperature, chartConfig: .automatic),
+                .init(SampleType.bloodOxygen, chartConfig: .automatic),
+                .bloodPressure()
             ]),
             .grid(sectionTitle: "Mobility", components: [
-                .init(sampleType: SampleType.stepCount),
-                .init(sampleType: SampleType.distanceWalkingRunning)
+                .init(SampleType.stepCount, chartConfig: .automatic),
+                .init(SampleType.distanceWalkingRunning, chartConfig: .automatic),
+                .init(SampleType.walkingDoubleSupportPercentage, chartConfig: .none)
             ])
         ]
+    }
+    
+    
+    @MainActor
+    func tmpAddSection() {
+        layout.blocks.append(.grid(sectionTitle: "Tmp Section", components: [
+            .init(.stepCount, chartConfig: .automatic)
+        ]))
+    }
+    
+    @MainActor
+    func tmpRemoveSection() {
+        if !layout.blocks.isEmpty {
+            layout.blocks.removeLast()
+        }
     }
 }
 

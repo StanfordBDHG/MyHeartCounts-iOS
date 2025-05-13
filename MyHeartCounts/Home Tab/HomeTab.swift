@@ -26,13 +26,14 @@ struct HomeTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "My Heart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
-    @State private var actionCards: [ActionCard] = []
-    
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var historicalDataExportMgr
     
     @LocalPreference(.enableDebugMode)
     private var enableDebugMode
+    
+    @State private var actionCards: [ActionCard] = []
+    @State private var isShowingLifesEssential8Sheet = false
     
     var body: some View {
         NavigationStack {
@@ -42,7 +43,19 @@ struct HomeTab: RootViewTab {
                 scheduleFormContent
             }
             .navigationTitle("My Heart Counts")
+            .sheet(isPresented: $isShowingLifesEssential8Sheet) {
+                NavigationStack {
+                    LifesEssential8()
+                }
+            }
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        isShowingLifesEssential8Sheet = true
+                    } label: {
+                        Image(systemSymbol: .line3CrossedSwirlCircle)
+                    }
+                }
                 accountToolbarItem
             }
         }

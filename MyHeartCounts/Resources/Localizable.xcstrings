@@ -4,6 +4,9 @@
     "– %@" : {
 
     },
+    "%lld" : {
+
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -97,6 +100,9 @@
     "Continue" : {
 
     },
+    "Date" : {
+
+    },
     "Date of Birth" : {
 
     },
@@ -185,6 +191,9 @@
         }
       }
     },
+    "Heart Health" : {
+
+    },
     "Historical Data Bulk Export" : {
 
     },
@@ -236,6 +245,9 @@
         }
       }
     },
+    "n/a" : {
+
+    },
     "Network Issue" : {
 
     },
@@ -256,6 +268,9 @@
 
     },
     "No" : {
+
+    },
+    "No data" : {
 
     },
     "No Internet" : {
@@ -293,6 +308,9 @@
     "Participation Criteria" : {
 
     },
+    "Percentage in Phase" : {
+
+    },
     "Physical Activity" : {
 
     },
@@ -321,6 +339,9 @@
 
     },
     "Selection Checkmark" : {
+
+    },
+    "Sleep Phase" : {
 
     },
     "Spezi Modules" : {
