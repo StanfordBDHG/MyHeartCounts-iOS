@@ -36,6 +36,9 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(StudyDefinitionLoader.self)
     private var studyLoader
     
+    @Dependency(TimeZoneTracking.self)
+    private var timeZoneTracking: TimeZoneTracking?
+    
     var enableDebugMode: Bool {
         LocalPreferencesStore.standard[.enableDebugMode]
     }
@@ -77,7 +80,9 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                     try? studyManager.unenroll(from: enrollment)
                 }
             }
-        case .associatedAccount, .detailsChanged:
+        case .associatedAccount:
+            try? await timeZoneTracking?.updateTimeZoneInfo()
+        case .detailsChanged:
             break
         }
     }

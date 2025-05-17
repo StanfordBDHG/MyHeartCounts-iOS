@@ -213,6 +213,7 @@ enum DeferredConfigLoading {
                 }
                 baseModules
                 NewsManager()
+                TimeZoneTracking()
             }
         } catch {
             logger.error("""
