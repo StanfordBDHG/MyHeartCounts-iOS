@@ -10,6 +10,7 @@ import Foundation
 import HealthKit
 import SpeziHealthKit
 import SpeziViews
+import SwiftData
 import SwiftUI
 
 
@@ -18,8 +19,13 @@ struct SaveQuantitySampleView: View {
     private var healthKit
     @Environment(\.dismiss)
     private var dismiss
+    @Environment(\.modelContext)
+    private var modelContext
     
-    let sampleType: SampleType<HKQuantitySample>
+    private let sampleTypeTitle: String
+    private let sampleTypeUnit: HKUnit
+    
+    private let save: @MainActor (Self) async throws -> Void
     @State private var startDate: Date = .now
     @State private var endDate: Date = .now
     @State private var value: Double?
@@ -29,10 +35,10 @@ struct SaveQuantitySampleView: View {
     var body: some View {
         Form {
             Section {
-                LabeledContent("Sample Type", value: sampleType.displayTitle)
+                LabeledContent("Sample Type", value: sampleTypeTitle)
                 DatePicker("Start Date", selection: $startDate)
                 DatePicker("End Date", selection: $endDate)
-                QuantityInputRow(title: "Value", value: $value, sampleType: sampleType)
+                QuantityInputRow(title: "Value", value: $value, unit: sampleTypeUnit)
                     .focused($valueFieldIsFocused)
             }
         }
@@ -44,7 +50,7 @@ struct SaveQuantitySampleView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 AsyncButton("Add", state: $viewState) {
-                    try await save()
+                    try await save(self)
                     dismiss()
                 }
                 .disabled(value == nil && endDate >= startDate)
@@ -55,17 +61,43 @@ struct SaveQuantitySampleView: View {
         }
     }
     
-    private func save() async throws {
-        guard let value else {
-            return
+    init(sampleType: SampleType<HKQuantitySample>) {
+        self.sampleTypeTitle = sampleType.displayTitle
+        self.sampleTypeUnit = sampleType.displayUnit
+        self.save = { `self` in
+            guard let value = self.value else {
+                return
+            }
+            let sample = HKQuantitySample(
+                type: sampleType.hkSampleType,
+                quantity: HKQuantity(unit: sampleType.displayUnit, doubleValue: value),
+                start: self.startDate,
+                end: self.endDate
+            )
+            try await self.healthKit.save(sample)
         }
-        let sample = HKQuantitySample(
-            type: sampleType.hkSampleType,
-            quantity: HKQuantity(unit: sampleType.displayUnit, doubleValue: value),
-            start: startDate,
-            end: endDate
-        )
-        try await healthKit.save(sample)
+    }
+    
+    init(sampleType: CustomHealthSample.SampleType) {
+        guard let unit = sampleType.displayUnit else {
+            preconditionFailure("Unsupported sample type: \(sampleType.displayTitle)")
+        }
+        self.sampleTypeTitle = sampleType.displayTitle
+        self.sampleTypeUnit = unit
+        self.save = { `self` in
+            guard let value = self.value else {
+                return
+            }
+            let sample = CustomHealthSample(
+                sampleType: sampleType,
+                startDate: self.startDate,
+                endDate: self.endDate,
+                unit: unit,
+                value: value
+            )
+            self.modelContext.insert(sample)
+            try self.modelContext.save()
+        }
     }
 }
 

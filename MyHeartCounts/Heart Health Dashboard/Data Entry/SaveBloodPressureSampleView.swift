@@ -14,11 +14,29 @@ import SwiftUI
 
 
 struct SaveBloodPressureSampleView: View {
+    private enum Field: Int, Hashable, CaseIterable, Comparable {
+        case systolic
+        case diastolic
+        
+        var prev: Self? {
+            Self.allCases.last { $0 < self }
+        }
+        
+        var next: Self? {
+            Self.allCases.first { $0 > self }
+        }
+        
+        static func < (lhs: Self, rhs: Self) -> Bool {
+            lhs.rawValue < rhs.rawValue
+        }
+    }
+    
     @Environment(HealthKit.self)
     private var healthKit
     @Environment(\.dismiss)
     private var dismiss
     
+    @FocusState private var focusedField: Field?
     @State private var viewState: ViewState = .idle
     @State private var date: Date = .now
     @State private var systolic: Int?
@@ -29,28 +47,67 @@ struct SaveBloodPressureSampleView: View {
             Section {
                 DatePicker("Date", selection: $date)
                 makeRow(for: $systolic, sampleType: .bloodPressureSystolic)
+                    .focused($focusedField, equals: .systolic)
                 makeRow(for: $diastolic, sampleType: .bloodPressureDiastolic)
+                    .focused($focusedField, equals: .diastolic)
             }
         }
         .navigationTitle("Enter Blood Pressure")
         .viewStateAlert(state: $viewState)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    dismiss()
-                }
+            navigationToobarItems
+            focusToolbarItems
+        }
+        .onAppear {
+            guard focusedField == nil else {
+                return
             }
-            ToolbarItem(placement: .confirmationAction) {
-                AsyncButton("Save", state: $viewState) {
-                    try await save()
-                    dismiss()
-                }
-                .bold()
-                .disabled(systolic == nil || diastolic == nil)
+            if systolic != nil && diastolic == nil {
+                focusedField = .diastolic
+            } else {
+                focusedField = .systolic
             }
         }
     }
     
+    
+    @ToolbarContentBuilder private var navigationToobarItems: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button("Cancel") {
+                dismiss()
+            }
+        }
+        ToolbarItem(placement: .confirmationAction) {
+            AsyncButton("Save", state: $viewState) {
+                try await save()
+                dismiss()
+            }
+            .bold()
+            .disabled(systolic == nil || diastolic == nil)
+        }
+    }
+    
+    @ToolbarContentBuilder private var focusToolbarItems: some ToolbarContent {
+        ToolbarItem(placement: .keyboard) {
+            HStack {
+                Spacer()
+                Button {
+                    focusedField = focusedField?.prev
+                } label: {
+                    Image(systemSymbol: .chevronLeft)
+                        .accessibilityLabel("Go to previous field")
+                }
+                .disabled(focusedField?.prev == nil)
+                Button {
+                    focusedField = focusedField?.next
+                } label: {
+                    Image(systemSymbol: .chevronRight)
+                        .accessibilityLabel("Go to next field")
+                }
+                .disabled(focusedField?.next == nil)
+            }
+        }
+    }
     
     private func makeRow(for value: Binding<Int?>, sampleType: SampleType<HKQuantitySample>) -> some View {
         QuantityInputRow(title: sampleType.displayTitle, value: value, sampleType: sampleType)

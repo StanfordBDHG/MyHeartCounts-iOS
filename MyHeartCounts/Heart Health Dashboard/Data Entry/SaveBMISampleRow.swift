@@ -45,13 +45,15 @@ struct SaveBMISampleView: View {
     var body: some View {
         Form {
             Section {
-                Picker("Input Mode", selection: $inputMode) {
+                Picker("", selection: $inputMode) {
                     ForEach(InputMode.allCases, id: \.self) { mode in
                         Text(mode.displayTitle)
                     }
                 }
                 .pickerStyle(.segmented)
-                .labelsVisibility(.visible)
+                .labelsVisibility(.hidden)
+                .listRowInsets(.zero)
+                .listRowBackground(Color.clear)
             }
             Section {
                 DatePicker("Date", selection: $date)
