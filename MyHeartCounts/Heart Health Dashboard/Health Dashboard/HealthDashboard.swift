@@ -19,12 +19,6 @@ import SwiftUI
 extension Gradient {
     static let greenToRed = Gradient(colors: [.green, .yellow, .orange, .red])
     static let redToGreen = Gradient(colors: [.red, .orange, .yellow, .green])
-    
-//    func reversed() -> Gradient {
-//        Gradient(stops: zip(stops.indices, stops.indices.reversed()).map { idx1, idx2 -> Stop in
-//            Stop(color: stops[idx2].color, location: stops[idx1].location)
-//        })
-//    }
 }
 
 
@@ -37,8 +31,6 @@ struct StyledGauge: View {
         self.value = value
         self.range = range
     }
-    
-//    let gradient = Gradient(colors: [.green, .yellow, .orange, .red])
 
 
     var body: some View {
@@ -63,7 +55,7 @@ struct StyledGauge: View {
 
 
 struct HealthDashboard: View {
-    private static let tmp_enableDebugGaugesSection = true
+    private static let tmp_enableDebugGaugesSection = false
     
     // TODO good names for all of these!!!
     typealias SampleTypeGoalProvider = @MainActor (QuantitySample.SampleType) -> Achievement.ResolvedGoal?

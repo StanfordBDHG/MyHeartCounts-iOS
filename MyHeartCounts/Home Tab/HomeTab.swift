@@ -33,7 +33,6 @@ struct HomeTab: RootViewTab {
     private var enableDebugMode
     
     @State private var actionCards: [ActionCard] = []
-    @State private var isShowingLifesEssential8Sheet = false
     
     var body: some View {
         NavigationStack {
@@ -43,21 +42,7 @@ struct HomeTab: RootViewTab {
                 scheduleFormContent
             }
             .navigationTitle("My Heart Counts")
-            .sheet(isPresented: $isShowingLifesEssential8Sheet) {
-                NavigationStack {
-                    NavigationStack {
-                        LifesEssential8()
-                    }
-                }
-            }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        isShowingLifesEssential8Sheet = true
-                    } label: {
-                        Image(systemSymbol: .line3CrossedSwirlCircle)
-                    }
-                }
                 accountToolbarItem
             }
         }
