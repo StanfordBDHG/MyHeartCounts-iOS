@@ -38,7 +38,7 @@ final class CustomHealthSample {
     
     private(set) var sampleTypeRawValue: SampleType.RawValue // ewwww
     
-    private(set) var unitString: String
+//    private(set) var unitString: String
     private(set) var value: Double
     
     var timeRange: Range<Date> {
@@ -59,31 +59,31 @@ final class CustomHealthSample {
         }
     }
     
-    var unit: HKUnit {
-        @storageRestrictions(initializes: _unitString, accesses: _$backingData)
-        init(initialValue) {
-            _unitString = .init()
-            _$backingData.setValue(forKey: \.unitString, to: initialValue.unitString)
-        }
-        get {
-            HKUnit(from: unitString)
-        }
-        set {
-            unitString = newValue.unitString
-        }
-    }
+//    var unit: HKUnit {
+//        @storageRestrictions(initializes: _unitString, accesses: _$backingData)
+//        init(initialValue) {
+//            _unitString = .init()
+//            _$backingData.setValue(forKey: \.unitString, to: initialValue.unitString)
+//        }
+//        get {
+//            HKUnit(from: unitString)
+//        }
+//        set {
+//            unitString = newValue.unitString
+//        }
+//    }
     
-    init(sampleType: SampleType, startDate: Date, endDate: Date, unit: HKUnit, value: Double) {
+    init(sampleType: SampleType, startDate: Date, endDate: Date/*, unit: HKUnit*/, value: Double) {
         self.id = UUID()
         self.sampleType = sampleType
         self.startDate = startDate
         self.endDate = endDate
-        self.unit = unit
+//        self.unit = unit
         self.value = value
     }
     
-    convenience init(sampleType: SampleType, date: Date, unit: HKUnit, value: Double) {
-        self.init(sampleType: sampleType, startDate: date, endDate: date, unit: unit, value: value)
+    convenience init(sampleType: SampleType, date: Date/*, unit: HKUnit*/, value: Double) {
+        self.init(sampleType: sampleType, startDate: date, endDate: date/*, unit: unit*/, value: value)
     }
 }
 

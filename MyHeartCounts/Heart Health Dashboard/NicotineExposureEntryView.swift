@@ -26,7 +26,7 @@ struct NicotineExposureEntryView: View {
     var body: some View {
         List {
             Section {
-                Text("What's your level of nicotone exposure? How often do you smoke?")
+                Text("What's your level of nicotine exposure? How often do you smoke?")
             }
             Section {
                 ForEach(Option.allCases, id: \.self) { option in
@@ -50,7 +50,6 @@ struct NicotineExposureEntryView: View {
                     let sample = CustomHealthSample(
                         sampleType: .nicotineExposure,
                         date: .now,
-                        unit: .count(),
                         value: Double(selection.rawValue)
                     )
                     modelContext.insert(sample)
