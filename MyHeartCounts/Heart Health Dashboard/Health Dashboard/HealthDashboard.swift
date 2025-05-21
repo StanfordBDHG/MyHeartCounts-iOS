@@ -22,6 +22,8 @@ extension Gradient {
 }
 
 
+enum HealthDashboardConstants {}
+
 
 struct StyledGauge: View {
     private let value: Double
@@ -54,8 +56,8 @@ struct StyledGauge: View {
 
 
 
-struct HealthDashboard: View {
-    private static let tmp_enableDebugGaugesSection = false
+struct HealthDashboard<Footer: View>: View {
+    private static var tmp_enableDebugGaugesSection: Bool { false }
     
     // TODO good names for all of these!!!
     typealias SampleTypeGoalProvider = @MainActor (QuantitySample.SampleType) -> Achievement.ResolvedGoal?
@@ -64,16 +66,19 @@ struct HealthDashboard: View {
     private let layout: HealthDashboardLayout
     private let goalProvider: SampleTypeGoalProvider?
     private let addSampleHandler: AddSampleHandler?
+    private let footer: (@MainActor () -> Footer) // TODO make the type itself generic!
     
     init(
 //        @HealthDashboardLayoutBuilder layout: () -> HealthDashboardLayout,
         layout: HealthDashboardLayout,
         goalProvider: SampleTypeGoalProvider? = nil,
-        addSampleHandler: AddSampleHandler? = nil
+        addSampleHandler: AddSampleHandler? = nil,
+        @ViewBuilder footer: @MainActor @escaping () -> Footer = { EmptyView() }
     ) {
         self.layout = layout
         self.goalProvider = goalProvider
         self.addSampleHandler = addSampleHandler
+        self.footer = footer
     }
     
     @State private var tmp_gaugeValue: Double = 1 / 3
@@ -107,6 +112,7 @@ struct HealthDashboard: View {
                 gaugeDebugSection
                     .padding(.horizontal)
             }
+            footer()
         }
         .makeBackgroundMatchFormBackground()
     }
@@ -172,7 +178,7 @@ struct HealthDashboard: View {
             case .quantityDisplay(let config):
                 makeComponentView(for: config)
             case .custom(let config):
-                SmallGridCell(title: config.title) {
+                HealthDashboardSmallGridCell(title: config.title) {
                     config.content()
                 }
             }
@@ -197,13 +203,23 @@ struct HealthDashboard: View {
                 config.tapAction
             }
         }()
-        if let tapAction {
-            Button(action: tapAction) {
+        Group {
+            if let tapAction {
+                Button(action: tapAction) {
+                    view
+                        .contentShape(Rectangle())
+                }.buttonStyle(.plain)
+            } else {
                 view
-                    .contentShape(Rectangle())
-            }.buttonStyle(.plain)
-        } else {
-            view
+            }
+        }
+        .contextMenu {
+            switch component {
+            case .quantityDisplay(let config):
+                EmptyView() // TODO
+            case .custom(let config):
+                config.contextMenu()
+            }
         }
     }
     
@@ -291,11 +307,11 @@ struct SleepAnalysisGridCell: View {
     var body: some View {
         let sleepSessions = try! sleepAnalysis.splitIntoSleepSessions() // swiftlint:disable:this force_try
         
-        HealthDashboard.SmallGridCell(title: $sleepAnalysis.sampleType.displayTitle) {
+        HealthDashboardSmallGridCell(title: $sleepAnalysis.sampleType.displayTitle) {
             EmptyView() // TODO?
         } content: {
             if let session = sleepSessions.last {
-                HealthDashboard.QuantityLabel(input: .init(
+                HealthDashboardQuantityLabel(input: .init(
                     valueString: String(format: "%.1f", session.totalTimeAsleep / 60 / 60),
                     unitString: HKUnit.hour().unitString,
                     timeRange: session.timeRange
@@ -310,14 +326,14 @@ struct BloodPressureGridCell: View {
     private var samples
     
     var body: some View {
-        HealthDashboard.SmallGridCell(title: $samples.sampleType.displayTitle) {
+        HealthDashboardSmallGridCell(title: $samples.sampleType.displayTitle) {
             EmptyView() // TODO?
         } content: {
             if let sample = samples.last,
                let systolic = sample.firstSample(ofType: .bloodPressureSystolic),
                let diastolic = sample.firstSample(ofType: .bloodPressureDiastolic) {
                 let unit = SampleType.bloodPressureSystolic.displayUnit
-                HealthDashboard.QuantityLabel(input: .init(
+                HealthDashboardQuantityLabel(input: .init(
                     valueString: "\(Int(systolic.quantity.doubleValue(for: unit)))/\(Int(diastolic.quantity.doubleValue(for: unit)))",
                     unitString: unit.unitString,
                     timeRange: sample.timeRange

@@ -28,7 +28,7 @@ struct LifesEssential8: View {
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
-    private static let cvhKeyPathsWithDataEntryEnabled: Set<PartialKeyPath<CVHScore>> = [
+    private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, CVHScore.Score>> = [
         \.dietScore,
         \.bodyMassIndexScore,
 //        \.physicalExerciseScore,
@@ -41,11 +41,20 @@ struct LifesEssential8: View {
     
     @CVHScore private var cvhScore
     
+    @Environment(NewsManager.self)
+    private var newsManager
+    
 //    @State private var sampleTypeToAdd: MHCSampleType?
     
     @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
+    @State private var browseCustomHealthSamplesInput: CustomHealthSample.SampleType?
+    @State private var presentedArticle: Article?
     
     var body: some View {
+        healthDashboard
+    }
+    
+    @ViewBuilder var healthDashboard: some View {
         HealthDashboard(layout: [
             .large(sectionTitle: nil, content: {
                 topSection
@@ -60,17 +69,33 @@ struct LifesEssential8: View {
                 makeGridComponent(for: \.sleepHealthScore),
                 makeGridComponent(for: \.bloodPressureScore)
             ])
-        ])
+        ], footer: {
+            Section("Further Reads") {
+                ForEach(newsManager.articles) { article in
+                    Button {
+                        presentedArticle = article
+                    } label: {
+                        ArticleCard(article: article)
+                            .frame(height: 117)
+                            .clipped()
+                    }
+                    .buttonStyle(.plain)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: HealthDashboardConstants.gridComponentCornerRadius))
+                    .padding(.horizontal)
+                }
+            }
+        })
         .navigationTitle("Life's Essential 8")
         .sheet(item: $addNewSampleDescriptor) { addNewSampleDescriptor in
             NavigationStack {
                 switch addNewSampleDescriptor.keyPath {
                 case \.dietScore:
-                    Text("TODO")
+                    Text("Unable to find Questionnaire")
                 case \.bodyMassIndexScore:
                     SaveBMISampleView()
                 case \.bloodLipidsScore:
-                    Text("TODO")
+                    SaveQuantitySampleView(sampleType: .bloodLipids)
                 case \.nicotineExposureScore:
                     NicotineExposureEntryView()
                 case \.bloodGlucoseScore:
@@ -81,6 +106,19 @@ struct LifesEssential8: View {
                     EmptyView()
                 }
             }
+        }
+        .sheet(item: $browseCustomHealthSamplesInput) { sampleType in
+            NavigationStack {
+                CustomHealthSamplesBrowser(sampleType)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            DismissButton()
+                        }
+                    }
+            }
+        }
+        .sheet(item: $presentedArticle) { article in
+            ArticleSheet(article: article)
         }
     }
     
@@ -94,6 +132,7 @@ struct LifesEssential8: View {
         ) {
             if let cvhScore, !cvhScore.isNaN {
                 Text(Int(cvhScore * 100), format: .number)
+                    .font(.system(size: 27, weight: .medium))
             } else {
                 Text("")
             }
@@ -130,7 +169,36 @@ struct LifesEssential8: View {
                     .foregroundStyle(.secondary)
             }
         } onTap: {
-            addNewSampleDescriptor = .init(keyPath: scoreKeyPath)
+            addNewSample(for: scoreKeyPath)
+        } contextMenu: {
+            if canAddSample(for: scoreKeyPath) {
+                Button {
+                    addNewSample(for: scoreKeyPath)
+                } label: {
+                    Label("Add Sample", systemSymbol: .plusSquare)
+                }
+            }
+            Divider()
+            switch score.sampleType {
+            case .healthKit:
+                EmptyView()
+            case .custom(let sampleType):
+                Button {
+                    browseCustomHealthSamplesInput = sampleType
+                } label: {
+                    Label("Browse Samples", systemSymbol: .listDash)
+                }
+            }
+        }
+    }
+    
+    private func canAddSample(for keyPath: KeyPath<CVHScore, CVHScore.Score>) -> Bool {
+        Self.cvhKeyPathsWithDataEntryEnabled.contains(keyPath)
+    }
+    
+    private func addNewSample(for keyPath: KeyPath<CVHScore, CVHScore.Score>) {
+        if canAddSample(for: keyPath) {
+            addNewSampleDescriptor = .init(keyPath: keyPath)
         }
     }
 }

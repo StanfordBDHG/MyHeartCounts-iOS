@@ -16,6 +16,12 @@
     "%.2f" : {
 
     },
+    "%@" : {
+
+    },
+    "%lf" : {
+
+    },
     "%lld" : {
 
     },
@@ -103,6 +109,9 @@
 
     },
     "Before we can continue,\nwe need to learn a little about you" : {
+
+    },
+    "Browse Samples" : {
 
     },
     "Bulk Export Manager" : {
@@ -200,6 +209,15 @@
     "Fetching…" : {
 
     },
+    "Further Reads" : {
+
+    },
+    "Go to next field" : {
+
+    },
+    "Go to previous field" : {
+
+    },
     "Grant Access" : {
       "localizations" : {
         "en" : {
@@ -265,9 +283,6 @@
 
     },
     "I'm actively smoking" : {
-
-    },
-    "Input Mode" : {
 
     },
     "Label?" : {
@@ -502,6 +517,9 @@
     "This study will request read-access to collect the following Health samples:" : {
 
     },
+    "Time Zone" : {
+
+    },
     "Today" : {
 
     },
@@ -521,6 +539,9 @@
 
     },
     "TODO: rough information about (at least some) key study components here?" : {
+
+    },
+    "Unable to find Questionnaire" : {
 
     },
     "Unenroll" : {

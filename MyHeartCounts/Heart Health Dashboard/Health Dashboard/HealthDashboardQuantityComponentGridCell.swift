@@ -137,7 +137,7 @@ private struct QuantityHealthStatGridCell2: View {
     }
     
     var body: some View {
-        HealthDashboard.SmallGridCell(title: sampleType.displayTitle) {
+        HealthDashboardSmallGridCell(title: sampleType.displayTitle) {
             progressDecoration
         } content: {
             switch style {
@@ -229,15 +229,15 @@ private struct QuantityHealthStatGridCell2: View {
     private func singleValueContent(for samples: [QuantitySample]) -> some View {
         let _ = print("\(#function) #samples: \(samples.count)")
         @ViewBuilder
-        func makeView(for input: HealthDashboard.QuantityLabel.Input?) -> some View {
+        func makeView(for input: HealthDashboardQuantityLabel.Input?) -> some View {
             if let input {
-                HealthDashboard.QuantityLabel(input: input)
+                HealthDashboardQuantityLabel(input: input)
             } else {
                 Text("n/a") // TODO!!!
             }
         }
         
-        let input: HealthDashboard.QuantityLabel.Input?
+        let input: HealthDashboardQuantityLabel.Input?
         switch style.effectiveAggregationKind(for: sampleType) {
         case .sum:
             if let lastSample = samples.last {

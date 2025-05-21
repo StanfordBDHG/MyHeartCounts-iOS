@@ -256,11 +256,18 @@ extension HealthDashboardLayout {
             let title: String
             let content: @MainActor () -> AnyView
             let tapAction: (@MainActor () -> Void)?
+            let contextMenu: @MainActor () -> AnyView
             
-            fileprivate init(title: String, content: @MainActor @escaping () -> AnyView, tapAction: (@MainActor () -> Void)?) {
+            fileprivate init(
+                title: String,
+                content: @MainActor @escaping () -> AnyView,
+                tapAction: (@MainActor () -> Void)?,
+                contextMenu: @MainActor @escaping () -> AnyView
+            ) {
                 self.title = title
                 self.content = content
                 self.tapAction = tapAction
+                self.contextMenu = contextMenu
             }
         }
         
@@ -301,12 +308,14 @@ extension HealthDashboardLayout {
             title: String
             /*, dataSource: DataSource?*/,
             @ViewBuilder _ content: @MainActor @escaping () -> some View,
-            onTap tapAction: (@MainActor () -> Void)? = nil
+            onTap tapAction: (@MainActor () -> Void)? = nil,
+            @ViewBuilder contextMenu: @MainActor @escaping () -> some View = { EmptyView() }
         ) -> Self {
             .custom(.init(
                 title: title,
                 content: { content().intoAnyView() },
-                tapAction: tapAction
+                tapAction: tapAction,
+                contextMenu: { contextMenu().intoAnyView() }
             ))
         }
     }

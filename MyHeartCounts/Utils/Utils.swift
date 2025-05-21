@@ -194,3 +194,10 @@ extension Sequence {
         chain(other, self)
     }
 }
+
+
+extension Collection where Index == Int {
+    func elements(at indices: IndexSet) -> [Element] {
+        indices.map { self[$0] }
+    }
+}
