@@ -62,11 +62,6 @@ struct LifesEssential8: View {
             ])
         ])
         .navigationTitle("Life's Essential 8")
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                DismissButton()
-            }
-        }
         .sheet(item: $addNewSampleDescriptor) { addNewSampleDescriptor in
             NavigationStack {
                 switch addNewSampleDescriptor.keyPath {
