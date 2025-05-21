@@ -25,10 +25,8 @@ extension HealthDashboard {
                     HStack {
                         Text(title)
                             .font(.headline)
-                        if Accessory.self != EmptyView.self {
-                            Spacer()
-                            accessory()
-                        }
+                        Spacer()
+                        accessory()
                     }
                     .padding(EdgeInsets(top: Self.insets.top, leading: 0, bottom: Self.insets.top, trailing: 0))
                     .frame(height: 57)
