@@ -16,7 +16,7 @@ import SpeziHealthKitUI
 import SwiftUI
 
 
-struct SleepSession: Hashable, Identifiable {
+private struct SleepSession: Hashable, Identifiable {
     typealias SleepPhase = HKCategoryValueSleepAnalysis
     
     let id: Set<UUID>

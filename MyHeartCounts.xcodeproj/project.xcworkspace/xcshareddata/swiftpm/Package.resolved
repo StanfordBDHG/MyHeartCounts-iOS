@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/Spezi.git",
       "state" : {
-        "revision" : "49ed1ddcfb7d0f753990b55578c33a887513fb39",
-        "version" : "1.8.1"
+        "revision" : "a7b3a178aca371b9a3621b87021ea1dfcd9dde17",
+        "version" : "1.8.2"
       }
     },
     {
@@ -213,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziAccount.git",
       "state" : {
-        "revision" : "9bb3d277f7f0e7f2e5abbe22040fd8fd626042f0",
-        "version" : "2.1.6"
+        "revision" : "63585928dca9f841e204f274f23b2764e4358c39",
+        "version" : "2.1.7"
       }
     },
     {
@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "branch" : "lukas/orderedarray-unsafe-operations",
-        "revision" : "dfbe8c3c473a734b01a66adebb15b217bb4bc6e4"
+        "revision" : "f389320d713dbebf0f13c4ae9a935f19e4eeca1e",
+        "version" : "2.1.7"
       }
     },
     {
@@ -285,8 +285,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "0adee4426e412c2036e78d3c21700fa84b1af409",
-        "version" : "1.2.7"
+        "branch" : "lukas/RuntimeAssertions",
+        "revision" : "8988c4009ba43516e9280f3f8748ca32d5ac3020"
       }
     },
     {
@@ -294,8 +294,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
       "state" : {
-        "revision" : "b5dfb4a551d3f4243e2798133d6da2414a70e274",
-        "version" : "2.1.0"
+        "revision" : "eda8a13d2a9c3570f1b8767a338fa720c2e37c75",
+        "version" : "2.1.1"
       }
     },
     {
@@ -465,8 +465,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTRuntimeAssertions.git",
       "state" : {
-        "revision" : "f560ec8410af032dd485ca9386e8c2b5d3e1a1f8",
-        "version" : "1.1.3"
+        "branch" : "lukas/negative-assertions",
+        "revision" : "aa60fdc5cc1febb081cdca1de47ab9545a8274df"
       }
     },
     {

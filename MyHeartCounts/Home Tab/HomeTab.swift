@@ -45,7 +45,9 @@ struct HomeTab: RootViewTab {
             .navigationTitle("My Heart Counts")
             .sheet(isPresented: $isShowingLifesEssential8Sheet) {
                 NavigationStack {
-                    LifesEssential8()
+                    NavigationStack {
+                        LifesEssential8()
+                    }
                 }
             }
             .toolbar {

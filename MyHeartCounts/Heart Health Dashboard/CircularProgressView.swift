@@ -15,12 +15,6 @@ struct CircularProgressView: View {
     private let lineWidth: Double
     private let showProgressAsLabel: Bool
     
-    init(_ value: some BinaryFloatingPoint, lineWidth: Double = 5, showProgressAsLabel: Bool = false) {
-        self.value = Double(value)
-        self.lineWidth = lineWidth
-        self.showProgressAsLabel = showProgressAsLabel
-    }
-    
     var body: some View {
         ZStack {
             Circle()
@@ -42,11 +36,14 @@ struct CircularProgressView: View {
             if showProgressAsLabel {
                 Text(String(format: "%.0f%%", value * 100))
                     .monospacedDigit()
-//                Rectangle()
-//                    .foregroundStyle(.red)
-//                    .frame(width: 4, height: 4)
             }
         }
         .padding(EdgeInsets(horizontal: lineWidth / 2, vertical: lineWidth / 2))
+    }
+    
+    init(_ value: some BinaryFloatingPoint, lineWidth: Double = 5, showProgressAsLabel: Bool = false) {
+        self.value = Double(value)
+        self.lineWidth = lineWidth
+        self.showProgressAsLabel = showProgressAsLabel
     }
 }

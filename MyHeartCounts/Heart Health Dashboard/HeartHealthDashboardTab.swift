@@ -25,27 +25,34 @@ struct HeartHealthDashboardTab: RootViewTab {
     @Environment(HeartHealthManager.self)
     private var manager
     
+    @Environment(HealthKit.self)
+    private var healthKit
+    
+    @State private var sampleTypeToAdd: MHCSampleType?
+    
     var body: some View {
         NavigationStack {
-            HealthDashboard(layout: manager.layout)
-                .navigationTitle("Heart Health")
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            manager.tmpRemoveSection()
-                        } label: {
-                            Image(systemSymbol: .minusSquare)
-                        }
-                    }
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            manager.tmpAddSection()
-                        } label: {
-                            Image(systemSymbol: .plusSquare)
-                        }
-                    }
-                    accountToolbarItem
+            HealthDashboard(
+                layout: manager.layout,
+                goalProvider: { _ in nil },
+                addSampleHandler: { sampleType in
+                    sampleTypeToAdd = sampleType
                 }
+            )
+            .navigationTitle("Heart Health")
+            .toolbar {
+                accountToolbarItem
+            }
+            .sheet(item: $sampleTypeToAdd) { sampleType in
+                NavigationStack {
+                    switch sampleType {
+                    case .healthKit(.quantity(let sampleType)):
+                        SaveQuantitySampleView(sampleType: sampleType)
+                    default:
+                        Text("Unhandled Sample Type: \(sampleType.displayTitle)")
+                    }
+                }
+            }
         }
     }
 }

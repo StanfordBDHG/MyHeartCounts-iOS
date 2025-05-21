@@ -23,7 +23,10 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration(standard: MyHeartCountsStandard()) {
             DeferredConfigLoading.initialAppLaunchConfig
-            HealthKit()
+            HealthKit {
+                RequestReadAccess(quantity: [.heartRate, .stepCount, .bodyMass, .height, .bodyMassIndex])
+                RequestWriteAccess(quantity: [.heartRate, .stepCount])
+            }
             Scheduler()
             Notifications()
             BulkHealthExporter()
