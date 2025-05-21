@@ -203,7 +203,8 @@ enum DeferredConfigLoading {
                         // additional values stored using the `FirestoreAccountStorage` within our Standard implementation
                         .collects(\.genderIdentity),
                         .collects(\.dateOfBirth),
-                        .manual(\.fcmToken)
+                        .manual(\.fcmToken),
+                        .manual(\.timeZone)
                     ]
                 )
                 firestore
@@ -214,6 +215,7 @@ enum DeferredConfigLoading {
                 }
                 baseModules
                 NewsManager()
+                TimeZoneTracking()
             }
         } catch {
             logger.error("""
