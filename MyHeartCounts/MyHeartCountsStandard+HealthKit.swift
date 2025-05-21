@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Algorithms
 import FirebaseFirestore
 import Foundation
 import HealthKit
@@ -39,21 +40,24 @@ extension MyHeartCountsStandard: HealthKitConstraint {
             )
         }
         do {
-            let batch = Firestore.firestore().batch()
-            for sample in addedSamples {
-                do {
-                    logger.notice("Adding sample to batch \(sample)")
-                    let document = try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
-                    try batch.setData(from: sample.resource(), forDocument: document)
-                } catch {
-                    logger.error("Error saving HealthKit sample to Firebase: \(error)")
-                    // maybe queue sample for later retry?
-                    // (probably not needed, since firebase already seems to be doing this for us...)
+            for addedSamples in addedSamples.chunks(ofCount: 100) {
+                logger.notice("#samples in batch: \(addedSamples.count)")
+                let batch = Firestore.firestore().batch()
+                for sample in addedSamples {
+                    do {
+                        //                    logger.notice("Adding sample to batch \(sample)")
+                        let document = try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
+                        try batch.setData(from: sample.resource(), forDocument: document)
+                    } catch {
+                        logger.error("Error saving HealthKit sample to Firebase: \(error)")
+                        // maybe queue sample for later retry?
+                        // (probably not needed, since firebase already seems to be doing this for us...)
+                    }
                 }
+                logger.notice("Will commit batch")
+                try await batch.commit()
+                logger.notice("Did commit batch")
             }
-            logger.notice("Will commit batch")
-            try await batch.commit()
-            logger.notice("Did commit batch")
         } catch {
             logger.error("Error committing Firestore batch: \(error)")
         }
@@ -111,6 +115,7 @@ extension MyHeartCountsStandard {
         case deletedSamples(SampleType<Sample>, [HKDeletedObject])
     }
     
+    @discardableResult
     private func showDebugHealthKitEventNotification<Sample>(for change: HealthKitChange<Sample>, stage: HealthKitUploadStage) async -> String {
         let notificationCenter = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
