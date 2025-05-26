@@ -14,7 +14,7 @@ import Testing
 
 
 @Suite(.tags(.unitTest))
-class LocalPreferenceTests {
+final class LocalPreferenceTests {
     let suite: UserDefaults
     let store: LocalPreferencesStore
     

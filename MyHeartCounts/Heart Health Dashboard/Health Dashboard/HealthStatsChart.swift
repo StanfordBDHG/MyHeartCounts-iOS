@@ -10,6 +10,7 @@
 
 import Charts
 import Foundation
+import SpeziFoundation
 import SpeziHealthKitUI
 import SwiftUI
 
@@ -100,13 +101,16 @@ struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: Heal
 
 
 struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
-    @Environment(\.calendar) private var calendar
+    @Environment(\.calendar)
+    private var calendar
+    @Environment(\.healthStatsChartHoverHighlightEnabled)
+    private var enableHoverHighlight
     
     private let dataSet: (repeat each DataSet)
     
-    init(
-        _ dataSet: repeat each DataSet
-    ) {
+    @State private var xSelection: Date?
+    
+    init(_ dataSet: repeat each DataSet) {
         self.dataSet = (repeat each dataSet)
     }
     
@@ -122,7 +126,6 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
     
     var body: some View {
         chart
-            .frame(height: 80)
             .chartOverlay { _ in
                 if !hasData {
                     // TODO make this look nice!
@@ -136,20 +139,8 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
             chartContent
         }
         .chartLegend(.hidden)
-        .chartXAxis {
-            AxisMarks(values: .stride(by: .hour, count: 6)) { value in
-                if let date = value.as(Date.self) {
-                    let hour = calendar.component(.hour, from: date)
-                    switch hour {
-                    case 0, 12:
-                        AxisValueLabel(format: .dateTime.hour())
-                    default:
-                        AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)))
-                    }
-                }
-                AxisGridLine()
-                AxisTick()
-            }
+        .if(enableHoverHighlight) {
+            $0.chartXSelection(value: $xSelection)
         }
         .chartYAxis {
             AxisMarks(values: .automatic(desiredCount: 3))
@@ -157,8 +148,19 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
     }
     
     
+    @ChartContentBuilder
     private var chartContent: some ChartContent {
         ChartContentBuilder.buildBlock(repeat buildContent(for: each dataSet))
+        if enableHoverHighlight,
+           let xSelection,
+           case let dataPoints = xAxisSelectionDataPoints(for: xSelection),
+           let (dataSet, dataPoint) = dataPoints.last {
+            ChartHighlightRuleMark(
+                x: .value("Selection", xSelection, unit: .day, calendar: calendar),
+                primaryText: "\(dataPoint.value)", // TODO unit?
+                secondaryText: dataPoint.timeRange.middle.formatted(.dateTime)
+            )
+        }
     }
     
     @ChartContentBuilder
@@ -175,6 +177,7 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
         let xVal: PlottableValue = .value("Date", dataPoint.timeRange)
         let yVal: PlottableValue = .value(dataSet.name, dataPoint.value)
         let series: PlottableValue = .value("Series", dataSet.name)
+        let _ = print("DP", dataPoint.timeRange, dataPoint.value, dataSet.name)
         SomeChartContent {
             switch dataSet.drawingConfig.chartType {
             case let .line(interpolationMethod):
@@ -188,6 +191,17 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
             }
         }
         .foregroundStyle(dataSet.drawingConfig.color)
+    }
+    
+    private func xAxisSelectionDataPoints(for selection: Date) -> [(any HealthStatsChartDataSetProtocol, HealthStatsChartDataPoint)] {
+        var retval: [(any HealthStatsChartDataSetProtocol, HealthStatsChartDataPoint)] = []
+        for dataSet in repeat each dataSet {
+            let dataPoints = dataSet.data.lazy.compactMap(dataSet.makeDataPoint)
+            for dataPoint in dataPoints.filter({ $0.timeRange.contains(selection) }) {
+                retval.append((dataSet, dataPoint))
+            }
+        }
+        return retval
     }
 }
 
@@ -214,5 +228,61 @@ extension ChartContent {
         } else {
             self
         }
+    }
+}
+
+
+// MARK: Environment Values
+
+extension EnvironmentValues {
+    @Entry fileprivate var healthStatsChartHoverHighlightEnabled: Bool = false
+}
+
+extension View {
+    func healthStatsChartHoverHighlightEnabled(_ isEnabled: Bool = true) -> some View {
+        self.environment(\.healthStatsChartHoverHighlightEnabled, isEnabled)
+    }
+}
+
+
+// MARK: Other
+
+
+private struct ChartXAxisModifier: ViewModifier {
+    @Environment(\.calendar) private var cal
+    
+    let timeRange: Range<Date>
+    
+    func body(content: Content) -> some View {
+        content.chartXAxis {
+            let duration = timeRange.timeInterval
+            let daysStride = if duration <= TimeConstants.week {
+                1
+            } else if duration <= TimeConstants.month {
+                7
+            } else {
+                14
+            }
+            AxisMarks(values: .stride(by: .day, count: daysStride)) { value in
+                if let date = value.as(Date.self) {
+                    if let prevDate = cal.date(byAdding: .day, value: -daysStride, to: date) {
+                        let format: Date.FormatStyle = .dateTime.omittingTime()
+                            .year(cal.isDate(prevDate, equalTo: date, toGranularity: .year) ? .omitted : .defaultDigits)
+                            .month(cal.isDate(prevDate, equalTo: date, toGranularity: .month) ? .omitted : .defaultDigits)
+                        AxisValueLabel(format: format)
+                    } else {
+                        AxisValueLabel(format: .dateTime.omittingTime())
+                    }
+                }
+                AxisGridLine()
+                AxisTick()
+            }
+        }
+    }
+}
+
+extension View {
+    func configureChartXAxisWithDailyMarks(forTimeRange timeRange: Range<Date>) -> some View {
+        self.modifier(ChartXAxisModifier(timeRange: timeRange))
     }
 }

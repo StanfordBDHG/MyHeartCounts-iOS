@@ -90,7 +90,7 @@ struct NicotineExposureEntryView: View {
 
 
 extension CustomHealthSample.NicotineExposureCategoryValues {
-    fileprivate var displayTitle: LocalizedStringResource {
+    var displayTitle: LocalizedStringResource {
         switch self {
         case .neverSmoked:
             "I have never smoked"
@@ -102,6 +102,21 @@ extension CustomHealthSample.NicotineExposureCategoryValues {
             "I last smoked within the last year, or am using NDS"
         case .activelySmoking:
             "I'm actively smoking"
+        }
+    }
+    
+    var shortDisplayTitle: LocalizedStringResource {
+        switch self {
+        case .neverSmoked:
+            "Never"
+        case .quitMoreThan5YearsAgo:
+            "More than 5 years ago"
+        case .quitWithin1To5Years:
+            "1 to 5 years ago"
+        case .quitWithinLastYearOrIsUsingNDS:
+            "Within last year, or am using NDS"
+        case .activelySmoking:
+            "Actively smoking"
         }
     }
 }

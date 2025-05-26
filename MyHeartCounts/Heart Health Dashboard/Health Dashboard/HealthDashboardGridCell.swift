@@ -20,6 +20,7 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
     private static var insets: EdgeInsets { EdgeInsets(horizontal: 9, vertical: 5) }
     
     private let title: String
+    private let subtitle: String?
     private let accessory: @MainActor () -> Accessory
     private let content: @MainActor () -> Content
     
@@ -27,8 +28,14 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
                 HStack {
-                    Text(title)
-                        .font(.headline)
+                    VStack(alignment: .leading) {
+                        Text(title)
+                            .font(.headline)
+                        if let subtitle {
+                            Text(subtitle)
+                                .font(.subheadline)
+                        }
+                    }
                     Spacer()
                     accessory()
                 }
@@ -43,16 +50,17 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
         .padding(EdgeInsets(top: 0, leading: Self.insets.leading, bottom: Self.insets.bottom, trailing: Self.insets.trailing))
         .frame(minHeight: 129)
         .background(.background)
-        .clipShape(RoundedRectangle(cornerRadius: HealthDashboardConstants.gridComponentCornerRadius))
     }
     
     
     init(
         title: String, // TODO localized overload!
+        subtitle: String? = nil,
         @ViewBuilder accessory: @MainActor @escaping () -> Accessory = { EmptyView() },
         @ViewBuilder content: @MainActor @escaping () -> Content
     ) {
         self.title = title
+        self.subtitle = subtitle
         self.accessory = accessory
         self.content = content
     }

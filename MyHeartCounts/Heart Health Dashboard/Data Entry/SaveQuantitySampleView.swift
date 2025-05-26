@@ -26,8 +26,7 @@ struct SaveQuantitySampleView: View {
     private let sampleTypeUnit: HKUnit
     
     private let save: @MainActor (Self) async throws -> Void
-    @State private var startDate: Date = .now
-    @State private var endDate: Date = .now
+    @State private var date: Date = .now
     @State private var value: Double?
     @State private var viewState: ViewState = .idle
     @FocusState private var valueFieldIsFocused: Bool
@@ -36,8 +35,7 @@ struct SaveQuantitySampleView: View {
         Form {
             Section {
                 LabeledContent("Sample Type", value: sampleTypeTitle)
-                DatePicker("Start Date", selection: $startDate)
-                DatePicker("End Date", selection: $endDate)
+                DatePicker("Date", selection: $date)
                 QuantityInputRow(title: "Value", value: $value, unit: sampleTypeUnit)
                     .focused($valueFieldIsFocused)
             }
@@ -53,7 +51,7 @@ struct SaveQuantitySampleView: View {
                     try await save(self)
                     dismiss()
                 }
-                .disabled(value == nil && endDate >= startDate)
+                .disabled(value == nil)
             }
         }
         .onAppear {
@@ -71,8 +69,8 @@ struct SaveQuantitySampleView: View {
             let sample = HKQuantitySample(
                 type: sampleType.hkSampleType,
                 quantity: HKQuantity(unit: sampleType.displayUnit, doubleValue: value),
-                start: self.startDate,
-                end: self.endDate
+                start: self.date,
+                end: self.date
             )
             try await self.healthKit.save(sample)
         }
@@ -90,8 +88,8 @@ struct SaveQuantitySampleView: View {
             }
             let sample = CustomHealthSample(
                 sampleType: sampleType,
-                startDate: self.startDate,
-                endDate: self.endDate,
+                startDate: self.date,
+                endDate: self.date,
                 unit: unit,
                 value: value
             )

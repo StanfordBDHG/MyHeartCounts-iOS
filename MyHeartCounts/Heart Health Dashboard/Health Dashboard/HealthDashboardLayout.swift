@@ -154,7 +154,16 @@ extension HealthDashboardLayout {
         let chartType: ChartDataSetDrawingConfig.ChartType
         let aggregationInterval: HealthKitStatisticsQuery.AggregationInterval
         
-        fileprivate static func `default`(for sampleType: SampleType<HKQuantitySample>, in timeRange: HealthKitQueryTimeRange) -> Self {
+        init(chartType: ChartDataSetDrawingConfig.ChartType, aggregationInterval: HealthKitStatisticsQuery.AggregationInterval) {
+            self.chartType = chartType
+            self.aggregationInterval = aggregationInterval
+        }
+        
+        init(chartType: ChartDataSetDrawingConfig.ChartType, defaultAggregationIntervalFor timeRange: HealthKitQueryTimeRange) {
+            self.init(chartType: chartType, aggregationInterval: Self.defaultSmallChartAggregationInterval(for: timeRange))
+        }
+        
+        static func `default`(for sampleType: SampleType<HKQuantitySample>, in timeRange: HealthKitQueryTimeRange) -> Self {
             let defaultAggIterval = defaultSmallChartAggregationInterval(for: timeRange)
             return switch sampleType {
             case .stepCount, .activeEnergyBurned:
@@ -206,6 +215,16 @@ extension HealthDashboardLayout {
         case healthKit(SampleTypeProxy)
         case custom(any CustomDataSourceProtocol)
         
+//        /// Creates a DataSource for the specified sample type
+//        init(sampleType: MHCSampleType) {
+//            switch sampleType {
+//            case .healthKit(let proxy):
+//                self = .healthKit(proxy)
+//            case .custom(let sampleType):
+//                <#code#>
+//            }
+//        }
+        
         var sampleTypeDisplayTitle: String {
             switch self {
             case .healthKit(let sampleType):
@@ -244,7 +263,7 @@ extension HealthDashboardLayout {
     /// A Health Stat Component within a Grid Section
     enum GridComponent: Sendable {
         /// The config of a component that displays a Quantity fetched from eg HealthKit.
-        struct QuantityDisplayComponentConfig: Sendable {
+        struct QuantityDisplayComponentConfig: Sendable { // TODO rename! (also covers non-quantity types)
             let dataSource: DataSource
             let timeRange: HealthKitQueryTimeRange
             let style: Style

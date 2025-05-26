@@ -25,6 +25,42 @@ extension Gradient {
 enum HealthDashboardConstants {}
 
 
+@ViewBuilder @MainActor
+func healthDashboardSmallComponentView(for config: HealthDashboardLayout.GridComponent.QuantityDisplayComponentConfig) -> some View {
+    switch config.dataSource {
+    case .healthKit(.quantity(let sampleType)):
+        HealthDashboardQuantityComponentGridCell(inputSampleType: .healthKit(sampleType), config: config)
+    case .custom(let dataSource):
+        HealthDashboardQuantityComponentGridCell(inputSampleType: .custom(dataSource), config: config)
+    case .healthKit(.category(.sleepAnalysis)):
+        SmallSleepAnalysisGridCell()
+    case .healthKit(.correlation(.bloodPressure)):
+        BloodPressureGridCell()
+    case .healthKit:
+        // TODO?
+        EmptyView()
+    }
+}
+
+
+@ViewBuilder @MainActor
+func healthDashboardLargeComponentView(for config: HealthDashboardLayout.GridComponent.QuantityDisplayComponentConfig) -> some View {
+    switch config.dataSource {
+    case .healthKit(.quantity(let sampleType)):
+        HealthDashboardQuantityComponentGridCell(inputSampleType: .healthKit(sampleType), config: config)
+    case .custom(let dataSource):
+        HealthDashboardQuantityComponentGridCell(inputSampleType: .custom(dataSource), config: config)
+    case .healthKit(.category(.sleepAnalysis)):
+        LargeSleepAnalysisView(timeRange: config.timeRange)
+    case .healthKit(.correlation(.bloodPressure)):
+        BloodPressureGridCell()
+    case .healthKit:
+        // TODO?
+        EmptyView()
+    }
+}
+
+
 struct StyledGauge: View {
     private let value: Double
     private let range: ClosedRange<Double>
@@ -166,6 +202,8 @@ struct HealthDashboard<Footer: View>: View {
         LazyVGrid(columns: columns, alignment: .center, spacing: 12, pinnedViews: .sectionHeaders) {
             ForEach(0..<components.endIndex, id: \.self) { idx in
                 makeView(for: components[idx])
+                    .clipShape(RoundedRectangle(cornerRadius: HealthDashboardConstants.gridComponentCornerRadius))
+                    .frame(maxHeight: 178)
             }
         }
     }
@@ -226,19 +264,20 @@ struct HealthDashboard<Footer: View>: View {
     
     @ViewBuilder
     private func makeComponentView(for config: HealthDashboardLayout.GridComponent.QuantityDisplayComponentConfig) -> some View {
-        switch config.dataSource {
-        case .healthKit(.quantity(let sampleType)):
-            HealthDashboardQuantityComponentGridCell(inputSampleType: .healthKit(sampleType), config: config)
-        case .custom(let dataSource):
-            HealthDashboardQuantityComponentGridCell(inputSampleType: .custom(dataSource), config: config)
-        case .healthKit(.category(.sleepAnalysis)):
-            SleepAnalysisGridCell()
-        case .healthKit(.correlation(.bloodPressure)):
-            BloodPressureGridCell()
-        case .healthKit:
-            // TODO?
-            EmptyView()
-        }
+//        switch config.dataSource {
+//        case .healthKit(.quantity(let sampleType)):
+//            HealthDashboardQuantityComponentGridCell(inputSampleType: .healthKit(sampleType), config: config)
+//        case .custom(let dataSource):
+//            HealthDashboardQuantityComponentGridCell(inputSampleType: .custom(dataSource), config: config)
+//        case .healthKit(.category(.sleepAnalysis)):
+//            SleepAnalysisGridCell()
+//        case .healthKit(.correlation(.bloodPressure)):
+//            BloodPressureGridCell()
+//        case .healthKit:
+//            // TODO?
+//            EmptyView()
+//        }
+        healthDashboardSmallComponentView(for: config)
     }
     
     
@@ -246,9 +285,12 @@ struct HealthDashboard<Footer: View>: View {
     private func makeChart(
         for component: HealthDashboardLayout.LargeChartComponent
     ) -> some View {
-//        let config = component.chartConfig.resolved(for: sampleType, in: timeRange)
-        // TODO!
-        EmptyView()
+        healthDashboardLargeComponentView(for: .init(
+            dataSource: component.dataSource,
+            timeRange: component.timeRange,
+            style: .chart(component.chartConfig),
+            allowAddingSamples: false
+        ))
     }
 }
 
@@ -296,50 +338,6 @@ enum TimeConstants {
 extension FloatingPoint {
     var isWholeNumber: Bool {
         rounded() == self // TODO is this correct? a good idea?
-    }
-}
-
-
-struct SleepAnalysisGridCell: View {
-    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 4))
-    private var sleepAnalysis
-    
-    var body: some View {
-        let sleepSessions = try! sleepAnalysis.splitIntoSleepSessions() // swiftlint:disable:this force_try
-        
-        HealthDashboardSmallGridCell(title: $sleepAnalysis.sampleType.displayTitle) {
-            EmptyView() // TODO?
-        } content: {
-            if let session = sleepSessions.last {
-                HealthDashboardQuantityLabel(input: .init(
-                    valueString: String(format: "%.1f", session.totalTimeAsleep / 60 / 60),
-                    unitString: HKUnit.hour().unitString,
-                    timeRange: session.timeRange
-                ))
-            }
-        }
-    }
-}
-
-struct BloodPressureGridCell: View {
-    @HealthKitQuery(.bloodPressure, timeRange: .last(months: 6))
-    private var samples
-    
-    var body: some View {
-        HealthDashboardSmallGridCell(title: $samples.sampleType.displayTitle) {
-            EmptyView() // TODO?
-        } content: {
-            if let sample = samples.last,
-               let systolic = sample.firstSample(ofType: .bloodPressureSystolic),
-               let diastolic = sample.firstSample(ofType: .bloodPressureDiastolic) {
-                let unit = SampleType.bloodPressureSystolic.displayUnit
-                HealthDashboardQuantityLabel(input: .init(
-                    valueString: "\(Int(systolic.quantity.doubleValue(for: unit)))/\(Int(diastolic.quantity.doubleValue(for: unit)))",
-                    unitString: unit.unitString,
-                    timeRange: sample.timeRange
-                ))
-            }
-        }
     }
 }
 

@@ -55,6 +55,29 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     let displayUnit: HKUnit
     let aggregationKind: StatisticsQueryAggregationKind
     let preferredTintColor: Color
+    
+    init(id: String, displayTitle: String, displayUnit: HKUnit, aggregationKind: StatisticsQueryAggregationKind, preferredTintColor: Color) {
+        self.id = id
+        self.displayTitle = displayTitle
+        self.displayUnit = displayUnit
+        self.aggregationKind = aggregationKind
+        self.preferredTintColor = preferredTintColor
+    }
+    
+    init?(_ sampleType: CustomHealthSample.SampleType) {
+        switch sampleType {
+        case .bloodLipids:
+            self = Self(
+                id: "mhc:custom:bloodLipids",
+                displayTitle: sampleType.displayTitle,
+                displayUnit: sampleType.displayUnit!, // swiftlint:disable:this force_unwrapping
+                aggregationKind: .average,
+                preferredTintColor: .yellow // ???
+            )
+        case .nicotineExposure, .dietMEPAScore:
+            return nil
+        }
+    }
 }
 
 

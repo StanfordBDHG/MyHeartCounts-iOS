@@ -102,7 +102,7 @@ struct SaveBMISampleView: View {
         // we need to go the extra round through HKQuantity in case weight and height are non-metric
         let weightQuantity = HKQuantity(unit: weightSampleType.displayUnit, doubleValue: weight)
         let heightQuantity = HKQuantity(unit: heightSampleType.displayUnit, doubleValue: height)
-        bmi = weightQuantity.doubleValue(for: .gramUnit(with: .kilo)) / heightQuantity.doubleValue(for: .meter())
+        bmi = weightQuantity.doubleValue(for: .gramUnit(with: .kilo)) / pow(heightQuantity.doubleValue(for: .meter()), 2)
     }
     
     private func save() async throws {

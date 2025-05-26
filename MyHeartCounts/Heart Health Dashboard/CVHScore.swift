@@ -42,31 +42,11 @@ struct CustomHealthSampleQuery: DynamicProperty {
 }
 
 
-@propertyWrapper
 @MainActor
+@propertyWrapper
 struct CVHScore: DynamicProperty {
     protocol ComponentSampleProtocol {
         var timeRange: Range<Date> { get }
-    }
-    
-    struct Score: Sendable, Hashable {
-        let sampleType: MHCSampleType
-        /// The ``sample`` value, normalized onto a `0...1` range, with `0` denoting "bad" and `1` denoting "good".
-        let normalized: Double?
-        let timeRange: Range<Date>?
-        
-        /// - parameter normalize: a closure that normalizes the ``sample`` value onto a `0...1` range, with `0` denoting "bad" and `1` denoting "good".
-        fileprivate init<Sample: ComponentSampleProtocol>(sampleType: MHCSampleType, sample: Sample?, normalize: (Sample) -> Double?) {
-            self.sampleType = sampleType
-            self.timeRange = sample?.timeRange
-            self.normalized = sample.flatMap(normalize)
-        }
-        
-        fileprivate init(sampleType: MHCSampleType) {
-            self.sampleType = sampleType
-            self.timeRange = nil
-            self.normalized = nil
-        }
     }
     
     @CustomHealthSampleQuery(.dietMEPAScore, sortBy: \.endDate, order: .reverse, limit: 1)
@@ -102,14 +82,14 @@ struct CVHScore: DynamicProperty {
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
     var wrappedValue: Double? {
         let scores: [Double] = [
-            dietScore.normalized,
-            physicalExerciseScore.normalized,
-            nicotineExposureScore.normalized,
-            sleepHealthScore.normalized,
-            bodyMassIndexScore.normalized,
-            bloodLipidsScore.normalized,
-            bloodGlucoseScore.normalized,
-            bloodPressureScore.normalized
+            dietScore.score,
+            physicalExerciseScore.score,
+            nicotineExposureScore.score,
+            sleepHealthScore.score,
+            bodyMassIndexScore.score,
+            bloodLipidsScore.score,
+            bloodGlucoseScore.score,
+            bloodPressureScore.score
         ].compactMap { $0.map { max(0, min(1, $0)) } }
         return scores.count < 5 ? nil : scores.reduce(0, +) / Double(scores.count)
     }
@@ -121,112 +101,59 @@ struct CVHScore: DynamicProperty {
 
 
 extension CVHScore {
-    var dietScore: Score {
-        Score(sampleType: .custom(.dietMEPAScore), sample: dietScores.first) { sample in
-            switch Int(sample.value) {
-            case 15...16:
-                1
-            case 12...14:
-                0.8
-            case 8...11:
-                0.5
-            case 4...7:
-                0.25
-            default:
-                0
-            }
-        }
+    var dietScore: ScoreResult {
+        ScoreResult(
+            sampleType: .custom(.dietMEPAScore),
+            sample: dietScores.first,
+            value: \.value,
+            definition: .cvhDiet
+        )
     }
     
-    var physicalExerciseScore: Score {
-        Score(sampleType: .healthKit(.quantity(.appleExerciseTime)), sample: dailyExerciseTime.last) { statistics in
-            switch statistics.sumQuantity()?.doubleValue(for: .minute()) ?? 0 {
-            case 150...:
-                1
-            case 120..<150:
-                0.9
-            case 90..<120:
-                0.8
-            case 60..<90:
-                0.6
-            case 30..<60:
-                0.4
-            case 1..<30:
-                0.2
-            default:
-                0
-            }
-        }
+    var physicalExerciseScore: ScoreResult {
+        ScoreResult(
+            sampleType: .healthKit(.quantity(.appleExerciseTime)),
+            sample: dailyExerciseTime.last,
+            value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
+            definition: .cvhPhysicalExercise
+        )
     }
     
-    var nicotineExposureScore: Score {
-        Score(sampleType: .custom(.nicotineExposure), sample: nicotineExposure.first) { sample in
-            switch CustomHealthSample.NicotineExposureCategoryValues(rawValue: Int(sample.value)) {
-            case nil:
-                nil
-            case .neverSmoked:
-                1
-            case .quitMoreThan5YearsAgo:
-                0.75
-            case .quitWithin1To5Years:
-                0.5
-            case .quitWithinLastYearOrIsUsingNDS:
-                0.25
-            case .activelySmoking:
-                0
-            }
-        }
+    var nicotineExposureScore: ScoreResult {
+        ScoreResult(
+            sampleType: .custom(.nicotineExposure),
+            sample: nicotineExposure.first,
+            value: { CustomHealthSample.NicotineExposureCategoryValues(rawValue: Int($0.value)) },
+            definition: .cvhNicotine
+        )
     }
     
-    var sleepHealthScore: Score {
-        Score(
+    var sleepHealthScore: ScoreResult {
+        ScoreResult(
             sampleType: .healthKit(.category(.sleepAnalysis)),
-            sample: ((try? sleepSamples.splitIntoSleepSessions()) ?? []).last
-        ) { (sleepSession: SleepSession) in
-            switch sleepSession.totalTimeAsleep / 60 / 60 {
-            case 7..<9:
-                1
-            case 9..<10:
-                0.9
-            case 6..<7:
-                0.7
-            case 5..<7, 10...:
-                0.4
-            case 4..<5:
-                0.2
-            default:
-                0
-            }
-        }
+            sample: ((try? sleepSamples.splitIntoSleepSessions()) ?? []).last,
+            value: { $0.totalTimeAsleep / 60 / 60 },
+            definition: .cvhSleep
+        )
     }
     
-    var bodyMassIndexScore: Score {
+    var bodyMassIndexScore: ScoreResult {
         let sampleType = MHCSampleType.healthKit(.quantity(.bodyMassIndex))
-        
         let bmiSample = bodyMassIndex.last
         let weightSample = bodyWeight.last
         let heightSample = height.last
-        
-        let mapping = { (bmi: HKQuantity) -> Double in
-            switch bmi.doubleValue(for: SampleType.bodyMassIndex.displayUnit) {
-            case ..<25:
-                1
-            case 25..<30:
-                0.7
-            case 30..<35:
-                0.3
-            case 35..<40:
-                0.15
-            default: // 40...
-                0
-            }
-        }
-        
         func calcBMI(weight: HKQuantity, height: HKQuantity) -> Double {
-            weight.doubleValue(for: .gramUnit(with: .kilo)) / height.doubleValue(for: .meter())
+            weight.doubleValue(for: .gramUnit(with: .kilo)) / pow(height.doubleValue(for: .meter()), 2)
         }
-        
-        func makeScore(fromWeight weight: HKQuantitySample, height: HKQuantitySample) -> Score {
+        func makeScore(bmiSample: HKQuantitySample) -> ScoreResult {
+            ScoreResult(
+                sampleType: sampleType,
+                sample: bmiSample,
+                value: { $0.quantity.doubleValue(for: SampleType.bodyMassIndex.displayUnit) },
+                definition: .cvhBMI
+            )
+        }
+        func makeScore(fromWeight weight: HKQuantitySample, height: HKQuantitySample) -> ScoreResult {
             let fakeSample = HKQuantitySample(
                 type: SampleType.bodyMassIndex.hkSampleType,
                 quantity: HKQuantity(
@@ -236,85 +163,163 @@ extension CVHScore {
                 start: weight.endDate > height.endDate ? weight.startDate : height.startDate,
                 end: weight.endDate > height.endDate ? weight.endDate : height.endDate
             )
-            return Score(sampleType: sampleType, sample: fakeSample) { mapping($0.quantity) }
+            return makeScore(bmiSample: fakeSample)
         }
-        
         switch (bmiSample, weightSample, heightSample) {
         case (nil, nil, nil), (nil, .some, nil), (nil, nil, .some):
             // if there are no samples, return nil
-            print("have nothing, or no BMI and only one of weight/height")
-            return .init(sampleType: sampleType)
+            return .init(sampleType: sampleType, definition: .cvhBMI)
         case (.some(let sample), nil, nil), (.some(let sample), .some, nil), (.some(let sample), nil, .some):
             // if we have a BMI sample, but not also a weight AND height sample, return the BMI sample
-            print("have BMI and one of weight/height")
-            return Score(sampleType: sampleType, sample: sample) { mapping($0.quantity) }
+            return makeScore(bmiSample: sample)
         case let (nil, .some(weight), .some(height)):
-            print("have nothing, but weight and height")
             // if we have no BMI sample, but weight and height samples, compute BMI from that
             guard weight.endDate.timeIntervalSinceNow < TimeConstants.year / 2 else {
                 // if the weight is from too long ago, we don't use it.
                 // we don't have the same check for height, since that doesn't flucuate as much as weight, for adults.
-                return .init(sampleType: sampleType)
+                return .init(sampleType: sampleType, definition: .cvhBMI)
             }
             return makeScore(fromWeight: weight, height: height)
         case let (.some(bmi), .some(weight), .some(height)):
-            print("have BMI and weight and height")
             if bmi.endDate > weight.endDate {
                 // if the BMI sample is newer, use that
-                return Score(sampleType: sampleType, sample: bmi) { mapping($0.quantity) }
+                return makeScore(bmiSample: bmi)
             } else {
                 return makeScore(fromWeight: weight, height: height)
             }
         }
     }
     
-    
-    var bloodLipidsScore: Score {
-        Score(sampleType: .custom(.bloodLipids), sample: bloodLipids.first) { sample in
-            switch sample.value {
-            case ..<130:
-                1
-            case 130..<160:
-                0.6
-            case 160..<190:
-                0.4
-            case 190..<220:
-                0.2
-            default: // 220...
-                0
-            }
-        }
+    var bloodLipidsScore: ScoreResult {
+        ScoreResult(
+            sampleType: .custom(.bloodLipids),
+            sample: bloodLipids.first,
+            value: \.value,
+            definition: .cvhBloodLipids
+        )
     }
     
-    var bloodGlucoseScore: Score {
-        Score(sampleType: .healthKit(.quantity(.bloodGlucose)), sample: bloodGlucose.last) { sample in
-            0.5 // TODO!
-        }
+    var bloodGlucoseScore: ScoreResult {
+        ScoreResult(
+            sampleType: .healthKit(.quantity(.bloodGlucose)),
+            sample: bloodGlucose.last,
+            value: { $0.quantity.doubleValue(for: SampleType.bloodGlucose.displayUnit) },
+            definition: .cvhBloodGlucose
+        )
     }
     
-    var bloodPressureScore: Score {
-        Score(sampleType: .healthKit(.correlation(.bloodPressure)), sample: bloodPressure.last) { correlation in
-            guard let systolicSample = correlation.firstSample(ofType: .bloodPressureSystolic),
-                  let diastolicSample = correlation.firstSample(ofType: .bloodPressureDiastolic) else {
-                return nil
-            }
-            let systolic = systolicSample.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit)
-            let diastolic = diastolicSample.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit)
-            if systolic < 100 && diastolic < 80 {
-                return 1
-            } else if systolic < 130 && diastolic < 80 {
-                return 0.75
-            } else if (130..<140).contains(systolic) || (80..<90).contains(diastolic) {
-                return 0.5
-            } else if (140..<160).contains(systolic) || (90..<100).contains(diastolic) {
-                return 0.25
-            } else if systolic >= 160 || diastolic >= 100 {
-                return 0
-            } else {
-                return nil
-            }
-        }
+    var bloodPressureScore: ScoreResult {
+        ScoreResult(
+            sampleType: .healthKit(.correlation(.bloodPressure)),
+            sample: bloodPressure.last,
+            value: { correlation in
+                if let systolic = correlation.firstSample(ofType: .bloodPressureSystolic),
+                   let diastolic = correlation.firstSample(ofType: .bloodPressureDiastolic) {
+                    BloodPressureMeasurement(
+                        systolic: systolic.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit),
+                        diastolic: diastolic.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit)
+                    )
+                } else {
+                    nil
+                }
+            },
+            definition: .cvhBloodPressure
+        )
+        
+//        let score = { () -> Double? in
+//            guard let correlation = bloodPressure.last,
+//                  let systolicSample = correlation.firstSample(ofType: .bloodPressureSystolic),
+//                  let diastolicSample = correlation.firstSample(ofType: .bloodPressureDiastolic) else {
+//                return nil
+//            }
+//            let systolic = systolicSample.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit)
+//            let diastolic = diastolicSample.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit)
+//            if systolic < 100 && diastolic < 80 {
+//                return 1
+//            } else if systolic < 130 && diastolic < 80 {
+//                return 0.75
+//            } else if (130..<140).contains(systolic) || (80..<90).contains(diastolic) {
+//                return 0.5
+//            } else if (140..<160).contains(systolic) || (90..<100).contains(diastolic) {
+//                return 0.25
+//            } else if systolic >= 160 || diastolic >= 100 {
+//                return 0
+//            } else {
+//                return nil
+//            }
+//        }()
+//        guard let score, let timeRange = bloodPressure.last?.timeRange else {
+//            return ScoreResult(sampleType: .healthKit(.correlation(.bloodPressure)), definition: .init(default: 0, mapping: []))
+//        }
+//        return ScoreResult(
+//            sampleType: .healthKit(.correlation(.bloodPressure)),
+//            definition: ScoreDefinition(default: 0, mapping: []),
+//            score: score,
+//            timeRange: timeRange
+//        )
     }
+}
+
+
+extension ScoreDefinition {
+    static let cvhDiet = ScoreDefinition(default: 0, mapping: [
+        .inRange(15...16, score: 1, textualRepresentation: "15 – 16"),
+        .inRange(12...14, score: 0.8, textualRepresentation: "15 – 16"),
+        .inRange(8...11, score: 0.5, textualRepresentation: "15 – 16"),
+        .inRange(4...7, score: 0.25, textualRepresentation: "15 – 16")
+    ])
+    
+    static let cvhPhysicalExercise = ScoreDefinition(default: 0, mapping: [
+        .inRange(150..., score: 1),
+        .inRange(120..<150, score: 0.9),
+        .inRange(90..<120, score: 0.8),
+        .inRange(60..<90, score: 0.6),
+        .inRange(30..<60, score: 0.4),
+        .inRange(1..<30, score: 0.2)
+    ])
+    
+    static let cvhNicotine: ScoreDefinition = {
+        typealias NicotineValue = CustomHealthSample.NicotineExposureCategoryValues
+        let makeEntry = { (value: NicotineValue, score: Double) -> ScoreDefinition.Element in
+            ScoreDefinition.Element.equal(to: value, score: score, textualRepresentation: String(localized: value.shortDisplayTitle))
+        }
+        return ScoreDefinition(default: 0, mapping: [
+            makeEntry(.neverSmoked, 1),
+            makeEntry(.quitMoreThan5YearsAgo, 0.75),
+            makeEntry(.quitWithin1To5Years, 0.5),
+            makeEntry(.quitWithinLastYearOrIsUsingNDS, 0.25),
+            makeEntry(.activelySmoking, 0)
+        ])
+    }()
+    
+    static let cvhSleep = ScoreDefinition(default: 0, mapping: [
+        .inRange(7..<9, score: 1, textualRepresentation: "7 to 9 hours"),
+        .inRange(9..<10, score: 0.9, textualRepresentation: "9 to 10 hours"),
+        .inRange(6..<7, score: 0.7, textualRepresentation: "6 to 7 hours"),
+        .inRange(5..<6, score: 0.4, textualRepresentation: "5 to 6 hours"),
+        .inRange(10..., score: 0.4, textualRepresentation: "10+ hours"),
+        .inRange(4..<5, score: 0.2, textualRepresentation: "4 to 5 hours")
+    ])
+    
+    static let cvhBMI = ScoreDefinition(default: 0, mapping: [
+        .inRange(..<25, score: 1),
+        .inRange(25..<30, score: 0.7),
+        .inRange(30..<35, score: 0.3),
+        .inRange(35..<40, score: 0.15),
+        .inRange(40..., score: 0)
+    ])
+    
+    static let cvhBloodLipids = ScoreDefinition(default: 0, mapping: [
+        .inRange(..<130, score: 1),
+        .inRange(130..<160, score: 0.6),
+        .inRange(160..<190, score: 0.4),
+        .inRange(190..<220, score: 0.2),
+        .inRange(220..., score: 0)
+    ])
+    
+    static let cvhBloodGlucose = ScoreDefinition(default: 0, mapping: []) // TODO!!!
+    
+    static let cvhBloodPressure = ScoreDefinition(default: 0, mapping: []) // TODO!!!
 }
 
 

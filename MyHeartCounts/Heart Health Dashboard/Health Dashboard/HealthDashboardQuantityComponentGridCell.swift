@@ -21,6 +21,17 @@ struct HealthDashboardQuantityComponentGridCell: View {
     enum InputSampleType { // TODO rename! QueryInput? Input? DataSource?
         case healthKit(SampleType<HKQuantitySample>)
         case custom(any HealthDashboardLayout.CustomDataSourceProtocol)
+        
+        init?(_ dataSource: HealthDashboardLayout.DataSource) {
+            switch dataSource {
+            case .healthKit(.quantity(let sampleType)):
+                self = .healthKit(sampleType)
+            case .healthKit:
+                return nil
+            case .custom(let dataSource):
+                self = .custom(dataSource)
+            }
+        }
     }
     
     let inputSampleType: InputSampleType
@@ -112,10 +123,17 @@ struct HealthDashboardQuantityComponentGridCell: View {
 }
 
 
+extension EnvironmentValues {
+    @Entry var tmp_showTimeRangeAsGridCellSubtitle: Bool = false
+}
+
 
 // TODO rename and ideally merge into the view above?!
 private struct QuantityHealthStatGridCell2: View {
     @Environment(\.calendar) private var cal
+    @Environment(\.tmp_showTimeRangeAsGridCellSubtitle)
+    private var showTimeRangeAsSubtitle
+    
     private let sampleType: QuantitySample.SampleType
     private let samples: [QuantitySample]
     private let timeRange: HealthKitQueryTimeRange
@@ -137,7 +155,10 @@ private struct QuantityHealthStatGridCell2: View {
     }
     
     var body: some View {
-        HealthDashboardSmallGridCell(title: sampleType.displayTitle) {
+        HealthDashboardSmallGridCell(
+            title: sampleType.displayTitle,
+            subtitle: showTimeRangeAsSubtitle ? timeRange.range.displayText(using: cal) : nil
+        ) {
             progressDecoration
         } content: {
             switch style {
@@ -167,6 +188,8 @@ private struct QuantityHealthStatGridCell2: View {
                     dataSet
                 )
                 .chartXScale(domain: [timeRange.range.lowerBound, timeRange.range.upperBound])
+                .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
+//                Text("\(timeRange.range)")
             case .singleValue:
                 singleValueContent(for: samples)
             case .gauge:

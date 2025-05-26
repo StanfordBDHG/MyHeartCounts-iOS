@@ -24,11 +24,11 @@ import SwiftUI
 
 struct LifesEssential8: View {
     private struct AddNewSampleDescriptor: Identifiable {
-        let keyPath: KeyPath<CVHScore, CVHScore.Score>
+        let keyPath: KeyPath<CVHScore, ScoreResult>
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
-    private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, CVHScore.Score>> = [
+    private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, ScoreResult>> = [
         \.dietScore,
         \.bodyMassIndexScore,
 //        \.physicalExerciseScore,
@@ -49,9 +49,54 @@ struct LifesEssential8: View {
     @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
     @State private var browseCustomHealthSamplesInput: CustomHealthSample.SampleType?
     @State private var presentedArticle: Article?
+    @State private var scoreResultToExplain: ScoreResult?
+    
+    @State private var dbgShowExtendedHealthDashboard = false
     
     var body: some View {
         healthDashboard
+            .toolbar {
+                Button("E") {
+                    dbgShowExtendedHealthDashboard = true
+                }
+            }
+            .sheet(isPresented: $dbgShowExtendedHealthDashboard) {
+                NavigationStack {
+                    HealthDashboard(layout: [
+                        .largeChart(sectionTitle: "Active Energy", component: .init(
+                            sampleType: .activeEnergyBurned,
+                            timeRange: .last(days: 14),
+                            chartConfig: .init(chartType: .bar, aggregationInterval: .day)
+                        )),
+                        .grid(sectionTitle: "", components: [
+                            .init(
+                                .stepCount,
+                                timeRange: .today,
+                                style: .chart(.init(chartType: .bar, aggregationInterval: .hour)),
+                                allowAddingSamples: true
+                            ),
+                            .init(
+                                .distanceWalkingRunning,
+                                timeRange: .today,
+                                style: .chart(.init(chartType: .bar, aggregationInterval: .hour)),
+                                allowAddingSamples: true
+                            ),
+                            .init(
+                                .heartRate,
+                                timeRange: .today,
+                                style: .chart(.init(chartType: .point(area: 5), aggregationInterval: .init(.init(minute: 15)))),
+                                allowAddingSamples: true
+                            ),
+                            .init(
+                                .restingHeartRate,
+                                timeRange: .today,
+                                style: .chart(.init(chartType: .point(area: 5), aggregationInterval: .init(.init(minute: 15)))),
+                                allowAddingSamples: true
+                            ),
+                        ])
+                    ])
+                }
+            }
     }
     
     @ViewBuilder var healthDashboard: some View {
@@ -120,6 +165,16 @@ struct LifesEssential8: View {
         .sheet(item: $presentedArticle) { article in
             ArticleSheet(article: article)
         }
+        .sheet(item: $scoreResultToExplain, id: \.self) { (scoreResult: ScoreResult) in
+            NavigationStack {
+                DetailedHealthStatsView(sampleType: scoreResult.sampleType, scoreResult: scoreResult)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            DismissButton()
+                        }
+                    }
+            }
+        }
     }
     
     
@@ -147,14 +202,14 @@ struct LifesEssential8: View {
     }
     
     private func makeGridComponent(
-        for scoreKeyPath: KeyPath<CVHScore, CVHScore.Score>
+        for scoreKeyPath: KeyPath<CVHScore, ScoreResult>
     ) -> HealthDashboardLayout.GridComponent {
         let score = $cvhScore[keyPath: scoreKeyPath]
         return .custom(title: score.sampleType.displayTitle) {
-            if let normalized = score.normalized {
+            if let scoreValue = score.score {
                 VStack {
-                    Gauge2(lineWidth: .default, gradient: .redToGreen, progress: normalized) {
-                        Text("\(Int(normalized * 100))%")
+                    Gauge2(lineWidth: .default, gradient: .redToGreen, progress: scoreValue) {
+                        Text("\(Int(scoreValue * 100))%")
                             .font(.caption2)
                     }
                     .frame(width: 50, height: 50)
@@ -179,6 +234,11 @@ struct LifesEssential8: View {
                 }
             }
             Divider()
+            Button {
+                scoreResultToExplain = score
+            } label: {
+                Label("Details", systemSymbol: .infoCircle)
+            }
             switch score.sampleType {
             case .healthKit:
                 EmptyView()
@@ -192,11 +252,11 @@ struct LifesEssential8: View {
         }
     }
     
-    private func canAddSample(for keyPath: KeyPath<CVHScore, CVHScore.Score>) -> Bool {
+    private func canAddSample(for keyPath: KeyPath<CVHScore, ScoreResult>) -> Bool {
         Self.cvhKeyPathsWithDataEntryEnabled.contains(keyPath)
     }
     
-    private func addNewSample(for keyPath: KeyPath<CVHScore, CVHScore.Score>) {
+    private func addNewSample(for keyPath: KeyPath<CVHScore, ScoreResult>) {
         if canAddSample(for: keyPath) {
             addNewSampleDescriptor = .init(keyPath: keyPath)
         }

@@ -47,6 +47,9 @@
     "0" : {
 
     },
+    "1 to 5 years ago" : {
+
+    },
     "100" : {
 
     },
@@ -80,6 +83,9 @@
         }
       }
     },
+    "Actively smoking" : {
+
+    },
     "Add" : {
 
     },
@@ -109,6 +115,9 @@
 
     },
     "Before we can continue,\nwe need to learn a little about you" : {
+
+    },
+    "Browse Data" : {
 
     },
     "Browse Samples" : {
@@ -170,6 +179,9 @@
     "Delete&Reset Session" : {
 
     },
+    "Details" : {
+
+    },
     "Disclosure Indicator" : {
 
     },
@@ -179,10 +191,10 @@
     "Done" : {
 
     },
-    "Enable Debug Mode" : {
+    "E" : {
 
     },
-    "End Date" : {
+    "Enable Debug Mode" : {
 
     },
     "End Study Participation" : {
@@ -201,6 +213,9 @@
 
     },
     "Failed to Load Study into App" : {
+
+    },
+    "Failed to process Sleep Sessions" : {
 
     },
     "FCM Token" : {
@@ -323,7 +338,13 @@
     "Make sure your device is connected to the internet and try again" : {
 
     },
+    "Matching Entry" : {
+
+    },
     "Message?" : {
+
+    },
+    "More than 5 years ago" : {
 
     },
     "My Heart Counts" : {
@@ -340,6 +361,9 @@
 
     },
     "Network Issue" : {
+
+    },
+    "Never" : {
 
     },
     "News" : {
@@ -402,6 +426,9 @@
     "Onboarding Consent Title" : {
 
     },
+    "Open In Browser" : {
+
+    },
     "Overall Cardiovascular Health" : {
 
     },
@@ -415,6 +442,9 @@
 
     },
     "Read Article" : {
+
+    },
+    "Recent Sleep Data" : {
 
     },
     "Region" : {
@@ -435,6 +465,9 @@
     "Save" : {
 
     },
+    "Score Result" : {
+
+    },
     "Screening" : {
 
     },
@@ -442,6 +475,12 @@
 
     },
     "Select a Region" : {
+
+    },
+    "Selected" : {
+
+    },
+    "Selection" : {
 
     },
     "Selection Checkmark" : {
@@ -472,9 +511,6 @@
           }
         }
       }
-    },
-    "Start Date" : {
-
     },
     "State" : {
 
@@ -517,6 +553,9 @@
     "This study will request read-access to collect the following Health samples:" : {
 
     },
+    "Time Asleep" : {
+
+    },
     "Time Zone" : {
 
     },
@@ -541,7 +580,13 @@
     "TODO: rough information about (at least some) key study components here?" : {
 
     },
+    "TODO?" : {
+
+    },
     "Unable to find Questionnaire" : {
+
+    },
+    "Unable to load data" : {
 
     },
     "Unenroll" : {
@@ -600,6 +645,9 @@
 
     },
     "Where are you currently living?" : {
+
+    },
+    "Within last year, or am using NDS" : {
 
     },
     "World" : {
