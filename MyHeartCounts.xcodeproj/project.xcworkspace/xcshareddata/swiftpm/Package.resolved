@@ -1,5 +1,5 @@
 {
-  "originHash" : "3ec236d8be4fb2bbbbfc2eefc875f4a83d63dc5488f78360fce94e5b3b2467f9",
+  "originHash" : "8aebb82f7726da2026ae6d7595bb4c6bc41c37815c8eabb1a3ebf10139645e25",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -294,8 +294,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "branch" : "lukas/RuntimeAssertions",
-        "revision" : "8988c4009ba43516e9280f3f8748ca32d5ac3020"
+        "revision" : "c7b8bebe7932af94bb875f1711bf785e54f419fa",
+        "version" : "1.2.8"
       }
     },
     {
@@ -474,8 +474,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTRuntimeAssertions.git",
       "state" : {
-        "branch" : "lukas/negative-assertions",
-        "revision" : "aa60fdc5cc1febb081cdca1de47ab9545a8274df"
+        "revision" : "d3394b8c432f4e3d30cdf14cb5892695e923b06d",
+        "version" : "2.1.0"
       }
     },
     {

@@ -1200,8 +1200,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				branch = lukas/RuntimeAssertions;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.8;
 			};
 		};
 		8043E0092DC2348600E0DF01 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
