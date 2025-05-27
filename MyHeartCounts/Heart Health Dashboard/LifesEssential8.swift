@@ -23,8 +23,14 @@ import SwiftUI
 
 
 struct LifesEssential8: View {
-    private struct AddNewSampleDescriptor: Identifiable {
+    struct AddNewSampleDescriptor: Identifiable {
         let keyPath: KeyPath<CVHScore, ScoreResult>
+        var id: ObjectIdentifier { .init(keyPath) }
+    }
+    
+    private struct ScoreResultToExplain: Identifiable {
+        let keyPath: KeyPath<CVHScore, ScoreResult>
+        let result: ScoreResult
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
@@ -49,7 +55,7 @@ struct LifesEssential8: View {
     @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
     @State private var browseCustomHealthSamplesInput: CustomHealthSample.SampleType?
     @State private var presentedArticle: Article?
-    @State private var scoreResultToExplain: ScoreResult?
+    @State private var scoreResultToExplain: ScoreResultToExplain?
     
     @State private var dbgShowExtendedHealthDashboard = false
     
@@ -132,24 +138,9 @@ struct LifesEssential8: View {
             }
         })
         .navigationTitle("Life's Essential 8")
-        .sheet(item: $addNewSampleDescriptor) { addNewSampleDescriptor in
+        .sheet(item: $addNewSampleDescriptor) { descriptor in
             NavigationStack {
-                switch addNewSampleDescriptor.keyPath {
-                case \.dietScore:
-                    Text("Unable to find Questionnaire")
-                case \.bodyMassIndexScore:
-                    SaveBMISampleView()
-                case \.bloodLipidsScore:
-                    SaveQuantitySampleView(sampleType: .bloodLipids)
-                case \.nicotineExposureScore:
-                    NicotineExposureEntryView()
-                case \.bloodGlucoseScore:
-                    SaveQuantitySampleView(sampleType: .bloodGlucose)
-                case \.bloodPressureScore:
-                    SaveBloodPressureSampleView()
-                default:
-                    EmptyView()
-                }
+                Self.addSampleView(for: descriptor.keyPath)
             }
         }
         .sheet(item: $browseCustomHealthSamplesInput) { sampleType in
@@ -165,14 +156,17 @@ struct LifesEssential8: View {
         .sheet(item: $presentedArticle) { article in
             ArticleSheet(article: article)
         }
-        .sheet(item: $scoreResultToExplain, id: \.self) { (scoreResult: ScoreResult) in
+        .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
             NavigationStack {
-                DetailedHealthStatsView(sampleType: scoreResult.sampleType, scoreResult: scoreResult)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            DismissButton()
-                        }
+                DetailedHealthStatsView(
+                    scoreResult: input.result,
+                    cvhKeyPath: input.keyPath
+                )
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        DismissButton()
                     }
+                }
             }
         }
     }
@@ -209,7 +203,7 @@ struct LifesEssential8: View {
             if let scoreValue = score.score {
                 VStack {
                     Gauge2(lineWidth: .default, gradient: .redToGreen, progress: scoreValue) {
-                        Text("\(Int(scoreValue * 100))%")
+                        Text(Int(scoreValue * 100), format: .number)
                             .font(.caption2)
                     }
                     .frame(width: 50, height: 50)
@@ -224,7 +218,7 @@ struct LifesEssential8: View {
                     .foregroundStyle(.secondary)
             }
         } onTap: {
-            addNewSample(for: scoreKeyPath)
+            scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
         } contextMenu: {
             if canAddSample(for: scoreKeyPath) {
                 Button {
@@ -233,12 +227,12 @@ struct LifesEssential8: View {
                     Label("Add Sample", systemSymbol: .plusSquare)
                 }
             }
-            Divider()
-            Button {
-                scoreResultToExplain = score
-            } label: {
-                Label("Details", systemSymbol: .infoCircle)
-            }
+//            Divider()
+//            Button {
+//                scoreResultToExplain = score
+//            } label: {
+//                Label("Details", systemSymbol: .infoCircle)
+//            }
             switch score.sampleType {
             case .healthKit:
                 EmptyView()
@@ -259,6 +253,26 @@ struct LifesEssential8: View {
     private func addNewSample(for keyPath: KeyPath<CVHScore, ScoreResult>) {
         if canAddSample(for: keyPath) {
             addNewSampleDescriptor = .init(keyPath: keyPath)
+        }
+    }
+    
+    @ViewBuilder
+    static func addSampleView(for keyPath: KeyPath<CVHScore, ScoreResult>) -> some View {
+        switch keyPath {
+        case \.dietScore:
+            Text("Unable to find Questionnaire")
+        case \.bodyMassIndexScore:
+            SaveBMISampleView()
+        case \.bloodLipidsScore:
+            SaveQuantitySampleView(sampleType: .bloodLipids)
+        case \.nicotineExposureScore:
+            NicotineExposureEntryView()
+        case \.bloodGlucoseScore:
+            SaveQuantitySampleView(sampleType: .bloodGlucose)
+        case \.bloodPressureScore:
+            SaveBloodPressureSampleView()
+        default:
+            EmptyView()
         }
     }
 }

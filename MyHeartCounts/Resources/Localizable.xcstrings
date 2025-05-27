@@ -41,9 +41,6 @@
         }
       }
     },
-    "%lld%%" : {
-
-    },
     "0" : {
 
     },
@@ -180,9 +177,6 @@
 
     },
     "Delete&Reset Session" : {
-
-    },
-    "Details" : {
 
     },
     "Disclosure Indicator" : {
@@ -581,9 +575,6 @@
 
     },
     "TODO: rough information about (at least some) key study components here?" : {
-
-    },
-    "TODO?" : {
 
     },
     "Unable to find Questionnaire" : {

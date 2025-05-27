@@ -24,7 +24,7 @@ import SwiftUI
 
 struct DetailedHealthStatsView: View {
     private enum Input {
-        case scoreResult(result: ScoreResult)
+        case scoreResult(result: ScoreResult, keyPath: KeyPath<CVHScore, ScoreResult>)
     }
     
     @Environment(\.modelContext)
@@ -32,11 +32,12 @@ struct DetailedHealthStatsView: View {
     
     private let sampleType: MHCSampleType
     private let input: Input
+    @State private var isPresentingAddSampleSheet = false
     
     var body: some View {
         Form { // swiftlint:disable:this closure_body_length
             switch input {
-            case .scoreResult(let result):
+            case .scoreResult(let result, keyPath: _):
                 Section {
                     scoreResultBasedTopSection(for: result)
                 }
@@ -51,7 +52,7 @@ struct DetailedHealthStatsView: View {
             }
             
             switch input {
-            case .scoreResult(let result):
+            case .scoreResult(let result, keyPath: _):
                 Section("Score Result") {
                     scoreResultExplainer(for: result)
                 }
@@ -70,12 +71,12 @@ struct DetailedHealthStatsView: View {
                     link: "https://stanford.edu"
                 )
             }
-            Section {
-                NavigationLink("Browse Data") {
-                    switch sampleType {
-                    case .healthKit(let sampleTypeProxy):
-                        Text("TODO?")
-                    case .custom(let sampleType):
+            switch sampleType {
+            case .healthKit:
+                EmptyView()
+            case .custom(let sampleType):
+                Section {
+                    NavigationLink("Browse Data") {
                         CustomHealthSamplesBrowser(sampleType)
                     }
                 }
@@ -83,12 +84,25 @@ struct DetailedHealthStatsView: View {
         }
         .navigationTitle(sampleType.displayTitle)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    // TODO
-                } label: {
-                    Image(systemSymbol: .plus)
-                        .accessibilityLabel("Add new Sample")
+            switch input {
+            case .scoreResult(result: _, let keyPath):
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isPresentingAddSampleSheet = true
+                    } label: {
+                        Image(systemSymbol: .plus)
+                            .accessibilityLabel("Add new Sample")
+                    }
+                }
+            }
+        }
+        .transforming { view in
+            switch input {
+            case .scoreResult(result: _, let keyPath):
+                view.sheet(isPresented: $isPresentingAddSampleSheet) {
+                    NavigationStack {
+                        LifesEssential8.addSampleView(for: keyPath)
+                    }
                 }
             }
         }
@@ -141,9 +155,9 @@ struct DetailedHealthStatsView: View {
     }
     
     
-    init(sampleType: MHCSampleType, scoreResult: ScoreResult) {
-        self.sampleType = sampleType
-        self.input = .scoreResult(result: scoreResult)
+    init(scoreResult: ScoreResult, cvhKeyPath: KeyPath<CVHScore, ScoreResult>) {
+        self.sampleType = scoreResult.sampleType
+        self.input = .scoreResult(result: scoreResult, keyPath: cvhKeyPath)
     }
     
     
@@ -169,7 +183,7 @@ struct DetailedHealthStatsView: View {
                             }()
                             Text(valueDesc)
                                 .font(.system(.body).bold().monospacedDigit())
-                            if let displayUnit = sampleType.displayUnit {
+                            if let displayUnit = sampleType.displayUnit, displayUnit != .count() {
                                 Text(displayUnit.unitString)
                                     .font(.footnote.smallCaps())
                                     .foregroundStyle(.secondary)
@@ -189,7 +203,7 @@ struct DetailedHealthStatsView: View {
                     progress: scoreResult.score
                 ) {
                     if let score = scoreResult.score {
-                        Text(score, format: .percent)
+                        Text(Int(score * 100), format: .number)
                             .bold()
                     } else {
                         Text("")
@@ -241,7 +255,7 @@ private struct ScoreExplanationView: View {
                 Image(systemSymbol: .checkmarkCircle)
                     .accessibilityLabel("Matching Entry")
             }
-            Text(element.score, format: .percent)
+            Text(Int(element.score * 100), format: .number)
         }
         .padding(.horizontal)
         .padding(.vertical, 5)
