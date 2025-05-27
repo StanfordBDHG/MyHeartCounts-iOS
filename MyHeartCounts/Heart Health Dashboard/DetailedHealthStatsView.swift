@@ -82,6 +82,16 @@ struct DetailedHealthStatsView: View {
             }
         }
         .navigationTitle(sampleType.displayTitle)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    // TODO
+                } label: {
+                    Image(systemSymbol: .plus)
+                        .accessibilityLabel("Add new Sample")
+                }
+            }
+        }
     }
     
     
