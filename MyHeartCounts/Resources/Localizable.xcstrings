@@ -1,7 +1,53 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "– %@" : {
+
+    },
+    "—" : {
+
+    },
+    "%.1f" : {
+
+    },
+    "%.2f" : {
+
+    },
+    "%@" : {
+
+    },
+    "%lf" : {
+
+    },
+    "%lld" : {
+
+    },
+    "%lld ft" : {
+
+    },
+    "%lld in" : {
+
+    },
+    "%lld‘ %lld“" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld‘ %2$lld“"
+          }
+        }
+      }
+    },
+    "0" : {
+
+    },
+    "1 to 5 years ago" : {
+
+    },
+    "100" : {
 
     },
     "ACCOUNT_SETUP_DESCRIPTION" : {
@@ -34,6 +80,18 @@
         }
       }
     },
+    "Actively smoking" : {
+
+    },
+    "Add" : {
+
+    },
+    "Add new Sample" : {
+
+    },
+    "Add Sample" : {
+
+    },
     "All tasks have already been completed!" : {
 
     },
@@ -57,6 +115,12 @@
 
     },
     "Before we can continue,\nwe need to learn a little about you" : {
+
+    },
+    "Browse Data" : {
+
+    },
+    "Browse Samples" : {
 
     },
     "Bulk Export Manager" : {
@@ -97,6 +161,9 @@
     "Continue" : {
 
     },
+    "Date" : {
+
+    },
     "Date of Birth" : {
 
     },
@@ -118,6 +185,12 @@
     "Do you speak %@?" : {
 
     },
+    "Done" : {
+
+    },
+    "E" : {
+
+    },
     "Enable Debug Mode" : {
 
     },
@@ -127,16 +200,34 @@
     "Enroll in Study" : {
 
     },
+    "Enter Blood Pressure" : {
+
+    },
+    "Enter BMI" : {
+
+    },
     "Failed to Download Study Information" : {
 
     },
     "Failed to Load Study into App" : {
 
     },
+    "Failed to process Sleep Sessions" : {
+
+    },
     "FCM Token" : {
 
     },
     "Fetching…" : {
+
+    },
+    "Further Reads" : {
+
+    },
+    "Go to next field" : {
+
+    },
+    "Go to previous field" : {
 
     },
     "Grant Access" : {
@@ -191,6 +282,21 @@
     "Historical Data Bulk Export" : {
 
     },
+    "I have never smoked" : {
+
+    },
+    "I last smoked between 1 and 5 years ago" : {
+
+    },
+    "I last smoked more than 5 years ago" : {
+
+    },
+    "I last smoked within the last year, or am using NDS" : {
+
+    },
+    "I'm actively smoking" : {
+
+    },
     "Label?" : {
 
     },
@@ -217,6 +323,9 @@
         }
       }
     },
+    "Life's Essential 8" : {
+
+    },
     "Link Arrow Symbol" : {
 
     },
@@ -226,7 +335,13 @@
     "Make sure your device is connected to the internet and try again" : {
 
     },
+    "Matching Entry" : {
+
+    },
     "Message?" : {
+
+    },
+    "More than 5 years ago" : {
 
     },
     "My Heart Counts" : {
@@ -239,7 +354,13 @@
         }
       }
     },
+    "n/a" : {
+
+    },
     "Network Issue" : {
+
+    },
+    "Never" : {
 
     },
     "News" : {
@@ -258,7 +379,16 @@
     "Next 2 weeks" : {
 
     },
+    "Nicotine Exposure" : {
+
+    },
     "No" : {
+
+    },
+    "No data" : {
+
+    },
+    "No Data" : {
 
     },
     "No Internet" : {
@@ -293,13 +423,25 @@
     "Onboarding Consent Title" : {
 
     },
+    "Open In Browser" : {
+
+    },
+    "Overall Cardiovascular Health" : {
+
+    },
     "Participation Criteria" : {
+
+    },
+    "Percentage in Phase" : {
 
     },
     "Physical Activity" : {
 
     },
     "Read Article" : {
+
+    },
+    "Recent Sleep Data" : {
 
     },
     "Region" : {
@@ -314,6 +456,15 @@
     "Retry" : {
 
     },
+    "Sample Type" : {
+
+    },
+    "Save" : {
+
+    },
+    "Score Result" : {
+
+    },
     "Screening" : {
 
     },
@@ -323,7 +474,19 @@
     "Select a Region" : {
 
     },
+    "Selected" : {
+
+    },
+    "Selection" : {
+
+    },
     "Selection Checkmark" : {
+
+    },
+    "Series" : {
+
+    },
+    "Sleep Phase" : {
 
     },
     "Spezi Modules" : {
@@ -387,7 +550,19 @@
     "This study will request read-access to collect the following Health samples:" : {
 
     },
+    "Time Asleep" : {
+
+    },
+    "Time Zone" : {
+
+    },
+    "Today" : {
+
+    },
     "Today's Tasks" : {
+
+    },
+    "TODO" : {
 
     },
     "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
@@ -396,7 +571,16 @@
     "TODO: make this look pretty!" : {
 
     },
+    "TODO: MISSING GOAL!!!" : {
+
+    },
     "TODO: rough information about (at least some) key study components here?" : {
+
+    },
+    "Unable to find Questionnaire" : {
+
+    },
+    "Unable to load data" : {
 
     },
     "Unenroll" : {
@@ -448,10 +632,16 @@
         }
       }
     },
+    "What's your level of nicotine exposure? How often do you smoke?" : {
+
+    },
     "When were you born?" : {
 
     },
     "Where are you currently living?" : {
+
+    },
+    "Within last year, or am using NDS" : {
 
     },
     "World" : {

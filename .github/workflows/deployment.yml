@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - 'lukas/heart-health-dashboard'
   workflow_dispatch:
     inputs:
       environment:
