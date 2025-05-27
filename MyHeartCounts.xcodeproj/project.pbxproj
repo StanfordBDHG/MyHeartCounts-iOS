@@ -45,6 +45,7 @@
 		8053637B2DB6997600D7E8A3 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637A2DB6997600D7E8A3 /* SpeziHealthKitUI */; };
 		8053637E2DB699C200D7E8A3 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637D2DB699C200D7E8A3 /* SpeziStudy */; };
 		805363802DB699C200D7E8A3 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637F2DB699C200D7E8A3 /* SpeziStudyDefinition */; };
+		8054D98E2DE54F8900458CD9 /* MyHeartCountsWatchCompanion.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8054D9842DE54F8800458CD9 /* MyHeartCountsWatchCompanion.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8055F2342D7C4E0D00CD7884 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */; };
 		805C02F22D832EFB005B38D9 /* SpeziFirebaseAccount in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F12D832EFB005B38D9 /* SpeziFirebaseAccount */; };
 		805C02F42D832EFB005B38D9 /* SpeziFirebaseAccountStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F32D832EFB005B38D9 /* SpeziFirebaseAccountStorage */; };
@@ -103,7 +104,28 @@
 			remoteGlobalIDString = 653A254C283387FE005D4D48;
 			remoteInfo = MyHeartCounts;
 		};
+		8054D98C2DE54F8900458CD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8054D9832DE54F8800458CD9;
+			remoteInfo = MyHeartCountsWatchCompanion;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8054D98F2DE54F8900458CD9 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				8054D98E2DE54F8900458CD9 /* MyHeartCountsWatchCompanion.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2FC94CD4298B0A1D009C8209 /* MyHeartCounts UI Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts UI Tests.xctestplan"; sourceTree = "<group>"; };
@@ -111,6 +133,7 @@
 		653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8043E0102DC236C600E0DF01 /* MyHeartCounts Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts Unit Tests.xctestplan"; sourceTree = "<group>"; };
+		8054D9842DE54F8800458CD9 /* MyHeartCountsWatchCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHeartCountsWatchCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -124,6 +147,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8054D9852DE54F8800458CD9 /* MyHeartCountsWatchCompanion */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsWatchCompanion; sourceTree = "<group>"; };
 		80F72BA52D7E008E00150FE3 /* MyHeartCounts */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCounts; sourceTree = "<group>"; };
 		80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsTests; sourceTree = "<group>"; };
 		80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsUITests; sourceTree = "<group>"; };
@@ -230,6 +254,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8054D9812DE54F8800458CD9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -241,6 +272,7 @@
 				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
 				80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */,
 				80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */,
+				8054D9852DE54F8800458CD9 /* MyHeartCountsWatchCompanion */,
 				653A254E283387FE005D4D48 /* Products */,
 				653A258B283395A7005D4D48 /* Frameworks */,
 			);
@@ -252,6 +284,7 @@
 				653A254D283387FE005D4D48 /* MyHeartCounts.app */,
 				653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */,
 				653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */,
+				8054D9842DE54F8800458CD9 /* MyHeartCountsWatchCompanion.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -273,12 +306,14 @@
 				653A2549283387FE005D4D48 /* Sources */,
 				653A254A283387FE005D4D48 /* Frameworks */,
 				653A254B283387FE005D4D48 /* Resources */,
+				8054D98F2DE54F8900458CD9 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				80BE06522DCF3A4600171114 /* PBXTargetDependency */,
 				805B42232DA6BDBF004C690D /* PBXTargetDependency */,
+				8054D98D2DE54F8900458CD9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
@@ -415,6 +450,28 @@
 			productReference = 653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		8054D9832DE54F8800458CD9 /* MyHeartCountsWatchCompanion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8054D9932DE54F8900458CD9 /* Build configuration list for PBXNativeTarget "MyHeartCountsWatchCompanion" */;
+			buildPhases = (
+				8054D9802DE54F8800458CD9 /* Sources */,
+				8054D9812DE54F8800458CD9 /* Frameworks */,
+				8054D9822DE54F8800458CD9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8054D9852DE54F8800458CD9 /* MyHeartCountsWatchCompanion */,
+			);
+			name = MyHeartCountsWatchCompanion;
+			packageProductDependencies = (
+			);
+			productName = MyHeartCountsWatchCompanion;
+			productReference = 8054D9842DE54F8800458CD9 /* MyHeartCountsWatchCompanion.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -422,7 +479,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1340;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					653A254C283387FE005D4D48 = {
@@ -436,6 +493,9 @@
 					653A256628338800005D4D48 = {
 						CreatedOnToolsVersion = 13.4;
 						TestTargetID = 653A254C283387FE005D4D48;
+					};
+					8054D9832DE54F8800458CD9 = {
+						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
@@ -479,6 +539,7 @@
 			projectRoot = "";
 			targets = (
 				653A254C283387FE005D4D48 /* MyHeartCounts */,
+				8054D9832DE54F8800458CD9 /* MyHeartCountsWatchCompanion */,
 				653A255C28338800005D4D48 /* MyHeartCountsTests */,
 				653A256628338800005D4D48 /* MyHeartCountsUITests */,
 			);
@@ -501,6 +562,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		653A256528338800005D4D48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8054D9822DE54F8800458CD9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -531,6 +599,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8054D9802DE54F8800458CD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -543,6 +618,11 @@
 			isa = PBXTargetDependency;
 			target = 653A254C283387FE005D4D48 /* MyHeartCounts */;
 			targetProxy = 653A256828338800005D4D48 /* PBXContainerItemProxy */;
+		};
+		8054D98D2DE54F8900458CD9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8054D9832DE54F8800458CD9 /* MyHeartCountsWatchCompanion */;
+			targetProxy = 8054D98C2DE54F8900458CD9 /* PBXContainerItemProxy */;
 		};
 		805B42232DA6BDBF004C690D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -640,7 +720,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A485NLSB8K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
@@ -652,7 +732,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MyHeart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -665,7 +745,7 @@
 				);
 				MARKETING_VERSION = 3.0.0;
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
+				PRODUCT_BUNDLE_IDENTIFIER = de.lukaskollmer.edu.stanford.MyHeartCounts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -873,7 +953,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MyHeart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -886,7 +966,7 @@
 				);
 				MARKETING_VERSION = 3.0.0;
 				OTHER_SWIFT_FLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
+				PRODUCT_BUNDLE_IDENTIFIER = de.lukaskollmer.edu.stanford.MyHeartCounts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -928,7 +1008,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MyHeart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1045,6 +1125,104 @@
 			};
 			name = Release;
 		};
+		8054D9902DE54F8900458CD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A485NLSB8K;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = de.lukaskollmer.edu.stanford.MyHeartCounts;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.lukaskollmer.edu.stanford.MyHeartCounts.watchCompanion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		8054D9912DE54F8900458CD9 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A485NLSB8K;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = de.lukaskollmer.edu.stanford.MyHeartCounts;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.lukaskollmer.edu.stanford.MyHeartCounts.watchCompanion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Test;
+		};
+		8054D9922DE54F8900458CD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = de.lukaskollmer.edu.stanford.MyHeartCounts;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1088,6 +1266,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8054D9932DE54F8900458CD9 /* Build configuration list for PBXNativeTarget "MyHeartCountsWatchCompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8054D9902DE54F8900458CD9 /* Debug */,
+				8054D9912DE54F8900458CD9 /* Test */,
+				8054D9922DE54F8900458CD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1111,8 +1299,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/HealthKitOnFHIR.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = "1.0.0-alpha.1";
+				branch = "lukas/public-observation-extensions";
+				kind = branch;
 			};
 		};
 		2FE5DC6229EDD883004B9AB4 /* XCRemoteSwiftPackageReference "SpeziAccount" */ = {
@@ -1135,8 +1323,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziQuestionnaire.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.3;
+				branch = lukas/FHIRModels;
+				kind = branch;
 			};
 		};
 		2FE5DC8829EDD972004B9AB4 /* XCRemoteSwiftPackageReference "SpeziStorage" */ = {
@@ -1215,8 +1403,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.4;
+				branch = lukas/FHIRModels;
+				kind = branch;
 			};
 		};
 		805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {
@@ -1271,8 +1459,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/ResearchKitOnFHIR.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.3;
+				branch = lukas/FHIRModels;
+				kind = branch;
 			};
 		};
 		A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */ = {

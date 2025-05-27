@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/FHIRModels",
       "state" : {
-        "revision" : "861afd5816a98d38f86220eab2f812d76cad84a0",
-        "version" : "0.5.0"
+        "revision" : "b7fcf26b818704f489719f8cdd9e270aaab37823",
+        "version" : "0.7.0"
       }
     },
     {
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "8e473c0581909c0faf8623a793d039f7a7259271",
-        "version" : "1.0.0-alpha.1"
+        "branch" : "lukas/public-observation-extensions",
+        "revision" : "59c6182fbc13f9c7c3c83dc5bb89aea6240b44a9"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/ResearchKitOnFHIR.git",
       "state" : {
-        "revision" : "2c70b9dc7a1be9c804222e93d1737be9fca9af84",
-        "version" : "2.0.3"
+        "branch" : "lukas/FHIRModels",
+        "revision" : "24e8e580d284a6c4eabb9141f0d7adbedcd7144d"
       }
     },
     {
@@ -285,8 +285,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziQuestionnaire.git",
       "state" : {
-        "revision" : "d0bd55f8a0bd3eeb806a673261e9d6b9fd43f3cd",
-        "version" : "1.2.3"
+        "branch" : "lukas/FHIRModels",
+        "revision" : "bc98645e82cb5d472e87e825e66589a4c3b3ba08"
       }
     },
     {
@@ -312,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "873d60e55d2489a092d0f4846d3f01789d739686",
-        "version" : "0.1.4"
+        "branch" : "lukas/FHIRModels",
+        "revision" : "3fc5ccf417667e1b206b28726eaa6d8ab277368f"
       }
     },
     {

@@ -4,6 +4,9 @@
     "– %@" : {
 
     },
+    "[DBG] Timed Walking Test" : {
+
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -46,6 +49,12 @@
           }
         }
       }
+    },
+    "Altitude (absolute)" : {
+
+    },
+    "Altitude (relative)" : {
+
     },
     "Are you able to perform physical activities?" : {
 
@@ -127,6 +136,9 @@
     "Enroll in Study" : {
 
     },
+    "Error Symbol" : {
+
+    },
     "Failed to Download Study Information" : {
 
     },
@@ -185,9 +197,6 @@
         }
       }
     },
-    "Heart Health" : {
-
-    },
     "Historical Data Bulk Export" : {
 
     },
@@ -227,6 +236,9 @@
 
     },
     "Message?" : {
+
+    },
+    "Missing Sensor Access Permissions" : {
 
     },
     "My Heart Counts" : {
@@ -293,6 +305,9 @@
     "Onboarding Consent Title" : {
 
     },
+    "Open Settings" : {
+
+    },
     "Participation Criteria" : {
 
     },
@@ -346,7 +361,13 @@
         }
       }
     },
+    "Start" : {
+
+    },
     "State" : {
+
+    },
+    "StepCountEvents" : {
 
     },
     "Study not available" : {
@@ -387,6 +408,18 @@
     "This study will request read-access to collect the following Health samples:" : {
 
     },
+    "Time Elapsed" : {
+
+    },
+    "Time Remaining" : {
+
+    },
+    "Time Zone" : {
+
+    },
+    "timestamp" : {
+
+    },
     "Today's Tasks" : {
 
     },
@@ -397,6 +430,9 @@
 
     },
     "TODO: rough information about (at least some) key study components here?" : {
+
+    },
+    "todo?" : {
 
     },
     "Unenroll" : {
@@ -458,6 +494,9 @@
 
     },
     "Yes" : {
+
+    },
+    "You need to grant MyHeart Counts access to Motion Data" : {
 
     },
     "You're all set.\n\nGreat to have you on board!" : {

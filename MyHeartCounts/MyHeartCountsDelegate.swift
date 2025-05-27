@@ -29,6 +29,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             BulkHealthExporter()
             HistoricalHealthSamplesExportManager()
             StudyDefinitionLoader.shared
+            TimedWalkingTestConductor()
         }
     }
     
