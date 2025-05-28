@@ -50,12 +50,6 @@
         }
       }
     },
-    "Altitude (absolute)" : {
-
-    },
-    "Altitude (relative)" : {
-
-    },
     "Are you able to perform physical activities?" : {
 
     },
@@ -125,6 +119,9 @@
 
     },
     "Do you speak %@?" : {
+
+    },
+    "Duration" : {
 
     },
     "Enable Debug Mode" : {
@@ -198,6 +195,9 @@
       }
     },
     "Historical Data Bulk Export" : {
+
+    },
+    "Kind" : {
 
     },
     "Label?" : {
@@ -367,7 +367,7 @@
     "State" : {
 
     },
-    "StepCountEvents" : {
+    "Stop" : {
 
     },
     "Study not available" : {
@@ -417,9 +417,6 @@
     "Time Zone" : {
 
     },
-    "timestamp" : {
-
-    },
     "Today's Tasks" : {
 
     },
@@ -430,9 +427,6 @@
 
     },
     "TODO: rough information about (at least some) key study components here?" : {
-
-    },
-    "todo?" : {
 
     },
     "Unenroll" : {

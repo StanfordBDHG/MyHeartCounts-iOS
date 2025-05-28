@@ -10,16 +10,19 @@
 
 import CoreMotion
 import Foundation
+import MyHeartCountsShared
 
 
 struct TimedWalkingTestResult: Hashable, Codable, Sendable {
     let test: TimedWalkingTest
     let startDate: Date
     let endDate: Date
-    let pedometerData: [PedometerData]
-    let pedometerEvents: [PedometerEvent]
-    let relativeAltitudeMeasurements: [RelativeAltitudeMeasurement]
-    let absoluteAltitudeMeasurements: [AbsoluteAltitudeMeasurement]
+    var numberOfSteps: Int
+    var distanceCovered: Double
+//    let pedometerData: [PedometerData]
+//    let pedometerEvents: [PedometerEvent]
+//    let relativeAltitudeMeasurements: [RelativeAltitudeMeasurement]
+//    let absoluteAltitudeMeasurements: [AbsoluteAltitudeMeasurement]
 }
 
 

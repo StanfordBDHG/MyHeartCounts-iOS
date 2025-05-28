@@ -45,7 +45,8 @@ extension TimedWalkingTestResult {
                 code: "55423-8",
                 system: "http://loinc.org",
                 unit: "steps",
-                value: Double(pedometerData.reduce(0) { $0 + $1.numberOfSteps })
+                //value: Double(pedometerData.reduce(0) { $0 + $1.numberOfSteps })
+                value: Double(numberOfSteps)
             )
         )
         observation.appendComponent(
@@ -53,7 +54,8 @@ extension TimedWalkingTestResult {
                 code: "55430-3",
                 system: "http://loinc.org",
                 unit: "m",
-                value: pedometerData.reduce(0) { $0 + ($1.distance ?? 0) }
+//                value: pedometerData.reduce(0) { $0 + ($1.distance ?? 0) }
+                value: distanceCovered
             )
         )
         return observation

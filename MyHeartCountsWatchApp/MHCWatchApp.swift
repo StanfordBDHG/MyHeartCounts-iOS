@@ -6,13 +6,21 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Spezi
 import SwiftUI
 
+
 @main
-struct MyHeartCountsWatchCompanion_Watch_AppApp: App {
+struct MHCWatchApp: App {
+    @ApplicationDelegateAdaptor(MHCWatchAppDelegate.self)
+    private var appDelegate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack {
+                ContentView()
+            }
+            .spezi(appDelegate)
         }
     }
 }
