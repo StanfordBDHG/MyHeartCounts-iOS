@@ -87,6 +87,14 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
     nonisolated(unsafe) private let pedometer = CMPedometer()
     nonisolated(unsafe) private let altimeter = CMAltimeter()
     
+    
+    struct Event: Hashable, Identifiable, Sendable {
+        let id = UUID()
+        let date: Date
+        let desc: String
+    }
+    
+    private(set) var dbg_eventLog: [Event] = []
     private(set) var state: State = .idle
     private(set) var absoluteAltitudeMeasurements: [AbsoluteAltitudeMeasurement] = []
     private(set) var relativeAltitudeMeasurements: [RelativeAltitudeMeasurement] = []
@@ -94,6 +102,12 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
     private(set) var pedometerEvents: [PedometerEvent] = []
     private(set) var tmpMostRecentResult: TimedWalkingTestResult?
     
+    
+    nonisolated private func logEvent(_ event: String) {
+        Task { @MainActor in
+            dbg_eventLog.append(.init(date: .now, desc: event))
+        }
+    }
     
     func conduct(_ test: TimedWalkingTest) async throws(TestError) {
         switch state {
@@ -107,7 +121,9 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
         }
         do {
             logger.notice("isWatchConnectivitySupported: \(WCSession.isSupported())")
+            logEvent("will start workout on watch")
             try await watchConnection.startWorkoutOnWatch(for: test.kind)
+            logEvent("did start workout on watch")
             logger.notice("Successfully launched watch app")
         } catch {
             // we still continue if the watch workout failed.
@@ -116,14 +132,19 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
         let startInstant = ContinuousClock.Instant.now
         let session = ActiveSession(test: test, startDate: .now)
         state = .testActive(session)
+        logEvent("will start phone data collection")
         startPhoneSensorDataCollection(for: session)
+        logEvent("did start phone data collection")
         Task {
+            logEvent("will wait to stop session")
             try await Task.sleep(until: startInstant.advanced(by: test.duration))
+            logEvent("will stop session")
             if let result = try await stop() {
                 await MainActor.run {
                     self.tmpMostRecentResult = result
                 }
             }
+            logEvent("did stop session")
         }
     }
     
@@ -136,11 +157,34 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
             defer {
                 state = .idle
             }
+            logEvent("will stop phone data collection")
             stopPhoneSensorDataCollection()
-            try await watchConnection.stopWorkoutOnWatch()
+            logEvent("will stop watch workout")
+            try? await watchConnection.stopWorkoutOnWatch()
             var results = session.preliminaryResults
-            results.numberOfSteps = pedometerMeasurements.reduce(0) { $0 + $1.numberOfSteps }
-            results.distanceCovered = pedometerMeasurements.reduce(0) { $0 + ($1.distance ?? 0) }
+//            results.numberOfSteps = pedometerMeasurements.reduce(0) { $0 + $1.numberOfSteps }
+//            results.distanceCovered = pedometerMeasurements.reduce(0) { $0 + ($1.distance ?? 0) }
+            logEvent("will fetch pedometer data and add to results")
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+                pedometer.queryPedometerData(from: results.startDate, to: results.endDate) { @Sendable data, error in
+                    self.logEvent("pedometer callback (\(data), \(error))")
+                    guard let data else {
+                        self.logEvent("no pedometer data :/ (error: \(error))")
+                        if let error {
+                            continuation.resume(throwing: error)
+                        } else {
+                            continuation.resume() // hmmm
+                        }
+                        return
+                    }
+                    self.logEvent("will update results")
+                    results.numberOfSteps = data.numberOfSteps.intValue
+                    results.distanceCovered = data.distance?.doubleValue ?? 0
+                    self.logEvent("will resume continuation")
+                    continuation.resume()
+                }
+            }
+            self.logEvent("will return results (\(results))")
             return results
         }
     }

@@ -30,7 +30,7 @@ final class WatchConnection: NSObject, Module, WCSessionDelegate {
         configuration.activityType = .walking
         configuration.locationType = .outdoor
         try await healthKit.healthStore.startWatchApp(toHandle: configuration)
-        try await Task.sleep(for: .seconds(1.5)) // give it some time to boot up
+        try await Task.sleep(for: .seconds(4)) // give it some time to boot up
         let response = try await wcSession.sendMessage(
             try JSONEncoder().encode(RemoteCommand.startWorkoutOnWatch(kind: activityKind))
         )

@@ -7,6 +7,16 @@
     "[DBG] Timed Walking Test" : {
 
     },
+    "%llu minute%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$llu minute%2$@"
+          }
+        }
+      }
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -84,6 +94,9 @@
     "Complete" : {
 
     },
+    "Config" : {
+
+    },
     "Consent Export Title" : {
 
     },
@@ -134,6 +147,9 @@
 
     },
     "Error Symbol" : {
+
+    },
+    "Event Log" : {
 
     },
     "Failed to Download Study Information" : {
@@ -415,6 +431,9 @@
 
     },
     "Time Zone" : {
+
+    },
+    "Timed Walking Test" : {
 
     },
     "Today's Tasks" : {

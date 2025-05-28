@@ -11,6 +11,7 @@
 import CoreMotion
 import Foundation
 import MyHeartCountsShared
+import SFSafeSymbols
 import Spezi
 import SpeziViews
 import SwiftUI
@@ -23,7 +24,10 @@ struct TimedWalkingTestView: View {
     @Environment(TimedWalkingTestConductor.self)
     private var conductor
     
-    private let test: TimedWalkingTest = .init(duration: .minutes(2), kind: .walking)
+//    private let test: TimedWalkingTest = .init(duration: .minutes(2), kind: .walking)
+    
+    @State private var duration: UInt = 1
+    @State private var kind: TimedWalkingTest.Kind = .walking
     
     @State private var viewState: ViewState = .idle
     @State private var showPermissionsErrorSection = false
@@ -33,6 +37,16 @@ struct TimedWalkingTestView: View {
             if showPermissionsErrorSection {
                 permissionsErrorSection
             }
+            Section("Config") {
+                Stepper("\(duration) minute\(duration == 1 ? "" : "s")", value: $duration, in: 0...20)
+                Picker("Kind", selection: $kind) {
+                    ForEach(TimedWalkingTest.Kind.allCases, id: \.self) { kind in
+                        Label(kind.displayTitle, systemSymbol: kind.symbol)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+            .disabled(conductor.state.isActive)
             Section {
                 content
             }
@@ -44,7 +58,18 @@ struct TimedWalkingTestView: View {
                     LabeledContent("Distance Covered", value: Measurement<UnitLength>(value: result.distanceCovered, unit: .meters), format: .measurement(width: .abbreviated))
                 }
             }
+            Section("Event Log") {
+                ForEach(conductor.dbg_eventLog.reversed()) { event in
+                    VStack(alignment: .leading) {
+                        Text(event.date, format: .iso8601)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(event.desc)
+                    }
+                }
+            }
         }
+        .navigationTitle("Timed Walking Test")
         .viewStateAlert(state: $viewState)
         .interactiveDismissDisabled(conductor.state.isActive)
         .onAppear {
@@ -59,6 +84,7 @@ struct TimedWalkingTestView: View {
         switch conductor.state {
         case .idle:
             AsyncButton("Start", state: $viewState) {
+                let test = TimedWalkingTest(duration: .minutes(duration), kind: kind)
                 try await conductor.conduct(test)
             }
         case .testActive(let session):
@@ -109,6 +135,13 @@ extension TimedWalkingTest.Kind {
         switch self {
         case .walking: "Walking"
         case .running: "Running"
+        }
+    }
+    
+    var symbol: SFSymbol {
+        switch self {
+        case .walking: .figureWalk
+        case .running: .figureRun
         }
     }
 }

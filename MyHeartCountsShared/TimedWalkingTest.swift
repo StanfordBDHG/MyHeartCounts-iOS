@@ -10,7 +10,7 @@ import Foundation
 
 
 public struct TimedWalkingTest: Codable, Hashable, Sendable {
-    public enum Kind: Codable, Hashable, Sendable {
+    public enum Kind: Codable, Hashable, CaseIterable, Sendable {
         case walking
         case running
     }
