@@ -11,7 +11,9 @@ import SwiftUI
 import UIKit
 
 
+/// Opens the App's settings page in Settings.app
 public struct OpenAppSettingsAction: Sendable {
+    /// The specific settings page that should be opened.
     public enum Target: Sendable {
         /// The current app's general settings page within Settings.app
         case generalAppSettings
@@ -19,6 +21,7 @@ public struct OpenAppSettingsAction: Sendable {
         case notificationSettings
     }
     
+    /// Opens the specified settings page, for the current app.
     @MainActor
     public func callAsFunction(_ target: Target = .generalAppSettings) {
         // SAFETY: all of these URL constants are provided by apple.
@@ -36,5 +39,6 @@ public struct OpenAppSettingsAction: Sendable {
 
 
 extension EnvironmentValues {
+    /// Opens the current app's settings.
     @Entry public var openAppSettings = OpenAppSettingsAction()
 }

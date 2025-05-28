@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swlftlint:disable file_types_order
+// swiftlint:disable file_types_order
 
 import CoreMotion
 import Foundation
@@ -19,10 +19,6 @@ struct TimedWalkingTestResult: Hashable, Codable, Sendable {
     let endDate: Date
     var numberOfSteps: Int
     var distanceCovered: Double
-//    let pedometerData: [PedometerData]
-//    let pedometerEvents: [PedometerEvent]
-//    let relativeAltitudeMeasurements: [RelativeAltitudeMeasurement]
-//    let absoluteAltitudeMeasurements: [AbsoluteAltitudeMeasurement]
 }
 
 

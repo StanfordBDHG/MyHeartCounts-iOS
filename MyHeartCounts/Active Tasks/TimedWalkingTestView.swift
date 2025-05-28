@@ -44,59 +44,6 @@ struct TimedWalkingTestView: View {
                     LabeledContent("Distance Covered", value: Measurement<UnitLength>(value: result.distanceCovered, unit: .meters), format: .measurement(width: .abbreviated))
                 }
             }
-            
-//            if let measurement = conductor.absoluteAltitudeMeasurements.last {
-//                Section("Altitude (absolute)") {
-//                    LabeledContent("timestamp", value: Duration.seconds(measurement.timestamp).formatted())
-//                    LabeledContent("timestamp", value: Duration.seconds(measurement.timestamp).formatted())
-//                    LabeledContent("altitude", value: measurement.altitude, format: .number)
-//                    LabeledContent("accuracy", value: measurement.accuracy, format: .number)
-//                    LabeledContent("precision", value: measurement.precision, format: .number)
-//                }
-//            }
-//            if let measurement = conductor.relativeAltitudeMeasurements.last {
-//                Section("Altitude (relative)") {
-//                    LabeledContent("timestamp", value: Duration.seconds(measurement.timestamp).formatted())
-//                    LabeledContent("altitude", value: measurement.altitude, format: .number)
-//                    LabeledContent("pressure", value: measurement.pressure, format: .number)
-//                }
-//            }
-//            Section("StepCountEvents") {
-//                ForEach(conductor.pedometerEvents, id: \.self) { event in
-//                    HStack {
-//                        Text(event.type.displayTitle)
-//                        Spacer()
-//                        Text(event.date, format: .iso8601)
-//                            .font(.footnote)
-//                            .foregroundStyle(.secondary)
-//                    }
-//                }
-//            }
-//            ForEach(conductor.pedometerMeasurements, id: \.self) { (measurement: PedometerData) in
-//                Section {
-//                    LabeledContent("startDate", value: measurement.startDate, format: .dateTime)
-//                    LabeledContent("endDate", value: measurement.endDate, format: .dateTime)
-//                    LabeledContent("numberOfSteps", value: measurement.numberOfSteps, format: .number)
-//                    if let distance = measurement.distance {
-//                        LabeledContent("distance", value: distance, format: .number)
-//                    }
-//                    if let floorsAscended = measurement.floorsAscended {
-//                        LabeledContent("floorsAscended", value: floorsAscended, format: .number)
-//                    }
-//                    if let floorsDescended = measurement.floorsDescended {
-//                        LabeledContent("floorsDescended", value: floorsDescended, format: .number)
-//                    }
-//                    if let currentPace = measurement.currentPace {
-//                        LabeledContent("currentPace", value: currentPace, format: .number)
-//                    }
-//                    if let currentCadence = measurement.currentCadence {
-//                        LabeledContent("currentCadence", value: currentCadence, format: .number)
-//                    }
-//                    if let averageActivePace = measurement.averageActivePace {
-//                        LabeledContent("averageActivePace", value: averageActivePace, format: .number)
-//                    }
-//                }
-//            }
         }
         .viewStateAlert(state: $viewState)
         .interactiveDismissDisabled(conductor.state.isActive)
@@ -104,12 +51,11 @@ struct TimedWalkingTestView: View {
             showPermissionsErrorSection = [
                 CMPedometer.authorizationStatus() == .denied,
                 CMAltimeter.authorizationStatus() == .denied
-                // TODO add more!
             ].contains(true)
         }
     }
     
-    @ViewBuilder private var content: some View { // TODO ugh
+    @ViewBuilder private var content: some View {
         switch conductor.state {
         case .idle:
             AsyncButton("Start", state: $viewState) {
