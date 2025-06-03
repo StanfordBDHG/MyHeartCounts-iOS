@@ -13,16 +13,28 @@ import ModelsR4
 
 
 extension TimedWalkingTestResult {
-    func fhirObservation() throws -> Observation {
+    func resource(
+        withMapping: HealthKitOnFHIR.HKSampleMapping,
+        issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?
+    ) throws -> ModelsR4.ResourceProxy {
+        try .observation(fhirObservation(issuedDate: issuedDate))
+    }
+    
+    
+    func fhirObservation(issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?) throws -> Observation {
         let observation = Observation(
             code: CodeableConcept(),
             status: FHIRPrimitive(.final)
         )
         // Set basic elements applicable to all observations
-        observation.id = UUID().uuidString.asFHIRStringPrimitive()
+        observation.id = self.id.uuidString.asFHIRStringPrimitive()
         observation.appendIdentifier(Identifier(id: observation.id))
         try observation.setEffective(startDate: self.startDate, endDate: self.endDate, timeZone: .current)
-        try observation.setIssued(on: .now)
+        if let issuedDate {
+            observation.issued = issuedDate
+        } else {
+            try observation.setIssued(on: .now)
+        }
         // Add LOINC code dependent on the walk test duration.
         let loincSystem = "http://loinc.org".asFHIRURIPrimitive()
         if test.duration == .minutes(6) {

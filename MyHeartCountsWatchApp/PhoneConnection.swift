@@ -12,14 +12,17 @@ import Spezi
 import WatchConnectivity
 
 
+/// A Module that runs on the Watch and handles simple interactions with its corresponding iPhone.
+@Observable
 @MainActor
 final class PhoneConnection: NSObject, Module, WCSessionDelegate {
     // swiftlint:disable attributes
-    @Application(\.logger) private var logger
-    @Dependency(WorkoutManager.self) private var workoutManager
+    @ObservationIgnored @Application(\.logger) private var logger
+    @ObservationIgnored @Dependency(WorkoutManager.self) private var workoutManager
     // swiftlint:enable attributes
     
-    private let wcSession: WCSession = .default
+    @ObservationIgnored private let wcSession: WCSession = .default
+    private(set) var userInfo: [InterDeviceUserInfoKey: Any] = [:]
     
     func configure() {
         wcSession.delegate = self
@@ -55,15 +58,33 @@ final class PhoneConnection: NSObject, Module, WCSessionDelegate {
         // ...
     }
     
-    nonisolated func session(_ session: WCSession, didReceiveMessageData messageData: Data, replyHandler: @escaping (Data) -> Void) {
-        guard let command = try? JSONDecoder().decode(RemoteCommand.self, from: messageData) else {
-            replyHandler(Data())
+//    nonisolated func session(_ session: WCSession, didReceiveMessageData messageData: Data, replyHandler: @escaping (Data) -> Void) {
+//        guard let command = try? JSONDecoder().decode(RemoteCommand.self, from: messageData) else {
+//            replyHandler(Data())
+//            return
+//        }
+//        nonisolated(unsafe) let replyHandler = replyHandler
+//        Task { @MainActor in
+////            let success = await self.handleCommand(command)
+////            replyHandler(Data([success ? 1 : 0]))
+//            replyHandler(Data([1]))
+//        }
+//    }
+    
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any]) {
+        guard let userInfo: [InterDeviceUserInfoKey: Any] = .init(userInfo) else {
             return
         }
-        nonisolated(unsafe) let replyHandler = replyHandler
-        Task { @MainActor in
-            let success = await self.handleCommand(command)
-            replyHandler(Data([success ? 1 : 0]))
+        let command: RemoteCommand
+        if userInfo[.watchShouldEnableWorkout] as? Bool == true,
+           let kindRawValue = userInfo[.watchWorkoutActivityKind] as? TimedWalkingTestConfiguration.Kind.RawValue,
+           let kind = TimedWalkingTestConfiguration.Kind(rawValue: kindRawValue) {
+            command = .startWorkoutOnWatch(kind: kind)
+        } else {
+            command = .endWorkoutOnWatch
+        }
+        Task {
+            await handleCommand(command)
         }
     }
 }

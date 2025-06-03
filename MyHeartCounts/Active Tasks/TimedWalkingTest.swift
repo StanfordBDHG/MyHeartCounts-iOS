@@ -12,15 +12,13 @@ import CoreMotion
 import Foundation
 import HealthKit
 import MyHeartCountsShared
-//import SensorKit // ???
 import Spezi
 import SpeziHealthKit
-import WatchConnectivity
 
 
 @Observable
 @MainActor
-final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
+final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     enum State: Hashable, Sendable {
         case idle
         case testActive(ActiveSession)
@@ -37,13 +35,16 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
     @MainActor
     final class ActiveSession: Hashable, Sendable {
         private(set) var preliminaryResults: TimedWalkingTestResult
+        /// The `Task` that waits for the session's duration to pass, and then ends the session
+        fileprivate var completeSessionTask: Task<Void, any Error>?
         
         var startDate: Date {
             preliminaryResults.startDate
         }
         
-        init(test: TimedWalkingTest, startDate: Date) {
+        init(test: TimedWalkingTestConfiguration, startDate: Date) {
             self.preliminaryResults = .init(
+                id: UUID(),
                 test: test,
                 startDate: startDate,
                 endDate: startDate.addingTimeInterval(test.duration.timeInterval),
@@ -80,8 +81,12 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
         }
     }
     
+    
+    @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
-    @ObservationIgnored @Dependency(WatchConnection.self) private var watchConnection
+    @ObservationIgnored @Dependency(WatchConnection.self) private var watchManager
+    
+    @ObservationIgnored @Application(\.spezi) private var spezi
     
     nonisolated(unsafe) private let motionManager = CMMotionManager()
     nonisolated(unsafe) private let pedometer = CMPedometer()
@@ -109,7 +114,7 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
         }
     }
     
-    func conduct(_ test: TimedWalkingTest) async throws(TestError) {
+    func conduct(_ test: TimedWalkingTestConfiguration) async throws(TestError) {
         switch state {
         case .idle:
             break
@@ -120,9 +125,9 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
             throw .unableToStart(.missingSensorPermissions)
         }
         do {
-            logger.notice("isWatchConnectivitySupported: \(WCSession.isSupported())")
+//            logger.notice("isWatchConnectivitySupported: \(WCSession.isSupported())")
             logEvent("will start workout on watch")
-            try await watchConnection.startWorkoutOnWatch(for: test.kind)
+            try await watchManager.startWorkoutOnWatch(for: test.kind)
             logEvent("did start workout on watch")
             logger.notice("Successfully launched watch app")
         } catch {
@@ -135,7 +140,7 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
         logEvent("will start phone data collection")
         startPhoneSensorDataCollection(for: session)
         logEvent("did start phone data collection")
-        Task {
+        session.completeSessionTask = Task { [unowned session] in
             logEvent("will wait to stop session")
             try await Task.sleep(until: startInstant.advanced(by: test.duration))
             logEvent("will stop session")
@@ -157,10 +162,11 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
             defer {
                 state = .idle
             }
+            session.completeSessionTask?.cancel()
             logEvent("will stop phone data collection")
             stopPhoneSensorDataCollection()
             logEvent("will stop watch workout")
-            try? await watchConnection.stopWorkoutOnWatch()
+            try? await watchManager.stopWorkoutOnWatch()
             var results = session.preliminaryResults
 //            results.numberOfSteps = pedometerMeasurements.reduce(0) { $0 + $1.numberOfSteps }
 //            results.distanceCovered = pedometerMeasurements.reduce(0) { $0 + ($1.distance ?? 0) }
@@ -185,13 +191,14 @@ final class TimedWalkingTestConductor: Module, EnvironmentAccessible, Sendable {
                 }
             }
             self.logEvent("will return results (\(results))")
+            try? await standard.uploadHealthObservation(results)
             return results
         }
     }
 }
 
 
-extension TimedWalkingTestConductor {
+extension TimedWalkingTest {
     private func startPhoneSensorDataCollection(for session: ActiveSession) {
         let queue = OperationQueue()
         absoluteAltitudeMeasurements.removeAll(keepingCapacity: true)
@@ -247,7 +254,7 @@ extension TimedWalkingTestConductor {
 
 // MARK: Permission Handling
 
-extension TimedWalkingTestConductor {
+extension TimedWalkingTest {
     private func requestAllPermissions() async throws {
         // motionManager.
     }

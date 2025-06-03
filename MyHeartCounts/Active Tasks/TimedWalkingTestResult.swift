@@ -14,7 +14,8 @@ import MyHeartCountsShared
 
 
 struct TimedWalkingTestResult: Hashable, Codable, Sendable {
-    let test: TimedWalkingTest
+    let id: UUID
+    let test: TimedWalkingTestConfiguration
     let startDate: Date
     let endDate: Date
     var numberOfSteps: Int

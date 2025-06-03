@@ -36,7 +36,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             HistoricalHealthSamplesExportManager()
             StudyDefinitionLoader.shared
             WatchConnection()
-            TimedWalkingTestConductor()
+            TimedWalkingTest()
         }
     }
     

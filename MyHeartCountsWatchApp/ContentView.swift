@@ -6,9 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Spezi
+import MyHeartCountsShared
 import SpeziViews
 import SwiftUI
+import WatchKit
 
 
 struct ContentView: View {
@@ -18,11 +19,22 @@ struct ContentView: View {
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        switch workoutManager.state {
-        case .idle:
-            inactiveContent
-        case .active(let startDate):
-            activeContent(startDate: startDate)
+        NavigationLink("Let's get Funky") {
+            Form {
+                ForEach(WKHapticType.allKnownCases, id: \.self) { hapticType in
+                    Button(hapticType.displayTitle) {
+                        WKInterfaceDevice.current().play(hapticType)
+                    }
+                }
+            }
+        }
+        Group {
+            switch workoutManager.state {
+            case .idle:
+                inactiveContent
+            case .active:
+                activeContent
+            }
         }
     }
     
@@ -38,8 +50,7 @@ struct ContentView: View {
         }
     }
     
-    @ViewBuilder
-    private func activeContent(startDate: Date) -> some View {
+    @ViewBuilder private var activeContent: some View {
         Form {
             Section {
                 HStack {
@@ -47,6 +58,7 @@ struct ContentView: View {
                     Spacer()
                     ProgressView()
                         .progressViewStyle(.circular)
+                        .frame(width: 40)
                 }
             }
             Section {
@@ -55,5 +67,51 @@ struct ContentView: View {
         }
         .navigationTitle("MyHeart Counts")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+
+extension WKHapticType {
+    static let allKnownCases: [Self] = [
+        .notification, .directionUp, .directionDown,
+        .success, .failure, .retry,
+        .start, .stop, .click,
+        .navigationGenericManeuver, .navigationLeftTurn, .navigationRightTurn,
+        .underwaterDepthPrompt, .underwaterDepthCriticalPrompt
+    ]
+    
+    var displayTitle: String {
+        switch self {
+        case .notification:
+            "notification"
+        case .directionUp:
+            "directionUp"
+        case .directionDown:
+            "directionDown"
+        case .success:
+            "success"
+        case .failure:
+            "failure"
+        case .retry:
+            "retry"
+        case .start:
+            "start"
+        case .stop:
+            "stop"
+        case .click:
+            "click"
+        case .navigationLeftTurn:
+            "navigationLeftTurn"
+        case .navigationRightTurn:
+            "navigationRightTurn"
+        case .navigationGenericManeuver:
+            "navigationGenericManeuver"
+        case .underwaterDepthPrompt:
+            "underwaterDepthPrompt"
+        case .underwaterDepthCriticalPrompt:
+            "underwaterDepthCriticalPrompt"
+        @unknown default:
+            "unknown<\(rawValue)>"
+        }
     }
 }

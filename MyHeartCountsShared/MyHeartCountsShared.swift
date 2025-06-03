@@ -11,8 +11,22 @@ import WatchConnectivity
 
 
 public enum RemoteCommand: Hashable, Codable, Sendable {
-    case startWorkoutOnWatch(kind: TimedWalkingTest.Kind)
+    case startWorkoutOnWatch(kind: TimedWalkingTestConfiguration.Kind)
     case endWorkoutOnWatch
+}
+
+
+public struct InterDeviceUserInfoKey: RawRepresentable, Hashable, Sendable {
+    public let rawValue: String
+    
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+}
+
+extension InterDeviceUserInfoKey {
+    public static let watchShouldEnableWorkout = Self(rawValue: "edu.stanford.MyHeartCounts.enableWatchWorkout")
+    public static let watchWorkoutActivityKind = Self(rawValue: "edu.stanford.MyHeartCounts.watchWorkoutActivityKind")
 }
 
 
@@ -26,5 +40,10 @@ extension WCSession {
                 continuation.resume(throwing: error)
             }
         }
+    }
+    
+    public func send(userInfo: [InterDeviceUserInfoKey: Any]) {
+        let userInfo: [String: Any] = .init(userInfo)
+        self.transferUserInfo(userInfo)
     }
 }

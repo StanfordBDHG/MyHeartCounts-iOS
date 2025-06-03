@@ -9,15 +9,22 @@
 import Foundation
 
 
-public struct TimedWalkingTest: Codable, Hashable, Sendable {
-    public enum Kind: Codable, Hashable, CaseIterable, Sendable {
+/// A Timed Walking Test's configuration
+public struct TimedWalkingTestConfiguration: Codable, Hashable, Sendable {
+    /// The kind of a Timed Walking Test
+    public enum Kind: UInt8, Codable, Hashable, CaseIterable, Sendable {
+        /// A test that observes the user walking
         case walking
+        /// A test that observes the user running
         case running
     }
     
+    /// How long the test should be conducted
     public let duration: Duration
+    /// The kind of test
     public let kind: Kind
     
+    /// Creates a new Timed Walking Test configuration
     public init(duration: Duration, kind: Kind) {
         self.duration = duration
         self.kind = kind

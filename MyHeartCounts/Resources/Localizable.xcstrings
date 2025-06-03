@@ -66,6 +66,16 @@
     "Are you sure you want to leave the '%@' study?" : {
 
     },
+    "As part of the %@-Minute %@ Test, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %llu minute%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "As part of the %1$@-Minute %2$@ Test, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %3$llu minute%4$@"
+          }
+        }
+      }
+    },
     "AuthorizationStatus" : {
 
     },
@@ -91,6 +101,9 @@
         }
       }
     },
+    "Companion Watch App Not Installed" : {
+
+    },
     "Complete" : {
 
     },
@@ -111,6 +124,9 @@
       }
     },
     "Continue" : {
+
+    },
+    "Current Test" : {
 
     },
     "Date of Birth" : {
@@ -164,6 +180,12 @@
     "Fetching…" : {
 
     },
+    "For optimal results, please keep your Phone in your pocket, and %@ until it vibrates to indicate that the test has ended." : {
+
+    },
+    "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
+
+    },
     "Grant Access" : {
       "localizations" : {
         "en" : {
@@ -213,6 +235,15 @@
     "Historical Data Bulk Export" : {
 
     },
+    "If you have an Apple Watch, please ensure that the MyHeart Counts app is running " : {
+
+    },
+    "Install on Apple Watch" : {
+
+    },
+    "Installing MyHeart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
+
+    },
     "Kind" : {
 
     },
@@ -220,6 +251,9 @@
 
     },
     "Language" : {
+
+    },
+    "Launch Watch App" : {
 
     },
     "Learn More" : {
@@ -342,6 +376,9 @@
     "Replace Root View Controller" : {
 
     },
+    "Results" : {
+
+    },
     "Retry" : {
 
     },
@@ -378,6 +415,9 @@
       }
     },
     "Start" : {
+
+    },
+    "Start Test" : {
 
     },
     "State" : {

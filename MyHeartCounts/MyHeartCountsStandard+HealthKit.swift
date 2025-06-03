@@ -11,6 +11,8 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 import enum ModelsR4.ResourceProxy
+import struct ModelsR4.FHIRPrimitive
+import struct ModelsR4.Instant
 import SpeziHealthKit
 import UserNotifications
 
@@ -34,34 +36,42 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         var willUploadNotificationId: String?
         if enableNotifications {
             willUploadNotificationId = await showDebugHealthKitEventNotification(
-                for: .newSamples(sampleType, Array(addedSamples)),
+                for: .new(sampleTypeTitle: sampleType.displayTitle, count: addedSamples.count),
                 stage: .willUpload
             )
         }
         do {
-            let batch = Firestore.firestore().batch()
-            for sample in addedSamples {
-                do {
-                    logger.notice("Adding sample to batch \(sample)")
-                    let document = try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
-                    try batch.setData(from: sample.resource(), forDocument: document)
-                } catch {
-                    logger.error("Error saving HealthKit sample to Firebase: \(error)")
-                    // maybe queue sample for later retry?
-                    // (probably not needed, since firebase already seems to be doing this for us...)
-                }
-            }
-            logger.notice("Will commit batch")
-            try await batch.commit()
-            logger.notice("Did commit batch")
+            try await uploadHealthObservations(addedSamples, batchSize: 100)
         } catch {
-            logger.error("Error committing Firestore batch: \(error)")
+            logger.error("Error uploading HealthKit samples: \(error)")
         }
+        //        do {
+        //            let batch = Firestore.firestore().batch()
+        //            for sample in addedSamples {
+        //                do {
+        //                    logger.notice("Adding sample to batch \(sample)")
+        //                    let document = try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
+        //                    try batch.setData(from: sample.resource(), forDocument: document)
+        //                } catch {
+        //                    logger.error("Error saving HealthKit sample to Firebase: \(error)")
+        //                    // maybe queue sample for later retry?
+        //                    // (probably not needed, since firebase already seems to be doing this for us...)
+        //                }
+        //            }
+        //            logger.notice("Will commit batch")
+        //            try await batch.commit()
+        //            logger.notice("Did commit batch")
+        //        } catch {
+        //            logger.error("Error committing Firestore batch: \(error)")
+        //        }
         if enableNotifications {
             if let willUploadNotificationId {
                 UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [willUploadNotificationId])
             }
-            await showDebugHealthKitEventNotification(for: .newSamples(sampleType, Array(addedSamples)), stage: .didUpload)
+            await showDebugHealthKitEventNotification(
+                for: .new(sampleTypeTitle: sampleType.displayTitle, count: addedSamples.count),
+                stage: .didUpload
+            )
         }
     }
     
@@ -70,14 +80,14 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         var willUploadNotificationId: String?
         if enableNotifications {
             willUploadNotificationId = await showDebugHealthKitEventNotification(
-                for: .deletedSamples(sampleType, Array(deletedObjects)),
+                for: .deleted(sampleTypeTitle: sampleType.displayTitle, count: deletedObjects.count),
                 stage: .willUpload
             )
         }
         for object in deletedObjects {
             do {
                 logger.debug("Will delete \(object)")
-                try await healthKitDocument(for: sampleType, sampleId: object.uuid).delete()
+                try await healthObservationDocument(forSampleType: sampleType.hkSampleType.identifier, id: object.uuid).delete()
             } catch {
                 logger.error("Error saving HealthKit sample to Firebase: \(error)")
                 // (probably not needed, since firebase already seems to be doing this for us...)
@@ -87,40 +97,77 @@ extension MyHeartCountsStandard: HealthKitConstraint {
             if let willUploadNotificationId {
                 UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [willUploadNotificationId])
             }
-            await showDebugHealthKitEventNotification(for: .deletedSamples(sampleType, Array(deletedObjects)), stage: .didUpload)
+            await showDebugHealthKitEventNotification(
+                for: .deleted(sampleTypeTitle: sampleType.displayTitle, count: deletedObjects.count),
+                stage: .didUpload
+            )
         }
-    }
-    
-    
-    private func healthKitDocument(for sampleType: SampleType<some Any>, sampleId uuid: UUID) async throws -> FirebaseFirestore.DocumentReference {
-        try await firebaseConfiguration.userDocumentReference
-            .collection("HealthKitObservations_\(sampleType.hkSampleType.identifier)")
-            .document(uuid.uuidString)
     }
 }
 
 
 extension MyHeartCountsStandard {
-    private enum HealthKitUploadStage: String {
+    func uploadHealthObservation(_ observation: some HealthObservation & Sendable) async throws {
+        try await uploadHealthObservations(CollectionOfOne(observation), batchSize: 1)
+    }
+    
+    func uploadHealthObservations(_ observations: some Collection<some HealthObservation & Sendable>, batchSize: Int = 100) async throws {
+        let issuedDate = FHIRPrimitive<ModelsR4.Instant>(try .init(date: .now))
+        for chunk in observations.chunks(ofCount: batchSize) {
+            let batch = Firestore.firestore().batch()
+            for observation in observations {
+                do {
+                    let document = try await healthObservationDocument(for: observation)
+                    try batch.setData(
+                        from: observation.resource(withMapping: .default, issuedDate: issuedDate),
+                        forDocument: document
+                    )
+                } catch {
+                    logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")
+                }
+            }
+            try await batch.commit()
+        }
+    }
+    
+    
+    private func healthObservationDocument(for observation: some HealthObservation) async throws -> FirebaseFirestore.DocumentReference {
+        try await healthObservationDocument(forSampleType: observation.sampleTypeIdentifier, id: observation.id)
+    }
+    
+    private func healthObservationDocument(
+        forSampleType sampleTypeIdentifier: String,
+        id: UUID
+    ) async throws -> FirebaseFirestore.DocumentReference {
+        try await firebaseConfiguration.userDocumentReference
+            .collection("HealthKitObservations_\(sampleTypeIdentifier)")
+            .document(id.uuidString)
+    }
+}
+
+
+extension MyHeartCountsStandard {
+    private enum HealthDocumentUploadStage: String {
         case willUpload = "will"
         case didUpload = "did"
     }
     
-    private enum HealthKitChange<Sample: _HKSampleWithSampleType> {
-        case newSamples(SampleType<Sample>, [Sample])
-        case deletedSamples(SampleType<Sample>, [HKDeletedObject])
+    private enum HealthDocumentChange {
+        case new(sampleTypeTitle: String, count: Int)
+        case deleted(sampleTypeTitle: String, count: Int)
     }
     
-    private func showDebugHealthKitEventNotification<Sample>(for change: HealthKitChange<Sample>, stage: HealthKitUploadStage) async -> String {
+    @discardableResult
+    private func showDebugHealthKitEventNotification(for change: HealthDocumentChange, stage: HealthDocumentUploadStage) async -> String {
         let notificationCenter = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
         switch change {
-        case let .newSamples(sampleType, samples):
-            content.title = "[MHC] New HealthKit Samples (\(stage.rawValue) upload)"
-            content.body = "\(samples.count) new samples for \(sampleType.displayTitle)"
-        case let .deletedSamples(sampleType, samples):
-            content.title = "[MHC] HealthKit Samples Deleted (\(stage.rawValue) upload)"
-            content.body = "\(samples.count) deleted samples for \(sampleType.displayTitle)"
+        case let .new(sampleTypeTitle, count):
+            content.title = "[MHC] \(stage.rawValue) upload new health observations"
+            content.body = "\(count) new observations for \(sampleTypeTitle)"
+        case let .deleted(sampleTypeTitle, count):
+            content.title = "[MHC] \(stage.rawValue) delete health observations"
+            content.body = "\(count) deleted observations for \(sampleTypeTitle)"
         }
         let identifier = UUID().uuidString
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)

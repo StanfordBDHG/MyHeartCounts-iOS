@@ -11,6 +11,7 @@ import HealthKit
 import MyHeartCountsShared
 import Spezi
 import SpeziHealthKit
+import WatchKit
 
 
 @Observable
@@ -20,7 +21,7 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         case alreadyAWorkoutOngoing
     }
     
-    enum State: Sendable {
+    enum State: Hashable, Sendable {
         case idle
         case active(startDate: Date)
     }
@@ -61,7 +62,7 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
     }
     
     
-    func startWorkout(for activityType: TimedWalkingTest.Kind) async throws {
+    func startWorkout(for activityType: TimedWalkingTestConfiguration.Kind) async throws {
         guard workoutSession == nil else {
             throw WorkoutSessionError.alreadyAWorkoutOngoing
         }
@@ -90,13 +91,7 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
 //        builder.delegate = self // ?? (do we care?)
         
         workoutSession.startActivity(with: .now)
-        Task {
-            do {
-                try await builder.beginCollection(at: .now)
-            } catch {
-                print("ERROR", error)
-            }
-        }
+        try await builder.beginCollection(at: .now)
     }
     
     
@@ -108,6 +103,7 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         try await builder.endCollection(at: .now)
         try await builder.finishWorkout()
         workoutSession.stopActivity(with: .now)
+        // NOTE: we're intentionally not setting self.workoutSession to nil in here, but instead do it in the delegate below.
     }
     
     
@@ -124,6 +120,9 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
                 self.workoutSession = nil
             }
             updateState()
+        }
+        if (fromState != .running && toState == .running) || (fromState == .running && (toState == .stopped || toState == .ended)) {
+            WKInterfaceDevice.current().play(.success)
         }
     }
     
