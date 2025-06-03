@@ -45,25 +45,6 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         } catch {
             logger.error("Error uploading HealthKit samples: \(error)")
         }
-        //        do {
-        //            let batch = Firestore.firestore().batch()
-        //            for sample in addedSamples {
-        //                do {
-        //                    logger.notice("Adding sample to batch \(sample)")
-        //                    let document = try await healthKitDocument(for: sampleType, sampleId: sample.uuid)
-        //                    try batch.setData(from: sample.resource(), forDocument: document)
-        //                } catch {
-        //                    logger.error("Error saving HealthKit sample to Firebase: \(error)")
-        //                    // maybe queue sample for later retry?
-        //                    // (probably not needed, since firebase already seems to be doing this for us...)
-        //                }
-        //            }
-        //            logger.notice("Will commit batch")
-        //            try await batch.commit()
-        //            logger.notice("Did commit batch")
-        //        } catch {
-        //            logger.error("Error committing Firestore batch: \(error)")
-        //        }
         if enableNotifications {
             if let willUploadNotificationId {
                 UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [willUploadNotificationId])
@@ -115,7 +96,7 @@ extension MyHeartCountsStandard {
         let issuedDate = FHIRPrimitive<ModelsR4.Instant>(try .init(date: .now))
         for chunk in observations.chunks(ofCount: batchSize) {
             let batch = Firestore.firestore().batch()
-            for observation in observations {
+            for observation in chunk {
                 do {
                     let document = try await healthObservationDocument(for: observation)
                     try batch.setData(

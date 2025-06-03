@@ -24,7 +24,7 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
     
     /// Indicates whether the user has an Apple Watch paired with their iPhone.
     ///
-    /// - Note: This value being true does not necessarily mean that the Apple Watch is actually currently reachable and connected. (TODO IS THIS REALLY REALLY TRUE???)
+    /// - Note: This value being true might not necessarily mean that the Apple Watch is actually currently reachable and connected.
     private(set) var userHasWatch = false
     /// Indicates whether the current app's counterpart Apple Watch app is currently reachable and can receive/send messages.
     private(set) var isWatchAppReachable = false
@@ -50,21 +50,15 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
         configuration.activityType = .walking
         configuration.locationType = .outdoor
         try await healthKit.healthStore.startWatchApp(toHandle: configuration)
-        try await Task.sleep(for: .seconds(4)) // give it some time to boot up
+        try await Task.sleep(for: .seconds(2)) // give it some time to boot up
         wcSession.send(userInfo: [
             .watchShouldEnableWorkout: true,
             .watchWorkoutActivityKind: activityKind.rawValue
         ])
-        let response = try await wcSession.sendMessage(
-            try JSONEncoder().encode(RemoteCommand.startWorkoutOnWatch(kind: activityKind))
-        )
     }
     
     func stopWorkoutOnWatch() async throws {
         wcSession.send(userInfo: [.watchShouldEnableWorkout: false])
-        let response = try await wcSession.sendMessage(
-            try JSONEncoder().encode(RemoteCommand.endWorkoutOnWatch)
-        )
     }
 }
 
@@ -85,48 +79,27 @@ extension WatchConnection: WCSessionDelegate {
     
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
         Task { @MainActor in
-            self.logger.notice("-[\(Self.self) \(#function)] activationState: \(activationState.debugDescription); error: \(error)")
             updateStateRelatedProperties()
         }
     }
     
     nonisolated func sessionDidBecomeInactive(_ session: WCSession) {
         // ...
-        Task { @MainActor in
-            self.logger.notice("-[\(Self.self) \(#function)]")
-        }
     }
     
     nonisolated func sessionDidDeactivate(_ session: WCSession) {
         // ...
-        Task { @MainActor in
-            self.logger.notice("-[\(Self.self) \(#function)]")
-        }
     }
     
     nonisolated func sessionWatchStateDidChange(_ session: WCSession) {
         Task { @MainActor in
-            self.logger.notice("-[\(Self.self) \(#function)]")
             updateStateRelatedProperties()
         }
     }
     
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
-            self.logger.notice("-[\(Self.self) \(#function)] (isReachable: \(self.wcSession.isReachable))")
             self.isWatchAppReachable = self.wcSession.isReachable
-        }
-    }
-}
-
-
-extension WCSessionActivationState: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        switch self {
-        case .activated: "activated"
-        case .notActivated: "notActivated"
-        case .inactive: "inactive"
-        @unknown default: "unknown<\(rawValue)>"
         }
     }
 }

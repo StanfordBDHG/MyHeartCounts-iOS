@@ -58,19 +58,6 @@ final class PhoneConnection: NSObject, Module, WCSessionDelegate {
         // ...
     }
     
-//    nonisolated func session(_ session: WCSession, didReceiveMessageData messageData: Data, replyHandler: @escaping (Data) -> Void) {
-//        guard let command = try? JSONDecoder().decode(RemoteCommand.self, from: messageData) else {
-//            replyHandler(Data())
-//            return
-//        }
-//        nonisolated(unsafe) let replyHandler = replyHandler
-//        Task { @MainActor in
-////            let success = await self.handleCommand(command)
-////            replyHandler(Data([success ? 1 : 0]))
-//            replyHandler(Data([1]))
-//        }
-//    }
-    
     nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any]) {
         guard let userInfo: [InterDeviceUserInfoKey: Any] = .init(userInfo) else {
             return

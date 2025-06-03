@@ -7,16 +7,6 @@
     "[DBG] Timed Walking Test" : {
 
     },
-    "%llu minute%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$llu minute%2$@"
-          }
-        }
-      }
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -107,9 +97,6 @@
     "Complete" : {
 
     },
-    "Config" : {
-
-    },
     "Consent Export Title" : {
 
     },
@@ -150,9 +137,6 @@
     "Do you speak %@?" : {
 
     },
-    "Duration" : {
-
-    },
     "Enable Debug Mode" : {
 
     },
@@ -160,12 +144,6 @@
 
     },
     "Enroll in Study" : {
-
-    },
-    "Error Symbol" : {
-
-    },
-    "Event Log" : {
 
     },
     "Failed to Download Study Information" : {
@@ -244,9 +222,6 @@
     "Installing MyHeart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
 
     },
-    "Kind" : {
-
-    },
     "Label?" : {
 
     },
@@ -286,9 +261,6 @@
 
     },
     "Message?" : {
-
-    },
-    "Missing Sensor Access Permissions" : {
 
     },
     "My Heart Counts" : {
@@ -355,9 +327,6 @@
     "Onboarding Consent Title" : {
 
     },
-    "Open Settings" : {
-
-    },
     "Participation Criteria" : {
 
     },
@@ -414,16 +383,10 @@
         }
       }
     },
-    "Start" : {
-
-    },
     "Start Test" : {
 
     },
     "State" : {
-
-    },
-    "Stop" : {
 
     },
     "Study not available" : {
@@ -497,6 +460,9 @@
     "Uploading Collected Health Data" : {
 
     },
+    "Warning Sign" : {
+
+    },
     "WELCOME_AREA1_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -547,9 +513,6 @@
 
     },
     "Yes" : {
-
-    },
-    "You need to grant MyHeart Counts access to Motion Data" : {
 
     },
     "You're all set.\n\nGreat to have you on board!" : {
