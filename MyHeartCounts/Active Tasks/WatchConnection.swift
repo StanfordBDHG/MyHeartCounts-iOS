@@ -10,6 +10,7 @@ import Foundation
 import MyHeartCountsShared
 import Spezi
 import SpeziHealthKit
+import SpeziStudyDefinition
 import WatchConnectivity
 
 

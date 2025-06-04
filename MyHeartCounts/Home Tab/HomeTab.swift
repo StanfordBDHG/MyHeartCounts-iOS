@@ -33,14 +33,10 @@ struct HomeTab: RootViewTab {
     private var enableDebugMode
     
     @State private var actionCards: [ActionCard] = []
-    @State private var showTimedWalkingTest = false
     
     var body: some View {
         NavigationStack {
             Form {
-                Button("[DBG] Timed Walking Test") {
-                    showTimedWalkingTest = true
-                }
                 topActionsFormContent
                 historicalHealthDataUploadSection
                 scheduleFormContent
@@ -48,11 +44,6 @@ struct HomeTab: RootViewTab {
             .navigationTitle("My Heart Counts")
             .toolbar {
                 accountToolbarItem
-            }
-            .sheet(isPresented: $showTimedWalkingTest) {
-                NavigationStack {
-                    TimedWalkingTestView()
-                }
             }
         }
     }

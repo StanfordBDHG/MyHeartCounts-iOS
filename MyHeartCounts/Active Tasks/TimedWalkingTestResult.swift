@@ -11,6 +11,7 @@
 import CoreMotion
 import Foundation
 import MyHeartCountsShared
+import SpeziStudyDefinition
 
 
 struct TimedWalkingTestResult: Hashable, Codable, Sendable {

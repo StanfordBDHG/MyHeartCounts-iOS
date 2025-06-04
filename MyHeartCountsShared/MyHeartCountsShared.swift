@@ -7,11 +7,12 @@
 //
 
 import Foundation
+//import SpeziStudyDefinition
 import WatchConnectivity
 
 
 public enum RemoteCommand: Hashable, Codable, Sendable {
-    case startWorkoutOnWatch(kind: TimedWalkingTestConfiguration.Kind)
+    case startWorkoutOnWatch(kindRawValue: UInt8)
     case endWorkoutOnWatch
 }
 

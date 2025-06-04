@@ -121,7 +121,7 @@ extension MyHeartCountsStandard {
         id: UUID
     ) async throws -> FirebaseFirestore.DocumentReference {
         try await firebaseConfiguration.userDocumentReference
-            .collection("HealthKitObservations_\(sampleTypeIdentifier)")
+            .collection("HealthObservations_\(sampleTypeIdentifier)")
             .document(id.uuidString)
     }
 }

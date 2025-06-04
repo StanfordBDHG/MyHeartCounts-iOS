@@ -4,9 +4,6 @@
     "– %@" : {
 
     },
-    "[DBG] Timed Walking Test" : {
-
-    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -56,12 +53,12 @@
     "Are you sure you want to leave the '%@' study?" : {
 
     },
-    "As part of the %@-Minute %@ Test, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %llu minute%@" : {
+    "As part of the %@, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %@ minute%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "As part of the %1$@-Minute %2$@ Test, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %3$llu minute%4$@"
+            "value" : "As part of the %1$@, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %2$@ minute%3$@"
           }
         }
       }

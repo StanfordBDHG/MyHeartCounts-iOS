@@ -9,6 +9,7 @@
 import Foundation
 import MyHeartCountsShared
 import Spezi
+import SpeziStudyDefinition
 import WatchConnectivity
 
 
@@ -33,9 +34,13 @@ final class PhoneConnection: NSObject, Module, WCSessionDelegate {
     /// - returns: `true` if the command was successfully executed; `false` otherwise
     private func handleCommand(_ command: RemoteCommand) async -> Bool {
         switch command {
-        case .startWorkoutOnWatch(let activityType):
+        case .startWorkoutOnWatch(let activityTypeRawValue):
+            guard let kind = TimedWalkingTestConfiguration.Kind(rawValue: activityTypeRawValue) else {
+                logger.error("Invalid kind rawValue (\(activityTypeRawValue))")
+                return false
+            }
             do {
-                try await workoutManager.startWorkout(for: activityType)
+                try await workoutManager.startWorkout(for: kind)
                 return true
             } catch {
                 logger.error("Error starting workout: \(error)")
@@ -66,7 +71,7 @@ final class PhoneConnection: NSObject, Module, WCSessionDelegate {
         if userInfo[.watchShouldEnableWorkout] as? Bool == true,
            let kindRawValue = userInfo[.watchWorkoutActivityKind] as? TimedWalkingTestConfiguration.Kind.RawValue,
            let kind = TimedWalkingTestConfiguration.Kind(rawValue: kindRawValue) {
-            command = .startWorkoutOnWatch(kind: kind)
+            command = .startWorkoutOnWatch(kindRawValue: kind.rawValue)
         } else {
             command = .endWorkoutOnWatch
         }

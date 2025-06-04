@@ -12,17 +12,12 @@ import MyHeartCountsShared
 import SFSafeSymbols
 import Spezi
 import SpeziFoundation
+import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
 
 
 struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
-    private static let spellOutNumberFormatter: NumberFormatter = {
-        let fmt = NumberFormatter()
-        fmt.numberStyle = .spellOut
-        return fmt
-    }()
-    
     @Environment(\.openAppSettings)
     private var openAppSettings
     
@@ -35,9 +30,7 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     @Environment(TimedWalkingTest.self)
     private var timedWalkingTest
     
-    /// the test's duration, in minutes
-    @State private var duration: UInt = 1
-    @State private var kind: TimedWalkingTestConfiguration.Kind = .walking
+    private let test: TimedWalkingTestConfiguration
     
     @State private var viewState: ViewState = .idle
     @State private var showPermissionsErrorSection = false
@@ -68,10 +61,10 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
         }
         PlainSection {
             CenterH {
-                Image(systemSymbol: kind.symbol)
+                Image(systemSymbol: test.kind.symbol)
                     .font(.system(size: 87))
                     .accessibilityLabel({ () -> String in
-                        switch kind {
+                        switch test.kind {
                         case .walking: "Symbol of person walking"
                         case .running: "Symbol of person running"
                         }
@@ -100,17 +93,16 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
             }
         }
         PlainSection {
-            // swiftlint:disable:next legacy_objc_type
-            let durationSpelledOut = Self.spellOutNumberFormatter.string(from: NSNumber(value: duration))?.capitalized ?? "\(duration)"
-            let kindText = switch kind {
-            case .walking: "Walk"
-            case .running: "Run"
+            let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
+            let kindText = switch test.kind {
+            case .walking: "walking"
+            case .running: "running"
             }
-            Text("As part of the \(durationSpelledOut)-Minute \(kindText) Test, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for \(duration) minute\(duration == 1 ? "" : "s")")
+            Text("As part of the \(test.displayTitle), we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for \(durationInMinutes) minute\(test.duration == .minutes(1) ? "" : "s")")
             if watchParticipatesInTest {
-                Text("For optimal results, please keep your Phone in your pocket, and \(kindText.lowercased()) until your Watch vibrates to indicate that the test has ended.")
+                Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until your Watch vibrates to indicate that the test has ended.")
             } else {
-                Text("For optimal results, please keep your Phone in your pocket, and \(kindText.lowercased()) until it vibrates to indicate that the test has ended.")
+                Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
             }
         }
         if watchManager.userHasWatch && !watchManager.isWatchAppReachable {
@@ -131,7 +123,6 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
             Section {
                 // Q: do we want to have an option to cancel the test?
                 AsyncButton(state: $viewState) {
-                    let test = TimedWalkingTestConfiguration(duration: .minutes(duration), kind: kind)
                     try await timedWalkingTest.start(test)
                 } label: {
                     Text("Start Test")
@@ -162,6 +153,11 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                 LabeledContent("Distance", value: results.distanceCovered, format: .number)
             }
         }
+    }
+    
+    
+    init(_ test: TimedWalkingTestConfiguration) {
+        self.test = test
     }
 }
 
