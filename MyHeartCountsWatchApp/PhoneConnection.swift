@@ -31,32 +31,6 @@ final class PhoneConnection: NSObject, Module, WCSessionDelegate {
     }
     
     
-    /// - returns: `true` if the command was successfully executed; `false` otherwise
-    private func handleCommand(_ command: RemoteCommand) async -> Bool {
-        switch command {
-        case .startWorkoutOnWatch(let activityTypeRawValue):
-            guard let kind = TimedWalkingTestConfiguration.Kind(rawValue: activityTypeRawValue) else {
-                logger.error("Invalid kind rawValue (\(activityTypeRawValue))")
-                return false
-            }
-            do {
-                try await workoutManager.startWorkout(for: kind)
-                return true
-            } catch {
-                logger.error("Error starting workout: \(error)")
-                return false
-            }
-        case .endWorkoutOnWatch:
-            do {
-                try await workoutManager.stopWorkout()
-                return true
-            } catch {
-                logger.error("Error stopping workout: \(error)")
-                return false
-            }
-        }
-    }
-    
     // MARK: WCSessionDelegate
     
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
@@ -67,16 +41,17 @@ final class PhoneConnection: NSObject, Module, WCSessionDelegate {
         guard let userInfo: [InterDeviceUserInfoKey: Any] = .init(userInfo) else {
             return
         }
-        let command: RemoteCommand
+        // userInfo isn't Sendable (it is, but the compiler doesn't know this), so we end up with two separate branches with a Task each...
         if userInfo[.watchShouldEnableWorkout] as? Bool == true,
            let kindRawValue = userInfo[.watchWorkoutActivityKind] as? TimedWalkingTestConfiguration.Kind.RawValue,
            let kind = TimedWalkingTestConfiguration.Kind(rawValue: kindRawValue) {
-            command = .startWorkoutOnWatch(kindRawValue: kind.rawValue)
+            Task {
+                try? await workoutManager.startWorkout(for: kind)
+            }
         } else {
-            command = .endWorkoutOnWatch
-        }
-        Task {
-            await handleCommand(command)
+            Task {
+                try? await workoutManager.stopWorkout()
+            }
         }
     }
 }

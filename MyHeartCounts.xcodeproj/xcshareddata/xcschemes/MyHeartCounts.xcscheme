@@ -29,11 +29,11 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:MyHeartCounts UI Tests.xctestplan">
+            reference = "container:MyHeartCounts UI Tests.xctestplan"
+            default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:MyHeartCounts Unit Tests.xctestplan"
-            default = "YES">
+            reference = "container:MyHeartCounts Unit Tests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
@@ -114,7 +114,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=GoogleService-Info-Override"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--dump-cli-options-and-exit"
