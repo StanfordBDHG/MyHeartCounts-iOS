@@ -1716,16 +1716,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
-				kind = revision;
-				revision = a1150590359938e97144f64e6b25db1c95dcb5c5;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
 			};
 		};
 		8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = revision;
-				revision = c21314e8b6ffeb74a7d4bb152647b8a2f90acbcb;
+				branch = lukas/TimedWalkingTest;
+				kind = branch;
 			};
 		};
 		805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {

@@ -249,7 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "a1150590359938e97144f64e6b25db1c95dcb5c5"
+        "revision" : "2fbdb8636f3ad394d5833cc048be5bb35c78a8c5",
+        "version" : "1.2.0"
       }
     },
     {
@@ -311,6 +312,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
+        "branch" : "lukas/TimedWalkingTest",
         "revision" : "c21314e8b6ffeb74a7d4bb152647b8a2f90acbcb"
       }
     },
