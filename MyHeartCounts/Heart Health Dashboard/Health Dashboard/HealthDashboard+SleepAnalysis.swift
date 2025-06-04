@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Charts
 import Foundation
 import HealthKit
@@ -22,10 +20,10 @@ struct SmallSleepAnalysisGridCell: View {
     private var sleepAnalysis
     
     var body: some View {
-        let sleepSessions = try! sleepAnalysis.splitIntoSleepSessions() // swiftlint:disable:this force_try
+        let sleepSessions = (try? sleepAnalysis.splitIntoSleepSessions()) ?? []
         
         HealthDashboardSmallGridCell(title: $sleepAnalysis.sampleType.displayTitle) {
-            EmptyView() // TODO?
+            EmptyView() // ?
         } content: {
             if let session = sleepSessions.last {
                 HealthDashboardQuantityLabel(input: .init(
@@ -39,7 +37,7 @@ struct SmallSleepAnalysisGridCell: View {
 }
 
 
-struct LargeSleepAnalysisView: View { // TODO better name!
+struct LargeSleepAnalysisView: View {
     private enum SleepData {
         case sleepSessions([SleepSession])
         case processingFailed(any Error)
@@ -76,7 +74,10 @@ struct LargeSleepAnalysisView: View { // TODO better name!
                     Text("Failed to process Sleep Sessions")
                 }
             }
-            .chartXScale(domain: [cal.startOfDay(for: timeRange.range.lowerBound), cal.startOfNextDay(for: timeRange.range.upperBound).addingTimeInterval(-1)])
+            .chartXScale(domain: [
+                cal.startOfDay(for: timeRange.range.lowerBound),
+                cal.startOfNextDay(for: timeRange.range.upperBound).addingTimeInterval(-1)
+            ])
             .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
 //            .chartXAxis {
 //                let daysStride: Int = { () -> Int in
@@ -199,11 +200,24 @@ struct LargeSleepAnalysisView: View { // TODO better name!
 
 
 extension Range where Bound == Date {
-    func displayText(using calendar: Calendar) -> String {
-        let format: Date.FormatStyle = .dateTime.omittingTime().calendar(calendar)
-        // TODO: give this a nice text (eg: "Today", "Current Week", "last N days", etc)
+    func displayText(using cal: Calendar) -> String {
         // would it maybe make sense to have a "TimeRangeLabel"?
-        return "\(lowerBound.formatted(format)) – \(upperBound.addingTimeInterval(-1).formatted(format))"
+        // certainly space for improvement here...
+        if self == cal.rangeOfDay(for: .now) {
+            return "Today"
+        } else if self == cal.rangeOfDay(for: self.lowerBound) {
+            return self.lowerBound.formatted(date: .abbreviated, time: .omitted)
+        } else if self.isEmpty, case let date = self.lowerBound { // startDate == endDate
+            return if cal.isDateInToday(date) && date <= .now {
+                date.formatted(date: .omitted, time: .shortened)
+            } else {
+                // is older than today
+                date.formatted(date: .numeric, time: .shortened)
+            }
+        } else {
+            let fmt = { ($0 as Date).formatted(date: .abbreviated, time: .omitted) }
+            return "\(fmt(self.lowerBound)) – \(fmt(self.upperBound.addingTimeInterval(-1)))"
+        }
     }
 }
 

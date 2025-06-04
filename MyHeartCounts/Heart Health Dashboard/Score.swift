@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order type_contents_order
+
 import Foundation
 import SwiftUI
 
@@ -22,19 +24,6 @@ protocol ScoreDefinitionPatternRange<Bound>: RangeExpression, Sendable {
 
 struct ScoreDefinition: Hashable, Sendable {
     final class Element: Hashable, Sendable { // not idea but we need this to be a class so that it can be Hashable
-//        enum Pattern: Hashable, Sendable {
-//            case range(any RangeProtocol)
-//            case exact(Double)
-//            
-//            func matches(_ input: Double) -> Bool {
-//                switch self {
-//                case .range(let range):
-//                    range.contains(input)
-//                case .exact(let value):
-//                    value == input
-//                }
-//            }
-//        }
         let score: Double
         let textualRepresentation: String
         private let matchImp: @Sendable (Any) -> Bool
@@ -45,7 +34,6 @@ struct ScoreDefinition: Hashable, Sendable {
             self.matchImp = { value in
                 if let value = value as? Input {
                     return matches(value)
-                    // TODO check that these work!
                 } else if let intValue = value as? any BinaryInteger, let inputTy = Input.self as? any BinaryFloatingPoint.Type {
                     // if the input is an integer, but the predicate expects a FloatingPoint value, we perform a conversion
                     if let floatValue = inputTy.init(exactly: intValue) {
@@ -99,17 +87,6 @@ struct ScoreDefinition: Hashable, Sendable {
                 input == value
             }
         }
-        
-//        init(_ range: any RangeProtocol, score: Double, textualRepresentation: String) {
-//            self.pattern = .range(range)
-//            self.score = score
-//            self.displayTitle = displayTitle
-//        }
-//        init(_ value: Double, score: Double, textualRepresentation: String) {
-//            self.pattern = .exact(value)
-//            self.score = score
-//            self.displayTitle = displayTitle
-//        }
     }
     
     let `default`: Double
@@ -119,8 +96,6 @@ struct ScoreDefinition: Hashable, Sendable {
         self.default = `default`
         self.mapping = mapping
     }
-    
-//    static func special(_ ) // TODO
     
     func apply(to value: some Any) -> Double {
         mapping.first { $0.matches(value) }?.score ?? `default`
@@ -137,20 +112,6 @@ extension ScoreDefinition.Element {
         hasher.combine(ObjectIdentifier(self))
     }
 }
-
-//extension ScoreDefinition.Element { // swiftlint:disable:this file_types_order
-//    static func == (lhs: ScoreDefinition.Element, rhs: ScoreDefinition.Element) -> Bool {
-//        lhs.score == rhs.score
-//            && lhs.textualRepresentation == rhs.textualRepresentation
-//            && ObjectIdentifier(lhs.matchImp) == ObjectIdentifier(rhs.matchImp)
-//    }
-//    
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(score)
-//        hasher.combine(textualRepresentation)
-//        hasher.combine(ObjectIdentifier(matchImp))
-//    }
-//}
 
 
 struct ScoreResult: Hashable, Sendable {
@@ -207,24 +168,12 @@ struct ScoreResult: Hashable, Sendable {
 }
 
 
-//extension ScoreResult {
-//    static func == (lhs: Self, rhs: Self) -> Bool {
-//        
-//    }
-//    
-//    func hash(into hasher: inout Hasher) {
-//        <#code#>
-//    }
-//}
-
-
-
 extension Range: ScoreDefinitionPatternRange {
     var textualDescription: String {
         if let upperBound = upperBound as? any BinaryInteger { // Int-based range
             "\(lowerBound) – \(upperBound.advanced(by: -1))"
         } else {
-            "\(self)" // TODO
+            "\(self)"
         }
     }
     

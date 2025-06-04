@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import SwiftUI
 
@@ -35,27 +33,22 @@ extension Gradient {
             return stop.color
         }
         
-        let surroundingStops = stops.adjacentPairs().first { (lhs, rhs) in
+        let surroundingStops = stops.adjacentPairs().first { lhs, rhs in
             (lhs.location...rhs.location).contains(position)
         }
         guard let (stop1, stop2) = surroundingStops else {
             fatalError("unreachable")
         }
 
-        // 5. Calculate the interpolation factor (t) for the segment
-        // This 't' is normalized to the space *between* stop1.location and stop2.location
         let segmentLength = stop2.location - stop1.location
-        
-        // If p is exactly at stop1.location, or if segmentLength is 0 (stops are at same location)
-        if segmentLength <= 0 { // Using <= 0 to catch potential floating point issues if very close
-            return stop1.color // Or stop2.color if p is closer to it, but stop1 is fine
+        if segmentLength <= 0 {
+            return stop1.color
         }
         
         let rgba1 = stop1.color.resolve(in: .init())
         let rgba2 = stop2.color.resolve(in: .init())
         
-        let t = (position - stop1.location) / segmentLength
-        
+        let t = (position - stop1.location) / segmentLength // swiftlint:disable:this identifier_name
         let red = lerp(from: Double(rgba1.red), to: Double(rgba2.red), t: t)
         let green = lerp(from: Double(rgba1.green), to: Double(rgba2.green), t: t)
         let blue = lerp(from: Double(rgba1.blue), to: Double(rgba2.blue), t: t)
@@ -63,7 +56,6 @@ extension Gradient {
         return Color(red: red, green: green, blue: blue, opacity: alpha)
     }
 }
-
 
 
 extension Comparable {

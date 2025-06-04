@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable file_types_order
 
 import Charts
 import Foundation
@@ -86,12 +86,11 @@ struct DetailedHealthStatsView: View {
         .toolbar {
             switch input {
             case .scoreResult(result: _, let keyPath):
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isPresentingAddSampleSheet = true
-                    } label: {
-                        Image(systemSymbol: .plus)
-                            .accessibilityLabel("Add new Sample")
+                if HeartHealthDashboard.canAddSample(for: keyPath) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Add Data") {
+                            isPresentingAddSampleSheet = true
+                        }
                     }
                 }
             }
@@ -101,7 +100,7 @@ struct DetailedHealthStatsView: View {
             case .scoreResult(result: _, let keyPath):
                 view.sheet(isPresented: $isPresentingAddSampleSheet) {
                     NavigationStack {
-                        LifesEssential8.addSampleView(for: keyPath)
+                        HeartHealthDashboard.addSampleView(for: keyPath)
                     }
                 }
             }
@@ -136,15 +135,18 @@ struct DetailedHealthStatsView: View {
                     return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
                 }
             }()
-            healthDashboardLargeComponentView(for: .init(
-                dataSource: dataSource,
-                timeRange: timeRange,
-                style: .chart(chartConfig),
-                allowAddingSamples: false
-            ))
-            //        .padding()
+            healthDashboardComponentView(
+                for: .init(
+                    dataSource: dataSource,
+                    timeRange: timeRange,
+                    style: .chart(chartConfig),
+                    enableSelection: false
+                ),
+                withSize: .large
+            )
+            //        .padding() // Issue: some of them need padding, some dont :/
             .healthStatsChartHoverHighlightEnabled()
-            .environment(\.tmp_showTimeRangeAsGridCellSubtitle, true)
+            .environment(\.showTimeRangeAsGridCellSubtitle, true)
         } else {
             HStack {
                 Spacer()
@@ -162,13 +164,12 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func scoreResultBasedTopSection(for scoreResult: ScoreResult) -> some View {
+    private func scoreResultBasedTopSection(for scoreResult: ScoreResult) -> some View { // swiftlint:disable:this function_body_length
         let spacing: Double = 24
-//        Grid(alignment: .center, horizontalSpacing: <#T##CGFloat?#>, verticalSpacing: <#T##CGFloat?#>, content: <#T##() -> View#>)
         GeometryReader { geometry in // swiftlint:disable:this closure_body_length
             let gaugePartWidth = (geometry.size.width - spacing) * 0.37
             let leftPartWidth = geometry.size.width - spacing - gaugePartWidth
-            HStack(spacing: spacing / 2 - 1) {
+            HStack(spacing: spacing / 2 - 1) { // swiftlint:disable:this closure_body_length
                 VStack(alignment: .leading) {
                     Text(sampleType.displayTitle)
                         .font(.headline)
@@ -196,7 +197,8 @@ struct DetailedHealthStatsView: View {
                     }
                 }
                 .frame(width: leftPartWidth, alignment: .leading)
-                Divider().frame(width: 1)
+                Divider()
+                    .frame(width: 1)
                 Gauge2(
                     lineWidth: .relative(1.75),
                     gradient: .redToGreen,

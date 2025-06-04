@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Foundation
 import SpeziHealthKit
 import SwiftUI
@@ -54,7 +56,7 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
     
     
     init(
-        title: String, // TODO localized overload!
+        title: String,
         subtitle: String? = nil,
         @ViewBuilder accessory: @MainActor @escaping () -> Accessory = { EmptyView() },
         @ViewBuilder content: @MainActor @escaping () -> Content
@@ -68,6 +70,34 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
 
 
 struct HealthDashboardQuantityLabel: View {
+    @Environment(\.calendar)
+    private var cal
+    
+    let input: Input
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack(alignment: .lastTextBaseline, spacing: 3) {
+                Text(input.valueString)
+                    .font(.title.bold())
+                Text(input.unitString)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            // NOTE: displaying the entire range here technically won't always be correct (it's not incorrect either, just not perfect):
+            // if we have a single-value grid cell that displays the max heart rate measured today, we'd have the label at the bottom say
+            // "Today", even though displaying the precise time of this max heart rate measurement would be more correct.
+            Text(input.timeRange.displayText(using: cal))
+                .foregroundStyle(.secondary)
+                .font(.footnote)
+        }
+    }
+}
+
+
+extension HealthDashboardQuantityLabel {
     struct Input {
         let valueString: String
         let unitString: String
@@ -98,45 +128,6 @@ struct HealthDashboardQuantityLabel: View {
             }
             self.unitString = sampleType.displayUnit.unitString
             self.timeRange = timeRange
-        }
-    }
-    
-    @Environment(\.calendar)
-    private var cal
-    
-    let input: Input
-    
-    var body: some View {
-        VStack {
-            Spacer()
-            HStack(alignment: .lastTextBaseline, spacing: 3) {
-                Text(input.valueString)
-                    .font(.title.bold())
-                Text(input.unitString)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-            sampleDateText
-                .foregroundStyle(.secondary)
-                .font(.footnote)
-        }
-    }
-    
-    // TODO if this is an aggregate sample stretching over a large time period, we want to show all of that?
-    // eg: imagine a label displaying "total # exercise miniutes today / this week". that should probably just say "today" or "current week"
-    private var sampleDateText: Text {
-        if input.timeRange == cal.rangeOfDay(for: .now) {
-            Text("Today")
-        } else if input.timeRange.isEmpty, case let date = input.timeRange.lowerBound { // startDate == endDate
-            if cal.isDateInToday(date) && date <= .now {
-                Text(date.formatted(date: .omitted, time: .shortened))
-            } else {
-                // is older than today
-                Text(date.formatted(date: .numeric, time: .shortened))
-            }
-        } else {
-            Text("TODO") // TODO
         }
     }
 }

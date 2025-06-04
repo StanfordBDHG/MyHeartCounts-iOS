@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable file_types_order
 
 import Charts
 import Foundation
@@ -35,7 +35,6 @@ public struct ChartDataSetDrawingConfig: Sendable {
         self.color = color
     }
 }
-
 
 
 struct HealthStatsChartDataPoint: Hashable, Sendable {
@@ -110,14 +109,9 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
     
     @State private var xSelection: Date?
     
-    init(_ dataSet: repeat each DataSet) {
-        self.dataSet = (repeat each dataSet)
-    }
-    
-    
     private var hasData: Bool {
         for dataSet in repeat each dataSet {
-            if !dataSet.data.isEmpty {
+            if !dataSet.data.isEmpty { // swiftlint:disable:this for_where
                 return true
             }
         }
@@ -128,7 +122,6 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
         chart
             .chartOverlay { _ in
                 if !hasData {
-                    // TODO make this look nice!
                     Text("No Data")
                 }
             }
@@ -148,19 +141,22 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
     }
     
     
-    @ChartContentBuilder
-    private var chartContent: some ChartContent {
+    @ChartContentBuilder private var chartContent: some ChartContent {
         ChartContentBuilder.buildBlock(repeat buildContent(for: each dataSet))
         if enableHoverHighlight,
            let xSelection,
            case let dataPoints = xAxisSelectionDataPoints(for: xSelection),
-           let (dataSet, dataPoint) = dataPoints.last {
+           let (_, dataPoint) = dataPoints.last {
             ChartHighlightRuleMark(
                 x: .value("Selection", xSelection, unit: .day, calendar: calendar),
-                primaryText: "\(dataPoint.value)", // TODO unit?
+                primaryText: "\(dataPoint.value)", // unit?
                 secondaryText: dataPoint.timeRange.middle.formatted(.dateTime)
             )
         }
+    }
+    
+    init(_ dataSet: repeat each DataSet) {
+        self.dataSet = (repeat each dataSet)
     }
     
     @ChartContentBuilder
@@ -177,7 +173,6 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
         let xVal: PlottableValue = .value("Date", dataPoint.timeRange)
         let yVal: PlottableValue = .value(dataSet.name, dataPoint.value)
         let series: PlottableValue = .value("Series", dataSet.name)
-        let _ = print("DP", dataPoint.timeRange, dataPoint.value, dataSet.name)
         SomeChartContent {
             switch dataSet.drawingConfig.chartType {
             case let .line(interpolationMethod):
@@ -206,32 +201,6 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
 }
 
 
-// TODO we now have this here and in SpeziHealthKitUI; maybe move it into SpeziViews?!
-struct SomeChartContent<Body: ChartContent>: ChartContent { // swiftlint:disable:this file_types_order
-    private let content: @MainActor () -> Body
-    
-    var body: some ChartContent {
-        content()
-    }
-    
-    init(@ChartContentBuilder _ content: @escaping @MainActor () -> Body) {
-        self.content = content
-    }
-}
-
-
-extension ChartContent {
-    @ChartContentBuilder
-    func `if`<T>(_ value: T?, @ChartContentBuilder _ makeContent: (T, Self) -> some ChartContent) -> some ChartContent {
-        if let value {
-            makeContent(value, self)
-        } else {
-            self
-        }
-    }
-}
-
-
 // MARK: Environment Values
 
 extension EnvironmentValues {
@@ -249,7 +218,8 @@ extension View {
 
 
 private struct ChartXAxisModifier: ViewModifier {
-    @Environment(\.calendar) private var cal
+    @Environment(\.calendar)
+    private var cal
     
     let timeRange: Range<Date>
     

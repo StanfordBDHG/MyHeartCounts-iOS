@@ -7,16 +7,12 @@
 //
 
 import Foundation
-import class HealthKit.HKUnit
-import class HealthKit.HKQuantity
-
-// swiftlint:disable all
-
+import HealthKit
 
 
 struct Achievement: Hashable, Codable, Sendable {
     enum Goal: Hashable, Codable, Sendable {
-        enum ReachLevelTarget: Hashable, Codable, Sendable {
+        enum ReachLevelTarget: Hashable, Codable, Sendable { // swiftlint:disable:this type_contents_order
             case absolute(Double)
             case newMaximum
         }
@@ -27,13 +23,11 @@ struct Achievement: Hashable, Codable, Sendable {
     let title: String
     let goal: Goal
     
-    init(title: String, goal: Goal) { // TODO add an LocalizedStringResource overload!
+    init(title: String, goal: Goal) {
         self.title = title
         self.goal = goal
     }
 }
-
-
 
 
 extension Achievement {
@@ -42,14 +36,11 @@ extension Achievement {
         /// - parameter quantity: The target quantity
         /// - parameter invert: Whether the goal should be inverted;
         ///     i.e., whether it should be considered achieved if an actual value is below, rather than above, the quantity.
-        case reachOrSurpass(_ quantity: HKQuantity, invert: Bool = false)
+        /// - parameter baselineQuantity: The quantity we take as the baseline with calculating progress. For non-inverted goals, this should be zero.
+        case reachOrSurpass(_ quantity: HKQuantity, invert: Bool = false, baselineQuantity: HKQuantity)
         
-        @available(*, deprecated, message: "don't use this!!!")
-        var quantity: HKQuantity {
-            switch self {
-            case .reachOrSurpass(let quantity, invert: _):
-                quantity
-            }
+        static func reachOrSurpass(_ quantity: HKQuantity, unit: HKUnit) -> Self {
+            .reachOrSurpass(quantity, invert: false, baselineQuantity: HKQuantity(unit: unit, doubleValue: 0))
         }
         
         /// Evaluates a concrete value against the goal's value.
@@ -57,22 +48,16 @@ extension Achievement {
         /// - returns: A `Double` value, indicating how close the `measuredValue` is to the goal's value
         func evaluate(_ measuredQuantity: HKQuantity, unit: HKUnit) -> Double {
             switch self {
-            case let .reachOrSurpass(targetQuantity, invert):
+            case let .reachOrSurpass(targetQuantity, invert, baselineQuantity):
                 let measuredValue = measuredQuantity.doubleValue(for: unit)
                 let targetValue = targetQuantity.doubleValue(for: unit)
                 if !invert {
                     return measuredValue / targetValue
                 } else {
-                    fatalError() // TODO
+                    let baselineValue = baselineQuantity.doubleValue(for: unit)
+                    return baselineValue.distance(to: measuredValue) / baselineValue.distance(to: targetValue)
                 }
             }
-            fatalError()
         }
     }
-}
-
-
-
-struct AchievementStatus { // TODO better name!!!!!!!!
-    
 }

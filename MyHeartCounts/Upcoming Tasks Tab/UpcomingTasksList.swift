@@ -106,8 +106,8 @@ struct UpcomingTasksList: View {
         }
     }
     
-    init(timeRange: TimeRange) {
-        _events = .init(in: Self.effectiveTimeRange(for: timeRange))
+    init(timeRange: TimeRange, calendar: Calendar) {
+        _events = .init(in: Self.effectiveTimeRange(for: timeRange, calendar: calendar))
     }
     
     private func handleAction(_ action: StudyManager.ScheduledTaskAction, for event: Event) async {
@@ -145,18 +145,17 @@ struct UpcomingTasksList: View {
 
 
 extension UpcomingTasksList {
-    private static func effectiveTimeRange(for timeRange: TimeRange) -> Range<Date> {
-        let cal = Calendar.current
+    private static func effectiveTimeRange(for timeRange: TimeRange, calendar: Calendar) -> Range<Date> {
         switch timeRange {
         case .today:
-            return cal.rangeOfDay(for: .now)
+            return calendar.rangeOfDay(for: .now)
         case .weeks(let numWeeks):
-            let start = cal.startOfDay(for: .now)
-            let end = cal.date(byAdding: .weekOfYear, value: numWeeks, to: start) ?? start
+            let start = calendar.startOfDay(for: .now)
+            let end = calendar.date(byAdding: .weekOfYear, value: numWeeks, to: start) ?? start
             return start..<end
         case .months(let numMonths):
-            let start = cal.startOfDay(for: .now)
-            let end = cal.date(byAdding: .month, value: numMonths, to: start) ?? start
+            let start = calendar.startOfDay(for: .now)
+            let end = calendar.date(byAdding: .month, value: numMonths, to: start) ?? start
             return start..<end
         }
     }

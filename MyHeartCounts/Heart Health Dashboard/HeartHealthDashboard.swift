@@ -14,15 +14,7 @@ import SwiftData
 import SwiftUI
 
 
-/*
- - toggle
- - choice SC/MC
- - vlidation?
- - exporting?
- */
-
-
-struct LifesEssential8: View {
+struct HeartHealthDashboard: View {
     struct AddNewSampleDescriptor: Identifiable {
         let keyPath: KeyPath<CVHScore, ScoreResult>
         var id: ObjectIdentifier { .init(keyPath) }
@@ -34,23 +26,10 @@ struct LifesEssential8: View {
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
-    private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, ScoreResult>> = [
-        \.dietScore,
-        \.bodyMassIndexScore,
-//        \.physicalExerciseScore,
-        \.bloodLipidsScore,
-        \.nicotineExposureScore,
-        \.bloodGlucoseScore,
-//        \.sleepHealthScore,
-        \.bloodPressureScore
-    ]
-    
     @CVHScore private var cvhScore
     
     @Environment(NewsManager.self)
     private var newsManager
-    
-//    @State private var sampleTypeToAdd: MHCSampleType?
     
     @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
     @State private var browseCustomHealthSamplesInput: CustomHealthSample.SampleType?
@@ -62,45 +41,10 @@ struct LifesEssential8: View {
     var body: some View {
         healthDashboard
             .toolbar {
-                Button("E") {
-                    dbgShowExtendedHealthDashboard = true
-                }
-            }
-            .sheet(isPresented: $dbgShowExtendedHealthDashboard) {
-                NavigationStack {
-                    HealthDashboard(layout: [
-                        .largeChart(sectionTitle: "Active Energy", component: .init(
-                            sampleType: .activeEnergyBurned,
-                            timeRange: .last(days: 14),
-                            chartConfig: .init(chartType: .bar, aggregationInterval: .day)
-                        )),
-                        .grid(sectionTitle: "", components: [
-                            .init(
-                                .stepCount,
-                                timeRange: .today,
-                                style: .chart(.init(chartType: .bar, aggregationInterval: .hour)),
-                                allowAddingSamples: true
-                            ),
-                            .init(
-                                .distanceWalkingRunning,
-                                timeRange: .today,
-                                style: .chart(.init(chartType: .bar, aggregationInterval: .hour)),
-                                allowAddingSamples: true
-                            ),
-                            .init(
-                                .heartRate,
-                                timeRange: .today,
-                                style: .chart(.init(chartType: .point(area: 5), aggregationInterval: .init(.init(minute: 15)))),
-                                allowAddingSamples: true
-                            ),
-                            .init(
-                                .restingHeartRate,
-                                timeRange: .today,
-                                style: .chart(.init(chartType: .point(area: 5), aggregationInterval: .init(.init(minute: 15)))),
-                                allowAddingSamples: true
-                            ),
-                        ])
-                    ])
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("E") {
+                        dbgShowExtendedHealthDashboard = true
+                    }
                 }
             }
     }
@@ -137,7 +81,7 @@ struct LifesEssential8: View {
                 }
             }
         })
-        .navigationTitle("Life's Essential 8")
+        .navigationTitle("Heart Health Dashboard")
         .sheet(item: $addNewSampleDescriptor) { descriptor in
             NavigationStack {
                 Self.addSampleView(for: descriptor.keyPath)
@@ -169,6 +113,25 @@ struct LifesEssential8: View {
                 }
             }
         }
+        .sheet(isPresented: $dbgShowExtendedHealthDashboard) {
+            NavigationStack {
+                extendedDashboard
+            }
+        }
+    }
+    
+    @ViewBuilder private var extendedDashboard: some View {
+        let layout: HealthDashboardLayout = [
+            HealthDashboardLayout.Block.grid(sectionTitle: "TITLE1", components: [
+                .init(.stepCount, style: .chart(.init(chartType: .bar, aggregationInterval: .hour)), enableSelection: true),
+                .init(.heartRate, style: .chart(.init(chartType: .point(area: 5), aggregationInterval: .init(.init(minute: 15))))),
+                .sleepAnalysis(style: .singleValue(.mostRecentSample)),
+                .sleepAnalysis(style: .singleValue(.aggregated(.sum))),
+                .init(.heartRate, style: .singleValue(.aggregated(.min))),
+                .init(.heartRate, style: .singleValue(.aggregated(.max)))
+            ])
+        ]
+        HealthDashboard(layout: layout)
     }
     
     
@@ -220,19 +183,19 @@ struct LifesEssential8: View {
         } onTap: {
             scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
         } contextMenu: {
-            if canAddSample(for: scoreKeyPath) {
+            if Self.canAddSample(for: scoreKeyPath) {
                 Button {
                     addNewSample(for: scoreKeyPath)
                 } label: {
                     Label("Add Sample", systemSymbol: .plusSquare)
                 }
             }
-//            Divider()
-//            Button {
-//                scoreResultToExplain = score
-//            } label: {
-//                Label("Details", systemSymbol: .infoCircle)
-//            }
+            Divider()
+            Button {
+                scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
+            } label: {
+                Label("Details", systemSymbol: .infoCircle)
+            }
             switch score.sampleType {
             case .healthKit:
                 EmptyView()
@@ -246,14 +209,28 @@ struct LifesEssential8: View {
         }
     }
     
-    private func canAddSample(for keyPath: KeyPath<CVHScore, ScoreResult>) -> Bool {
-        Self.cvhKeyPathsWithDataEntryEnabled.contains(keyPath)
-    }
-    
     private func addNewSample(for keyPath: KeyPath<CVHScore, ScoreResult>) {
-        if canAddSample(for: keyPath) {
+        if Self.canAddSample(for: keyPath) {
             addNewSampleDescriptor = .init(keyPath: keyPath)
         }
+    }
+}
+
+
+extension HeartHealthDashboard {
+    private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, ScoreResult>> = [
+        \.dietScore,
+        \.bodyMassIndexScore,
+//        \.physicalExerciseScore,
+        \.bloodLipidsScore,
+        \.nicotineExposureScore,
+        \.bloodGlucoseScore,
+//        \.sleepHealthScore,
+        \.bloodPressureScore
+    ]
+    
+    static func canAddSample(for keyPath: KeyPath<CVHScore, ScoreResult>) -> Bool {
+        cvhKeyPathsWithDataEntryEnabled.contains(keyPath)
     }
     
     @ViewBuilder

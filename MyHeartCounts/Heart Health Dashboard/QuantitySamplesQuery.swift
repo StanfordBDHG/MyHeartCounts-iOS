@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import HealthKit
 import SpeziFoundation
@@ -20,13 +18,13 @@ import SwiftUI
 /// How a collection of quantity samples should be aggregated into a collection of aggregated quantity samples
 struct QuantitySamplesAggregationStrategy {
     /// The operation that should be used to aggregate a subset of the samples
-    let kind: StatisticsQueryAggregationKind
+    let kind: StatisticsAggregationOption
     /// The time interval, for which a subset of the input samples should be turned into an aggregated sample
     let interval: HealthKitStatisticsQuery.AggregationInterval
 }
 
 
-enum QuantitySamplesQueryingViewAggregationMode {
+enum QuantitySamplesQueryingViewAggregationMode { // swiftlint:disable:this type_name
     /// the individual samples should be fetched and returned as-is
     case none
     /// we're only interested in the most recent sample. no additional processing should happen
@@ -36,11 +34,10 @@ enum QuantitySamplesQueryingViewAggregationMode {
 }
 
 
-
 extension HealthKitStatisticsQuery {
     init(
         _ sampleType: SampleType<HKQuantitySample>,
-        aggregatedBy: StatisticsQueryAggregationKind,
+        aggregatedBy: StatisticsAggregationOption,
         over aggregationInterval: AggregationInterval,
         timeRange: HealthKitQueryTimeRange,
         filter: NSPredicate? = nil
@@ -48,8 +45,12 @@ extension HealthKitStatisticsQuery {
         switch aggregatedBy {
         case .sum:
             self.init(sampleType, aggregatedBy: [.sum], over: aggregationInterval, timeRange: timeRange, filter: filter)
-        case .average:
+        case .avg:
             self.init(sampleType, aggregatedBy: [.average], over: aggregationInterval, timeRange: timeRange, filter: filter)
+        case .min:
+            self.init(sampleType, aggregatedBy: [.min], over: aggregationInterval, timeRange: timeRange, filter: filter)
+        case .max:
+            self.init(sampleType, aggregatedBy: [.max], over: aggregationInterval, timeRange: timeRange, filter: filter)
         }
     }
 }

@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Algorithms
 import Foundation
 import SFSafeSymbols
@@ -201,7 +203,6 @@ extension Collection where Index == Int {
         indices.map { self[$0] }
     }
 }
-
 
 
 private struct IdentifiableAdaptor<Value, ID: Hashable>: Identifiable {

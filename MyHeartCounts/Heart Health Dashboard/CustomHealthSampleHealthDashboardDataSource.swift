@@ -12,7 +12,7 @@ import SpeziHealthKit
 import SwiftData
 
 
-@Observable
+@Observable // swiftlint:disable:next type_name
 final class CustomHealthSampleHealthDashboardDataSource: HealthDashboardLayout.CustomDataSourceProtocol, Sendable {
     @ObservationIgnored private let customHealthSampleType: CustomHealthSample.SampleType
     @ObservationIgnored @MainActor private let modelContext: ModelContext
@@ -20,16 +20,10 @@ final class CustomHealthSampleHealthDashboardDataSource: HealthDashboardLayout.C
     
     @ObservationIgnored let sampleType: CustomQuantitySampleType
     @ObservationIgnored let timeRange: HealthKitQueryTimeRange
+    @MainActor private(set) var samples: [QuantitySample] = []
     
-    // SAFETY: only set once, from w/in the initializer.
-    nonisolated(unsafe) private var modelContextDidSaveCancellable: AnyCancellable?
-    
-    // SAFETY: only mutated from the MainActor
-    // TODO: probably still unsafe, since a read could coincide with a write!
-    nonisolated(unsafe) private var samples: [QuantitySample] = []
-    
-//    private var fetchResults: [CustomHealthSample] = []
-//    private var token: DefaultHistoryToken?
+    // only set once, from w/in the initializer, but we sadly can't make it immutable
+    @MainActor private var modelContextDidSaveCancellable: AnyCancellable?
     
     @MainActor
     init?(modelContext: ModelContext, sampleType customHealthSampleType: CustomHealthSample.SampleType, timeRange: HealthKitQueryTimeRange) {
@@ -43,7 +37,7 @@ final class CustomHealthSampleHealthDashboardDataSource: HealthDashboardLayout.C
         let sampleTypeRawValue = customHealthSampleType.rawValue
         self.fetchDescriptor = .init(
             predicate: #Predicate<CustomHealthSample> { sample in
-                sample.sampleTypeRawValue == sampleTypeRawValue // TODO filter based on time range!
+                sample.sampleTypeRawValue == sampleTypeRawValue // filter based on time range?
             },
             sortBy: [SortDescriptor<CustomHealthSample>(\.startDate)]
         )
@@ -54,18 +48,6 @@ final class CustomHealthSampleHealthDashboardDataSource: HealthDashboardLayout.C
             }
         update()
     }
-    
-    
-//    @MainActor private func startUpdates() {
-//        let publisher = NotificationCenter.default.publisher(for: ModelContext.didSave, object: modelContext)
-//        publisher.sink(receiveValue: <#T##(Notification) -> Void#>)
-//        let saveNotifications = NotificationCenter.default.notifications(named: ModelContext.didSave, object: modelContext)
-//        Task {
-//            for try await _ in saveNotifications {
-//                self.update()
-//            }
-//        }
-//    }
     
     @MainActor
     private func update() {
@@ -81,53 +63,4 @@ final class CustomHealthSampleHealthDashboardDataSource: HealthDashboardLayout.C
         }
         self.samples = samples
     }
-    
-//    private func transactionsSinceLastUpdate() throws -> [DefaultHistoryTransaction] {
-//        var historyDescriptor = HistoryDescriptor<DefaultHistoryTransaction>()
-//        if let token {
-//            historyDescriptor.predicate = #Predicate { transaction in
-//                transaction.token > token
-//            }
-//        }
-//        return try modelContext.fetchHistory(historyDescriptor)
-//    }
-    
-//    private func update2() {
-//        do {
-//            let transactions = try transactionsSinceLastUpdate()
-//            for transaction in transactions {
-//                for change in transaction.changes {
-//                    switch change {
-//                    case .insert(let insert as DefaultHistoryInsert<CustomHealthSample>):
-//                        print("INSERT", insert)
-//                    case .update(let update as DefaultHistoryUpdate<CustomHealthSample>):
-//                        print("UPDATE", update)
-//                    case .delete(let delete as DefaultHistoryDelete<CustomHealthSample>):
-//                        print("DELETE", delete)
-//                    }
-//                }
-//            }
-//        } catch {
-//            // TODO
-//        }
-//    }
 }
-
-
-extension CustomHealthSampleHealthDashboardDataSource: RandomAccessCollection {
-    typealias Element = QuantitySample
-    typealias Index = [QuantitySample].Index
-    
-    var startIndex: Index {
-        samples.startIndex
-    }
-    
-    var endIndex: Index {
-        samples.endIndex
-    }
-    
-    subscript(position: Index) -> QuantitySample {
-        samples[position]
-    }
-}
-

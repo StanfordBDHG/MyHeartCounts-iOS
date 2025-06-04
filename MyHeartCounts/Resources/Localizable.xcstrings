@@ -10,19 +10,10 @@
     "—" : {
 
     },
-    "%.1f" : {
-
-    },
-    "%.2f" : {
-
-    },
     "%@" : {
 
     },
     "%lf" : {
-
-    },
-    "%lld" : {
 
     },
     "%lld ft" : {
@@ -86,7 +77,7 @@
     "Add" : {
 
     },
-    "Add new Sample" : {
+    "Add Data" : {
 
     },
     "Add Sample" : {
@@ -177,6 +168,9 @@
 
     },
     "Delete&Reset Session" : {
+
+    },
+    "Details" : {
 
     },
     "Disclosure Indicator" : {
@@ -279,6 +273,9 @@
     "Heart Health" : {
 
     },
+    "Heart Health Dashboard" : {
+
+    },
     "Historical Data Bulk Export" : {
 
     },
@@ -323,9 +320,6 @@
         }
       }
     },
-    "Life's Essential 8" : {
-
-    },
     "Link Arrow Symbol" : {
 
     },
@@ -345,6 +339,7 @@
 
     },
     "My Heart Counts" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -353,6 +348,9 @@
           }
         }
       }
+    },
+    "MyHeart Counts" : {
+
     },
     "n/a" : {
 
@@ -556,13 +554,7 @@
     "Time Zone" : {
 
     },
-    "Today" : {
-
-    },
     "Today's Tasks" : {
-
-    },
-    "TODO" : {
 
     },
     "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {

@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable file_types_order
 
 import Charts
 import Foundation
@@ -25,99 +25,42 @@ extension Gradient {
 enum HealthDashboardConstants {}
 
 
-@ViewBuilder @MainActor
-func healthDashboardSmallComponentView(for config: HealthDashboardLayout.GridComponent.QuantityDisplayComponentConfig) -> some View {
-    switch config.dataSource {
-    case .healthKit(.quantity(let sampleType)):
-        HealthDashboardQuantityComponentGridCell(inputSampleType: .healthKit(sampleType), config: config)
-    case .custom(let dataSource):
-        HealthDashboardQuantityComponentGridCell(inputSampleType: .custom(dataSource), config: config)
-    case .healthKit(.category(.sleepAnalysis)):
+@ViewBuilder
+@MainActor
+func healthDashboardComponentView(
+    for config: HealthDashboardLayout.GridComponent.ComponentDisplayConfig,
+    withSize size: HealthDashboardLayout.ComponentSize
+) -> some View {
+    switch (size, config.dataSource) {
+    case (_, .healthKit(.quantity(let sampleType))):
+        HealthDashboardQuantityComponentGridCell(queryInput: .healthKit(sampleType), config: config)
+    case (_, .custom(let dataSource)):
+        HealthDashboardQuantityComponentGridCell(queryInput: .custom(dataSource), config: config)
+    case (.small, .healthKit(.category(.sleepAnalysis))):
         SmallSleepAnalysisGridCell()
-    case .healthKit(.correlation(.bloodPressure)):
-        BloodPressureGridCell()
-    case .healthKit:
-        // TODO?
-        EmptyView()
-    }
-}
-
-
-@ViewBuilder @MainActor
-func healthDashboardLargeComponentView(for config: HealthDashboardLayout.GridComponent.QuantityDisplayComponentConfig) -> some View {
-    switch config.dataSource {
-    case .healthKit(.quantity(let sampleType)):
-        HealthDashboardQuantityComponentGridCell(inputSampleType: .healthKit(sampleType), config: config)
-    case .custom(let dataSource):
-        HealthDashboardQuantityComponentGridCell(inputSampleType: .custom(dataSource), config: config)
-    case .healthKit(.category(.sleepAnalysis)):
+    case (.large, .healthKit(.category(.sleepAnalysis))):
         LargeSleepAnalysisView(timeRange: config.timeRange)
-    case .healthKit(.correlation(.bloodPressure)):
-        BloodPressureGridCell()
-    case .healthKit:
-        // TODO?
+    case (_, .healthKit(.correlation(.bloodPressure))):
+        BloodPressureGridCell() // maybe have a dedicated large cell for this?
+    case (_, .healthKit):
+        // we shouldn't end up in here, since the GridComponent factory methods limit which HealthKit sample types are allowed here...
         EmptyView()
     }
 }
-
-
-struct StyledGauge: View {
-    private let value: Double
-    private let range: ClosedRange<Double>
-    
-    init(value: Double, in range: ClosedRange<Double>) {
-        self.value = value
-        self.range = range
-    }
-
-
-    var body: some View {
-        SwiftUI.Gauge(value: value, in: range) {
-            Image(systemName: "heart.fill")
-                .foregroundColor(.red)
-        } currentValueLabel: {
-            Text("\(Int(value))")
-                .foregroundColor(Color.green)
-        } minimumValueLabel: {
-            Text("\(Int(range.lowerBound))")
-                .foregroundColor(Color.green)
-        } maximumValueLabel: {
-            Text("\(Int(range.upperBound))")
-                .foregroundColor(Color.red)
-        }
-//        .gaugeStyle(CircularGaugeStyle(tint: gradient))
-        .gaugeStyle(.accessoryCircular)
-    }
-}
-
 
 
 struct HealthDashboard<Footer: View>: View {
-    private static var tmp_enableDebugGaugesSection: Bool { false }
-    
-    // TODO good names for all of these!!!
     typealias SampleTypeGoalProvider = @MainActor (QuantitySample.SampleType) -> Achievement.ResolvedGoal?
-    typealias AddSampleHandler = @MainActor (MHCSampleType) -> Void
+    typealias SelectionHandler = @MainActor (SelectionHandlerInput) -> Void
+    enum SelectionHandlerInput {
+        case healthKit(SampleTypeProxy)
+        case customQuantitySample(CustomQuantitySampleType)
+    }
     
     private let layout: HealthDashboardLayout
     private let goalProvider: SampleTypeGoalProvider?
-    private let addSampleHandler: AddSampleHandler?
-    private let footer: (@MainActor () -> Footer) // TODO make the type itself generic!
-    
-    init(
-//        @HealthDashboardLayoutBuilder layout: () -> HealthDashboardLayout,
-        layout: HealthDashboardLayout,
-        goalProvider: SampleTypeGoalProvider? = nil,
-        addSampleHandler: AddSampleHandler? = nil,
-        @ViewBuilder footer: @MainActor @escaping () -> Footer = { EmptyView() }
-    ) {
-        self.layout = layout
-        self.goalProvider = goalProvider
-        self.addSampleHandler = addSampleHandler
-        self.footer = footer
-    }
-    
-    @State private var tmp_gaugeValue: Double = 1 / 3
+    private let selectionHandler: SelectionHandler?
+    private let footer: (@MainActor () -> Footer)
     
     var body: some View {
         ScrollView {
@@ -128,7 +71,15 @@ struct HealthDashboard<Footer: View>: View {
                     case .grid(let components):
                         makeGrid(with: components)
                     case .largeChart(let component):
-                        makeChart(for: component)
+                        healthDashboardComponentView(
+                            for: .init(
+                                dataSource: component.dataSource,
+                                timeRange: component.timeRange,
+                                style: .chart(component.chartConfig),
+                                enableSelection: false
+                            ),
+                            withSize: .large
+                        )
                     case .largeCustom(let makeView):
                         makeView()
                     }
@@ -144,54 +95,24 @@ struct HealthDashboard<Footer: View>: View {
                 }
             }
             .padding(.horizontal)
-            if Self.tmp_enableDebugGaugesSection {
-                gaugeDebugSection
-                    .padding(.horizontal)
-            }
             footer()
         }
         .makeBackgroundMatchFormBackground()
     }
     
-    @ViewBuilder private var gaugeDebugSection: some View {
-        Color.clear.frame(height: 20)
-        HStack {
-            Spacer()
-            StyledGauge(value: tmp_gaugeValue, in: 0...1)
-                .background(.red.opacity(0.2))
-            Spacer()
-            Gauge2(gradient: .greenToRed, progress: tmp_gaugeValue)
-                .frame(width: 58, height: 58)
-                .background(.red.opacity(0.2))
-            Spacer()
-            ZStack {
-                StyledGauge(value: tmp_gaugeValue, in: 0...1)
-                Gauge2(gradient: .greenToRed, progress: tmp_gaugeValue)
-                    .opacity(0.5)
-                    .frame(width: 58, height: 58)
-            }
-            Spacer()
-            Gauge(progress: tmp_gaugeValue, gradient: .redToGreen, backgroundColor: .clear, lineWidth: 4)
-                .frame(width: 40, height: 40)
-                .background(.red.opacity(0.2))
-            Spacer()
-        }
-        
-        HStack {
-            Slider(value: $tmp_gaugeValue, in: 0...1)
-            Text("\(tmp_gaugeValue, specifier: "%.2f")")
-                .monospacedDigit()
-        }
-        HStack {
-            ForEach(Array(stride(from: 0, through: 1, by: 0.1)), id: \.self) { step in
-                Button("\(step, specifier: "%.1f")") {
-                    withAnimation {
-                        tmp_gaugeValue = step
-                    }
-                }
-            }
-        }
+    
+    init(
+        layout: HealthDashboardLayout,
+        goalProvider: SampleTypeGoalProvider? = nil,
+        selectionHandler: SelectionHandler? = nil,
+        @ViewBuilder footer: @MainActor @escaping () -> Footer = { EmptyView() }
+    ) {
+        self.layout = layout
+        self.goalProvider = goalProvider
+        self.selectionHandler = selectionHandler
+        self.footer = footer
     }
+    
     
     @ViewBuilder
     private func makeGrid(with components: [HealthDashboardLayout.GridComponent]) -> some View {
@@ -214,7 +135,7 @@ struct HealthDashboard<Footer: View>: View {
         let view = Group {
             switch component {
             case .quantityDisplay(let config):
-                makeComponentView(for: config)
+                healthDashboardComponentView(for: config, withSize: .small)
             case .custom(let config):
                 HealthDashboardSmallGridCell(title: config.title) {
                     config.content()
@@ -224,15 +145,16 @@ struct HealthDashboard<Footer: View>: View {
         let tapAction = { () -> (@MainActor () -> Void)? in
             switch component {
             case .quantityDisplay(let config):
-                if config.allowAddingSamples, let addSampleHandler {
+                if config.enableSelection, let selectionHandler {
                     switch config.dataSource {
                     case .healthKit(let sampleType):
                         { @MainActor in
-                            addSampleHandler(MHCSampleType.healthKit(sampleType))
+                            selectionHandler(.healthKit(sampleType))
                         }
                     case .custom(let dataSource):
-                        // TODO extend the addSampleHandler to also support this!!!
-                        nil
+                        { @MainActor in
+                            selectionHandler(.customQuantitySample(dataSource.sampleType))
+                        }
                     }
                 } else {
                     nil
@@ -253,60 +175,26 @@ struct HealthDashboard<Footer: View>: View {
         }
         .contextMenu {
             switch component {
-            case .quantityDisplay(let config):
-                EmptyView() // TODO
+            case .quantityDisplay:
+                EmptyView()
             case .custom(let config):
                 config.contextMenu()
             }
         }
     }
-    
-    
-    @ViewBuilder
-    private func makeComponentView(for config: HealthDashboardLayout.GridComponent.QuantityDisplayComponentConfig) -> some View {
-//        switch config.dataSource {
-//        case .healthKit(.quantity(let sampleType)):
-//            HealthDashboardQuantityComponentGridCell(inputSampleType: .healthKit(sampleType), config: config)
-//        case .custom(let dataSource):
-//            HealthDashboardQuantityComponentGridCell(inputSampleType: .custom(dataSource), config: config)
-//        case .healthKit(.category(.sleepAnalysis)):
-//            SleepAnalysisGridCell()
-//        case .healthKit(.correlation(.bloodPressure)):
-//            BloodPressureGridCell()
-//        case .healthKit:
-//            // TODO?
-//            EmptyView()
-//        }
-        healthDashboardSmallComponentView(for: config)
-    }
-    
-    
-    @ViewBuilder
-    private func makeChart(
-        for component: HealthDashboardLayout.LargeChartComponent
-    ) -> some View {
-        healthDashboardLargeComponentView(for: .init(
-            dataSource: component.dataSource,
-            timeRange: component.timeRange,
-            style: .chart(component.chartConfig),
-            allowAddingSamples: false
-        ))
-    }
 }
 
 
+@available(*, deprecated, renamed: "StatisticsAggregationOption")
+typealias StatisticsQueryAggregationKind = SpeziHealthKitUI.StatisticsAggregationOption
 
-enum StatisticsQueryAggregationKind { // TODO why not reuse the type from SpeziHealthKit?
-    case sum, average
-    
+extension SpeziHealthKitUI.StatisticsAggregationOption {
     init(_ other: HKQuantityAggregationStyle) {
         switch other {
         case .cumulative:
             self = .sum
-        case .discreteArithmetic:
-            self = .average
-        case .discreteTemporallyWeighted:
-            self = .average
+        case .discreteArithmetic, .discreteTemporallyWeighted:
+            self = .avg
         case .discreteEquivalentContinuousLevel:
             fatalError("Currently not supported")
         @unknown default:
@@ -337,7 +225,7 @@ enum TimeConstants {
 
 extension FloatingPoint {
     var isWholeNumber: Bool {
-        rounded() == self // TODO is this correct? a good idea?
+        rounded().isEqual(to: self)
     }
 }
 
@@ -354,13 +242,6 @@ extension HKCorrelation {
 }
 
 
-
-/// Compare two sample types, based on their identifiers
-@inlinable public func ~= (pattern: SampleType<some Any>, value: SampleTypeProxy) -> Bool {
-    pattern.id == value.id
-}
-
-
 extension AnySampleType {
     var preferredTintColorForDisplay: Color? {
         switch SampleTypeProxy(self) {
@@ -370,7 +251,9 @@ extension AnySampleType {
             Color.blue
         case .bloodPressure, .bloodPressureSystolic, .bloodPressureDiastolic:
             Color.red
-        case .stepCount, .walkingStepLength, .distanceWalkingRunning, .runningStrideLength, .stairAscentSpeed, .stairDescentSpeed, .walkingAsymmetryPercentage, .walkingDoubleSupportPercentage:
+        case .stepCount, .walkingStepLength, .distanceWalkingRunning, .runningStrideLength,
+                .stairAscentSpeed, .stairDescentSpeed,
+                .walkingAsymmetryPercentage, .walkingDoubleSupportPercentage:
             Color.orange
         default:
             nil
@@ -391,11 +274,9 @@ extension QuantitySample.SampleType {
 }
 
 
-
 extension HealthKitStatisticsQuery.AggregationInterval {
-    static func `for`(_ queryTimeRange: HealthKitQueryTimeRange) -> Self {
-        let cal = Calendar.current
-        let components = cal.dateComponents(
+    static func `for`(_ queryTimeRange: HealthKitQueryTimeRange, in calendar: Calendar) -> Self {
+        let components = calendar.dateComponents(
             [.year, .month, .day, .hour, .minute, .second],
             from: queryTimeRange.range.lowerBound,
             to: queryTimeRange.range.upperBound

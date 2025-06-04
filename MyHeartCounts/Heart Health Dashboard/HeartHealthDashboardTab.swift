@@ -24,7 +24,7 @@ struct HeartHealthDashboardTab: RootViewTab {
     
     var body: some View {
         NavigationStack {
-            LifesEssential8()
+            HeartHealthDashboard()
                 .toolbar {
                     accountToolbarItem
                 }

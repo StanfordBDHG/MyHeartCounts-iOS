@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import HealthKit
 import SpeziHealthKit
@@ -16,10 +14,9 @@ import SwiftData
 import struct SwiftUI.Color
 
 
-
 enum MHCSampleType: Hashable, Identifiable, Sendable {
     case healthKit(SampleTypeProxy)
-    case custom(CustomHealthSample.SampleType) // TODO call this case swiftData instead?!
+    case custom(CustomHealthSample.SampleType)
     
     var id: AnyHashable {
         switch self {
@@ -53,10 +50,10 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     let id: String
     let displayTitle: String
     let displayUnit: HKUnit
-    let aggregationKind: StatisticsQueryAggregationKind
+    let aggregationKind: StatisticsAggregationOption
     let preferredTintColor: Color
     
-    init(id: String, displayTitle: String, displayUnit: HKUnit, aggregationKind: StatisticsQueryAggregationKind, preferredTintColor: Color) {
+    init(id: String, displayTitle: String, displayUnit: HKUnit, aggregationKind: StatisticsAggregationOption, preferredTintColor: Color) {
         self.id = id
         self.displayTitle = displayTitle
         self.displayUnit = displayUnit
@@ -71,7 +68,7 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
                 id: "mhc:custom:bloodLipids",
                 displayTitle: sampleType.displayTitle,
                 displayUnit: sampleType.displayUnit!, // swiftlint:disable:this force_unwrapping
-                aggregationKind: .average,
+                aggregationKind: .avg,
                 preferredTintColor: .yellow // ???
             )
         case .nicotineExposure, .dietMEPAScore:
@@ -81,19 +78,9 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
 }
 
 
-
 enum MHCQuantitySampleType: Hashable, Identifiable, Sendable {
     case healthKit(SampleType<HKQuantitySample>)
     case custom(CustomQuantitySampleType)
-    
-    init?(_ other: MHCSampleType) {
-        switch other {
-        case .healthKit(.quantity(let sampleType)):
-            self = .healthKit(sampleType)
-        case .healthKit, .custom:
-            return nil
-        }
-    }
     
     var id: String {
         switch self {
@@ -119,6 +106,15 @@ enum MHCQuantitySampleType: Hashable, Identifiable, Sendable {
             sampleType.displayUnit
         case .custom(let sampleType):
             sampleType.displayUnit
+        }
+    }
+    
+    init?(_ other: MHCSampleType) {
+        switch other {
+        case .healthKit(.quantity(let sampleType)):
+            self = .healthKit(sampleType)
+        case .healthKit, .custom:
+            return nil
         }
     }
 }
@@ -180,15 +176,13 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
 
 extension Collection where Element == QuantitySample {
     func aggregated(
-        using kind: StatisticsQueryAggregationKind,
+        using kind: StatisticsAggregationOption,
         over timeInterval: HealthKitStatisticsQuery.AggregationInterval,
         anchor: Date,
         overallTimeRange: Range<Date>,
-        calendar: Calendar = .current
+        calendar: Calendar
     ) -> [QuantitySample] {
-        print(timeInterval.intervalComponents, overallTimeRange)
-        var samplesAlreadyProcessed = Set<QuantitySample>()
-        let retval = calendar
+        calendar
             .dates(
                 byAdding: timeInterval.intervalComponents,
                 startingAt: anchor,
@@ -196,7 +190,7 @@ extension Collection where Element == QuantitySample {
             )
             // `Calendar.dates(byAdding:startingAt:in:)` doesn't include the start date, so we need to manually prepend it to the sequence.
             .chaining(after: CollectionOfOne(anchor))
-//            .lazy
+            .lazy
             .compactMap { date -> Range<Date>? in
                 calendar.date(byAdding: timeInterval.intervalComponents, to: date).map { date..<$0 }
             }
@@ -212,12 +206,9 @@ extension Collection where Element == QuantitySample {
                     }
                 }
                 .map { sample in
-                    if !samplesAlreadyProcessed.insert(sample).inserted {
-                        // TODO look into this!
-                        print("SAMPLE IS BEING PROCESSED TWICE!!! \(sample.value) \(sample.startDate) \(sample.endDate)")
-                    }
                     switch kind {
-                    case .average:
+                    case .avg, .min, .max:
+                        // for the non-cumulative options, we can simply pass the data on unchanged.
                         return sample
                     case .sum:
                         if sample.startDate == sample.endDate || (range.contains(sample.startDate) && range.contains(sample.endDate)) {
@@ -238,18 +229,13 @@ extension Collection where Element == QuantitySample {
                     }
                 }
             }
-        let retval2 = Array(retval)
-//        print("RETVAL:")
-//        for sample in retval2 {
-//            print("- \(sample.value) \(sample.startDate) \(sample.endDate)")
-//        }
-        return retval2
     }
     
     
-    func aggregated(
+    func aggregated( // swiftlint:disable:this cyclomatic_complexity
         using input: HealthDashboardLayout.SingleValueConfig._Variant,
-        overallTimeRange: Range<Date>
+        overallTimeRange: Range<Date>,
+        calendar: Calendar
     ) -> [QuantitySample] {
         guard let firstSample = first else {
             return []
@@ -263,18 +249,19 @@ extension Collection where Element == QuantitySample {
                 return []
             }
         case let .aggregated(steps, final):
-            let cal = Calendar.current
             var samples = Array(self)
             for step in steps {
                 samples = samples.aggregated(
                     using: step.kind,
                     over: step.interval,
-                    anchor: cal.startOfDay(for: overallTimeRange.lowerBound),
+                    anchor: calendar.startOfDay(for: overallTimeRange.lowerBound),
                     overallTimeRange: overallTimeRange,
-                    calendar: cal
+                    calendar: calendar
                 )
             }
-            assert(!samples.isEmpty)
+            guard !samples.isEmpty else {
+                return samples // de-facto unreachable, but we wanna be safe
+            }
             guard let final else {
                 return samples
             }
@@ -286,13 +273,20 @@ extension Collection where Element == QuantitySample {
                     value: { () -> Double in
                         switch final {
                         case .sum:
-                            return samples.reduce(0) { $0 + $1.value }
-                        case .average:
-                            print("calc.avg #samples: \(samples.count)\n\(samples.map { "- \($0.value) \($0.startDate..<$0.endDate)" }.joined(separator: "\n"))")
-                            return samples.reduce(0) { $0 + $1.value } / Double(samples.count)
+                            samples.reduce(0) { $0 + $1.value }
+                        case .avg:
+                            samples.reduce(0) { $0 + $1.value } / Double(samples.count)
+                        case .min:
+                            // SAFETY: we know that samples is non-empty
+                            samples.min(of: \.value)! // swiftlint:disable:this force_unwrapping
+                        case .max:
+                            // SAFETY: we know that samples is non-empty
+                            samples.max(of: \.value)! // swiftlint:disable:this force_unwrapping
                         }
                     }(),
+                    // SAFETY: we know that samples is non-empty
                     startDate: samples.min(of: \.startDate)!, // swiftlint:disable:this force_unwrapping
+                    // SAFETY: we know that samples is non-empty
                     endDate: samples.max(of: \.endDate)! // swiftlint:disable:this force_unwrapping
                 )
             ]

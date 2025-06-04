@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable type_contents_order
 
 import Foundation
 import SpeziFoundation
@@ -15,19 +15,15 @@ import SpeziHealthKitUI
 import SwiftUI
 
 
-enum HealthDashboardLayoutBuilder: RangeReplaceableCollectionBuilderBase {
-    typealias Element = HealthDashboardLayout.Block
-    
-    static func buildFinalResult(_ component: IntermediateStep) -> HealthDashboardLayout {
-        HealthDashboardLayout(blocks: component)
-    }
-}
-
 struct HealthDashboardLayout: Sendable {
     var blocks: [Block]
     
     init(blocks: some Collection<Block> = []) {
         self.blocks = Array(blocks)
+    }
+    
+    init(@ArrayBuilder<Block> blocks: () -> [Block]) {
+        self.init(blocks: blocks())
     }
 }
 
@@ -45,7 +41,7 @@ extension HealthDashboardLayout {
             case grid([GridComponent])
         }
         
-        let title: String? // TODO localize!
+        let title: String?
         let content: Content
         
         private init(title: String?, content: Content) {
@@ -88,10 +84,10 @@ extension HealthDashboardLayout {
         case chart(ChartConfig)
         case gauge(GaugeConfig) // TODO need to specify the min/max values, and what we want to use as the "current" value (ie: latest? average?)
         
-        func effectiveAggregationKind(for sampleType: MHCQuantitySampleType) -> StatisticsQueryAggregationKind {
+        func effectiveAggregationKind(for sampleType: MHCQuantitySampleType) -> StatisticsAggregationOption {
             switch self {
             case .chart:
-                StatisticsQueryAggregationKind(sampleType)
+                StatisticsAggregationOption(sampleType)
             case .singleValue(let config), .gauge(let config):
                 config.effectiveAggregationKind ?? .init(sampleType)
             }
@@ -104,19 +100,16 @@ extension HealthDashboardLayout {
     struct SingleValueConfig: Sendable {
         enum _Variant: Sendable { // swiftlint:disable:this type_name
             case mostRecentSample
-            case aggregated([QuantitySamplesAggregationStrategy], StatisticsQueryAggregationKind?)
+            case aggregated([QuantitySamplesAggregationStrategy], StatisticsAggregationOption?)
         }
+        
         let _variant: _Variant // swiftlint:disable:this identifier_name
         
-        private init(_variant: _Variant) {
-            self._variant = _variant
-        }
-        
-        fileprivate var effectiveAggregationKind: StatisticsQueryAggregationKind? {
+        fileprivate var effectiveAggregationKind: StatisticsAggregationOption? {
             switch _variant {
             case .mostRecentSample:
                 nil
-            case .aggregated(let steps, let final):
+            case let .aggregated(steps, final):
                 final ?? steps.last!.kind // swiftlint:disable:this force_unwrapping
             }
         }
@@ -125,7 +118,11 @@ extension HealthDashboardLayout {
             .init(_variant: .mostRecentSample)
         }
         
-        static func aggregated(_ kind: StatisticsQueryAggregationKind) -> Self {
+        private init(_variant: _Variant) { // swiftlint:disable:this identifier_name
+            self._variant = _variant
+        }
+        
+        static func aggregated(_ kind: StatisticsAggregationOption) -> Self {
             .init(_variant: .aggregated([], kind))
         }
         
@@ -135,7 +132,7 @@ extension HealthDashboardLayout {
         
         static func aggregated(
             _ start: QuantitySamplesAggregationStrategy,
-            _ final: StatisticsQueryAggregationKind
+            _ final: StatisticsAggregationOption
         ) -> Self {
             .aggregated(start, final: final)
         }
@@ -143,7 +140,7 @@ extension HealthDashboardLayout {
         static func aggregated(
             _ start: QuantitySamplesAggregationStrategy,
             _ then: QuantitySamplesAggregationStrategy...,
-            final: StatisticsQueryAggregationKind
+            final: StatisticsAggregationOption
         ) -> Self {
             .init(_variant: .aggregated([start].appending(contentsOf: then), final))
         }
@@ -179,7 +176,9 @@ extension HealthDashboardLayout {
             }
         }
         
-        private static func defaultSmallChartAggregationInterval(for timeRange: HealthKitQueryTimeRange) -> HealthKitStatisticsQuery.AggregationInterval {
+        private static func defaultSmallChartAggregationInterval(
+            for timeRange: HealthKitQueryTimeRange
+        ) -> HealthKitStatisticsQuery.AggregationInterval {
             let duration = timeRange.duration
             return if duration <= TimeConstants.hour {
                 HealthKitStatisticsQuery.AggregationInterval(.init(minute: 15))
@@ -200,30 +199,22 @@ extension HealthDashboardLayout {
     }
     
     struct AutomaticChartConfig {
-        private init() {}
         static let automatic = Self()
+        private init() {}
     }
     
     
-    protocol CustomDataSourceProtocol: Sendable, Observable, RandomAccessCollection where Element == QuantitySample {
+    protocol CustomDataSourceProtocol: Sendable, Observable {
+        associatedtype Samples: RandomAccessCollection<QuantitySample>
         /// The range of time represented by this data source
         var timeRange: HealthKitQueryTimeRange { get }
         var sampleType: CustomQuantitySampleType { get }
+        @MainActor var samples: Samples { get }
     }
     
     enum DataSource: Sendable {
         case healthKit(SampleTypeProxy)
         case custom(any CustomDataSourceProtocol)
-        
-//        /// Creates a DataSource for the specified sample type
-//        init(sampleType: MHCSampleType) {
-//            switch sampleType {
-//            case .healthKit(let proxy):
-//                self = .healthKit(proxy)
-//            case .custom(let sampleType):
-//                <#code#>
-//            }
-//        }
         
         var sampleTypeDisplayTitle: String {
             switch self {
@@ -263,11 +254,11 @@ extension HealthDashboardLayout {
     /// A Health Stat Component within a Grid Section
     enum GridComponent: Sendable {
         /// The config of a component that displays a Quantity fetched from eg HealthKit.
-        struct QuantityDisplayComponentConfig: Sendable { // TODO rename! (also covers non-quantity types)
+        struct ComponentDisplayConfig: Sendable {
             let dataSource: DataSource
             let timeRange: HealthKitQueryTimeRange
             let style: Style
-            let allowAddingSamples: Bool
+            let enableSelection: Bool
         }
         
         /// The config of a component that displays a custom view.
@@ -290,11 +281,11 @@ extension HealthDashboardLayout {
             }
         }
         
-        case quantityDisplay(QuantityDisplayComponentConfig)
+        case quantityDisplay(ComponentDisplayConfig) // technically wrong since it's also used for some (select) non-quantity types...
         case custom(CustomComponentConfig)
         
-        private init(dataSource: DataSource, timeRange: HealthKitQueryTimeRange, style: Style, allowAddingSamples: Bool) {
-            self = .quantityDisplay(.init(dataSource: dataSource, timeRange: timeRange, style: style, allowAddingSamples: allowAddingSamples))
+        private init(dataSource: DataSource, timeRange: HealthKitQueryTimeRange, style: Style, enableSelection: Bool) {
+            self = .quantityDisplay(.init(dataSource: dataSource, timeRange: timeRange, style: style, enableSelection: enableSelection))
         }
         
         /// Creates a new Component
@@ -305,22 +296,22 @@ extension HealthDashboardLayout {
             _ sampleType: SampleType<HKQuantitySample>,
             timeRange: HealthKitQueryTimeRange = .today, // swiftlint:disable:this function_default_parameter_at_end
             style: Style,
-            allowAddingSamples: Bool = true // TODO default back to false!
+            enableSelection: Bool = true
         ) {
             self = .quantityDisplay(.init(
                 dataSource: .healthKit(SampleTypeProxy(sampleType)),
                 timeRange: timeRange,
                 style: style,
-                allowAddingSamples: allowAddingSamples
+                enableSelection: enableSelection
             ))
         }
         
-        static func bloodPressure(style: Style) -> Self {
-            Self(dataSource: .healthKit(.init(.bloodPressure)), timeRange: .last(days: 2), style: style, allowAddingSamples: false)
+        static func bloodPressure(style: Style, enableSelection: Bool = true) -> Self {
+            Self(dataSource: .healthKit(.init(.bloodPressure)), timeRange: .last(days: 2), style: style, enableSelection: enableSelection)
         }
         
-        static func sleepAnalysis(style: Style) -> Self {
-            Self(dataSource: .healthKit(.init(.sleepAnalysis)), timeRange: .last(days: 7), style: style, allowAddingSamples: false)
+        static func sleepAnalysis(style: Style, enableSelection: Bool = true) -> Self {
+            Self(dataSource: .healthKit(.init(.sleepAnalysis)), timeRange: .last(days: 7), style: style, enableSelection: enableSelection)
         }
         
         static func custom(
