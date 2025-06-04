@@ -312,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "branch" : "lukas/TimedWalkingTest",
-        "revision" : "c21314e8b6ffeb74a7d4bb152647b8a2f90acbcb"
+        "revision" : "9e68a0979ef4a0fba50df861df2b64711bb7b532",
+        "version" : "0.1.6"
       }
     },
     {

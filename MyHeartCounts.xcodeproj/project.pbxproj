@@ -1724,8 +1724,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				branch = lukas/TimedWalkingTest;
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.6;
 			};
 		};
 		805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {
