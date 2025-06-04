@@ -27,6 +27,7 @@ platform :ios do
   desc "Build and Test UI Tests"
   lane :uitest do
     run_tests(
+      scheme: "MyHeartCounts",
       skip_build: true,
       testplan: "MyHeartCounts UI Tests",
       derived_data_path: ".derivedData",
@@ -48,6 +49,7 @@ platform :ios do
   desc "Screenshots"
   lane :screenshots do
     run_tests(
+      scheme: "MyHeartCounts",
       destination: "generic/platform=iOS Simulator",
       configuration: "Debug",
       derived_data_path: ".derivedData",
