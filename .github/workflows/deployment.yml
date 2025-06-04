@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - lukas/TimedWalkingTest
   workflow_dispatch:
     inputs:
       environment:
