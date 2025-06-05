@@ -165,7 +165,9 @@ platform :ios do
 
     UI.message("Using environment: #{environment}")
     UI.message("Using app identifier: #{appidentifier}")
+    UI.message("Using secondary app identifier: #{secondaryAppIdentifier}")
     UI.message("Using provisioning profile: #{provisioningProfile}")
+    UI.message("Using secondary provisioning profile: #{secondaryProvisioningProfile}")
     UI.message("Using version name: #{versionname}")
     UI.message("Using release notes: #{releasenotes}")
 
