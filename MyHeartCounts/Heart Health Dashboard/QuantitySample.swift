@@ -65,7 +65,7 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
         switch sampleType {
         case .bloodLipids:
             self = Self(
-                id: "mhc:custom:bloodLipids",
+                id: "mhc.customSampleType.bloodLipids",
                 displayTitle: sampleType.displayTitle,
                 displayUnit: sampleType.displayUnit!, // swiftlint:disable:this force_unwrapping
                 aggregationKind: .avg,

@@ -21,6 +21,8 @@ struct SaveQuantitySampleView: View {
     private var dismiss
     @Environment(\.modelContext)
     private var modelContext
+    @Environment(MyHeartCountsStandard.self)
+    private var standard
     
     private let sampleTypeTitle: String
     private let sampleTypeUnit: HKUnit
@@ -86,15 +88,16 @@ struct SaveQuantitySampleView: View {
             guard let value = self.value else {
                 return
             }
-            let sample = CustomHealthSample(
-                sampleType: sampleType,
-                startDate: self.date,
-                endDate: self.date,
-                unit: unit,
-                value: value
-            )
-            self.modelContext.insert(sample)
-            try self.modelContext.save()
+//            let sample = CustomHealthSample(
+//                sampleType: sampleType,
+//                startDate: self.date,
+//                endDate: self.date,
+//                unit: unit,
+//                value: value
+//            )
+//            self.modelContext.insert(sample)
+//            try self.modelContext.save()
+            try await self.standard
         }
     }
 }

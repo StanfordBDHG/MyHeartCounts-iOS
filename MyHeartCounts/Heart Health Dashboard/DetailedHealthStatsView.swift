@@ -271,23 +271,6 @@ private struct ScoreExplanationView: View {
             }
             Text(Int(element.score * 100), format: .number)
         }
-//        HStack {
-//            Text(element.textualRepresentation)
-//            Spacer()
-//            if didMatch {
-//                Image(systemSymbol: .checkmarkCircle)
-//                    .accessibilityLabel("Matching Entry")
-//            }
-//            Text(Int(element.score * 100), format: .number)
-//        }
-//        .padding(.horizontal)
-//        .padding(.vertical, 5)
-//        .background {
-//            color.opacity(didMatch ? 1 : 0.9)
-//        }
-//        .clipShape(RoundedRectangle(cornerRadius: 7))
-//        .foregroundStyle(.black)
-//        .font(.subheadline.weight(didMatch ? .semibold : .medium))
     }
     
     

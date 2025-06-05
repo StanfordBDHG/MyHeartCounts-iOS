@@ -98,7 +98,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     
     private func healthKitDocument(for sampleType: SampleType<some Any>, sampleId uuid: UUID) async throws -> FirebaseFirestore.DocumentReference {
         try await firebaseConfiguration.userDocumentReference
-            .collection("HealthKitObservations_\(sampleType.hkSampleType.identifier)")
+            .collection("HealthObservations_\(sampleType.hkSampleType.identifier)")
             .document(uuid.uuidString)
     }
 }
