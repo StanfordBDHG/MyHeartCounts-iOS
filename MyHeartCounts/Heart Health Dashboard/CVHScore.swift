@@ -216,8 +216,8 @@ extension CVHScore {
                 if let systolic = correlation.firstSample(ofType: .bloodPressureSystolic),
                    let diastolic = correlation.firstSample(ofType: .bloodPressureDiastolic) {
                     BloodPressureMeasurement(
-                        systolic: systolic.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit),
-                        diastolic: diastolic.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit)
+                        systolic: Int(systolic.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit)),
+                        diastolic: Int(diastolic.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit))
                     )
                 } else {
                     nil
@@ -327,7 +327,29 @@ extension ScoreDefinition {
         .inRange(10..., score: 0)
     ])
     
-    static let cvhBloodPressure = ScoreDefinition(default: 0, mapping: []) // TODO!!!
+    static let cvhBloodPressure = ScoreDefinition(
+        default: 0,
+        // ideally we'd simply put the explanation directly into the ScoreDefinition, and have it work in a way that
+        // the UI gets created based on that; but for the time being we simply have this ScoreDefinition hardcoded.
+        textualRepresentation: ""
+    ) { (measurement: BloodPressureMeasurement) in
+        let systolicScore: Double = switch measurement.systolic as Int {
+        case ..<120: 0.75
+        case 120...129: 0.65
+        case 130...139: 0.5
+        case 140...159: 0.25
+        case 160...: 0
+        default: 0 // unreachable
+        }
+        let diastolicScore: Double = switch measurement.diastolic as Int {
+        case ..<80: 0.25
+        case 80...89: 0.15
+        case 90...99: 0.05
+        case 100...: 0
+        default: 0 // unreachable
+        }
+        return systolicScore + diastolicScore
+    }
 }
 
 

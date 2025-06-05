@@ -11,7 +11,7 @@ import Foundation
 
 struct BloodPressureMeasurement: Hashable, Sendable {
     /// The systolic blood pressure, in mmHg
-    let systolic: Double
+    let systolic: Int
     /// The diastolic blood pressure, in mmHg
-    let diastolic: Double
+    let diastolic: Int
 }

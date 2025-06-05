@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+/// provides identity-based default implementations for `Equatable` and `Hashable` conformances, for `AnyObject` types that conform to either or both of these protocols.
+@_marker
 protocol AnyObjectBasedDefaultImpls {}
 
 extension AnyObjectBasedDefaultImpls where Self: AnyObject & Equatable {
