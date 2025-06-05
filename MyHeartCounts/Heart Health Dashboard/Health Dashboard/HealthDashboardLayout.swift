@@ -82,20 +82,18 @@ extension HealthDashboardLayout {
     enum Style: Sendable {
         case singleValue(SingleValueConfig)
         case chart(ChartConfig)
-        case gauge(GaugeConfig) // TODO need to specify the min/max values, and what we want to use as the "current" value (ie: latest? average?)
+        /// How the gauge's "current value" should be determined
+        case gauge(_ value: SingleValueConfig, score: ScoreDefinition)
         
         func effectiveAggregationKind(for sampleType: MHCQuantitySampleType) -> StatisticsAggregationOption {
             switch self {
             case .chart:
                 StatisticsAggregationOption(sampleType)
-            case .singleValue(let config), .gauge(let config):
+            case .singleValue(let config), .gauge(let config, score: _):
                 config.effectiveAggregationKind ?? .init(sampleType)
             }
         }
     }
-    
-    /// How the gauge's "current value" should be determined
-    typealias GaugeConfig = SingleValueConfig
     
     struct SingleValueConfig: Sendable {
         enum _Variant: Sendable { // swiftlint:disable:this type_name

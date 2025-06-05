@@ -82,6 +82,7 @@ struct Gauge2: View {
                 if let minimumValueText {
                     minimumValueText
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 if let maximumValueText {
                     maximumValueText
@@ -128,7 +129,7 @@ struct Gauge2: View {
         lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
         gradient: Gradient,
         progress: Double?,
-        currentValueText: () -> Text,
+        currentValueText: () -> Text?,
         minimumValueText: () -> Text,
         maximumValueText: () -> Text
     ) {
@@ -146,7 +147,7 @@ struct Gauge2: View {
         lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
         gradient: Gradient,
         progress: Double?,
-        currentValueText: () -> Text
+        currentValueText: () -> Text?
     ) {
         self.init(
             lineWidth: lineWidth,

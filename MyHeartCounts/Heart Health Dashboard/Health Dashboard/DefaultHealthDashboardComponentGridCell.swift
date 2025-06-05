@@ -17,7 +17,8 @@ import SwiftData
 import SwiftUI
 
 
-struct HealthDashboardQuantityComponentGridCell: View {
+/// Grid Cell intended for usage in the ``HealthDashboard``, with support for most (quantity-based) sample types.
+struct DefaultHealthDashboardComponentGridCell: View {
     enum QueryInput {
         case healthKit(SampleType<HKQuantitySample>)
         case custom(any HealthDashboardLayout.CustomDataSourceProtocol)
@@ -59,7 +60,7 @@ struct HealthDashboardQuantityComponentGridCell: View {
     
     private var aggregationMode: QuantitySamplesQueryingViewAggregationMode {
         switch config.style {
-        case .singleValue(let config), .gauge(let config):
+        case .singleValue(let config), .gauge(let config, score: _):
             switch config._variant {
             case .mostRecentSample:
                 return .mostRecentSample
@@ -110,7 +111,7 @@ struct HealthDashboardQuantityComponentGridCell: View {
             switch config.style {
             case .chart:
                 samples
-            case .singleValue(let config), .gauge(let config):
+            case .singleValue(let config), .gauge(let config, score: _):
                 samples.aggregated(using: config._variant, overallTimeRange: timeRange.range, calendar: calendar)
             }
         }()
@@ -168,8 +169,8 @@ private struct GridCellImpl: View {
                     .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
             case .singleValue:
                 singleValueContent(for: samples)
-            case .gauge:
-                gaugeContent(for: samples)
+            case let .gauge(_, score):
+                gaugeContent(for: samples, score: score)
             }
         }
     }
@@ -201,50 +202,73 @@ private struct GridCellImpl: View {
     }
     
     @ViewBuilder
-    private func gaugeContent(for samples: [QuantitySample]) -> some View {
-        if let goal {
-            let progress = goal.evaluate(
-                HKQuantity(unit: sampleType.displayUnit, doubleValue: samples.last?.value ?? 0),
-                unit: sampleType.displayUnit
-            )
-            Gauge2(gradient: .redToGreen, progress: progress)
-                .frame(width: 58, height: 58)
-        } else {
-            Text("TODO: MISSING GOAL!!!")
+    private func gaugeContent(for samples: [QuantitySample], score: ScoreDefinition) -> some View {
+        VStack {
+            let input = singleValueInput(for: samples)
+            let progress = input?.value.map { score.apply(to: $0) }
+            let currentValueText: Text? = input.map { input in
+                Text(input.valueString + (input.unitString.isEmpty ? "" : " \(input.unitString)")) // maybe have the unit someplace else?
+                    .font(.caption2)
+            }
+            let makeGaugeBoundaryText = { (value: Double) -> Text in
+                Text(value, format: .number.notation(.compactName))
+                    .font(.system(size: 8.5, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+            Group {
+                switch score.variant {
+                case .distinctMapping, .custom:
+                    Gauge2(
+                        gradient: .redToGreen,
+                        progress: progress
+                    ) { currentValueText }
+                case .range(let range):
+                    Gauge2(gradient: .redToGreen, progress: progress) {
+                        currentValueText
+                    } minimumValueText: {
+                        makeGaugeBoundaryText(range.lowerBound)
+                    } maximumValueText: {
+                        // technically we might need to adjust the value here a bit (it's an exclusive range),
+                        // but since we use `.number.notation(.compactName)` when formatting, it should be fine.
+                        makeGaugeBoundaryText(range.upperBound)
+                    }
+                }
+            }
+            .frame(width: 58, height: 58)
+            if let input {
+                // NOTE: displaying the entire range here technically won't always be correct (it's not incorrect either, just not perfect):
+                // if we have a single-value grid cell that displays the max heart rate measured today, we'd have the label at the bottom say
+                // "Today", even though displaying the precise time of this max heart rate measurement would be more correct.
+                Text(input.timeRange.displayText(using: cal))
+                    .foregroundStyle(.secondary)
+                    .font(.footnote)
+            }
         }
     }
     
-    private func singleValueContent(for samples: [QuantitySample]) -> some View { // swiftlint:disable:this function_body_length
-        @ViewBuilder
-        func makeView(for input: HealthDashboardQuantityLabel.Input?) -> some View {
-            if let input {
-                HealthDashboardQuantityLabel(input: input)
-            } else {
-                Text("n/a")
-            }
-        }
-        
-        let input: HealthDashboardQuantityLabel.Input?
+    
+    private func singleValueInput(for samples: [QuantitySample]) -> HealthDashboardQuantityLabel.Input? {
         switch style.effectiveAggregationKind(for: sampleType) {
         case .sum:
             if let lastSample = samples.last {
                 let total = samples.reduce(0) { $0 + $1.value }
                 switch sampleType {
                 case .healthKit(let sampleType):
-                    input = .init(
+                    return .init(
                         value: total,
                         sampleType: .healthKit(sampleType),
                         timeRange: lastSample.timeRange
                     )
                 case .custom(let sampleType):
-                    input = .init(
+                    return .init(
+                        value: total,
                         valueString: "\(total)", // ideally we'd make this look nice; depending on the SampleType
-                        unitString: sampleType.displayUnit.unitString,
+                        unit: sampleType.displayUnit,
                         timeRange: lastSample.timeRange
                     )
                 }
             } else {
-                input = nil
+                return nil
             }
         case .avg, .min, .max:
             // in the case of an average-based aggregation, i.e. in the case of all non-cumulative sample types,
@@ -252,23 +276,32 @@ private struct GridCellImpl: View {
             if let lastSample = samples.last {
                 switch sampleType {
                 case .healthKit(let sampleType):
-                    input = .init(
+                    return .init(
                         value: lastSample.value,
                         sampleType: .healthKit(sampleType),
                         timeRange: lastSample.timeRange
                     )
                 case .custom:
-                    input = .init(
+                    return .init(
+                        value: lastSample.value,
                         valueString: "\(lastSample.value)",
-                        unitString: lastSample.unit.unitString,
+                        unit: lastSample.unit,
                         timeRange: lastSample.timeRange
                     )
                 }
             } else {
-                input = nil
+                return nil
             }
         }
-        return makeView(for: input)
+    }
+    
+    @ViewBuilder
+    private func singleValueContent(for samples: [QuantitySample]) -> some View {
+        if let input = singleValueInput(for: samples) {
+            HealthDashboardQuantityLabel(input: input)
+        } else {
+            Text("n/a") // ???
+        }
     }
 }
 
@@ -278,7 +311,7 @@ private struct GridCellImpl: View {
 private struct SamplesProviderView<Content: View>: View {
     @Environment(\.calendar)
     private var calendar
-    private let input: HealthDashboardQuantityComponentGridCell.QueryInput
+    private let input: DefaultHealthDashboardComponentGridCell.QueryInput
     private let aggregationMode: QuantitySamplesQueryingViewAggregationMode
     private let timeRange: HealthKitQueryTimeRange
     private let content: @MainActor ([QuantitySample]) -> Content
@@ -323,7 +356,7 @@ private struct SamplesProviderView<Content: View>: View {
     }
     
     init(
-        input: HealthDashboardQuantityComponentGridCell.QueryInput,
+        input: DefaultHealthDashboardComponentGridCell.QueryInput,
         aggregationMode: QuantitySamplesQueryingViewAggregationMode,
         timeRange: HealthKitQueryTimeRange,
         @ViewBuilder content: @escaping @MainActor ([QuantitySample]) -> Content

@@ -125,10 +125,9 @@ struct HeartHealthDashboard: View {
             HealthDashboardLayout.Block.grid(sectionTitle: "TITLE1", components: [
                 .init(.stepCount, style: .chart(.init(chartType: .bar, aggregationInterval: .hour)), enableSelection: true),
                 .init(.heartRate, style: .chart(.init(chartType: .point(area: 5), aggregationInterval: .init(.init(minute: 15))))),
-                .sleepAnalysis(style: .singleValue(.mostRecentSample)),
-                .sleepAnalysis(style: .singleValue(.aggregated(.sum))),
-                .init(.heartRate, style: .singleValue(.aggregated(.min))),
-                .init(.heartRate, style: .singleValue(.aggregated(.max)))
+                .sleepAnalysis(style: .gauge(.mostRecentSample, score: .init(range: 0..<10))),
+                .sleepAnalysis(style: .gauge(.aggregated(.sum), score: .init(range: 0..<10))),
+                .init(.stepCount, style: .gauge(.aggregated(.sum), score: .init(range: 0..<10000)))
             ])
         ]
         HealthDashboard(layout: layout)

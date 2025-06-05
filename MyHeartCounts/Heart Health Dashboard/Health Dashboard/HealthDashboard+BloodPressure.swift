@@ -24,8 +24,9 @@ struct BloodPressureGridCell: View {
                let diastolic = sample.firstSample(ofType: .bloodPressureDiastolic) {
                 let unit = SampleType.bloodPressureSystolic.displayUnit
                 HealthDashboardQuantityLabel(input: .init(
+                    value: nil,
                     valueString: "\(Int(systolic.quantity.doubleValue(for: unit)))/\(Int(diastolic.quantity.doubleValue(for: unit)))",
-                    unitString: unit.unitString,
+                    unit: unit,
                     timeRange: sample.timeRange
                 ))
             }

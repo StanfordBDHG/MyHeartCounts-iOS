@@ -232,25 +232,37 @@ private struct ScoreExplanationView: View {
     let scoreResult: ScoreResult
     
     var body: some View {
-        VStack(spacing: 8) {
-            ForEach(scoreResult.definition.mapping, id: \.self) { element in
-                makeRow(for: element)
+        switch scoreResult.definition.variant {
+        case let .distinctMapping(_, elements):
+            VStack(spacing: 8) {
+                ForEach(elements, id: \.self) { element in
+                    makeRow(for: element)
+                }
             }
+            .listRowInsets(.zero)
+        case .range(let range):
+            makeColorBar(didMatch: false, background: Gradient.redToGreen) {
+                Text(range.lowerBound, format: .number)
+                Spacer()
+                Text(range.upperBound, format: .number)
+            }
+        case .custom(_, let textualRepresentation):
+            Text(textualRepresentation)
         }
-        .listRowInsets(.zero)
     }
     
     @ViewBuilder
     private func makeRow(for element: ScoreDefinition.Element) -> some View {
         let color = Gradient.redToGreen.color(at: element.score)
         let didMatch = { () -> Bool in
-            if let inputValue = scoreResult.inputValue {
-                element == scoreResult.definition.mapping.first { $0.matches(inputValue) }
+            if let inputValue = scoreResult.inputValue,
+               case let ScoreDefinition.Variant.distinctMapping(default: _, elements) = scoreResult.definition.variant {
+                element == elements.first { $0.matches(inputValue) }
             } else {
                 false
             }
         }()
-        HStack {
+        makeColorBar(didMatch: didMatch, background: color.opacity(didMatch ? 1 : 0.9)) {
             Text(element.textualRepresentation)
             Spacer()
             if didMatch {
@@ -259,11 +271,34 @@ private struct ScoreExplanationView: View {
             }
             Text(Int(element.score * 100), format: .number)
         }
+//        HStack {
+//            Text(element.textualRepresentation)
+//            Spacer()
+//            if didMatch {
+//                Image(systemSymbol: .checkmarkCircle)
+//                    .accessibilityLabel("Matching Entry")
+//            }
+//            Text(Int(element.score * 100), format: .number)
+//        }
+//        .padding(.horizontal)
+//        .padding(.vertical, 5)
+//        .background {
+//            color.opacity(didMatch ? 1 : 0.9)
+//        }
+//        .clipShape(RoundedRectangle(cornerRadius: 7))
+//        .foregroundStyle(.black)
+//        .font(.subheadline.weight(didMatch ? .semibold : .medium))
+    }
+    
+    
+    @ViewBuilder
+    private func makeColorBar(didMatch: Bool, background: some ShapeStyle, @ViewBuilder content: () -> some View) -> some View {
+        HStack {
+            content()
+        }
         .padding(.horizontal)
         .padding(.vertical, 5)
-        .background {
-            color.opacity(didMatch ? 1 : 0.9)
-        }
+        .background(background)
         .clipShape(RoundedRectangle(cornerRadius: 7))
         .foregroundStyle(.black)
         .font(.subheadline.weight(didMatch ? .semibold : .medium))

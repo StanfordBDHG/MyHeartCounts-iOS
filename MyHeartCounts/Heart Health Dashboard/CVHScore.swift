@@ -317,7 +317,15 @@ extension ScoreDefinition {
         .inRange(220..., score: 0)
     ])
     
-    static let cvhBloodGlucose = ScoreDefinition(default: 0, mapping: []) // TODO!!!
+    static let cvhBloodGlucose = ScoreDefinition(default: 0, mapping: [
+        .inRange(..<5.7, score: 1),
+        .inRange(5.7..<6.5, score: 0.75),
+        .inRange(6.5..<7, score: 0.5),
+        .inRange(7..<8, score: 0.3),
+        .inRange(8..<9, score: 0.2),
+        .inRange(9..<10, score: 0.1),
+        .inRange(10..., score: 0)
+    ])
     
     static let cvhBloodPressure = ScoreDefinition(default: 0, mapping: []) // TODO!!!
 }

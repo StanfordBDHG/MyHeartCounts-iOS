@@ -25,6 +25,7 @@ extension Gradient {
 enum HealthDashboardConstants {}
 
 
+/// creates a component view for use in the health dashboard, appropriate for the specific input's sample type and context
 @ViewBuilder
 @MainActor
 func healthDashboardComponentView(
@@ -33,9 +34,9 @@ func healthDashboardComponentView(
 ) -> some View {
     switch (size, config.dataSource) {
     case (_, .healthKit(.quantity(let sampleType))):
-        HealthDashboardQuantityComponentGridCell(queryInput: .healthKit(sampleType), config: config)
+        DefaultHealthDashboardComponentGridCell(queryInput: .healthKit(sampleType), config: config)
     case (_, .custom(let dataSource)):
-        HealthDashboardQuantityComponentGridCell(queryInput: .custom(dataSource), config: config)
+        DefaultHealthDashboardComponentGridCell(queryInput: .custom(dataSource), config: config)
     case (.small, .healthKit(.category(.sleepAnalysis))):
         SmallSleepAnalysisGridCell()
     case (.large, .healthKit(.category(.sleepAnalysis))):

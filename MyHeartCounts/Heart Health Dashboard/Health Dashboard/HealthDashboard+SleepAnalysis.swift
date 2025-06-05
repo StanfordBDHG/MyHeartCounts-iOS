@@ -26,9 +26,11 @@ struct SmallSleepAnalysisGridCell: View {
             EmptyView() // ?
         } content: {
             if let session = sleepSessions.last {
+                let value = session.totalTimeAsleep / 60 / 60
                 HealthDashboardQuantityLabel(input: .init(
-                    valueString: String(format: "%.1f", session.totalTimeAsleep / 60 / 60),
-                    unitString: HKUnit.hour().unitString,
+                    value: value,
+                    valueString: String(format: "%.1f", value), // have "Xhrs Ymin" instead?
+                    unit: .hour(),
                     timeRange: session.timeRange
                 ))
             }

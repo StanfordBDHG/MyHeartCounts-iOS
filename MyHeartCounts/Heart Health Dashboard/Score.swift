@@ -22,8 +22,15 @@ protocol ScoreDefinitionPatternRange<Bound>: RangeExpression, Sendable {
 }
 
 
-struct ScoreDefinition: Hashable, Sendable {
-    final class Element: Hashable, Sendable { // not idea but we need this to be a class so that it can be Hashable
+/// Intended to be declared as a static property somewhere.
+final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
+    enum Variant: Sendable {
+        case distinctMapping(default: Double, elements: [Element])
+        case range(Range<Double>)
+        case custom(@Sendable (Any) -> Double, textualRepresentation: String)
+    }
+    
+    final class Element: Hashable, Sendable, AnyObjectBasedDefaultImpls { // not ideal but we need this to be a class so that it can be Hashable
         let score: Double
         let textualRepresentation: String
         private let matchImp: @Sendable (Any) -> Bool
@@ -31,30 +38,8 @@ struct ScoreDefinition: Hashable, Sendable {
         init<Input>(score: Double, textualRepresentation: String, _ matches: @escaping @Sendable (Input) -> Bool) {
             self.score = score
             self.textualRepresentation = textualRepresentation
-            self.matchImp = { value in
-                if let value = value as? Input {
-                    return matches(value)
-                } else if let intValue = value as? any BinaryInteger, let inputTy = Input.self as? any BinaryFloatingPoint.Type {
-                    // if the input is an integer, but the predicate expects a FloatingPoint value, we perform a conversion
-                    if let floatValue = inputTy.init(exactly: intValue) {
-                        return matches(floatValue as! Input) // swiftlint:disable:this force_cast
-                    } else {
-                        return false
-                    }
-                } else if let floatValue = value as? any BinaryFloatingPoint, let inputTy = Input.self as? any BinaryInteger.Type {
-                    // if the input is a FloatingPoint value, but the predicate expects an Integer,
-                    // we check if the value can be losslessly converted, and if yes pass it to the predicate.
-                    if let intValue: any BinaryInteger = inputTy.init(exactly: floatValue),
-                       let floatValue2 = type(of: floatValue).init(exactly: intValue),
-                       floatValue.isEqual(to: floatValue2) {
-                        return matches(intValue as! Input) // swiftlint:disable:this force_cast
-                    } else {
-                        return false
-                    }
-                } else {
-                    return false
-                }
-            }
+            let matches = erasingClosureInputType(matches)
+            self.matchImp = { matches($0) ?? false }
         }
         
         func matches(_ value: some Any) -> Bool {
@@ -89,27 +74,49 @@ struct ScoreDefinition: Hashable, Sendable {
         }
     }
     
-    let `default`: Double
-    let mapping: [Element]
+    let variant: Variant
     
     init(`default`: Double, mapping: [Element]) {
-        self.default = `default`
-        self.mapping = mapping
+        self.variant = .distinctMapping(default: `default`, elements: mapping)
+    }
+    
+    private init<Input>(`default`: Double, textualRepresentation: String, _ customMapping: @Sendable @escaping (Input) -> Double) {
+        let mapping = erasingClosureInputType(customMapping)
+        self.variant = .custom({ mapping($0) ?? `default` }, textualRepresentation: textualRepresentation)
+    }
+    
+//    convenience init(_ range: Range<Double>) {
+//        self.init(default: 0, textualRepresentation: range.textualDescription) { (value: Double) in
+//            if value < range.lowerBound {
+//                0
+//            } else if value >= range.upperBound {
+//                1
+//            } else {
+//                value.distance(to: range.lowerBound) / range.upperBound.distance(to: range.lowerBound)
+//            }
+//        }
+//    }
+    init(range: Range<Double>) {
+        self.variant = .range(range)
     }
     
     func apply(to value: some Any) -> Double {
-        mapping.first { $0.matches(value) }?.score ?? `default`
-    }
-}
-
-
-extension ScoreDefinition.Element {
-    static func == (lhs: ScoreDefinition.Element, rhs: ScoreDefinition.Element) -> Bool {
-        ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(self))
+        switch variant {
+        case let .distinctMapping(`default`, elements):
+            elements.first { $0.matches(value) }?.score ?? `default`
+        case .range(let range):
+            erasingClosureInputType { (value: Double) in
+                if value < range.lowerBound {
+                    0
+                } else if value >= range.upperBound {
+                    1
+                } else {
+                    value.distance(to: range.lowerBound) / range.upperBound.distance(to: range.lowerBound)
+                }
+            }(value) ?? 0
+        case .custom(let calcScore, _):
+            calcScore(value)
+        }
     }
 }
 
@@ -221,5 +228,33 @@ extension PartialRangeThrough: ScoreDefinitionPatternRange {
     }
     func map<NewBound: Comparable>(_ transform: (Bound) -> NewBound) -> any ScoreDefinitionPatternRange<NewBound> {
         ...transform(upperBound)
+    }
+}
+
+
+private func erasingClosureInputType<Input, Result>(_ closure: @escaping @Sendable (Input) -> Result) -> @Sendable (Any) -> Result? {
+    { value in
+        if let value = value as? Input {
+            return closure(value)
+        } else if let intValue = value as? any BinaryInteger, let inputTy = Input.self as? any BinaryFloatingPoint.Type {
+            // if the input is an integer, but the predicate expects a FloatingPoint value, we perform a conversion
+            if let floatValue = inputTy.init(exactly: intValue) {
+                return closure(floatValue as! Input) // swiftlint:disable:this force_cast
+            } else {
+                return nil
+            }
+        } else if let floatValue = value as? any BinaryFloatingPoint, let inputTy = Input.self as? any BinaryInteger.Type {
+            // if the input is a FloatingPoint value, but the predicate expects an Integer,
+            // we check if the value can be losslessly converted, and if yes pass it to the predicate.
+            if let intValue: any BinaryInteger = inputTy.init(exactly: floatValue),
+               let floatValue2 = type(of: floatValue).init(exactly: intValue),
+               floatValue.isEqual(to: floatValue2) {
+                return closure(intValue as! Input) // swiftlint:disable:this force_cast
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 }

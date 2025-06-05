@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/FHIRModels",
       "state" : {
-        "revision" : "861afd5816a98d38f86220eab2f812d76cad84a0",
-        "version" : "0.5.0"
+        "revision" : "b7fcf26b818704f489719f8cdd9e270aaab37823",
+        "version" : "0.7.0"
       }
     },
     {
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "8e473c0581909c0faf8623a793d039f7a7259271",
-        "version" : "1.0.0-alpha.1"
+        "revision" : "fb63d33cd119f87794536f3dc39ee4e31a40e211",
+        "version" : "1.0.0"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/ResearchKitOnFHIR.git",
       "state" : {
-        "revision" : "2c70b9dc7a1be9c804222e93d1737be9fca9af84",
-        "version" : "2.0.3"
+        "revision" : "9670cdff1cdd9196cd263f93e9faaf6de0583052",
+        "version" : "2.0.4"
       }
     },
     {
@@ -249,8 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "branch" : "lukas/changes",
-        "revision" : "3109e9b9fa9e593f6d5d178d1330a2e410af0d6e"
+        "revision" : "2fbdb8636f3ad394d5833cc048be5bb35c78a8c5",
+        "version" : "1.2.0"
       }
     },
     {
@@ -285,8 +285,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziQuestionnaire.git",
       "state" : {
-        "revision" : "d0bd55f8a0bd3eeb806a673261e9d6b9fd43f3cd",
-        "version" : "1.2.3"
+        "revision" : "6110a9ec1be8fc35caf9b7aa20b7cf570e1a8ffb",
+        "version" : "1.2.4"
       }
     },
     {
@@ -312,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "873d60e55d2489a092d0f4846d3f01789d739686",
-        "version" : "0.1.4"
+        "revision" : "9e68a0979ef4a0fba50df861df2b64711bb7b532",
+        "version" : "0.1.6"
       }
     },
     {

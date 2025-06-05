@@ -128,6 +128,9 @@ struct UpcomingTasksList: View {
                 return
             }
             questionnaireBeingAnswered = .init(questionnaire: questionnaire, enrollment: enrollment, event: event)
+        case .promptTimedWalkingTest:
+            // implemented in https://github.com/StanfordBDHG/MyHeartCounts-iOS/pull/13
+            break
         }
     }
     

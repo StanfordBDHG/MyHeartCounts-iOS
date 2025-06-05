@@ -99,18 +99,27 @@ struct HealthDashboardQuantityLabel: View {
 
 extension HealthDashboardQuantityLabel {
     struct Input {
+        let value: Double?
         let valueString: String
         let unitString: String
         let timeRange: Range<Date>
         
-        init(valueString: String, unitString: String, timeRange: Range<Date>) {
+        init(value: Double?, valueString: String, unit: HKUnit, timeRange: Range<Date>) {
+            func unitString(for unit: HKUnit) -> String {
+                if unit == .count() {
+                    ""
+                } else {
+                    unit.unitString
+                }
+            }
+            self.value = value
             self.valueString = valueString
-            self.unitString = unitString
+            self.unitString = unitString(for: unit)
             self.timeRange = timeRange
         }
         
         init(value: Double, sampleType: MHCQuantitySampleType, timeRange: Range<Date>) {
-            self.valueString = switch sampleType {
+            let valueString = switch sampleType {
             case .healthKit(.bloodOxygen):
                 String(format: "%.1f", value / 100)
             case .healthKit(.walkingAsymmetryPercentage), .healthKit(.walkingDoubleSupportPercentage):
@@ -126,8 +135,12 @@ extension HealthDashboardQuantityLabel {
                     String(format: "%.2f", value)
                 }
             }
-            self.unitString = sampleType.displayUnit.unitString
-            self.timeRange = timeRange
+            self.init(
+                value: value,
+                valueString: valueString,
+                unit: sampleType.displayUnit,
+                timeRange: timeRange
+            )
         }
     }
 }
