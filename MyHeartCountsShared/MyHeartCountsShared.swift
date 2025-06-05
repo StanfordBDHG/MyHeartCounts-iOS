@@ -1,0 +1,41 @@
+//
+// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+//
+// SPDX-FileCopyrightText: 2025 Stanford University
+//
+// SPDX-License-Identifier: MIT
+//
+
+import Foundation
+import WatchConnectivity
+
+
+/// Key into a User Info dictionary transferred from the iPhone app to the Watch app.
+public struct InterDeviceUserInfoKey: RawRepresentable, Hashable, Sendable {
+    /// The key's raw value
+    public let rawValue: String
+    
+    /// Creates a new key
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+}
+
+
+extension InterDeviceUserInfoKey {
+    /// `Bool` flag indicating that the watch should start a workout
+    public static let watchShouldEnableWorkout = Self(rawValue: "edu.stanford.MyHeartCounts.enableWatchWorkout")
+    /// `UInt8` value specifying which type of workout the watch should track.
+    ///
+    /// The value here corresponds to a `SpeziStudyDefinition/TimedWalkingTestConfiguration/Kind` raw value.
+    public static let watchWorkoutActivityKind = Self(rawValue: "edu.stanford.MyHeartCounts.watchWorkoutActivityKind")
+}
+
+
+extension WCSession {
+    /// Sends the specified user info dictionary to the companion app.
+    public func send(userInfo: [InterDeviceUserInfoKey: Any]) {
+        let userInfo: [String: Any] = .init(userInfo)
+        self.transferUserInfo(userInfo)
+    }
+}

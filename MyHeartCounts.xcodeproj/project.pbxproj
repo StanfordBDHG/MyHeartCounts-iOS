@@ -32,6 +32,9 @@
 		803166B92D75E22E00E9173B /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803166B82D75E22E00E9173B /* SpeziHealthKitUI */; };
 		803241E02D7B599300F7DE8B /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 803241DF2D7B599300F7DE8B /* SpeziScheduler */; };
 		803241E22D7B599300F7DE8B /* SpeziSchedulerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803241E12D7B599300F7DE8B /* SpeziSchedulerUI */; };
+		8034CBE02DE6514700E7F9F6 /* Spezi in Frameworks */ = {isa = PBXBuildFile; productRef = 8034CBDF2DE6514700E7F9F6 /* Spezi */; };
+		8034CBE22DE6514700E7F9F6 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8034CBE12DE6514700E7F9F6 /* SpeziHealthKit */; };
+		8035B5302DE6A3EB00326BB2 /* SpeziViews in Frameworks */ = {isa = PBXBuildFile; productRef = 8035B52F2DE6A3EB00326BB2 /* SpeziViews */; };
 		803D2B422D8981EA00DAEF9B /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 803D2B412D8981EA00DAEF9B /* SpeziStudy */; };
 		803D2B442D8981EA00DAEF9B /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 803D2B432D8981EA00DAEF9B /* SpeziStudyDefinition */; };
 		803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
@@ -45,6 +48,7 @@
 		8053637B2DB6997600D7E8A3 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637A2DB6997600D7E8A3 /* SpeziHealthKitUI */; };
 		8053637E2DB699C200D7E8A3 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637D2DB699C200D7E8A3 /* SpeziStudy */; };
 		805363802DB699C200D7E8A3 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8053637F2DB699C200D7E8A3 /* SpeziStudyDefinition */; };
+		8054D98E2DE54F8900458CD9 /* MyHeartCountsWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8055F2342D7C4E0D00CD7884 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */; };
 		805C02F22D832EFB005B38D9 /* SpeziFirebaseAccount in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F12D832EFB005B38D9 /* SpeziFirebaseAccount */; };
 		805C02F42D832EFB005B38D9 /* SpeziFirebaseAccountStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 805C02F32D832EFB005B38D9 /* SpeziFirebaseAccountStorage */; };
@@ -70,6 +74,9 @@
 		808E10052DAD48F300DB240D /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 808E10042DAD48F300DB240D /* SpeziHealthKit */; };
 		808E10072DAD48F300DB240D /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 808E10062DAD48F300DB240D /* SpeziHealthKitUI */; };
 		8097DCB52D918B56000351D3 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8097DCB42D918B56000351D3 /* SpeziOnboarding */; };
+		80A008352DEFCFA400A446BA /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80A008342DEFCFA400A446BA /* SpeziStudyDefinition */; };
+		80A0083F2DEFD0B300A446BA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A0083E2DEFD0B300A446BA /* Collections */; };
+		80A008462DEFD0F900A446BA /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A008452DEFD0F900A446BA /* OrderedCollections */; };
 		80A81C692D7C89D400444A17 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80A81C682D7C89D400444A17 /* SpeziStudy */; };
 		80BE06542DCF3A6D00171114 /* SwiftPackageList in Frameworks */ = {isa = PBXBuildFile; productRef = 80BE06532DCF3A6D00171114 /* SwiftPackageList */; };
 		80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */; };
@@ -82,6 +89,10 @@
 		80E774A62D81B4B20035A0EE /* SpeziFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 80E774A52D81B4B20035A0EE /* SpeziFirestore */; };
 		80E862142D8C630D0089B8E1 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80E862132D8C630D0089B8E1 /* SpeziStudy */; };
 		80E862162D8C630D0089B8E1 /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80E862152D8C630D0089B8E1 /* SpeziStudyDefinition */; };
+		80FB17012DE67523000F2C8A /* MyHeartCountsShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */; };
+		80FB17022DE67523000F2C8A /* MyHeartCountsShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		80FB17092DE67533000F2C8A /* MyHeartCountsShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */; };
+		80FB170A2DE67534000F2C8A /* MyHeartCountsShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9739A0C62AD7B5730084BEA5 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9739A0C52AD7B5730084BEA5 /* FirebaseStorage */; };
 		A94DDFFD2CBD1190004930BD /* SpeziNotifications in Frameworks */ = {isa = PBXBuildFile; productRef = A94DDFFC2CBD1190004930BD /* SpeziNotifications */; };
 		A994264E2CD25EB3002F8BD5 /* XCTSpeziAccount in Frameworks */ = {isa = PBXBuildFile; productRef = A994264D2CD25EB3002F8BD5 /* XCTSpeziAccount */; };
@@ -103,7 +114,64 @@
 			remoteGlobalIDString = 653A254C283387FE005D4D48;
 			remoteInfo = MyHeartCounts;
 		};
+		8054D98C2DE54F8900458CD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8054D9832DE54F8800458CD9;
+			remoteInfo = MyHeartCountsWatchApp;
+		};
+		80FB16FF2DE67523000F2C8A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 80FB16FA2DE67523000F2C8A;
+			remoteInfo = MyHeartCountsShared;
+		};
+		80FB170B2DE67534000F2C8A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 80FB16FA2DE67523000F2C8A;
+			remoteInfo = MyHeartCountsShared;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8054D98F2DE54F8900458CD9 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				8054D98E2DE54F8900458CD9 /* MyHeartCountsWatchApp.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80FB17072DE67523000F2C8A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				80FB17022DE67523000F2C8A /* MyHeartCountsShared.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80FB170D2DE67534000F2C8A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				80FB170A2DE67534000F2C8A /* MyHeartCountsShared.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2FC94CD4298B0A1D009C8209 /* MyHeartCounts UI Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts UI Tests.xctestplan"; sourceTree = "<group>"; };
@@ -111,9 +179,18 @@
 		653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8043E0102DC236C600E0DF01 /* MyHeartCounts Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts Unit Tests.xctestplan"; sourceTree = "<group>"; };
+		8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHeartCountsWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MyHeartCountsShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8034CC092DE65C3000E7F9F6 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Supporting Files/Info.plist",
+			);
+			target = 8054D9832DE54F8800458CD9 /* MyHeartCountsWatchApp */;
+		};
 		80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -124,9 +201,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8054D9852DE54F8800458CD9 /* MyHeartCountsWatchApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8034CC092DE65C3000E7F9F6 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsWatchApp; sourceTree = "<group>"; };
 		80F72BA52D7E008E00150FE3 /* MyHeartCounts */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCounts; sourceTree = "<group>"; };
 		80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsTests; sourceTree = "<group>"; };
 		80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsUITests; sourceTree = "<group>"; };
+		80FB16FC2DE67523000F2C8A /* MyHeartCountsShared */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsShared; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +286,7 @@
 				806EB9562DB502A9000D78A5 /* SpeziStudyDefinition in Frameworks */,
 				80E862162D8C630D0089B8E1 /* SpeziStudyDefinition in Frameworks */,
 				803D2B422D8981EA00DAEF9B /* SpeziStudy in Frameworks */,
+				80FB17012DE67523000F2C8A /* MyHeartCountsShared.framework in Frameworks */,
 				80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,6 +310,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8054D9812DE54F8800458CD9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80A0083F2DEFD0B300A446BA /* Collections in Frameworks */,
+				8034CBE02DE6514700E7F9F6 /* Spezi in Frameworks */,
+				80FB17092DE67533000F2C8A /* MyHeartCountsShared.framework in Frameworks */,
+				8034CBE22DE6514700E7F9F6 /* SpeziHealthKit in Frameworks */,
+				80A008352DEFCFA400A446BA /* SpeziStudyDefinition in Frameworks */,
+				80A008462DEFD0F900A446BA /* OrderedCollections in Frameworks */,
+				8035B5302DE6A3EB00326BB2 /* SpeziViews in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80FB16F82DE67523000F2C8A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -241,6 +342,8 @@
 				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
 				80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */,
 				80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */,
+				8054D9852DE54F8800458CD9 /* MyHeartCountsWatchApp */,
+				80FB16FC2DE67523000F2C8A /* MyHeartCountsShared */,
 				653A254E283387FE005D4D48 /* Products */,
 				653A258B283395A7005D4D48 /* Frameworks */,
 			);
@@ -252,6 +355,8 @@
 				653A254D283387FE005D4D48 /* MyHeartCounts.app */,
 				653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */,
 				653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */,
+				8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */,
+				80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -265,6 +370,16 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		80FB16F62DE67523000F2C8A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		653A254C283387FE005D4D48 /* MyHeartCounts */ = {
 			isa = PBXNativeTarget;
@@ -273,12 +388,16 @@
 				653A2549283387FE005D4D48 /* Sources */,
 				653A254A283387FE005D4D48 /* Frameworks */,
 				653A254B283387FE005D4D48 /* Resources */,
+				8054D98F2DE54F8900458CD9 /* Embed Watch Content */,
+				80FB17072DE67523000F2C8A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				80BE06522DCF3A4600171114 /* PBXTargetDependency */,
 				805B42232DA6BDBF004C690D /* PBXTargetDependency */,
+				8054D98D2DE54F8900458CD9 /* PBXTargetDependency */,
+				80FB17002DE67523000F2C8A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
@@ -415,6 +534,60 @@
 			productReference = 653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		8054D9832DE54F8800458CD9 /* MyHeartCountsWatchApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8054D9932DE54F8900458CD9 /* Build configuration list for PBXNativeTarget "MyHeartCountsWatchApp" */;
+			buildPhases = (
+				8054D9802DE54F8800458CD9 /* Sources */,
+				8054D9812DE54F8800458CD9 /* Frameworks */,
+				8054D9822DE54F8800458CD9 /* Resources */,
+				80FB170D2DE67534000F2C8A /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8035B5542DE6B36000326BB2 /* PBXTargetDependency */,
+				80FB170C2DE67534000F2C8A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8054D9852DE54F8800458CD9 /* MyHeartCountsWatchApp */,
+			);
+			name = MyHeartCountsWatchApp;
+			packageProductDependencies = (
+				8034CBDF2DE6514700E7F9F6 /* Spezi */,
+				8034CBE12DE6514700E7F9F6 /* SpeziHealthKit */,
+				8035B52F2DE6A3EB00326BB2 /* SpeziViews */,
+				80A008342DEFCFA400A446BA /* SpeziStudyDefinition */,
+				80A0083E2DEFD0B300A446BA /* Collections */,
+				80A008452DEFD0F900A446BA /* OrderedCollections */,
+			);
+			productName = MyHeartCountsWatchApp;
+			productReference = 8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		80FB16FA2DE67523000F2C8A /* MyHeartCountsShared */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 80FB17032DE67523000F2C8A /* Build configuration list for PBXNativeTarget "MyHeartCountsShared" */;
+			buildPhases = (
+				80FB16F62DE67523000F2C8A /* Headers */,
+				80FB16F72DE67523000F2C8A /* Sources */,
+				80FB16F82DE67523000F2C8A /* Frameworks */,
+				80FB16F92DE67523000F2C8A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				80FB16FC2DE67523000F2C8A /* MyHeartCountsShared */,
+			);
+			name = MyHeartCountsShared;
+			packageProductDependencies = (
+			);
+			productName = MyHeartCountsShared;
+			productReference = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -422,8 +595,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1340;
-				LastUpgradeCheck = 1600;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					653A254C283387FE005D4D48 = {
 						CreatedOnToolsVersion = 13.4;
@@ -436,6 +609,12 @@
 					653A256628338800005D4D48 = {
 						CreatedOnToolsVersion = 13.4;
 						TestTargetID = 653A254C283387FE005D4D48;
+					};
+					8054D9832DE54F8800458CD9 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					80FB16FA2DE67523000F2C8A = {
+						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
@@ -479,6 +658,8 @@
 			projectRoot = "";
 			targets = (
 				653A254C283387FE005D4D48 /* MyHeartCounts */,
+				8054D9832DE54F8800458CD9 /* MyHeartCountsWatchApp */,
+				80FB16FA2DE67523000F2C8A /* MyHeartCountsShared */,
 				653A255C28338800005D4D48 /* MyHeartCountsTests */,
 				653A256628338800005D4D48 /* MyHeartCountsUITests */,
 			);
@@ -501,6 +682,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		653A256528338800005D4D48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8054D9822DE54F8800458CD9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80FB16F92DE67523000F2C8A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -531,6 +726,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8054D9802DE54F8800458CD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80FB16F72DE67523000F2C8A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -544,6 +753,15 @@
 			target = 653A254C283387FE005D4D48 /* MyHeartCounts */;
 			targetProxy = 653A256828338800005D4D48 /* PBXContainerItemProxy */;
 		};
+		8035B5542DE6B36000326BB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 8035B5532DE6B36000326BB2 /* SwiftLintBuildToolPlugin */;
+		};
+		8054D98D2DE54F8900458CD9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8054D9832DE54F8800458CD9 /* MyHeartCountsWatchApp */;
+			targetProxy = 8054D98C2DE54F8900458CD9 /* PBXContainerItemProxy */;
+		};
 		805B42232DA6BDBF004C690D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 805B42222DA6BDBF004C690D /* SwiftLintBuildToolPlugin */;
@@ -551,6 +769,16 @@
 		80BE06522DCF3A4600171114 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 80BE06512DCF3A4600171114 /* SwiftPackageListPlugin */;
+		};
+		80FB17002DE67523000F2C8A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 80FB16FA2DE67523000F2C8A /* MyHeartCountsShared */;
+			targetProxy = 80FB16FF2DE67523000F2C8A /* PBXContainerItemProxy */;
+		};
+		80FB170C2DE67534000F2C8A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 80FB16FA2DE67523000F2C8A /* MyHeartCountsShared */;
+			targetProxy = 80FB170B2DE67534000F2C8A /* PBXContainerItemProxy */;
 		};
 		A9E1D3462C67B0A300CED217 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -652,7 +880,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MyHeart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -861,7 +1089,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = A485NLSB8K;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
@@ -873,7 +1101,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MyHeart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -928,7 +1156,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSMotionUsageDescription = "This message should never appear. Please adjust this when you start using motion information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "MyHeart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1045,6 +1273,280 @@
 			};
 			name = Release;
 		};
+		8054D9902DE54F8900458CD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "MyHeartCountsWatchApp/Supporting Files/MyHeartCountsWatchApp.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MyHeartCountsWatchApp/Supporting Files/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyHeart Counts creates workout-related Health data as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyHeart Counts accesses some Health data, such as heart rate, step count, etc, as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = edu.stanford.MyHeartCounts;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Debug;
+		};
+		8054D9912DE54F8900458CD9 /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "MyHeartCountsWatchApp/Supporting Files/MyHeartCountsWatchApp.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MyHeartCountsWatchApp/Supporting Files/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyHeart Counts creates workout-related Health data as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyHeart Counts accesses some Health data, such as heart rate, step count, etc, as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = edu.stanford.MyHeartCounts;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Test;
+		};
+		8054D9922DE54F8900458CD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "MyHeartCountsWatchApp/Supporting Files/MyHeartCountsWatchApp.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=watchos*]" = CQRZ4E7K9U;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "MyHeartCountsWatchApp/Supporting Files/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyHeart Counts creates workout-related Health data as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyHeart Counts accesses some Health data, such as heart rate, step count, etc, as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = edu.stanford.MyHeartCounts;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=watchos*]" = "MyHeart Counts - Biodesign Digital Health - Watch";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Release;
+		};
+		80FB17042DE67523000F2C8A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.shared;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,4";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		80FB17052DE67523000F2C8A /* Test */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.shared;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,4";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Test;
+		};
+		80FB17062DE67523000F2C8A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.shared;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator watchos watchsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,4";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1088,6 +1590,26 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8054D9932DE54F8900458CD9 /* Build configuration list for PBXNativeTarget "MyHeartCountsWatchApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8054D9902DE54F8900458CD9 /* Debug */,
+				8054D9912DE54F8900458CD9 /* Test */,
+				8054D9922DE54F8900458CD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		80FB17032DE67523000F2C8A /* Build configuration list for PBXNativeTarget "MyHeartCountsShared" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80FB17042DE67523000F2C8A /* Debug */,
+				80FB17052DE67523000F2C8A /* Test */,
+				80FB17062DE67523000F2C8A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1112,7 +1634,7 @@
 			repositoryURL = "https://github.com/StanfordBDHG/HealthKitOnFHIR.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = "1.0.0-alpha.1";
+				minimumVersion = 1.0.0;
 			};
 		};
 		2FE5DC6229EDD883004B9AB4 /* XCRemoteSwiftPackageReference "SpeziAccount" */ = {
@@ -1136,7 +1658,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziQuestionnaire.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.3;
+				minimumVersion = 1.2.4;
 			};
 		};
 		2FE5DC8829EDD972004B9AB4 /* XCRemoteSwiftPackageReference "SpeziStorage" */ = {
@@ -1208,7 +1730,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.3;
+				minimumVersion = 1.2.0;
 			};
 		};
 		8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
@@ -1216,7 +1738,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.4;
+				minimumVersion = 0.1.6;
 			};
 		};
 		805C02F02D832EFB005B38D9 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {
@@ -1272,7 +1794,7 @@
 			repositoryURL = "https://github.com/StanfordBDHG/ResearchKitOnFHIR.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.3;
+				minimumVersion = 2.0.4;
 			};
 		};
 		A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */ = {
@@ -1399,6 +1921,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 803241DE2D7B599300F7DE8B /* XCRemoteSwiftPackageReference "SpeziScheduler" */;
 			productName = SpeziSchedulerUI;
+		};
+		8034CBDF2DE6514700E7F9F6 /* Spezi */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F49B7742980407B00BCB272 /* XCRemoteSwiftPackageReference "Spezi" */;
+			productName = Spezi;
+		};
+		8034CBE12DE6514700E7F9F6 /* SpeziHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */;
+			productName = SpeziHealthKit;
+		};
+		8035B52F2DE6A3EB00326BB2 /* SpeziViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FE5DC8D29EDD980004B9AB4 /* XCRemoteSwiftPackageReference "SpeziViews" */;
+			productName = SpeziViews;
+		};
+		8035B5532DE6B36000326BB2 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		803D2B412D8981EA00DAEF9B /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1577,6 +2119,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8097DCB32D918B56000351D3 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */;
 			productName = SpeziOnboarding;
+		};
+		80A008342DEFCFA400A446BA /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8053637C2DB699C200D7E8A3 /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudyDefinition;
+		};
+		80A0083E2DEFD0B300A446BA /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		80A008452DEFD0F900A446BA /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
 		};
 		80A81C682D7C89D400444A17 /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;

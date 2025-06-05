@@ -53,6 +53,16 @@
     "Are you sure you want to leave the '%@' study?" : {
 
     },
+    "As part of the %@, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %@ minute%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "As part of the %1$@, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %2$@ minute%3$@"
+          }
+        }
+      }
+    },
     "AuthorizationStatus" : {
 
     },
@@ -78,6 +88,9 @@
         }
       }
     },
+    "Companion Watch App Not Installed" : {
+
+    },
     "Complete" : {
 
     },
@@ -95,6 +108,9 @@
       }
     },
     "Continue" : {
+
+    },
+    "Current Test" : {
 
     },
     "Date of Birth" : {
@@ -137,6 +153,12 @@
 
     },
     "Fetching…" : {
+
+    },
+    "For optimal results, please keep your Phone in your pocket, and %@ until it vibrates to indicate that the test has ended." : {
+
+    },
+    "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
 
     },
     "Grant Access" : {
@@ -185,16 +207,25 @@
         }
       }
     },
-    "Heart Health" : {
+    "Historical Data Bulk Export" : {
 
     },
-    "Historical Data Bulk Export" : {
+    "If you have an Apple Watch, please ensure that the MyHeart Counts app is running " : {
+
+    },
+    "Install on Apple Watch" : {
+
+    },
+    "Installing MyHeart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
 
     },
     "Label?" : {
 
     },
     "Language" : {
+
+    },
+    "Launch Watch App" : {
 
     },
     "Learn More" : {
@@ -311,6 +342,9 @@
     "Replace Root View Controller" : {
 
     },
+    "Results" : {
+
+    },
     "Retry" : {
 
     },
@@ -345,6 +379,9 @@
           }
         }
       }
+    },
+    "Start Test" : {
+
     },
     "State" : {
 
@@ -387,6 +424,18 @@
     "This study will request read-access to collect the following Health samples:" : {
 
     },
+    "Time Elapsed" : {
+
+    },
+    "Time Remaining" : {
+
+    },
+    "Time Zone" : {
+
+    },
+    "Timed Walking Test" : {
+
+    },
     "Today's Tasks" : {
 
     },
@@ -406,6 +455,9 @@
 
     },
     "Uploading Collected Health Data" : {
+
+    },
+    "Warning Sign" : {
 
     },
     "WELCOME_AREA1_DESCRIPTION" : {

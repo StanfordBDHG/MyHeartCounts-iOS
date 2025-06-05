@@ -12,14 +12,26 @@ import UIKit
 
 
 struct DebugStuffView: View {
+    @State private var isTimedWalkingTestSheetShown = false
+    
     var body: some View {
         Form {
+            Section {
+                Button("Timed Walking Test") {
+                    isTimedWalkingTestSheetShown = true
+                }
+            }
             Section {
                 Button("Replace Root View Controller", role: .destructive) {
                     // The idea here is that replacing the root view controller should deallocate all our resources.
                     // We can then launch the memory graph debugger, and anything that's still in the left sidebar is leaked.
                     replaceRootVC()
                 }
+            }
+        }
+        .sheet(isPresented: $isTimedWalkingTestSheetShown) {
+            NavigationStack {
+                TimedWalkingTestView(.init(duration: .minutes(6), kind: .walking))
             }
         }
     }

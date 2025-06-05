@@ -1,6 +1,10 @@
 version = 1
 
 [[annotations]]
-path = ["MyHeartCounts.xcodeproj/**", "MyHeartCounts/Resources/Assets.xcassets/**"]
+path = [
+    "MyHeartCounts.xcodeproj/**",
+    "MyHeartCounts/Resources/Assets.xcassets/**",
+    "MyHeartCountsWatchApp/Resources/Assets.xcassets/**"
+]
 SPDX-FileCopyrightText = "2025 Stanford University and the project authors (see CONTRIBUTORS.md)"
 SPDX-License-Identifier = "MIT"
