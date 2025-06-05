@@ -11,7 +11,9 @@ default_platform(:ios)
 APP_CONFIG = {
   default_environment: "staging",
   default_app_identifier: "edu.stanford.MyHeartCounts",
+  default_secondary_app_identifier: "edu.stanford.MyHeartCounts.watchkitapp",
   default_provisioningProfile: "MyHeart Counts - Biodesign Digital Health",
+  default_secondary_provisioningProfile: "MyHeart Counts - Biodesign Digital Health - Watch",
   default_version_name: "3.0.0",
   default_release_notes: "Bug fixes and performance improvements.",
   scheme: "MyHeartCounts",
@@ -116,8 +118,10 @@ platform :ios do
   desc "Archive app"
   lane :archive do |options|
     appidentifier = options[:appidentifier].to_s.strip.empty? ? APP_CONFIG[:default_app_identifier] : options[:appidentifier]
+    secondaryAppIdentifier = options[:secondaryAppidentifier].to_s.strip.empty? ? APP_CONFIG[:default_secondary_app_identifier] : options[:secondaryAppidentifier]
     provisioningProfile = options[:provisioningProfile].to_s.strip.empty? ? APP_CONFIG[:default_provisioningProfile] : options[:provisioningProfile]
-    
+    secondaryProvisioningProfile = options[:secondaryProvisioningProfile].to_s.strip.empty? ? APP_CONFIG[:default_secondary_provisioningProfile] : options[:secondaryProvisioningProfile]
+
     update_app_identifier(
       plist_path: APP_CONFIG[:plist_path],
       app_identifier: appidentifier
@@ -132,7 +136,8 @@ platform :ios do
       ],
       export_options: {
         provisioningProfiles: {
-          appidentifier => provisioningProfile
+          appidentifier => provisioningProfile,
+          secondaryAppIdentifier => secondaryProvisioningProfile
         }
       }
     )
@@ -152,7 +157,9 @@ platform :ios do
   lane :deploy do |options|
     environment = options[:environment].to_s.strip.empty? ? APP_CONFIG[:default_environment] : options[:environment]
     appidentifier = options[:appidentifier].to_s.strip.empty? ? APP_CONFIG[:default_app_identifier] : options[:appidentifier]
+    secondaryAppIdentifier = options[:secondaryAppidentifier].to_s.strip.empty? ? APP_CONFIG[:default_secondary_app_identifier] : options[:secondaryAppidentifier]
     provisioningProfile = options[:provisioningProfile].to_s.strip.empty? ? APP_CONFIG[:default_provisioningProfile] : options[:provisioningProfile]
+    secondaryProvisioningProfile = options[:secondaryProvisioningProfile].to_s.strip.empty? ? APP_CONFIG[:default_secondary_provisioningProfile] : options[:secondaryProvisioningProfile]
     versionname = options[:versionname].to_s.strip.empty? ? APP_CONFIG[:default_version_name] : options[:versionname]
     releasenotes = options[:releasenotes].to_s.strip.empty? ? APP_CONFIG[:default_release_notes] : options[:releasenotes]
 
@@ -179,7 +186,9 @@ platform :ios do
     )
     archive(
       appidentifier: appidentifier,
+      secondaryAppIdentifier: secondaryAppIdentifier,
       provisioningProfile: provisioningProfile,
+      secondaryProvisioningProfile: secondaryProvisioningProfile,
     )
     commit = last_git_commit
     

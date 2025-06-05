@@ -1287,6 +1287,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCountsWatchApp/Supporting Files/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyHeart Counts creates workout-related Health data as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyHeart Counts accesses some Health data, such as heart rate, step count, etc, as part of conducting a Six-Minute Walk Test";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = edu.stanford.MyHeartCounts;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
@@ -1295,7 +1297,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchapp;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1324,6 +1326,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCountsWatchApp/Supporting Files/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyHeart Counts creates workout-related Health data as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyHeart Counts accesses some Health data, such as heart rate, step count, etc, as part of conducting a Six-Minute Walk Test";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = edu.stanford.MyHeartCounts;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
@@ -1332,7 +1336,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchapp;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1362,6 +1366,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCountsWatchApp/Supporting Files/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "MyHeart Counts";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "MyHeart Counts creates workout-related Health data as part of conducting a Six-Minute Walk Test";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "MyHeart Counts accesses some Health data, such as heart rate, step count, etc, as part of conducting a Six-Minute Walk Test";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = edu.stanford.MyHeartCounts;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = NO;
@@ -1370,7 +1376,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchapp;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;

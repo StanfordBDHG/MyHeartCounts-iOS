@@ -8,9 +8,5 @@
 	<array>
 		<string>workout-processing</string>
 	</array>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>MyHeart Counts accesses some Health data, such as heart rate, step count, etc, as part of conducting a Six-Minute Walk Test</string>
-	<key>NSHealthShareUsageDescription</key>
-	<string>MyHeart Counts creates workout-related Health data as part of conducting a Six-Minute Walk Test</string>
 </dict>
 </plist>
