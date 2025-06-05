@@ -11,6 +11,7 @@ import SpeziQuestionnaire
 import SpeziScheduler
 import SpeziSchedulerUI
 import SpeziStudy
+import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
 
@@ -47,6 +48,7 @@ struct UpcomingTasksList: View {
     @State private var viewState: ViewState = .idle
     @State private var presentedInformationalStudyComponent: StudyDefinition.InformationalComponent?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
+    @State private var presentedTimedWalkingTest: StudyDefinition.TimedWalkingTestComponent?
     
     var body: some View {
         eventsList
@@ -73,6 +75,11 @@ struct UpcomingTasksList: View {
             }
             .sheet(item: $presentedInformationalStudyComponent) { component in
                 ArticleSheet(article: .init(component))
+            }
+            .sheet(item: $presentedTimedWalkingTest) { component in
+                NavigationStack {
+                    TimedWalkingTestView(component.test)
+                }
             }
     }
     
@@ -128,9 +135,8 @@ struct UpcomingTasksList: View {
                 return
             }
             questionnaireBeingAnswered = .init(questionnaire: questionnaire, enrollment: enrollment, event: event)
-        case .promptTimedWalkingTest:
-            // implemented in https://github.com/StanfordBDHG/MyHeartCounts-iOS/pull/13
-            break
+        case .promptTimedWalkingTest(let component):
+            presentedTimedWalkingTest = component
         }
     }
     

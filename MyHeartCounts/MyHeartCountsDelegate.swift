@@ -21,14 +21,22 @@ import UserNotifications
 @Observable
 final class MyHeartCountsDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
-        Configuration(standard: MyHeartCountsStandard()) {
+        if let selector = FeatureFlags.overrideFirebaseConfig {
+            LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
+        }
+        return Configuration(standard: MyHeartCountsStandard()) {
             DeferredConfigLoading.initialAppLaunchConfig
-            HealthKit()
+            HealthKit {
+                RequestReadAccess(other: [SampleType.workout])
+                RequestWriteAccess(other: [SampleType.workout])
+            }
             Scheduler()
             Notifications()
             BulkHealthExporter()
             HistoricalHealthSamplesExportManager()
             StudyDefinitionLoader.shared
+            WatchConnection()
+            TimedWalkingTest()
         }
     }
     

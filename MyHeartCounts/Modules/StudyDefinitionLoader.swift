@@ -24,6 +24,7 @@ final class StudyDefinitionLoader: Module, Sendable {
     
     private let logger = Logger(subsystem: "edu.stanford.MHC.studyLoader", category: "")
     // SAFETY: this is only mutated from the MainActor.
+    // NOTE: the compiler thinks the nonisolated(unsafe) isn't needed here. this is a lie. see also https://github.com/swiftlang/swift/issues/81962
     nonisolated(unsafe) private(set) var studyDefinition: Result<StudyDefinition, LoadError>?
     
     private init() {
