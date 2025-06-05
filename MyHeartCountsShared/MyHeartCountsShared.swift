@@ -33,17 +33,6 @@ extension InterDeviceUserInfoKey {
 
 
 extension WCSession {
-//    /// Sends a message and waits for a response.
-//    public func sendMessage(_ data: Data) async throws -> Data {
-//        try await withCheckedThrowingContinuation { continuation in
-//            self.sendMessageData(data) { response in
-//                continuation.resume(returning: response)
-//            } errorHandler: { error in
-//                continuation.resume(throwing: error)
-//            }
-//        }
-//    }
-    
     /// Sends the specified user info dictionary to the companion app.
     public func send(userInfo: [InterDeviceUserInfoKey: Any]) {
         let userInfo: [String: Any] = .init(userInfo)
