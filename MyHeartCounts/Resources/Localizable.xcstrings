@@ -10,12 +10,6 @@
     "—" : {
 
     },
-    "%@" : {
-
-    },
-    "%lf" : {
-
-    },
     "%lld ft" : {
 
     },
@@ -118,9 +112,6 @@
     "Before we can continue,\nwe need to learn a little about you" : {
 
     },
-    "Browse Data" : {
-
-    },
     "Browse Samples" : {
 
     },
@@ -166,6 +157,9 @@
 
     },
     "Current Test" : {
+
+    },
+    "Date" : {
 
     },
     "Date of Birth" : {
@@ -234,6 +228,15 @@
     "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
 
     },
+    "Further Reads" : {
+
+    },
+    "Go to next field" : {
+
+    },
+    "Go to previous field" : {
+
+    },
     "Grant Access" : {
       "localizations" : {
         "en" : {
@@ -280,16 +283,13 @@
         }
       }
     },
+    "Heart Health" : {
+
+    },
+    "Heart Health Dashboard" : {
+
+    },
     "Historical Data Bulk Export" : {
-
-    },
-    "If you have an Apple Watch, please ensure that the MyHeart Counts app is running " : {
-
-    },
-    "Install on Apple Watch" : {
-
-    },
-    "Installing MyHeart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
 
     },
     "I have never smoked" : {
@@ -305,6 +305,15 @@
 
     },
     "I'm actively smoking" : {
+
+    },
+    "If you have an Apple Watch, please ensure that the MyHeart Counts app is running " : {
+
+    },
+    "Install on Apple Watch" : {
+
+    },
+    "Installing MyHeart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
 
     },
     "Label?" : {
@@ -568,6 +577,9 @@
       }
     },
     "This study will request read-access to collect the following Health samples:" : {
+
+    },
+    "Time Asleep" : {
 
     },
     "Time Elapsed" : {

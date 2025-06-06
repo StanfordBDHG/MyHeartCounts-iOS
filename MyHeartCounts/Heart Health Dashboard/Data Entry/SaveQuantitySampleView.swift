@@ -88,16 +88,18 @@ struct SaveQuantitySampleView: View {
             guard let value = self.value else {
                 return
             }
-//            let sample = CustomHealthSample(
-//                sampleType: sampleType,
-//                startDate: self.date,
-//                endDate: self.date,
-//                unit: unit,
-//                value: value
-//            )
-//            self.modelContext.insert(sample)
-//            try self.modelContext.save()
-            try await self.standard
+            guard let sampleType = CustomQuantitySampleType(sampleType) else {
+                return // ???
+            }
+            let sample = QuantitySample(
+                id: UUID(),
+                sampleType: .custom(sampleType),
+                unit: unit,
+                value: value,
+                startDate: self.date,
+                endDate: self.date
+            )
+            try await self.standard.uploadHealthObservation(sample)
         }
     }
 }

@@ -100,6 +100,8 @@ extension MyHeartCountsStandard {
             for observation in chunk {
                 do {
                     let document = try await healthObservationDocument(for: observation)
+                    let path = document.path
+                    logger.notice("Uploading Health Observation to \(path)")
                     try batch.setData(
                         from: observation.resource(withMapping: .default, issuedDate: issuedDate),
                         forDocument: document

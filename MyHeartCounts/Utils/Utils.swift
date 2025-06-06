@@ -239,3 +239,10 @@ extension View {
         }
     }
 }
+
+
+extension Double {
+    init(_ decimal: Decimal) {
+        self = NSDecimalNumber(decimal: decimal).doubleValue // swiftlint:disable:this legacy_objc_type
+    }
+}

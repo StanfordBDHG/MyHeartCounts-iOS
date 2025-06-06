@@ -13,6 +13,7 @@ import SpeziHealthKitUI
 import SwiftData
 import struct SwiftUI.Color
 
+// https://console.firebase.google.com/u/1/project/myheart-counts-development/firestore/databases/-default-/data/~2Fusers~2FEDsEPMPtiOOBE9l7JH4Y3kZHuxm1~2FHealthObservations_MHCCustomSampleTypeBloodLipidMeasurement
 
 enum MHCSampleType: Hashable, Identifiable, Sendable {
     case healthKit(SampleTypeProxy)
@@ -64,14 +65,28 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     init?(_ sampleType: CustomHealthSample.SampleType) {
         switch sampleType {
         case .bloodLipids:
-            self = Self(
-                id: "mhc.customSampleType.bloodLipids",
-                displayTitle: sampleType.displayTitle,
-                displayUnit: sampleType.displayUnit!, // swiftlint:disable:this force_unwrapping
-                aggregationKind: .avg,
-                preferredTintColor: .yellow // ???
-            )
+            self = .bloodLipids
         case .nicotineExposure, .dietMEPAScore:
+            return nil
+        }
+    }
+}
+
+
+extension CustomQuantitySampleType {
+    static let bloodLipids = Self(
+        id: "MHCCustomSampleTypeBloodLipidMeasurement",
+        displayTitle: CustomHealthSample.SampleType.bloodLipids.displayTitle,
+        displayUnit: CustomHealthSample.SampleType.bloodLipids.displayUnit!, // swiftlint:disable:this force_unwrapping
+        aggregationKind: .avg,
+        preferredTintColor: .yellow // ???
+    )
+    
+    init?(identifier: String) {
+        switch identifier {
+        case Self.bloodLipids.id:
+            self = .bloodLipids
+        default:
             return nil
         }
     }

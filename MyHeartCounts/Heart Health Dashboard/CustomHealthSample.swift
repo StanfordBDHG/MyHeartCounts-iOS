@@ -12,6 +12,7 @@ import SpeziHealthKit
 import SwiftData
 
 
+@available(*, deprecated, message: "DONT USE THIS ANYMORE ITS CRINGE")
 @Model
 final class CustomHealthSample {
     enum SampleType: Int, Codable, Identifiable {

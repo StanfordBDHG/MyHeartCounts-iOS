@@ -14,6 +14,7 @@ import SwiftData
 import SwiftUI
 
 
+@available(*, deprecated, message: "DO NOT USE")
 @propertyWrapper
 @MainActor
 struct CustomHealthSampleQuery: DynamicProperty {

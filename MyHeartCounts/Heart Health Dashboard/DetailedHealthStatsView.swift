@@ -10,6 +10,7 @@
 
 import Charts
 import Foundation
+import SpeziAccount
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziViews
@@ -29,6 +30,9 @@ struct DetailedHealthStatsView: View {
     
     @Environment(\.modelContext)
     private var modelContext
+    
+    @Environment(Account.self)
+    private var account: Account?
     
     private let sampleType: MHCSampleType
     private let input: Input
@@ -75,11 +79,12 @@ struct DetailedHealthStatsView: View {
             case .healthKit:
                 EmptyView()
             case .custom(let sampleType):
-                Section {
-                    NavigationLink("Browse Data") {
-                        CustomHealthSamplesBrowser(sampleType)
-                    }
-                }
+//                Section {
+//                    NavigationLink("Browse Data") {
+//                        CustomHealthSamplesBrowser(sampleType)
+//                    }
+//                }
+                EmptyView() // ???
             }
         }
         .navigationTitle(sampleType.displayTitle)
@@ -115,11 +120,12 @@ struct DetailedHealthStatsView: View {
             case .healthKit(let proxy):
                 return .healthKit(proxy)
             case .custom(let sampleType):
-                return CustomHealthSampleHealthDashboardDataSource(
-                    modelContext: modelContext,
-                    sampleType: sampleType,
-                    timeRange: timeRange
-                ).map { .custom($0) }
+                return FirestoreHealthDashboardDataSource(account: account, sampleType: sampleType, timeRange: timeRange).map { .custom($0) }
+//                return CustomHealthSampleHealthDashboardDataSource(
+//                    modelContext: modelContext,
+//                    sampleType: sampleType,
+//                    timeRange: timeRange
+//                ).map { .custom($0) }
             }
         }()
         if let dataSource {

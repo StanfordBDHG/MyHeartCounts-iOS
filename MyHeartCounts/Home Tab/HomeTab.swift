@@ -35,6 +35,9 @@ struct HomeTab: RootViewTab {
     @LocalPreference(.enableDebugMode)
     private var enableDebugMode
     
+    @Environment(Account.self)
+    private var account
+    
     @State private var actionCards: [ActionCard] = []
     
     var body: some View {

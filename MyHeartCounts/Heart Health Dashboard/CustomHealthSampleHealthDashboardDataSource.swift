@@ -12,6 +12,7 @@ import SpeziHealthKit
 import SwiftData
 
 
+@available(*, deprecated, message: "USE THE FIREBASE ONE!!!!!!")
 @Observable // swiftlint:disable:next type_name
 final class CustomHealthSampleHealthDashboardDataSource: HealthDashboardLayout.CustomDataSourceProtocol, Sendable {
     @ObservationIgnored private let customHealthSampleType: CustomHealthSample.SampleType

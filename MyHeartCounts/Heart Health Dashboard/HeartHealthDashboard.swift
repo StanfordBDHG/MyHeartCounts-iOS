@@ -87,16 +87,16 @@ struct HeartHealthDashboard: View {
                 Self.addSampleView(for: descriptor.keyPath)
             }
         }
-        .sheet(item: $browseCustomHealthSamplesInput) { sampleType in
-            NavigationStack {
-                CustomHealthSamplesBrowser(sampleType)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            DismissButton()
-                        }
-                    }
-            }
-        }
+//        .sheet(item: $browseCustomHealthSamplesInput) { sampleType in
+//            NavigationStack {
+//                CustomHealthSamplesBrowser(sampleType)
+//                    .toolbar {
+//                        ToolbarItem(placement: .cancellationAction) {
+//                            DismissButton()
+//                        }
+//                    }
+//            }
+//        }
         .sheet(item: $presentedArticle) { article in
             ArticleSheet(article: article)
         }
