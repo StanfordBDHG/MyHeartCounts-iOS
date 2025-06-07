@@ -16,6 +16,8 @@ struct UpcomingTasksTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "Upcoming Tasks" }
     static var tabSymbol: SFSymbol { .calendar }
     
+    @Environment(\.calendar)
+    private var calendar
     
     var body: some View {
         NavigationStack {
@@ -28,7 +30,7 @@ struct UpcomingTasksTab: RootViewTab {
                     .fontDesign(.rounded)
                     .fontWeight(.bold)
                 // maybe lower the spacing inbetween these?
-                UpcomingTasksList(timeRange: .fortnight)
+                UpcomingTasksList(timeRange: .fortnight, calendar: calendar)
             }
             .navigationTitle("Upcoming Tasks")
             .navigationBarTitleDisplayMode(.large)

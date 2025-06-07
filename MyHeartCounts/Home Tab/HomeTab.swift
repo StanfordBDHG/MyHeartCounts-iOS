@@ -23,14 +23,20 @@ import class ModelsR4.Questionnaire
 
 /// The View for the "Home" tab in the root tab view.
 struct HomeTab: RootViewTab {
-    static var tabTitle: LocalizedStringResource { "My Heart Counts" }
+    static var tabTitle: LocalizedStringResource { "MyHeart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var historicalDataExportMgr
     
+    @Environment(\.calendar)
+    private var calendar
+    
     @LocalPreference(.enableDebugMode)
     private var enableDebugMode
+    
+    @Environment(Account.self)
+    private var account
     
     @State private var actionCards: [ActionCard] = []
     
@@ -41,7 +47,7 @@ struct HomeTab: RootViewTab {
                 historicalHealthDataUploadSection
                 scheduleFormContent
             }
-            .navigationTitle("My Heart Counts")
+            .navigationTitle(String(localized: Self.tabTitle))
             .toolbar {
                 accountToolbarItem
             }
@@ -63,7 +69,7 @@ struct HomeTab: RootViewTab {
     
     @ViewBuilder private var scheduleFormContent: some View {
         makeSection("Today's Tasks") {
-            UpcomingTasksList(timeRange: .today)
+            UpcomingTasksList(timeRange: .today, calendar: calendar)
         }
     }
         
