@@ -7,20 +7,23 @@
 //
 
 import Foundation
-import SwiftData
+import SpeziViews
 import SwiftUI
 
 
 struct NicotineExposureEntryView: View {
-    private typealias Option = CustomHealthSample.NicotineExposureCategoryValues
+    private typealias Option = NicotineExposureCategoryValues
     
-    @Environment(\.modelContext)
-    private var modelContext
     @Environment(\.dismiss)
     private var dismiss
+    
     @Environment(\.colorScheme)
     private var colorScheme
     
+    @Environment(MyHeartCountsStandard.self)
+    private var standard
+    
+    @State private var viewState: ViewState = .idle
     @State private var selection: Option?
     
     var body: some View {
@@ -43,17 +46,20 @@ struct NicotineExposureEntryView: View {
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done") {
+                AsyncButton("Done", state: $viewState) {
                     guard let selection else {
                         return
                     }
-                    let sample = CustomHealthSample(
-                        sampleType: .nicotineExposure,
-                        date: .now,
-                        value: Double(selection.rawValue)
+                    let now = Date.now
+                    let sample = QuantitySample(
+                        id: UUID(),
+                        sampleType: .custom(.nicotineExposure),
+                        unit: CustomQuantitySampleType.nicotineExposure.displayUnit,
+                        value: Double(selection.rawValue),
+                        startDate: now,
+                        endDate: now
                     )
-                    modelContext.insert(sample)
-                    try? modelContext.save()
+                    try await standard.uploadHealthObservation(sample)
                     dismiss()
                 }
                 .bold()
@@ -89,7 +95,7 @@ struct NicotineExposureEntryView: View {
 }
 
 
-extension CustomHealthSample.NicotineExposureCategoryValues {
+extension NicotineExposureCategoryValues {
     var displayTitle: LocalizedStringResource {
         switch self {
         case .neverSmoked:

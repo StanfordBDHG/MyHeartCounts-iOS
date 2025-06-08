@@ -14,7 +14,6 @@ import SpeziAccount
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziViews
-import SwiftData
 import SwiftUI
 
 
@@ -28,9 +27,6 @@ struct DetailedHealthStatsView: View {
         case scoreResult(result: ScoreResult, keyPath: KeyPath<CVHScore, ScoreResult>)
     }
     
-    @Environment(\.modelContext)
-    private var modelContext
-    
     @Environment(Account.self)
     private var account: Account?
     
@@ -39,7 +35,7 @@ struct DetailedHealthStatsView: View {
     @State private var isPresentingAddSampleSheet = false
     
     var body: some View {
-        Form { // swiftlint:disable:this closure_body_length
+        Form {
             switch input {
             case .scoreResult(let result, keyPath: _):
                 Section {
@@ -75,17 +71,6 @@ struct DetailedHealthStatsView: View {
                     link: "https://stanford.edu"
                 )
             }
-            switch sampleType {
-            case .healthKit:
-                EmptyView()
-            case .custom(let sampleType):
-//                Section {
-//                    NavigationLink("Browse Data") {
-//                        CustomHealthSamplesBrowser(sampleType)
-//                    }
-//                }
-                EmptyView() // ???
-            }
         }
         .navigationTitle(sampleType.displayTitle)
         .toolbar {
@@ -105,7 +90,7 @@ struct DetailedHealthStatsView: View {
             case .scoreResult(result: _, let keyPath):
                 view.sheet(isPresented: $isPresentingAddSampleSheet) {
                     NavigationStack {
-                        HeartHealthDashboard.addSampleView(for: keyPath)
+                        HeartHealthDashboard.addSampleView(for: keyPath, locale: Locale.current)
                     }
                 }
             }
@@ -120,12 +105,7 @@ struct DetailedHealthStatsView: View {
             case .healthKit(let proxy):
                 return .healthKit(proxy)
             case .custom(let sampleType):
-                return FirestoreHealthDashboardDataSource(account: account, sampleType: sampleType, timeRange: timeRange).map { .custom($0) }
-//                return CustomHealthSampleHealthDashboardDataSource(
-//                    modelContext: modelContext,
-//                    sampleType: sampleType,
-//                    timeRange: timeRange
-//                ).map { .custom($0) }
+                return .firebase(sampleType)
             }
         }()
         if let dataSource {
@@ -138,6 +118,8 @@ struct DetailedHealthStatsView: View {
                 case .healthKit:
                     return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
                 case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
+                    return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
+                case .custom:
                     return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
                 }
             }()

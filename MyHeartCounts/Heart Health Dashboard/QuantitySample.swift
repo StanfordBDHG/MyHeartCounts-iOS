@@ -6,18 +6,18 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Foundation
 import HealthKit
 import SpeziHealthKit
 import SpeziHealthKitUI
-import SwiftData
 import struct SwiftUI.Color
 
-// https://console.firebase.google.com/u/1/project/myheart-counts-development/firestore/databases/-default-/data/~2Fusers~2FEDsEPMPtiOOBE9l7JH4Y3kZHuxm1~2FHealthObservations_MHCCustomSampleTypeBloodLipidMeasurement
 
 enum MHCSampleType: Hashable, Identifiable, Sendable {
     case healthKit(SampleTypeProxy)
-    case custom(CustomHealthSample.SampleType)
+    case custom(CustomQuantitySampleType)
     
     var id: AnyHashable {
         switch self {
@@ -61,32 +61,39 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
         self.aggregationKind = aggregationKind
         self.preferredTintColor = preferredTintColor
     }
-    
-    init?(_ sampleType: CustomHealthSample.SampleType) {
-        switch sampleType {
-        case .bloodLipids:
-            self = .bloodLipids
-        case .nicotineExposure, .dietMEPAScore:
-            return nil
-        }
-    }
 }
 
 
 extension CustomQuantitySampleType {
     static let bloodLipids = Self(
         id: "MHCCustomSampleTypeBloodLipidMeasurement",
-        displayTitle: CustomHealthSample.SampleType.bloodLipids.displayTitle,
-        displayUnit: CustomHealthSample.SampleType.bloodLipids.displayUnit!, // swiftlint:disable:this force_unwrapping
+        displayTitle: "Blood Lipids",
+        displayUnit: .gramUnit(with: .milli) / .literUnit(with: .deci),
         aggregationKind: .avg,
         preferredTintColor: .yellow // ???
     )
     
+    static let dietMEPAScore = Self(
+        id: "MHCCustomSampleTypeDietMEPAScore",
+        displayTitle: "Diet (MEPA Score)",
+        displayUnit: .count(),
+        aggregationKind: .avg,
+        preferredTintColor: .blue // ???
+    )
+    
+    static let nicotineExposure = Self(
+        id: "MHCCustomSampleTypeNicotineExposure",
+        displayTitle: "Nicotine Exposure",
+        displayUnit: .count(),
+        aggregationKind: .avg,
+        preferredTintColor: .brown // ???
+    )
+    
     init?(identifier: String) {
-        switch identifier {
-        case Self.bloodLipids.id:
-            self = .bloodLipids
-        default:
+        let wellKnownSampleTypes: [Self] = [.bloodLipids, .dietMEPAScore, .nicotineExposure]
+        if let sampleType = wellKnownSampleTypes.first(where: { $0.id == identifier }) {
+            self = sampleType
+        } else {
             return nil
         }
     }

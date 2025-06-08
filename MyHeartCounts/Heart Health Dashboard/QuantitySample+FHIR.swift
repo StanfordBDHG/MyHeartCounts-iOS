@@ -18,26 +18,40 @@ extension QuantitySample: HealthObservation {
         case notSupported
     }
     
+    // SAFETY: this is in fact safe, since the FHIRPrimitive's `extension` property is empty.
+    // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
+    // it also never can be mutated to contain any.
+    private nonisolated(unsafe) static let speziSystem = "https://spezi.stanford.edu".asFHIRURIPrimitive()! // swiftlint:disable:this force_unwrapping
+    
     var sampleTypeIdentifier: String {
         self.sampleType.id
     }
     
-    func resource(withMapping: HKSampleMapping, issuedDate: FHIRPrimitive<Instant>?) throws -> ResourceProxy {
+    // swiftlint:disable:next function_body_length
+    func resource(withMapping mapping: HKSampleMapping, issuedDate: FHIRPrimitive<Instant>?) throws -> ResourceProxy {
+        let observation = Observation(
+            code: CodeableConcept(),
+            status: FHIRPrimitive(.final)
+        )
+        // Set basic elements applicable to all observations
+        observation.id = self.id.uuidString.asFHIRStringPrimitive()
+        observation.appendIdentifier(Identifier(id: observation.id))
+        try observation.setEffective(startDate: self.startDate, endDate: self.endDate, timeZone: .current)
+        if let issuedDate {
+            observation.issued = issuedDate
+        } else {
+            try observation.setIssued(on: .now)
+        }
         switch sampleType {
-        case .custom(.bloodLipids):
-            let observation = Observation(
-                code: CodeableConcept(),
-                status: FHIRPrimitive(.final)
+        case .healthKit(let sampleType):
+            let sample = HKQuantitySample(
+                type: sampleType.hkSampleType,
+                quantity: HKQuantity(unit: self.unit, doubleValue: self.value),
+                start: self.startDate,
+                end: self.endDate
             )
-            // Set basic elements applicable to all observations
-            observation.id = self.id.uuidString.asFHIRStringPrimitive()
-            observation.appendIdentifier(Identifier(id: observation.id))
-            try observation.setEffective(startDate: self.startDate, endDate: self.endDate, timeZone: .current)
-            if let issuedDate {
-                observation.issued = issuedDate
-            } else {
-                try observation.setIssued(on: .now)
-            }
+            return try sample.resource(withMapping: mapping, issuedDate: issuedDate)
+        case .custom(.bloodLipids):
             let code = "18262-6".asFHIRStringPrimitive() // "Cholesterol in LDL [Mass/volume] in Serum or Plasma by Direct assay"
             let system = "http://loinc.org".asFHIRURIPrimitive()
             observation.appendCodings([
@@ -45,7 +59,7 @@ extension QuantitySample: HealthObservation {
                 Coding(
                     code: sampleType.id.asFHIRStringPrimitive(),
                     display: sampleType.displayTitle.asFHIRStringPrimitive(),
-                    system: "https://spezi.stanford.edu".asFHIRURIPrimitive()
+                    system: Self.speziSystem
                 )
             ])
             observation.value = .quantity(Quantity(
@@ -54,19 +68,34 @@ extension QuantitySample: HealthObservation {
                 unit: "mg/dL".asFHIRStringPrimitive(),
                 value: value.asFHIRDecimalPrimitive()
             ))
-            return .observation(observation)
+        case .custom(.nicotineExposure), .custom(.dietMEPAScore):
+            let code = sampleType.id.asFHIRStringPrimitive()
+            observation.appendCoding(Coding(
+                code: code,
+                display: sampleType.displayTitle.asFHIRStringPrimitive(),
+                system: Self.speziSystem
+            ))
+            observation.value = .quantity(Quantity(
+                code: code,
+                system: Self.speziSystem,
+                unit: "score" // not ideal
+            ))
         default:
             throw FHIRObservationConversionError.notSupported
         }
+        return .observation(observation)
     }
 }
 
 
 extension QuantitySample {
-    init?(_ resourceProxy: ModelsR4.ResourceProxy) {
+    /// Attempts to create a ``QuantitySample`` from a FHIR `ResourceProxy`.
+    ///
+    /// - parameter sampleTypeHint: the expected sample type. if you specify `nil`, the function will attempt to determine the sample type automatically, based on the Observation.
+    init?(_ resourceProxy: ModelsR4.ResourceProxy, sampleTypeHint: MHCQuantitySampleType? = nil) {
         switch resourceProxy {
         case .observation(let observation):
-            if let sample = Self(observation) {
+            if let sample = Self(observation, sampleTypeHint: sampleTypeHint) {
                 self = sample
             } else {
                 return nil
@@ -79,14 +108,14 @@ extension QuantitySample {
     /// Attempts to create a ``QuantitySample`` from a FHIR `Observation`.
     ///
     /// - parameter sampleTypeHint: the expected sample type. if you specify `nil`, the function will attempt to determine the sample type automatically, based on the Observation.
-    init?(_ observation: ModelsR4.Observation, sampleTypeHint: MHCQuantitySampleType? = nil) { // swiftlint:disable:this function_body_length
+    init?(_ observation: ModelsR4.Observation, sampleTypeHint: MHCQuantitySampleType? = nil) {
+        // swiftlint:disable:previous function_body_length cyclomatic_complexity
         guard let id = (observation.id?.value?.string).flatMap({ UUID(uuidString: $0) }),
               case .quantity(let quantity) = observation.value,
               let rawUnit = quantity.unit?.value?.string,
               let value = (quantity.value?.value?.decimal).map({ Double($0) }),
               let effective = observation.effective,
               let coding = observation.code.coding else {
-            print(#line)
             return nil
         }
         let startDate: Date
@@ -94,14 +123,12 @@ extension QuantitySample {
         switch effective {
         case .dateTime(let dateTime):
             guard let date = try? dateTime.value?.asNSDate() else {
-                print(#line)
                 return nil
             }
             startDate = date
             endDate = date
         case .instant(let instant):
             guard let date = try? instant.value?.asNSDate() else {
-                print(#line)
                 return nil
             }
             startDate = date
@@ -109,13 +136,11 @@ extension QuantitySample {
         case .period(let period):
             guard let start = try? period.start?.value?.asNSDate(),
                   let end = try? period.end?.value?.asNSDate() else {
-                print(#line)
                 return nil
             }
             startDate = start
             endDate = end
         case .timing:
-            print(#line)
             return nil
         }
         let sampleType: MHCQuantitySampleType
@@ -124,7 +149,6 @@ extension QuantitySample {
         } else if let healthKitCoding = coding.first(where: { $0.system == "http://developer.apple.com/documentation/healthkit" }) {
             guard let sampleTypeIdentifier = healthKitCoding.code?.value?.string,
                   let healthKitSampleType = SpeziHealthKit.SampleType<HKQuantitySample>(.init(rawValue: sampleTypeIdentifier)) else {
-                print(#line)
                 return nil
             }
             sampleType = .healthKit(healthKitSampleType)
@@ -134,7 +158,6 @@ extension QuantitySample {
             sampleType = .custom(mhcSampleType)
         } else {
             // no hint and also we were unable to extract smth we know / can handle
-            print(#line)
             return nil
         }
         self.init(

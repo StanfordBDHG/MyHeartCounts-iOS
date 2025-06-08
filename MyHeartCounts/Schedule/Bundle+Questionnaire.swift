@@ -11,16 +11,23 @@ import SpeziQuestionnaire
 
 
 extension Foundation.Bundle {
-    func questionnaire(withName name: String) -> Questionnaire {
-        guard let resourceURL = self.url(forResource: name, withExtension: "json") else {
-            fatalError("Could not find the questionnaire \"\(name).json\" in the bundle.")
+    func localizedQuestionnaire(
+        withName name: String,
+        for locale: Locale,
+        fallbackLocales: [Locale] = [.init(identifier: "en_US")]
+    ) -> Questionnaire? {
+        let locales = [locale].appending(contentsOf: fallbackLocales)
+        for locale in locales {
+            let identifier = String(locale.identifier(.icu).prefix(while: { $0 != "@" }))
+            let filename = "\(name)_\(identifier)"
+            guard let url = self.url(forResource: filename, withExtension: "json"),
+                  let data = try? Data(contentsOf: url),
+                  let questionnaire = try? JSONDecoder().decode(Questionnaire.self, from: data) else {
+                logger.error("Failed to locate/load questionnaire '\(filename).json' in bundle")
+                continue
+            }
+            return questionnaire
         }
-        
-        do {
-            let resourceData = try Data(contentsOf: resourceURL)
-            return try JSONDecoder().decode(Questionnaire.self, from: resourceData)
-        } catch {
-            fatalError("Could not decode the FHIR questionnaire named \"\(name).json\": \(error)")
-        }
+        return nil
     }
 }

@@ -8,39 +8,10 @@
 
 import Foundation
 import HealthKit
+import SpeziAccount
 import SpeziHealthKit
 import SpeziHealthKitUI
-import SwiftData
 import SwiftUI
-
-
-@available(*, deprecated, message: "DO NOT USE")
-@propertyWrapper
-@MainActor
-struct CustomHealthSampleQuery: DynamicProperty {
-    @Query private var samples: [CustomHealthSample]
-    
-    var wrappedValue: [CustomHealthSample] {
-        samples
-    }
-    
-    init(
-        _ sampleType: CustomHealthSample.SampleType,
-        sortBy sortKeyPath: KeyPath<CustomHealthSample, some Comparable> & Sendable = \.startDate,
-        order sortOrder: SortOrder = .forward,
-        limit: Int? = nil
-    ) {
-        let sampleTypeRawValue = sampleType.rawValue
-        var descriptor = FetchDescriptor<CustomHealthSample>(
-            predicate: #Predicate<CustomHealthSample> { sample in
-                sample.sampleTypeRawValue == sampleTypeRawValue
-            },
-            sortBy: [SortDescriptor(sortKeyPath, order: sortOrder)]
-        )
-        descriptor.fetchLimit = limit
-        _samples = .init(descriptor)
-    }
-}
 
 
 @MainActor
@@ -50,13 +21,13 @@ struct CVHScore: DynamicProperty {
         var timeRange: Range<Date> { get }
     }
     
-    @CustomHealthSampleQuery(.dietMEPAScore, sortBy: \.endDate, order: .reverse, limit: 1)
+    @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2), limit: 1)
     private var dietScores
     
-    @CustomHealthSampleQuery(.bloodLipids, sortBy: \.endDate, order: .reverse, limit: 1)
+    @MHCFirestoreQuery(sampleType: .bloodLipids, timeRange: .last(months: 2), limit: 1)
     private var bloodLipids
     
-    @CustomHealthSampleQuery(.nicotineExposure, sortBy: \.endDate, order: .reverse, limit: 1)
+    @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2), limit: 1)
     private var nicotineExposure
     
     @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 14))
@@ -92,6 +63,7 @@ struct CVHScore: DynamicProperty {
             bloodGlucoseScore.score,
             bloodPressureScore.score
         ].compactMap { $0.map { max(0, min(1, $0)) } }
+        print("BLOOD LIPIDS", bloodLipids.count, bloodLipids)
         return scores.count < 5 ? nil : scores.reduce(0, +) / Double(scores.count)
     }
     
@@ -124,7 +96,7 @@ extension CVHScore {
         ScoreResult(
             sampleType: .custom(.nicotineExposure),
             sample: nicotineExposure.first,
-            value: { CustomHealthSample.NicotineExposureCategoryValues(rawValue: Int($0.value)) },
+            value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
             definition: .cvhNicotine
         )
     }
@@ -226,38 +198,6 @@ extension CVHScore {
             },
             definition: .cvhBloodPressure
         )
-        
-//        let score = { () -> Double? in
-//            guard let correlation = bloodPressure.last,
-//                  let systolicSample = correlation.firstSample(ofType: .bloodPressureSystolic),
-//                  let diastolicSample = correlation.firstSample(ofType: .bloodPressureDiastolic) else {
-//                return nil
-//            }
-//            let systolic = systolicSample.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit)
-//            let diastolic = diastolicSample.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit)
-//            if systolic < 100 && diastolic < 80 {
-//                return 1
-//            } else if systolic < 130 && diastolic < 80 {
-//                return 0.75
-//            } else if (130..<140).contains(systolic) || (80..<90).contains(diastolic) {
-//                return 0.5
-//            } else if (140..<160).contains(systolic) || (90..<100).contains(diastolic) {
-//                return 0.25
-//            } else if systolic >= 160 || diastolic >= 100 {
-//                return 0
-//            } else {
-//                return nil
-//            }
-//        }()
-//        guard let score, let timeRange = bloodPressure.last?.timeRange else {
-//            return ScoreResult(sampleType: .healthKit(.correlation(.bloodPressure)), definition: .init(default: 0, mapping: []))
-//        }
-//        return ScoreResult(
-//            sampleType: .healthKit(.correlation(.bloodPressure)),
-//            definition: ScoreDefinition(default: 0, mapping: []),
-//            score: score,
-//            timeRange: timeRange
-//        )
     }
 }
 
@@ -280,8 +220,7 @@ extension ScoreDefinition {
     ])
     
     static let cvhNicotine: ScoreDefinition = {
-        typealias NicotineValue = CustomHealthSample.NicotineExposureCategoryValues
-        let makeEntry = { (value: NicotineValue, score: Double) -> ScoreDefinition.Element in
+        let makeEntry = { (value: NicotineExposureCategoryValues, score: Double) -> ScoreDefinition.Element in
             ScoreDefinition.Element.equal(to: value, score: score, textualRepresentation: String(localized: value.shortDisplayTitle))
         }
         return ScoreDefinition(default: 0, mapping: [
@@ -355,7 +294,6 @@ extension ScoreDefinition {
 
 
 extension QuantitySample: CVHScore.ComponentSampleProtocol {}
-extension CustomHealthSample: CVHScore.ComponentSampleProtocol {}
 
 extension HKQuantitySample: CVHScore.ComponentSampleProtocol {}
 extension HKCorrelation: CVHScore.ComponentSampleProtocol {}

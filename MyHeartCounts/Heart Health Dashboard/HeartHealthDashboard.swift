@@ -6,11 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Foundation
 import SpeziHealthKit
 import SpeziHealthKitUI
+import SpeziQuestionnaire
 import SpeziViews
-import SwiftData
 import SwiftUI
 
 
@@ -32,21 +34,11 @@ struct HeartHealthDashboard: View {
     private var newsManager
     
     @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
-    @State private var browseCustomHealthSamplesInput: CustomHealthSample.SampleType?
     @State private var presentedArticle: Article?
     @State private var scoreResultToExplain: ScoreResultToExplain?
     
-    @State private var dbgShowExtendedHealthDashboard = false
-    
     var body: some View {
         healthDashboard
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("E") {
-                        dbgShowExtendedHealthDashboard = true
-                    }
-                }
-            }
     }
     
     @ViewBuilder var healthDashboard: some View {
@@ -84,19 +76,9 @@ struct HeartHealthDashboard: View {
         .navigationTitle("Heart Health Dashboard")
         .sheet(item: $addNewSampleDescriptor) { descriptor in
             NavigationStack {
-                Self.addSampleView(for: descriptor.keyPath)
+                Self.addSampleView(for: descriptor.keyPath, locale: Locale.current)
             }
         }
-//        .sheet(item: $browseCustomHealthSamplesInput) { sampleType in
-//            NavigationStack {
-//                CustomHealthSamplesBrowser(sampleType)
-//                    .toolbar {
-//                        ToolbarItem(placement: .cancellationAction) {
-//                            DismissButton()
-//                        }
-//                    }
-//            }
-//        }
         .sheet(item: $presentedArticle) { article in
             ArticleSheet(article: article)
         }
@@ -113,24 +95,6 @@ struct HeartHealthDashboard: View {
                 }
             }
         }
-        .sheet(isPresented: $dbgShowExtendedHealthDashboard) {
-            NavigationStack {
-                extendedDashboard
-            }
-        }
-    }
-    
-    @ViewBuilder private var extendedDashboard: some View {
-        let layout: HealthDashboardLayout = [
-            HealthDashboardLayout.Block.grid(sectionTitle: "TITLE1", components: [
-                .init(.stepCount, style: .chart(.init(chartType: .bar, aggregationInterval: .hour)), enableSelection: true),
-                .init(.heartRate, style: .chart(.init(chartType: .point(area: 5), aggregationInterval: .init(.init(minute: 15))))),
-                .sleepAnalysis(style: .gauge(.mostRecentSample, score: .init(range: 0..<10))),
-                .sleepAnalysis(style: .gauge(.aggregated(.sum), score: .init(range: 0..<10))),
-                .init(.stepCount, style: .gauge(.aggregated(.sum), score: .init(range: 0..<10000)))
-            ])
-        ]
-        HealthDashboard(layout: layout)
     }
     
     
@@ -195,16 +159,6 @@ struct HeartHealthDashboard: View {
             } label: {
                 Label("Details", systemSymbol: .infoCircle)
             }
-            switch score.sampleType {
-            case .healthKit:
-                EmptyView()
-            case .custom(let sampleType):
-                Button {
-                    browseCustomHealthSamplesInput = sampleType
-                } label: {
-                    Label("Browse Samples", systemSymbol: .listDash)
-                }
-            }
         }
     }
     
@@ -220,11 +174,9 @@ extension HeartHealthDashboard {
     private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, ScoreResult>> = [
         \.dietScore,
         \.bodyMassIndexScore,
-//        \.physicalExerciseScore,
         \.bloodLipidsScore,
         \.nicotineExposureScore,
         \.bloodGlucoseScore,
-//        \.sleepHealthScore,
         \.bloodPressureScore
     ]
     
@@ -233,22 +185,52 @@ extension HeartHealthDashboard {
     }
     
     @ViewBuilder
-    static func addSampleView(for keyPath: KeyPath<CVHScore, ScoreResult>) -> some View {
+    static func addSampleView(for keyPath: KeyPath<CVHScore, ScoreResult>, locale: Locale) -> some View {
         switch keyPath {
+        case \.nicotineExposureScore:
+            HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
         case \.dietScore:
-            Text("Unable to find Questionnaire")
+            HealthDashboardQuestionnaireView(questionnaireName: "DietScoreMEPA")
         case \.bodyMassIndexScore:
             SaveBMISampleView()
         case \.bloodLipidsScore:
-            SaveQuantitySampleView(sampleType: .bloodLipids)
-        case \.nicotineExposureScore:
-            NicotineExposureEntryView()
+            SaveQuantitySampleView(sampleType: MHCQuantitySampleType.custom(.bloodLipids))
         case \.bloodGlucoseScore:
-            SaveQuantitySampleView(sampleType: .bloodGlucose)
+            SaveQuantitySampleView(sampleType: MHCQuantitySampleType.healthKit(.bloodGlucose))
         case \.bloodPressureScore:
             SaveBloodPressureSampleView()
         default:
             EmptyView()
+        }
+    }
+}
+
+
+private struct HealthDashboardQuestionnaireView: View {
+    @Environment(\.locale)
+    private var locale
+    
+    @Environment(MyHeartCountsStandard.self)
+    private var standard
+    
+    @Environment(\.dismiss)
+    private var dismiss
+    
+    let questionnaireName: String
+    
+    var body: some View {
+        if let questionnaire = Bundle.main.localizedQuestionnaire(withName: questionnaireName, for: locale) {
+            QuestionnaireView(questionnaire: questionnaire) { result in
+                switch result {
+                case .completed(let response):
+                    await standard.add(response: response)
+                case .cancelled, .failed:
+                    break
+                }
+                dismiss()
+            }
+        } else {
+            ContentUnavailableView("Unable to find Questionnaire", systemSymbol: .exclamationmarkTriangle) // ???
         }
     }
 }

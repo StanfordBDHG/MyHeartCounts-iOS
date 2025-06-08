@@ -12,7 +12,6 @@ import Charts
 import Foundation
 import SpeziHealthKit
 import SpeziHealthKitUI
-import SwiftData
 import SwiftUI
 
 
@@ -23,6 +22,12 @@ extension Gradient {
 
 
 enum HealthDashboardConstants {}
+
+typealias HealthDashboardGoalProvider = @Sendable @MainActor (QuantitySample.SampleType) -> Achievement.ResolvedGoal?
+
+extension EnvironmentValues {
+    @Entry var healthDashboardGoalProvider: HealthDashboardGoalProvider?
+}
 
 
 /// creates a component view for use in the health dashboard, appropriate for the specific input's sample type and context
@@ -35,8 +40,8 @@ func healthDashboardComponentView(
     switch (size, config.dataSource) {
     case (_, .healthKit(.quantity(let sampleType))):
         DefaultHealthDashboardComponentGridCell(queryInput: .healthKit(sampleType), config: config)
-    case (_, .custom(let dataSource)):
-        DefaultHealthDashboardComponentGridCell(queryInput: .custom(dataSource), config: config)
+    case (_, .firebase(let sampleType)):
+        DefaultHealthDashboardComponentGridCell(queryInput: .firestore(sampleType), config: config)
     case (.small, .healthKit(.category(.sleepAnalysis))):
         SmallSleepAnalysisGridCell()
     case (.large, .healthKit(.category(.sleepAnalysis))):
@@ -51,7 +56,6 @@ func healthDashboardComponentView(
 
 
 struct HealthDashboard<Footer: View>: View {
-    typealias SampleTypeGoalProvider = @MainActor (QuantitySample.SampleType) -> Achievement.ResolvedGoal?
     typealias SelectionHandler = @MainActor (SelectionHandlerInput) -> Void
     enum SelectionHandlerInput {
         case healthKit(SampleTypeProxy)
@@ -59,7 +63,7 @@ struct HealthDashboard<Footer: View>: View {
     }
     
     private let layout: HealthDashboardLayout
-    private let goalProvider: SampleTypeGoalProvider?
+    private let goalProvider: HealthDashboardGoalProvider?
     private let selectionHandler: SelectionHandler?
     private let footer: (@MainActor () -> Footer)
     
@@ -99,12 +103,13 @@ struct HealthDashboard<Footer: View>: View {
             footer()
         }
         .makeBackgroundMatchFormBackground()
+        .environment(\.healthDashboardGoalProvider, goalProvider)
     }
     
     
     init(
         layout: HealthDashboardLayout,
-        goalProvider: SampleTypeGoalProvider? = nil,
+        goalProvider: HealthDashboardGoalProvider? = nil,
         selectionHandler: SelectionHandler? = nil,
         @ViewBuilder footer: @MainActor @escaping () -> Footer = { EmptyView() }
     ) {
@@ -152,9 +157,9 @@ struct HealthDashboard<Footer: View>: View {
                         { @MainActor in
                             selectionHandler(.healthKit(sampleType))
                         }
-                    case .custom(let dataSource):
+                    case .firebase(let sampleType):
                         { @MainActor in
-                            selectionHandler(.customQuantitySample(dataSource.sampleType))
+                            selectionHandler(.customQuantitySample(sampleType))
                         }
                     }
                 } else {

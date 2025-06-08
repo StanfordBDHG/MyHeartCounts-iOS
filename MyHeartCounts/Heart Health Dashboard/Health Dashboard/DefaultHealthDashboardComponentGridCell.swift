@@ -13,7 +13,6 @@ import HealthKit
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
-import SwiftData
 import SwiftUI
 
 
@@ -21,7 +20,7 @@ import SwiftUI
 struct DefaultHealthDashboardComponentGridCell: View {
     enum QueryInput {
         case healthKit(SampleType<HKQuantitySample>)
-        case custom(any HealthDashboardLayout.CustomDataSourceProtocol)
+        case firestore(CustomQuantitySampleType)
         
         init?(_ dataSource: HealthDashboardLayout.DataSource) {
             switch dataSource {
@@ -29,14 +28,18 @@ struct DefaultHealthDashboardComponentGridCell: View {
                 self = .healthKit(sampleType)
             case .healthKit:
                 return nil
-            case .custom(let dataSource):
-                self = .custom(dataSource)
+            case .firebase(let sampleType):
+                self = .firestore(sampleType)
             }
         }
     }
     
     @Environment(\.calendar)
     private var calendar
+    
+    @Environment(\.healthDashboardGoalProvider)
+    private var goalProvider
+    
     let queryInput: QueryInput
     let config: HealthDashboardLayout.GridComponent.ComponentDisplayConfig
     
@@ -44,17 +47,8 @@ struct DefaultHealthDashboardComponentGridCell: View {
         switch queryInput {
         case .healthKit(let sampleType):
             view(for: sampleType)
-        case .custom(let dataSource):
-            view(for: dataSource)
-        }
-    }
-    
-    private var timeRange: HealthKitQueryTimeRange {
-        switch queryInput {
-        case .custom(let dataSource):
-            dataSource.timeRange
-        case .healthKit:
-            config.timeRange
+        case .firestore(let sampleType):
+            view(for: sampleType)
         }
     }
     
@@ -72,15 +66,15 @@ struct DefaultHealthDashboardComponentGridCell: View {
                     guard let final else {
                         preconditionFailure("unreachable") // enforced by ctors
                     }
-                    return .aggregate(.init(kind: final, interval: .for(timeRange, in: calendar)))
+                    return .aggregate(.init(kind: final, interval: .for(self.config.timeRange, in: calendar)))
                 }
             }
         case .chart(let config):
             switch queryInput {
             case .healthKit(let sampleType):
                 return .aggregate(.init(kind: .init(sampleType.hkSampleType.aggregationStyle), interval: config.aggregationInterval))
-            case .custom(let dataSource):
-                return .aggregate(.init(kind: dataSource.sampleType.aggregationKind, interval: config.aggregationInterval))
+            case .firestore(let sampleType):
+                return .aggregate(.init(kind: sampleType.aggregationKind, interval: config.aggregationInterval))
             }
         }
     }
@@ -95,13 +89,13 @@ struct DefaultHealthDashboardComponentGridCell: View {
         }
     }
     
-    private func view(for dataSource: any HealthDashboardLayout.CustomDataSourceProtocol) -> some View {
+    private func view(for sampleType: CustomQuantitySampleType) -> some View {
         SamplesProviderView(
-            input: .custom(dataSource),
+            input: .firestore(sampleType),
             aggregationMode: self.aggregationMode,
-            timeRange: self.config.timeRange
+            timeRange: config.timeRange
         ) { samples in
-            innerView(for: samples, sampleType: .custom(dataSource.sampleType))
+            innerView(for: samples, sampleType: .custom(sampleType))
         }
     }
     
@@ -112,15 +106,15 @@ struct DefaultHealthDashboardComponentGridCell: View {
             case .chart:
                 samples
             case .singleValue(let config), .gauge(let config, score: _):
-                samples.aggregated(using: config._variant, overallTimeRange: timeRange.range, calendar: calendar)
+                samples.aggregated(using: config._variant, overallTimeRange: self.config.timeRange.range, calendar: calendar)
             }
         }()
         GridCellImpl(
             sampleType: sampleType,
             samples: samples,
-            timeRange: timeRange,
+            timeRange: self.config.timeRange,
             style: config.style,
-            goal: Achievement.ResolvedGoal?.none// goalProvider?(sampleType)
+            goal: goalProvider?(sampleType)
         )
     }
 }
@@ -350,8 +344,11 @@ private struct SamplesProviderView<Content: View>: View {
                     content: content
                 )
             }
-        case .custom(let dataSource):
-            CustomDataSourceImpl(dataSource: dataSource, content: content)
+        case .firestore(let sampleType):
+            FirestoreImpl(
+                samples: .init(sampleType: sampleType, timeRange: timeRange),
+                content: content
+            )
         }
     }
     
@@ -461,12 +458,13 @@ extension SamplesProviderView {
 
 
 extension SamplesProviderView {
-    private struct CustomDataSourceImpl: View {
-        var dataSource: any HealthDashboardLayout.CustomDataSourceProtocol // TOOD is this enough to get @Observable behaviour?
+    private struct FirestoreImpl: View {
+        @MHCFirestoreQuery<QuantitySample> var samples: [QuantitySample]
         let content: @MainActor ([QuantitySample]) -> Content
         
+        
         var body: some View {
-            content(Array(dataSource.samples))
+            content(samples)
         }
     }
 }

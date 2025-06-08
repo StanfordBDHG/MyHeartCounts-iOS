@@ -201,25 +201,16 @@ extension HealthDashboardLayout {
         private init() {}
     }
     
-    
-    protocol CustomDataSourceProtocol: Sendable, Observable {
-        associatedtype Samples: RandomAccessCollection<QuantitySample>
-        /// The range of time represented by this data source
-        var timeRange: HealthKitQueryTimeRange { get }
-        var sampleType: CustomQuantitySampleType { get }
-        @MainActor var samples: Samples { get }
-    }
-    
     enum DataSource: Sendable {
         case healthKit(SampleTypeProxy)
-        case custom(any CustomDataSourceProtocol)
+        case firebase(CustomQuantitySampleType)
         
         var sampleTypeDisplayTitle: String {
             switch self {
             case .healthKit(let sampleType):
                 sampleType.underlyingSampleType.displayTitle
-            case .custom(let dataSource):
-                dataSource.sampleType.displayTitle
+            case .firebase(let sampleType):
+                sampleType.displayTitle
             }
         }
     }

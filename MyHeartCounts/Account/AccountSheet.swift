@@ -10,7 +10,6 @@
 import SpeziAccount
 import SpeziLicense
 import SpeziStudy
-import SwiftData
 import SwiftUI
 
 

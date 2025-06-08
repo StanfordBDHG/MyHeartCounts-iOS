@@ -8,7 +8,6 @@
 
 import OSLog
 import Spezi
-import SwiftData
 import SwiftUI
 
 
@@ -24,23 +23,6 @@ struct MyHeartCounts: App {
     @LocalPreference(.onboardingFlowComplete)
     private var didCompleteOnboarding
     
-    private let modelContainer: ModelContainer = {
-        let schema = Schema([CustomHealthSample.self], version: .init(0, 0, 1))
-        let configuration = ModelConfiguration(
-            "MyHeartCounts",
-            schema: schema,
-            isStoredInMemoryOnly: false,
-            allowsSave: true,
-            groupContainer: .automatic,
-            cloudKitDatabase: .none
-        )
-        do {
-            return try ModelContainer(for: schema, migrationPlan: nil, configurations: configuration)
-        } catch {
-            fatalError("Unable to create ModelContainer: \(error)")
-        }
-    }()
-    
     var body: some Scene {
         WindowGroup {
             RootView()
@@ -51,6 +33,5 @@ struct MyHeartCounts: App {
             .environment(StudyDefinitionLoader.shared)
         }
         .environment(appDelegate)
-        .modelContainer(modelContainer)
     }
 }

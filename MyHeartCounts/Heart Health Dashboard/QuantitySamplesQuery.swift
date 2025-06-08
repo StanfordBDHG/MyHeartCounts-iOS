@@ -11,7 +11,6 @@ import HealthKit
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
-import SwiftData
 import SwiftUI
 
 
