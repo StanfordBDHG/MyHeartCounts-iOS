@@ -212,12 +212,12 @@ private struct GridCellImpl: View {
             Group {
                 switch score.variant {
                 case .distinctMapping, .custom:
-                    Gauge2(
+                    Gauge(
                         gradient: .redToGreen,
                         progress: progress
                     ) { currentValueText }
                 case .range(let range):
-                    Gauge2(gradient: .redToGreen, progress: progress) {
+                    Gauge(gradient: .redToGreen, progress: progress) {
                         currentValueText
                     } minimumValueText: {
                         makeGaugeBoundaryText(range.lowerBound)

@@ -187,7 +187,7 @@ struct DetailedHealthStatsView: View {
                 .frame(width: leftPartWidth, alignment: .leading)
                 Divider()
                     .frame(width: 1)
-                Gauge2(
+                Gauge(
                     lineWidth: .relative(1.75),
                     gradient: .redToGreen,
                     progress: scoreResult.score

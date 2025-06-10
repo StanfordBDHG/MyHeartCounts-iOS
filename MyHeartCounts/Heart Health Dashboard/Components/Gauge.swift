@@ -6,157 +6,202 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import SwiftUI
 
 
-private struct GaugeRing: Shape {
-    private(set) var progress: CGFloat
-    
-    
-    var animatableData: CGFloat {
-        get {
-            progress
+struct Gauge: View {
+    struct LineWidth {
+        /// The default line width. Matches the `SwiftUI.Gauge`.
+        static let `default` = Self(value: 5.523809523809524)
+        
+        fileprivate let value: Double
+        
+        /// Creates a `LineWidth` my multiplying a fraction onto the default line width.
+        static func relative(_ multiplier: Double) -> Self {
+            Self(value: Self.default.value * multiplier)
         }
-        set {
-            progress = newValue
+        
+        static func absolute(_ width: Double) -> Self {
+            Self(value: width)
+        }
+    }
+    
+    private static let openSegment: Double = 0.2
+    /// The gauge's current value, with `0` representing an "empty" gauge, and `1` representing a "full" gauge
+    private let progress: Double?
+    
+    private let lineWidth: LineWidth
+    private let gradient: Gradient
+    
+    /// A textual representation of the current value.
+    ///
+    /// The value being represented here is not necessarily the same as ``value``.
+    /// For example, it could be the case that a gauge representing a "daily step count" metric will have its ``value`` scaled onto a `0...1` range representing
+    /// the user's progress towards a predefined step count goal, but then uses the ``currentValueString`` to display the total number of steps taken so far today,
+    /// or the percentage of the user's progress towards the goal.
+    let currentValueText: Text?
+    /// A textual representation of the gauge's minimum value.
+    let minimumValueText: Text?
+    /// A textual representation of the gauge's maximum value.
+    let maximumValueText: Text?
+    
+    private var startAngle: Angle {
+        .radians(2.617993877991494)
+    }
+    private var endAngle: Angle {
+        .radians(6.806784082777886)
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Arc(startAngle: startAngle, endAngle: endAngle)
+                    .stroke(
+                        AngularGradient(
+                            gradient: gradient,
+                            center: .center,
+                            startAngle: startAngle,
+                            endAngle: endAngle
+                        ),
+                        style: StrokeStyle(lineWidth: lineWidth.value, lineCap: .round)
+                    )
+                    .padding(lineWidth.value / 2)
+                let strokeWidth = lineWidth.value * 0.39
+                if let position = highlightPointPosition(in: geometry.frame(in: .local)) {
+                    Arc(startAngle: .zero, endAngle: .degrees(360))
+                        .stroke(style: StrokeStyle(lineWidth: strokeWidth))
+                        .frame(width: lineWidth.value + strokeWidth, height: lineWidth.value + strokeWidth)
+                        .position(position)
+                        .blendMode(.destinationOut)
+                }
+                if let currentValueText {
+                    currentValueText
+                }
+                if let minimumValueText {
+                    minimumValueText
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                if let maximumValueText {
+                    maximumValueText
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                }
+            }
+            .compositingGroup()
         }
     }
     
     
-    init(progress: CGFloat) {
-        self.progress = progress
+    private init(
+        lineWidth: LineWidth,
+        gradient: Gradient,
+        progress: Double?,
+        currentValueText: Text?,
+        minimumValueText: Text?,
+        maximumValueText: Text?
+    ) {
+        self.lineWidth = lineWidth
+        self.gradient = gradient
+        self.progress = progress.map { min(1, max(0, $0)) }
+        self.currentValueText = currentValueText
+        self.minimumValueText = minimumValueText
+        self.maximumValueText = maximumValueText
     }
     
+    init(
+        lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
+        gradient: Gradient,
+        progress: Double?
+    ) {
+        self.init(
+            lineWidth: lineWidth,
+            gradient: gradient,
+            progress: progress,
+            currentValueText: nil,
+            minimumValueText: nil,
+            maximumValueText: nil
+        )
+    }
+    
+    init(
+        lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
+        gradient: Gradient,
+        progress: Double?,
+        currentValueText: () -> Text?,
+        minimumValueText: () -> Text,
+        maximumValueText: () -> Text
+    ) {
+        self.init(
+            lineWidth: lineWidth,
+            gradient: gradient,
+            progress: progress,
+            currentValueText: currentValueText(),
+            minimumValueText: minimumValueText(),
+            maximumValueText: maximumValueText()
+        )
+    }
+    
+    init(
+        lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
+        gradient: Gradient,
+        progress: Double?,
+        currentValueText: () -> Text?
+    ) {
+        self.init(
+            lineWidth: lineWidth,
+            gradient: gradient,
+            progress: progress,
+            currentValueText: currentValueText(),
+            minimumValueText: nil,
+            maximumValueText: nil
+        )
+    }
+    
+    private func radius(in rect: CGRect) -> Double {
+        radius(in: rect.size)
+    }
+    
+    private func radius(in rect: CGSize) -> Double {
+        min(rect.width, rect.height) / 2
+    }
+    
+    private func highlightPointPosition(in rect: CGRect) -> CGPoint? {
+        guard let progress else {
+            return nil
+        }
+        let radius = radius(in: rect)
+        let angle = Angle(radians: startAngle.radians + progress * (endAngle.radians - startAngle.radians))
+        return CGPoint(
+            x: (radius * cos(angle.radians)) + radius,
+            y: (radius * sin(angle.radians)) + radius
+        )
+        .move(towards: .init(x: rect.width / 2, y: rect.height / 2), by: lineWidth.value / 2)
+    }
+}
+
+
+private struct Arc: Shape {
+    let startAngle: Angle
+    let endAngle: Angle
     
     func path(in rect: CGRect) -> Path {
         Path { path in
             path.addArc(
-                center: CGPoint(x: rect.width / 2, y: rect.height / 2),
+                center: rect.center,
                 radius: min(rect.width, rect.height) / 2,
-                startAngle: Angle(degrees: 0),
-                endAngle: Angle(degrees: progress * 360.0),
+                startAngle: startAngle,
+                endAngle: endAngle,
                 clockwise: false
             )
         }
     }
 }
 
-struct Gauge: View {
-    let lineWidth: Double
-    let shaddowRadius: Double
-    let gradient: Gradient
-    let backgroundColor: Color
-    let progress: Double
-    
-    @State private var size: CGSize = .zero
-    
-    
-    private var shaddowOffset: CGPoint {
-        let angle = Angle(degrees: progress * 360.0).radians
-        return CGPoint(x: cos(angle) * shaddowRadius * 2.0, y: sin(angle) * shaddowRadius * 2.0)
-    }
-    
-    private var radius: Double {
-        (size.height / 2) - (lineWidth / 2)
-    }
-    
-    var body: some View {
-        ZStack { // swiftlint:disable:this closure_body_length
-            GeometryReader { proxy in
-                Circle()
-                    .stroke(backgroundColor, lineWidth: lineWidth)
-                    .padding(lineWidth / 2)
-                    .onAppear {
-                        self.size = proxy.size
-                    }
-            }
-            GaugeRing(progress: progress)
-                .stroke(
-                    AngularGradient(
-                        gradient: gradient,
-                        center: .center,
-                        startAngle: .degrees(0),
-                        endAngle: .degrees(progress * 360.0)
-                    ),
-                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-                .padding(lineWidth / 2)
-            if progress < 1.0 - (lineWidth / (2 * radius * .pi)) {
-                Circle()
-                    .frame(width: lineWidth)
-                    .foregroundColor(gradient.stops.first?.color)
-                    .offset(y: -(size.height / 2) + (lineWidth / 2))
-            } else {
-                let shaddowOffset = shaddowOffset
-                Circle()
-                    .frame(width: lineWidth)
-                    .foregroundColor(gradient.stops.last?.color)
-                    .offset(y: -(size.height / 2) + (lineWidth / 2))
-                    .rotationEffect(Angle.degrees(360 * Double(progress)))
-                    .shadow(
-                        color: .black.opacity(0.2),
-                        radius: shaddowRadius,
-                        x: shaddowOffset.x,
-                        y: shaddowOffset.y
-                    )
-            }
-        }
-            .aspectRatio(1.0, contentMode: .fit)
-            .animation(.easeOut, value: progress)
-    }
-    
-    
-    init(
-        progress: Double,
-        gradient: Gradient,
-        backgroundColor: Color,
-        lineWidth: Double = 20,
-        shaddowRadius: Double = 4
-    ) {
-        self.progress = progress
-        self.lineWidth = lineWidth
-        self.shaddowRadius = shaddowRadius
-        self.gradient = gradient
-        self.backgroundColor = backgroundColor
-    }
-    
-    init(
-        progress: Double,
-        color: Color = .accentColor,
-        lineWidth: Double = 20
-    ) {
-        self.progress = progress
-        self.lineWidth = lineWidth
-        self.shaddowRadius = lineWidth / 5
-        self.gradient = Gradient(colors: [color, color])
-        self.backgroundColor = color.opacity(0.2)
+
+extension CGRect {
+    var center: CGPoint {
+        CGPoint(x: width / 2, y: height / 2)
     }
 }
-
-
-#if DEBUG
-#Preview {
-    Gauge(progress: 0.981, color: .red)
-        .padding()
-}
-
-#Preview("Animation") {
-    struct PreviewWrapper: View {
-        @State var progress = 0.0
-        
-        var body: some View {
-            Gauge(progress: progress)
-                .task {
-                    while true {
-                        progress += Double.random(in: 0.0...0.05)
-                        try? await Task.sleep(for: .seconds(1))
-                    }
-                }
-        }
-    }
-    
-    return PreviewWrapper()
-        .padding()
-}
-#endif

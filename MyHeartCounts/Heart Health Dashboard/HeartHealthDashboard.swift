@@ -100,7 +100,7 @@ struct HeartHealthDashboard: View {
     
     @ViewBuilder private var topSection: some View {
         Text("Overall Cardiovascular Health")
-        Gauge2(
+        Gauge(
             lineWidth: .relative(1.5),
             gradient: .redToGreen,
             progress: cvhScore
@@ -128,7 +128,7 @@ struct HeartHealthDashboard: View {
         return .custom(title: score.sampleType.displayTitle) {
             if let scoreValue = score.score {
                 VStack {
-                    Gauge2(lineWidth: .default, gradient: .redToGreen, progress: scoreValue) {
+                    Gauge(lineWidth: .default, gradient: .redToGreen, progress: scoreValue) {
                         Text(Int(scoreValue * 100), format: .number)
                             .font(.caption2)
                     }
