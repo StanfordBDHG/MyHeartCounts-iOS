@@ -155,26 +155,27 @@ extension MHCFirestoreQuery where Element == QuantitySample {
             if timeRange != .ever {
                 let data = document.data()
                 if false {
-                    guard let extensions = data["extension"] as? [[String: Any]] else {
-                        return nil
-                    }
-                    let getDate = { (url: FHIRPrimitive<FHIRURI>) -> Date? in
-                        extensions.firstNonNil { extensionDict -> Date? in
-                            guard extensionDict["url"] as? String == url.value?.url.absoluteString,
-                                  let value = extensionDict["valueDecimal"] as? Double else {
-                                return nil
-                            }
-                            return Date(timeIntervalSince1970: value)
-                        }
-                    }
-                    guard let startDate = getDate(FHIRExtensionUrls.absoluteTimeRangeStart),
-                          let endDate = getDate(FHIRExtensionUrls.absoluteTimeRangeEnd) else {
-                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
-                        return nil
-                    }
-                    guard (startDate..<endDate).overlaps(timeRange.range) else {
-                        return nil
-                    }
+                    return nil
+//                    guard let extensions = data["extension"] as? [[String: Any]] else {
+//                        return nil
+//                    }
+//                    let getDate = { (url: FHIRPrimitive<FHIRURI>) -> Date? in
+//                        extensions.firstNonNil { extensionDict -> Date? in
+//                            guard extensionDict["url"] as? String == url.value?.url.absoluteString,
+//                                  let value = extensionDict["valueDecimal"] as? Double else {
+//                                return nil
+//                            }
+//                            return Date(timeIntervalSince1970: value)
+//                        }
+//                    }
+//                    guard let startDate = getDate(FHIRExtensionUrls.absoluteTimeRangeStart),
+//                          let endDate = getDate(FHIRExtensionUrls.absoluteTimeRangeEnd) else {
+//                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
+//                        return nil
+//                    }
+//                    guard (startDate..<endDate).overlaps(timeRange.range) else {
+//                        return nil
+//                    }
                 } else {
                     if let dateString = data["effectiveDateTime"] as? String {
                         guard let date = try? DateTime(dateString).asNSDate() else {
