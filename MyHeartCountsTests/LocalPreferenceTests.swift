@@ -14,7 +14,7 @@ import Testing
 
 
 @Suite(.tags(.unitTest))
-class LocalPreferenceTests {
+final class LocalPreferenceTests {
     let suite: UserDefaults
     let store: LocalPreferencesStore
     
@@ -41,9 +41,6 @@ class LocalPreferenceTests {
         #expect(store[.string] == "abc")
         #expect(try #require(suite.string(forKey: "edu_stanford_MyHeartCounts_string")) == "abc")
     }
-    
-    @Test
-    func abc() {}
 }
 
 

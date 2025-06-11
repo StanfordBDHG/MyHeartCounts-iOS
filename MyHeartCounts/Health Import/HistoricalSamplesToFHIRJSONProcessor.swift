@@ -24,7 +24,7 @@ struct HistoricalSamplesToFHIRJSONProcessor: BatchProcessor {
     
     private func storeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
         let fileManager = FileManager.default
-        let resources = try samples.mapIntoResourceProxies()
+        let resources = try samples.mapIntoResourceProxies(extensions: [.includeAbsoluteTimeRange])
         _ = consume samples
         let encoded = try JSONEncoder().encode(resources)
         _ = consume resources

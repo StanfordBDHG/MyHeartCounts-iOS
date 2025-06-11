@@ -6,6 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
+import Algorithms
 import Foundation
 import SFSafeSymbols
 import SpeziViews
@@ -122,5 +125,124 @@ extension StringProtocol {
 extension EdgeInsets {
     init(horizontal: CGFloat, vertical: CGFloat) {
         self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
+    }
+}
+
+
+extension Color {
+    static func random() -> Color {
+        Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
+    }
+}
+
+
+extension Angle {
+    @inlinable
+    func sin() -> Angle {
+        .radians(_math.sin(radians))
+    }
+    
+    @inlinable
+    func cos() -> Angle {
+        .radians(_math.cos(radians))
+    }
+}
+
+
+extension CGPoint {
+    func move(towards dstPoint: CGPoint, by distance: CGFloat) -> CGPoint {
+        let difference = CGVector(dx: dstPoint.x - x, dy: dstPoint.y - y)
+        let curDistance = (pow(x - dstPoint.x, 2) + pow(y - dstPoint.y, 2)).squareRoot()
+        let relDistance = distance / curDistance
+        return CGPoint(
+            x: x + difference.dx * relDistance,
+            y: y + difference.dy * relDistance
+        )
+    }
+}
+
+
+extension Sequence {
+    func min<T: Comparable>(by keyPath: KeyPath<Element, T>) -> Element? {
+        self.min { $0[keyPath: keyPath] < $1[keyPath: keyPath] }
+    }
+    
+    func max<T: Comparable>(by keyPath: KeyPath<Element, T>) -> Element? {
+        self.max { $0[keyPath: keyPath] < $1[keyPath: keyPath] }
+    }
+    
+    func min<T: Comparable>(of keyPath: KeyPath<Element, T>) -> T? {
+        self.min { $0[keyPath: keyPath] < $1[keyPath: keyPath] }?[keyPath: keyPath]
+    }
+    
+    func max<T: Comparable>(of keyPath: KeyPath<Element, T>) -> T? {
+        self.max { $0[keyPath: keyPath] < $1[keyPath: keyPath] }?[keyPath: keyPath]
+    }
+}
+
+
+extension Sequence {
+    /// Returns a new sequence that chains the `other` sequence onto the end of the sequence.
+    func chaining<Other: Sequence<Element>>(before other: Other) -> Chain2Sequence<Self, Other> {
+        chain(self, other)
+    }
+    
+    /// Returns a new sequence that chains the sequence onto the end of the `other` sequence.
+    func chaining<Other: Sequence<Element>>(after other: Other) -> Chain2Sequence<Other, Self> {
+        chain(other, self)
+    }
+}
+
+
+extension Collection where Index == Int {
+    func elements(at indices: IndexSet) -> [Element] {
+        indices.map { self[$0] }
+    }
+}
+
+
+private struct IdentifiableAdaptor<Value, ID: Hashable>: Identifiable {
+    let value: Value
+    let keyPath: KeyPath<Value, ID>
+    
+    var id: ID {
+        value[keyPath: keyPath]
+    }
+}
+
+extension View {
+    func sheet<Item, ID: Hashable>(
+        item: Binding<Item?>,
+        id: KeyPath<Item, ID>,
+        onDismiss: (@MainActor () -> Void)? = nil,
+        @ViewBuilder content: @MainActor @escaping (Item) -> some View
+    ) -> some View {
+        let binding = Binding<IdentifiableAdaptor<Item, ID>?> {
+            if let item = item.wrappedValue {
+                IdentifiableAdaptor(value: item, keyPath: id)
+            } else {
+                nil
+            }
+        } set: { newValue in
+            if let newValue {
+                item.wrappedValue = newValue.value
+            } else {
+                item.wrappedValue = nil
+            }
+        }
+        return self.sheet(item: binding, onDismiss: onDismiss) { item in
+            content(item.value)
+        }
+    }
+}
+
+
+extension Double {
+    init(_ decimal: Decimal) {
+        self = NSDecimalNumber(decimal: decimal).doubleValue // swiftlint:disable:this legacy_objc_type
     }
 }

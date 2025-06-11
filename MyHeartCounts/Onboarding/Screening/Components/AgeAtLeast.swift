@@ -12,8 +12,10 @@ import SwiftUI
 
 struct AgeAtLeast: ScreeningComponent {
     let title: LocalizedStringResource = "Date of Birth"
-    
     let minAge: Int
+    
+    @Environment(\.calendar)
+    private var cal
     
     @Environment(ScreeningDataCollection.self)
     private var data
@@ -31,7 +33,7 @@ struct AgeAtLeast: ScreeningComponent {
     }
     
     func evaluate(_ data: ScreeningDataCollection) -> Bool {
-        let age = Calendar.current.dateComponents([.year], from: data.dateOfBirth, to: .tomorrow).year ?? 0
+        let age = cal.dateComponents([.year], from: data.dateOfBirth, to: .tomorrow).year ?? 0
         return age >= minAge
     }
 }

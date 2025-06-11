@@ -1,7 +1,38 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "– %@" : {
+
+    },
+    "—" : {
+
+    },
+    "%lld ft" : {
+
+    },
+    "%lld in" : {
+
+    },
+    "%lld‘ %lld“" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld‘ %2$lld“"
+          }
+        }
+      }
+    },
+    "0" : {
+
+    },
+    "1 to 5 years ago" : {
+
+    },
+    "100" : {
 
     },
     "ACCOUNT_SETUP_DESCRIPTION" : {
@@ -33,6 +64,18 @@
           }
         }
       }
+    },
+    "Actively smoking" : {
+
+    },
+    "Add" : {
+
+    },
+    "Add Data" : {
+
+    },
+    "Add Sample" : {
+
     },
     "All tasks have already been completed!" : {
 
@@ -113,6 +156,9 @@
     "Current Test" : {
 
     },
+    "Date" : {
+
+    },
     "Date of Birth" : {
 
     },
@@ -128,10 +174,16 @@
     "Delete&Reset Session" : {
 
     },
+    "Details" : {
+
+    },
     "Disclosure Indicator" : {
 
     },
     "Do you speak %@?" : {
+
+    },
+    "Done" : {
 
     },
     "Enable Debug Mode" : {
@@ -143,10 +195,19 @@
     "Enroll in Study" : {
 
     },
+    "Enter Blood Pressure" : {
+
+    },
+    "Enter BMI" : {
+
+    },
     "Failed to Download Study Information" : {
 
     },
     "Failed to Load Study into App" : {
+
+    },
+    "Failed to process Sleep Sessions" : {
 
     },
     "FCM Token" : {
@@ -159,6 +220,15 @@
 
     },
     "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
+
+    },
+    "Further Reads" : {
+
+    },
+    "Go to next field" : {
+
+    },
+    "Go to previous field" : {
 
     },
     "Grant Access" : {
@@ -207,7 +277,28 @@
         }
       }
     },
+    "Heart Health" : {
+
+    },
+    "Heart Health Dashboard" : {
+
+    },
     "Historical Data Bulk Export" : {
+
+    },
+    "I have never smoked" : {
+
+    },
+    "I last smoked between 1 and 5 years ago" : {
+
+    },
+    "I last smoked more than 5 years ago" : {
+
+    },
+    "I last smoked within the last year, or am using NDS" : {
+
+    },
+    "I'm actively smoking" : {
 
     },
     "If you have an Apple Watch, please ensure that the MyHeart Counts app is running " : {
@@ -257,10 +348,17 @@
     "Make sure your device is connected to the internet and try again" : {
 
     },
+    "Matching Entry" : {
+
+    },
     "Message?" : {
 
     },
+    "More than 5 years ago" : {
+
+    },
     "My Heart Counts" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -270,7 +368,16 @@
         }
       }
     },
+    "MyHeart Counts" : {
+
+    },
+    "n/a" : {
+
+    },
     "Network Issue" : {
+
+    },
+    "Never" : {
 
     },
     "News" : {
@@ -289,7 +396,16 @@
     "Next 2 weeks" : {
 
     },
+    "Nicotine Exposure" : {
+
+    },
     "No" : {
+
+    },
+    "No data" : {
+
+    },
+    "No Data" : {
 
     },
     "No Internet" : {
@@ -324,13 +440,25 @@
     "Onboarding Consent Title" : {
 
     },
+    "Open In Browser" : {
+
+    },
+    "Overall Cardiovascular Health" : {
+
+    },
     "Participation Criteria" : {
+
+    },
+    "Percentage in Phase" : {
 
     },
     "Physical Activity" : {
 
     },
     "Read Article" : {
+
+    },
+    "Recent Sleep Data" : {
 
     },
     "Region" : {
@@ -348,6 +476,15 @@
     "Retry" : {
 
     },
+    "Sample Type" : {
+
+    },
+    "Save" : {
+
+    },
+    "Score Result" : {
+
+    },
     "Screening" : {
 
     },
@@ -357,7 +494,19 @@
     "Select a Region" : {
 
     },
+    "Selected" : {
+
+    },
+    "Selection" : {
+
+    },
     "Selection Checkmark" : {
+
+    },
+    "Series" : {
+
+    },
+    "Sleep Phase" : {
 
     },
     "Spezi Modules" : {
@@ -424,6 +573,9 @@
     "This study will request read-access to collect the following Health samples:" : {
 
     },
+    "Time Asleep" : {
+
+    },
     "Time Elapsed" : {
 
     },
@@ -446,6 +598,12 @@
 
     },
     "TODO: rough information about (at least some) key study components here?" : {
+
+    },
+    "Unable to find Questionnaire" : {
+
+    },
+    "Unable to load data" : {
 
     },
     "Unenroll" : {
@@ -500,10 +658,16 @@
         }
       }
     },
+    "What's your level of nicotine exposure? How often do you smoke?" : {
+
+    },
     "When were you born?" : {
 
     },
     "Where are you currently living?" : {
+
+    },
+    "Within last year, or am using NDS" : {
 
     },
     "World" : {

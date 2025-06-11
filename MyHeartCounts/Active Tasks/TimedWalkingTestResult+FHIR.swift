@@ -17,7 +17,7 @@ extension TimedWalkingTestResult {
         withMapping: HealthKitOnFHIR.HKSampleMapping,
         issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?
     ) throws -> ModelsR4.ResourceProxy {
-        try .observation(fhirObservation(issuedDate: issuedDate))
+        .observation(try fhirObservation(issuedDate: issuedDate))
     }
     
     
@@ -72,7 +72,7 @@ extension TimedWalkingTestResult {
     }
 }
 
-private func builObservationComponent(code: String, system: String, unit: String, value: Double) -> ObservationComponent {
+func builObservationComponent(code: String, system: String, unit: String, value: Double) -> ObservationComponent {
     ObservationComponent(
         code: CodeableConcept(coding: [Coding(code: code.asFHIRStringPrimitive(), system: system.asFHIRURIPrimitive())]),
         value: .quantity(.init(

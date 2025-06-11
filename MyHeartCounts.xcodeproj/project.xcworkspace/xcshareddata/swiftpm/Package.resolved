@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "fb63d33cd119f87794536f3dc39ee4e31a40e211",
-        "version" : "1.0.0"
+        "revision" : "d38792e36a435134e1757fc2f1bed24dca714ac7",
+        "version" : "1.1.0"
       }
     },
     {

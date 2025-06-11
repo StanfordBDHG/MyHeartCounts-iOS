@@ -8,4 +8,16 @@
 
 import ModelsR4
 
+
 extension ModelsR4.Resource: @retroactive Identifiable {}
+
+extension ModelsR4.ResourceProxy {
+    var observation: Observation? {
+        switch self {
+        case .observation(let observation):
+            observation
+        default:
+            nil
+        }
+    }
+}
