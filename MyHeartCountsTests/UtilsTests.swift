@@ -18,8 +18,8 @@ struct UtilsTests {
         let timesTwo = { @Sendable (input: Double) -> Double in
             input * 2
         }
-        let erasedRounding = erasingClosureInputType(floatToIntConversionRule: .allowRounding, timesTwo)
-        let erasedNoRounding = erasingClosureInputType(floatToIntConversionRule: .requireLosslessConversion, timesTwo)
+        let erasedRounding = erasingClosureInputType(floatToIntHandlingRule: .allowRounding, timesTwo)
+        let erasedNoRounding = erasingClosureInputType(floatToIntHandlingRule: .requireLosslessConversion, timesTwo)
         
         #expect(erasedRounding(1 as Double) == 2)
         #expect(erasedRounding(2 as Double) == 4)
@@ -67,8 +67,8 @@ struct UtilsTests {
         let timesTwo = { @Sendable (input: Int) -> Int in
             input * 2
         }
-        let erasedRounding = erasingClosureInputType(floatToIntConversionRule: .allowRounding, timesTwo)
-        let erasedNoRounding = erasingClosureInputType(floatToIntConversionRule: .requireLosslessConversion, timesTwo)
+        let erasedRounding = erasingClosureInputType(floatToIntHandlingRule: .allowRounding, timesTwo)
+        let erasedNoRounding = erasingClosureInputType(floatToIntHandlingRule: .requireLosslessConversion, timesTwo)
         
         #expect(erasedRounding(1 as Double) == 2)
         #expect(erasedRounding(2 as Double) == 4)

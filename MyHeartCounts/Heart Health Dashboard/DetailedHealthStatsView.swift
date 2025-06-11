@@ -60,14 +60,8 @@ struct DetailedHealthStatsView: View {
             
             Section {
                 FurtherReadingSection(
-                    title: "About Sleep",
-                    body: """
-                    Sleep provides insight into your sleep habits.
-                    Sleep trackers and monitors can help you determine the amount of time you are in bed and asleep. These devices estimate your time in bed and your time asleep by analysing changes in physical activity, including movement during the night. You can also keep track of your sleep by entering your own estimation of your time in bed and time asleep manually.
-                    The "In Bed" period reflects the time period you are lying in bed with the intention to sleep.
-                    For most people, it starts when you turn the lights off and it ends when you get out of bed.
-                    The "Asleep" period reflects the period(s) you are asleep.
-                    """,
+                    title: "About \(sampleType.displayTitle)",
+                    body: "",
                     link: "https://stanford.edu"
                 )
             }
