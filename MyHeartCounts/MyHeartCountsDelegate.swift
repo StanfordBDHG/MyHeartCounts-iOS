@@ -26,10 +26,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
         }
         return Configuration(standard: MyHeartCountsStandard()) {
             DeferredConfigLoading.initialAppLaunchConfig
-            HealthKit {
-                RequestReadAccess(other: [SampleType.workout])
-                RequestWriteAccess(other: [SampleType.workout])
-            }
+            HealthKit()
             Scheduler()
             Notifications()
             BulkHealthExporter()
