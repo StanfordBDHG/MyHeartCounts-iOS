@@ -17,7 +17,7 @@ extension TimedWalkingTestResult {
         withMapping: HealthKitOnFHIR.HKSampleMapping,
         issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?
     ) throws -> ModelsR4.ResourceProxy {
-        try .observation(fhirObservation(issuedDate: issuedDate))
+        .observation(try fhirObservation(issuedDate: issuedDate))
     }
     
     

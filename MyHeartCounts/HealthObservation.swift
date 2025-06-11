@@ -17,13 +17,20 @@ protocol HealthObservation {
     var id: UUID { get }
     var sampleTypeIdentifier: String { get }
     
-    func resource(withMapping: HKSampleMapping, issuedDate: FHIRPrimitive<Instant>?) throws -> ResourceProxy
+    func resource(
+        withMapping mapping: HKSampleMapping,
+        issuedDate: FHIRPrimitive<Instant>?
+    ) throws -> ResourceProxy
 }
 
 
 extension HKSample: HealthObservation {
     var sampleTypeIdentifier: String {
         sampleType.identifier
+    }
+    
+    func resource(withMapping mapping: HKSampleMapping, issuedDate: FHIRPrimitive<Instant>?) throws -> ResourceProxy {
+        try resource(withMapping: mapping, issuedDate: issuedDate, extensions: [])
     }
 }
 

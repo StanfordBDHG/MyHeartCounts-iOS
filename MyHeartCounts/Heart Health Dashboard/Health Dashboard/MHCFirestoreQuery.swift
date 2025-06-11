@@ -9,7 +9,10 @@
 // swiftlint:disable all
 
 import FirebaseFirestore
+import HealthKitOnFHIR
 import struct ModelsR4.DateTime
+import struct ModelsR4.FHIRPrimitive
+import struct ModelsR4.FHIRURI
 import class ModelsR4.Period
 import enum ModelsR4.ResourceProxy
 import SpeziAccount
@@ -19,7 +22,7 @@ import Foundation
 import SwiftUI
 
 
-/// an alternative to Firebase's `FirestoreQuery`, with some changes based on our specific needs in MyHeart Counts:
+/// An alternative to Firebase's `FirestoreQuery`, with some changes based on our specific needs in MyHeart Counts:
 ///
 /// Differences to the `@FirestoreQuery` API:
 /// - ability to not only transform the documents into a custom `Decodable` type, but then (optionally) also implicitly project into a different type from that
@@ -43,9 +46,17 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
         _: Element.Type = Element.self,
         collection: String,
         filter: Filter,
+        sortBy sortDescriptors: [SortDescriptor] = [],
+        limit: Int? = nil,
         decode: @escaping DecodeFn
     ) {
-        input = .init(collection: collection, filter: filter, decode: decode)
+        input = .init(
+            collection: collection,
+            filter: filter,
+            sortDescriptors: sortDescriptors,
+            limit: limit,
+            decode: decode
+        )
     }
     
     nonisolated func update() {
@@ -62,31 +73,17 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
 
 
 extension MHCFirestoreQuery {
+    struct SortDescriptor: Sendable {
+        let fieldName: String
+        let order: SortOrder
+    }
+    
     fileprivate struct QueryInput: Sendable {
-        struct SortDescriptor: Sendable {
-            let fieldName: String
-            let order: SortOrder
-        }
-        
         var collection: String
         var filter: Filter?
         var sortDescriptors: [SortDescriptor]
         var limit: Int?
         var decode: DecodeFn
-        
-        init(
-            collection: String,
-            filter: Filter? = nil,
-            sortDescriptors: [SortDescriptor] = [],
-            limit: Int? = nil,
-            decode: @escaping DecodeFn
-        ) {
-            self.collection = collection
-            self.filter = filter
-            self.sortDescriptors = sortDescriptors
-            self.limit = limit
-            self.decode = decode
-        }
     }
 }
 
@@ -149,27 +146,55 @@ private final class Impl<Element: Sendable>: Sendable {
 
 extension MHCFirestoreQuery where Element == QuantitySample {
     init(sampleType: CustomQuantitySampleType, timeRange: HealthKitQueryTimeRange, limit: Int? = nil) {
-        input = .init(collection: "HealthObservations_\(sampleType.id)") { document in
+        input = .init(
+            collection: "HealthObservations_\(sampleType.id)",
+            filter: nil,
+            sortDescriptors: [],
+            limit: nil
+        ) { document -> QuantitySample? in
             if timeRange != .ever {
                 let data = document.data()
-                if let dateString = data["effectiveDateTime"] as? String {
-                    guard let date = try? DateTime(dateString).asNSDate() else {
+                if false {
+                    guard let extensions = data["extension"] as? [[String: Any]] else {
                         return nil
                     }
-                    guard timeRange.range.contains(date) else {
+                    let getDate = { (url: FHIRPrimitive<FHIRURI>) -> Date? in
+                        extensions.firstNonNil { extensionDict -> Date? in
+                            guard extensionDict["url"] as? String == url.value?.url.absoluteString,
+                                  let value = extensionDict["valueDecimal"] as? Double else {
+                                return nil
+                            }
+                            return Date(timeIntervalSince1970: value)
+                        }
+                    }
+                    guard let startDate = getDate(FHIRExtensionUrls.absoluteTimeRangeStart),
+                          let endDate = getDate(FHIRExtensionUrls.absoluteTimeRangeEnd) else {
+                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
                         return nil
                     }
-                } else if let periodDict = data["effectivePeriod"] as? [String: String] {
-                    guard let start = periodDict["start"].flatMap({ try? DateTime($0).asNSDate() }),
-                          let end = periodDict["end"].flatMap({ try? DateTime($0).asNSDate() }) else {
-                        return nil
-                    }
-                    guard (start..<end).overlaps(timeRange.range) else {
+                    guard (startDate..<endDate).overlaps(timeRange.range) else {
                         return nil
                     }
                 } else {
-                    // we want to filter based on time range, but we can't extract a time range to filter against from the document
-                    return nil
+                    if let dateString = data["effectiveDateTime"] as? String {
+                        guard let date = try? DateTime(dateString).asNSDate() else {
+                            return nil
+                        }
+                        guard timeRange.range.contains(date) else {
+                            return nil
+                        }
+                    } else if let periodDict = data["effectivePeriod"] as? [String: String] {
+                        guard let start = periodDict["start"].flatMap({ try? DateTime($0).asNSDate() }),
+                              let end = periodDict["end"].flatMap({ try? DateTime($0).asNSDate() }) else {
+                            return nil
+                        }
+                        guard (start..<end).overlaps(timeRange.range) else {
+                            return nil
+                        }
+                    } else {
+                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
+                        return nil
+                    }
                 }
             }
             guard let proxy = try? document.data(as: ResourceProxy.self) else {

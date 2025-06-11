@@ -102,10 +102,9 @@ extension MyHeartCountsStandard {
                     let document = try await healthObservationDocument(for: observation)
                     let path = document.path
                     logger.notice("Uploading Health Observation to \(path)")
-                    try batch.setData(
-                        from: observation.resource(withMapping: .default, issuedDate: issuedDate),
-                        forDocument: document
-                    )
+                    let resource = try observation.resource(withMapping: .default, issuedDate: issuedDate)
+                    try? resource.observation?.encodeAbsoluteTimeRangeIntoExtension()
+                    try batch.setData(from: resource, forDocument: document)
                 } catch {
                     logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")
                 }

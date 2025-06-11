@@ -63,7 +63,6 @@ struct CVHScore: DynamicProperty {
             bloodGlucoseScore.score,
             bloodPressureScore.score
         ].compactMap { $0.map { max(0, min(1, $0)) } }
-        print("BLOOD LIPIDS", bloodLipids.count, bloodLipids)
         return scores.count < 5 ? nil : scores.reduce(0, +) / Double(scores.count)
     }
     
