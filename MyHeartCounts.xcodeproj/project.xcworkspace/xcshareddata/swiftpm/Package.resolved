@@ -276,8 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
       "state" : {
-        "revision" : "b6f0d3568aeed1d59f05c883d695195de5936d0b",
-        "version" : "2.0.0-alpha.5"
+        "branch" : "lukas/SpeziConsent",
+        "revision" : "df039802389253828815385cbfe78588fed4e937"
       }
     },
     {
@@ -321,8 +321,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "10b125763d8dd83c3fc9f9d6cd3137c8529212ce",
-        "version" : "1.10.1"
+        "revision" : "22267bc04079e17f999a09da1429b7c1c7aabf14"
       }
     },
     {

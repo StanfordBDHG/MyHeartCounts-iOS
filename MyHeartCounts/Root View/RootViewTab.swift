@@ -6,14 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Foundation
 import SFSafeSymbols
 import SpeziAccount
 import SwiftUI
 
 
-protocol RootViewTab: View { // swiftlint:disable:this file_types_order
-    static var tabId: String { get }
+protocol RootViewTab: View {
+    nonisolated static var tabId: String { get }
     static var tabTitle: LocalizedStringResource { get }
     static var tabSymbol: SFSymbol { get }
     
@@ -21,14 +23,14 @@ protocol RootViewTab: View { // swiftlint:disable:this file_types_order
 }
 
 
-extension RootViewTab { // swiftlint:disable:this file_types_order
-    static var tabId: String {
+extension RootViewTab {
+    nonisolated static var tabId: String {
         String(describing: Self.self)
     }
 }
 
 
-extension RootViewTab { // swiftlint:disable:this file_types_order
+extension RootViewTab {
     /// A `ToolbarItem` consisting of a Button which will present the account management sheet.
     ///
     /// ``RootViewTab``s should include this in their respective toolbars.
