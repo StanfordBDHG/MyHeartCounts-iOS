@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - lukas/consent
   workflow_dispatch:
     inputs:
       environment:
