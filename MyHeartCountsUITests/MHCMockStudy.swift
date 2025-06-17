@@ -19,7 +19,7 @@ enum MockStudyRevision: UInt {
 
 
 extension UUID {
-//    static let mhcMockStudy = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+//    static let mhcMockStudy = UUID(uuidString: "00000000-0000-0000-0000-000000000001")! x
     static let mhcMockStudy = UUID()
     static let healthCollectionComponent = UUID()
     static let article1 = UUID()
