@@ -276,8 +276,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
       "state" : {
-        "branch" : "lukas/SpeziConsent",
-        "revision" : "df039802389253828815385cbfe78588fed4e937"
+        "revision" : "f99e575cd58ab5702acbe3f68e6b76581cec00d0"
       }
     },
     {

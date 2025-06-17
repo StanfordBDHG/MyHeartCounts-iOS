@@ -137,6 +137,9 @@
     "Complete" : {
 
     },
+    "Consent" : {
+
+    },
     "CONSENT_LOADING_ERROR" : {
       "extractionState" : "stale",
       "localizations" : {

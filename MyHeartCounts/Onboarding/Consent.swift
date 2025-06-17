@@ -14,20 +14,19 @@ import SwiftUI
 
 
 struct Consent: View {
-    @Environment(ManagedNavigationStack.Path.self)
-    private var path
-    @Environment(MyHeartCountsStandard.self)
-    private var standard
-    @Environment(Account.self)
-    private var account
-    @Environment(\.locale)
-    private var locale
+    // swiftlint:disable attributes
+    @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(MyHeartCountsStandard.self) private var standard
+    @Environment(Account.self) private var account
+    @Environment(\.locale) private var locale
+    @Environment(StudyDefinitionLoader.self) private var definitionLoader
+    // swiftlint:enable attributes
     
     @State private var consentDocument: ConsentDocument?
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        OnboardingConsentView(consentDocument: consentDocument) {
+        OnboardingConsentView(consentDocument: consentDocument, title: nil) {
             guard let consentDocument else {
                 return
             }
@@ -35,19 +34,32 @@ struct Consent: View {
             try await standard.importConsentDocument(pdf, for: .generalAppUsage)
             path.nextStep()
         }
+        .navigationTitle("Consent")
+        .scrollIndicators(.visible)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 ConsentShareButton(consentDocument: consentDocument, viewState: $viewState)
             }
         }
         .task {
-            if consentDocument == nil {
-                let url = Bundle.main.url(forResource: "Consent", withExtension: "md")! // swiftlint:disable:this force_unwrapping
-                consentDocument = try? ConsentDocument(
-                    contentsOf: url,
-                    initialName: account.details?.name
-                )
+            do {
+                try await loadConsentDocument()
+            } catch {
+                logger.error("Failed to load/create ConsentDocument: \(error)")
             }
+        }
+    }
+    
+    private func loadConsentDocument() async throws {
+        logger.notice("will load consent document")
+        guard consentDocument == nil else {
+            return
+        }
+        if let text = try? definitionLoader.consentDocument?.get() {
+            consentDocument = try ConsentDocument(
+                markdown: text,
+                initialName: account.details?.name
+            )
         }
     }
 }
