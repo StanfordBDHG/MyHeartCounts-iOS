@@ -74,7 +74,7 @@ extension JSONDecoder {
     }
     
     @_disfavoredOverload
-    func decode<T: Decodable>(_ ty: T.Type, from input: String) throws -> T { // swiflint:disable:this identifier_name
+    func decode<T: Decodable>(_ ty: T.Type, from input: String) throws -> T { // swiftlint:disable:this identifier_name
         guard let data = input.data(using: .utf8) else {
             throw CodingError.inputNotUTF8
         }
