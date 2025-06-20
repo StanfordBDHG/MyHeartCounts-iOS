@@ -26,19 +26,23 @@ struct Consent: View {
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        OnboardingConsentView(consentDocument: consentDocument, title: nil) {
+        OnboardingConsentView(consentDocument: consentDocument, title: nil, viewState: $viewState) {
             guard let consentDocument else {
                 return
             }
-            let pdf = try consentDocument.export(using: .init(paperSize: locale.preferredPaperSize))
-            try await standard.importConsentDocument(pdf, for: .generalAppUsage)
+            let result = try consentDocument.export(using: pdfExportConfig)
+            try await standard.uploadConsentDocument(result)
             path.nextStep()
         }
         .navigationTitle("Consent")
         .scrollIndicators(.visible)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                ConsentShareButton(consentDocument: consentDocument, viewState: $viewState)
+                ConsentShareButton(
+                    consentDocument: consentDocument,
+                    exportConfiguration: pdfExportConfig,
+                    viewState: $viewState
+                )
             }
         }
         .task {
@@ -48,6 +52,12 @@ struct Consent: View {
                 logger.error("Failed to load/create ConsentDocument: \(error)")
             }
         }
+    }
+    
+    private var pdfExportConfig: ConsentDocument.ExportConfiguration {
+        ConsentDocument.ExportConfiguration(
+            paperSize: locale.preferredPaperSize
+        )
     }
     
     private func loadConsentDocument() async throws {

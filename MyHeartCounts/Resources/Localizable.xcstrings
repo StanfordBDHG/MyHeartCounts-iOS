@@ -10,6 +10,9 @@
     "—" : {
 
     },
+    "%@" : {
+
+    },
     "%lld ft" : {
 
     },
@@ -138,6 +141,9 @@
 
     },
     "Consent" : {
+
+    },
+    "Consent Documents" : {
 
     },
     "CONSENT_LOADING_ERROR" : {
@@ -415,6 +421,9 @@
     "No Upcoming Tasks" : {
 
     },
+    "Not logged in" : {
+
+    },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -474,6 +483,9 @@
     "Retry" : {
 
     },
+    "Review Consent Forms" : {
+
+    },
     "Sample Type" : {
 
     },
@@ -531,6 +543,9 @@
 
     },
     "State" : {
+
+    },
+    "Study Information" : {
 
     },
     "Study not available" : {
