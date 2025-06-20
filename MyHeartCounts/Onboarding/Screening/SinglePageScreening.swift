@@ -33,7 +33,7 @@ struct SinglePageScreening: View {
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        OnboardingView {
+        OnboardingView(wrapInScrollView: false) {
             OnboardingTitleView(title: title, subtitle: subtitle)
         } content: {
             Form {
@@ -55,7 +55,6 @@ struct SinglePageScreening: View {
                     .buttonStyle(.borderedProminent)
                     .disabled(!canAdvanceToNextStep)
                     .listRowInsets(.zero)
-                    // ISSUE(@lukas) can we somehow make it so that the scroll view fills the entire screen? ie, all the way to the bottom?
                 }
             }
             .toolbar {
