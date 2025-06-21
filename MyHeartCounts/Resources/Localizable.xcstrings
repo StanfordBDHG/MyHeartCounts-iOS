@@ -137,10 +137,14 @@
     "Complete" : {
 
     },
-    "Consent Export Title" : {
+    "Consent" : {
+
+    },
+    "Consent Documents" : {
 
     },
     "CONSENT_LOADING_ERROR" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -414,6 +418,9 @@
     "No Upcoming Tasks" : {
 
     },
+    "Not logged in" : {
+
+    },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -435,9 +442,6 @@
       }
     },
     "NotificationsManager" : {
-
-    },
-    "Onboarding Consent Title" : {
 
     },
     "Open In Browser" : {
@@ -474,6 +478,9 @@
 
     },
     "Retry" : {
+
+    },
+    "Review Consent Forms" : {
 
     },
     "Sample Type" : {
@@ -533,6 +540,9 @@
 
     },
     "State" : {
+
+    },
+    "Study Information" : {
 
     },
     "Study not available" : {

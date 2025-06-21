@@ -102,6 +102,16 @@ struct AccountSheet: View {
             }
         }
         Section {
+            if let enrollment = enrollments.first, let study = enrollment.study {
+                NavigationLink("Study Information") {
+                    StudyInfoView(study: study)
+                }
+            }
+            NavigationLink("Review Consent Forms") {
+                SignedConsentForms()
+            }
+        }
+        Section {
             NavigationLink {
                 ContributionsList(projectLicense: .mit)
             } label: {

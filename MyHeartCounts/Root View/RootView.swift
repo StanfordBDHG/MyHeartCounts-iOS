@@ -20,10 +20,11 @@ struct RootView: View {
     @LocalPreference(.onboardingFlowComplete)
     private var didCompleteOnboarding
     
-    @AppStorage(StorageKeys.homeTabSelection)
-    private var selectedTab: String = HomeTab.tabId
-    @AppStorage(StorageKeys.tabViewCustomization)
-    private var tabViewCustomization = TabViewCustomization()
+    @LocalPreference(.rootTabSelection)
+    private var selectedTab
+    
+    @LocalPreference(.rootTabViewCustomization)
+    private var tabViewCustomization
     
     var body: some View {
         ZStack {
@@ -55,5 +56,16 @@ struct RootView: View {
             tab.init()
         }
         .customizationID(tab.tabId)
+    }
+}
+
+
+extension LocalPreferenceKey {
+    static var rootTabSelection: LocalPreferenceKey<String> {
+        .make("rootTabSelection", default: HomeTab.tabId)
+    }
+    
+    static var rootTabViewCustomization: LocalPreferenceKey<TabViewCustomization> {
+        .make("rootTabViewCustomization", default: .init())
     }
 }

@@ -7,51 +7,80 @@
 //
 
 import SpeziAccount
+import SpeziConsent
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
 
 struct Consent: View {
-    @Environment(ManagedNavigationStack.Path.self)
-    private var path
+    // swiftlint:disable attributes
+    @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(MyHeartCountsStandard.self) private var standard
+    @Environment(Account.self) private var account
+    @Environment(\.locale) private var locale
+    @Environment(StudyDefinitionLoader.self) private var definitionLoader
+    // swiftlint:enable attributes
     
-    @Environment(MyHeartCountsStandard.self)
-    private var standard
-    
-    @Environment(Account.self)
-    private var account
-    
-    private var consentDocument: Data {
-        guard let path = Bundle.main.url(forResource: "ConsentDocument", withExtension: "md"),
-              let data = try? Data(contentsOf: path) else {
-            return Data(String(localized: "CONSENT_LOADING_ERROR").utf8)
-        }
-        return data
-    }
-    
+    @State private var consentDocument: ConsentDocument?
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
-        OnboardingConsentView(
-            markdown: {
-                consentDocument
-            },
-            action: { document in
-                // TOOD deliver this to the standard instead?!
-                nonisolated(unsafe) let document = document
-                try! await standard.importConsentDocument(document, for: .generalAppUsage) // swiftlint:disable:this force_try
-                path.nextStep()
-            },
-            title: "Onboarding Consent Title",
-            initialNameComponents: account.details?.name,
-            currentDateInSignature: true,
-            exportConfiguration: .init(
-                paperSize: .usLetter,
-                consentTitle: "Consent Export Title",
-                includingTimestamp: true,
-                fontSettings: .defaultExportFontSettings
-            )
+        OnboardingConsentView(consentDocument: consentDocument, title: nil, viewState: $viewState) {
+            guard let consentDocument else {
+                return
+            }
+            let result = try consentDocument.export(using: pdfExportConfig)
+            try await standard.uploadConsentDocument(result)
+            path.nextStep()
+        }
+        .navigationTitle("Consent")
+        .scrollIndicators(.visible)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                ConsentShareButton(
+                    consentDocument: consentDocument,
+                    exportConfiguration: pdfExportConfig,
+                    viewState: $viewState
+                )
+            }
+        }
+        .task {
+            do {
+                try await loadConsentDocument()
+            } catch {
+                logger.error("Failed to load/create ConsentDocument: \(error)")
+            }
+        }
+    }
+    
+    private var pdfExportConfig: ConsentDocument.ExportConfiguration {
+        ConsentDocument.ExportConfiguration(
+            paperSize: locale.preferredPaperSize
         )
+    }
+    
+    private func loadConsentDocument() async throws {
+        logger.notice("will load consent document")
+        guard consentDocument == nil else {
+            return
+        }
+        if let text = try? definitionLoader.consentDocument?.get() {
+            consentDocument = try ConsentDocument(
+                markdown: text,
+                initialName: account.details?.name
+            )
+        }
+    }
+}
+
+
+extension Locale {
+    fileprivate var preferredPaperSize: ConsentDocument.ExportConfiguration.PaperSize {
+        switch self.region {
+        case .unitedStates: .usLetter
+        default: .dinA4
+        }
     }
 }
 
