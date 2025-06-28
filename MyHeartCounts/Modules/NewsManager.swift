@@ -29,13 +29,14 @@ final class NewsManager: Module, EnvironmentAccessible {
     
     @discardableResult
     func refresh() async throws -> [Article] {
-        let query = try await newsCollection.getDocuments()
-        let decoder = Firestore.Decoder()
-        decoder.dateDecodingStrategy = .iso8601
-        articles = query.documents
-            .compactMap { try? $0.data(as: Article.self, decoder: decoder) }
-            .filter { $0.status == .published }
-            .sorted(using: KeyPathComparator(\.date, order: .reverse))
-        return articles
+//        let query = try await newsCollection.getDocuments()
+//        let decoder = Firestore.Decoder()
+//        decoder.dateDecodingStrategy = .iso8601
+//        articles = query.documents
+//            .compactMap { try? $0.data(as: Article.self, decoder: decoder) }
+//            .filter { $0.status == .published }
+//            .sorted(using: KeyPathComparator(\.date, order: .reverse))
+//        return articles
+        []
     }
 }

@@ -97,7 +97,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
             return false
         }
         if session == nil {
-            guard let study = studyManager?.studyEnrollments.first?.study else {
+            guard let study = studyManager?.studyEnrollments.first?.studyBundle?.studyDefinition else {
                 logger.error("\(#function) aborting: no study")
                 return false
             }
@@ -105,7 +105,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                 session = try await bulkExporter.session(
                     withId: .mhcHistoricalDataExport,
                     for: study.allCollectedHealthData,
-                    startDate: .last(DateComponents(year: 5)),
+                    startDate: .last(DateComponents(year: 5)), // TODO read from study def!!!!
                     using: HistoricalSamplesToFHIRJSONProcessor()
                 )
             } catch {

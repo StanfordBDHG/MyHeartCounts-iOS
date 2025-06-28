@@ -1806,16 +1806,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziOnboarding.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = "2.0.0-alpha.6";
+				branch = "lukas/fix-consent-dividers";
+				kind = branch;
 			};
 		};
 		80E840F92E01957200486828 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.6;
+				kind = revision;
+				revision = 36491a2b1bd4820a6fedff5fac8d74fa363ec9cc;
 			};
 		};
 		A945FCD32C9C6BFA00B9EBC7 /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {

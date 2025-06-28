@@ -23,7 +23,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     @State private var viewState: ViewState = .idle
     @State private var isPresentingUnenrollConfirmationDialog = false
     
-    private let study: StudyDefinition
+    private let studyBundle: StudyBundle
     private let injectedDismiss: DismissAction?
     
     private var dismiss: DismissAction {
@@ -31,6 +31,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     }
     
     public var body: some View {
+        let study = studyBundle.studyDefinition
         Form {
             Section {
                 VStack(spacing: 12) {
@@ -63,7 +64,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     
     
     @ViewBuilder private var healthDataCollectionSection: some View {
-        let collectedSampleTypes = study.allCollectedHealthData
+        let collectedSampleTypes = studyBundle.studyDefinition.allCollectedHealthData
         if !collectedSampleTypes.isEmpty {
             Section("Health Data") {
                 VStack(alignment: .leading) {
@@ -84,7 +85,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     
     @ViewBuilder private var mainAction: some View {
         Group { // swiftlint:disable:this closure_body_length
-            if let enrollment = enrollments.first(where: { $0.studyId == study.id }) {
+            if let enrollment = enrollments.first(where: { $0.studyId == studyBundle.id }) {
                 // already enrolled
                 Button {
                     isPresentingUnenrollConfirmationDialog = true
@@ -99,7 +100,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
                 }
                 .tint(.red)
                 .confirmationDialog(
-                    "Are you sure you want to leave the '\(study.metadata.title)' study?",
+                    "Are you sure you want to leave the '\(studyBundle.studyDefinition.metadata.title)' study?",
                     isPresented: $isPresentingUnenrollConfirmationDialog
                 ) {
                     Button("Cancel", role: .cancel) {
@@ -125,7 +126,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
             } else {
                 // not yet enrolled
                 AsyncButton(state: $viewState) {
-                    try await mhc.enroll(in: study)
+                    try await mhc.enroll(in: studyBundle)
                     dismiss()
                 } label: {
                     HStack {
@@ -144,8 +145,8 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     }
     
     
-    public init(study: StudyDefinition, dismiss: DismissAction? = nil) {
-        self.study = study
+    public init(studyBundle: StudyBundle, dismiss: DismissAction? = nil) {
+        self.studyBundle = studyBundle
         self.injectedDismiss = dismiss
     }
 }

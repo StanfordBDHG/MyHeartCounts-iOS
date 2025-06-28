@@ -33,7 +33,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Account.self)
     var account: Account?
     
-    @Dependency(StudyDefinitionLoader.self)
+    @Dependency(StudyBundleLoader.self)
     private var studyLoader
     
     @Dependency(TimeZoneTracking.self)

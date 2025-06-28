@@ -240,8 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "404dd76502fed1e0cc03dcdb8bba9818f206b244",
-        "version" : "2.1.8"
+        "revision" : "759e28cd36338d83900eef3a0839fd9edecf616d",
+        "version" : "2.2.0"
       }
     },
     {
@@ -276,8 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
       "state" : {
-        "revision" : "8514366e2c88864ae3ed459b748646510268b687",
-        "version" : "2.0.0-alpha.6"
+        "branch" : "lukas/fix-consent-dividers",
+        "revision" : "f81c20f0074e23e90f46797c1351c8231c74b165"
       }
     },
     {
@@ -294,8 +294,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "c7b8bebe7932af94bb875f1711bf785e54f419fa",
-        "version" : "1.2.8"
+        "revision" : "9fb72378186681ccf465cac4f81c5302c58b7909"
       }
     },
     {
@@ -312,8 +311,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "9e68a0979ef4a0fba50df861df2b64711bb7b532",
-        "version" : "0.1.6"
+        "revision" : "36491a2b1bd4820a6fedff5fac8d74fa363ec9cc"
       }
     },
     {
@@ -321,8 +319,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "ad348cbae11e4896ca5bb0a2f19ea131bd4c6632",
-        "version" : "1.11.0"
+        "revision" : "dc9403578fea702525b462448a00cd917634a8a1",
+        "version" : "1.12.0"
       }
     },
     {

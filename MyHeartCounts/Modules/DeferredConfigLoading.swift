@@ -288,7 +288,7 @@ extension FirebaseOptions {
 
 
 private final class LoadFirebaseTracking: Module {
-    @Dependency(StudyDefinitionLoader.self)
+    @Dependency(StudyBundleLoader.self)
     private var studyLoader
     
     func configure() {

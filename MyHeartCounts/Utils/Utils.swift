@@ -246,3 +246,15 @@ extension Double {
         self = NSDecimalNumber(decimal: decimal).doubleValue // swiftlint:disable:this legacy_objc_type
     }
 }
+
+
+extension Result {
+    var value: Success? {
+        switch self {
+        case .success(let value):
+            value
+        case .failure:
+            nil
+        }
+    }
+}

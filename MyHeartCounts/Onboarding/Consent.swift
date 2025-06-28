@@ -19,7 +19,7 @@ struct Consent: View {
     @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(Account.self) private var account
     @Environment(\.locale) private var locale
-    @Environment(StudyDefinitionLoader.self) private var definitionLoader
+    @Environment(StudyBundleLoader.self) private var studyLoader
     // swiftlint:enable attributes
     
     @State private var consentDocument: ConsentDocument?
@@ -65,12 +65,15 @@ struct Consent: View {
         guard consentDocument == nil else {
             return
         }
-        if let text = try? definitionLoader.consentDocument?.get() {
-            consentDocument = try ConsentDocument(
-                markdown: text,
-                initialName: account.details?.name
-            )
+        guard let studyBundle = try? studyLoader.studyBundle?.get(),
+              let consentFileRef = studyBundle.studyDefinition.metadata.consentFileRef,
+              let text = studyBundle.consentText(for: consentFileRef, in: locale) else {
+            return
         }
+        consentDocument = try ConsentDocument(
+            markdown: text,
+            initialName: account.details?.name
+        )
     }
 }
 

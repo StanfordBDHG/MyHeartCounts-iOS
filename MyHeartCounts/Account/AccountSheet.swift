@@ -74,8 +74,8 @@ struct AccountSheet: View {
             Section("Study Participations") {
                 ForEach(enrollments) { enrollment in
                     NavigationLink {
-                        if let study = enrollment.study {
-                            StudyInfoView(study: study)
+                        if let studyBundle = enrollment.studyBundle {
+                            StudyInfoView(studyBundle: studyBundle)
                         } else {
                             Text("Study not available")
                                 .foregroundStyle(.secondary)
@@ -83,7 +83,7 @@ struct AccountSheet: View {
                     } label: {
                         makeEnrolledStudyRow(for: enrollment)
                     }
-                    .disabled(enrollment.study == nil)
+                    .disabled(enrollment.studyBundle == nil)
                 }
             }
         }
@@ -102,9 +102,9 @@ struct AccountSheet: View {
             }
         }
         Section {
-            if let enrollment = enrollments.first, let study = enrollment.study {
+            if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
-                    StudyInfoView(study: study)
+                    StudyInfoView(studyBundle: studyBundle)
                 }
             }
             NavigationLink("Review Consent Forms") {
@@ -127,11 +127,11 @@ struct AccountSheet: View {
     
     @ViewBuilder
     private func makeEnrolledStudyRow(for enrollment: StudyEnrollment) -> some View {
-        if let study = enrollment.study {
+        if let studyInfo = enrollment.studyBundle?.studyDefinition.metadata {
             VStack(alignment: .leading) {
-                Text(study.metadata.title)
+                Text(studyInfo.title)
                     .font(.headline)
-                Text(study.metadata.shortExplanationText)
+                Text(studyInfo.shortExplanationText)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 Text("TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected")

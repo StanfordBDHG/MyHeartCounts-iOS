@@ -25,7 +25,7 @@ struct FinalEnrollmentStep: View {
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var historicalUploadManager
     
-    @Environment(StudyDefinitionLoader.self)
+    @Environment(StudyBundleLoader.self)
     private var studyLoader
     
     @State private var viewState: ViewState = .idle
@@ -44,7 +44,7 @@ struct FinalEnrollmentStep: View {
     }
     
     private func completeStudyEnrollment() async {
-        guard let study = try? studyLoader.studyDefinition?.get() else {
+        guard let study = try? studyLoader.studyBundle?.get() else {
             // guaranteed to be non-nil if we end up in this view
             return
         }

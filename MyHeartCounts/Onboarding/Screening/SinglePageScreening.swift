@@ -23,7 +23,7 @@ struct SinglePageScreening: View {
     private var path
     @Environment(ScreeningDataCollection.self)
     private var screeningData
-    @Environment(StudyDefinitionLoader.self)
+    @Environment(StudyBundleLoader.self)
     private var studyLoader
     
     private let title: LocalizedStringResource

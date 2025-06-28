@@ -40,13 +40,15 @@ struct UpcomingTasksList: View {
         var id: Questionnaire.ID { questionnaire.id }
     }
     
+    @Environment(\.locale)
+    private var locale
     @Environment(MyHeartCountsStandard.self)
     private var standard
     @Environment(StudyManager.self)
     private var studyManager
     @EventQuery private var events: [Event]
     @State private var viewState: ViewState = .idle
-    @State private var presentedInformationalStudyComponent: StudyDefinition.InformationalComponent?
+    @State private var presentedArticle: Article?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
     @State private var presentedTimedWalkingTest: StudyDefinition.TimedWalkingTestComponent?
     
@@ -73,8 +75,8 @@ struct UpcomingTasksList: View {
                     }
                 }
             }
-            .sheet(item: $presentedInformationalStudyComponent) { component in
-                ArticleSheet(article: .init(component))
+            .sheet(item: $presentedArticle) { article in
+                ArticleSheet(article: article)
             }
             .sheet(item: $presentedTimedWalkingTest) { component in
                 NavigationStack {
@@ -87,14 +89,15 @@ struct UpcomingTasksList: View {
         if !events.isEmpty {
             ForEach(events) { event in
                 Section {
-                    if let action = event.task.studyScheduledTaskAction {
+                    if let context = event.task.studyContext,
+                       let action = event.task.studyScheduledTaskAction {
                         InstructionsTile(event) {
                             // IDEA(@lukas):
                             // - add an official overload with an optional label text?
                             // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
                             EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
                                 _Concurrency.Task {
-                                    await handleAction(action, for: event)
+                                    await handleAction(action, for: event, context: context)
                                 }
                             }
                         }
@@ -117,20 +120,28 @@ struct UpcomingTasksList: View {
         _events = .init(in: Self.effectiveTimeRange(for: timeRange, calendar: calendar))
     }
     
-    private func handleAction(_ action: StudyManager.ScheduledTaskAction, for event: Event) async {
+    private func handleAction(_ action: StudyManager.ScheduledTaskAction, for event: Event, context: Task.Context.StudyContext) async {
         switch action {
         case .presentInformationalStudyComponent(let component):
-            presentedInformationalStudyComponent = component
+            guard let enrollment = studyManager.enrollment(withId: context.enrollmentId),
+                  let studyBundle = enrollment.studyBundle,
+                  let article = Article(component, in: studyBundle, locale: locale) else {
+                logger.error("Error fetching&loading&procesing Article")
+                return
+            }
+            presentedArticle = article
             // we consider simply presenting the component as being sufficient to complete the event.
             // NOTE ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
             // BUT: in this case, we do wanna allow this to happen again! how should we go about this?
-//            do {
-//                try event.complete()
-//            } catch {
-//                logger.error("Was unable to complete() event: \(error)")
-//            }
-        case let .answerQuestionnaire(questionnaire, spcId):
-            guard let enrollment = studyManager.enrollment(withId: spcId) else {
+            do {
+                try event.complete()
+            } catch {
+                logger.error("Was unable to complete() event: \(error)")
+            }
+        case .answerQuestionnaire(let component):
+            guard let enrollment = studyManager.enrollment(withId: context.enrollmentId),
+                  let studyBundle = enrollment.studyBundle,
+                  let questionnaire = studyBundle.questionnaire(for: component.fileRef, in: locale) else {
                 logger.error("Unable to find SPC")
                 return
             }

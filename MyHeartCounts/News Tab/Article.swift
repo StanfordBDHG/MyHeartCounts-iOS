@@ -14,13 +14,13 @@ import SpeziStudyDefinition
 import SwiftUI
 
 
-struct Article: Codable, Hashable, Identifiable, Sendable {
+struct Article: Hashable, Identifiable, Sendable {
     enum ImageReference: Hashable, Sendable {
         case url(URL)
         case asset(String)
     }
     
-    struct Tag: Codable, Hashable, Sendable {
+    struct Tag: Hashable, Sendable {
         let title: String
         let color: Color
         
@@ -30,7 +30,7 @@ struct Article: Codable, Hashable, Identifiable, Sendable {
         }
     }
     
-    enum Status: String, Codable, Hashable, Sendable {
+    enum Status: String, Hashable, Sendable {
         case draft
         case published
     }
@@ -42,7 +42,7 @@ struct Article: Codable, Hashable, Identifiable, Sendable {
     let tags: [Tag]
     let lede: String?
     let headerImage: ImageReference?
-    let body: String
+    let body: MarkdownDocument
     
     init(
         id: UUID,
@@ -52,7 +52,7 @@ struct Article: Codable, Hashable, Identifiable, Sendable {
         tags: [Tag] = [],
         lede: String? = nil,
         headerImage: ImageReference? = nil, // swiftlint:disable:this function_default_parameter_at_end
-        body: String
+        body: MarkdownDocument
     ) {
         self.id = id
         self.status = status
@@ -127,13 +127,30 @@ extension Article.ImageReference: RawRepresentable, Codable {
 
 
 extension Article {
-    init(_ other: StudyDefinition.InformationalComponent) {
+    init?(_ other: StudyDefinition.InformationalComponent, in studyBundle: StudyBundle, locale: Locale) {
+        guard let url = studyBundle.resolve(other.fileRef, in: locale),
+              let markdownDoc = try? MarkdownDocument(processingContentsOf: url) else {
+            return nil
+        }
+        self.init(id: other.id, markdownDoc)
+    }
+    
+    
+    /// Creates a new Article from a `MarkdownDocument`, extracting information from the document's metadata.
+    init(id: UUID, _ doc: MarkdownDocument, defaultStatus: Status = .published) {
+        let metadata = doc.metadata
         self.init(
-            id: other.id,
-            status: .published,
-            title: other.title,
-            headerImage: .asset(other.headerImage), // we'll need to switch this over to a (file?) URL once we have study bundles!
-            body: other.body
+            id: id,
+            status: metadata["status"].flatMap(Status.init(rawValue:)) ?? defaultStatus,
+            title: metadata.title ?? "",
+            date: metadata["date"].flatMap { try? Date($0, strategy: .iso8601) },
+            tags: metadata["tags"].flatMap { value -> [Tag] in
+                let tagTitles = value.split(separator: ",").map { $0.trimmingWhitespace() }
+                return tagTitles.map { Tag(title: String($0), color: .blue) } // TODO how to encode the colors?
+            } ?? [],
+            lede: metadata["lede"],
+            headerImage: metadata["headerImage"].flatMap(ImageReference.init(rawValue:)),
+            body: doc
         )
     }
 }

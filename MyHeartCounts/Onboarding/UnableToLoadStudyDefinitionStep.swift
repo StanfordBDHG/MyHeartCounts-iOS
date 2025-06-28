@@ -17,14 +17,14 @@ struct UnableToLoadStudyDefinitionStep: View {
     private var locale
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
-    @Environment(StudyDefinitionLoader.self)
+    @Environment(StudyBundleLoader.self)
     private var studyLoader
     
     @State private var viewState: ViewState = .idle
     @State private var viewWidth: CGFloat = 0
     
     var body: some View {
-        switch studyLoader.studyDefinition {
+        switch studyLoader.studyBundle {
         case nil, .failure(.noLastUsedFirebaseConfig):
             // the StudyLoader, for whatever reason, hasn't yet loaded the study.
             // it is extremely unlikely, if not even outright impossible, for us to end up in this View
@@ -72,7 +72,7 @@ struct UnableToLoadStudyDefinitionStep: View {
     @ViewBuilder private var retryButton: some View {
         AsyncButton(state: $viewState) {
             // We don't need to handle the result here; the update() call will
-            // end up writing its result into the StudyDefinitionLoader, which is Observable,
+            // end up writing its result into the StudyBundleLoader, which is Observable,
             // and will trigger a view update here.
             _ = try? await studyLoader.update()
         } label: {
