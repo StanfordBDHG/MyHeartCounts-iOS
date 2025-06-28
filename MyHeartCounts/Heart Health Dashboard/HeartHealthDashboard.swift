@@ -12,6 +12,7 @@ import Foundation
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziQuestionnaire
+import SpeziStudy
 import SpeziViews
 import SwiftUI
 
@@ -190,7 +191,7 @@ extension HeartHealthDashboard {
         case \.nicotineExposureScore:
             HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
         case \.dietScore:
-            HealthDashboardQuestionnaireView(questionnaireName: "DietScoreMEPA")
+            HealthDashboardQuestionnaireView(questionnaireName: "DietScore")
         case \.bodyMassIndexScore:
             SaveBMISampleView()
         case \.bloodLipidsScore:
@@ -213,24 +214,40 @@ private struct HealthDashboardQuestionnaireView: View {
     @Environment(MyHeartCountsStandard.self)
     private var standard
     
+    @Environment(StudyManager.self)
+    private var studyManager
+    
     @Environment(\.dismiss)
     private var dismiss
     
     let questionnaireName: String
+    @State private var questionnaire: Questionnaire?
     
     var body: some View {
-        if let questionnaire = Bundle.main.localizedQuestionnaire(withName: questionnaireName, for: locale) {
-            QuestionnaireView(questionnaire: questionnaire) { result in
-                switch result {
-                case .completed(let response):
-                    await standard.add(response: response)
-                case .cancelled, .failed:
-                    break
+        Group {
+            if let questionnaire {
+                QuestionnaireView(questionnaire: questionnaire) { result in
+                    switch result {
+                    case .completed(let response):
+                        await standard.add(response: response)
+                    case .cancelled, .failed:
+                        break
+                    }
+                    dismiss()
                 }
-                dismiss()
+            } else {
+                ContentUnavailableView("Unable to find Questionnaire", systemSymbol: .exclamationmarkTriangle) // ???
             }
-        } else {
-            ContentUnavailableView("Unable to find Questionnaire", systemSymbol: .exclamationmarkTriangle) // ???
         }
+        .task {
+            loadQuestionnaire()
+        }
+    }
+    
+    private func loadQuestionnaire() {
+        guard let studyBundle = studyManager.studyEnrollments.first?.studyBundle else {
+            return
+        }
+        questionnaire = studyBundle.questionnaire(named: questionnaireName, in: locale)
     }
 }

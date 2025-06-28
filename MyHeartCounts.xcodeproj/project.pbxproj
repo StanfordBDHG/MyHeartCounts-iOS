@@ -1815,7 +1815,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
 				kind = revision;
-				revision = 36491a2b1bd4820a6fedff5fac8d74fa363ec9cc;
+				revision = e86afd161cf8aec7d5b957d012a11cb177aab016;
 			};
 		};
 		A945FCD32C9C6BFA00B9EBC7 /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {
