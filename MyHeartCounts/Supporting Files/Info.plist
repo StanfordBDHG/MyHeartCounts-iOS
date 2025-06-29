@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleAllowMixedLocalizations</key>
-	<true/>
+	<false/>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>

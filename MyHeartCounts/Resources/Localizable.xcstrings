@@ -620,7 +620,14 @@
 
     },
     "Upcoming Tasks" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tareas Próximas"
+          }
+        }
+      }
     },
     "Uploading Collected Health Data" : {
 
@@ -664,6 +671,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome to the My Heart Counts study"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Bienvenido al Estudio My Heart Counts!"
           }
         }
       }
