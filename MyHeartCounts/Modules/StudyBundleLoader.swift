@@ -23,24 +23,27 @@ final class StudyBundleLoader: Module, Sendable {
     
     private let logger = Logger(subsystem: "edu.stanford.MHC.studyLoader", category: "")
     
-    
-    // Note: we use the Result in here, and set the Task's Failure type to Never, since Task currently only supports type-erased `any Error` failures.
-    // (and does not support typed throws in its init, for whatever reason...)
+    /// The currently active Study Bundle loading operation, if any.
+    ///
+    /// This exists to avoid performing multiple, concurrent downloads of the bundle.
+    ///
+    /// - Note: we use the Result in here, and set the Task's Failure type to Never, since Task currently only supports type-erased `any Error` failures.
+    ///     (and does not support typed throws in its init, for whatever reason...)
     @ObservationIgnored @MainActor private var loadStudyBundleTask: Task<Result<StudyBundle, LoadError>, Never>?
+    
     // SAFETY: this is only mutated from the MainActor.
     // NOTE: the compiler thinks the nonisolated(unsafe) isn't needed here. this is a lie. see also https://github.com/swiftlang/swift/issues/81962
+    /// The result of the most recent Study Bundle download operation.
     nonisolated(unsafe) private(set) var studyBundle: Result<StudyBundle, LoadError>?
-//    private var isLoadingStudyBundle = false
     
-    // SAFETY: the FileManager itself is not thread safe, but we have our own instance (as opposed to using `FileManager.default`),
-    // and we never mutate it.
+    // SAFETY: the FileManager type itself is not thread safe,
+    // but we have our own instance (as opposed to using `FileManager.default`), and we never mutate it.
     nonisolated(unsafe) private let fileManager = FileManager()
     
+    /// The url where we store the `StudyBundle`s downloaded by the Loader.
+    ///
+    /// Note that this is distinct from what the `StudyManager`' does, which also stores the `StudyBundle`s of the studie(s) we're enrolled into, in a special directory.
     private let studyBundlesUrl: URL
-    
-//    // SAFETY: this is only mutated from the MainActor.
-//    // NOTE: the compiler thinks the nonisolated(unsafe) isn't needed here. this is a lie. see also https://github.com/swiftlang/swift/issues/81962
-//    nonisolated(unsafe) private(set) var consentDocument: Result<String, LoadError>?
     
     private init() {
         studyBundlesUrl = URL.documentsDirectory.appending(path: "MHC/StudyBundlesCache", directoryHint: .isDirectory)

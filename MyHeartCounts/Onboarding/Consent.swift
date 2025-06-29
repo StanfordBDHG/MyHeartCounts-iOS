@@ -9,6 +9,7 @@
 import SpeziAccount
 import SpeziConsent
 import SpeziOnboarding
+import SpeziStudy
 import SpeziViews
 import SwiftUI
 
@@ -18,8 +19,11 @@ struct Consent: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(Account.self) private var account
-    @Environment(\.locale) private var locale
     @Environment(StudyBundleLoader.self) private var studyLoader
+    // NOTE: at this step, we aren't yet enrolled into the study,
+    // so we can't access `studyManager.enrollments`, but we CAN access
+    // `studyManager.preferredLocale`, since that has been set in a previous step.
+    @Environment(StudyManager.self) private var studyManager
     // swiftlint:enable attributes
     
     @State private var consentDocument: ConsentDocument?
@@ -56,18 +60,17 @@ struct Consent: View {
     
     private var pdfExportConfig: ConsentDocument.ExportConfiguration {
         ConsentDocument.ExportConfiguration(
-            paperSize: locale.preferredPaperSize
+            paperSize: studyManager.preferredLocale.preferredPaperSize
         )
     }
     
     private func loadConsentDocument() async throws {
-        logger.notice("will load consent document")
         guard consentDocument == nil else {
             return
         }
         guard let studyBundle = try? studyLoader.studyBundle?.get(),
               let consentFileRef = studyBundle.studyDefinition.metadata.consentFileRef,
-              let text = studyBundle.consentText(for: consentFileRef, in: locale) else {
+              let text = studyBundle.consentText(for: consentFileRef, in: studyManager.preferredLocale) else {
             return
         }
         consentDocument = try ConsentDocument(

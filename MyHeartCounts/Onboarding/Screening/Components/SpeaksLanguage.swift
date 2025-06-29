@@ -11,10 +11,10 @@ import SwiftUI
 
 
 struct SpeaksLanguage: ScreeningComponent {
-    @Environment(\.locale)
-    private var locale
-    @Environment(ScreeningDataCollection.self)
-    private var data
+    // swiftlint:disable attributes
+    @Environment(\.locale) private var locale
+    @Environment(ScreeningDataCollection.self) private var data
+    // swiftlint:enable attributes
     
     let title: LocalizedStringResource = "Language"
     let allowedLanguage: Locale.Language

@@ -13,8 +13,6 @@ import SwiftUI
 
 /// Onboarding step intended to be used to signal to the user that the app was unable to fetch its study definition; most likely due to network connectivity issues.
 struct UnableToLoadStudyDefinitionStep: View {
-    @Environment(\.locale)
-    private var locale
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     @Environment(StudyBundleLoader.self)

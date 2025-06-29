@@ -208,9 +208,6 @@ extension HeartHealthDashboard {
 
 
 private struct HealthDashboardQuestionnaireView: View {
-    @Environment(\.locale)
-    private var locale
-    
     @Environment(MyHeartCountsStandard.self)
     private var standard
     
@@ -248,6 +245,6 @@ private struct HealthDashboardQuestionnaireView: View {
         guard let studyBundle = studyManager.studyEnrollments.first?.studyBundle else {
             return
         }
-        questionnaire = studyBundle.questionnaire(named: questionnaireName, in: locale)
+        questionnaire = studyBundle.questionnaire(named: questionnaireName, in: studyManager.preferredLocale)
     }
 }

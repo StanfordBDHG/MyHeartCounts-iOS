@@ -40,8 +40,6 @@ struct UpcomingTasksList: View {
         var id: Questionnaire.ID { questionnaire.id }
     }
     
-    @Environment(\.locale)
-    private var locale
     @Environment(MyHeartCountsStandard.self)
     private var standard
     @Environment(StudyManager.self)
@@ -125,7 +123,7 @@ struct UpcomingTasksList: View {
         case .presentInformationalStudyComponent(let component):
             guard let enrollment = studyManager.enrollment(withId: context.enrollmentId),
                   let studyBundle = enrollment.studyBundle,
-                  let article = Article(component, in: studyBundle, locale: locale) else {
+                  let article = Article(component, in: studyBundle, locale: studyManager.preferredLocale) else {
                 logger.error("Error fetching&loading&procesing Article")
                 return
             }
@@ -141,7 +139,7 @@ struct UpcomingTasksList: View {
         case .answerQuestionnaire(let component):
             guard let enrollment = studyManager.enrollment(withId: context.enrollmentId),
                   let studyBundle = enrollment.studyBundle,
-                  let questionnaire = studyBundle.questionnaire(for: component.fileRef, in: locale) else {
+                  let questionnaire = studyBundle.questionnaire(for: component.fileRef, in: studyManager.preferredLocale) else {
                 logger.error("Unable to find SPC")
                 return
             }

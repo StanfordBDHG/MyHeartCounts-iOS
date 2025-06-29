@@ -13,14 +13,11 @@ import SwiftUI
 
 struct IsFromRegion: ScreeningComponent {
     let title: LocalizedStringResource = "Region"
-    
-    @Environment(\.locale)
-    private var locale
-    @Environment(\.colorScheme)
-    private var colorScheme
-    
-    @Environment(ScreeningDataCollection.self)
-    private var data
+    // swiftlint:disable attributes
+    @Environment(\.locale) private var locale
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(ScreeningDataCollection.self) private var data
+    // swiftlint:enable attributes
     
     let allowedRegions: Set<Locale.Region>
     
