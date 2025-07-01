@@ -305,13 +305,13 @@
     "I'm actively smoking" : {
 
     },
-    "If you have an Apple Watch, please ensure that the MyHeart Counts app is running " : {
+    "If you have an Apple Watch, please ensure that the My Heart Counts app is running " : {
 
     },
     "Install on Apple Watch" : {
 
     },
-    "Installing MyHeart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
+    "Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
 
     },
     "Label?" : {
@@ -362,7 +362,6 @@
 
     },
     "My Heart Counts" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -371,9 +370,6 @@
           }
         }
       }
-    },
-    "MyHeart Counts" : {
-
     },
     "n/a" : {
 

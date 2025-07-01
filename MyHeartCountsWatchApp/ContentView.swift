@@ -29,7 +29,7 @@ struct ContentView: View {
     
     @ViewBuilder private var inactiveContent: some View {
         VStack {
-            Text("MyHeart Counts")
+            Text("My Heart Counts")
                 .font(.system(size: 21, weight: .semibold))
             Color.clear
                 .frame(height: 40)
@@ -54,7 +54,7 @@ struct ContentView: View {
                 Text("See your iPhone for more information.")
             }
         }
-        .navigationTitle("MyHeart Counts")
+        .navigationTitle("My Heart Counts")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

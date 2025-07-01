@@ -23,7 +23,7 @@ import class ModelsR4.Questionnaire
 
 /// The View for the "Home" tab in the root tab view.
 struct HomeTab: RootViewTab {
-    static var tabTitle: LocalizedStringResource { "MyHeart Counts" }
+    static var tabTitle: LocalizedStringResource { "My Heart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
     @Environment(HistoricalHealthSamplesExportManager.self)

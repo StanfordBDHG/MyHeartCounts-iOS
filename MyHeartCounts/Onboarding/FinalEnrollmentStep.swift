@@ -32,7 +32,7 @@ struct FinalEnrollmentStep: View {
     
     var body: some View {
         OnboardingView {
-            OnboardingTitleView(title: "MyHeart Counts")
+            OnboardingTitleView(title: "My Heart Counts")
         } content: {
             Text("You're all set.\n\nGreat to have you on board!")
         } footer: {

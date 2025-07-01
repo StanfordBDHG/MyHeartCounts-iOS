@@ -18,7 +18,7 @@ struct Welcome: View {
     
     var body: some View {
         OnboardingView(
-            title: "MyHeart Counts",
+            title: "My Heart Counts",
             subtitle: "WELCOME_SUBTITLE",
             areas: [
                 OnboardingInformationView.Content(

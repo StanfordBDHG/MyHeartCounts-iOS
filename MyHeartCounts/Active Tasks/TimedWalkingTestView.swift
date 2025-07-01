@@ -80,7 +80,7 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                     VStack(alignment: .leading) {
                         Text("Companion Watch App Not Installed")
                             .font(.headline)
-                        Text("Installing MyHeart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data.")
+                        Text("Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data.")
                             .font(.subheadline)
                     }
                 }
@@ -107,7 +107,7 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
         }
         if watchManager.userHasWatch && !watchManager.isWatchAppReachable {
             PlainSection {
-                Text("If you have an Apple Watch, please ensure that the MyHeart Counts app is running ")
+                Text("If you have an Apple Watch, please ensure that the My Heart Counts app is running ")
                 AsyncButton(state: $viewState) {
                     async let _ = withTimeout(of: .seconds(4)) {
                         print("timed out?")
