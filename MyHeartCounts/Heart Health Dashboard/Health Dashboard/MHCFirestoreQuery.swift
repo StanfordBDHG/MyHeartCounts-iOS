@@ -61,7 +61,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     
     nonisolated func update() {
         var input = self.input
-        runOrScheduleOnMainActor {
+        Task { @MainActor in
             guard let accountId = account?.details?.accountId else {
                 return
             }

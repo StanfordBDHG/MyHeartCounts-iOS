@@ -85,20 +85,20 @@ struct AccountSheet: View {
                 }
             }
         }
-        Section("Debug Mode") {
-            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
-            if enableDebugMode {
-                NavigationLink("Health Data Bulk Upload") {
-                    HealthImporterControlView()
-                }
-                NavigationLink("NotificationsManager") {
-                    NotificationsManagerControlView()
-                }
-                NavigationLink("Debug Stuff") {
-                    DebugStuffView()
-                }
-            }
-        }
+//        Section("Debug Mode") {
+//            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
+//            if enableDebugMode {
+//                NavigationLink("Health Data Bulk Upload") {
+//                    HealthImporterControlView()
+//                }
+//                NavigationLink("NotificationsManager") {
+//                    NotificationsManagerControlView()
+//                }
+//                NavigationLink("Debug Stuff") {
+//                    DebugStuffView()
+//                }
+//            }
+//        }
         Section {
             if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
@@ -130,9 +130,11 @@ struct AccountSheet: View {
                 Text(studyInfo.title)
                     .font(.headline)
                 Text(studyInfo.shortExplanationText)
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(.secondary)
+                Text("Enrolled since: \(enrollment.enrollmentDate, format: .dateTime)")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                Text("TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected")
             }
         } else {
             Text("Study not available")

@@ -227,12 +227,6 @@
     "Date of Birth" : {
 
     },
-    "Debug Mode" : {
-
-    },
-    "Debug Stuff" : {
-
-    },
     "Delete ~/HealthKitUploads/*" : {
 
     },
@@ -248,13 +242,13 @@
     "Done" : {
 
     },
-    "Enable Debug Mode" : {
-
-    },
     "End Study Participation" : {
 
     },
     "Enroll in Study" : {
+
+    },
+    "Enrolled since: %@" : {
 
     },
     "Enter Blood Pressure" : {
@@ -320,9 +314,6 @@
       }
     },
     "Health Data" : {
-
-    },
-    "Health Data Bulk Upload" : {
 
     },
     "HealthKit Access" : {
@@ -539,9 +530,6 @@
           }
         }
       }
-    },
-    "NotificationsManager" : {
-
     },
     "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT" : {
       "localizations" : {
@@ -836,9 +824,6 @@
 
     },
     "Today's Tasks" : {
-
-    },
-    "TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected" : {
 
     },
     "TODO: make this look pretty!" : {

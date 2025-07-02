@@ -36,21 +36,6 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             TimedWalkingTest()
         }
     }
-    
-    override func application(
-        _ application: UIApplication,
-        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? // swiftlint:disable:this discouraged_optional_collection
-    ) -> Bool {
-        let prefs = LocalPreferencesStore.standard
-        if FeatureFlags.showOnboarding {
-            prefs[.onboardingFlowComplete] = false
-            prefs[.lastUsedFirebaseConfig] = nil
-        }
-        if FeatureFlags.skipOnboarding {
-            prefs[.onboardingFlowComplete] = true
-        }
-        return super.application(application, willFinishLaunchingWithOptions: launchOptions)
-    }
 }
 
 
