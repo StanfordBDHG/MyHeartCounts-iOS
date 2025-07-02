@@ -35,6 +35,9 @@
     "100" : {
 
     },
+    "About %@" : {
+
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -385,6 +388,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "## Understanding Your My Heart Counts Health Score\n\n### What is this score?\nYour My Heart Counts Health Score provides a snapshot of your overall cardiovascular health based on the information you've shared with us. This score combines multiple factors that research has shown to be important for heart health.\n\n### How is it calculated?\nYour score incorporates:\n- Physical activity levels from your daily movement patterns\n- Heart risk factors you reported in surveys (like blood pressure, cholesterol)\n- Lifestyle factors such as diet, sleep, and overall mental health\n- Health behaviors like smoking status\n\n### What to do with this information:\n- **Track changes** over time to see how your heart health evolves. Understand that higher scores mean better overall health. By tracking your changes over time you can try and improve your overall health!\n- **Identify specific areas** where small changes might have the biggest impact.\n- **Set personal goals** based on which components have the most room for improvement. \n\nImportant note: This score is provided for research and educational purposes only. It is not a medical diagnosis and should not replace consultation with healthcare providers. The My Heart Counts Health Score is designed to encourage positive health behaviors and support your heart health journey."
+          }
+        }
+      }
+    },
+    "HEART_HEALTH_DASHBOARD_METRIC_EXPLAINER_DIET_SCORE" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "–––\nlink: https://www.who.int/news-room/fact-sheets/detail/healthy-diet\n–––\nThis dietary questionnaire, developed by the British Heart Foundation, helps you assess your eating habits and identify areas for improvement. A healthy diet—rich in fruits, vegetables, whole grains, lean proteins, and healthy fats—supports heart health, energy, and chronic disease prevention (such as cancer and dementia). Limiting added sugars, salt, and processed foods is also important. However, diet is complex and influenced by culture, preferences, and access to foods, making it hard to assess accurately with simple surveys. While general guidelines help, personalized nutrition advice with your healthcare provider or licensed dietician is best for lasting health benefits.\n\nIf your score indicates room for improvement, consider gradually adopting healthier dietary habits to enhance your overall well-being and reduce your long-term risk of cardiovascular disease, cancer, and dementia.\n\n\n\n\n"
           }
         }
       }
