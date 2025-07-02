@@ -507,6 +507,12 @@
             "state" : "translated",
             "value" : "My Heart Counts"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi Corazón Cuenta"
+          }
         }
       }
     },
