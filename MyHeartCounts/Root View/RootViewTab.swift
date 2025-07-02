@@ -14,6 +14,7 @@ import SpeziAccount
 import SwiftUI
 
 
+/// A `View` that constitutes one of the tabs in the MHC app's root-level `TabView`.
 protocol RootViewTab: View {
     nonisolated static var tabId: String { get }
     static var tabTitle: LocalizedStringResource { get }

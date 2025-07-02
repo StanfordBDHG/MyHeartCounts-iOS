@@ -7,7 +7,7 @@
 //
 
 
-enum PossiblyLoading<Value> {
+enum PossiblyLoading<Value> { // is this still used? needed?
     case loading
     case loaded(Value)
     case error(any Error)

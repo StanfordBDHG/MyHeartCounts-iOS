@@ -6,25 +6,36 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable discouraged_optional_boolean
+
 import Foundation
 import SpeziFoundation
 
 
 @Observable
 @MainActor
-final class ScreeningDataCollection: Sendable {
-    var dateOfBirth: Date = .now
-    var region: Locale.Region?
-    var speaksEnglish: Bool? // swiftlint:disable:this discouraged_optional_boolean
-    var physicalActivity: Bool? // swiftlint:disable:this discouraged_optional_boolean
-    
-    var allPropertiesAreNonnil: Bool {
-        // NOTE: ideally we'd simply use Mirror here to get a list of all properties,
-        // and then do a simple `allSatisfy { value != nil }`, but that doesn't work,
-        // because, even though we absolutely can use this code to get this result,
-        // reading the property value through the Mirror won't call `access`, meaning that
-        // using this propertu from SwiftUI won't cause view updates if any of the
-        // properties change.
-        region != nil && speaksEnglish != nil && physicalActivity != nil
+final class OnboardingDataCollection: Sendable {
+    struct Screening: Sendable {
+        enum DateOfBirthResponse: Sendable {
+            case date(Date)
+            case binaryAtLeast(minAge: Int, response: Bool)
+        }
+        
+        var dateOfBirth: DateOfBirthResponse?
+        var region: Locale.Region?
+        var speaksEnglish: Bool?
+        var physicalActivity: Bool?
     }
+    
+    struct Comprehension: Sendable {
+        /// Comprehension Question: "If at any point during this study I do not feel well, I should immediately contact my healthcare provider"
+        var seekHelpIfNotFeelingWell: Bool?
+        /// Comprehension Question: "I am not required to complete all or any parts of this study if I don’t want to"
+        var studyParticipationIsVoluntary: Bool?
+        /// Comprehension Question: "Once I start participating in this study, I can choose to not continue at any time with no repercussions to me"
+        var canStopParticipatingAtAnyTime: Bool?
+    }
+    
+    var screening = Screening()
+    var comprehension = Comprehension()
 }

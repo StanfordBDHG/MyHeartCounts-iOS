@@ -14,19 +14,19 @@ import SwiftUI
 struct NotEligibleView: View {
     var body: some View {
         OnboardingView {
-            OnboardingTitleView(title: "Screening Results")
+            OnboardingTitleView(title: "INELIGIBLE_TITLE")
                 .padding(.top, 47)
         } content: {
             Form {
                 Section {
-                    Text("You're sadly not eligible to participate in the My Heart Counts study.")
+                    Text("INELIGIBLE_SUBTITLE")
                 }
                 .listRowBackground(Color.clear)
                 .listRowInsets(.zero)
                 Section {
                     Link(destination: "https://bdh.stanford.edu") {
                         HStack {
-                            Text("Check out our other work")
+                            Text("Learn more about My Heart Counts")
                             Spacer()
                             Image(systemSymbol: .arrowUpRight)
                                 .accessibilityLabel("Link Arrow Symbol")
@@ -38,6 +38,5 @@ struct NotEligibleView: View {
             EmptyView()
         }
         .makeBackgroundMatchFormBackground()
-        .navigationBarBackButtonHidden()
     }
 }

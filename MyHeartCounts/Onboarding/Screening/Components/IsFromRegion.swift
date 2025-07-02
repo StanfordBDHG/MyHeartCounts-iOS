@@ -16,7 +16,7 @@ struct IsFromRegion: ScreeningComponent {
     // swiftlint:disable attributes
     @Environment(\.locale) private var locale
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(ScreeningDataCollection.self) private var data
+    @Environment(OnboardingDataCollection.self) private var data
     // swiftlint:enable attributes
     
     let allowedRegions: Set<Locale.Region>
@@ -40,11 +40,11 @@ struct IsFromRegion: ScreeningComponent {
             isPresentingRegionPicker = true
         } label: {
             HStack {
-                Text("Where are you currently living?")
+                Text("What country do you currently live in?")
                     .fontWeight(.medium)
                     .foregroundStyle(colorScheme.buttonLabelForegroundStyle)
                 Spacer()
-                if let region = data.region {
+                if let region = data.screening.region {
                     Text(region.localizedName(in: locale, includeEmoji: .none))
                         .foregroundStyle(colorScheme.buttonLabelForegroundStyle.secondary)
                 }
@@ -53,14 +53,14 @@ struct IsFromRegion: ScreeningComponent {
             .contentShape(Rectangle())
         }
         .sheet(isPresented: $isPresentingRegionPicker) {
-            ListSelectionSheet("Select a Region", items: regionsList, selection: $data.region) { region in
+            ListSelectionSheet("Select a Region", items: regionsList, selection: $data.screening.region) { region in
                 region.localizedName(in: locale, includeEmoji: .front)
             }
         }
     }
     
-    func evaluate(_ data: ScreeningDataCollection) -> Bool {
-        guard let region = data.region else {
+    func evaluate(_ data: OnboardingDataCollection) -> Bool {
+        guard let region = data.screening.region else {
             return false
         }
         return allowedRegions.contains(region)

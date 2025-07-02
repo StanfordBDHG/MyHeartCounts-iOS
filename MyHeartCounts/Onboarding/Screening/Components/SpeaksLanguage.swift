@@ -13,7 +13,7 @@ import SwiftUI
 struct SpeaksLanguage: ScreeningComponent {
     // swiftlint:disable attributes
     @Environment(\.locale) private var locale
-    @Environment(ScreeningDataCollection.self) private var data
+    @Environment(OnboardingDataCollection.self) private var data
     // swiftlint:enable attributes
     
     let title: LocalizedStringResource = "Language"
@@ -22,14 +22,14 @@ struct SpeaksLanguage: ScreeningComponent {
     var body: some View {
         @Bindable var data = data
         SingleChoiceScreeningComponentImpl(
-            question: "Do you speak \(allowedLanguage.localizedName(in: locale))?",
+            question: "Can you read and understand \(allowedLanguage.localizedName(in: locale)) in order to provide informed consent and follow instructions?",
             options: [true, false],
-            selection: $data.speaksEnglish,
+            selection: $data.screening.speaksEnglish,
             optionTitle: { $0 ? "Yes" : "No" }
         )
     }
     
-    func evaluate(_ data: ScreeningDataCollection) -> Bool {
-        data.speaksEnglish == true
+    func evaluate(_ data: OnboardingDataCollection) -> Bool {
+        data.screening.speaksEnglish == true
     }
 }

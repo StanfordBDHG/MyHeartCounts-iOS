@@ -101,23 +101,31 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                 logger.error("\(#function) aborting: no study")
                 return false
             }
-            do {
-                session = try await bulkExporter.session(
-                    withId: .mhcHistoricalDataExport,
-                    for: study.allCollectedHealthData,
-                    startDate: .last(DateComponents(year: 5)), // TODO read from study def!!!!
-                    using: HistoricalSamplesToFHIRJSONProcessor()
-                )
-            } catch {
-                logger.error("Error creating bulk export session: \(error)")
-                return false
+            for component in study.healthDataCollectionComponents {
+                switch component.historicalDataCollection {
+                case .disabled:
+                    continue
+                case .enabled(let startDate):
+                    do {
+                        session = try await bulkExporter.session(
+                            withId: .mhcHistoricalDataExport,
+                            for: study.allCollectedHealthData,
+                            startDate: startDate,
+                            using: HistoricalSamplesToFHIRJSONProcessor()
+                        )
+                    } catch {
+                        logger.error("Error creating bulk export session: \(error)")
+                        return false
+                    }
+                }
             }
         }
-        // session is nonnil now
-        assert(session != nil)
+        guard let session else {
+            return false
+        }
         do {
             logger.notice("Will start BulkHealthExport session")
-            let results = try session!.start(retryFailedBatches: true) // swiftlint:disable:this force_unwrapping
+            let results = try session.start(retryFailedBatches: true)
             processUploads(for: results.compactMap { $0 })
             return true
         } catch {

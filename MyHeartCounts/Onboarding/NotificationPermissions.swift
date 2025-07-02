@@ -22,10 +22,7 @@ struct NotificationPermissions: View {
     var body: some View {
         OnboardingView {
             VStack {
-                OnboardingTitleView(
-                    title: "Notifications",
-                    subtitle: "Spezi Scheduler Notifications."
-                )
+                OnboardingTitleView(title: "Notifications")
                 Spacer()
                 Image(systemName: "bell.square.fill")
                     .font(.system(size: 150))

@@ -8,6 +8,7 @@
 
 import Foundation
 import Spezi
+import SpeziFoundation
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziStudy
@@ -34,7 +35,9 @@ struct FinalEnrollmentStep: View {
         OnboardingView {
             OnboardingTitleView(title: "My Heart Counts")
         } content: {
-            Text("You're all set.\n\nGreat to have you on board!")
+            let text = String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE")
+            let doc = MarkdownDocument(metadata: [:], blocks: [.markdown(id: nil, rawContents: text)])
+            MarkdownView(markdownDocument: doc)
         } footer: {
             OnboardingActionsView("Complete") {
                 await completeStudyEnrollment()

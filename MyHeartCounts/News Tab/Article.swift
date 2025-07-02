@@ -137,7 +137,12 @@ extension Article {
     
     
     /// Creates a new Article from a `MarkdownDocument`, extracting information from the document's metadata.
-    init(id: UUID, _ doc: MarkdownDocument, defaultStatus: Status = .published) {
+    init(
+        id: UUID,
+        _ doc: MarkdownDocument,
+        defaultStatus: Status = .published,
+        fallbackHeaderImage: ImageReference? = .asset("stanford")
+    ) {
         let metadata = doc.metadata
         self.init(
             id: id,
@@ -146,10 +151,10 @@ extension Article {
             date: metadata["date"].flatMap { try? Date($0, strategy: .iso8601) },
             tags: metadata["tags"].flatMap { value -> [Tag] in
                 let tagTitles = value.split(separator: ",").map { $0.trimmingWhitespace() }
-                return tagTitles.map { Tag(title: String($0), color: .blue) } // TODO how to encode the colors?
+                return tagTitles.map { Tag(title: String($0), color: .blue) } // maybe also somehoe encode the colors?
             } ?? [],
             lede: metadata["lede"],
-            headerImage: metadata["headerImage"].flatMap(ImageReference.init(rawValue:)),
+            headerImage: metadata["headerImage"].flatMap(ImageReference.init(rawValue:)) ?? fallbackHeaderImage,
             body: doc
         )
     }

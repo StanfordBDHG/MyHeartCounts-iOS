@@ -31,8 +31,6 @@ struct AccountSheet: View {
     @LocalPreference(.enableDebugMode)
     private var enableDebugMode
     
-    @State private var debugModeLabelId = UUID()
-    
     var body: some View {
         NavigationStack {
             ZStack {

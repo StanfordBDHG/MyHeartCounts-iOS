@@ -42,32 +42,45 @@ struct AppOnboardingFlow: View {
     
     @Binding var didCompleteOnboarding: Bool
     
-    @State private var screeningData = ScreeningDataCollection()
+    @State private var onboardingData = OnboardingDataCollection()
     @State private var localNotificationAuthorization = false
     
     
     var body: some View {
-        ManagedNavigationStack(didComplete: $didCompleteOnboarding) {
+        ManagedNavigationStack(didComplete: $didCompleteOnboarding) { // swiftlint:disable:this closure_body_length
             Welcome()
-            SinglePageScreening(
-                title: "Screening",
-                subtitle: "Before we can continue,\nwe need to learn a little about you"
-            ) {
-                AgeAtLeast(minAge: 18)
-                IsFromRegion(allowedRegions: [.unitedStates])
-                SpeaksLanguage(allowedLanguage: .init(identifier: "en_US"))
-                CanPerformPhysicalActivity()
-            }
+            EligibilityScreening()
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
                     .injectingSpezi()
                     .navigationBarBackButtonHidden()
             }
+            OnboardingDisclaimerStep(
+                title: "ONBOARDING_DISCLAIMER_1_TITLE",
+                primaryText: "ONBOARDING_DISCLAIMER_1_PRIMARY_TEXT",
+                learnMoreText: "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT"
+            )
+            OnboardingDisclaimerStep(
+                title: "ONBOARDING_DISCLAIMER_2_TITLE",
+                primaryText: "ONBOARDING_DISCLAIMER_2_PRIMARY_TEXT",
+                learnMoreText: "ONBOARDING_DISCLAIMER_2_LEARN_MORE_TEXT"
+            )
+            OnboardingDisclaimerStep(
+                title: "ONBOARDING_DISCLAIMER_3_TITLE",
+                primaryText: "ONBOARDING_DISCLAIMER_3_PRIMARY_TEXT",
+                learnMoreText: "ONBOARDING_DISCLAIMER_3_LEARN_MORE_TEXT"
+            )
+            OnboardingDisclaimerStep(
+                title: "ONBOARDING_DISCLAIMER_4_TITLE",
+                primaryText: "ONBOARDING_DISCLAIMER_4_PRIMARY_TEXT",
+                learnMoreText: "ONBOARDING_DISCLAIMER_4_LEARN_MORE_TEXT"
+            )
             #if !(targetEnvironment(simulator) && (arch(i386) || arch(x86_64)))
             Consent()
                 .injectingSpezi()
                 .navigationStepIdentifier("Consent")
             #endif
+            ComprehensionScreening()
             if HKHealthStore.isHealthDataAvailable() {
                 // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()
@@ -80,7 +93,7 @@ struct AppOnboardingFlow: View {
             FinalEnrollmentStep()
                 .injectingSpezi()
         }
-        .environment(screeningData)
+        .environment(onboardingData)
         .interactiveDismissDisabled(!didCompleteOnboarding)
         .onChange(of: scenePhase, initial: true) {
             guard case .active = scenePhase else {
