@@ -15,7 +15,7 @@ import SwiftUI
 
 struct AccountSheet: View {
     private let dismissAfterSignIn: Bool
-
+    
     @Environment(\.dismiss)
     private var dismiss
     
@@ -25,6 +25,9 @@ struct AccountSheet: View {
     private var accountRequired
     
     @State private var isInSetup = false
+    
+    @Environment(\.openAppSettings)
+    private var openAppSettings
     
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
@@ -46,19 +49,19 @@ struct AccountSheet: View {
                     } header: {
                         AccountSetupHeader()
                     }
-                        .onAppear {
-                            isInSetup = true
+                    .onAppear {
+                        isInSetup = true
+                    }
+                    .toolbar {
+                        if !accountRequired {
+                            closeButton
                         }
-                        .toolbar {
-                            if !accountRequired {
-                                closeButton
-                            }
-                        }
+                    }
                 }
             }
         }
     }
-
+    
     @ToolbarContentBuilder private var closeButton: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button("Close") {
@@ -85,20 +88,20 @@ struct AccountSheet: View {
                 }
             }
         }
-//        Section("Debug Mode") {
-//            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
-//            if enableDebugMode {
-//                NavigationLink("Health Data Bulk Upload") {
-//                    HealthImporterControlView()
-//                }
-//                NavigationLink("NotificationsManager") {
-//                    NotificationsManagerControlView()
-//                }
-//                NavigationLink("Debug Stuff") {
-//                    DebugStuffView()
-//                }
-//            }
-//        }
+        //        Section("Debug Mode") {
+        //            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
+        //            if enableDebugMode {
+        //                NavigationLink("Health Data Bulk Upload") {
+        //                    HealthImporterControlView()
+        //                }
+        //                NavigationLink("NotificationsManager") {
+        //                    NotificationsManagerControlView()
+        //                }
+        //                NavigationLink("Debug Stuff") {
+        //                    DebugStuffView()
+        //                }
+        //            }
+        //        }
         Section {
             if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
@@ -110,6 +113,22 @@ struct AccountSheet: View {
             }
         }
         Section {
+            Button {
+                openAppSettings()
+            } label: {
+                HStack {
+                    Text("Change Language")
+                    Spacer()
+                    Image(systemSymbol: .arrowUpRightSquare)
+                        .accessibilityHidden(true)
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        Section {
             NavigationLink {
                 ContributionsList(projectLicense: .mit)
             } label: {
@@ -117,7 +136,7 @@ struct AccountSheet: View {
             }
         }
     }
-
+    
     init(dismissAfterSignIn: Bool = true) {
         self.dismissAfterSignIn = dismissAfterSignIn
     }
@@ -142,24 +161,3 @@ struct AccountSheet: View {
         }
     }
 }
-
-
-#if DEBUG
-#Preview("AccountSheet") {
-    var details = AccountDetails()
-    details.userId = "lelandstanford@stanford.edu"
-    details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-    
-    return AccountSheet()
-        .previewWith {
-            AccountConfiguration(service: InMemoryAccountService(), activeDetails: details)
-        }
-}
-
-#Preview("AccountSheet SignIn") {
-    AccountSheet()
-        .previewWith {
-            AccountConfiguration(service: InMemoryAccountService())
-        }
-}
-#endif
