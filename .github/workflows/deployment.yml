@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - lukas/StudyBundle
   workflow_dispatch:
     inputs:
       environment:
