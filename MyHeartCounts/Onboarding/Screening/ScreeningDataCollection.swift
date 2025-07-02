@@ -9,6 +9,7 @@
 // swiftlint:disable discouraged_optional_boolean
 
 import Foundation
+import SpeziConsent
 import SpeziFoundation
 
 
@@ -38,4 +39,5 @@ final class OnboardingDataCollection: Sendable {
     
     var screening = Screening()
     var comprehension = Comprehension()
+    var consentResponses: ConsentDocument.UserResponses?
 }

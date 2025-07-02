@@ -58,21 +58,7 @@ struct HeartHealthDashboard: View {
                 makeGridComponent(for: \.bloodPressureScore)
             ])
         ], footer: {
-            Section("Further Reads") {
-                ForEach(newsManager.articles) { article in
-                    Button {
-                        presentedArticle = article
-                    } label: {
-                        ArticleCard(article: article)
-                            .frame(height: 117)
-                            .clipped()
-                    }
-                    .buttonStyle(.plain)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: HealthDashboardConstants.gridComponentCornerRadius))
-                    .padding(.horizontal)
-                }
-            }
+            LearnMore()
         })
         .navigationTitle("Heart Health Dashboard")
         .sheet(item: $addNewSampleDescriptor) { descriptor in
@@ -100,7 +86,7 @@ struct HeartHealthDashboard: View {
     
     
     @ViewBuilder private var topSection: some View {
-        Text("Overall Cardiovascular Health")
+        Text("HEART_HEALTH_DASHBOARD_HEADER")
         Gauge(
             lineWidth: .relative(1.5),
             gradient: .redToGreen,

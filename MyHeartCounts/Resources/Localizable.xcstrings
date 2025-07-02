@@ -283,7 +283,27 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What happens next:\n- Baseline Monitoring Week: Over the next 7 days, you'll be guided through several short activities:\n    - Completing surveys about your health, lifestyle, and well-being\n    - Recording your baseline physical activity through the app\n    - Performing optional fitness assessments if appropriate for your health status\n- Daily Tasks: Each day, you'll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete.\n- Data Collection: The app will begin collecting activity data from your phone and any connected wearable devices you've authorized.\n"
+            "value" : "What happens next:\n- Baseline Monitoring Week: Over the next 7 days, you'll be guided through several short activities:\n    - Completing surveys about your health, lifestyle, and well-being\n    - Recording your baseline physical activity through the app\n    - Performing optional fitness assessments if appropriate for your health status\n- Daily Tasks: Each day, you'll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete.\n- Data Collection: The app will begin collecting activity data from your phone and any connected wearable devices you've authorized."
+          }
+        }
+      }
+    },
+    "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By joining this study, you're contributing to important research that may help improve our understanding of heart health for people across diverse communities."
+          }
+        }
+      }
+    },
+    "FINAL_ENROLLMENT_STEP_MESSAGE_TRIAL_SECTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After your baseline week, you'll begin the 2-week trial comparing different types of physical activity coaching. You'll receive notifications when this phase begins."
           }
         }
       }
@@ -292,9 +312,6 @@
 
     },
     "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
-
-    },
-    "Further Reads" : {
 
     },
     "Go to next field" : {
@@ -351,6 +368,26 @@
     },
     "Heart Health Dashboard" : {
 
+    },
+    "HEART_HEALTH_DASHBOARD_HEADER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your personalized score reflects your overall health based on the factors listed below. Track it over time to see how lifestyle changes impact your heart health."
+          }
+        }
+      }
+    },
+    "HEART_HEALTH_DASHBOARD_LEARN_MORE_TEXT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "## Understanding Your My Heart Counts Health Score\n\n### What is this score?\nYour My Heart Counts Health Score provides a snapshot of your overall cardiovascular health based on the information you've shared with us. This score combines multiple factors that research has shown to be important for heart health.\n\n### How is it calculated?\nYour score incorporates:\n- Physical activity levels from your daily movement patterns\n- Heart risk factors you reported in surveys (like blood pressure, cholesterol)\n- Lifestyle factors such as diet, sleep, and overall mental health\n- Health behaviors like smoking status\n\n### What to do with this information:\n- **Track changes** over time to see how your heart health evolves. Understand that higher scores mean better overall health. By tracking your changes over time you can try and improve your overall health!\n- **Identify specific areas** where small changes might have the biggest impact.\n- **Set personal goals** based on which components have the most room for improvement. \n\nImportant note: This score is provided for research and educational purposes only. It is not a medical diagnosis and should not replace consultation with healthcare providers. The My Heart Counts Health Score is designed to encourage positive health behaviors and support your heart health journey."
+          }
+        }
+      }
     },
     "Historical Data Bulk Export" : {
 
@@ -654,9 +691,6 @@
     "Open In Browser" : {
 
     },
-    "Overall Cardiovascular Health" : {
-
-    },
     "Participation Criteria" : {
 
     },
@@ -858,6 +892,9 @@
 
     },
     "Warning Sign" : {
+
+    },
+    "Welcome to My Heart Counts" : {
 
     },
     "WELCOME_AREA1_DESCRIPTION" : {

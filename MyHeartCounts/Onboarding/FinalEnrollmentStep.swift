@@ -17,26 +17,24 @@ import SwiftUI
 
 
 struct FinalEnrollmentStep: View {
-    @Environment(ManagedNavigationStack.Path.self)
-    private var path
-    
-    @Environment(StudyManager.self)
-    private var studyManager
-    
-    @Environment(HistoricalHealthSamplesExportManager.self)
-    private var historicalUploadManager
-    
-    @Environment(StudyBundleLoader.self)
-    private var studyLoader
+    // swiftlint:disable attributes
+    @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(OnboardingDataCollection.self) private var onboardingData
+    @Environment(StudyManager.self) private var studyManager
+    @Environment(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
+    @Environment(StudyBundleLoader.self) private var studyLoader
+    // swiftlint:enable attributes
     
     @State private var viewState: ViewState = .idle
     
     var body: some View {
         OnboardingView {
-            OnboardingTitleView(title: "My Heart Counts")
+            OnboardingTitleView(title: "Welcome to My Heart Counts")
         } content: {
-            let text = String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE")
-            let doc = MarkdownDocument(metadata: [:], blocks: [.markdown(id: nil, rawContents: text)])
+            let doc = MarkdownDocument(
+                metadata: [:],
+                blocks: [.markdown(id: nil, rawContents: loadText())]
+            )
             MarkdownView(markdownDocument: doc)
         } footer: {
             OnboardingActionsView("Complete") {
@@ -44,6 +42,17 @@ struct FinalEnrollmentStep: View {
             }
             .disabled(viewState != .idle)
         }
+    }
+    
+    private func loadText() -> String {
+        var text = String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE")
+        if onboardingData.consentResponses?.toggles["short-term-physical-activity-trial"] == true {
+            text.append("\n\n")
+            text.append(String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE_TRIAL_SECTION"))
+        }
+        text.append("\n\n")
+        text.append(String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER"))
+        return text
     }
     
     private func completeStudyEnrollment() async {

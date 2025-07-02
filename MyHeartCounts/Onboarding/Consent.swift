@@ -17,6 +17,7 @@ import SwiftUI
 struct Consent: View {
     // swiftlint:disable attributes
     @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(OnboardingDataCollection.self) private var onboardingData
     @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(Account.self) private var account
     @Environment(StudyBundleLoader.self) private var studyLoader
@@ -34,6 +35,7 @@ struct Consent: View {
             guard let consentDocument else {
                 return
             }
+            onboardingData.consentResponses = consentDocument.userResponses
             let result = try consentDocument.export(using: pdfExportConfig)
             try await standard.uploadConsentDocument(result)
             path.nextStep()
@@ -89,15 +91,3 @@ extension Locale {
         }
     }
 }
-
-
-#if DEBUG
-#Preview {
-    ManagedNavigationStack {
-        Consent()
-    }
-    .previewWith(standard: MyHeartCountsStandard()) {
-//        OnboardingDataSource()
-    }
-}
-#endif
