@@ -19,8 +19,7 @@ struct EligibilityScreening: View {
     private let components: [any ScreeningComponent] = [
         AgeAtLeast(style: .toggle, minAge: 18),
         IsFromRegion(allowedRegions: [.unitedStates, .unitedKingdom]),
-        SpeaksLanguage(allowedLanguage: .init(identifier: "en_US")),
-        CanPerformPhysicalActivity()
+        SpeaksLanguage(allowedLanguage: .init(identifier: "en_US"))
     ]
     
     var body: some View {
@@ -34,12 +33,12 @@ struct EligibilityScreening: View {
             func nonnil(_ keyPath: KeyPath<OnboardingDataCollection.Screening, (some Any)?>) -> Bool {
                 data.screening[keyPath: keyPath] != nil
             }
-            return nonnil(\.dateOfBirth) && nonnil(\.region) && nonnil(\.speaksEnglish) && nonnil(\.physicalActivity)
+            return nonnil(\.dateOfBirth) && nonnil(\.region) && nonnil(\.speaksEnglish)
         } continue: { data, path in
             let isEligible = components.allSatisfy { $0.evaluate(data) }
             if isEligible {
                 guard let region = data.screening.region else {
-                    // IDEA(@lukas) maybe show an alert? (we will never end up in here)
+                    // unreachable
                     return
                 }
                 if !Spezi.didLoadFirebase {
