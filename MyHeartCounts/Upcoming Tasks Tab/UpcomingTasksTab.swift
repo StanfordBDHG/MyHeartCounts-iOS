@@ -9,6 +9,7 @@
 import SFSafeSymbols
 import SpeziScheduler
 import SpeziSchedulerUI
+import SpeziStudyDefinition
 import SwiftUI
 
 
@@ -18,6 +19,8 @@ struct UpcomingTasksTab: RootViewTab {
     
     @Environment(\.calendar)
     private var calendar
+    
+    @State private var activeTimedWalkingTest: TimedWalkingTestConfiguration?
     
     var body: some View {
         NavigationStack {
@@ -34,6 +37,33 @@ struct UpcomingTasksTab: RootViewTab {
             }
             .navigationTitle("Upcoming Tasks")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    timedWalkingTestMenu
+                }
+                accountToolbarItem
+            }
+            .sheet(item: $activeTimedWalkingTest, id: \.self) { test in
+                TimedWalkingTestView(test)
+            }
+        }
+    }
+    
+    @ViewBuilder private var timedWalkingTestMenu: some View {
+        let tests = [
+            TimedWalkingTestConfiguration(duration: .minutes(6), kind: .walking),
+            TimedWalkingTestConfiguration(duration: .minutes(12), kind: .running)
+        ]
+        Menu {
+            ForEach(tests, id: \.self) { test in
+                Button {
+                    activeTimedWalkingTest = test
+                } label: {
+                    Label(test.displayTitle, systemSymbol: test.kind.symbol)
+                }
+            }
+        } label: {
+            Label("Timed Walking Test", systemSymbol: .figureWalk)
         }
     }
 }

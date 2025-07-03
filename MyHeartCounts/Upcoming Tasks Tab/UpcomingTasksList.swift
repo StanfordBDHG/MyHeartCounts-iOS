@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Algorithms
 import Foundation
 import SpeziQuestionnaire
 import SpeziScheduler
@@ -40,11 +41,17 @@ struct UpcomingTasksList: View {
         var id: Questionnaire.ID { questionnaire.id }
     }
     
+    private struct SectionedEvents {
+        let startOfDay: Date
+        let events: [Event]
+    }
+    
     @Environment(MyHeartCountsStandard.self)
     private var standard
     @Environment(StudyManager.self)
     private var studyManager
     @EventQuery private var events: [Event]
+    private let calendar: Calendar
     @State private var viewState: ViewState = .idle
     @State private var presentedArticle: Article?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
@@ -85,22 +92,29 @@ struct UpcomingTasksList: View {
     
     @ViewBuilder private var eventsList: some View {
         if !events.isEmpty {
-            ForEach(events) { event in
+            let eventsByDay = eventsByDay
+            ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
                 Section {
-                    if let context = event.task.studyContext,
-                       let action = event.task.studyScheduledTaskAction {
-                        InstructionsTile(event) {
-                            // IDEA(@lukas):
-                            // - add an official overload with an optional label text?
-                            // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
-                            EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
-                                _Concurrency.Task {
-                                    await handleAction(action, for: event, context: context)
+                    ForEach(sectionedEvents.events) { event in
+                        if let context = event.task.studyContext,
+                           let action = event.task.studyScheduledTaskAction {
+                            InstructionsTile(event) {
+                                // IDEA(@lukas):
+                                // - add an official overload with an optional label text?
+                                // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
+                                EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
+                                    _Concurrency.Task {
+                                        await handleAction(action, for: event, context: context)
+                                    }
                                 }
                             }
+                        } else {
+                            InstructionsTile(event)
                         }
-                    } else {
-                        InstructionsTile(event)
+                    }
+                } header: {
+                    if eventsByDay.count > 1 {
+                        Text(sectionedEvents.startOfDay.formatted(date: .long, time: .omitted))
                     }
                 }
             }
@@ -114,8 +128,18 @@ struct UpcomingTasksList: View {
         }
     }
     
+    private var eventsByDay: [SectionedEvents] {
+        events.chunked { calendar.isDate($0.occurrence.start, inSameDayAs: $1.occurrence.start) }
+            // SAFETY: the chunking guarantees that the slices aren't empty.
+            // we need to use `.first` instead of `[0]`, since the slices share the indices.
+            // swiftlint:disable:next force_unwrapping
+            .map { SectionedEvents(startOfDay: calendar.startOfDay(for: $0.first!.occurrence.start), events: Array($0)) }
+    }
+    
+    
     init(timeRange: TimeRange, calendar: Calendar) {
         _events = .init(in: Self.effectiveTimeRange(for: timeRange, calendar: calendar))
+        self.calendar = calendar
     }
     
     private func handleAction(_ action: StudyManager.ScheduledTaskAction, for event: Event, context: Task.Context.StudyContext) async {
