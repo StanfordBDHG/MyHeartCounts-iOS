@@ -45,6 +45,16 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
         }
         .viewStateAlert(state: $viewState)
         .interactiveDismissDisabled(testIsRunning || viewState == .processing)
+        .task {
+            switch CMMotionManager.authorizationStatus() {
+            case .denied:
+                showPermissionsErrorSection = true
+            case .authorized, .notDetermined, .restricted:
+                break
+            @unknown default:
+                break
+            }
+        }
     }
     
     private var watchParticipatesInTest: Bool {
@@ -71,27 +81,6 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                     }())
             }
         }
-        if watchManager.userHasWatch && !watchManager.isWatchAppInstalled {
-            Section {
-                HStack {
-                    Image(systemSymbol: .exclamationmarkTriangle)
-                        .accessibilityLabel("Warning Sign")
-                        .foregroundStyle(.red)
-                    VStack(alignment: .leading) {
-                        Text("Companion Watch App Not Installed")
-                            .font(.headline)
-                        Text("Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data.")
-                            .font(.subheadline)
-                    }
-                }
-                Button {
-                    openUrl("itms-watchs://")
-                } label: {
-                    Text("Install on Apple Watch")
-                        .padding(.leading, 29)
-                }
-            }
-        }
         PlainSection {
             let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
             let kindText = switch test.kind {
@@ -105,17 +94,39 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                 Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
             }
         }
-        if watchManager.userHasWatch && !watchManager.isWatchAppReachable {
-            PlainSection {
-                Text("If you have an Apple Watch, please ensure that the My Heart Counts app is running ")
-                AsyncButton(state: $viewState) {
-                    async let _ = withTimeout(of: .seconds(4)) {
-                        print("timed out?")
+        if !testIsRunning {
+            if watchManager.userHasWatch && !watchManager.isWatchAppReachable {
+                PlainSection {
+                    Text("If you have an Apple Watch, please ensure that the My Heart Counts app is running")
+                    AsyncButton(state: $viewState) {
+                        async let _ = withTimeout(of: .seconds(4)) {
+                            print("timed out?")
+                        }
+                        try await watchManager.launchWatchApp()
+                    } label: {
+                        Text("Launch Watch App")
                     }
-                    try await watchManager.launchWatchApp()
-                } label: {
-                    Text("Launch Watch App")
                 }
+            }
+            if showPermissionsErrorSection {
+                ErrorSection(
+                    title: "Missing Required Motion Data Access Permission",
+                    explanation: "The Timed Walking Test requires read access to Motion and Fitness Data.",
+                    actionText: "Open Settings",
+                    action: {
+                        openAppSettings()
+                    }
+                )
+            }
+            if watchManager.userHasWatch && !watchManager.isWatchAppInstalled {
+                ErrorSection(
+                    title: "Companion Watch App Not Installed",
+                    explanation: "Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data.",
+                    actionText: "Install on Apple Watch",
+                    action: {
+                        openUrl("itms-watchs://")
+                    }
+                )
             }
         }
         switch timedWalkingTest.state {
@@ -123,7 +134,11 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
             Section {
                 // Q: do we want to have an option to cancel the test?
                 AsyncButton(state: $viewState) {
-                    try await timedWalkingTest.start(test)
+                    do {
+                        try await timedWalkingTest.start(test)
+                    } catch TimedWalkingTest.TestError.unableToStart(.missingSensorPermissions) {
+                        showPermissionsErrorSection = true
+                    }
                 } label: {
                     Text("Start Test")
                         .bold()
@@ -187,6 +202,38 @@ private struct PlainSection<Content: View>: View {
     
     init(@ViewBuilder _ content: () -> Content) {
         self.content = content()
+    }
+}
+
+
+extension TimedWalkingTestView {
+    private struct ErrorSection: View {
+        let title: LocalizedStringResource
+        let explanation: LocalizedStringResource
+        let actionText: LocalizedStringResource
+        let action: @MainActor () -> Void
+        
+        var body: some View {
+            Section {
+                HStack {
+                    Image(systemSymbol: .exclamationmarkTriangle)
+                        .accessibilityLabel("Warning Sign")
+                        .foregroundStyle(.red)
+                    VStack(alignment: .leading) {
+                        Text(title)
+                            .font(.headline)
+                        Text(explanation)
+                            .font(.subheadline)
+                    }
+                }
+                Button {
+                    action()
+                } label: {
+                    Text(actionText)
+                        .padding(.leading, 29)
+                }
+            }
+        }
     }
 }
 

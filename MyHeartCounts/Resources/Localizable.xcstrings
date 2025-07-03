@@ -424,7 +424,7 @@
     "I'm actively smoking" : {
 
     },
-    "If you have an Apple Watch, please ensure that the My Heart Counts app is running " : {
+    "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
 
     },
     "INELIGIBLE_SUBTITLE" : {
@@ -498,6 +498,9 @@
 
     },
     "Message?" : {
+
+    },
+    "Missing Required Motion Data Access Permission" : {
 
     },
     "More than 5 years ago" : {
@@ -714,6 +717,9 @@
     "Open In Browser" : {
 
     },
+    "Open Settings" : {
+
+    },
     "Participation Criteria" : {
 
     },
@@ -861,6 +867,9 @@
           }
         }
       }
+    },
+    "The Timed Walking Test requires read access to Motion and Fitness Data." : {
+
     },
     "This study will request read-access to collect the following Health samples:" : {
 
