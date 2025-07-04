@@ -16,7 +16,7 @@ import SwiftUI
 
 
 struct SmallSleepAnalysisGridCell: View {
-    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 4))
+    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 4), source: .appleHealthSystem)
     private var sleepAnalysis
     
     var body: some View {
@@ -26,7 +26,7 @@ struct SmallSleepAnalysisGridCell: View {
             EmptyView() // ?
         } content: {
             if let session = sleepSessions.last {
-                let value = session.totalTimeAsleep / 60 / 60
+                let value = session.totalTimeSpentAsleep / 60 / 60
                 HealthDashboardQuantityLabel(input: .init(
                     value: value,
                     valueString: String(format: "%.1f", value), // have "Xhrs Ymin" instead?
@@ -40,9 +40,11 @@ struct SmallSleepAnalysisGridCell: View {
 
 
 struct LargeSleepAnalysisView: View {
-    private enum SleepData {
-        case sleepSessions([SleepSession])
-        case processingFailed(any Error)
+    private struct SleepData {
+        let sessions: [SleepSession]
+        /// key: noon
+        /// value: total "asleep" duration of all sleep sessions that have their end in the `key` day.
+        let timeAsleepByDay: [Date: TimeInterval]
     }
     
     @Environment(\.calendar)
@@ -51,10 +53,10 @@ struct LargeSleepAnalysisView: View {
     @HealthKitQuery<HKCategorySample> private var sleepAnalysis: Slice<OrderedArray<HKCategorySample>>
     @SleepPhaseColors private var sleepPhaseColors
     
+    @State private var sleepData: Result<SleepData, any Error>?
     @State private var xSelection: Date?
     
     var body: some View {
-        let sleepData = processSleepSessions()
         VStack(alignment: .leading) {
             Text("Recent Sleep Data")
                 .font(.headline)
@@ -62,17 +64,23 @@ struct LargeSleepAnalysisView: View {
                 .font(.subheadline)
             Chart {
                 switch sleepData {
-                case .sleepSessions(let sessions):
-                    chartContent(for: sessions)
-                case .processingFailed:
+                case nil, .failure:
                     EmptyChartContent()
+                case .success(let data):
+                    if !data.sessions.isEmpty {
+                        chartContent(for: data)
+                    } else {
+                        // ???
+                    }
                 }
             }
             .chartOverlay { _ in
                 switch sleepData {
-                case .sleepSessions:
+                case nil:
+                    ProgressView("Processing Sleep Data…")
+                case .success:
                     EmptyView()
-                case .processingFailed:
+                case .failure:
                     Text("Failed to process Sleep Sessions")
                 }
             }
@@ -81,122 +89,84 @@ struct LargeSleepAnalysisView: View {
                 cal.startOfNextDay(for: timeRange.range.upperBound).addingTimeInterval(-1)
             ])
             .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
-//            .chartXAxis {
-//                let daysStride: Int = { () -> Int in
-//                    if timeRange.duration <= TimeConstants.week {
-//                        1
-//                    } else if timeRange.duration <= TimeConstants.month {
-//                        7
-//                    } else {
-//                        14
-//                    }
-//                }()
-//                AxisMarks(values: .stride(by: .day, count: daysStride)) { value in
-//                    if let date = value.as(Date.self) {
-//                        if let prevDate = cal.date(byAdding: .day, value: -daysStride, to: date) {
-//                            let format: Date.FormatStyle = .dateTime.omittingTime()
-//                                .year(cal.isDate(prevDate, equalTo: date, toGranularity: .year) ? .omitted : .defaultDigits)
-//                                .month(cal.isDate(prevDate, equalTo: date, toGranularity: .month) ? .omitted : .defaultDigits)
-//                            AxisValueLabel(format: format)
-//                        } else {
-//                            AxisValueLabel(format: .dateTime.omittingTime())
-//                        }
-//                    }
-//                    AxisGridLine()
-//                    AxisTick()
-//                }
-//            }
+            //            .chartXAxis {
+            //                let daysStride: Int = { () -> Int in
+            //                    if timeRange.duration <= TimeConstants.week {
+            //                        1
+            //                    } else if timeRange.duration <= TimeConstants.month {
+            //                        7
+            //                    } else {
+            //                        14
+            //                    }
+            //                }()
+            //                AxisMarks(values: .stride(by: .day, count: daysStride)) { value in
+            //                    if let date = value.as(Date.self) {
+            //                        if let prevDate = cal.date(byAdding: .day, value: -daysStride, to: date) {
+            //                            let format: Date.FormatStyle = .dateTime.omittingTime()
+            //                                .year(cal.isDate(prevDate, equalTo: date, toGranularity: .year) ? .omitted : .defaultDigits)
+            //                                .month(cal.isDate(prevDate, equalTo: date, toGranularity: .month) ? .omitted : .defaultDigits)
+            //                            AxisValueLabel(format: format)
+            //                        } else {
+            //                            AxisValueLabel(format: .dateTime.omittingTime())
+            //                        }
+            //                    }
+            //                    AxisGridLine()
+            //                    AxisTick()
+            //                }
+            //            }
             .chartXSelection(value: $xSelection)
         }
-//        switch sleepData {
-//        case .sleepSessions(let sessions):
-//            NavigationLink("Sessions") {
-//                Form {
-//                    ForEach(sessions, id: \.self) { (session: SleepSession) in
-//                        Section(coveredTimeRangeText(for: session.timeRange)) {
-//                            ForEach(session) { (sample: HKCategorySample) in
-//                                LabeledContent(sample.sleepPhase!.displayTitle, value: { () -> String in
-//                                    let range = sample.timeRange
-//                                    let startFormat: Date.FormatStyle = .dateTime.year(.defaultDigits).month(.abbreviated).day(.defaultDigits).hour(.twoDigits(amPM: .narrow)).minute(.twoDigits).second(.omitted)
-//                                    let timeOnly: Date.FormatStyle = .dateTime.year(.omitted).month(.omitted).day(.omitted).hour(.twoDigits(amPM: .narrow)).minute(.twoDigits).second(.omitted)
-//                                    if true || cal.isDate(range.lowerBound, inSameDayAs: range.upperBound) {
-//                                        return "\(range.lowerBound.formatted(startFormat)) – \(range.upperBound.addingTimeInterval(-1).formatted(timeOnly))"
-//                                    } else {
-//                                        return "\(range.lowerBound.formatted(startFormat)) – \(range.upperBound.addingTimeInterval(-1).formatted(startFormat))"
-//                                    }
-//                                }())
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        case .processingFailed:
-//            EmptyView()
-//        }
+        .onChange(of: Array(sleepAnalysis)) { _, samples in
+            // the sleep session computation isn't exactly super slow,
+            // but it might take a little bit (~0.1 sec),
+            // so we want it to happen off the main thread.
+            Task(priority: .userInitiated) {
+                do {
+                    let sessions = try samples.splitIntoSleepSessions()
+                    sleepData = .success(.init(
+                        sessions: sessions,
+                        timeAsleepByDay: sessions.reduce(into: [:], { acc, session in
+                            acc[cal.makeNoon(session.endDate), default: 0] += session.totalTimeSpentAsleep
+                        })
+                    ))
+                } catch {
+                    sleepData = .failure(error)
+                }
+            }
+        }
     }
     
     init(timeRange: HealthKitQueryTimeRange) {
         self.timeRange = timeRange
-        self._sleepAnalysis = .init(.sleepAnalysis, timeRange: timeRange)
+        self._sleepAnalysis = .init(.sleepAnalysis, timeRange: timeRange, source: .appleHealthSystem)
     }
     
+    /// - precondition: `sleepSessions` may not be empty.
     @ChartContentBuilder
-    private func chartContent(for sleepSessions: [SleepSession]) -> some ChartContent {
-        ForEach(sleepSessions, id: \.self) { session in
+    private func chartContent(for sleepData: SleepData) -> some ChartContent {
+        ForEach(sleepData.sessions, id: \.self) { session in
             BarMark(
                 x: .value("Date", cal.makeNoon(session.endDate)),
-                y: .value("Time Asleep", session.totalTimeAsleep / TimeConstants.hour),
+                y: .value("Time Asleep", session.totalTimeSpentAsleep / TimeConstants.hour),
                 width: .automatic
             )
             .foregroundStyle(Color.blue)
         }
         if let xSelection,
-           case let sessionsForDay = sleepSessions.filter({ cal.isDate(xSelection, inSameDayAs: cal.makeNoon($0.endDate)) }),
-           !sessionsForDay.isEmpty {
+           case let timeAsleepInDay = sleepData.timeAsleepByDay[cal.makeNoon(xSelection)] ?? 0 {
+//           case let timeAsleepInDay = sleepData.timeAsleepByDay.first { cal.isDate(xSelection, inSameDayAs: $0.key) }?.value ?? 0 {
             ChartHighlightRuleMark(
                 x: .value("Selected", xSelection, unit: .day, calendar: cal),
-                primaryText: { () -> String in
-                    print("CALC DURATION TEXT")
-                    let totalDuration = sessionsForDay.reduce(0) { $0 + $1.totalTimeAsleep }
-                    let hours = Int(totalDuration / TimeConstants.hour)
-                    let minutes = Int(totalDuration.truncatingRemainder(dividingBy: TimeConstants.hour) / TimeConstants.minute)
-                    return "\(hours) hr \(minutes) min"
-                }(),
+                primaryText: formatDuration(timeAsleepInDay),
                 secondaryText: xSelection.formatted(.dateTime.calendar(cal).omittingTime())
             )
-//            RuleMark(x: .value("Selected", xSelection, unit: .day, calendar: cal))
-//                .foregroundStyle(Color.gray.opacity(0.3))
-//                .offset(yStart: -10)
-//                .zIndex(-1)
-//                .annotation(
-//                    position: AnnotationPosition.top,
-//                    alignment: Alignment.center,
-//                    spacing: 0,
-//                    overflowResolution: .init(x: .fit(to: .chart), y: .disabled)
-//                ) { (context: AnnotationContext) in
-//                    VStack(alignment: .leading) {
-//                        Text(xSelection, format: .dateTime.calendar(cal).omittingTime())
-//                            .font(.subheadline)
-//                        let totalDuration = sessionsForDay.reduce(0) { $0 + $1.totalTimeAsleep }
-//                        let hours = Int(totalDuration / TimeConstants.hour)
-//                        let minutes = Int(totalDuration.truncatingRemainder(dividingBy: TimeConstants.hour) / TimeConstants.minute)
-//                        Text("\(hours) hr \(minutes) min")
-//                            .font(.headline)
-//                    }
-//                    .padding(4)
-//                    .background(Color.gray.opacity(0.5))
-//                    .background(.background)
-//                    .clipShape(RoundedRectangle(cornerRadius: 4))
-//                }
         }
     }
     
-    private func processSleepSessions() -> SleepData {
-        do {
-            return .sleepSessions(try sleepAnalysis.splitIntoSleepSessions())
-        } catch {
-            return .processingFailed(error)
-        }
+    private func formatDuration(_ duration: TimeInterval) -> String {
+        let hours = Int(duration / TimeConstants.hour)
+        let minutes = Int(duration.truncatingRemainder(dividingBy: TimeConstants.hour) / TimeConstants.minute)
+        return "\(hours) hr \(minutes) min"
     }
 }
 
@@ -231,6 +201,13 @@ extension HKObject {
         } else {
             nil
         }
+    }
+}
+
+
+extension SleepSession.SleepPhase {
+    var isAsleep: Bool {
+        Self.allAsleepValues.contains(self)
     }
 }
 
