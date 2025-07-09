@@ -28,7 +28,11 @@ extension QuantitySample: HealthObservation {
     }
     
     // swiftlint:disable:next function_body_length
-    func resource(withMapping mapping: HKSampleMapping, issuedDate: FHIRPrimitive<Instant>?) throws -> ResourceProxy {
+    func resource(
+        withMapping mapping: HKSampleMapping,
+        issuedDate: FHIRPrimitive<Instant>?,
+        extensions: [any FHIRExtensionBuilderProtocol]
+    ) throws -> ResourceProxy {
         let observation = Observation(
             code: CodeableConcept(),
             status: FHIRPrimitive(.final)
@@ -83,6 +87,10 @@ extension QuantitySample: HealthObservation {
         default:
             throw FHIRObservationConversionError.notSupported
         }
+        for builder in extensions {
+            try builder.apply(typeErasedInput: self, to: observation)
+        }
+        try observation.addMHCAppAsSource()
         return .observation(observation)
     }
 }

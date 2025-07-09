@@ -19,7 +19,8 @@ protocol HealthObservation {
     
     func resource(
         withMapping mapping: HKSampleMapping,
-        issuedDate: FHIRPrimitive<Instant>?
+        issuedDate: FHIRPrimitive<Instant>?,
+        extensions: [any FHIRExtensionBuilderProtocol]
     ) throws -> ResourceProxy
 }
 
@@ -28,15 +29,24 @@ extension HKSample: HealthObservation {
     var sampleTypeIdentifier: String {
         sampleType.identifier
     }
-    
-    func resource(withMapping mapping: HKSampleMapping, issuedDate: FHIRPrimitive<Instant>?) throws -> ResourceProxy {
-        try resource(withMapping: mapping, issuedDate: issuedDate, extensions: [])
-    }
 }
 
 
 extension TimedWalkingTestResult: HealthObservation {
     var sampleTypeIdentifier: String {
         "MHCHealthObservationTimedWalkingTestResultIdentifier"
+    }
+}
+
+
+extension Observation {
+    func addMHCAppAsSource() throws {
+        let revision = HKSourceRevision(
+            source: HKSource.default(),
+            version: "\(Bundle.main.version) (\(Bundle.main.buildNumber ?? 0))",
+            productType: nil,
+            operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersion
+        )
+        try self.apply(.sourceRevision, input: revision)
     }
 }

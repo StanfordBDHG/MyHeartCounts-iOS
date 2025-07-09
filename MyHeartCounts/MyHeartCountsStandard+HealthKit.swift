@@ -11,9 +11,7 @@ import FirebaseFirestore
 import Foundation
 import HealthKit
 import HealthKitOnFHIR
-import enum ModelsR4.ResourceProxy
-import struct ModelsR4.FHIRPrimitive
-import struct ModelsR4.Instant
+@preconcurrency import ModelsR4
 import SpeziHealthKit
 import UserNotifications
 
@@ -68,8 +66,22 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         }
         for object in deletedObjects {
             do {
-                logger.debug("Will delete \(object)")
-                try await healthObservationDocument(forSampleType: sampleType.hkSampleType.identifier, id: object.uuid).delete()
+                let doc = try await healthObservationDocument(forSampleType: sampleType.hkSampleType.identifier, id: object.uuid)
+                if let resourceProxy = try? await doc.getDocument(as: ResourceProxy.self),
+                   let observation = resourceProxy.observation {
+                    // For Observation-backed Health samples (which should be all of them),
+                    // we intentionally don't delete the doc when the sample gets deleted from HealthKit,
+                    // but rather set the Observation's ststus to `.enteredInError`,
+                    // which indicates a previously published but now withdrawn value.
+                    logger.notice("Updating status of FHIR Observation created from now-deleted HKObject to enteredInError (id: \(object.uuid))")
+                    observation.status = .init(.enteredInError)
+                    try await doc.setData(from: resourceProxy)
+                } else {
+                    // if the sample wasn't a FHIR Observation (should never be the case) (that it isn't),
+                    // we delete the doc.
+                    logger.notice("Deleting document for now-deleted HKObject (id: \(object.uuid))")
+                    try await doc.delete()
+                }
             } catch {
                 logger.error("Error saving HealthKit sample to Firebase: \(error)")
                 // (probably not needed, since firebase already seems to be doing this for us...)
@@ -102,8 +114,11 @@ extension MyHeartCountsStandard {
                     let document = try await healthObservationDocument(for: observation)
                     let path = document.path
                     logger.notice("Uploading Health Observation to \(path)")
-                    let resource = try observation.resource(withMapping: .default, issuedDate: issuedDate)
-//                    try? resource.observation?.encodeAbsoluteTimeRangeIntoExtension()
+                    let resource = try observation.resource(
+                        withMapping: .default,
+                        issuedDate: issuedDate,
+                        extensions: [.sampleUploadTimeZone]
+                    )
                     try batch.setData(from: resource, forDocument: document)
                 } catch {
                     logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")
@@ -156,5 +171,29 @@ extension MyHeartCountsStandard {
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
         try? await notificationCenter.add(request)
         return identifier
+    }
+}
+
+
+// MARK: FHIR Observation Metadata
+
+extension FHIRExtensionUrls {
+    // SAFETY: this is in fact safe, since the FHIRPrimitive's `extension` property is empty.
+    // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
+    // it also never can be mutated to contain any.
+    /// Url of a FHIR Extension containing the user's time zone when uploading a FHIR `Observation`.
+    fileprivate nonisolated(unsafe) static let sampleUploadTimeZone = "https://bdh.stanford.edu/fhir/defs/sampleUploadTimeZone".asFHIRURIPrimitive()!
+    // swiftlint:disable:previous force_unwrapping
+}
+
+extension FHIRExtensionBuilderProtocol where Self == FHIRExtensionBuilder<Void> {
+    static var sampleUploadTimeZone: Self {
+        .init { observation in
+            let ext = Extension(
+                url: FHIRExtensionUrls.sampleUploadTimeZone,
+                value: .string(TimeZone.current.identifier.asFHIRStringPrimitive())
+            )
+            observation.appendExtension(ext, replaceAllExistingWithSameUrl: true)
+        }
     }
 }

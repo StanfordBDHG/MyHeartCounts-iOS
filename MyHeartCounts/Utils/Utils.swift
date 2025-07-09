@@ -258,3 +258,14 @@ extension Result {
         }
     }
 }
+
+
+extension Bundle {
+    var version: String {
+        infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    }
+    
+    var buildNumber: Int? {
+        (infoDictionary?["CFBundleVersion"] as? String).flatMap(Int.init)
+    }
+}

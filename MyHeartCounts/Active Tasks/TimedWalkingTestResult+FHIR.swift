@@ -15,13 +15,17 @@ import ModelsR4
 extension TimedWalkingTestResult {
     func resource(
         withMapping: HealthKitOnFHIR.HKSampleMapping,
-        issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?
+        issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?,
+        extensions: [any FHIRExtensionBuilderProtocol]
     ) throws -> ModelsR4.ResourceProxy {
-        .observation(try fhirObservation(issuedDate: issuedDate))
+        .observation(try fhirObservation(issuedDate: issuedDate, extensions: extensions))
     }
     
     
-    func fhirObservation(issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?) throws -> Observation {
+    func fhirObservation(
+        issuedDate: ModelsR4.FHIRPrimitive<ModelsR4.Instant>?,
+        extensions: [any FHIRExtensionBuilderProtocol]
+    ) throws -> Observation {
         let observation = Observation(
             code: CodeableConcept(),
             status: FHIRPrimitive(.final)
@@ -68,6 +72,10 @@ extension TimedWalkingTestResult {
                 value: distanceCovered
             )
         )
+        for builder in extensions {
+            try builder.apply(typeErasedInput: self, to: observation)
+        }
+        try observation.addMHCAppAsSource()
         return observation
     }
 }

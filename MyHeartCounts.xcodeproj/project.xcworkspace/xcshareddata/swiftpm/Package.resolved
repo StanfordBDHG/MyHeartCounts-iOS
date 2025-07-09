@@ -1,5 +1,5 @@
 {
-  "originHash" : "8aebb82f7726da2026ae6d7595bb4c6bc41c37815c8eabb1a3ebf10139645e25",
+  "originHash" : "07bcfe1d12e46fc5f28fc89c9247ece7500a9e2b7776e3ffeeb7abc0973bf4c6",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "d38792e36a435134e1757fc2f1bed24dca714ac7",
-        "version" : "1.1.0"
+        "revision" : "2b23ed7196d98da822982d0f17d4219234aa948c",
+        "version" : "1.1.2"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/ResearchKit.git",
       "state" : {
-        "revision" : "a9066441faf920671f0b64cdaebe1e61f64093d4",
-        "version" : "3.1.1"
+        "revision" : "8029e36bfa88b7995d8c997f4c7f52ef9e6679ea",
+        "version" : "3.1.2"
       }
     },
     {
@@ -267,7 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "451b6824f9b513e312c12bcfa87a6d354e61fd0a"
+        "revision" : "be41255155c2c8cd6dc6b28aa413afdd775987b4",
+        "version" : "1.2.1"
       }
     },
     {
@@ -311,7 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "9fb72378186681ccf465cac4f81c5302c58b7909"
+        "revision" : "8208cf8bd0e33d0e499dfa640410c22bfed7ec50",
+        "version" : "1.2.10"
       }
     },
     {
@@ -328,7 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "1b90f41300dca00fd297c4d36db219593a5061ce"
+        "revision" : "5d87abbbd7fc356742a273ae4e343c79a47724ff",
+        "version" : "0.1.7"
       }
     },
     {

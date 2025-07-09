@@ -59,7 +59,7 @@ struct UpcomingTasksTab: RootViewTab {
                 Button {
                     activeTimedWalkingTest = test
                 } label: {
-                    Label(test.displayTitle, systemSymbol: test.kind.symbol)
+                    Label(String(localized: test.displayTitle), systemSymbol: test.kind.symbol)
                 }
             }
         } label: {
