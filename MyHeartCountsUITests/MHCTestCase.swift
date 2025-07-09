@@ -21,7 +21,7 @@ class MHCTestCase: XCTestCase {
             // After each test, we want the app to get fully reset.
             let app = XCUIApplication()
             app.terminate()
-            app.delete(app: "MyHeart Counts")
+            app.delete(app: "My Heart Counts")
         }
     }
 }

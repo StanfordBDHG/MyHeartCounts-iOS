@@ -30,8 +30,22 @@ struct MyHeartCounts: App {
             OnboardingSheet(
                 didCompleteOnboarding: $didCompleteOnboarding
             )
-            .environment(StudyDefinitionLoader.shared)
+            .environment(StudyBundleLoader.shared)
         }
         .environment(appDelegate)
+    }
+    
+    init() {
+        // This needs to run before *any* Spezi-related code is executed,
+        // i.e. before the AppDelegate's `willFinishLaunchingWithOptions`
+        // method gets called. Hence why we put it in here.
+        let prefs = LocalPreferencesStore.standard
+        if FeatureFlags.showOnboarding {
+            prefs[.onboardingFlowComplete] = false
+            prefs[.lastUsedFirebaseConfig] = nil
+        }
+        if FeatureFlags.skipOnboarding {
+            prefs[.onboardingFlowComplete] = true
+        }
     }
 }

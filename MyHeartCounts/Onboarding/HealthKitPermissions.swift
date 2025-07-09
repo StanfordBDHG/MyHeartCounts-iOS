@@ -16,10 +16,11 @@ import SwiftUI
 struct HealthKitPermissions: View {
     @Environment(HealthKit.self)
     private var healthKit
+    
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
-    @Environment(StudyDefinitionLoader.self)
+    @Environment(StudyBundleLoader.self)
     private var studyLoader
     
     @State private var healthKitProcessing = false
@@ -43,7 +44,7 @@ struct HealthKitPermissions: View {
             }
         } footer: {
             OnboardingActionsView("Grant Access") {
-                guard let study = try? studyLoader.studyDefinition?.get() else {
+                guard let studyBundle = try? studyLoader.studyBundle?.get() else {
                     // guaranteed to be non-nil if we end up in this view
                     return
                 }
@@ -54,7 +55,7 @@ struct HealthKitPermissions: View {
                         try await _Concurrency.Task.sleep(for: .seconds(5))
                     } else {
                         try await healthKit.askForAuthorization(for: .init(
-                            read: study.allCollectedHealthData,
+                            read: studyBundle.studyDefinition.allCollectedHealthData,
                             write: [
                                 SampleType.workout,
                                 SampleType.height, SampleType.bodyMass, SampleType.bodyMassIndex,

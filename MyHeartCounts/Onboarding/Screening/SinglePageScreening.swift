@@ -14,6 +14,19 @@ import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
+/// The ``SinglePageScreening`` view consists of components, each of which should collect one piece of information from the user, and is placed in its own `Section`.
+protocol ScreeningComponent: View {
+    /// The user-displayed title of this component.
+    ///
+    /// Will be used as the `Section` title in the UI.
+    var title: LocalizedStringResource { get }
+    
+    /// Determines, based on the collected data, whether the user-entered value sasisfies the component's requirements.
+    ///
+    /// - Note: this function will be called outside of the component being installed in a SwiftUI hierarchy!
+    func evaluate(_ data: OnboardingDataCollection) -> Bool
+}
+
 
 /// A Screening View, that collects all data on a single page.
 ///
@@ -21,20 +34,21 @@ import SwiftUI
 struct SinglePageScreening: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var path
-    @Environment(ScreeningDataCollection.self)
-    private var screeningData
-    @Environment(StudyDefinitionLoader.self)
-    private var studyLoader
+    @Environment(OnboardingDataCollection.self)
+    private var data
     
     private let title: LocalizedStringResource
     private let subtitle: LocalizedStringResource
     private let components: [any ScreeningComponent]
+    private let didAnswerAllRequestedFields: @MainActor (OnboardingDataCollection) -> Bool
+    private let continueAction: @MainActor (_ data: OnboardingDataCollection, _ path: ManagedNavigationStack.Path) async -> Void
     
     @State private var viewState: ViewState = .idle
     
     var body: some View {
         OnboardingView(wrapInScrollView: false) {
             OnboardingTitleView(title: title, subtitle: subtitle)
+                .padding(.horizontal)
         } content: {
             Form {
                 ForEach(0..<components.endIndex, id: \.self) { idx in
@@ -42,7 +56,12 @@ struct SinglePageScreening: View {
                     Section {
                         component.intoAnyView()
                     } header: {
-                        Text(component.title)
+                        let text = String(localized: component.title)
+                        if text.isEmpty {
+                            EmptyView()
+                        } else {
+                            Text(text)
+                        }
                     }
                 }
                 Section {
@@ -76,41 +95,31 @@ struct SinglePageScreening: View {
     }
     
     private var canAdvanceToNextStep: Bool {
-        screeningData.allPropertiesAreNonnil
+        didAnswerAllRequestedFields(data)
+//        // NOTE: ideally we'd simply use Mirror here to get a list of all properties,
+//        // and then do a simple `allSatisfy { value != nil }`, but that doesn't work,
+//        // because, even though we absolutely can use this code to get this result,
+//        // reading the property value through the Mirror won't call `access`, meaning that
+//        // using this propertu from SwiftUI won't cause view updates if any of the
+//        // properties change.
+//        screeningData.dateOfBirth != nil && screeningData.region != nil && screeningData.speaksEnglish != nil && screeningData.physicalActivity != nil
     }
     
     init(
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource,
-        @ArrayBuilder<any ScreeningComponent> components: () -> [any ScreeningComponent]
+        @ArrayBuilder<any ScreeningComponent> components: () -> [any ScreeningComponent],
+        didAnswerAllRequestedFields: @escaping @MainActor (OnboardingDataCollection) -> Bool,
+        continue continueAction: @escaping @MainActor (_ data: OnboardingDataCollection, _ path: ManagedNavigationStack.Path) async -> Void
     ) {
         self.title = title
         self.subtitle = subtitle
         self.components = components()
+        self.didAnswerAllRequestedFields = didAnswerAllRequestedFields
+        self.continueAction = continueAction
     }
     
     private func evaluateEligibilityAndProceed() async {
-        let isEligible = components.allSatisfy { $0.evaluate(screeningData) }
-        if isEligible {
-            guard let region = screeningData.region else {
-                // IDEA(@lukas) maybe show an alert? (we will never end up in here)
-                return
-            }
-            if !Spezi.didLoadFirebase {
-                // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
-                // the crux here is that there isn't a mechanism by which Firebase would let us know when it
-                Spezi.loadFirebase(for: region)
-                try? await Task.sleep(for: .seconds(3))
-            }
-            do {
-                try await studyLoader.update()
-            } catch {
-                path.append(customView: UnableToLoadStudyDefinitionStep())
-                return
-            }
-            path.nextStep()
-        } else {
-            path.append(customView: NotEligibleView())
-        }
+        await continueAction(data, path)
     }
 }

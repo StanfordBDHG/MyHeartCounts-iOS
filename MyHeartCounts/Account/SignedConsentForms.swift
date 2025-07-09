@@ -79,7 +79,7 @@ private struct ConsentFileRow: View {
     
     @State private var viewState: ViewState = .idle
     @State private var storageRefCustomMetadata: [String: String] = [:]
-    @State private var formMetadata: ConsentDocument.Metadata?
+    @State private var formMetadata: MarkdownDocument.Metadata?
     
     var body: some View {
         AsyncButton(state: $viewState) {
@@ -98,7 +98,7 @@ private struct ConsentFileRow: View {
             do {
                 storageRefCustomMetadata = try await file.getMetadata().customMetadata ?? [:]
                 formMetadata = try storageRefCustomMetadata["consentFormMetadata"].map {
-                    try JSONDecoder().decode(ConsentDocument.Metadata.self, from: $0)
+                    try JSONDecoder().decode(MarkdownDocument.Metadata.self, from: $0)
                 }
             } catch {
                 logger.error("Error fetching consent file metadata: \(error)")

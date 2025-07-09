@@ -11,7 +11,7 @@ import SwiftUI
 
 
 struct CanPerformPhysicalActivity: ScreeningComponent {
-    @Environment(ScreeningDataCollection.self)
+    @Environment(OnboardingDataCollection.self)
     private var data
     
     let title: LocalizedStringResource = "Physical Activity"
@@ -21,12 +21,12 @@ struct CanPerformPhysicalActivity: ScreeningComponent {
         SingleChoiceScreeningComponentImpl(
             question: "Are you able to perform physical activities?",
             options: [true, false],
-            selection: $data.physicalActivity,
+            selection: $data.screening.physicalActivity,
             optionTitle: { $0 ? "Yes" : "No" }
         )
     }
     
-    func evaluate(_ data: ScreeningDataCollection) -> Bool {
-        data.physicalActivity == true
+    func evaluate(_ data: OnboardingDataCollection) -> Bool {
+        data.screening.physicalActivity == true
     }
 }

@@ -16,9 +16,9 @@ import SwiftUI
 
 struct ArticleSheet: View {
     let article: Article
-    @State private var navbarTitleViewHeight: CGFloat?
-    @State private var articleTitleLabelFrame: CGRect?
-    @State private var scrollViewOffset: CGPoint = .zero
+    @AsyncStreamTracked private var navbarTitleViewHeight: CGFloat?
+    @AsyncStreamTracked private var articleTitleLabelFrame: CGRect?
+    @AsyncStreamTracked private var scrollViewOffset: CGPoint = .zero
     
     var body: some View {
         NavigationStack {
@@ -32,9 +32,7 @@ struct ArticleSheet: View {
                     }
                     .frame(height: 0)
                     .onPreferenceChange(ScrollViewOffsetKey.self) { offset in
-                        runOrScheduleOnMainActor {
-                            self.scrollViewOffset = offset
-                        }
+                        $scrollViewOffset.yield(offset)
                     }
                     scrollViewContent
                         .coordinateSpace(.named("scrollViewContent"))
@@ -56,6 +54,9 @@ struct ArticleSheet: View {
                 }
             }
         }
+        .task { await $scrollViewOffset.startTracking() }
+        .task { await $navbarTitleViewHeight.startTracking() }
+        .task { await $articleTitleLabelFrame.startTracking() }
     }
     
     @ViewBuilder private var navigationTitleView: some View {
@@ -99,9 +100,7 @@ struct ArticleSheet: View {
                     Color.clear.preference(key: NavbarTitleViewHeight.self, value: geometry.size.height)
                 }
                 .onPreferenceChange(NavbarTitleViewHeight.self) { height in
-                    runOrScheduleOnMainActor {
-                        self.navbarTitleViewHeight = height
-                    }
+                    $navbarTitleViewHeight.yield(height)
                 }
             }
         }
@@ -113,7 +112,7 @@ struct ArticleSheet: View {
         VStack(spacing: 0) {
             headlineImage
             Divider()
-            Markdown(.init(article.body))
+            MarkdownView(markdownDocument: article.body)
                 .padding([.horizontal, .top])
         }
     }
@@ -135,9 +134,7 @@ struct ArticleSheet: View {
                         }
                         .frame(height: 0)
                         .onPreferenceChange(ArticleTitleLabelFrame.self) { frame in
-                            runOrScheduleOnMainActor {
-                                self.articleTitleLabelFrame = frame
-                            }
+                            $articleTitleLabelFrame.yield(frame)
                         }
                     }
                 HStack {

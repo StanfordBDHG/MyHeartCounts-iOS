@@ -25,15 +25,16 @@ struct AccountSetupHeader: View {
                 .bold()
                 .padding(.bottom)
                 .padding(.top, 30)
-            Text("ACCOUNT_SUBTITLE")
-                .padding(.bottom, 8)
             if account.signedIn, case .presentingExistingAccount = setupState {
                 Text("ACCOUNT_SIGNED_IN_DESCRIPTION")
             } else {
                 Text("ACCOUNT_SETUP_DESCRIPTION")
+                Text("ACCOUNT_SETUP_DESCRIPTION_SUBTITLE")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
         }
-            .multilineTextAlignment(.center)
+        .multilineTextAlignment(.center)
     }
 }
 

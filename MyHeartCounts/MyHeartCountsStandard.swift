@@ -33,7 +33,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Account.self)
     var account: Account?
     
-    @Dependency(StudyDefinitionLoader.self)
+    @Dependency(StudyBundleLoader.self)
     private var studyLoader
     
     @Dependency(TimeZoneTracking.self)
@@ -50,8 +50,9 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func configure() {
         Task {
             if let studyManager = await self.studyManager,
-               let study = try? await studyLoader.update() {
-                try await studyManager.informAboutStudies([study])
+               let studyBundle = try? await studyLoader.update() {
+                await logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
+                try await studyManager.informAboutStudies([studyBundle])
             }
         }
     }

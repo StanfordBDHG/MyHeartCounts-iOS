@@ -20,42 +20,47 @@ struct NewsTab: RootViewTab {
     @Environment(NewsManager.self)
     private var newsManager
     
-    @State private var articles: PossiblyLoading<[Article]> = .loading
+    @State private var isInitialLoad = false
     @State private var presentedArticle: Article?
     
     var body: some View {
-        NavigationStack {
+        NavigationStack { // swiftlint:disable:this closure_body_length
             Group {
-                switch articles {
-                case .loading:
+                if isInitialLoad {
                     ProgressView("Fetching…")
-                case .loaded(let articles):
-                    makeContent(for: articles)
-                case .error(let error):
-                    ContentUnavailableView("No Internet", systemSymbol: .networkSlash, description: Text("\(error)"))
+                } else if newsManager.articles.isEmpty {
+                    if let error = newsManager.loadingError {
+                        ContentUnavailableView(
+                            "No Internet",
+                            systemSymbol: .networkSlash,
+                            description: Text("\(error)")
+                        )
+                    } else {
+                        ContentUnavailableView(
+                            "No News Yet",
+                            systemSymbol: .newspaper,
+                            description: Text("Feel free to check back later!")
+                        )
+                    }
+                } else {
+                    makeContent(for: newsManager.articles)
                 }
             }
-            .navigationTitle("News")
+            .navigationTitle("News & Information")
             .toolbar {
                 accountToolbarItem
             }
             .task {
-                await fetchContent()
+                isInitialLoad = true
+                await newsManager.refresh()
+                isInitialLoad = false
             }
             .refreshable {
-                await fetchContent()
+                await newsManager.refresh()
             }
             .sheet(item: $presentedArticle) { article in
                 ArticleSheet(article: article)
             }
-        }
-    }
-    
-    private func fetchContent() async {
-        do {
-            articles = .loaded(try await newsManager.refresh())
-        } catch {
-            articles = .error(error)
         }
     }
     

@@ -8,6 +8,7 @@
 
 import Foundation
 import Spezi
+import SpeziFoundation
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziStudy
@@ -16,25 +17,25 @@ import SwiftUI
 
 
 struct FinalEnrollmentStep: View {
-    @Environment(ManagedNavigationStack.Path.self)
-    private var path
-    
-    @Environment(StudyManager.self)
-    private var studyManager
-    
-    @Environment(HistoricalHealthSamplesExportManager.self)
-    private var historicalUploadManager
-    
-    @Environment(StudyDefinitionLoader.self)
-    private var studyLoader
+    // swiftlint:disable attributes
+    @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(OnboardingDataCollection.self) private var onboardingData
+    @Environment(StudyManager.self) private var studyManager
+    @Environment(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
+    @Environment(StudyBundleLoader.self) private var studyLoader
+    // swiftlint:enable attributes
     
     @State private var viewState: ViewState = .idle
     
     var body: some View {
         OnboardingView {
-            OnboardingTitleView(title: "MyHeart Counts")
+            OnboardingTitleView(title: "Welcome to My Heart Counts")
         } content: {
-            Text("You're all set.\n\nGreat to have you on board!")
+            let doc = MarkdownDocument(
+                metadata: [:],
+                blocks: [.markdown(id: nil, rawContents: loadText())]
+            )
+            MarkdownView(markdownDocument: doc)
         } footer: {
             OnboardingActionsView("Complete") {
                 await completeStudyEnrollment()
@@ -43,8 +44,19 @@ struct FinalEnrollmentStep: View {
         }
     }
     
+    private func loadText() -> String {
+        var text = String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE")
+        if onboardingData.consentResponses?.toggles["short-term-physical-activity-trial"] == true {
+            text.append("\n\n")
+            text.append(String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE_TRIAL_SECTION"))
+        }
+        text.append("\n\n")
+        text.append(String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER"))
+        return text
+    }
+    
     private func completeStudyEnrollment() async {
-        guard let study = try? studyLoader.studyDefinition?.get() else {
+        guard let study = try? studyLoader.studyBundle?.get() else {
             // guaranteed to be non-nil if we end up in this view
             return
         }

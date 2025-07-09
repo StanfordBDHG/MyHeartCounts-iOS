@@ -11,29 +11,77 @@ import SwiftUI
 
 
 struct AgeAtLeast: ScreeningComponent {
-    let title: LocalizedStringResource = "Date of Birth"
-    let minAge: Int
+    enum Style {
+        case toggle
+        case enterDate
+    }
     
     @Environment(\.calendar)
     private var cal
-    
-    @Environment(ScreeningDataCollection.self)
+    @Environment(OnboardingDataCollection.self)
     private var data
     
+    let title: LocalizedStringResource
+    private let style: Style
+    private let minAge: Int
+    
     var body: some View {
-        @Bindable var data = data
-        DatePicker(
-            selection: $data.dateOfBirth,
-            in: Date.distantPast...Date.now,
-            displayedComponents: .date
-        ) {
-            Text("When were you born?")
-                .fontWeight(.medium)
+        switch style {
+        case .toggle:
+            // or use the `SingleChoiceScreeningComponentImpl`??
+            Toggle(String(localized: title), isOn: Binding<Bool> {
+                switch data.screening.dateOfBirth {
+                case .binaryAtLeast(minAge: _, let response):
+                    response
+                case nil, .date:
+                    false
+                }
+            } set: { newValue in
+                data.screening.dateOfBirth = .binaryAtLeast(minAge: minAge, response: newValue)
+            })
+        case .enterDate:
+            let binding = Binding<Date> {
+                switch data.screening.dateOfBirth {
+                case nil, .binaryAtLeast:
+                    Date.now
+                case .date(let date):
+                    date
+                }
+            } set: { newValue in
+                data.screening.dateOfBirth = .date(newValue)
+            }
+            DatePicker(
+                selection: binding,
+                in: Date.distantPast...Date.now,
+                displayedComponents: .date
+            ) {
+                Text("When were you born?")
+                    .fontWeight(.medium)
+            }
         }
     }
     
-    func evaluate(_ data: ScreeningDataCollection) -> Bool {
-        let age = cal.dateComponents([.year], from: data.dateOfBirth, to: .tomorrow).year ?? 0
-        return age >= minAge
+    
+    init(style: Style, minAge: Int) {
+        self.style = style
+        self.minAge = minAge
+        switch style {
+        case .toggle:
+            self.title = "Are you \(minAge) years old or older?"
+        case .enterDate:
+            self.title = "Date of Birth"
+        }
+    }
+    
+    func evaluate(_ data: OnboardingDataCollection) -> Bool {
+        switch data.screening.dateOfBirth {
+        case nil:
+            return false
+        case .date(let date):
+            let age = cal.dateComponents([.year], from: date, to: .tomorrow).year ?? 0
+            return age >= minAge
+        case .binaryAtLeast(minAge: _, let response):
+            return response
+        }
     }
 }

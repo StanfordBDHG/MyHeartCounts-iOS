@@ -12,6 +12,7 @@ import Foundation
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziQuestionnaire
+import SpeziStudy
 import SpeziViews
 import SwiftUI
 
@@ -57,21 +58,7 @@ struct HeartHealthDashboard: View {
                 makeGridComponent(for: \.bloodPressureScore)
             ])
         ], footer: {
-            Section("Further Reads") {
-                ForEach(newsManager.articles) { article in
-                    Button {
-                        presentedArticle = article
-                    } label: {
-                        ArticleCard(article: article)
-                            .frame(height: 117)
-                            .clipped()
-                    }
-                    .buttonStyle(.plain)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: HealthDashboardConstants.gridComponentCornerRadius))
-                    .padding(.horizontal)
-                }
-            }
+            LearnMore()
         })
         .navigationTitle("Heart Health Dashboard")
         .sheet(item: $addNewSampleDescriptor) { descriptor in
@@ -99,7 +86,7 @@ struct HeartHealthDashboard: View {
     
     
     @ViewBuilder private var topSection: some View {
-        Text("Overall Cardiovascular Health")
+        Text("HEART_HEALTH_DASHBOARD_HEADER")
         Gauge(
             lineWidth: .relative(1.5),
             gradient: .redToGreen,
@@ -190,7 +177,7 @@ extension HeartHealthDashboard {
         case \.nicotineExposureScore:
             HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
         case \.dietScore:
-            HealthDashboardQuestionnaireView(questionnaireName: "DietScoreMEPA")
+            HealthDashboardQuestionnaireView(questionnaireName: "DietScore")
         case \.bodyMassIndexScore:
             SaveBMISampleView()
         case \.bloodLipidsScore:
@@ -207,30 +194,43 @@ extension HeartHealthDashboard {
 
 
 private struct HealthDashboardQuestionnaireView: View {
-    @Environment(\.locale)
-    private var locale
-    
     @Environment(MyHeartCountsStandard.self)
     private var standard
+    
+    @Environment(StudyManager.self)
+    private var studyManager
     
     @Environment(\.dismiss)
     private var dismiss
     
     let questionnaireName: String
+    @State private var questionnaire: Questionnaire?
     
     var body: some View {
-        if let questionnaire = Bundle.main.localizedQuestionnaire(withName: questionnaireName, for: locale) {
-            QuestionnaireView(questionnaire: questionnaire) { result in
-                switch result {
-                case .completed(let response):
-                    await standard.add(response: response)
-                case .cancelled, .failed:
-                    break
+        Group {
+            if let questionnaire {
+                QuestionnaireView(questionnaire: questionnaire) { result in
+                    switch result {
+                    case .completed(let response):
+                        await standard.add(response: response)
+                    case .cancelled, .failed:
+                        break
+                    }
+                    dismiss()
                 }
-                dismiss()
+            } else {
+                ContentUnavailableView("Unable to find Questionnaire", systemSymbol: .exclamationmarkTriangle) // ???
             }
-        } else {
-            ContentUnavailableView("Unable to find Questionnaire", systemSymbol: .exclamationmarkTriangle) // ???
         }
+        .task {
+            loadQuestionnaire()
+        }
+    }
+    
+    private func loadQuestionnaire() {
+        guard let studyBundle = studyManager.studyEnrollments.first?.studyBundle else {
+            return
+        }
+        questionnaire = studyBundle.questionnaire(named: questionnaireName, in: studyManager.preferredLocale)
     }
 }

@@ -11,8 +11,10 @@
 import Charts
 import Foundation
 import SpeziAccount
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
+import SpeziStudy
 import SpeziViews
 import SwiftUI
 
@@ -30,6 +32,9 @@ struct DetailedHealthStatsView: View {
     @Environment(Account.self)
     private var account: Account?
     
+    @Environment(StudyManager.self)
+    private var studyManager
+    
     private let sampleType: MHCSampleType
     private let input: Input
     @State private var isPresentingAddSampleSheet = false
@@ -44,26 +49,26 @@ struct DetailedHealthStatsView: View {
                 .listRowInsets(.zero)
                 .listRowBackground(Color.clear)
             }
-            
             Section {
                 recentValuesChart
                     .frame(height: 220)
                     .listRowInsets(.zero)
             }
-            
             switch input {
             case .scoreResult(let result, keyPath: _):
                 Section("Score Result") {
                     scoreResultExplainer(for: result)
                 }
             }
-            
-            Section {
-                FurtherReadingSection(
-                    title: "About \(sampleType.displayTitle)",
-                    body: "",
-                    link: "https://stanford.edu"
-                )
+            if let explainer = explainerText(for: sampleType) {
+                let document = (try? MarkdownDocument(processing: explainer))
+                    ?? MarkdownDocument(metadata: [:], blocks: [.markdown(id: nil, rawContents: explainer)])
+                Section {
+                    FurtherReadingSection(
+                        title: "About \(sampleType.displayTitle)",
+                        document: document
+                    )
+                }
             }
         }
         .navigationTitle(sampleType.displayTitle)
@@ -275,17 +280,15 @@ private struct FurtherReadingSection: View {
     @Environment(\.openURL)
     private var openURL
     
-    private let titleText: String?
-    private let bodyText: String
+    private let title: LocalizedStringResource
+    private let document: MarkdownDocument
     private let link: URL?
     
     var body: some View {
         VStack(alignment: .leading) {
-            if let titleText {
-                Text(titleText)
-                    .font(.title)
-            }
-            Text(bodyText)
+            Text(title)
+                .font(.title)
+            MarkdownView(markdownDocument: document)
             if let link {
                 Button {
                     openURL(link)
@@ -303,9 +306,45 @@ private struct FurtherReadingSection: View {
         }
     }
     
-    init(title titleText: String? = nil, body bodyText: String, link: URL? = nil) { // swiftlint:disable:this function_default_parameter_at_end
-        self.titleText = titleText
-        self.bodyText = bodyText
-        self.link = link
+    init(title: LocalizedStringResource, document: MarkdownDocument) {
+        self.title = title
+        self.document = document
+        self.link = document.metadata["link"].flatMap { try? URL($0, strategy: .url) }
+    }
+}
+
+
+extension DetailedHealthStatsView {
+    private func explainerText(for sampleType: MHCSampleType) -> String? { // swiftlint:disable:this cyclomatic_complexity
+        let imp = { (key: String) -> String? in
+            let fileRef = StudyBundle.FileReference(category: .init(rawValue: "hhdExplainer"), filename: key, fileExtension: "md")
+            guard let studyBundle = studyManager.studyEnrollments.first?.studyBundle,
+                  let url = studyBundle.resolve(fileRef, in: studyManager.preferredLocale) else {
+                return nil
+            }
+            return try? String(contentsOf: url, encoding: .utf8)
+        }
+        return switch sampleType {
+        case .custom(.dietMEPAScore):
+            imp("DietScore")
+        case .custom(.bloodLipids):
+            imp("BloodLipids")
+        case .custom(.nicotineExposure):
+            imp("NicotineExposure")
+        case .healthKit(.quantity(.bodyMassIndex)):
+            imp("BMI")
+        case .healthKit(.quantity(.appleExerciseTime)):
+            imp("ExerciseMinutes")
+        case .healthKit(.quantity(.stepCount)):
+            imp("StepCount")
+        case .healthKit(.quantity(.bloodGlucose)):
+            imp("BloodGlucose")
+        case .healthKit(.category(.sleepAnalysis)):
+            imp("Sleep")
+        case .healthKit(.correlation(.bloodPressure)):
+            imp("BloodPressure")
+        default:
+            nil
+        }
     }
 }

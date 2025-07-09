@@ -33,7 +33,7 @@ struct CVHScore: DynamicProperty {
     @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 14))
     private var dailyExerciseTime
     
-    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 14))
+    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 14), source: .appleHealthSystem)
     private var sleepSamples
     
     @HealthKitQuery(.bodyMassIndex, timeRange: .last(days: 14))
@@ -104,7 +104,7 @@ extension CVHScore {
         ScoreResult(
             sampleType: .healthKit(.category(.sleepAnalysis)),
             sample: ((try? sleepSamples.splitIntoSleepSessions()) ?? []).last,
-            value: { $0.totalTimeAsleep / 60 / 60 },
+            value: { $0.totalTimeSpentAsleep / 60 / 60 },
             definition: .cvhSleep
         )
     }
@@ -303,4 +303,9 @@ extension HKStatistics: CVHScore.ComponentSampleProtocol {
     var timeRange: Range<Date> {
         startDate..<endDate
     }
+}
+
+
+extension HealthKit.SourceFilter {
+    static let appleHealthSystem = Self.bundleId(beginsWith: "com.apple.health")
 }

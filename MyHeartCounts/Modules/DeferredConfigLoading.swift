@@ -49,6 +49,15 @@ enum DeferredConfigLoading {
         /// the firebase config plist at the specified URL should be loaded
         case customUrl(URL)
         
+        var region: Locale.Region? {
+            switch self {
+            case .region(let region):
+                region
+            case .custom, .customUrl:
+                nil
+            }
+        }
+        
         /// Decodes a `FirebaseConfigSelector` from a launch option value
         ///
         /// `--firebaseConfig region=US`
@@ -157,7 +166,7 @@ enum DeferredConfigLoading {
     
     @MainActor static var initialAppLaunchConfig: [any Module] {
         if FeatureFlags.disableFirebase {
-            baseModules
+            baseModules(preferredLocale: .autoupdatingCurrent)
         } else if let selector = FeatureFlags.overrideFirebaseConfig {
             config(for: selector)
         } else {
@@ -171,8 +180,10 @@ enum DeferredConfigLoading {
     }
     
     /// The set of modules which we always want to load, regardless of whether Firebase is enabled or disabled.
-    @MainActor @ArrayBuilder<any Module> private static var baseModules: [any Module] {
-        StudyManager()
+    @MainActor
+    @ArrayBuilder<any Module>
+    private static func baseModules(preferredLocale: Locale) -> [any Module] {
+        StudyManager(preferredLocale: preferredLocale)
         NotificationsManager()
     }
     
@@ -180,10 +191,20 @@ enum DeferredConfigLoading {
     ///
     /// Returns nil if there was an issue resolving the selector.
     @MainActor
-    static func config(for configSelector: FirebaseConfigSelector) -> [any Module] {
+    static func config(for configSelector: FirebaseConfigSelector) -> [any Module] { // swiftlint:disable:this function_body_length
         logger.notice("CLI args: \(CommandLine.arguments)")
+        let preferredLocale = { () -> Locale in
+            if let region = configSelector.region {
+                return .init(language: Locale.current.language, region: region)
+            } else {
+                logger.warning(
+                    "Unable to determine preferredLocale for configSelector \(String(describing: configSelector)). Falling back to autoupdatingCurrent"
+                )
+                return .autoupdatingCurrent
+            }
+        }()
         guard !FeatureFlags.disableFirebase else {
-            return baseModules
+            return baseModules(preferredLocale: preferredLocale)
         }
         do {
             guard let firebaseOptions = try firebaseOptions(for: configSelector) else {
@@ -212,7 +233,7 @@ enum DeferredConfigLoading {
                 } else {
                     FirebaseStorageConfiguration()
                 }
-                baseModules
+                baseModules(preferredLocale: preferredLocale)
                 NewsManager()
                 TimeZoneTracking()
             }
@@ -288,7 +309,7 @@ extension FirebaseOptions {
 
 
 private final class LoadFirebaseTracking: Module {
-    @Dependency(StudyDefinitionLoader.self)
+    @Dependency(StudyBundleLoader.self)
     private var studyLoader
     
     func configure() {

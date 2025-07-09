@@ -15,7 +15,7 @@ import SwiftUI
 
 struct AccountSheet: View {
     private let dismissAfterSignIn: Bool
-
+    
     @Environment(\.dismiss)
     private var dismiss
     
@@ -26,12 +26,13 @@ struct AccountSheet: View {
     
     @State private var isInSetup = false
     
+    @Environment(\.openAppSettings)
+    private var openAppSettings
+    
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     @LocalPreference(.enableDebugMode)
     private var enableDebugMode
-    
-    @State private var debugModeLabelId = UUID()
     
     var body: some View {
         NavigationStack {
@@ -48,19 +49,19 @@ struct AccountSheet: View {
                     } header: {
                         AccountSetupHeader()
                     }
-                        .onAppear {
-                            isInSetup = true
+                    .onAppear {
+                        isInSetup = true
+                    }
+                    .toolbar {
+                        if !accountRequired {
+                            closeButton
                         }
-                        .toolbar {
-                            if !accountRequired {
-                                closeButton
-                            }
-                        }
+                    }
                 }
             }
         }
     }
-
+    
     @ToolbarContentBuilder private var closeButton: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button("Close") {
@@ -74,8 +75,8 @@ struct AccountSheet: View {
             Section("Study Participations") {
                 ForEach(enrollments) { enrollment in
                     NavigationLink {
-                        if let study = enrollment.study {
-                            StudyInfoView(study: study)
+                        if let studyBundle = enrollment.studyBundle {
+                            StudyInfoView(studyBundle: studyBundle)
                         } else {
                             Text("Study not available")
                                 .foregroundStyle(.secondary)
@@ -83,33 +84,49 @@ struct AccountSheet: View {
                     } label: {
                         makeEnrolledStudyRow(for: enrollment)
                     }
-                    .disabled(enrollment.study == nil)
+                    .disabled(enrollment.studyBundle == nil)
                 }
             }
         }
-        Section("Debug Mode") {
-            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
-            if enableDebugMode {
-                NavigationLink("Health Data Bulk Upload") {
-                    HealthImporterControlView()
-                }
-                NavigationLink("NotificationsManager") {
-                    NotificationsManagerControlView()
-                }
-                NavigationLink("Debug Stuff") {
-                    DebugStuffView()
-                }
-            }
-        }
+        //        Section("Debug Mode") {
+        //            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
+        //            if enableDebugMode {
+        //                NavigationLink("Health Data Bulk Upload") {
+        //                    HealthImporterControlView()
+        //                }
+        //                NavigationLink("NotificationsManager") {
+        //                    NotificationsManagerControlView()
+        //                }
+        //                NavigationLink("Debug Stuff") {
+        //                    DebugStuffView()
+        //                }
+        //            }
+        //        }
         Section {
-            if let enrollment = enrollments.first, let study = enrollment.study {
+            if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
-                    StudyInfoView(study: study)
+                    StudyInfoView(studyBundle: studyBundle)
                 }
             }
             NavigationLink("Review Consent Forms") {
                 SignedConsentForms()
             }
+        }
+        Section {
+            Button {
+                openAppSettings()
+            } label: {
+                HStack {
+                    Text("Change Language")
+                    Spacer()
+                    Image(systemSymbol: .arrowUpRightSquare)
+                        .accessibilityHidden(true)
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
         Section {
             NavigationLink {
@@ -119,7 +136,7 @@ struct AccountSheet: View {
             }
         }
     }
-
+    
     init(dismissAfterSignIn: Bool = true) {
         self.dismissAfterSignIn = dismissAfterSignIn
     }
@@ -127,14 +144,16 @@ struct AccountSheet: View {
     
     @ViewBuilder
     private func makeEnrolledStudyRow(for enrollment: StudyEnrollment) -> some View {
-        if let study = enrollment.study {
+        if let studyInfo = enrollment.studyBundle?.studyDefinition.metadata {
             VStack(alignment: .leading) {
-                Text(study.metadata.title)
+                Text(studyInfo.title)
                     .font(.headline)
-                Text(study.metadata.shortExplanationText)
+                Text(studyInfo.shortExplanationText)
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(.secondary)
+                Text("Enrolled since: \(enrollment.enrollmentDate, format: .dateTime)")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                Text("TODO MAYBE ALSO: enrollment date/duration, short list of which data are being shared/collected")
             }
         } else {
             Text("Study not available")
@@ -142,24 +161,3 @@ struct AccountSheet: View {
         }
     }
 }
-
-
-#if DEBUG
-#Preview("AccountSheet") {
-    var details = AccountDetails()
-    details.userId = "lelandstanford@stanford.edu"
-    details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-    
-    return AccountSheet()
-        .previewWith {
-            AccountConfiguration(service: InMemoryAccountService(), activeDetails: details)
-        }
-}
-
-#Preview("AccountSheet SignIn") {
-    AccountSheet()
-        .previewWith {
-            AccountConfiguration(service: InMemoryAccountService())
-        }
-}
-#endif

@@ -18,7 +18,7 @@ struct Welcome: View {
     
     var body: some View {
         OnboardingView(
-            title: "MyHeart Counts",
+            title: "My Heart Counts",
             subtitle: "WELCOME_SUBTITLE",
             areas: [
                 OnboardingInformationView.Content(
@@ -26,7 +26,7 @@ struct Welcome: View {
                         Image(systemName: "apps.iphone")
                             .accessibilityHidden(true)
                     },
-                    title: "The Spezi Framework",
+                    title: "WELCOME_AREA1_TITLE",
                     description: "WELCOME_AREA1_DESCRIPTION"
                 ),
                 OnboardingInformationView.Content(
@@ -34,7 +34,7 @@ struct Welcome: View {
                         Image(systemName: "shippingbox.fill")
                             .accessibilityHidden(true)
                     },
-                    title: "Swift Package Manager",
+                    title: "WELCOME_AREA2_TITLE",
                     description: "WELCOME_AREA2_DESCRIPTION"
                 ),
                 OnboardingInformationView.Content(
@@ -42,7 +42,7 @@ struct Welcome: View {
                         Image(systemName: "list.bullet.clipboard.fill")
                             .accessibilityHidden(true)
                     },
-                    title: "Spezi Modules",
+                    title: "WELCOME_AREA3_TITLE",
                     description: "WELCOME_AREA3_DESCRIPTION"
                 )
             ],

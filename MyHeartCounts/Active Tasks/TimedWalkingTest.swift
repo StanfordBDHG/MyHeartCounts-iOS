@@ -229,6 +229,16 @@ extension TimedWalkingTest {
 // MARK: Permission Handling
 
 extension CMMotionManager {
+    static func authorizationStatus() -> CMAuthorizationStatus {
+        CMPedometer.authorizationStatus()
+    }
+    
+    /// Requests access to the "Motion and Fitness" data.
+    ///
+    /// If the user has already granted or denied access in the past, or access is otherwise impossible, this function returns immediately.
+    /// Otherwise (i.e., if the user hasn't been asked yet), it will prompt the user to grant access and return then.
+    ///
+    /// - returns: A boolean indicating whether the request was successful and we now have access.
     static func requestMotionDataAccess() async -> Bool {
         // we're using the pedometer here, but it doesn't really matter since requesting access to that will also give us access to the other Motion sensors (eg: altimeter)
         switch CMPedometer.authorizationStatus() {
@@ -238,9 +248,16 @@ extension CMMotionManager {
             false
         case .notDetermined:
             await withCheckedContinuation { continuation in
-                CMPedometer().queryPedometerData(from: .now, to: .now) { _, error in
-                    // we simply assume that the absence of an error implies that the authorization was successfully granted.
+                // ISSUE: we use the `queryPedometerData` function to trigger the permission prompt.
+                // But: The completion handler will only get called if the pedometer object is still
+                // around by the time the user grants/denies us the permission.
+                // Meaning that we need to somehow extend the lifetime of the pedometer object.
+                // We do this by capturing it in the closure, and then setting it to nil once we've received the callback.
+                nonisolated(unsafe) var pedometer: CMPedometer? = CMPedometer()
+                pedometer!.queryPedometerData(from: .now, to: .now) { @Sendable _, error in // swiftlint:disable:this force_unwrapping
+                    // we simply assume that the absence of an error implies that the authorization was successfully granted
                     continuation.resume(returning: error == nil)
+                    pedometer = nil
                 }
             }
         @unknown default:

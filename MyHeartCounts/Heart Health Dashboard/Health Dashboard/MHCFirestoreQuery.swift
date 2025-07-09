@@ -22,7 +22,7 @@ import Foundation
 import SwiftUI
 
 
-/// An alternative to Firebase's `FirestoreQuery`, with some changes based on our specific needs in MyHeart Counts:
+/// An alternative to Firebase's `FirestoreQuery`, with some changes based on our specific needs in My Heart Counts:
 ///
 /// Differences to the `@FirestoreQuery` API:
 /// - ability to not only transform the documents into a custom `Decodable` type, but then (optionally) also implicitly project into a different type from that
@@ -61,7 +61,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     
     nonisolated func update() {
         var input = self.input
-        runOrScheduleOnMainActor {
+        Task { @MainActor in
             guard let accountId = account?.details?.accountId else {
                 return
             }

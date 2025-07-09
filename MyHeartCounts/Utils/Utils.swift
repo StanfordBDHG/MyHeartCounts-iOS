@@ -246,3 +246,26 @@ extension Double {
         self = NSDecimalNumber(decimal: decimal).doubleValue // swiftlint:disable:this legacy_objc_type
     }
 }
+
+
+extension Result {
+    var value: Success? {
+        switch self {
+        case .success(let value):
+            value
+        case .failure:
+            nil
+        }
+    }
+}
+
+
+extension Bundle {
+    var version: String {
+        infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    }
+    
+    var buildNumber: Int? {
+        (infoDictionary?["CFBundleVersion"] as? String).flatMap(Int.init)
+    }
+}

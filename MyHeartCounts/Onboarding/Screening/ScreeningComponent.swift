@@ -10,20 +10,6 @@ import Foundation
 import SwiftUI
 
 
-/// The ``SinglePageScreening`` view consists of components, each of which should collect one piece of information from the user, and is placed in its own `Section`.
-protocol ScreeningComponent: View { // swiftlint:disable:this file_types_order
-    /// The user-displayed title of this component.
-    ///
-    /// Will be used as the `Section` title in the UI.
-    var title: LocalizedStringResource { get }
-    
-    /// Determines, based on the collected data, whether the user-entered value sasisfies the component's requirements.
-    ///
-    /// - Note: this function will be called outside of the component being installed in a SwiftUI hierarchy!
-    func evaluate(_ data: ScreeningDataCollection) -> Bool
-}
-
-
 struct SingleChoiceScreeningComponentImpl<Option: Hashable>: View {
     @Environment(\.colorScheme)
     private var colorScheme
