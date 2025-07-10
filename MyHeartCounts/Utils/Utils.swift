@@ -261,11 +261,11 @@ extension Result {
 
 
 extension Bundle {
-    var version: String {
+    var appVersion: String {
         infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     }
     
-    var buildNumber: Int? {
+    var appBuildNumber: Int? {
         (infoDictionary?["CFBundleVersion"] as? String).flatMap(Int.init)
     }
 }

@@ -34,6 +34,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             StudyBundleLoader.shared
             WatchConnection()
             TimedWalkingTest()
+            FeedbackManager()
         }
     }
 }

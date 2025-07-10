@@ -216,7 +216,7 @@ enum DeferredConfigLoading {
                 LoadFirebaseTracking()
                 AccountConfiguration(
                     service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: accountEmulator),
-                    storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.userCollection),
+                    storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.usersCollection),
                     configuration: [
                         .requires(\.userId),
                         .requires(\.name),

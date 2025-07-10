@@ -25,6 +25,7 @@ struct AccountSheet: View {
     private var accountRequired
     
     @State private var isInSetup = false
+    @State private var isPresentingFeedbackSheet = false
     
     @Environment(\.openAppSettings)
     private var openAppSettings
@@ -59,6 +60,11 @@ struct AccountSheet: View {
                     }
                 }
             }
+            .sheet(isPresented: $isPresentingFeedbackSheet) {
+                NavigationStack {
+                    FeedbackForm()
+                }
+            }
         }
     }
     
@@ -88,20 +94,9 @@ struct AccountSheet: View {
                 }
             }
         }
-        //        Section("Debug Mode") {
-        //            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
-        //            if enableDebugMode {
-        //                NavigationLink("Health Data Bulk Upload") {
-        //                    HealthImporterControlView()
-        //                }
-        //                NavigationLink("NotificationsManager") {
-        //                    NotificationsManagerControlView()
-        //                }
-        //                NavigationLink("Debug Stuff") {
-        //                    DebugStuffView()
-        //                }
-        //            }
-        //        }
+        #if false && DEBUG
+        debugSection
+        #endif
         Section {
             if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
@@ -116,23 +111,36 @@ struct AccountSheet: View {
             Button {
                 openAppSettings()
             } label: {
-                HStack {
-                    Text("Change Language")
-                    Spacer()
-                    Image(systemSymbol: .arrowUpRightSquare)
-                        .accessibilityHidden(true)
-                        .foregroundStyle(.secondary)
-                        .font(.footnote)
-                }
-                .contentShape(Rectangle())
+                Label("Change Language", systemSymbol: .globe)
             }
-            .buttonStyle(.plain)
+            Button {
+                isPresentingFeedbackSheet = true
+            } label: {
+                Label("Send Feedback", systemSymbol: .textBubble)
+            }
         }
         Section {
             NavigationLink {
                 ContributionsList(projectLicense: .mit)
             } label: {
                 Text("License Information")
+            }
+        }
+    }
+    
+    @ViewBuilder private var debugSection: some View {
+        Section("Debug Mode") {
+            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
+            if enableDebugMode {
+                NavigationLink("Health Data Bulk Upload") {
+                    HealthImporterControlView()
+                }
+                NavigationLink("NotificationsManager") {
+                    NotificationsManagerControlView()
+                }
+                NavigationLink("Debug Stuff") {
+                    DebugStuffView()
+                }
             }
         }
     }

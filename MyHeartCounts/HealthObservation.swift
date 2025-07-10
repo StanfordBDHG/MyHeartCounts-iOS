@@ -43,7 +43,7 @@ extension Observation {
     func addMHCAppAsSource() throws {
         let revision = HKSourceRevision(
             source: HKSource.default(),
-            version: "\(Bundle.main.version) (\(Bundle.main.buildNumber ?? 0))",
+            version: "\(Bundle.main.appVersion) (\(Bundle.main.appBuildNumber ?? -1))",
             productType: nil,
             operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersion
         )

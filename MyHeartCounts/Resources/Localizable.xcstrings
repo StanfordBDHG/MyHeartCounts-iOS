@@ -233,6 +233,12 @@
     "Date of Birth" : {
 
     },
+    "Debug Mode" : {
+
+    },
+    "Debug Stuff" : {
+
+    },
     "Delete ~/HealthKitUploads/*" : {
 
     },
@@ -246,6 +252,9 @@
 
     },
     "Done" : {
+
+    },
+    "Enable Debug Mode" : {
 
     },
     "End Study Participation" : {
@@ -277,6 +286,19 @@
     },
     "FCM Token" : {
 
+    },
+    "Feedback" : {
+
+    },
+    "FEEDBACK_FORM_FOOTER_TEXT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your feedback helps us improve My Heart Counts and [TODO some text about better helping more people???]\n\nThe feedback you share with us will be associated with your Email address.\nThis allows us to reach out to you if required."
+          }
+        }
+      }
     },
     "Feel free to check back later!" : {
 
@@ -337,6 +359,9 @@
       }
     },
     "Health Data" : {
+
+    },
+    "Health Data Bulk Upload" : {
 
     },
     "HealthKit Access" : {
@@ -594,6 +619,9 @@
         }
       }
     },
+    "NotificationsManager" : {
+
+    },
     "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT" : {
       "localizations" : {
         "en" : {
@@ -795,6 +823,12 @@
 
     },
     "Selection Checkmark" : {
+
+    },
+    "Send" : {
+
+    },
+    "Send Feedback" : {
 
     },
     "Series" : {

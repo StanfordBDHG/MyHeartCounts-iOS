@@ -24,10 +24,12 @@ struct HeartHealthDashboardTab: RootViewTab {
     
     var body: some View {
         NavigationStack {
-            HeartHealthDashboard()
-                .toolbar {
-                    accountToolbarItem
-                }
+            Group {
+                HeartHealthDashboard()
+            }
+            .toolbar {
+                accountToolbarItem
+            }
         }
     }
 }
