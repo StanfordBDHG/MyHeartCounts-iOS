@@ -19,12 +19,16 @@ struct AccountSheet: View {
     @Environment(\.dismiss)
     private var dismiss
     
+    @Environment(\.colorScheme)
+    private var colorScheme
+    
     @Environment(Account.self)
     private var account
     @Environment(\.accountRequired)
     private var accountRequired
     
     @State private var isInSetup = false
+    @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
     
     @Environment(\.openAppSettings)
@@ -36,7 +40,7 @@ struct AccountSheet: View {
     private var enableDebugMode
     
     var body: some View {
-        NavigationStack {
+        NavigationStack { // swiftlint:disable:this closure_body_length
             ZStack {
                 if account.signedIn && !isInSetup {
                     AccountOverview(close: .showCloseButton) {
@@ -60,6 +64,19 @@ struct AccountSheet: View {
                     }
                 }
             }
+            .sheet(isPresented: $isPresentingDemographicsSheet) {
+                NavigationStack {
+                    DemographicsForm()
+                        .toolbar {
+                            ToolbarItem(placement: .primaryAction) {
+                                Button("Done") {
+                                    isPresentingDemographicsSheet = false
+                                }
+                                .bold()
+                            }
+                        }
+                }
+            }
             .sheet(isPresented: $isPresentingFeedbackSheet) {
                 NavigationStack {
                     FeedbackForm()
@@ -77,6 +94,12 @@ struct AccountSheet: View {
     }
     
     @ViewBuilder private var accountSheetExtraContent: some View {
+        Section {
+            Button("Demographics") {
+                isPresentingDemographicsSheet = true
+            }
+        }
+        
         if !enrollments.isEmpty {
             Section("Study Participations") {
                 ForEach(enrollments) { enrollment in
@@ -120,10 +143,19 @@ struct AccountSheet: View {
             }
         }
         Section {
+            LabeledContent {
+                let bundle = Bundle.main
+                Text("\(bundle.appVersion) (\(bundle.appBuildNumber ?? -1))")
+            } label: {
+                Label("My Heart Counts", systemSymbol: .infoCircle)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+            }
+
             NavigationLink {
                 ContributionsList(projectLicense: .mit)
             } label: {
-                Text("License Information")
+                Label("License Information", systemSymbol: .buildingColumns)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
             }
         }
     }

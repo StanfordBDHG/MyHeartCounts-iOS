@@ -150,52 +150,28 @@ extension MHCFirestoreQuery where Element == QuantitySample {
             collection: "HealthObservations_\(sampleType.id)",
             filter: nil,
             sortDescriptors: [],
-            limit: nil
+            limit: nil // TODO why do we allow setting a limit, if we then ignore it?
         ) { document -> QuantitySample? in
             if timeRange != .ever {
                 let data = document.data()
-                if false {
-                    return nil
-//                    guard let extensions = data["extension"] as? [[String: Any]] else {
-//                        return nil
-//                    }
-//                    let getDate = { (url: FHIRPrimitive<FHIRURI>) -> Date? in
-//                        extensions.firstNonNil { extensionDict -> Date? in
-//                            guard extensionDict["url"] as? String == url.value?.url.absoluteString,
-//                                  let value = extensionDict["valueDecimal"] as? Double else {
-//                                return nil
-//                            }
-//                            return Date(timeIntervalSince1970: value)
-//                        }
-//                    }
-//                    guard let startDate = getDate(FHIRExtensionUrls.absoluteTimeRangeStart),
-//                          let endDate = getDate(FHIRExtensionUrls.absoluteTimeRangeEnd) else {
-//                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
-//                        return nil
-//                    }
-//                    guard (startDate..<endDate).overlaps(timeRange.range) else {
-//                        return nil
-//                    }
-                } else {
-                    if let dateString = data["effectiveDateTime"] as? String {
-                        guard let date = try? DateTime(dateString).asNSDate() else {
-                            return nil
-                        }
-                        guard timeRange.range.contains(date) else {
-                            return nil
-                        }
-                    } else if let periodDict = data["effectivePeriod"] as? [String: String] {
-                        guard let start = periodDict["start"].flatMap({ try? DateTime($0).asNSDate() }),
-                              let end = periodDict["end"].flatMap({ try? DateTime($0).asNSDate() }) else {
-                            return nil
-                        }
-                        guard (start..<end).overlaps(timeRange.range) else {
-                            return nil
-                        }
-                    } else {
-                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
+                if let dateString = data["effectiveDateTime"] as? String {
+                    guard let date = try? DateTime(dateString).asNSDate() else {
                         return nil
                     }
+                    guard timeRange.range.contains(date) else {
+                        return nil
+                    }
+                } else if let periodDict = data["effectivePeriod"] as? [String: String] {
+                    guard let start = periodDict["start"].flatMap({ try? DateTime($0).asNSDate() }),
+                          let end = periodDict["end"].flatMap({ try? DateTime($0).asNSDate() }) else {
+                        return nil
+                    }
+                    guard (start..<end).overlaps(timeRange.range) else {
+                        return nil
+                    }
+                } else {
+                    // we want to filter based on time range, but we can't extract a time range to filter against from the document
+                    return nil
                 }
             }
             guard let proxy = try? document.data(as: ResourceProxy.self) else {

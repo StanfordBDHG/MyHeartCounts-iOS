@@ -269,3 +269,14 @@ extension Bundle {
         (infoDictionary?["CFBundleVersion"] as? String).flatMap(Int.init)
     }
 }
+
+
+extension OptionSet {
+    mutating func toggleMembership(of member: Element) {
+        if contains(member) {
+            remove(member)
+        } else {
+            insert(member)
+        }
+    }
+}

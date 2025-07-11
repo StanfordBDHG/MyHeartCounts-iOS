@@ -224,7 +224,12 @@ enum DeferredConfigLoading {
                         .collects(\.genderIdentity),
                         .collects(\.dateOfBirth),
                         .manual(\.fcmToken),
-                        .manual(\.timeZone)
+                        .manual(\.timeZone),
+                        .manual(\.heightInCM),
+                        .manual(\.weightInKG),
+                        .manual(\.raceEthnicity),
+                        .manual(\.bloodType),
+                        .manual(\.nhsNumber)
                     ]
                 )
                 firestore

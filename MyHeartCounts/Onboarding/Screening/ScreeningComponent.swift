@@ -39,7 +39,7 @@ struct SingleChoiceScreeningComponentImpl<Option: Hashable>: View {
         } label: {
             HStack {
                 Text(optionTitle(option))
-                    .foregroundStyle(colorScheme.buttonLabelForegroundStyle)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
                 if selection == option {
                     Spacer()
                     Image(systemSymbol: .checkmark)
@@ -55,7 +55,7 @@ struct SingleChoiceScreeningComponentImpl<Option: Hashable>: View {
 
 
 extension ColorScheme {
-    var buttonLabelForegroundStyle: Color {
+    var textLabelForegroundStyle: Color {
         self == .dark ? .white : .black
     }
 }

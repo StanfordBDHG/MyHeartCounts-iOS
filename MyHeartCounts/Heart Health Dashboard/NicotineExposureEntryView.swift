@@ -80,7 +80,7 @@ struct NicotineExposureEntryView: View {
         } label: {
             HStack {
                 Text(option.displayTitle)
-                    .foregroundStyle(colorScheme.buttonLabelForegroundStyle)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
                 if selection == option {
                     Spacer()
                     Image(systemSymbol: .checkmark)

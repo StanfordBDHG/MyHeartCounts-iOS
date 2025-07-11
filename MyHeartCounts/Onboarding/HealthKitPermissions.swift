@@ -54,14 +54,23 @@ struct HealthKitPermissions: View {
                     if ProcessInfo.processInfo.isPreviewSimulator {
                         try await _Concurrency.Task.sleep(for: .seconds(5))
                     } else {
-                        try await healthKit.askForAuthorization(for: .init(
+                        var accessReqs = HealthKit.DataAccessRequirements(
                             read: studyBundle.studyDefinition.allCollectedHealthData,
                             write: [
                                 SampleType.workout,
                                 SampleType.height, SampleType.bodyMass, SampleType.bodyMassIndex,
                                 SampleType.bloodGlucose, SampleType.bloodPressure
                             ] as [any AnySampleType]
-                        ))
+                        )
+                        accessReqs.merge(with: .init(read: [
+                            HealthKitCharacteristic.activityMoveMode.hkType,
+                            HealthKitCharacteristic.biologicalSex.hkType,
+                            HealthKitCharacteristic.bloodType.hkType,
+                            HealthKitCharacteristic.dateOfBirth.hkType,
+                            HealthKitCharacteristic.fitzpatrickSkinType.hkType,
+                            HealthKitCharacteristic.wheelchairUse.hkType
+                        ]))
+                        try await healthKit.askForAuthorization(for: accessReqs)
                     }
                 } catch {
                     print("Could not request HealthKit permissions.")

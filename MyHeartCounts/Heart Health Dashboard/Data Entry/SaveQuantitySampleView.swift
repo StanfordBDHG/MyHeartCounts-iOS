@@ -24,6 +24,7 @@ struct SaveQuantitySampleView: View {
     private var standard
     
     private let sampleType: MHCQuantitySampleType
+    private let completionHandler: (@MainActor (QuantitySample) -> Void)?
     @State private var date: Date = .now
     @State private var value: Double?
     @State private var viewState: ViewState = .idle
@@ -57,18 +58,11 @@ struct SaveQuantitySampleView: View {
         }
     }
     
-    init(sampleType: MHCQuantitySampleType) {
+    init(sampleType: MHCQuantitySampleType, completionHandler: (@MainActor (QuantitySample) -> Void)? = nil) {
         self.sampleType = sampleType
+        self.completionHandler = completionHandler
     }
     
-    @available(*, deprecated, renamed: "init(sampleType:)")
-    init(sampleType: SampleType<HKQuantitySample>) {
-        self.init(sampleType: .healthKit(sampleType))
-    }
-    @available(*, deprecated, renamed: "init(sampleType:)")
-    init(sampleType: CustomQuantitySampleType) {
-        self.init(sampleType: .custom(sampleType))
-    }
     
     private func save() async throws {
         guard let value = self.value else {
@@ -83,6 +77,7 @@ struct SaveQuantitySampleView: View {
                 end: self.date
             )
             try await self.healthKit.save(sample)
+            completionHandler?(.init(sample))
         case .custom(let sampleType):
             let sample = QuantitySample(
                 id: UUID(),
@@ -93,6 +88,7 @@ struct SaveQuantitySampleView: View {
                 endDate: self.date
             )
             try await self.standard.uploadHealthObservation(sample)
+            completionHandler?(sample)
         }
     }
 }

@@ -193,6 +193,21 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
     private func checkDateRangeValid() {
         precondition(endDate >= startDate)
     }
+    
+    func value(as unit: HKUnit) -> Double {
+        self.unit == unit ? value : HKQuantity(unit: self.unit, doubleValue: value).doubleValue(for: unit)
+    }
+    
+    func valueAndUnitDescription(for unit: HKUnit? = nil) -> String {
+        let unit = unit ?? self.unit
+        let quantity = HKQuantity(unit: self.unit, doubleValue: self.value)
+        if unit == HKUnit.foot() && sampleType == .healthKit(.height) {
+            let (feet, inches) = quantity.valuesForFeetAndInches()
+            return "\(feet)‘ \(Int(inches))“"
+        } else {
+            return "\(quantity.doubleValue(for: unit).formatted(.number.precision(.fractionLength(0...2)))) \(unit.unitString)"
+        }
+    }
 }
 
 

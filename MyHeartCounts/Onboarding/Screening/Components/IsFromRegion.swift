@@ -42,11 +42,11 @@ struct IsFromRegion: ScreeningComponent {
             HStack {
                 Text("What country do you currently live in?")
                     .fontWeight(.medium)
-                    .foregroundStyle(colorScheme.buttonLabelForegroundStyle)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
                 Spacer()
                 if let region = data.screening.region {
                     Text(region.localizedName(in: locale, includeEmoji: .none))
-                        .foregroundStyle(colorScheme.buttonLabelForegroundStyle.secondary)
+                        .foregroundStyle(colorScheme.textLabelForegroundStyle.secondary)
                 }
                 DisclosureIndicator()
             }

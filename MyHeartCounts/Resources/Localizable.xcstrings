@@ -10,6 +10,16 @@
     "—" : {
 
     },
+    "%@ (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$lld)"
+          }
+        }
+      }
+    },
     "%lld ft" : {
 
     },
@@ -33,6 +43,18 @@
 
     },
     "100" : {
+
+    },
+    "A-" : {
+
+    },
+    "A+" : {
+
+    },
+    "AB-" : {
+
+    },
+    "AB+" : {
 
     },
     "About %@" : {
@@ -126,6 +148,15 @@
     "AuthorizationStatus" : {
 
     },
+    "B-" : {
+
+    },
+    "B+" : {
+
+    },
+    "Blood Type" : {
+
+    },
     "Bulk Export Manager" : {
 
     },
@@ -147,6 +178,9 @@
           }
         }
       }
+    },
+    "Comorbidities" : {
+
     },
     "Companion Watch App Not Installed" : {
 
@@ -243,6 +277,9 @@
 
     },
     "Delete&Reset Session" : {
+
+    },
+    "Demographics" : {
 
     },
     "Details" : {
@@ -431,6 +468,9 @@
         }
       }
     },
+    "Height" : {
+
+    },
     "Historical Data Bulk Export" : {
 
     },
@@ -572,7 +612,10 @@
         }
       }
     },
-    "Next 2 weeks" : {
+    "NHS Number" : {
+
+    },
+    "NHS Number (Optional)" : {
 
     },
     "Nicotine Exposure" : {
@@ -599,6 +642,9 @@
     "Not logged in" : {
 
     },
+    "Not Set" : {
+
+    },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -620,6 +666,12 @@
       }
     },
     "NotificationsManager" : {
+
+    },
+    "O-" : {
+
+    },
+    "O+" : {
 
     },
     "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT" : {
@@ -760,7 +812,143 @@
     "Processing Sleep Data…" : {
 
     },
+    "Race / Ethnicity" : {
+
+    },
+    "RACE_AFRICAN_AMERICAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "African American"
+          }
+        }
+      }
+    },
+    "RACE_ALASKA_NATIVE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alaska Native"
+          }
+        }
+      }
+    },
+    "RACE_AMERICAN_INDIAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "American Indian"
+          }
+        }
+      }
+    },
+    "RACE_ASIAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asian"
+          }
+        }
+      }
+    },
+    "RACE_CAUCASIAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caucasian"
+          }
+        }
+      }
+    },
+    "RACE_HISPANIC_LATINO" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hispanic / Latino"
+          }
+        }
+      }
+    },
+    "RACE_MENA" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Middle East and Northern Africa"
+          }
+        }
+      }
+    },
+    "RACE_NATIVE_HAWAIIAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Native Hawaiian"
+          }
+        }
+      }
+    },
+    "RACE_NO_SELECTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        }
+      }
+    },
+    "RACE_OTHER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        }
+      }
+    },
+    "RACE_PACIFIC_ISLANDER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pacific Islander"
+          }
+        }
+      }
+    },
+    "RACE_PREFER_NOT_TO_ANSWER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer not to Answer"
+          }
+        }
+      }
+    },
+    "RACE_SELECTOR_LIST_FOOTER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can select multiple options."
+          }
+        }
+      }
+    },
     "Read Article" : {
+
+    },
+    "Read from HealthKit" : {
 
     },
     "Recent Sleep Data" : {
@@ -894,6 +1082,9 @@
     "The app was unable to load the study, but we're not sure why" : {
 
     },
+    "The Blood Type value was auto-read from HealthKit" : {
+
+    },
     "The Spezi Framework" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -926,9 +1117,6 @@
     "Timed Walking Test" : {
 
     },
-    "Today's Tasks" : {
-
-    },
     "TODO: make this look pretty!" : {
 
     },
@@ -947,6 +1135,9 @@
     "Unenroll" : {
 
     },
+    "Unknown" : {
+
+    },
     "Upcoming Tasks" : {
       "localizations" : {
         "es" : {
@@ -960,7 +1151,13 @@
     "Uploading Collected Health Data" : {
 
     },
+    "Use this option to auto-fill Height and Weight, by reading the most recent value for each from HealthKit.\nAlternatively, you can tap the field above to manually enter a value." : {
+
+    },
     "Warning Sign" : {
+
+    },
+    "Weight" : {
 
     },
     "Welcome to My Heart Counts" : {
