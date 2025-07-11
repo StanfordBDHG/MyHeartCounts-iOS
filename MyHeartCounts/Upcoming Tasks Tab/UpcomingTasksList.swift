@@ -19,12 +19,15 @@ import SwiftUI
 
 struct UpcomingTasksList: View {
     enum TimeRange {
-        /// The time range encompassing all of today.
-        case today
+        /// The time range starting today, and going `numDays` days into the future.
+        case days(_ numDays: Int)
         /// The time range starting today, and going `numWeeks` weeks into the future.
         case weeks(_ numWeeks: Int)
         /// The time range starting today, and going `numMonths` months into the future.
         case months(_ numMonths: Int)
+        
+        /// The time range encompassing all of today.
+        static let today = Self.days(1)
         
         /// The time range starting today, and going a week into the future.
         static let nextWeek = Self.weeks(1)
@@ -34,6 +37,12 @@ struct UpcomingTasksList: View {
         static let month = Self.months(1)
     }
     
+    enum HeaderConfig {
+        case none
+        case custom(String, subtitle: String = "")
+        case timeRange
+    }
+    
     private struct QuestionnaireBeingAnswered: Identifiable {
         let questionnaire: Questionnaire
         let enrollment: StudyEnrollment
@@ -41,105 +50,108 @@ struct UpcomingTasksList: View {
         var id: Questionnaire.ID { questionnaire.id }
     }
     
-    private struct SectionedEvents {
-        let startOfDay: Date
-        let events: [Event]
-    }
     
+    @Environment(\.calendar)
+    private var cal
     @Environment(MyHeartCountsStandard.self)
     private var standard
     @Environment(StudyManager.self)
     private var studyManager
-    @EventQuery private var events: [Event]
-    private let calendar: Calendar
+    
+    private let timeRange: TimeRange
+    private let headerConfig: HeaderConfig
+    
     @State private var viewState: ViewState = .idle
     @State private var presentedArticle: Article?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
     @State private var presentedTimedWalkingTest: StudyDefinition.TimedWalkingTestComponent?
+    @State private var tmpPresentSheet = false
     
     var body: some View {
-        eventsList
+        header
             .viewStateAlert(state: $viewState)
-            .sheet(item: $questionnaireBeingAnswered) { input in
-                QuestionnaireView(
-                    questionnaire: input.questionnaire,
-                    completionStepMessage: "COMPLETION_STEP_MESSAGE",
-                    cancelBehavior: .cancel
-                ) { result in
-                    questionnaireBeingAnswered = nil
-                    switch result {
-                    case .completed(let response):
-                        do {
-                            try input.event.complete()
-                            await standard.add(response: response)
-                        } catch {
-                            viewState = .error(error)
-                        }
-                    case .cancelled, .failed:
-                        break
-                    }
-                }
-            }
-            .sheet(item: $presentedArticle) { article in
-                ArticleSheet(article: article)
-            }
-            .sheet(item: $presentedTimedWalkingTest) { component in
-                NavigationStack {
-                    TimedWalkingTestView(component.test)
-                }
-            }
-    }
-    
-    @ViewBuilder private var eventsList: some View {
-        if !events.isEmpty {
-            let eventsByDay = eventsByDay
-            ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
-                Section {
-                    ForEach(sectionedEvents.events) { event in
-                        if let context = event.task.studyContext,
-                           let action = event.task.studyScheduledTaskAction {
-                            InstructionsTile(event) {
-                                // IDEA(@lukas):
-                                // - add an official overload with an optional label text?
-                                // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
-                                EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
-                                    _Concurrency.Task {
-                                        await handleAction(action, for: event, context: context)
-                                    }
-                                }
+                .sheet(item: $questionnaireBeingAnswered) { input in
+                    QuestionnaireView(
+                        questionnaire: input.questionnaire,
+                        completionStepMessage: "COMPLETION_STEP_MESSAGE",
+                        cancelBehavior: .cancel
+                    ) { result in
+                        questionnaireBeingAnswered = nil
+                        switch result {
+                        case .completed(let response):
+                            do {
+                                try input.event.complete()
+                                await standard.add(response: response)
+                            } catch {
+                                viewState = .error(error)
                             }
-                        } else {
-                            InstructionsTile(event)
+                        case .cancelled, .failed:
+                            break
                         }
                     }
-                } header: {
-                    if eventsByDay.count > 1 {
-                        Text(sectionedEvents.startOfDay.formatted(date: .long, time: .omitted))
+                }
+                .sheet(item: $presentedArticle) { article in
+                    ArticleSheet(article: article)
+                }
+                .sheet(item: $presentedTimedWalkingTest) { component in
+                    NavigationStack {
+                        TimedWalkingTestView(component.test)
                     }
                 }
-            }
-            .injectingCustomTaskCategoryAppearances()
-        } else {
-            ContentUnavailableView(
-                "No Upcoming Tasks",
-                systemSymbol: .partyPopper,
-                description: Text("All tasks have already been completed!")
-            )
+        Impl(timeRange: Self.effectiveTimeRange(for: timeRange, cal: cal)) {
+            await handleAction($0, for: $1, context: $2)
         }
     }
     
-    private var eventsByDay: [SectionedEvents] {
-        events.chunked { calendar.isDate($0.occurrence.start, inSameDayAs: $1.occurrence.start) }
-            // SAFETY: the chunking guarantees that the slices aren't empty.
-            // we need to use `.first` instead of `[0]`, since the slices share the indices.
-            // swiftlint:disable:next force_unwrapping
-            .map { SectionedEvents(startOfDay: calendar.startOfDay(for: $0.first!.occurrence.start), events: Array($0)) }
+    @ViewBuilder private var header: some View {
+        let (title, subtitle) = headerContents
+        VStack(alignment: .leading) {
+            Text(title)
+            if !subtitle.isEmpty {
+                Text(subtitle)
+                    .foregroundStyle(.secondary)
+                    .font(.caption)
+                    .fontDesign(.rounded)
+            }
+        }
+        .styleAsMHCSectionHeader()
     }
     
+    private var headerContents: (String, String) {
+        switch headerConfig {
+        case .none:
+            return ("", "")
+        case let .custom(title, subtitle):
+            return (title, subtitle)
+        case .timeRange:
+            let (title, needsSubtitle) = switch timeRange {
+            case .days(1):
+                ("Today", false)
+            case .days(let numDays):
+                ("Next \(numDays) Days", true)
+            case .weeks(1):
+                ("Next Week", true)
+            case .weeks(let numWeeks):
+                ("Next \(numWeeks) Weeks", true)
+            case .months(1):
+                ("Next Month", true)
+            case .months(let numMonths):
+                ("Next \(numMonths) Months", true)
+            }
+            if needsSubtitle {
+                let timeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
+                let start = timeRange.lowerBound.formatted(date: .numeric, time: .omitted)
+                let end = timeRange.upperBound.addingTimeInterval(-1).formatted(date: .numeric, time: .omitted)
+                return (title, "\(start) – \(end)")
+            } else {
+                return (title, "")
+            }
+        }
+    }
     
-    init(timeRange: TimeRange, calendar: Calendar) {
-        _events = .init(in: Self.effectiveTimeRange(for: timeRange, calendar: calendar))
-        self.calendar = calendar
+    init(timeRange: TimeRange, headerConfig: HeaderConfig = .timeRange) {
+        self.timeRange = timeRange
+        self.headerConfig = headerConfig
     }
     
     private func handleAction(_ action: StudyManager.ScheduledTaskAction, for event: Event, context: Task.Context.StudyContext) async {
@@ -167,38 +179,113 @@ struct UpcomingTasksList: View {
                 logger.error("Unable to find SPC")
                 return
             }
+            tmpPresentSheet = true
             questionnaireBeingAnswered = .init(questionnaire: questionnaire, enrollment: enrollment, event: event)
         case .promptTimedWalkingTest(let component):
             presentedTimedWalkingTest = component
-        }
-    }
-    
-    private func eventButtonTitle(for category: Task.Category?) -> LocalizedStringResource? {
-        switch category {
-        case .informational:
-            "Read Article"
-        case .questionnaire:
-            "Complete Questionnaire"
-        default:
-            nil
         }
     }
 }
 
 
 extension UpcomingTasksList {
-    private static func effectiveTimeRange(for timeRange: TimeRange, calendar: Calendar) -> Range<Date> {
+    private static func effectiveTimeRange(for timeRange: TimeRange, cal: Calendar) -> Range<Date> {
         switch timeRange {
-        case .today:
-            return calendar.rangeOfDay(for: .now)
+        case .days(let numDays):
+            let start = cal.startOfDay(for: .now)
+            let end = cal.date(byAdding: .day, value: numDays, to: start) ?? start
+            return start..<end
         case .weeks(let numWeeks):
-            let start = calendar.startOfDay(for: .now)
-            let end = calendar.date(byAdding: .weekOfYear, value: numWeeks, to: start) ?? start
+            let start = cal.startOfDay(for: .now)
+            let end = cal.date(byAdding: .weekOfYear, value: numWeeks, to: start) ?? start
             return start..<end
         case .months(let numMonths):
-            let start = calendar.startOfDay(for: .now)
-            let end = calendar.date(byAdding: .month, value: numMonths, to: start) ?? start
+            let start = cal.startOfDay(for: .now)
+            let end = cal.date(byAdding: .month, value: numMonths, to: start) ?? start
             return start..<end
+        }
+    }
+}
+
+
+extension UpcomingTasksList {
+    private struct Impl: View {
+        typealias SelectionHandler = @MainActor (
+            _ action: StudyManager.ScheduledTaskAction,
+            _ event: Event,
+            _ context: Task.Context.StudyContext
+        ) async -> Void
+        
+        private struct SectionedEvents {
+            let startOfDay: Date
+            let events: [Event]
+        }
+        
+        @Environment(\.calendar)
+        private var cal
+        @EventQuery private var events: [Event]
+        private let selectionHandler: SelectionHandler
+        
+        var body: some View {
+            if !events.isEmpty {
+                let eventsByDay = eventsByDay
+                ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
+                    Section {
+                        ForEach(sectionedEvents.events) { event in
+                            if let context = event.task.studyContext,
+                               let action = event.task.studyScheduledTaskAction {
+                                InstructionsTile(event) {
+                                    // IDEA(@lukas):
+                                    // - add an official overload with an optional label text?
+                                    // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
+                                    EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
+                                        _Concurrency.Task {
+                                            await selectionHandler(action, event, context)
+                                        }
+                                    }
+                                }
+                            } else {
+                                InstructionsTile(event)
+                            }
+                        }
+                    } header: {
+                        if eventsByDay.count > 1 {
+                            Text(sectionedEvents.startOfDay.formatted(date: .long, time: .omitted))
+                        }
+                    }
+                }
+                .injectingCustomTaskCategoryAppearances()
+            } else {
+                ContentUnavailableView(
+                    "No Upcoming Tasks",
+                    systemSymbol: .partyPopper,
+                    description: Text("All tasks have already been completed!")
+                )
+            }
+        }
+        
+        private var eventsByDay: [SectionedEvents] {
+            events.chunked { cal.isDate($0.occurrence.start, inSameDayAs: $1.occurrence.start) }
+                // SAFETY: the chunking guarantees that the slices aren't empty.
+                // we need to use `.first` instead of `[0]`, since the slices share the indices.
+                // swiftlint:disable:next force_unwrapping
+                .map { SectionedEvents(startOfDay: cal.startOfDay(for: $0.first!.occurrence.start), events: Array($0)) }
+        }
+        
+        init(timeRange: Range<Date>, selectionHandler: @escaping SelectionHandler) {
+            _events = .init(in: timeRange)
+            self.selectionHandler = selectionHandler
+        }
+        
+        private func eventButtonTitle(for category: Task.Category?) -> LocalizedStringResource? {
+            switch category {
+            case .informational:
+                "Read Article"
+            case .questionnaire:
+                "Complete Questionnaire"
+            default:
+                nil
+            }
         }
     }
 }

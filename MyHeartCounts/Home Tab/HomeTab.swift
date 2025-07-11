@@ -45,7 +45,7 @@ struct HomeTab: RootViewTab {
             Form {
                 topActionsFormContent
                 historicalHealthDataUploadSection
-                scheduleFormContent
+                UpcomingTasksList(timeRange: .today, headerConfig: .custom("Today's Tasks"))
             }
             .navigationTitle(String(localized: Self.tabTitle))
             .toolbar {
@@ -64,12 +64,6 @@ struct HomeTab: RootViewTab {
                     }
                 }
             }
-        }
-    }
-    
-    @ViewBuilder private var scheduleFormContent: some View {
-        makeSection("Today's Tasks") {
-            UpcomingTasksList(timeRange: .today, calendar: calendar)
         }
     }
         
@@ -113,21 +107,6 @@ struct HomeTab: RootViewTab {
             nil
         }
     }
-    
-    private func makeSection(_ title: LocalizedStringResource, @ViewBuilder content: () -> some View) -> some View {
-        Section {
-            content()
-        } header: {
-            Text(title)
-                .foregroundStyle(.secondary)
-                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .listRowBackground(Color.clear)
-                .font(.title2)
-                .fontDesign(.rounded)
-                .fontWeight(.bold)
-                .padding(.bottom, 12)
-        }
-    }
 }
 
 
@@ -138,5 +117,18 @@ extension EventActionButton {
         } else {
             self.init(event: event, action: action)
         }
+    }
+}
+
+
+extension View {
+    func styleAsMHCSectionHeader() -> some View {
+        self
+            .foregroundStyle(.secondary)
+            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .listRowBackground(Color.clear)
+            .font(.title2)
+            .fontDesign(.rounded)
+            .fontWeight(.bold)
     }
 }

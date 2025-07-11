@@ -17,25 +17,16 @@ struct UpcomingTasksTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "Upcoming Tasks" }
     static var tabSymbol: SFSymbol { .calendar }
     
-    @Environment(\.calendar)
-    private var calendar
-    
     @State private var activeTimedWalkingTest: TimedWalkingTestConfiguration?
+    
+    @State private var sheet = false
     
     var body: some View {
         NavigationStack {
             Form {
-                Text("Next 2 weeks")
-                    .foregroundStyle(.secondary)
-                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                    .listRowBackground(Color.clear)
-                    .font(.title2)
-                    .fontDesign(.rounded)
-                    .fontWeight(.bold)
-                // maybe lower the spacing inbetween these?
-                UpcomingTasksList(timeRange: .fortnight, calendar: calendar)
+                UpcomingTasksList(timeRange: .days(4))
             }
-            .navigationTitle("Upcoming Tasks")
+            .navigationTitle(String(localized: Self.tabTitle))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -48,6 +39,7 @@ struct UpcomingTasksTab: RootViewTab {
             }
         }
     }
+    
     
     @ViewBuilder private var timedWalkingTestMenu: some View {
         let tests = [
