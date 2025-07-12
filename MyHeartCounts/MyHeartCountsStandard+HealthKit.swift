@@ -105,26 +105,45 @@ extension MyHeartCountsStandard {
         try await uploadHealthObservations(CollectionOfOne(observation), batchSize: 1)
     }
     
-    func uploadHealthObservations(_ observations: some Collection<some HealthObservation & Sendable>, batchSize: Int = 100) async throws {
+    func uploadHealthObservations(_ observations: consuming some Collection<some HealthObservation & Sendable>, batchSize: Int = 100) async throws {
+        guard !observations.isEmpty, let sampleTypeIdentifier = observations.first?.sampleTypeIdentifier else {
+            return
+        }
         let issuedDate = FHIRPrimitive<ModelsR4.Instant>(try .init(date: .now))
-        for chunk in observations.chunks(ofCount: batchSize) {
-            let batch = Firestore.firestore().batch()
-            for observation in chunk {
-                do {
-                    let document = try await healthObservationDocument(for: observation)
-                    let path = document.path
-                    logger.notice("Uploading Health Observation to \(path)")
-                    let resource = try observation.resource(
-                        withMapping: .default,
-                        issuedDate: issuedDate,
-                        extensions: [.sampleUploadTimeZone]
-                    )
-                    try batch.setData(from: resource, forDocument: document)
-                } catch {
-                    logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")
-                }
+        if observations.count >= 1000, observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
+            let numObservations = observations.count
+            logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' via zlib upload")
+            let resources = try observations.map { observation in
+                try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
             }
-            try await batch.commit()
+            _ = consume observations
+            let encoded = try JSONEncoder().encode(resources)
+            let compressed = try encoded.compressed(using: Zlib.self)
+            _ = consume encoded
+            let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zlib", directoryHint: .notDirectory)
+            try compressed.write(to: url)
+            _ = consume compressed
+            healthDataUploader.scheduleForUpload(url, category: .liveData)
+        } else {
+            for chunk in observations.chunks(ofCount: batchSize) {
+                let batch = Firestore.firestore().batch()
+                for observation in chunk {
+                    do {
+                        let document = try await healthObservationDocument(for: observation)
+                        let path = document.path
+                        logger.notice("Uploading Health Observation to \(path)")
+                        let resource = try observation.resource(
+                            withMapping: .default,
+                            issuedDate: issuedDate,
+                            extensions: [.sampleUploadTimeZone]
+                        )
+                        try batch.setData(from: resource, forDocument: document)
+                    } catch {
+                        logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")
+                    }
+                }
+                try await batch.commit()
+            }
         }
     }
     

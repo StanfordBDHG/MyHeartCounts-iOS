@@ -39,6 +39,9 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(TimeZoneTracking.self)
     private var timeZoneTracking: TimeZoneTracking?
     
+    @Dependency(HealthDataFileUploadManager.self)
+    var healthDataUploader
+    
     var enableDebugMode: Bool {
         LocalPreferencesStore.standard[.enableDebugMode]
     }
@@ -71,7 +74,8 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             LocalPreferencesStore.standard[.onboardingFlowComplete] = false
             // QUESTION deleting the userDocument will probably also delete everything nested w/in it (eg: Questionnaire Resonse
             // NOTE: we want as many of these as possible to succeed; hence why we use try? everywhere...
-            try? FileManager.default.removeItem(at: .scheduledHealthKitUploads)
+            try? FileManager.default.removeItem(at: .scheduledLiveHealthKitUploads)
+            try? FileManager.default.removeItem(at: .scheduledHistoricalHealthKitUploads)
             try? await firebaseConfiguration.userDocumentReference.delete()
             if let studyManager {
                 await MainActor.run {

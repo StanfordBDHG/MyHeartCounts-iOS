@@ -68,7 +68,7 @@ struct HomeTab: RootViewTab {
     }
         
     @ViewBuilder private var historicalHealthDataUploadSection: some View {
-        switch (historicalDataExportMgr.exportProgress, historicalDataExportMgr.uploadProgress) {
+        switch (historicalDataExportMgr.exportProgress, historicalDataExportMgr.fileUploader.uploadProgress) {
         case (nil, nil):
             EmptyView()
         case (.some(let exportProgress), nil):

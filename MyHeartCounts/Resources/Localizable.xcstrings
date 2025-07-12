@@ -255,7 +255,7 @@
     "Debug Stuff" : {
 
     },
-    "Delete ~/HealthKitUploads/*" : {
+    "Delete ~/%@/*" : {
 
     },
     "Delete&Reset Session" : {

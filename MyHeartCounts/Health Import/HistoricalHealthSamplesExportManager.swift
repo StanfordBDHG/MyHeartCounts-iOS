@@ -19,6 +19,9 @@ import SpeziStudy
 @MainActor
 final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
+    @ObservationIgnored @Application(\.logger)
+    private var logger
+    
     @ObservationIgnored @Dependency(Account.self)
     private var account: Account?
     
@@ -28,11 +31,11 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     @ObservationIgnored @Dependency(BulkHealthExporter.self)
     private var bulkExporter
     
-    @ObservationIgnored @Application(\.logger)
-    private var logger
+    @ObservationIgnored @Dependency(HealthDataFileUploadManager.self)
+    var fileUploader
     // swiftlint:enable attributes
     
-    private(set) var session: (any BulkExportSession<HistoricalSamplesToFHIRJSONProcessor>)?
+    private(set) var session: (any BulkExportSession<HealthKitSamplesToFHIRJSONProcessor>)?
     
     /// A `Progress` instance representing the current health data export progress,
     /// i.e. the progress of fetching historical samples, converting them into FHIR observations, and compressing them.
@@ -40,34 +43,9 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         session?.progress
     }
     
-    /// A `Progress` instance representing the current health upload progress,
-    /// i.e. the progress uploading collected historical health samples into the Firebase Storage.
-    @MainActor private(set) var uploadProgress: Progress?
-    
     
     func configure() {
         startAutomaticExportingIfNeeded()
-        scheduleOrphanedExportsForUpload()
-    }
-    
-    
-    /// Schedules all files in the bulkExports folder to be uploaded, unless they have already been scheduled.
-    ///
-    /// The purpose of this function is to allow us to retry any unsucessful uploads, which failed bc the app was quit, or for some other reason.
-    private func scheduleOrphanedExportsForUpload() {
-        let urls = (try? FileManager.default.contentsOfDirectory(at: .scheduledHealthKitUploads, includingPropertiesForKeys: nil)) ?? []
-        guard !urls.isEmpty else {
-            return
-        }
-        Task.detached(priority: .utility) {
-            await withDiscardingTaskGroup { taskGroup in
-                for url in urls {
-                    taskGroup.addTask(priority: .utility) {
-                        try? await self.uploadAndDelete(url)
-                    }
-                }
-            }
-        }
     }
     
     
@@ -111,7 +89,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                             withId: .mhcHistoricalDataExport,
                             for: study.allCollectedHealthData,
                             startDate: startDate,
-                            using: HistoricalSamplesToFHIRJSONProcessor()
+                            using: HealthKitSamplesToFHIRJSONProcessor()
                         )
                     } catch {
                         logger.error("Error creating bulk export session: \(error)")
@@ -126,79 +104,11 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         do {
             logger.notice("Will start BulkHealthExport session")
             let results = try session.start(retryFailedBatches: true)
-            processUploads(for: results.compactMap { $0 })
+            fileUploader.scheduleForUpload(results.compactMap { $0 }, category: .historicalData)
             return true
         } catch {
             logger.error("Error starting session: \(error)")
             return false
-        }
-    }
-}
-
-
-// MARK: Upload
-
-extension HistoricalHealthSamplesExportManager {
-    private enum UploadError: Error {
-        case noAccount
-        case uploadFailed(any Error)
-        case deletionFailed(any Error)
-    }
-    
-    nonisolated private func processUploads(for stream: some AsyncSequence<URL, Never> & Sendable) {
-        Task {
-            for await url in stream {
-                scheduleForUpload(url)
-            }
-        }
-    }
-    
-    private nonisolated func scheduleForUpload(_ url: URL) {
-        Task.detached(priority: .utility) {
-            try await self.uploadAndDelete(url)
-        }
-    }
-    
-    @MainActor
-    private func incrementTotalNumUploads() {
-        if let uploadProgress = self.uploadProgress {
-            uploadProgress.totalUnitCount += 1
-        } else {
-            let progress = Progress(totalUnitCount: 1)
-            progress.localizedDescription = String(localized: "Uploading Collected Health Data")
-            self.uploadProgress = progress
-        }
-    }
-    
-    @MainActor
-    private func incrementNumCompletedUploads() {
-        uploadProgress?.completedUnitCount += 1
-        if uploadProgress?.isFinished == true {
-            uploadProgress = nil
-        }
-    }
-    
-    /// Uploads the specified file into the current user's `bulkHealthKitUploads` Firebase Storage directory, and deletes the local file afterwards.
-    private nonisolated func uploadAndDelete(_ url: URL) async throws(UploadError) {
-        await MainActor.run {
-            incrementTotalNumUploads()
-        }
-        guard let accountId = await account?.details?.accountId else {
-            throw .noAccount
-        }
-        let storageRef = Storage.storage().reference(withPath: "users/\(accountId)/bulkHealthKitUploads/\(url.lastPathComponent)")
-        let metadata = StorageMetadata()
-        metadata.contentType = "application/octet-stream"
-        do {
-            _ = try await storageRef.putFileAsync(from: url, metadata: metadata)
-            await incrementNumCompletedUploads()
-        } catch {
-            throw .uploadFailed(error)
-        }
-        do {
-            try FileManager.default.removeItem(at: url)
-        } catch {
-            throw .deletionFailed(error)
         }
     }
 }
