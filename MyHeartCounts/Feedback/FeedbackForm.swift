@@ -48,18 +48,6 @@ struct FeedbackForm: View {
                 .disabled(viewState != .idle)
             }
             ToolbarItem(placement: .primaryAction) {
-//                switch viewState {
-//                case .processing:
-//                    HStack {
-//                        Spacer()
-//                        ProgressView()
-//                        Spacer()
-//                    }
-//                case .processing:
-//                    <#code#>
-//                case .error(let localizedError):
-//                    <#code#>
-//                }
                 AsyncButton("Send", state: $viewState) {
                     guard !text.isEmpty else {
                         return

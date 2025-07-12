@@ -45,18 +45,6 @@
     "100" : {
 
     },
-    "A-" : {
-
-    },
-    "A+" : {
-
-    },
-    "AB-" : {
-
-    },
-    "AB+" : {
-
-    },
     "About %@" : {
 
     },
@@ -146,12 +134,6 @@
       }
     },
     "AuthorizationStatus" : {
-
-    },
-    "B-" : {
-
-    },
-    "B+" : {
 
     },
     "Blood Type" : {
@@ -642,9 +624,6 @@
     "Not logged in" : {
 
     },
-    "Not Set" : {
-
-    },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -666,12 +645,6 @@
       }
     },
     "NotificationsManager" : {
-
-    },
-    "O-" : {
-
-    },
-    "O+" : {
 
     },
     "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT" : {
@@ -1135,9 +1108,6 @@
     "Unenroll" : {
 
     },
-    "Unknown" : {
-
-    },
     "Upcoming Tasks" : {
       "localizations" : {
         "es" : {
@@ -1148,7 +1118,7 @@
         }
       }
     },
-    "Uploading Collected Health Data" : {
+    "Uploading Health Data" : {
 
     },
     "Use this option to auto-fill Height and Weight, by reading the most recent value for each from HealthKit.\nAlternatively, you can tap the field above to manually enter a value." : {
