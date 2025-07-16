@@ -58,6 +58,48 @@
         }
       }
     },
+    "$15,000 – $24,999" : {
+
+    },
+    "$25,000 – $34,999" : {
+
+    },
+    "$35,000 – $49,999" : {
+
+    },
+    "$50,000 – $74,999" : {
+
+    },
+    "$75,000 – $99,999" : {
+
+    },
+    "$100,000 – $149,999" : {
+
+    },
+    "$150,000 and above" : {
+
+    },
+    "£15,000 – £24,999" : {
+
+    },
+    "£25,000 – £34,999" : {
+
+    },
+    "£35,000 – £49,999" : {
+
+    },
+    "£50,000 – £74,999" : {
+
+    },
+    "£75,000 – £99,999" : {
+
+    },
+    "£100,000 – £149,999" : {
+
+    },
+    "£150,000 and above" : {
+
+    },
     "0" : {
 
     },
@@ -123,6 +165,12 @@
     "Add Sample" : {
 
     },
+    "Alabama" : {
+
+    },
+    "Alaska" : {
+
+    },
     "All tasks have already been completed!" : {
 
     },
@@ -136,13 +184,25 @@
         }
       }
     },
+    "American Samoa" : {
+
+    },
     "Are you %lld years old or older?" : {
 
     },
     "Are you able to perform physical activities?" : {
 
     },
+    "Are you Hispanic/Latino?" : {
+
+    },
     "Are you sure you want to leave the '%@' study?" : {
+
+    },
+    "Arizona" : {
+
+    },
+    "Arkansas" : {
 
     },
     "As part of the %@, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %@ minute%@" : {
@@ -158,10 +218,16 @@
     "AuthorizationStatus" : {
 
     },
+    "Biological Sex at Birth" : {
+
+    },
     "Blood Type" : {
 
     },
     "Bulk Export Manager" : {
+
+    },
+    "California" : {
 
     },
     "Can you read and understand %@ in order to provide informed consent and follow instructions?" : {
@@ -183,7 +249,28 @@
         }
       }
     },
+    "Colorado" : {
+
+    },
     "Comorbidities" : {
+
+    },
+    "COMORBIDITY_ACHD" : {
+
+    },
+    "COMORBIDITY_CAD" : {
+
+    },
+    "COMORBIDITY_DIABETES" : {
+
+    },
+    "COMORBIDITY_HEART_FAILURE" : {
+
+    },
+    "COMORBIDITY_NONE" : {
+
+    },
+    "COMORBIDITY_PAH" : {
 
     },
     "Companion Watch App Not Installed" : {
@@ -242,6 +329,9 @@
         }
       }
     },
+    "Connecticut" : {
+
+    },
     "Consent" : {
 
     },
@@ -277,6 +367,9 @@
     "Debug Stuff" : {
 
     },
+    "Delaware" : {
+
+    },
     "Delete ~/%@/*" : {
 
     },
@@ -289,10 +382,22 @@
     "Details" : {
 
     },
+    "Disable Override" : {
+
+    },
     "Disclosure Indicator" : {
 
     },
+    "District of Columbia" : {
+
+    },
     "Done" : {
+
+    },
+    "Educational Level" : {
+
+    },
+    "Effective Region" : {
 
     },
     "Enable App Debug Mode" : {
@@ -377,10 +482,88 @@
         }
       }
     },
+    "First 3 Digits of ZIP Code" : {
+
+    },
+    "First half of Postcode" : {
+
+    },
+    "Florida" : {
+
+    },
     "For optimal results, please keep your Phone in your pocket, and %@ until it vibrates to indicate that the test has ended." : {
 
     },
     "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
+
+    },
+    "Future Studies" : {
+
+    },
+    "Gender Identity" : {
+
+    },
+    "GENDER_FEMALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Female"
+          }
+        }
+      }
+    },
+    "GENDER_MALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Male"
+          }
+        }
+      }
+    },
+    "GENDER_OTHER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gender Variant / Non-Conforming"
+          }
+        }
+      }
+    },
+    "GENDER_PREFER_NOT_TO_STATE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer not to state"
+          }
+        }
+      }
+    },
+    "GENDER_TRANS_FEMALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transgender Female"
+          }
+        }
+      }
+    },
+    "GENDER_TRANS_MALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transgender Male"
+          }
+        }
+      }
+    },
+    "Georgia" : {
 
     },
     "Go to next field" : {
@@ -398,6 +581,12 @@
           }
         }
       }
+    },
+    "Guam" : {
+
+    },
+    "Hawaii" : {
+
     },
     "Health Data" : {
 
@@ -478,6 +667,9 @@
     "Historical Data Bulk Export" : {
 
     },
+    "Household Income" : {
+
+    },
     "I have never smoked" : {
 
     },
@@ -493,7 +685,16 @@
     "I'm actively smoking" : {
 
     },
+    "Idaho" : {
+
+    },
     "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
+
+    },
+    "Illinois" : {
+
+    },
+    "Indiana" : {
 
     },
     "INELIGIBLE_SUBTITLE" : {
@@ -522,10 +723,22 @@
     "Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
 
     },
+    "Iowa" : {
+
+    },
+    "Kansas" : {
+
+    },
+    "Kentucky" : {
+
+    },
     "Label?" : {
 
     },
     "Language" : {
+
+    },
+    "Latino / Hispanic?" : {
 
     },
     "Launch Watch App" : {
@@ -544,6 +757,12 @@
     "Learn more about My Heart Counts" : {
 
     },
+    "Less than $15,000" : {
+
+    },
+    "Less than £15,000" : {
+
+    },
     "License Information" : {
       "localizations" : {
         "en" : {
@@ -560,19 +779,49 @@
     "Local Notifications Status" : {
 
     },
+    "Louisiana" : {
+
+    },
+    "Maine" : {
+
+    },
     "Make sure your device is connected to the internet and try again" : {
+
+    },
+    "Maryland" : {
+
+    },
+    "Massachusetts" : {
 
     },
     "Matching Entry" : {
 
     },
+    "May we contact you about future studies that may be of interest to you?" : {
+
+    },
     "Message?" : {
+
+    },
+    "Michigan" : {
+
+    },
+    "Minnesota" : {
 
     },
     "Missed Tasks" : {
 
     },
     "Missing Required Motion Data Access Permission" : {
+
+    },
+    "Mississippi" : {
+
+    },
+    "Missouri" : {
+
+    },
+    "Montana" : {
 
     },
     "More than 5 years ago" : {
@@ -597,10 +846,28 @@
     "n/a" : {
 
     },
+    "Nebraska" : {
+
+    },
     "Network Issue" : {
 
     },
+    "Nevada" : {
+
+    },
     "Never" : {
+
+    },
+    "New Hampshire" : {
+
+    },
+    "New Jersey" : {
+
+    },
+    "New Mexico" : {
+
+    },
+    "New York" : {
 
     },
     "News" : {
@@ -646,7 +913,22 @@
     "No Upcoming Tasks" : {
 
     },
+    "No, not Spanish/Hispanic/Latino" : {
+
+    },
+    "North Carolina" : {
+
+    },
+    "North Dakota" : {
+
+    },
+    "Northern Mariana Islands" : {
+
+    },
     "Not logged in" : {
+
+    },
+    "Not Set" : {
 
     },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
@@ -670,6 +952,12 @@
       }
     },
     "NotificationsManager" : {
+
+    },
+    "Ohio" : {
+
+    },
+    "Oklahoma" : {
 
     },
     "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT" : {
@@ -798,7 +1086,16 @@
     "Open Settings" : {
 
     },
+    "Oregon" : {
+
+    },
+    "Override Region" : {
+
+    },
     "Participation Criteria" : {
+
+    },
+    "Pennsylvania" : {
 
     },
     "Percentage in Phase" : {
@@ -808,6 +1105,9 @@
 
     },
     "Processing Sleep Data…" : {
+
+    },
+    "Puerto Rico" : {
 
     },
     "Race / Ethnicity" : {
@@ -844,6 +1144,7 @@
       }
     },
     "RACE_ASIAN" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -853,7 +1154,11 @@
         }
       }
     },
+    "RACE_ASIAN_INDIAN" : {
+
+    },
     "RACE_CAUCASIAN" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -863,7 +1168,14 @@
         }
       }
     },
+    "RACE_CHINESE" : {
+
+    },
+    "RACE_FILIPINO" : {
+
+    },
     "RACE_HISPANIC_LATINO" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -873,7 +1185,14 @@
         }
       }
     },
+    "RACE_JAPANESE" : {
+
+    },
+    "RACE_KOREAN" : {
+
+    },
     "RACE_MENA" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -884,6 +1203,7 @@
       }
     },
     "RACE_NATIVE_HAWAIIAN" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -943,6 +1263,12 @@
         }
       }
     },
+    "RACE_VIETNAMESE" : {
+
+    },
+    "RACE_WHITE" : {
+
+    },
     "Read Article" : {
 
     },
@@ -968,6 +1294,9 @@
 
     },
     "Review Consent Forms" : {
+
+    },
+    "Rhode Island" : {
 
     },
     "Sample Type" : {
@@ -1020,7 +1349,53 @@
     "Series" : {
 
     },
+    "SEX_FEMALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Female"
+          }
+        }
+      }
+    },
+    "SEX_INTERSEX" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intersex"
+          }
+        }
+      }
+    },
+    "SEX_MALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Male"
+          }
+        }
+      }
+    },
+    "SEX_PREFER_NOT_TO_STATE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer not to state"
+          }
+        }
+      }
+    },
     "Sleep Phase" : {
+
+    },
+    "South Carolina" : {
+
+    },
+    "South Dakota" : {
 
     },
     "Spezi Modules" : {
@@ -1074,13 +1449,16 @@
         }
       }
     },
+    "Tennessee" : {
+
+    },
+    "Texas" : {
+
+    },
     "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
 
     },
     "The app was unable to load the study, but we're not sure why" : {
-
-    },
-    "The Blood Type value was auto-read from HealthKit" : {
 
     },
     "The Spezi Framework" : {
@@ -1121,7 +1499,31 @@
     "TODO: rough information about (at least some) key study components here?" : {
 
     },
+    "Total Household Income" : {
+
+    },
     "True" : {
+
+    },
+    "Trust Territories" : {
+
+    },
+    "UK Country" : {
+
+    },
+    "UK_REGION_ENGLAND" : {
+
+    },
+    "UK_REGION_NORTHERN_IRELAND" : {
+
+    },
+    "UK_REGION_NOT_SET" : {
+
+    },
+    "UK_REGION_SCOTLAND" : {
+
+    },
+    "UK_REGION_WALES" : {
 
     },
     "Unable to find Questionnaire" : {
@@ -1146,10 +1548,28 @@
     "Uploading Health Data" : {
 
     },
-    "Use this option to auto-fill Height and Weight, by reading the most recent value for each from HealthKit.\nAlternatively, you can tap the field above to manually enter a value." : {
+    "US State / Region" : {
+
+    },
+    "Use this option to auto-fill Blood Type, Height and Weight, by reading each from HealthKit, if available.\nAlternatively, you can also tap the respective fields below to manually enter a value." : {
+
+    },
+    "Utah" : {
+
+    },
+    "Vermont" : {
+
+    },
+    "Virgin Islands" : {
+
+    },
+    "Virginia" : {
 
     },
     "Warning Sign" : {
+
+    },
+    "Washington" : {
 
     },
     "Weight" : {
@@ -1227,6 +1647,9 @@
         }
       }
     },
+    "West Virginia" : {
+
+    },
     "What country do you currently live in?" : {
 
     },
@@ -1236,13 +1659,37 @@
     "When were you born?" : {
 
     },
+    "Wisconsin" : {
+
+    },
     "Within last year, or am using NDS" : {
 
     },
     "World" : {
 
     },
+    "Wyoming" : {
+
+    },
     "Yes" : {
+
+    },
+    "Yes, Caribbean Hispanic, including Cuban and Puerto Rican" : {
+
+    },
+    "Yes, European Hispanic, including Spanish and Portuguese, Hispanic, Latina" : {
+
+    },
+    "Yes, Mexican, Mexican American, or Chicano" : {
+
+    },
+    "Yes, other Hispanic, Latino" : {
+
+    },
+    "Yes, South American Hispanic" : {
+
+    },
+    "You can select multiple options" : {
 
     },
     "Your Account" : {

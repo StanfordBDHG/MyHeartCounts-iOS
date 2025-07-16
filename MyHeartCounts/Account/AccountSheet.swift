@@ -86,8 +86,10 @@ struct AccountSheet: View {
     
     @ViewBuilder private var accountSheetExtraContent: some View {
         Section {
-            Button("Demographics") {
+            Button {
                 isPresentingDemographicsSheet = true
+            } label: {
+                Label("Demographics", systemSymbol: .personTextRectangle)
             }
         }
         

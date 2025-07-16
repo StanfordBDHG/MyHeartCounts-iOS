@@ -9,44 +9,45 @@
 import Foundation
 
 
-struct RaceEthnicity: OptionSet, Hashable, Codable, Sendable {
+struct RaceEthnicity: OptionSet, Hashable, Sendable, RawRepresentableAccountKey {
     let rawValue: UInt64
     
     init(rawValue: RawValue) {
         self.rawValue = rawValue
     }
     
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        rawValue = try container.decode(RawValue.self)
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
-    }
+//    init(from decoder: any Decoder) throws {
+//        let container = try decoder.singleValueContainer()
+//        rawValue = try container.decode(RawValue.self)
+//    }
+//    
+//    func encode(to encoder: any Encoder) throws {
+//        var container = encoder.singleValueContainer()
+//        try container.encode(rawValue)
+//    }
 }
 
 
 extension RaceEthnicity {
     static let preferNotToState = Self(rawValue: 1 << 0)
     
-    static let americanIndian = Self(rawValue: 1 << 1)
-    static let alaskaNative = Self(rawValue: 1 << 2)
-    static let asian = Self(rawValue: 1 << 3)
-    static let africanAmerican = Self(rawValue: 1 << 4)
-    static let caucasian = Self(rawValue: 1 << 5)
-    static let hispanicOrLatino = Self(rawValue: 1 << 6)
-    /// Middle East and Northern Africa
-    static let mena = Self(rawValue: 1 << 7)
-    static let nativeHawaiian = Self(rawValue: 1 << 8)
-    static let pacificIslander = Self(rawValue: 1 << 9)
-    static let other = Self(rawValue: 1 << 10)
+    
+    static let white = Self(rawValue: 1 << 1) // 1=White;
+    static let black = Self(rawValue: 1 << 2) // 2=Black, African-American, or Negro;
+    static let americanIndian = Self(rawValue: 1 << 3) // 3=American Indian;
+    static let alaskaNative = Self(rawValue: 1 << 4) // 4=Alaska Native;
+    static let asianIndian = Self(rawValue: 1 << 5) // 5=Asian Indian;
+    static let chinese = Self(rawValue: 1 << 6) // 6=Chinise;
+    static let filipino = Self(rawValue: 1 << 7) // 7=Filipino;
+    static let japanese = Self(rawValue: 1 << 8) // 8=Japanese;
+    static let korean = Self(rawValue: 1 << 9) // 9=Korean;
+    static let vietnamese = Self(rawValue: 1 << 10) // 10=Vietnamese;
+    static let pacificIslander = Self(rawValue: 1 << 11) // 11=Pacific Islander;
+    static let other = Self(rawValue: 1 << 12) // 12=Not listed
     
     static let allOptions: [Self] = [
         .preferNotToState,
-        .americanIndian, .alaskaNative, .asian, .africanAmerican, .caucasian,
-        .hispanicOrLatino, .mena, .nativeHawaiian, .pacificIslander, .other
+        .white, .black, .americanIndian, .alaskaNative, .asianIndian, .chinese, .filipino, .japanese, .korean, .vietnamese, .pacificIslander, .other
     ]
     
     var localizedDisplayTitle: String {
@@ -56,29 +57,35 @@ extension RaceEthnicity {
             return String(localized: "RACE_PREFER_NOT_TO_ANSWER")
         }
         var entries: [LocalizedStringResource] = []
+        if self.contains(.white) {
+            entries.append("RACE_WHITE")
+        }
+        if self.contains(.black) {
+            entries.append("RACE_AFRICAN_AMERICAN")
+        }
         if self.contains(.americanIndian) {
             entries.append("RACE_AMERICAN_INDIAN")
         }
         if self.contains(.alaskaNative) {
             entries.append("RACE_ALASKA_NATIVE")
         }
-        if self.contains(.asian) {
-            entries.append("RACE_ASIAN")
+        if self.contains(.asianIndian) {
+            entries.append("RACE_ASIAN_INDIAN")
         }
-        if self.contains(.africanAmerican) {
-            entries.append("RACE_AFRICAN_AMERICAN")
+        if self.contains(.chinese) {
+            entries.append("RACE_CHINESE")
         }
-        if self.contains(.caucasian) {
-            entries.append("RACE_CAUCASIAN")
+        if self.contains(.filipino) {
+            entries.append("RACE_FILIPINO")
         }
-        if self.contains(.hispanicOrLatino) {
-            entries.append("RACE_HISPANIC_LATINO")
+        if self.contains(.japanese) {
+            entries.append("RACE_JAPANESE")
         }
-        if self.contains(.mena) {
-            entries.append("RACE_MENA")
+        if self.contains(.korean) {
+            entries.append("RACE_KOREAN")
         }
-        if self.contains(.nativeHawaiian) {
-            entries.append("RACE_NATIVE_HAWAIIAN")
+        if self.contains(.vietnamese) {
+            entries.append("RACE_VIETNAMESE")
         }
         if self.contains(.pacificIslander) {
             entries.append("RACE_PACIFIC_ISLANDER")

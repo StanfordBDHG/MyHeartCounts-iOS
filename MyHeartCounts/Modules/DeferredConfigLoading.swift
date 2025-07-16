@@ -211,7 +211,7 @@ enum DeferredConfigLoading {
                 logger.notice("FirebaseOptions fetch returned nil. Not initializing anything.")
                 return []
             }
-            return Array {
+            return Array { // swiftlint:disable:this closure_body_length
                 ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
                 LoadFirebaseTracking()
                 AccountConfiguration(
@@ -221,16 +221,28 @@ enum DeferredConfigLoading {
                         .requires(\.userId),
                         .requires(\.name),
                         // additional values stored using the `FirestoreAccountStorage` within our Standard implementation
-                        .collects(\.genderIdentity),
-                        .collects(\.dateOfBirth),
+//                        .collects(\.genderIdentity),
+                        .manual(\.dateOfBirth),
                         .manual(\.fcmToken),
                         .manual(\.timeZone),
+                        .manual(\.enableDebugMode),
+                        .manual(\.mhcGenderIdentity),
+                        .manual(\.usRegion),
+                        .manual(\.usZipCodePrefix),
+                        .manual(\.householdIncomeUS),
+                        .manual(\.ukRegion),
+                        .manual(\.ukPostcodePrefix),
+                        .manual(\.householdIncomeUK),
                         .manual(\.heightInCM),
                         .manual(\.weightInKG),
                         .manual(\.raceEthnicity),
+                        .manual(\.latinoStatus),
+                        .manual(\.biologicalSexAtBirth),
                         .manual(\.bloodType),
-                        .manual(\.nhsNumber),
-                        .manual(\.enableDebugMode)
+                        .manual(\.educationUS),
+                        .manual(\.educationUK),
+                        .manual(\.comorbidities),
+                        .manual(\.nhsNumber)
                     ]
                 )
                 firestore
