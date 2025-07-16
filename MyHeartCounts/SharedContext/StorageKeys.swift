@@ -21,9 +21,4 @@ extension LocalPreferenceKey {
     static var onboardingFlowComplete: LocalPreferenceKey<Bool> {
         .make("onboardingFlowComplete", default: false)
     }
-    
-    /// A `Bool` flag indicating whether the app should enable its debug mode.
-    static var enableDebugMode: LocalPreferenceKey<Bool> {
-        .make("enableDebugMode", default: true)
-    }
 }

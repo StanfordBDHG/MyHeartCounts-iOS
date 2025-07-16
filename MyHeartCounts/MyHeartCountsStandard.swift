@@ -42,8 +42,13 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(HealthDataFileUploadManager.self)
     var healthDataUploader
     
+    @Dependency(AccountFeatureFlags.self)
+    private var accountFeatureFlags
+    
     var enableDebugMode: Bool {
-        LocalPreferencesStore.standard[.enableDebugMode]
+        get async {
+            await accountFeatureFlags.isDebugModeEnabled
+        }
     }
     
     init() {}
@@ -59,12 +64,22 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             }
         }
     }
-
+    
+    private func propagateDebugModeValue(_ isEnabled: Bool) async {
+        LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey] = isEnabled
+        await accountFeatureFlags._updateIsDebugModeEnabled(isEnabled)
+    }
+    
+    private func propagateDebugModeValue(_ details: AccountDetails) async {
+        await propagateDebugModeValue(details.enableDebugMode ?? false)
+    }
+    
     func respondToEvent(_ event: AccountNotifications.Event) async {
         switch event {
         case .deletingAccount:
-            break
+            await propagateDebugModeValue(false)
         case .disassociatingAccount:
+            await propagateDebugModeValue(false)
             // upon logging out, we want to throw the user back to the onboarding.
             // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
             // since the Firebase SDK and all related Spezi modules will still be loaded.
@@ -85,10 +100,11 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                     try? studyManager.unenroll(from: enrollment)
                 }
             }
-        case .associatedAccount:
+        case .associatedAccount(let details):
+            await propagateDebugModeValue(details)
             try? await timeZoneTracking?.updateTimeZoneInfo()
-        case .detailsChanged:
-            break
+        case .detailsChanged(_, let newDetails):
+            await propagateDebugModeValue(newDetails)
         }
     }
 }

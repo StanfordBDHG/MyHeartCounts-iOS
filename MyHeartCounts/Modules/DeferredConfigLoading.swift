@@ -229,7 +229,8 @@ enum DeferredConfigLoading {
                         .manual(\.weightInKG),
                         .manual(\.raceEthnicity),
                         .manual(\.bloodType),
-                        .manual(\.nhsNumber)
+                        .manual(\.nhsNumber),
+                        .manual(\.enableDebugMode)
                     ]
                 )
                 firestore

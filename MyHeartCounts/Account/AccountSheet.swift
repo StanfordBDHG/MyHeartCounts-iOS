@@ -15,29 +15,20 @@ import SwiftUI
 
 struct AccountSheet: View {
     private let dismissAfterSignIn: Bool
-    
-    @Environment(\.dismiss)
-    private var dismiss
-    
-    @Environment(\.colorScheme)
-    private var colorScheme
-    
-    @Environment(Account.self)
-    private var account
-    @Environment(\.accountRequired)
-    private var accountRequired
+    // swiftlint:disable attributes
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.openAppSettings) private var openAppSettings
+    @Environment(Account.self) private var account
+    @Environment(\.accountRequired) private var accountRequired
+    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    // swiftlint:enable attributes
     
     @State private var isInSetup = false
     @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
     
-    @Environment(\.openAppSettings)
-    private var openAppSettings
-    
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
-    
-    @LocalPreference(.enableDebugMode)
-    private var enableDebugMode
     
     var body: some View {
         NavigationStack { // swiftlint:disable:this closure_body_length
@@ -117,9 +108,9 @@ struct AccountSheet: View {
                 }
             }
         }
-        #if false && DEBUG
-        debugSection
-        #endif
+        if accountFeatureFlags.isDebugModeEnabled {
+            debugSection
+        }
         Section {
             if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
@@ -162,17 +153,14 @@ struct AccountSheet: View {
     
     @ViewBuilder private var debugSection: some View {
         Section("Debug Mode") {
-            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
-            if enableDebugMode {
-                NavigationLink("Health Data Bulk Upload") {
-                    HealthImporterControlView()
-                }
-                NavigationLink("NotificationsManager") {
-                    NotificationsManagerControlView()
-                }
-                NavigationLink("Debug Stuff") {
-                    DebugStuffView()
-                }
+            NavigationLink("Health Data Bulk Upload") {
+                HealthImporterControlView()
+            }
+            NavigationLink("NotificationsManager") {
+                NotificationsManagerControlView()
+            }
+            NavigationLink("Debug Stuff") {
+                DebugStuffView()
             }
         }
     }

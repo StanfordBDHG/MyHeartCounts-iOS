@@ -32,9 +32,6 @@ struct HomeTab: RootViewTab {
     @Environment(\.calendar)
     private var calendar
     
-    @LocalPreference(.enableDebugMode)
-    private var enableDebugMode
-    
     @Environment(Account.self)
     private var account
     

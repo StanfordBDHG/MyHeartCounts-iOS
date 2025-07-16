@@ -99,11 +99,16 @@ extension HealthDataFileUploadManager {
     }
     
     nonisolated func scheduleForUpload(_ url: URL, category: Category) {
-        Task(priority: .utility) {
-            let stagingUrl = category.stagingDirUrl.appending(path: url.lastPathComponent)
-            try FileManager.default.moveItem(at: url, to: stagingUrl)
-            try await self.uploadAndDelete(stagingUrl, category: category)
+        Task {
+            try await upload(url, category: category)
         }
+    }
+    
+    nonisolated func upload(_ url: URL, category: Category) async throws {
+        let stagingUrl = category.stagingDirUrl.appending(path: url.lastPathComponent)
+        try FileManager.default.moveItem(at: url, to: stagingUrl)
+        await Task.yield()
+        try await self.uploadAndDelete(stagingUrl, category: category)
     }
     
     @MainActor
