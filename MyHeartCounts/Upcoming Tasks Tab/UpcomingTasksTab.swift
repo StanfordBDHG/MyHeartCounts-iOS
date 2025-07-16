@@ -24,7 +24,7 @@ struct UpcomingTasksTab: RootViewTab {
     var body: some View {
         NavigationStack {
             Form {
-                UpcomingTasksList(timeRange: .days(4))
+                TasksList(timeRange: .weeks(2))
             }
             .navigationTitle(String(localized: Self.tabTitle))
             .navigationBarTitleDisplayMode(.large)

@@ -17,7 +17,7 @@ import SpeziViews
 import SwiftUI
 
 
-struct UpcomingTasksList: View {
+struct TasksList: View {
     enum TimeRange {
         /// The time range starting today, and going `numDays` days into the future.
         case days(_ numDays: Int)
@@ -35,6 +35,13 @@ struct UpcomingTasksList: View {
         static let fortnight = Self.weeks(2)
         /// The time range starting today, and going a month into the future.
         static let month = Self.months(1)
+    }
+    
+    enum Mode {
+        /// The ``TasksList`` should display a list of upcoming Tasks
+        case upcoming
+        /// The ``TasksList`` should display a list of missed but not yet expired Tasks
+        case missed
     }
     
     enum HeaderConfig {
@@ -58,6 +65,7 @@ struct UpcomingTasksList: View {
     @Environment(StudyManager.self)
     private var studyManager
     
+    private let mode: Mode
     private let timeRange: TimeRange
     private let headerConfig: HeaderConfig
     
@@ -65,7 +73,6 @@ struct UpcomingTasksList: View {
     @State private var presentedArticle: Article?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
     @State private var presentedTimedWalkingTest: StudyDefinition.TimedWalkingTestComponent?
-    @State private var tmpPresentSheet = false
     
     var body: some View {
         header
@@ -98,8 +105,20 @@ struct UpcomingTasksList: View {
                         TimedWalkingTestView(component.test)
                     }
                 }
-        Impl(timeRange: Self.effectiveTimeRange(for: timeRange, cal: cal)) {
-            await handleAction($0, for: $1, context: $2)
+        let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
+        switch mode {
+        case .upcoming:
+            UpcomingEventsQuery(effectiveTimeRange) { events in
+                Impl(events: events) {
+                    await handleAction($0, for: $1, context: $2)
+                }
+            }
+        case .missed:
+            MissedEventsQuery(effectiveTimeRange) { events in
+                Impl(events: events) {
+                    await handleAction($0, for: $1, context: $2)
+                }
+            }
         }
     }
     
@@ -110,7 +129,7 @@ struct UpcomingTasksList: View {
             if !subtitle.isEmpty {
                 Text(subtitle)
                     .foregroundStyle(.secondary)
-                    .font(.caption)
+                    .font(.footnote)
                     .fontDesign(.rounded)
             }
         }
@@ -149,7 +168,12 @@ struct UpcomingTasksList: View {
         }
     }
     
-    init(timeRange: TimeRange, headerConfig: HeaderConfig = .timeRange) {
+    init(
+        mode: Mode = .upcoming, // swiftlint:disable:this function_default_parameter_at_end
+        timeRange: TimeRange,
+        headerConfig: HeaderConfig = .timeRange
+    ) {
+        self.mode = mode
         self.timeRange = timeRange
         self.headerConfig = headerConfig
     }
@@ -179,7 +203,6 @@ struct UpcomingTasksList: View {
                 logger.error("Unable to find SPC")
                 return
             }
-            tmpPresentSheet = true
             questionnaireBeingAnswered = .init(questionnaire: questionnaire, enrollment: enrollment, event: event)
         case .promptTimedWalkingTest(let component):
             presentedTimedWalkingTest = component
@@ -188,8 +211,8 @@ struct UpcomingTasksList: View {
 }
 
 
-extension UpcomingTasksList {
-    private static func effectiveTimeRange(for timeRange: TimeRange, cal: Calendar) -> Range<Date> {
+extension TasksList {
+    static func effectiveTimeRange(for timeRange: TimeRange, cal: Calendar) -> Range<Date> {
         switch timeRange {
         case .days(let numDays):
             let start = cal.startOfDay(for: .now)
@@ -208,7 +231,37 @@ extension UpcomingTasksList {
 }
 
 
-extension UpcomingTasksList {
+extension TasksList {
+    private struct UpcomingEventsQuery<Content: View>: View {
+        @EventQuery private var events: [Event]
+        private let content: @MainActor ([Event]) -> Content
+        
+        var body: some View {
+            content(events)
+        }
+        
+        init(_ timeRange: Range<Date>, @ViewBuilder content: @escaping @MainActor ([Event]) -> Content) {
+            _events = .init(in: timeRange)
+            self.content = content
+        }
+    }
+    
+    
+    private struct MissedEventsQuery<Content: View>: View {
+        @MissedEventQuery private var events: [Event]
+        private let content: @MainActor ([Event]) -> Content
+        
+        var body: some View {
+            content(events)
+        }
+        
+        init(_ timeRange: Range<Date>, @ViewBuilder content: @escaping @MainActor ([Event]) -> Content) {
+            _events = .init(in: timeRange)
+            self.content = content
+        }
+    }
+    
+    
     private struct Impl: View {
         typealias SelectionHandler = @MainActor (
             _ action: StudyManager.ScheduledTaskAction,
@@ -223,7 +276,7 @@ extension UpcomingTasksList {
         
         @Environment(\.calendar)
         private var cal
-        @EventQuery private var events: [Event]
+        private let events: [Event]
         private let selectionHandler: SelectionHandler
         
         var body: some View {
@@ -272,8 +325,8 @@ extension UpcomingTasksList {
                 .map { SectionedEvents(startOfDay: cal.startOfDay(for: $0.first!.occurrence.start), events: Array($0)) }
         }
         
-        init(timeRange: Range<Date>, selectionHandler: @escaping SelectionHandler) {
-            _events = .init(in: timeRange)
+        init(events: [Event], selectionHandler: @escaping SelectionHandler) {
+            self.events = events
             self.selectionHandler = selectionHandler
         }
         

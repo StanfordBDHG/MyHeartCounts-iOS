@@ -280,3 +280,12 @@ extension OptionSet {
         }
     }
 }
+
+
+extension SwiftUI.Label where Icon == Image {
+    init(symbol: SFSymbol, @ViewBuilder title: () -> Title) {
+        self.init(title: title) {
+            Image(systemSymbol: symbol)
+        }
+    }
+}

@@ -83,7 +83,7 @@ extension MyHeartCountsStandard {
         try await uploadHealthObservations(CollectionOfOne(observation), batchSize: 1)
     }
     
-    func uploadHealthObservations( // swiftlint:disable:this function_body_length
+    func uploadHealthObservations(
         _ observations: consuming some Collection<some HealthObservation & Sendable>,
         batchSize: Int = 100
     ) async throws {

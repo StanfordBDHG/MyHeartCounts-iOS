@@ -29,20 +29,45 @@ struct HomeTab: RootViewTab {
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var historicalDataExportMgr
     
-    @Environment(\.calendar)
-    private var calendar
-    
     @Environment(Account.self)
     private var account
     
     @State private var actionCards: [ActionCard] = []
+    
+    @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
+    private var missedEvents
     
     var body: some View {
         NavigationStack {
             Form {
                 topActionsFormContent
                 historicalHealthDataUploadSection
-                UpcomingTasksList(timeRange: .today, headerConfig: .custom("Today's Tasks"))
+                TasksList(timeRange: .today, headerConfig: .custom("Today's Tasks"))
+                if !missedEvents.isEmpty {
+                    Section {
+                        NavigationLink {
+                            Form {
+                                TasksList(
+                                    mode: .missed,
+                                    timeRange: .weeks(2),
+                                    headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks")
+                                )
+                            }
+                            .navigationTitle("Missed Tasks")
+                            .navigationBarTitleDisplayMode(.inline)
+                        } label: {
+                            let numMissedTasks = missedEvents.count
+                            Label(symbol: .calendar) {
+                                VStack(alignment: .leading) {
+                                    Text("Missed Tasks")
+                                    Text("\(numMissedTasks) missed tasks in the past 2 weeks")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                }
             }
             .navigationTitle(String(localized: Self.tabTitle))
             .toolbar {
