@@ -22,6 +22,7 @@ struct AgeAtLeast: ScreeningComponent {
     private var data
     
     let title: LocalizedStringResource
+    private let labelText: LocalizedStringResource
     private let style: Style
     private let minAge: Int
     
@@ -29,7 +30,7 @@ struct AgeAtLeast: ScreeningComponent {
         switch style {
         case .toggle:
             // or use the `SingleChoiceScreeningComponentImpl`??
-            Toggle(String(localized: title), isOn: Binding<Bool> {
+            Toggle(isOn: Binding<Bool> {
                 switch data.screening.dateOfBirth {
                 case .binaryAtLeast(minAge: _, let response):
                     response
@@ -38,7 +39,10 @@ struct AgeAtLeast: ScreeningComponent {
                 }
             } set: { newValue in
                 data.screening.dateOfBirth = .binaryAtLeast(minAge: minAge, response: newValue)
-            })
+            }) {
+                Text(labelText)
+                    .fontWeight(.medium)
+            }
         case .enterDate:
             let binding = Binding<Date> {
                 switch data.screening.dateOfBirth {
@@ -55,7 +59,7 @@ struct AgeAtLeast: ScreeningComponent {
                 in: Date.distantPast...Date.now,
                 displayedComponents: .date
             ) {
-                Text("When were you born?")
+                Text(labelText)
                     .fontWeight(.medium)
             }
         }
@@ -65,11 +69,12 @@ struct AgeAtLeast: ScreeningComponent {
     init(style: Style, minAge: Int) {
         self.style = style
         self.minAge = minAge
+        title = "Age"
         switch style {
         case .toggle:
-            self.title = "Are you \(minAge) years old or older?"
+            labelText = "Are you \(minAge) years old or older?"
         case .enterDate:
-            self.title = "Date of Birth"
+            labelText = "Date of Birth"
         }
     }
     

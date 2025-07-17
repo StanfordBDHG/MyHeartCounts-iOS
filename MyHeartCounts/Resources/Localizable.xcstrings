@@ -165,6 +165,9 @@
     "Add Sample" : {
 
     },
+    "Age" : {
+
+    },
     "Alabama" : {
 
     },
@@ -324,7 +327,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprehension of Consent Questionnaire"
+            "value" : "Consent Comprehension"
           }
         }
       }
@@ -1654,9 +1657,6 @@
 
     },
     "What's your level of nicotine exposure? How often do you smoke?" : {
-
-    },
-    "When were you born?" : {
 
     },
     "Wisconsin" : {

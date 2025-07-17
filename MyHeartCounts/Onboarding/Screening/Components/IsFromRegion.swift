@@ -49,6 +49,7 @@ struct IsFromRegion: ScreeningComponent {
                         .foregroundStyle(colorScheme.textLabelForegroundStyle.secondary)
                 }
                 DisclosureIndicator()
+                    .accessibilityHidden(true)
             }
             .contentShape(Rectangle())
         }

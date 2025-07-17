@@ -68,5 +68,5 @@ extension LaunchOptions {
     
     static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)
     
-    static let overrideStudyDefinitionLocation = LaunchOption<URL?>("--overrideStudyDefinitionLocation", default: nil)
+    static let overrideStudyBundleLocation = LaunchOption<URL?>("--overrideStudyBundleLocation", default: nil)
 }

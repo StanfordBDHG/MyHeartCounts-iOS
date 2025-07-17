@@ -46,19 +46,10 @@ struct Welcome: View {
                     description: "WELCOME_AREA3_DESCRIPTION"
                 )
             ],
-            actionText: "Learn More",
+            actionText: "Continue",
             action: {
                 onboardingPath.nextStep()
             }
         )
     }
 }
-
-
-#if DEBUG
-#Preview {
-    ManagedNavigationStack {
-        Welcome()
-    }
-}
-#endif

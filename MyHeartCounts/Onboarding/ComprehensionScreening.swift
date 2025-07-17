@@ -68,6 +68,7 @@ private struct Question: ScreeningComponent {
             },
             optionTitle: { $0 ? "True" : "False" }
         )
+        .accessibilityIdentifier("Consent Comprehension: \(String(localized: title))")
     }
     
     func evaluate(_ data: OnboardingDataCollection) -> Bool {

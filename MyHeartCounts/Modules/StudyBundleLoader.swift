@@ -93,10 +93,14 @@ final class StudyBundleLoader: Module, Sendable {
     private func load(fromBucket bucketName: String) async throws(LoadError) -> StudyBundle {
         let downloadUrl: URL
         do {
-            downloadUrl = try await download(
-                fileName: "mhcStudyBundle.\(StudyBundle.fileExtension).aar",
-                inBucket: bucketName
-            )
+            if let url = LaunchOptions.launchOptions[.overrideStudyBundleLocation] {
+                downloadUrl = try await download(url)
+            } else {
+                downloadUrl = try await download(
+                    fileName: "mhcStudyBundle.\(StudyBundle.fileExtension).aar",
+                    inBucket: bucketName
+                )
+            }
         } catch {
             throw .unableToFetchFromServer(error)
         }
@@ -118,7 +122,11 @@ final class StudyBundleLoader: Module, Sendable {
     /// Downloads the file with the specified `filename` from the Firebase Storage bucket `bucketName`
     @discardableResult
     private func download(fileName: String, inBucket bucketName: String) async throws -> URL {
-        let url = Self.url(ofFile: fileName, inBucket: bucketName)
+        try await download(Self.url(ofFile: fileName, inBucket: bucketName))
+    }
+    
+    @discardableResult
+    private func download(_ url: URL) async throws -> URL {
         logger.notice("will try to download '\(url.absoluteString)'")
         let session = URLSession(configuration: .ephemeral)
         let (downloadUrl, response) = try await session.download(from: url)
@@ -133,11 +141,11 @@ final class StudyBundleLoader: Module, Sendable {
             return downloadUrl
         case 404:
             throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "Unable to find file '\(bucketName)/\(fileName)'"
+                NSLocalizedDescriptionKey: "Unable to find file '\(url)'"
             ])
         default:
             throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "Unable to fetch file '\(bucketName)/\(fileName)'"
+                NSLocalizedDescriptionKey: "Unable to fetch file '\(url)'"
             ])
         }
     }
@@ -167,14 +175,6 @@ final class StudyBundleLoader: Module, Sendable {
 
 
 extension StudyBundleLoader {
-    private static func studyLocation(inBucket bucketName: String) -> URL {
-        if let url = LaunchOptions.launchOptions[.overrideStudyDefinitionLocation] {
-            url
-        } else {
-            url(ofFile: "mhcStudyDefinition.json", inBucket: bucketName)
-        }
-    }
-    
     private static func url(ofFile filename: String, inBucket bucketName: String) -> URL {
         "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2F\(filename)?alt=media"
     }

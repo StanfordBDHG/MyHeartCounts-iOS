@@ -49,20 +49,20 @@ struct SinglePageScreening: View {
         OnboardingView(wrapInScrollView: false) {
             OnboardingTitleView(title: title, subtitle: subtitle)
                 .padding(.horizontal)
-        } content: {
+        } content: { // swiftlint:disable:this closure_body_length
             Form {
                 ForEach(0..<components.endIndex, id: \.self) { idx in
                     let component = components[idx]
+                    let title = String(localized: component.title)
                     Section {
                         component.intoAnyView()
                     } header: {
-                        let text = String(localized: component.title)
-                        if text.isEmpty {
-                            EmptyView()
-                        } else {
-                            Text(text)
+                        if !title.isEmpty {
+                            Text(title)
                         }
                     }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("Screening Section, \(title.isEmpty ? String(idx) : title)")
                 }
                 Section {
                     AsyncButton(state: $viewState) {
