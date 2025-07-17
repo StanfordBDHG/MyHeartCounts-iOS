@@ -49,7 +49,7 @@ struct SinglePageScreening: View {
         OnboardingView(wrapInScrollView: false) {
             OnboardingTitleView(title: title, subtitle: subtitle)
                 .padding(.horizontal)
-        } content: { // swiftlint:disable:this closure_body_length
+        } content: {
             Form {
                 ForEach(0..<components.endIndex, id: \.self) { idx in
                     let component = components[idx]
