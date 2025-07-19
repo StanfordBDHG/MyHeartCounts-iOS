@@ -17,11 +17,9 @@ struct LocalPreferenceKey<Value>: Sendable {
     fileprivate let key: String
     fileprivate let read: @Sendable (UserDefaults) -> Value
     fileprivate let write: @Sendable (Value?, UserDefaults) throws -> Void
-    fileprivate let makeDefault: @Sendable () -> Value
     
     private init(
         key: String,
-        makeDefault: @escaping @Sendable () -> Value,
         read: @escaping @Sendable (String, UserDefaults) -> Value,
         write: @escaping @Sendable (String, Value?, UserDefaults) throws -> Void
     ) {
@@ -31,14 +29,13 @@ struct LocalPreferenceKey<Value>: Sendable {
         self.key = key
         self.read = { read(key, $0) }
         self.write = { try write(key, $0, $1) }
-        self.makeDefault = makeDefault
     }
     
     static func make(
         _ key: String,
         default makeDefault: @autoclosure @escaping @Sendable () -> Value
     ) -> Self where Value: HasDirectUserDefaultsSupport {
-        Self(key: key, makeDefault: makeDefault) { key, defaults in
+        Self(key: key) { key, defaults in
             Value.load(from: defaults, forKey: key) ?? makeDefault()
         } write: { key, newValue, defaults in
             try newValue.store(to: defaults, forKey: key)
@@ -49,7 +46,7 @@ struct LocalPreferenceKey<Value>: Sendable {
         _ key: String,
         default makeDefault: @autoclosure @escaping @Sendable () -> Value
     ) -> Self where Value: RawRepresentable, Value.RawValue: HasDirectUserDefaultsSupport {
-        Self(key: key, makeDefault: makeDefault) { key, defaults in
+        Self(key: key) { key, defaults in
             Value.RawValue.load(from: defaults, forKey: key).flatMap(Value.init(rawValue:)) ?? makeDefault()
         } write: { key, newValue, defaults in
             if let rawValue = newValue?.rawValue {
@@ -65,7 +62,7 @@ struct LocalPreferenceKey<Value>: Sendable {
         _ key: String,
         default makeDefault: @autoclosure @escaping @Sendable () -> Value
     ) -> Self where Value: Codable {
-        Self(key: key, makeDefault: makeDefault) { key, defaults in
+        Self(key: key) { key, defaults in
             let decoder = JSONDecoder()
             if let data = defaults.data(forKey: key) {
                 return (try? decoder.decode(Value.self, from: data)) ?? makeDefault()

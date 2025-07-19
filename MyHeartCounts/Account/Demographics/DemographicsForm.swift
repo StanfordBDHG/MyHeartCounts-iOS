@@ -57,6 +57,7 @@ private struct Impl: View {
     @State private var isShowingEnterHeightSheet = false
     @State private var isShowingEnterWeightSheet = false
     @State private var nhsNumberTextEntry = ""
+    @State private var isPresentingUKCountyPicker = false
     
     private var region: Locale.Region {
         regionOverride ?? studyManager.preferredLocale.region ?? .unitedStates
@@ -96,8 +97,10 @@ private struct Impl: View {
             raceEthnicitySection
             switch region {
             case .unitedStates:
+                usStateRow
                 makeIncomeRow(\.householdIncomeUS)
             case .unitedKingdom:
+                ukRegionRows
                 makeIncomeRow(\.householdIncomeUK)
             default:
                 EmptyView()
@@ -313,6 +316,54 @@ private struct Impl: View {
                 }
             } label: {
                 LabeledContent("Comorbidities", value: binding.wrappedValue.localizedDisplayTitle)
+            }
+        }
+    }
+    
+    @ViewBuilder private var usStateRow: some View {
+        let binding = accountValueBinding(\.usRegion).withDefaultValue(.notSet)
+        NavigationLink {
+            USRegionPicker(selection: binding)
+        } label: {
+            LabeledContent("US State / Territory", value: binding.wrappedValue.name.localizedString())
+        }
+    }
+    
+    @ViewBuilder private var ukRegionRows: some View {
+        let regionBinding = accountValueBinding(\.ukRegion).withDefaultValue(.notSet)
+        let countyBinding = accountValueBinding(\.ukCounty)
+        Picker("Region", selection: regionBinding) {
+            ForEach(UKRegion.allCases, id: \.self) { region in
+                Text(region.displayTitle)
+            }
+        }
+        Button {
+            isPresentingUKCountyPicker = true
+        } label: {
+            HStack {
+                Text("County")
+                Spacer()
+                if let county = countyBinding.wrappedValue {
+                    Text(county.displayTitle)
+                        .foregroundStyle(.secondary)
+                }
+                DisclosureIndicator()
+                    .accessibilityHidden(true)
+            }
+            .contentShape(Rectangle())
+            .foregroundStyle(colorScheme.textLabelForegroundStyle)
+        }
+        .disabled(regionBinding.wrappedValue == .notSet)
+        .sheet(isPresented: $isPresentingUKCountyPicker) {
+            let items: [UKRegion.County] = switch regionBinding.wrappedValue {
+            case .notSet: []
+            case .england: UKRegion.County.englishCounties
+            case .scotland: UKRegion.County.scottishCounties
+            case .wales: UKRegion.County.welshCounties
+            case .northernIreland: UKRegion.County.northernIrishCounties
+            }
+            ListSelectionSheet("Select County", items: items, selection: countyBinding) { county in
+                String(localized: county.displayTitle)
             }
         }
     }

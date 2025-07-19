@@ -19,8 +19,6 @@ struct UpcomingTasksTab: RootViewTab {
     
     @State private var activeTimedWalkingTest: TimedWalkingTestConfiguration?
     
-    @State private var sheet = false
-    
     var body: some View {
         NavigationStack {
             Form {

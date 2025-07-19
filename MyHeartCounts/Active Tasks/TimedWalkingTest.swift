@@ -10,10 +10,7 @@
 
 import CoreMotion
 import Foundation
-import HealthKit
-import MyHeartCountsShared
 import Spezi
-import SpeziHealthKit
 import SpeziStudyDefinition
 
 
@@ -84,12 +81,9 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     
     // swiftlint:disable attributes
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
-    @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(WatchConnection.self) private var watchManager
-    @ObservationIgnored @Application(\.spezi) private var spezi
     // swiftlint:enable attributes
     
-    nonisolated(unsafe) private let motionManager = CMMotionManager()
     nonisolated(unsafe) private let pedometer = CMPedometer()
     nonisolated(unsafe) private let altimeter = CMAltimeter()
     

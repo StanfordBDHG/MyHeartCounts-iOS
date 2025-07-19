@@ -13,7 +13,7 @@ import SpeziAccount
 import SpeziFirebaseAccount
 
 
-public final class FirebaseConfiguration: Module, @unchecked Sendable {
+final class FirebaseConfiguration: Module, @unchecked Sendable {
     enum ConfigurationError: Error {
         case userNotAuthenticatedYet
     }
@@ -29,12 +29,12 @@ public final class FirebaseConfiguration: Module, @unchecked Sendable {
     private var accountService: FirebaseAccountService?
 
     
-    public init(setupTestAccount: Bool = false) {
+    init(setupTestAccount: Bool = false) {
         self.setupTestAccount = setupTestAccount
     }
 
 
-    public func configure() {
+    func configure() {
         Task {
             await setupTestAccount()
         }

@@ -145,12 +145,11 @@ private final class Impl<Element: Sendable>: Sendable {
 // MARK: Extensions
 
 extension MHCFirestoreQuery where Element == QuantitySample {
-    init(sampleType: CustomQuantitySampleType, timeRange: HealthKitQueryTimeRange, limit: Int? = nil) {
+    init(sampleType: CustomQuantitySampleType, timeRange: HealthKitQueryTimeRange) {
         input = .init(
             collection: "HealthObservations_\(sampleType.id)",
             filter: nil,
-            sortDescriptors: [],
-            limit: nil // TODO why do we allow setting a limit, if we then ignore it?
+            sortDescriptors: []
         ) { document -> QuantitySample? in
             if timeRange != .ever {
                 let data = document.data()

@@ -7,6 +7,7 @@
 //
 
 // swiftlint:disable missing_docs
+// periphery:ignore:all
 
 import Foundation
 

@@ -12,6 +12,7 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 @preconcurrency import ModelsR4
+import SpeziFoundation
 import SpeziHealthKit
 import UserNotifications
 
@@ -164,11 +165,6 @@ extension MyHeartCountsStandard {
     private enum UploadMode: String {
         case direct
         case zlib
-    }
-    
-    private enum HealthDocumentUploadStage: String {
-        case willUpload = "will"
-        case didUpload = "did"
     }
     
     /// - returns: A closure that should be called upon completion of the uploads, and will replaces the "will upload" notifications with "did upload" notifications.

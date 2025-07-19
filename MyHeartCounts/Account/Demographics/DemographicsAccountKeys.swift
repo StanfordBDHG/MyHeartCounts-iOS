@@ -20,6 +20,9 @@ extension AccountKeyCategory {
 
 
 extension AccountDetails {
+    typealias UKCounty = UKRegion.County
+    
+    
     @AccountKey(
         id: "mhcGenderIdentity",
         name: "Gender Identity",
@@ -34,7 +37,7 @@ extension AccountDetails {
     @AccountKey(id: "usRegion", name: "US State / Region", category: .demographics, options: .mutable, as: USRegion.self, initial: .empty(.notSet))
     var usRegion: USRegion?
     
-    @AccountKey(id: "usZipCodePrefix", name: "First 3 Digits of ZIP Code", category: .demographics, options: .default, as: String.self)
+    @AccountKey(id: "usZipCodePrefix", name: "First 3 Digits of ZIP Code", category: .demographics, options: .mutable, as: String.self)
     var usZipCodePrefix: String?
     
     @AccountKey(
@@ -51,10 +54,17 @@ extension AccountDetails {
     @AccountKey(id: "ukRegion", name: "UK Country", category: .demographics, options: .mutable, as: UKRegion.self, initial: .empty(.notSet))
     var ukRegion: UKRegion?
     
-//    @AccountKey(id: "ukCounty", name: "UK County", category: .demographics, options: .default, as: UKRegion.County.self)
-//    var ukCounty: UKRegion.County?
+    @AccountKey(
+        id: "ukCounty",
+        name: "UK County",
+        category: .demographics,
+        options: .mutable,
+        as: UKCounty.self,
+        initial: .empty(.notSet)
+    )
+    var ukCounty: UKCounty?
     
-    @AccountKey(id: "ukPostcodePrefix", name: "First half of Postcode", category: .demographics, options: .default, as: String.self)
+    @AccountKey(id: "ukPostcodePrefix", name: "First half of Postcode", category: .demographics, options: .mutable, as: String.self)
     var ukPostcodePrefix: String?
     
     @AccountKey(
@@ -68,10 +78,10 @@ extension AccountDetails {
     var householdIncomeUK: HouseholdIncomeUK?
     
     
-    @AccountKey(id: "heightInCM", name: "Height", category: .demographics, options: .default, as: Double.self)
+    @AccountKey(id: "heightInCM", name: "Height", category: .demographics, options: .mutable, as: Double.self)
     var heightInCM: Double?
     
-    @AccountKey(id: "weightInKG", name: "Weight", category: .demographics, options: .default, as: Double.self)
+    @AccountKey(id: "weightInKG", name: "Weight", category: .demographics, options: .mutable, as: Double.self)
     var weightInKG: Double?
     
     @AccountKey(id: "raceEthnicity", name: "Race / Ethnicity", category: .demographics, options: .mutable, as: RaceEthnicity.self)
@@ -147,10 +157,10 @@ extension AccountDetails {
 
 @KeyEntry(
     \.usRegion, \.usZipCodePrefix, \.householdIncomeUS, \.educationUS,
-     \.ukRegion, /*\.ukCounty,*/ \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
+    \.ukRegion, \.ukCounty, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,
-     \.raceEthnicity, \.latinoStatus,
-     \.biologicalSexAtBirth, \.comorbidities, \.futureStudies
+    \.raceEthnicity, \.latinoStatus,
+    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies
 )
 extension AccountKeys {}
 

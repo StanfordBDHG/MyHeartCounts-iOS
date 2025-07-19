@@ -80,7 +80,8 @@ final class NewsManager: Module, EnvironmentAccessible {
                             logger.trace("DOWNLOAD DURATION: \(endTS - startTS)")
                             let doc = try MarkdownDocument(processingContentsOf: tmpUrl)
                             try? FileManager.default.removeItem(at: tmpUrl)
-                            return Article(id: doc.metadata["id"].flatMap(UUID.init(uuidString:)) ?? UUID(), doc)
+                            let article = Article(id: doc.metadata["id"].flatMap(UUID.init(uuidString:)) ?? UUID(), doc)
+                            return article.status == .published ? article : nil
                         } catch {
                             logger.error("Error processing news article: \(error)")
                             return nil

@@ -21,13 +21,13 @@ struct CVHScore: DynamicProperty {
         var timeRange: Range<Date> { get }
     }
     
-    @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2), limit: 1)
+    @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2))
     private var dietScores
     
-    @MHCFirestoreQuery(sampleType: .bloodLipids, timeRange: .last(months: 2), limit: 1)
+    @MHCFirestoreQuery(sampleType: .bloodLipids, timeRange: .last(months: 2))
     private var bloodLipids
     
-    @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2), limit: 1)
+    @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2))
     private var nicotineExposure
     
     @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 14))

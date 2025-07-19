@@ -50,6 +50,9 @@ final class StudyBundleLoader: Module, Sendable {
         Task {
             _ = try? await update()
         }
+        Task(priority: .background) {
+            try? await cleanupOldStudyBundles()
+        }
     }
     
     

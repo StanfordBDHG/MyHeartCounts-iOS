@@ -45,11 +45,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(AccountFeatureFlags.self)
     private var accountFeatureFlags
     
-    var enableDebugMode: Bool {
-        get async {
-            await accountFeatureFlags.isDebugModeEnabled
-        }
-    }
     
     init() {}
     

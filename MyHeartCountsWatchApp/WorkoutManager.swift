@@ -8,7 +8,6 @@
 
 import Foundation
 import HealthKit
-import MyHeartCountsShared
 import Spezi
 import SpeziHealthKit
 import SpeziStudyDefinition

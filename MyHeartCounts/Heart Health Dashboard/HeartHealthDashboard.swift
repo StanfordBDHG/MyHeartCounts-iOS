@@ -31,9 +31,6 @@ struct HeartHealthDashboard: View {
     
     @CVHScore private var cvhScore
     
-    @Environment(NewsManager.self)
-    private var newsManager
-    
     @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
     @State private var presentedArticle: Article?
     @State private var scoreResultToExplain: ScoreResultToExplain?

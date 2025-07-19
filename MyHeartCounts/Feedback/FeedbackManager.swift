@@ -34,8 +34,8 @@ final class FeedbackManager: Module, EnvironmentAccessible, @unchecked Sendable 
 
 
 extension FeedbackManager {
-    private struct Feedback: Codable {
-        struct DeviceInfo: Codable {
+    private struct Feedback: Encodable {
+        struct DeviceInfo: Encodable {
             let osVersion: String
             let model: String
             let type: String

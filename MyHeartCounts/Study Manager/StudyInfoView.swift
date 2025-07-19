@@ -13,7 +13,7 @@ import SpeziViews
 import SwiftUI
 
 
-public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
+struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     @Environment(StudyManager.self)
     private var mhc
     @Environment(\.dismiss)
@@ -30,7 +30,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
         injectedDismiss ?? _dismiss
     }
     
-    public var body: some View {
+    var body: some View {
         let study = studyBundle.studyDefinition
         Form {
             Section {
@@ -118,7 +118,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
                                 try mhc.unenroll(from: enrollment)
                                 dismiss()
                             } catch {
-                                viewState = .error(AnyLocalizedError(error: error))
+                                viewState = .error(error)
                             }
                         }
                     }
@@ -145,7 +145,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     }
     
     
-    public init(studyBundle: StudyBundle, dismiss: DismissAction? = nil) {
+    init(studyBundle: StudyBundle, dismiss: DismissAction? = nil) {
         self.studyBundle = studyBundle
         self.injectedDismiss = dismiss
     }

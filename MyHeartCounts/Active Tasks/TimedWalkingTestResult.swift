@@ -7,10 +7,10 @@
 //
 
 // swiftlint:disable file_types_order
+// periphery:ignore:all
 
 import CoreMotion
 import Foundation
-import MyHeartCountsShared
 import SpeziStudyDefinition
 
 

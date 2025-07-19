@@ -14,7 +14,6 @@ import Foundation
 protocol HouseholdIncome: CaseIterable, RawRepresentableAccountKey where AllCases: RandomAccessCollection {
     static var notSet: Self { get }
     
-    var rawValue: UInt8 { get }
     var displayTitle: LocalizedStringResource { get }
 }
 

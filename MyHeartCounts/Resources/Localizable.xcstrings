@@ -355,6 +355,9 @@
     "Continue" : {
 
     },
+    "County" : {
+
+    },
     "Current Test" : {
 
     },
@@ -895,9 +898,6 @@
     "NHS Number (Optional)" : {
 
     },
-    "Nicotine Exposure" : {
-
-    },
     "No" : {
 
     },
@@ -1090,6 +1090,9 @@
 
     },
     "Oregon" : {
+
+    },
+    "Other Territories" : {
 
     },
     "Override Region" : {
@@ -1334,6 +1337,12 @@
     "Select a Region" : {
 
     },
+    "Select County" : {
+
+    },
+    "Select your State or Territory" : {
+
+    },
     "Selected" : {
 
     },
@@ -1514,6 +1523,9 @@
     "UK Country" : {
 
     },
+    "UK County" : {
+
+    },
     "UK_REGION_ENGLAND" : {
 
     },
@@ -1552,6 +1564,9 @@
 
     },
     "US State / Region" : {
+
+    },
+    "US State / Territory" : {
 
     },
     "Use this option to auto-fill Blood Type, Height and Weight, by reading each from HealthKit, if available.\nAlternatively, you can also tap the respective fields below to manually enter a value." : {
@@ -1654,9 +1669,6 @@
 
     },
     "What country do you currently live in?" : {
-
-    },
-    "What's your level of nicotine exposure? How often do you smoke?" : {
 
     },
     "Wisconsin" : {

@@ -8,7 +8,6 @@
 
 import CoreMotion
 import Foundation
-import MyHeartCountsShared
 import SFSafeSymbols
 import Spezi
 import SpeziFoundation

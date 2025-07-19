@@ -8,6 +8,7 @@
 
 import Foundation
 import HealthKitOnFHIR
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 

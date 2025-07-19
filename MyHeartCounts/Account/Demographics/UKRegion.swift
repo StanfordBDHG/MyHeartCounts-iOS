@@ -9,7 +9,7 @@
 import Foundation
 
 
-enum UKRegion: Int, Hashable, Sendable, RawRepresentableAccountKey {
+enum UKRegion: Int, Hashable, Sendable, CaseIterable, RawRepresentableAccountKey {
     case notSet = 0
     case england = 1
     case scotland = 2
@@ -33,8 +33,25 @@ enum UKRegion: Int, Hashable, Sendable, RawRepresentableAccountKey {
 }
 
 
+// MARK: County
+
 extension UKRegion {
-    struct County: Hashable, RawRepresentable, Sendable {
+    struct County: Hashable, RawRepresentable, Sendable, CaseIterable, RawRepresentableAccountKey {
         let rawValue: String
+        let displayTitle: LocalizedStringResource
     }
+}
+
+
+extension UKRegion.County {
+    static let notSet = Self(rawValue: "notSet", displayTitle: "Not Set")
+    
+    static let allCases: [UKRegion.County] = [
+        .notSet
+    ]
+    
+    static let englishCounties: [UKRegion.County] = []
+    static let scottishCounties: [UKRegion.County] = []
+    static let welshCounties: [UKRegion.County] = []
+    static let northernIrishCounties: [UKRegion.County] = []
 }
