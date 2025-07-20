@@ -306,7 +306,7 @@ extension URL: LaunchOptionDecodable {
             }
         } else {
             // treat as file URL
-            return URL(filePath: rawValue, relativeTo: fileUrlBasePath)
+            return URL(filePath: rawValue, relativeTo: rawValue.starts(with: "/") ? nil : fileUrlBasePath)
         }
     }
 }

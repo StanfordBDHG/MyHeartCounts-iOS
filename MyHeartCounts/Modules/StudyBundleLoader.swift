@@ -115,9 +115,13 @@ final class StudyBundleLoader: Module, Sendable {
                 try? fileManager.removeItem(at: tmpUrl)
             }
             try fileManager.unarchiveDirectory(at: tmpUrl, to: dstUrl)
+        } catch {
+            throw .unableToFetchFromServer(error)
+        }
+        do {
             return try StudyBundle(bundleUrl: dstUrl)
         } catch {
-            fatalError("\(error)")
+            throw .unableToDecode(error)
         }
     }
     
@@ -135,6 +139,10 @@ final class StudyBundleLoader: Module, Sendable {
         let (downloadUrl, response) = try await session.download(from: url)
         logger.notice("did finish download of '\(url.lastPathComponent)'")
         guard let response = response as? HTTPURLResponse else {
+            guard !url.isFileURL else {
+                // we were "downloading" a local file, so it's expected that we don't get back a HTTPURLResponse
+                return downloadUrl
+            }
             throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
                 NSLocalizedDescriptionKey: "Unable to decode HTTP response"
             ])
