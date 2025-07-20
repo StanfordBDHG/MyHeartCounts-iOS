@@ -1807,8 +1807,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.7;
+				kind = revision;
+				revision = e469a17ce600ecf5ad2e467ffa67be1791d6a17c;
 			};
 		};
 		80A3A4812E1EB270002A8515 /* XCRemoteSwiftPackageReference "ResearchKit" */ = {

@@ -17,21 +17,45 @@ import SwiftUI
 
 
 struct RootView: View {
-    @LocalPreference(.onboardingFlowComplete)
-    private var didCompleteOnboarding
-    
-    @LocalPreference(.rootTabSelection)
-    private var selectedTab
-    
-    @LocalPreference(.rootTabViewCustomization)
-    private var tabViewCustomization
+    // swiftlint:disable attributes
+    @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
+    @LocalPreference(.rootTabSelection) private var selectedTab
+    @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
+    @Environment(Account.self) private var account: Account?
+    @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
+    @State private var viewState: ViewState = .idle
+    // swiftlint:enable attributes
     
     var body: some View {
         ZStack {
-            if didCompleteOnboarding {
-                content
-            } else {
-                EmptyView()
+            switch viewState {
+            case .idle:
+                if didCompleteOnboarding, account != nil {
+                    content
+                } else {
+                    EmptyView()
+                }
+            case .processing:
+                ProgressView("Loading Firebase Test Setup")
+            case .error(let error):
+                ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(verbatim: "\(error)"))
+            }
+        }
+        .task {
+            if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && FeatureFlags.setupTestAccount {
+                viewState = .processing
+                if !Spezi.didLoadFirebase {
+                    Spezi.loadFirebase(for: .unitedStates)
+                    try? await _Concurrency.Task.sleep(for: .seconds(4))
+                }
+                do {
+                    try await setupTestEnvironment.setup()
+                    logger.notice("Successfully set up test environment")
+                    viewState = .idle
+                } catch {
+                    logger.error("ERROR SETTING UP TEST ENVIRONMENT: \(error)")
+                    viewState = .error(AnyLocalizedError(error: error, defaultErrorDescription: "\(error)"))
+                }
             }
         }
     }
@@ -49,7 +73,6 @@ struct RootView: View {
             AccountSheet()
         }
     }
-    
     
     private func makeTab(_ tab: (some RootViewTab).Type) -> some TabContent<String> {
         Tab(String(localized: tab.tabTitle), systemImage: tab.tabSymbol.rawValue, value: tab.tabId) {

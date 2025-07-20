@@ -77,34 +77,34 @@ struct TasksList: View {
     var body: some View {
         header
             .viewStateAlert(state: $viewState)
-                .sheet(item: $questionnaireBeingAnswered) { input in
-                    QuestionnaireView(
-                        questionnaire: input.questionnaire,
-                        completionStepMessage: "COMPLETION_STEP_MESSAGE",
-                        cancelBehavior: .cancel
-                    ) { result in
-                        questionnaireBeingAnswered = nil
-                        switch result {
-                        case .completed(let response):
-                            do {
-                                try input.event.complete()
-                                await standard.add(response: response)
-                            } catch {
-                                viewState = .error(error)
-                            }
-                        case .cancelled, .failed:
-                            break
+            .sheet(item: $questionnaireBeingAnswered) { input in
+                QuestionnaireView(
+                    questionnaire: input.questionnaire,
+                    completionStepMessage: "COMPLETION_STEP_MESSAGE",
+                    cancelBehavior: .cancel
+                ) { result in
+                    questionnaireBeingAnswered = nil
+                    switch result {
+                    case .completed(let response):
+                        do {
+                            try input.event.complete()
+                            await standard.add(response: response)
+                        } catch {
+                            viewState = .error(error)
                         }
+                    case .cancelled, .failed:
+                        break
                     }
                 }
-                .sheet(item: $presentedArticle) { article in
-                    ArticleSheet(article: article)
+            }
+            .sheet(item: $presentedArticle) { article in
+                ArticleSheet(article: article)
+            }
+            .sheet(item: $presentedTimedWalkingTest) { component in
+                NavigationStack {
+                    TimedWalkingTestView(component.test)
                 }
-                .sheet(item: $presentedTimedWalkingTest) { component in
-                    NavigationStack {
-                        TimedWalkingTestView(component.test)
-                    }
-                }
+            }
         let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
         switch mode {
         case .upcoming:

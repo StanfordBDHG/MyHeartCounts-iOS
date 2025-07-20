@@ -10,6 +10,12 @@ import XCTest
 
 
 class MHCTestCase: XCTestCase {
+    var studyBundleUrl: URL {
+        get throws {
+            try XCTUnwrap(Bundle(for: MHCTestCase.self).url(forResource: "mhcStudyBundle", withExtension: "spezistudybundle.aar"))
+        }
+    }
+    
     override func setUp() {
         super.setUp()
         continueAfterFailure = false

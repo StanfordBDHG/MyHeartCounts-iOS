@@ -22,32 +22,19 @@ import SwiftUI
 
 
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConstraint {
-    @Application(\.logger)
-    private var logger
-    
-    @Dependency var firebaseConfiguration = FirebaseConfiguration(setupTestAccount: FeatureFlags.setupTestAccount)
-    
-    @Dependency(StudyManager.self)
-    private var studyManager: StudyManager?
-    
-    @Dependency(Account.self)
-    var account: Account?
-    
-    @Dependency(StudyBundleLoader.self)
-    private var studyLoader
-    
-    @Dependency(TimeZoneTracking.self)
-    private var timeZoneTracking: TimeZoneTracking?
-    
-    @Dependency(HealthDataFileUploadManager.self)
-    var healthDataUploader
-    
-    @Dependency(AccountFeatureFlags.self)
-    private var accountFeatureFlags
-    
+    // swiftlint:disable attributes
+    @Application(\.logger) var logger
+    @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
+    @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @Dependency(Account.self) var account: Account?
+    @Dependency(StudyBundleLoader.self) private var studyLoader
+    @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
+    @Dependency(HealthDataFileUploadManager.self) var healthDataUploader
+    @Dependency(AccountFeatureFlags.self) private var accountFeatureFlags
+    @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
+    // swiftlint:disable attributes
     
     init() {}
-    
     
     @MainActor
     func configure() {
@@ -72,8 +59,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func respondToEvent(_ event: AccountNotifications.Event) async {
         switch event {
         case .deletingAccount:
+            logger.notice("account is being deleted")
             await propagateDebugModeValue(false)
         case .disassociatingAccount:
+            logger.notice("account is disassociating")
             await propagateDebugModeValue(false)
             // upon logging out, we want to throw the user back to the onboarding.
             // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
@@ -81,7 +70,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             // we could look into using the `FirebaseApp.deleteApp(_:)` API in combination with attempting to unload the related Spezi modules, but that
             // would be anything but trivial.
             // if the user wants to switch to a different region, the easiest approach currently is to just kill and relaunch the app.
-            LocalPreferencesStore.standard[.onboardingFlowComplete] = false
+            if !ProcessInfo.isBeingUITested, await !setupTestEnvironment.isInSetup {
+                // ^we potentially log out and in as part of the test env setup; we want to skip this
+                LocalPreferencesStore.standard[.onboardingFlowComplete] = false
+            }
             // QUESTION deleting the userDocument will probably also delete everything nested w/in it (eg: Questionnaire Resonse
             // NOTE: we want as many of these as possible to succeed; hence why we use try? everywhere...
             try? FileManager.default.removeItem(at: .scheduledLiveHealthKitUploads)
@@ -96,9 +88,11 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 }
             }
         case .associatedAccount(let details):
+            logger.notice("account was associated")
             await propagateDebugModeValue(details)
             try? await timeZoneTracking?.updateTimeZoneInfo()
         case .detailsChanged(_, let newDetails):
+            logger.notice("account details changed")
             await propagateDebugModeValue(newDetails)
         }
     }

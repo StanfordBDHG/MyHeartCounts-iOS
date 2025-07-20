@@ -25,6 +25,8 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
         }
         return Configuration(standard: MyHeartCountsStandard()) {
+            FirebaseConfiguration()
+            SetupTestEnvironment()
             DeferredConfigLoading.initialAppLaunchConfig
             HealthKit()
             Scheduler()

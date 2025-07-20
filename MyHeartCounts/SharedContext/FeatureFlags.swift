@@ -57,6 +57,13 @@ enum FeatureFlags {
 }
 
 
+extension ProcessInfo {
+    static var isBeingUITested: Bool {
+        ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
+    }
+}
+
+
 extension LaunchOptions {
     static let skipOnboarding = LaunchOption<Bool>("--skipOnboarding", default: false)
     static let showOnboarding = LaunchOption<Bool>("--showOnboarding", default: false)

@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
@@ -22,7 +20,7 @@ final class OnboardingTests: MHCTestCase {
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--overrideStudyBundleLocation",
-            "https://firebasestorage.googleapis.com/v0/b/myheart-counts-development.firebasestorage.app/o/public%2FmhcStudyBundle.spezistudybundle.aar?alt=media",
+            try studyBundleUrl.path,
             "--disableAutomaticBulkHealthExport"
         ]
         app.launch()
@@ -175,10 +173,10 @@ extension XCUIApplication {
             while !scrollViews.switches[identifier].isHittable {
                 swipeUp(velocity: .fast)
             }
-            let _switch = scrollViews.switches[identifier].switches.firstMatch
-            switch (_switch.value as? String, isOn) {
+            let toggle = scrollViews.switches[identifier].switches.firstMatch
+            switch (toggle.value as? String, isOn) {
             case ("0", true), ("1", false):
-                _switch.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
+                toggle.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
             case ("0", false), ("1", true):
                 break
             default:
@@ -190,11 +188,13 @@ extension XCUIApplication {
         swipeUp()
         XCTAssertFalse(buttons["I Consent"].isEnabled)
         scrollViews["ConsentForm:sig"].swipeRight()
-        XCTAssert(buttons["I Consent"].isEnabled)
         if let firstName = expectedName?.givenName, let lastName = expectedName?.familyName {
             XCTAssert(staticTexts["Name: \(firstName) \(lastName)"].waitForExistence(timeout: 1))
         }
+        sleep(for: .seconds(0.25))
+        XCTAssert(buttons["I Consent"].isEnabled)
         buttons["I Consent"].tap()
+        sleep(for: .seconds(0.5))
     }
     
     

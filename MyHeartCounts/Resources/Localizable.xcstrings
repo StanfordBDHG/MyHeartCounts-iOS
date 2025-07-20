@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "- %@" : {
+
+    },
     "– %@" : {
 
     },
@@ -388,6 +391,9 @@
     "Details" : {
 
     },
+    "Devices:" : {
+
+    },
     "Disable Override" : {
 
     },
@@ -424,6 +430,9 @@
     "Enter BMI" : {
 
     },
+    "Error" : {
+
+    },
     "Failed to Download Study Information" : {
 
     },
@@ -453,6 +462,9 @@
       }
     },
     "Feel free to check back later!" : {
+
+    },
+    "Fetch Data" : {
 
     },
     "Fetching…" : {
@@ -782,6 +794,9 @@
     "Link Arrow Symbol" : {
 
     },
+    "Loading Firebase Test Setup" : {
+
+    },
     "Local Notifications Status" : {
 
     },
@@ -1107,6 +1122,9 @@
     "Percentage in Phase" : {
 
     },
+    "Permissions" : {
+
+    },
     "Physical Activity" : {
 
     },
@@ -1293,6 +1311,9 @@
     "Replace Root View Controller" : {
 
     },
+    "Request Permissions" : {
+
+    },
     "Results" : {
 
     },
@@ -1432,10 +1453,16 @@
         }
       }
     },
+    "Start All" : {
+
+    },
     "Start Test" : {
 
     },
     "State" : {
+
+    },
+    "Stop All" : {
 
     },
     "Study Information" : {

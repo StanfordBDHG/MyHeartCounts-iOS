@@ -11,62 +11,21 @@ import FirebaseStorage
 import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
+import SpeziStudy
 
 
-final class FirebaseConfiguration: Module, @unchecked Sendable {
+final class FirebaseConfiguration: Module, EnvironmentAccessible, @unchecked Sendable {
     enum ConfigurationError: Error {
         case userNotAuthenticatedYet
     }
+
+    // swiftlint:disable attributes
+    @Application(\.logger) private var logger
+    @Dependency(Account.self) private var account: Account? // optional, as Firebase might be disabled
+    @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
+    // swiftlint:enable attributes
     
-    private let setupTestAccount: Bool
-
-    @Application(\.logger)
-    private var logger
-
-    @Dependency(Account.self)
-    private var account: Account? // optional, as Firebase might be disabled
-    @Dependency(FirebaseAccountService.self)
-    private var accountService: FirebaseAccountService?
-
-    
-    init(setupTestAccount: Bool = false) {
-        self.setupTestAccount = setupTestAccount
-    }
-
-
-    func configure() {
-        Task {
-            await setupTestAccount()
-        }
-    }
-
-
-    private func setupTestAccount() async {
-        guard let accountService, setupTestAccount else {
-            return
-        }
-        do {
-            try await accountService.login(userId: "lelandstanford@stanford.edu", password: "StanfordRocks!")
-            return
-        } catch {
-            guard let accountError = error as? FirebaseAccountError,
-                  case .invalidCredentials = accountError else {
-                logger.error("Failed to login into test account: \(error)")
-                return
-            }
-        }
-        // account doesn't exist yet, signup
-        var details = AccountDetails()
-        details.userId = "lelandstanford@stanford.edu"
-        details.password = "StanfordRocks!"
-        details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-        details.genderIdentity = .male
-        do {
-            try await accountService.signUp(with: details)
-        } catch {
-            logger.error("Failed to setup test account: \(error)")
-        }
-    }
+    init() {}
 }
 
 
