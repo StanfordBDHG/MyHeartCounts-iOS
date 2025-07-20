@@ -115,6 +115,30 @@
         }
       }
     },
+    "NSSensorKitPrivacyPolicyURL" : {
+      "comment" : "Privacy - SensorKit Privacy Policy URL",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "https://stanford.edu"
+          }
+        }
+      }
+    },
+    "NSSensorKitUsageDescription" : {
+      "comment" : "Privacy - SensorKit Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "My Heart Counts uses SensorKit to better TODO TODO TODO TODO"
+          }
+        }
+      }
+    },
     "NSSpeechRecognitionUsageDescription" : {
       "comment" : "Privacy - Speech Recognition Usage Description",
       "extractionState" : "extracted_with_value",
