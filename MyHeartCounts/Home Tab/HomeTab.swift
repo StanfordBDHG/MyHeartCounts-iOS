@@ -33,6 +33,7 @@ struct HomeTab: RootViewTab {
     private var account
     
     @State private var actionCards: [ActionCard] = []
+    @State private var showSensorKitSheet = false
     
     @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
     private var missedEvents
@@ -43,35 +44,23 @@ struct HomeTab: RootViewTab {
                 topActionsFormContent
                 historicalHealthDataUploadSection
                 TasksList(timeRange: .today, headerConfig: .custom("Today's Tasks"))
-                if !missedEvents.isEmpty {
-                    Section {
-                        NavigationLink {
-                            Form {
-                                TasksList(
-                                    mode: .missed,
-                                    timeRange: .weeks(2),
-                                    headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks")
-                                )
-                            }
-                            .navigationTitle("Missed Tasks")
-                            .navigationBarTitleDisplayMode(.inline)
-                        } label: {
-                            let numMissedTasks = missedEvents.count
-                            Label(symbol: .calendar) {
-                                VStack(alignment: .leading) {
-                                    Text("Missed Tasks")
-                                    Text("\(numMissedTasks) missed tasks in the past 2 weeks")
-                                        .font(.footnote)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                    }
-                }
+                missedEventsSection
             }
             .navigationTitle(String(localized: Self.tabTitle))
             .toolbar {
                 accountToolbarItem
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showSensorKitSheet = true
+                    } label: {
+                        Image(systemSymbol: .waveformPathEcgRectangle)
+                    }
+                }
+            }
+            .sheet(isPresented: $showSensorKitSheet) {
+                NavigationStack {
+                    SensorKitPlayground()
+                }
             }
         }
     }
@@ -105,6 +94,35 @@ struct HomeTab: RootViewTab {
             Section("Historical Data Bulk Export") {
                 ProgressView(exportProgress)
                 ProgressView(uploadProgress)
+            }
+        }
+    }
+    
+    @ViewBuilder private var missedEventsSection: some View {
+        if !missedEvents.isEmpty {
+            Section {
+                NavigationLink {
+                    Form {
+                        TasksList(
+                            mode: .missed,
+                            timeRange: .weeks(2),
+                            headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks")
+                        )
+                    }
+                    .navigationTitle("Missed Tasks")
+                    .navigationBarTitleDisplayMode(.inline)
+                } label: {
+                    let numMissedTasks = missedEvents.count
+                    Label(symbol: .calendar) {
+                        VStack(alignment: .leading) {
+                            Text("Missed Tasks")
+                                .fontWeight(.medium)
+                            Text("\(numMissedTasks) missed tasks in the past 2 weeks")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
         }
     }

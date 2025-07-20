@@ -35,6 +35,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             WatchConnection()
             TimedWalkingTest()
             FeedbackManager()
+            SensorKit()
         }
     }
 }
