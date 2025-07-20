@@ -36,7 +36,7 @@ final class StudyParticipationTests: MHCTestCase {
         app.buttons["Your Account"].tap()
         XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["lelandstanford@stanford.edu"].waitForExistence(timeout: 1))
-        XCTAssert(app.staticTexts["Study Participations"].waitForExistence(timeout: 1))
+        XCTAssert(app.staticTexts["STUDY PARTICIPATIONS"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["Improve your cardiovascular health"].waitForExistence(timeout: 1))
     }

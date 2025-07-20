@@ -13,9 +13,9 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
-final class OnboardingTests: MHCTestCase {
+final class AOnboardingTests: MHCTestCase {
     @MainActor
-    func testOnboardingFlow() throws {
+    func testAOnboardingFlow() throws {
         let app = XCUIApplication()
         app.launchArguments = [
             "--useFirebaseEmulator",
