@@ -267,6 +267,18 @@ extension SensorKitPlayground {
                 LabeledContent("heartRate", value: sample.heartRate, format: .number)
                 LabeledContent("conficence", value: sample.confidence.displayTitle)
                 LabeledContent("date", value: (sample.date?.formatted()) ?? "n/a")
+            case let sample as SRWristDetection:
+                LabeledContent("onWrist", value: sample.onWrist.description)
+                LabeledContent("wristLocation", value: sample.wristLocation.displayTitle)
+                LabeledContent("crownOrientation", value: sample.crownOrientation.displayTitle)
+                LabeledContent("onWristDate", value: sample.onWristDate?.formatted() ?? "n/a")
+                LabeledContent("offWristDate", value: sample.offWristDate?.formatted() ?? "n/a")
+            case let sample as SRVisit:
+                LabeledContent("distanceFromHome", value: sample.distanceFromHome, format: .number) // TODO which unit is this?
+                LabeledContent("arrivalDateInterval", value: sample.arrivalDateInterval, format: .humanReadable())
+                LabeledContent("departureDateInterval", value: sample.departureDateInterval, format: .humanReadable())
+                LabeledContent("locationCategory", value: sample.locationCategory.displayTitle)
+                LabeledContent("identifier", value: sample.identifier.uuidString)
             default:
                 Text("Unhandled sample type \(type(of: sample)) :/")
             }
@@ -274,6 +286,53 @@ extension SensorKitPlayground {
     }
 }
 
+
+extension SRVisit.LocationCategory {
+    var displayTitle: String {
+        switch self {
+        case .unknown:
+            "unknown"
+        case .home:
+            "home"
+        case .work:
+            "work"
+        case .school:
+            "school"
+        case .gym:
+            "gym"
+        @unknown default:
+            "unknown<\(rawValue)>"
+        }
+    }
+}
+
+
+extension SRWristDetection.WristLocation {
+    var displayTitle: String {
+        switch self {
+        case .left:
+            "left"
+        case .right:
+            "right"
+        @unknown default:
+            "unknown"
+        }
+    }
+}
+
+
+extension SRWristDetection.CrownOrientation {
+    var displayTitle: String {
+        switch self {
+        case .left:
+            "left"
+        case .right:
+            "right"
+        @unknown default:
+            "unknown"
+        }
+    }
+}
 
 
 extension CMHighFrequencyHeartRateDataConfidence {
@@ -352,6 +411,49 @@ extension TimeInterval {
     }
 }
 
+extension FormatStyle where Self == TimeInterval.TimeIntervalFormatStyle {
+    static var timeInterval: Self {
+        Self()
+    }
+}
+
+
+extension DateInterval {
+    struct FormatStyleHumanReadable: FormatStyle {
+        private let dateFormat: Date.FormatStyle
+        private var locale: Locale
+        
+        init(dateFormat: Date.FormatStyle, locale: Locale = .current) {
+            self.dateFormat = dateFormat
+            self.locale = locale
+        }
+        
+        func locale(_ locale: Locale) -> Self {
+            var copy = self
+            copy.locale = locale
+            return copy
+        }
+        
+        func format(_ value: DateInterval) -> String {
+            let cal = locale.calendar
+            var output = value.start.formatted(dateFormat)
+            output.append(" – ")
+            if cal.isDate(value.end, inSameDayAs: value.start) {
+                output.append(value.end.formatted(dateFormat.omittingDate()))
+            } else {
+                output.append(value.end.formatted(dateFormat))
+            }
+            return output
+        }
+    }
+}
+
+extension FormatStyle where Self == DateInterval.FormatStyleHumanReadable {
+    static func humanReadable(dateFormat: Date.FormatStyle = .init(), locale: Locale = .current) -> Self {
+        Self(dateFormat: dateFormat, locale: locale)
+    }
+}
+
 
 extension SRAmbientLightSample.SensorPlacement {
     var displayTitle: String {
@@ -377,13 +479,6 @@ extension SRAmbientLightSample.SensorPlacement {
         @unknown default:
             "unknown<\(rawValue)>"
         }
-    }
-}
-
-
-extension FormatStyle where Self == TimeInterval.TimeIntervalFormatStyle {
-    static var timeInterval: Self {
-        Self()
     }
 }
 

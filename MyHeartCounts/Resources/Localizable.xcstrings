@@ -379,6 +379,9 @@
     "County" : {
 
     },
+    "crownOrientation" : {
+
+    },
     "Current Test" : {
 
     },
@@ -730,6 +733,9 @@
     "Idaho" : {
 
     },
+    "identifier" : {
+
+    },
     "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
 
     },
@@ -822,6 +828,9 @@
 
     },
     "Local Notifications Status" : {
+
+    },
+    "locationCategory" : {
 
     },
     "Louisiana" : {
@@ -996,6 +1005,9 @@
     "NotificationsManager" : {
 
     },
+    "offWristDate" : {
+
+    },
     "Ohio" : {
 
     },
@@ -1121,6 +1133,12 @@
           }
         }
       }
+    },
+    "onWrist" : {
+
+    },
+    "onWristDate" : {
+
     },
     "Open In Browser" : {
 
@@ -1750,6 +1768,9 @@
 
     },
     "World" : {
+
+    },
+    "wristLocation" : {
 
     },
     "Wyoming" : {

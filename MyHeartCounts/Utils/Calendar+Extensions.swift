@@ -39,7 +39,21 @@ extension Date.FormatStyle {
     }
     
     func omittingTime() -> Self {
-        self.hour(.omitted).minute(.omitted).second(.omitted).secondFraction(.omitted)
+        self.hour(.omitted)
+            .minute(.omitted)
+            .second(.omitted)
+            .secondFraction(.omitted)
+    }
+    
+    func omittingDate() -> Self {
+        self.era(.omitted)
+            .year(.omitted)
+            .quarter(.omitted)
+            .month(.omitted)
+            .week(.omitted)
+            .day(.omitted)
+            .dayOfYear(.omitted)
+            .weekday(.omitted)
     }
 }
 
