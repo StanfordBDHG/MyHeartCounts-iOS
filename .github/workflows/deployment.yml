@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - lukas/small-fixes-and-backlog
   workflow_dispatch:
     inputs:
       environment:
