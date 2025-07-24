@@ -13,6 +13,9 @@
     "—" : {
 
     },
+    "#=%lld" : {
+
+    },
     "%@ (%lld)" : {
       "localizations" : {
         "en" : {
@@ -22,6 +25,9 @@
           }
         }
       }
+    },
+    "%@ bpm" : {
+
     },
     "%lld ft" : {
 
@@ -193,6 +199,9 @@
     "American Samoa" : {
 
     },
+    "App Usage" : {
+
+    },
     "Are you %lld years old or older?" : {
 
     },
@@ -233,6 +242,9 @@
     "Bulk Export Manager" : {
 
     },
+    "bundle id" : {
+
+    },
     "California" : {
 
     },
@@ -243,6 +255,9 @@
 
     },
     "Change Language" : {
+
+    },
+    "chromaticity" : {
 
     },
     "Close" : {
@@ -335,6 +350,9 @@
         }
       }
     },
+    "conficence" : {
+
+    },
     "Connecticut" : {
 
     },
@@ -364,6 +382,9 @@
     "Current Test" : {
 
     },
+    "date" : {
+
+    },
     "Date" : {
 
     },
@@ -388,10 +409,10 @@
     "Demographics" : {
 
     },
-    "Details" : {
+    "Depending on the amount of samples, this might take a bit" : {
 
     },
-    "Devices:" : {
+    "Details" : {
 
     },
     "Disable Override" : {
@@ -464,7 +485,10 @@
     "Feel free to check back later!" : {
 
     },
-    "Fetch Data" : {
+    "Fetch Results" : {
+
+    },
+    "Fetching Data…" : {
 
     },
     "Fetching…" : {
@@ -1128,6 +1152,9 @@
     "Physical Activity" : {
 
     },
+    "placement" : {
+
+    },
     "Processing Sleep Data…" : {
 
     },
@@ -1311,6 +1338,9 @@
     "Replace Root View Controller" : {
 
     },
+    "reportApplicationIdentifier" : {
+
+    },
     "Request Permissions" : {
 
     },
@@ -1324,6 +1354,9 @@
 
     },
     "Rhode Island" : {
+
+    },
+    "Sample" : {
 
     },
     "Sample Type" : {
@@ -1377,6 +1410,9 @@
 
     },
     "Send Feedback" : {
+
+    },
+    "Sensors" : {
 
     },
     "Series" : {
@@ -1477,6 +1513,12 @@
     "Subject?" : {
 
     },
+    "Summarized" : {
+
+    },
+    "Supplemental Categories" : {
+
+    },
     "Swift Package Manager" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1521,6 +1563,9 @@
 
     },
     "Time Elapsed" : {
+
+    },
+    "Time Info" : {
 
     },
     "Time Remaining" : {

@@ -55,7 +55,6 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         let logger = logger
         for object in deletedObjects {
             do {
-                // AB0234A3-9C8D-47AF-981F-45CA73B22EB1
                 let doc = try await healthObservationDocument(forSampleType: sampleType.hkSampleType.identifier, id: object.uuid)
                 let deleteDoc = { @Sendable in
                     await self.logger.notice("Deleting document for now-deleted HKObject (id: \(object.uuid); sampleType: \(sampleType.displayTitle))")

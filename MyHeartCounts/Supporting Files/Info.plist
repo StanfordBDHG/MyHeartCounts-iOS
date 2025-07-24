@@ -7,57 +7,57 @@
 	<key>NSSensorKitUsageDescription</key>
 	<string>My Heart Counts uses SensorKit to better TODO TODO TODO TODO</string>
 	<key>NSSensorKitPrivacyPolicyURL</key>
-	<string>https://stanford.edu</string>
+	<string>https://myheartcounts.su.domains/privacy-policy/</string>
 	<key>NSSensorKitUsageDetail</key>
 	<dict>
 		<key>SRSensorUsageWristDetection</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses On-Wrist Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsageHeartRate</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsagePedometer</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsageWristTemperature</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsagePPG</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsageECG</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsageAmbientLightSensor</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsageElevation</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsageVisits</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 		<key>SRSensorUsageDeviceUsage</key>
 		<dict>
-		    <key>Description</key>
+			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 	</dict>

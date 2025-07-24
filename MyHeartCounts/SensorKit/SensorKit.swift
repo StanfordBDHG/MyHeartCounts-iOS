@@ -123,13 +123,35 @@ extension Sensor where Sample == SRDeviceUsageReport {
 // MARK: FetchedSample
 
 
-struct FetchedSensorSample<Sample: AnyObject & Hashable>: @unchecked Sendable, Hashable { // ewww
-    let sample: Sample
-    let timestamp: SRAbsoluteTime
-    
-    fileprivate init(_ result: SRFetchResult<some Any>) {
-        sample = result.sample as! Sample
-        timestamp = result.timestamp
+extension SensorKit {
+    struct FetchResult<Sample: AnyObject & Hashable>: Hashable, @unchecked Sendable {
+        /// The SensorKit framework's timestamp
+        let sensorKitTimestamp: Date
+        let samples: [Sample]
+        
+        init(_ fetchResult: SRFetchResult<AnyObject>) {
+            sensorKitTimestamp = Date(timeIntervalSinceReferenceDate: fetchResult.timestamp.toCFAbsoluteTime())
+            samples = if let samples = fetchResult.sample as? [Sample] {
+                samples
+            } else if let sample = fetchResult.sample as? Sample {
+                [sample]
+            } else {
+                preconditionFailure("Unable to process fetch result \(fetchResult)")
+            }
+        }
+    }
+}
+
+
+extension SensorKit.FetchResult: RandomAccessCollection {
+    var startIndex: Int {
+        samples.startIndex
+    }
+    var endIndex: Int {
+        samples.endIndex
+    }
+    subscript(position: Int) -> Sample {
+        samples[position]
     }
 }
 
@@ -151,17 +173,17 @@ protocol SensorReaderProtocol<Sample>: AnyObject, Sendable {
     func fetchDevices() async throws -> sending [SRDevice]
     
     @SensorKitActor
-    func fetch(device: SRDevice?, timeRange: Range<Date>) async throws -> [FetchedSensorSample<Sample>]
+    func fetch(device: SRDevice?, timeRange: Range<Date>) async throws -> [SensorKit.FetchResult<Sample>]
 }
 
 
+
+@Observable
 final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderProtocol, @unchecked Sendable, SRSensorReaderDelegate {
-    typealias FetchedSample = FetchedSensorSample<Sample>
-    
     private enum State {
         case idle
         case fetchingDevices(CheckedContinuation<[SRDevice], any Error>)
-        case fetchingSamples(samples: [FetchedSample], CheckedContinuation<[FetchedSample], any Error>)
+        case fetchingSamples(samples: [SensorKit.FetchResult<Sample>], CheckedContinuation<[SensorKit.FetchResult<Sample>], any Error>)
         case startingRecording(CheckedContinuation<Void, any Error>)
         case stoppingRecording(CheckedContinuation<Void, any Error>)
         
@@ -173,18 +195,48 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
         }
     }
     
-    let sensor: Sensor<Sample>
-    private let logger = Logger(subsystem: "edu.stanford.MHC", category: "SensorKit")
-    private let reader: SRSensorReader
-    /*@SensorKitActor*/ private var state: State = .idle
-    
-    var authorizationStatus: SRAuthorizationStatus {
-        reader.authorizationStatus
+    private final class Lock {
+        private var isLocked = false
+        private var waiters: [CheckedContinuation<Void, Never>] = []
+        
+        init() {}
+        
+        func lock() async {
+            if !isLocked {
+                precondition(waiters.isEmpty, "invalid state: lock is open but there are waiters.")
+                isLocked = true
+            } else {
+                // the lock is locked.
+                // we need to wait until it is our turn to obtain the lock.
+                await withCheckedContinuation { continuation in
+                    waiters.append(continuation)
+                }
+            }
+        }
+        
+        func unlock() {
+            precondition(isLocked, "invalid state: cannot unlock lock that isn't locked.")
+            if waiters.isEmpty {
+                // no one wants to take the lock over from us; we can simply open it
+                isLocked = false
+            } else {
+                // if there are waiters, we keep the lock closed and (semantially) hand it over to the first continuation.
+                waiters.removeFirst().resume()
+            }
+        }
     }
     
-    init(sensor: Sensor<Sample>) {
+    @ObservationIgnored let sensor: Sensor<Sample>
+    @ObservationIgnored private let logger = Logger(subsystem: "edu.stanford.MHC", category: "SensorKit")
+    @ObservationIgnored private let reader: SRSensorReader
+    @ObservationIgnored /*@SensorKitActor*/ private var state: State = .idle
+    @ObservationIgnored @SensorKitActor private let lock = Lock()
+    @MainActor private(set) var authorizationStatus: SRAuthorizationStatus = .notDetermined
+    
+    nonisolated init(sensor: Sensor<Sample>) {
         self.sensor = sensor
-        reader = .init(sensor: sensor.srSensor)
+        reader = SRSensorReader(sensor: sensor.srSensor)
+//        id = "123"
         super.init()
         reader.delegate = self
     }
@@ -199,10 +251,22 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     @SensorKitActor
+    private func lock() async {
+        await lock.lock()
+    }
+    
+    @SensorKitActor
+    private func unlock() {
+        lock.unlock()
+    }
+    
+    @SensorKitActor
     func fetchDevices() async throws -> sending [SRDevice] {
+        await lock()
         checkIsIdle()
         defer {
             state = .idle
+            unlock()
         }
         return try await withCheckedThrowingContinuation { continuation in
             checkIsIdle()
@@ -213,9 +277,11 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     
     @SensorKitActor
     func startRecording() async throws {
+        await lock()
         checkIsIdle()
         defer {
             state = .idle
+            unlock()
         }
         return try await withCheckedThrowingContinuation { continuation in
             checkIsIdle()
@@ -226,9 +292,11 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     
     @SensorKitActor
     func stopRecording() async throws {
+        await lock()
         checkIsIdle()
         defer {
             state = .idle
+            unlock()
         }
         return try await withCheckedThrowingContinuation { continuation in
             checkIsIdle()
@@ -238,17 +306,24 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     @SensorKitActor
-    func fetch(device: SRDevice? = nil, timeRange: Range<Date>) async throws -> [FetchedSample] { // TODO we could also model this as an API that returns an AsyncStream... (NOT A GOOD IDEA THOUGH!!!)
+    func fetch(device: SRDevice? = nil, timeRange: Range<Date>) async throws -> [SensorKit.FetchResult<Sample>] { // TODO we could also model this as an API that returns an AsyncStream... (NOT A GOOD IDEA THOUGH!!!)
+        logger.notice("Will obtain lock to perform fetch")
+        await lock()
+        logger.notice(" Did obtain lock to perform fetch")
         checkIsIdle()
+        defer {
+            state = .idle
+            logger.notice("Will release lock")
+            unlock()
+            logger.notice(" Did release lock")
+        }
         let fetchRequest = SRFetchRequest()
         if let device {
             fetchRequest.device = device
         }
-        //fetchRequest.from = .fromCFAbsoluteTime(_cf: timeRange.lowerBound.timeIntervalSinceReferenceDate)
-        //fetchRequest.to = .fromCFAbsoluteTime(_cf: timeRange.upperBound.timeIntervalSinceReferenceDate)
-        defer {
-            state = .idle
-        }
+        fetchRequest.from = .fromCFAbsoluteTime(_cf: timeRange.lowerBound.timeIntervalSinceReferenceDate)
+        fetchRequest.to = .fromCFAbsoluteTime(_cf: timeRange.upperBound.timeIntervalSinceReferenceDate)
+        try await Task.sleep(for: .seconds(5))
         return try await withCheckedThrowingContinuation { continuation in
             checkIsIdle()
             state = .fetchingSamples(samples: [], continuation)
@@ -259,11 +334,12 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     // MARK: SRSensorReaderDelegate
     
     func sensorReader(_ reader: SRSensorReader, didChange authorizationStatus: SRAuthorizationStatus) {
-        logger.notice("sensorReaderDidChangeAuth \(reader) \(authorizationStatus.displayName)")
+        Task { @MainActor in
+            self.authorizationStatus = authorizationStatus
+        }
     }
     
     func sensorReader(_ reader: SRSensorReader, didFetch devices: [SRDevice]) {
-        logger.notice("didFetchDevices \(reader) \(devices)")
         switch state {
         case .fetchingDevices(let continuation):
             nonisolated(unsafe) let devices = devices
@@ -274,7 +350,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReader(_ reader: SRSensorReader, fetchDevicesDidFailWithError error: any Error) {
-        logger.notice("failedToFetchDevices \(reader) \(error)")
         switch state {
         case .fetchingDevices(let continuation):
             continuation.resume(throwing: error)
@@ -284,13 +359,11 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReader(_ reader: SRSensorReader, fetching fetchRequest: SRFetchRequest, didFetchResult result: SRFetchResult<AnyObject>) -> Bool {
-        logger.notice("didFetchResult \(fetchRequest) \(result)")
         switch state {
         case let .fetchingSamples(samples, continuation):
-            state = .fetchingSamples(
-                samples: samples.appending(contentsOf: CollectionOfOne(.init(result))),
-                continuation
-            )
+            var samples = consume samples
+            samples.append(.init(result))
+            state = .fetchingSamples(samples: samples, continuation)
         default:
             reportUnexpectedDelegateCallback()
         }
@@ -298,7 +371,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReader(_ reader: SRSensorReader, fetching fetchRequest: SRFetchRequest, failedWithError error: any Error) {
-        logger.notice("fetchingFailed \(fetchRequest) \(error)")
         switch state {
         case .fetchingSamples(samples: _, let continuation):
             continuation.resume(throwing: error)
@@ -308,7 +380,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReader(_ reader: SRSensorReader, didCompleteFetch fetchRequest: SRFetchRequest) {
-        logger.notice("didCompleteFetch \(fetchRequest)")
         switch state {
         case let .fetchingSamples(samples, continuation):
             continuation.resume(returning: samples)
@@ -318,7 +389,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReaderWillStartRecording(_ reader: SRSensorReader) {
-        logger.notice("willStartRecording \(reader)")
         switch state {
         case .startingRecording(let continuation):
             continuation.resume()
@@ -328,7 +398,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReader(_ reader: SRSensorReader, startRecordingFailedWithError error: any Error) {
-        logger.notice("failedToStartRecording \(reader) \(error)")
         switch state {
         case .startingRecording(let continuation):
             continuation.resume(throwing: error)
@@ -338,7 +407,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReaderDidStopRecording(_ reader: SRSensorReader) {
-        logger.notice("didStopRecording \(reader)")
         switch state {
         case .stoppingRecording(let continuation):
             continuation.resume()
@@ -348,7 +416,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     func sensorReader(_ reader: SRSensorReader, stopRecordingFailedWithError error: any Error) {
-        logger.notice("failedToStopRecording \(reader) \(error)")
         switch state {
         case .stoppingRecording(let continuation):
             continuation.resume(throwing: error)
