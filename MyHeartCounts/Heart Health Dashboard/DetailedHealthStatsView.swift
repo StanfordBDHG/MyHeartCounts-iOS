@@ -29,18 +29,18 @@ struct DetailedHealthStatsView: View {
         case scoreResult(result: ScoreResult, keyPath: KeyPath<CVHScore, ScoreResult>)
     }
     
-    @Environment(Account.self)
-    private var account: Account?
-    
-    @Environment(StudyManager.self)
-    private var studyManager
+    // swiftlint:disable attributes
+    @Environment(Account.self) private var account: Account?
+    @Environment(StudyManager.self) private var studyManager
+    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    // swiftlint:enable attributes
     
     private let sampleType: MHCSampleType
     private let input: Input
     @State private var isPresentingAddSampleSheet = false
     
     var body: some View {
-        Form {
+        Form { // swiftlint:disable:this closure_body_length
             switch input {
             case .scoreResult(let result, keyPath: _):
                 Section {
@@ -68,6 +68,13 @@ struct DetailedHealthStatsView: View {
                         title: "About \(sampleType.displayTitle)",
                         document: document
                     )
+                }
+            }
+            if accountFeatureFlags.isDebugModeEnabled, case let .custom(sampleType) = sampleType {
+                Section("Debug") {
+                    NavigationLink("All Samples") {
+                        BrowseFirestoreSamplesView(sampleType: sampleType)
+                    }
                 }
             }
         }
@@ -346,5 +353,38 @@ extension DetailedHealthStatsView {
         default:
             nil
         }
+    }
+}
+
+
+private struct BrowseFirestoreSamplesView: View {
+    @MHCFirestoreQuery<QuantitySample> private var samples: [QuantitySample]
+    
+    var body: some View {
+        Form {
+            List(samples) { sample in
+                NavigationLink {
+                    Form {
+                        LabeledContent("id", value: sample.id.uuidString)
+                        LabeledContent("sampleType", value: sample.sampleType.displayTitle)
+                        LabeledContent("unit", value: sample.unit.unitString)
+                        LabeledContent("value", value: sample.value, format: .number)
+                        LabeledContent("startDate", value: sample.startDate, format: .dateTime)
+                        LabeledContent("endDate", value: sample.endDate, format: .dateTime)
+                    }
+                } label: {
+                    HStack {
+                        Text(sample.startDate, format: .dateTime)
+                        Spacer()
+                        Text(sample.valueAndUnitDescription())
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+    }
+    
+    init(sampleType: CustomQuantitySampleType) {
+        _samples = .init(sampleType: sampleType, timeRange: .ever)
     }
 }

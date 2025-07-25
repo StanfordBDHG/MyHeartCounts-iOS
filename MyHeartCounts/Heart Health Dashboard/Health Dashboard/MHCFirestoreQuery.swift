@@ -84,6 +84,8 @@ extension MHCFirestoreQuery {
         var sortDescriptors: [SortDescriptor]
         var limit: Int?
         var decode: DecodeFn
+        var postDecodeSort: (any SortComparator<Element>)?
+        var postDecodeLimit: Int?
     }
 }
 
@@ -135,6 +137,12 @@ private final class Impl<Element: Sendable>: Sendable {
                 elements.append(element)
             }
         }
+        if let comparator = input.postDecodeSort {
+            elements.sort(using: comparator)
+        }
+        if let limit = input.postDecodeLimit, limit > elements.count {
+            elements.removeFirst(elements.count - limit)
+        }
         await MainActor.run {
             self.elements = elements
         }
@@ -145,38 +153,46 @@ private final class Impl<Element: Sendable>: Sendable {
 // MARK: Extensions
 
 extension MHCFirestoreQuery where Element == QuantitySample {
-    init(sampleType: CustomQuantitySampleType, timeRange: HealthKitQueryTimeRange) {
+    init(
+        sampleType: CustomQuantitySampleType,
+        timeRange: HealthKitQueryTimeRange,
+        sorted sortDescriptor: some SortComparator<QuantitySample> = KeyPathComparator(\.startDate, order: .reverse),
+        limit: Int? = nil
+    ) {
         input = .init(
             collection: "HealthObservations_\(sampleType.id)",
             filter: nil,
-            sortDescriptors: []
-        ) { document -> QuantitySample? in
-            if timeRange != .ever {
-                let data = document.data()
-                if let dateString = data["effectiveDateTime"] as? String {
-                    guard let date = try? DateTime(dateString).asNSDate() else {
+            sortDescriptors: [],
+            decode: { document -> QuantitySample? in
+                if timeRange != .ever {
+                    let data = document.data()
+                    if let dateString = data["effectiveDateTime"] as? String {
+                        guard let date = try? DateTime(dateString).asNSDate() else {
+                            return nil
+                        }
+                        guard timeRange.range.contains(date) else {
+                            return nil
+                        }
+                    } else if let periodDict = data["effectivePeriod"] as? [String: String] {
+                        guard let start = periodDict["start"].flatMap({ try? DateTime($0).asNSDate() }),
+                              let end = periodDict["end"].flatMap({ try? DateTime($0).asNSDate() }) else {
+                            return nil
+                        }
+                        guard (start..<end).overlaps(timeRange.range) else {
+                            return nil
+                        }
+                    } else {
+                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
                         return nil
                     }
-                    guard timeRange.range.contains(date) else {
-                        return nil
-                    }
-                } else if let periodDict = data["effectivePeriod"] as? [String: String] {
-                    guard let start = periodDict["start"].flatMap({ try? DateTime($0).asNSDate() }),
-                          let end = periodDict["end"].flatMap({ try? DateTime($0).asNSDate() }) else {
-                        return nil
-                    }
-                    guard (start..<end).overlaps(timeRange.range) else {
-                        return nil
-                    }
-                } else {
-                    // we want to filter based on time range, but we can't extract a time range to filter against from the document
+                }
+                guard let proxy = try? document.data(as: ResourceProxy.self) else {
                     return nil
                 }
-            }
-            guard let proxy = try? document.data(as: ResourceProxy.self) else {
-                return nil
-            }
-            return QuantitySample(proxy, sampleTypeHint: .custom(sampleType))
-        }
+                return QuantitySample(proxy, sampleTypeHint: .custom(sampleType))
+            },
+            postDecodeSort: sortDescriptor,
+            postDecodeLimit: limit
+        )
     }
 }

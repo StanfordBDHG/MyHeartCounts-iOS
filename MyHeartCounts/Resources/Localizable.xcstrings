@@ -183,6 +183,9 @@
     "Alaska" : {
 
     },
+    "All Samples" : {
+
+    },
     "All tasks have already been completed!" : {
 
     },
@@ -392,6 +395,9 @@
 
     },
     "Date of Birth" : {
+
+    },
+    "Debug" : {
 
     },
     "Debug Mode" : {
@@ -728,6 +734,9 @@
 
     },
     "I'm actively smoking" : {
+
+    },
+    "id" : {
 
     },
     "Idaho" : {
@@ -1380,6 +1389,9 @@
     "Sample Type" : {
 
     },
+    "sampleType" : {
+
+    },
     "Save" : {
 
     },
@@ -1638,6 +1650,9 @@
 
     },
     "Unenroll" : {
+
+    },
+    "unit" : {
 
     },
     "Upcoming Tasks" : {
