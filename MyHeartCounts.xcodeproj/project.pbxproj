@@ -80,6 +80,7 @@
 		80A008462DEFD0F900A446BA /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A008452DEFD0F900A446BA /* OrderedCollections */; };
 		80A81C692D7C89D400444A17 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80A81C682D7C89D400444A17 /* SpeziStudy */; };
 		80BE06542DCF3A6D00171114 /* SwiftPackageList in Frameworks */ = {isa = PBXBuildFile; productRef = 80BE06532DCF3A6D00171114 /* SwiftPackageList */; };
+		80C6AFF22E33E4D200D22DCB /* SpeziFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 80C6AFF12E33E4D200D22DCB /* SpeziFoundation */; };
 		80C7B86C2D67D76B0016BCAF /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */; };
 		80D41BE92E25A9BC00D5EAAB /* ResearchKitOnFHIR in Frameworks */ = {isa = PBXBuildFile; productRef = 80D41BE82E25A9BC00D5EAAB /* ResearchKitOnFHIR */; };
 		80D612F02D67A5D200FAE750 /* SpeziKeychainStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 80D612EF2D67A5D200FAE750 /* SpeziKeychainStorage */; };
@@ -241,6 +242,7 @@
 				2FB099AF2A875DF100B20952 /* FirebaseAuth in Frameworks */,
 				80D41BE92E25A9BC00D5EAAB /* ResearchKitOnFHIR in Frameworks */,
 				803D2B442D8981EA00DAEF9B /* SpeziStudyDefinition in Frameworks */,
+				80C6AFF22E33E4D200D22DCB /* SpeziFoundation in Frameworks */,
 				80F8A3AB2E20496E00C6322F /* SpeziHealthKitUI in Frameworks */,
 				807669732D772C40001B980B /* Collections in Frameworks */,
 				2FE5DC6729EDD894004B9AB4 /* SpeziContact in Frameworks */,
@@ -509,6 +511,7 @@
 				80F8A3A82E20496E00C6322F /* SpeziHealthKitBulkExport */,
 				80F8A3AA2E20496E00C6322F /* SpeziHealthKitUI */,
 				80D41BE82E25A9BC00D5EAAB /* ResearchKitOnFHIR */,
+				80C6AFF12E33E4D200D22DCB /* SpeziFoundation */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -684,6 +687,7 @@
 				80A3A4812E1EB270002A8515 /* XCRemoteSwiftPackageReference "ResearchKit" */,
 				80F8A3A52E20496E00C6322F /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
 				80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */,
+				80C6AFF02E33E4D200D22DCB /* XCRemoteSwiftPackageReference "SpeziFoundation" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1827,6 +1831,14 @@
 				minimumVersion = 4.8.0;
 			};
 		};
+		80C6AFF02E33E4D200D22DCB /* XCRemoteSwiftPackageReference "SpeziFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziFoundation.git";
+			requirement = {
+				branch = "lukas/OrderedArray-improvements";
+				kind = branch;
+			};
+		};
 		80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/ResearchKitOnFHIR.git";
@@ -2202,6 +2214,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 80BE064E2DCF3A2D00171114 /* XCRemoteSwiftPackageReference "swift-package-list" */;
 			productName = SwiftPackageList;
+		};
+		80C6AFF12E33E4D200D22DCB /* SpeziFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80C6AFF02E33E4D200D22DCB /* XCRemoteSwiftPackageReference "SpeziFoundation" */;
+			productName = SpeziFoundation;
 		};
 		80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
