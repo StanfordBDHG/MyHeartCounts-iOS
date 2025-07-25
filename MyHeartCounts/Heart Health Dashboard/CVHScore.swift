@@ -51,8 +51,14 @@ struct CVHScore: DynamicProperty {
     @HealthKitQuery(.bloodPressure, timeRange: .last(months: 3))
     private var bloodPressure
     
+    @State private var lastSeenSleepSamples: [HKCategorySample] = []
+    @State private(set) var sleepHealthScore = ScoreResult(sampleType: .healthKit(.category(.sleepAnalysis)), definition: .cvhSleep)
+    
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
     var wrappedValue: Double? {
+        Task {
+            await updateSleepScore()
+        }
         let scores: [Double] = [
             dietScore.score,
             physicalExerciseScore.score,
@@ -68,6 +74,39 @@ struct CVHScore: DynamicProperty {
     
     var projectedValue: Self {
         self
+    }
+    
+    init() {
+        print(Self.self, #function)
+    }
+    
+    nonisolated func update() {
+        Task {
+            await updateSleepScore()
+        }
+    }
+    
+    nonisolated private func updateSleepScore() async {
+        guard await !lastSeenSleepSamples.elementsEqual(sleepSamples) else {
+            return
+        }
+        let sleepSamples = await MainActor.run {
+            // this ensures that any subsequent calls (including while the computation below is running) will return early, unless data actually changed.
+            let sleepSamples = Array(self.sleepSamples)
+            self.lastSeenSleepSamples = sleepSamples
+            return sleepSamples
+        }
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        let sleepSessions = (try? sleepSamples.splitIntoSleepSessions()) ?? []
+        let score = ScoreResult(
+            sampleType: .healthKit(.category(.sleepAnalysis)),
+            sample: sleepSessions.last,
+            value: { $0.totalTimeSpentAsleep / 60 / 60 },
+            definition: .cvhSleep
+        )
+        await MainActor.run {
+            self.sleepHealthScore = score
+        }
     }
 }
 
@@ -97,15 +136,6 @@ extension CVHScore {
             sample: nicotineExposure.first,
             value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
             definition: .cvhNicotine
-        )
-    }
-    
-    var sleepHealthScore: ScoreResult {
-        ScoreResult(
-            sampleType: .healthKit(.category(.sleepAnalysis)),
-            sample: ((try? sleepSamples.splitIntoSleepSessions()) ?? []).last,
-            value: { $0.totalTimeSpentAsleep / 60 / 60 },
-            definition: .cvhSleep
         )
     }
     
