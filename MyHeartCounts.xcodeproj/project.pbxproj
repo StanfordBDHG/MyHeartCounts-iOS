@@ -412,6 +412,7 @@
 				653A254B283387FE005D4D48 /* Resources */,
 				8054D98F2DE54F8900458CD9 /* Embed Watch Content */,
 				80FB17072DE67523000F2C8A /* Embed Frameworks */,
+				80C6B4172E34E0D100D22DCB /* Run Script (Adjust Entitlements) */,
 			);
 			buildRules = (
 			);
@@ -739,6 +740,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		80C6B4172E34E0D100D22DCB /* Run Script (Adjust Entitlements) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script (Adjust Entitlements)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nenv\nexit 1\n\nENTITLEMENTS_FILE=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\necho \"Entitlements file before potential adjustments: (${ENTITLEMENTS_FILE})\"\ncat \"${ENTITLEMENTS_FILE}\"\n\n\nlk_remove_entitlement() {\n    plutil -remove \"$1\" \"${ENTITLEMENTS_FILE}\"\n}\n\n\nif [ \"${IS_MACCATALYST}\" = \"YES\" ]; then\n    echo \"Is compiling for MacCatalyst. Removing unnecessary entitlements.\"\n    lk_remove_entitlement \"com\\.apple\\.developer\\.healthkit\"\n    lk_remove_entitlement \"com\\.apple\\.developer\\.healthkit\\.access\"\n    lk_remove_entitlement \"com\\.apple\\.developer\\.healthkit\\.background-delivery\"\n    lk_remove_entitlement \"com\\.apple\\.developer\\.game-center\"\n    lk_remove_entitlement \"application-identifier\"\n    lk_remove_entitlement \"com\\.apple\\.developer\\.team-identifier\"\n    lk_remove_entitlement \"get-task-allow\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		653A2549283387FE005D4D48 /* Sources */ = {
