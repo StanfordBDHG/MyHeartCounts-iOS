@@ -407,12 +407,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 653A257128338800005D4D48 /* Build configuration list for PBXNativeTarget "MyHeartCounts" */;
 			buildPhases = (
+				80C6B4172E34E0D100D22DCB /* Run Script (Adjust Entitlements) */,
 				653A2549283387FE005D4D48 /* Sources */,
 				653A254A283387FE005D4D48 /* Frameworks */,
 				653A254B283387FE005D4D48 /* Resources */,
 				8054D98F2DE54F8900458CD9 /* Embed Watch Content */,
 				80FB17072DE67523000F2C8A /* Embed Frameworks */,
-				80C6B4172E34E0D100D22DCB /* Run Script (Adjust Entitlements) */,
 			);
 			buildRules = (
 			);
@@ -744,6 +744,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		80C6B4172E34E0D100D22DCB /* Run Script (Adjust Entitlements) */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
