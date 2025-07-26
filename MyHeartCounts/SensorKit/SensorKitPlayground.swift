@@ -50,6 +50,9 @@ struct SensorKitPlayground: View {
                     }
                 }
             }
+            AsyncButton("Fetch WristTemp Data", state: $viewState) {
+                try await fetchWristTempData()
+            }
             Section("Sensors") {
                 sensorReaderNavigationLink(for: onWristReader)
                 sensorReaderNavigationLink(for: ambientLightReader)
@@ -105,6 +108,31 @@ struct SensorKitPlayground: View {
         NavigationLink(reader.sensor.displayName) {
             SensorReaderView(reader: reader)
         }
+    }
+    
+    private nonisolated func fetchWristTempData() async throws {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        let reader = SensorReader(sensor: .wristTemperature)
+        let devices = try await reader.fetchDevices()
+        var sessions: [SRWristTemperatureSession] = []
+        for device in devices {
+            sessions.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: .days(6)).flatMap(\.self))
+        }
+        print("#sessions: \(sessions.count)")
+        for (idx, session) in sessions.enumerated() {
+//            print("- [\(idx)]: \(session.startDate) \(session.temperatures.count(where: { _ in true }))")
+            print(session)
+            print(session.startDate, session.duration, session.version)
+            print(type(of: session.temperatures))
+            let samples: NSEnumerator = session.__temperatures
+            while let sample = samples.nextObject() {
+                print(sample)
+            }
+//            for sample in session.temperatures {
+//                print(sample)
+//            }
+        }
+        fatalError()
     }
 }
 
@@ -201,7 +229,7 @@ extension SensorKitPlayground {
                     return start..<end
                 }()
                 for device in devices {
-                    fetchResults.append(contentsOf: try await reader.fetch(device: device, timeRange: timeRange))
+                    fetchResults.append(contentsOf: try await reader.fetch(from: device, timeRange: timeRange))
                 }
                 if let firstResult = fetchResults.first {
                     var numSamples = firstResult.count
@@ -234,6 +262,7 @@ extension SensorKitPlayground {
                     if let sample = fetchResult.first, fetchResult.count == 1 {
                         sampleFields(for: sample)
                     } else {
+                        let _ = print(fetchResult.reduce(into: 0, { $0 ^ $1.hashValue }))
                         List(fetchResult, id: \.self) { sample in
                             NavigationLink {
                                 Form {
@@ -279,10 +308,42 @@ extension SensorKitPlayground {
                 LabeledContent("departureDateInterval", value: sample.departureDateInterval, format: .humanReadable())
                 LabeledContent("locationCategory", value: sample.locationCategory.displayTitle)
                 LabeledContent("identifier", value: sample.identifier.uuidString)
+            case let sample as SRWristTemperatureSession:
+                LabeledContent("startDate", value: sample.startDate, format: .dateTime)
+                LabeledContent("duration", value: sample.duration, format: .timeInterval)
+                LabeledContent("version", value: sample.version)
+//                let measurements = Array(sample.temperatures)
+                ForEach(Array(sample.temperatures), id: \.mhc_id) { (measurement: SRWristTemperature) in
+//                    let measurement = measurements[idx]
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(measurement.timestamp, format: .dateTime)
+                        }
+                        Spacer()
+                        Text(measurement.value, format: .measurement(width: .abbreviated))
+                    }
+                }
             default:
                 Text("Unhandled sample type \(type(of: sample)) :/")
             }
         }
+    }
+}
+
+
+extension SRWristTemperatureSession {
+    var mhc_id: ObjectIdentifier {
+        ObjectIdentifier(self)
+    }
+    
+//    public override func hash(into hasher: inout Hasher) {
+//        hasher.combine(ObjectIdentifier(self))
+//    }
+}
+
+extension SRWristTemperature {
+    var mhc_id: ObjectIdentifier {
+        ObjectIdentifier(self)
     }
 }
 

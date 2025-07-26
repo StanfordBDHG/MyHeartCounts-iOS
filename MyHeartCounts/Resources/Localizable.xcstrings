@@ -497,6 +497,9 @@
     "Fetch Results" : {
 
     },
+    "Fetch WristTemp Data" : {
+
+    },
     "Fetching Data…" : {
 
     },
@@ -1681,6 +1684,9 @@
 
     },
     "Vermont" : {
+
+    },
+    "version" : {
 
     },
     "Virgin Islands" : {

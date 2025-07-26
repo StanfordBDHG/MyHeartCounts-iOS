@@ -56,67 +56,111 @@ nonisolated extension SensorKit {
 // MARK: Sensor
 
 struct Sensor<Sample: AnyObject & Hashable>: Hashable, Sendable {
+    /// The underlying SensorKit `SRSensor`
     let srSensor: SRSensor
+    /// The recommended display name
     let displayName: String
+    /// How long the system hold data in quarantine before it can be queried by applications.
+    let dataQuarantineDuration: Duration
 }
 
 extension Sensor where Sample == SRWristDetection {
     static var onWrist: Sensor<SRWristDetection> {
-        Sensor(srSensor: .onWristState, displayName: "On-Wrist State")
+        Sensor(
+            srSensor: .onWristState,
+            displayName: "On-Wrist State",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == SRAmbientLightSample {
     static var ambientLight: Sensor<SRAmbientLightSample> {
-        Sensor(srSensor: .ambientLightSensor, displayName: "Ambient Light")
+        Sensor(
+            srSensor: .ambientLightSensor,
+            displayName: "Ambient Light",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == CMRecordedPressureData {
     static var ambientPressure: Sensor<CMRecordedPressureData> {
-        Sensor(srSensor: .ambientPressure, displayName: "Ambient Pressure")
+        Sensor(
+            srSensor: .ambientPressure,
+            displayName: "Ambient Pressure",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == CMHighFrequencyHeartRateData {
     static var heartRate: Sensor<CMHighFrequencyHeartRateData> {
-        Sensor(srSensor: .heartRate, displayName: "Heart Rate")
+        Sensor(
+            srSensor: .heartRate,
+            displayName: "Heart Rate",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == CMPedometerData {
     static var pedometer: Sensor<CMPedometerData> {
-        Sensor(srSensor: .pedometerData, displayName: "Pedometer")
+        Sensor(
+            srSensor: .pedometerData,
+            displayName: "Pedometer",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
-extension Sensor where Sample == SRWristTemperature {
-    static var wristTemperature: Sensor<SRWristTemperature> {
-        Sensor(srSensor: .wristTemperature, displayName: "Wrist Temperature")
+extension Sensor where Sample == SRWristTemperatureSession {
+    static var wristTemperature: Sensor<SRWristTemperatureSession> {
+        Sensor(
+            srSensor: .wristTemperature,
+            displayName: "Wrist Temperature",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == SRPhotoplethysmogramSample {
     static var ppg: Sensor<SRPhotoplethysmogramSample> {
-        Sensor(srSensor: .photoplethysmogram, displayName: "PPG")
+        Sensor(
+            srSensor: .photoplethysmogram,
+            displayName: "PPG",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == SRElectrocardiogramSample {
     static var ecg: Sensor<SRElectrocardiogramSample> {
-        Sensor(srSensor: .electrocardiogram, displayName: "ECG")
+        Sensor(
+            srSensor: .electrocardiogram,
+            displayName: "ECG",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == SRVisit {
     static var visits: Sensor<SRVisit> {
-        Sensor(srSensor: .visits, displayName: "Visits")
+        Sensor(
+            srSensor: .visits,
+            displayName: "Visits",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
 extension Sensor where Sample == SRDeviceUsageReport {
     static var deviceUsage: Sensor<SRDeviceUsageReport> {
-        Sensor(srSensor: .deviceUsageReport, displayName: "Device Usage Report")
+        Sensor(
+            srSensor: .deviceUsageReport,
+            displayName: "Device Usage Report",
+            dataQuarantineDuration: .hours(24)
+        )
     }
 }
 
@@ -158,6 +202,12 @@ extension SensorKit.FetchResult: RandomAccessCollection {
 
 // MARK: SensorReader
 
+//extension SensorKit {
+//    enum FetchError: Error {
+//        case invalidTimeRange
+//    }
+//}
+
 protocol SensorReaderProtocol<Sample>: AnyObject, Sendable {
     associatedtype Sample: AnyObject & Hashable
     
@@ -173,7 +223,17 @@ protocol SensorReaderProtocol<Sample>: AnyObject, Sendable {
     func fetchDevices() async throws -> sending [SRDevice]
     
     @SensorKitActor
-    func fetch(device: SRDevice?, timeRange: Range<Date>) async throws -> [SensorKit.FetchResult<Sample>]
+    func fetch(from device: SRDevice?, timeRange: Range<Date>) async throws -> [SensorKit.FetchResult<Sample>]
+}
+
+
+extension SensorReaderProtocol {
+    @SensorKitActor
+    func fetch(from device: SRDevice? = nil, mostRecentAvailable fetchDuration: Duration) async throws -> [SensorKit.FetchResult<Sample>] {
+        let endDate = Date.now.addingTimeInterval(-sensor.dataQuarantineDuration.timeInterval)
+        let startDate = endDate.addingTimeInterval(-fetchDuration.timeInterval)
+        return try await fetch(from: device, timeRange: startDate..<endDate)
+    }
 }
 
 
@@ -306,7 +366,7 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
     }
     
     @SensorKitActor
-    func fetch(device: SRDevice? = nil, timeRange: Range<Date>) async throws -> [SensorKit.FetchResult<Sample>] { // TODO we could also model this as an API that returns an AsyncStream... (NOT A GOOD IDEA THOUGH!!!)
+    func fetch(from device: SRDevice? = nil, timeRange: Range<Date>) async throws -> [SensorKit.FetchResult<Sample>] { // TODO we could also model this as an API that returns an AsyncStream... (NOT A GOOD IDEA THOUGH!!!)
         logger.notice("Will obtain lock to perform fetch")
         await lock()
         logger.notice(" Did obtain lock to perform fetch")
