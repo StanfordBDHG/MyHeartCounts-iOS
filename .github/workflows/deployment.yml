@@ -118,7 +118,7 @@ jobs:
       runsonlabels: '["macOS", "self-hosted"]'
       environment: ${{ needs.determineenvironment.outputs.environment }}
       entitlements_file: 'MyHeartCounts/Supporting Files/MyHeartCounts.entitlements'
-      remove_entitlements: 'com.apple.developer.sensorkit.reader.allow'
+      remove_entitlements: 'com\.apple\.developer\.sensorkit\.reader\.allow'
       googleserviceinfoplistpath: 'MyHeartCounts/Supporting Files/GoogleService-Info.plist'
       setupsigning: true
       fastlanelane: deploy environment:"${{ needs.determineenvironment.outputs.environment }}" versionname:"${{ needs.vars.outputs.version }}" releasenotes:"${{ inputs.releasenotes }}"
