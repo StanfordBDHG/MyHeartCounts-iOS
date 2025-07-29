@@ -383,7 +383,6 @@ final class SensorReader<Sample: AnyObject & Hashable>: NSObject, SensorReaderPr
         }
         fetchRequest.from = .fromCFAbsoluteTime(_cf: timeRange.lowerBound.timeIntervalSinceReferenceDate)
         fetchRequest.to = .fromCFAbsoluteTime(_cf: timeRange.upperBound.timeIntervalSinceReferenceDate)
-        try await Task.sleep(for: .seconds(5))
         return try await withCheckedThrowingContinuation { continuation in
             checkIsIdle()
             state = .fetchingSamples(samples: [], continuation)
