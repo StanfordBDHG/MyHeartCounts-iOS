@@ -191,7 +191,7 @@ platform :ios do
 
     if strip_sensorkit_entitlement
       puts 'Stripping SensorKit entitlement'
-      sh('plutil', '-remove', 'com\.apple\.developer\.sensorkit\.reader\.allow', 'MyHeartCounts/Supporting Files/MyHeartCounts.entitlements')
+      sh('plutil', '-remove', 'com\.apple\.developer\.sensorkit\.reader\.allow', '../MyHeartCounts/Supporting Files/MyHeartCounts.entitlements')
     end
 
     archive(
