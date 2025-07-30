@@ -22,7 +22,11 @@ struct UpcomingTasksTab: RootViewTab {
     var body: some View {
         NavigationStack {
             Form {
-                TasksList(timeRange: .weeks(2))
+                TasksList(
+                    mode: .upcoming(showFallbackTasks: true),
+                    timeRange: .weeks(2),
+                    noTasksMessageLabels: .init(title: "No Upcoming Tasks")
+                )
             }
             .navigationTitle(String(localized: Self.tabTitle))
             .navigationBarTitleDisplayMode(.large)

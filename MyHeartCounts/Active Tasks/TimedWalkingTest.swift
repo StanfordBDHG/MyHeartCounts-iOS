@@ -125,7 +125,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             return try await stop()
         }
         session.completeSessionTask = sessionTask
-        let result = try await sessionTask.result
+        let result = await sessionTask.result
         switch result {
         case .success(let result):
             return result

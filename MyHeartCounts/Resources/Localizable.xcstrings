@@ -186,7 +186,7 @@
     "All Samples" : {
 
     },
-    "All tasks have already been completed!" : {
+    "All tasks have been completed!" : {
 
     },
     "Allow Notifications" : {
@@ -965,6 +965,9 @@
 
     },
     "No Internet" : {
+
+    },
+    "No Missed Tasks" : {
 
     },
     "No News Yet" : {
@@ -1819,6 +1822,9 @@
 
     },
     "You can select multiple options" : {
+
+    },
+    "You're All Set" : {
 
     },
     "Your Account" : {

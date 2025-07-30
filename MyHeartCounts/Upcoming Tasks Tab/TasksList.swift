@@ -42,7 +42,7 @@ struct TasksList: View {
     
     enum Mode {
         /// The ``TasksList`` should display a list of upcoming Tasks
-        case upcoming
+        case upcoming(showFallbackTasks: Bool)
         /// The ``TasksList`` should display a list of missed but not yet expired Tasks
         case missed
     }
@@ -51,6 +51,19 @@ struct TasksList: View {
         case none
         case custom(String, subtitle: String = "")
         case timeRange
+    }
+    
+    struct NoTasksMessageLabels {
+        let title: LocalizedStringResource
+        let subtitle: LocalizedStringResource
+        
+        init(
+            title: LocalizedStringResource,
+            subtitle: LocalizedStringResource = "All tasks have been completed!"
+        ) {
+            self.title = title
+            self.subtitle = subtitle
+        }
     }
     
     private struct QuestionnaireBeingAnswered: Identifiable {
@@ -67,7 +80,7 @@ struct TasksList: View {
         let shouldCompleteEvent: Bool
         
         var id: AnyHashable {
-            AnyHashable(event?.id) ?? AnyHashable(test)
+            (event?.id).map { AnyHashable($0) } ?? AnyHashable(test)
         }
         
         init(test: TimedWalkingTestConfiguration, event: Event, shouldCompleteEvent: Bool) {
@@ -93,6 +106,7 @@ struct TasksList: View {
     private let mode: Mode
     private let timeRange: TimeRange
     private let headerConfig: HeaderConfig
+    private let noTasksMessageLabels: NoTasksMessageLabels
     
     @State private var viewState: ViewState = .idle
     @State private var presentedArticle: Article?
@@ -138,15 +152,15 @@ struct TasksList: View {
             }
         let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
         switch mode {
-        case .upcoming:
+        case .upcoming(let showFallbackTasks):
             UpcomingEventsQuery(effectiveTimeRange) { events in
-                Impl(events: events) {
+                Impl(events: events, showFallbackTasks: showFallbackTasks, noTasksMessageLabels: noTasksMessageLabels) {
                     handleAction($0)
                 }
             }
         case .missed:
             MissedEventsQuery(effectiveTimeRange) { events in
-                Impl(events: events) {
+                Impl(events: events, showFallbackTasks: false, noTasksMessageLabels: noTasksMessageLabels) {
                     handleAction($0)
                 }
             }
@@ -194,13 +208,15 @@ struct TasksList: View {
     }
     
     init(
-        mode: Mode = .upcoming, // swiftlint:disable:this function_default_parameter_at_end
+        mode: Mode,
         timeRange: TimeRange,
-        headerConfig: HeaderConfig = .timeRange
+        headerConfig: HeaderConfig = .timeRange, // swiftlint:disable:this function_default_parameter_at_end
+        noTasksMessageLabels: NoTasksMessageLabels
     ) {
         self.mode = mode
         self.timeRange = timeRange
         self.headerConfig = headerConfig
+        self.noTasksMessageLabels = noTasksMessageLabels
     }
     
     private func handleAction(_ taskToPerform: Impl.TaskToPerform) {
@@ -401,6 +417,8 @@ extension TasksList {
         @Environment(\.calendar)
         private var cal
         private let events: [Event]
+        private let showFallbackTasks: Bool
+        private let noTasksMessageLabels: NoTasksMessageLabels
         private let selectionHandler: SelectionHandler
         
         var body: some View {
@@ -421,16 +439,15 @@ extension TasksList {
             } else {
                 Section {
                     ContentUnavailableView(
-                        "No Upcoming Tasks",
+                        noTasksMessageLabels.title.localizedString(),
                         systemSymbol: .partyPopper,
-                        description: Text("All tasks have already been completed!")
+                        description: Text(noTasksMessageLabels.subtitle)
                     )
                 }
                 UpcomingTasksTab.sectionHeader(
                     title: "Other Tasks",
                     subtitle: "Always Available"
                 )
-                .background(Color.red)
                 fallbackSections
             }
         }
@@ -464,8 +481,15 @@ extension TasksList {
         }
         
         
-        init(events: [Event], selectionHandler: @escaping SelectionHandler) {
+        init(
+            events: [Event],
+            showFallbackTasks: Bool,
+            noTasksMessageLabels: NoTasksMessageLabels,
+            selectionHandler: @escaping SelectionHandler
+        ) {
             self.events = events
+            self.showFallbackTasks = showFallbackTasks
+            self.noTasksMessageLabels = noTasksMessageLabels
             self.selectionHandler = selectionHandler
         }
         

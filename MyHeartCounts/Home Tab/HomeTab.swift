@@ -43,7 +43,12 @@ struct HomeTab: RootViewTab {
             Form {
                 topActionsFormContent
                 historicalHealthDataUploadSection
-                TasksList(timeRange: .today, headerConfig: .custom("Today's Tasks"))
+                TasksList(
+                    mode: .upcoming(showFallbackTasks: false),
+                    timeRange: .today,
+                    headerConfig: .custom("Today's Tasks"),
+                    noTasksMessageLabels: .init(title: "You're All Set")
+                )
                 missedEventsSection
             }
             .navigationTitle(String(localized: Self.tabTitle))
@@ -106,7 +111,8 @@ struct HomeTab: RootViewTab {
                         TasksList(
                             mode: .missed,
                             timeRange: .weeks(2),
-                            headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks")
+                            headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks"),
+                            noTasksMessageLabels: .init(title: "No Missed Tasks")
                         )
                     }
                     .navigationTitle("Missed Tasks")
