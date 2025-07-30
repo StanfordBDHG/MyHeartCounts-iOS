@@ -6,8 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_length
+
 import Algorithms
 import Foundation
+import SFSafeSymbols
 import SpeziQuestionnaire
 import SpeziScheduler
 import SpeziSchedulerUI
@@ -54,16 +57,38 @@ struct TasksList: View {
         let questionnaire: Questionnaire
         let enrollment: StudyEnrollment
         let event: Event
+        let shouldCompleteEvent: Bool
         var id: Questionnaire.ID { questionnaire.id }
     }
     
+    private struct ActiveTimedWalkingTest: Identifiable {
+        let test: TimedWalkingTestConfiguration
+        let event: Event?
+        let shouldCompleteEvent: Bool
+        
+        var id: AnyHashable {
+            AnyHashable(event?.id) ?? AnyHashable(test)
+        }
+        
+        init(test: TimedWalkingTestConfiguration, event: Event, shouldCompleteEvent: Bool) {
+            self.test = test
+            self.event = event
+            self.shouldCompleteEvent = shouldCompleteEvent
+        }
+        
+        init(test: TimedWalkingTestConfiguration) {
+            self.test = test
+            self.event = nil
+            self.shouldCompleteEvent = false
+        }
+    }
     
-    @Environment(\.calendar)
-    private var cal
-    @Environment(MyHeartCountsStandard.self)
-    private var standard
-    @Environment(StudyManager.self)
-    private var studyManager
+    
+    // swiftlint:disable attributes
+    @Environment(\.calendar) private var cal
+    @Environment(MyHeartCountsStandard.self) private var standard
+    @Environment(StudyManager.self) private var studyManager
+    // swiftlint:enable attributes
     
     private let mode: Mode
     private let timeRange: TimeRange
@@ -72,7 +97,7 @@ struct TasksList: View {
     @State private var viewState: ViewState = .idle
     @State private var presentedArticle: Article?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
-    @State private var presentedTimedWalkingTest: StudyDefinition.TimedWalkingTestComponent?
+    @State private var activeTimedWalkingTest: ActiveTimedWalkingTest?
     
     var body: some View {
         header
@@ -87,7 +112,9 @@ struct TasksList: View {
                     switch result {
                     case .completed(let response):
                         do {
-                            try input.event.complete()
+                            if input.shouldCompleteEvent {
+                                try input.event.complete()
+                            }
                             await standard.add(response: response)
                         } catch {
                             viewState = .error(error)
@@ -100,9 +127,13 @@ struct TasksList: View {
             .sheet(item: $presentedArticle) { article in
                 ArticleSheet(article: article)
             }
-            .sheet(item: $presentedTimedWalkingTest) { component in
+            .sheet(item: $activeTimedWalkingTest) { input in
                 NavigationStack {
-                    TimedWalkingTestView(component.test)
+                    TimedWalkingTestView(input.test) { result in
+                        if result != nil, let event = input.event, input.shouldCompleteEvent {
+                            _ = try? event.complete()
+                        }
+                    }
                 }
             }
         let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
@@ -110,13 +141,13 @@ struct TasksList: View {
         case .upcoming:
             UpcomingEventsQuery(effectiveTimeRange) { events in
                 Impl(events: events) {
-                    await handleAction($0, for: $1, context: $2)
+                    handleAction($0)
                 }
             }
         case .missed:
             MissedEventsQuery(effectiveTimeRange) { events in
                 Impl(events: events) {
-                    await handleAction($0, for: $1, context: $2)
+                    handleAction($0)
                 }
             }
         }
@@ -124,16 +155,10 @@ struct TasksList: View {
     
     @ViewBuilder private var header: some View {
         let (title, subtitle) = headerContents
-        VStack(alignment: .leading) {
-            Text(title)
-            if !subtitle.isEmpty {
-                Text(subtitle)
-                    .foregroundStyle(.secondary)
-                    .font(.footnote)
-                    .fontDesign(.rounded)
-            }
-        }
-        .styleAsMHCSectionHeader()
+        UpcomingTasksTab.sectionHeader(
+            title: title,
+            subtitle: subtitle
+        )
     }
     
     private var headerContents: (String, String) {
@@ -178,7 +203,21 @@ struct TasksList: View {
         self.headerConfig = headerConfig
     }
     
-    private func handleAction(_ action: StudyManager.ScheduledTaskAction, for event: Event, context: Task.Context.StudyContext) async {
+    private func handleAction(_ taskToPerform: Impl.TaskToPerform) {
+        switch taskToPerform {
+        case let .regular(action, event, context, shouldCompleteEvent):
+            handleAction(action, for: event, context: context, shouldComplete: shouldCompleteEvent)
+        case .unscheduled(.timedWalkingTest(let test)):
+            activeTimedWalkingTest = .init(test: test)
+        }
+    }
+    
+    private func handleAction(
+        _ action: StudyManager.ScheduledTaskAction,
+        for event: Event,
+        context: Task.Context.StudyContext,
+        shouldComplete: Bool
+    ) {
         switch action {
         case .presentInformationalStudyComponent(let component):
             guard let enrollment = studyManager.enrollment(withId: context.enrollmentId),
@@ -188,13 +227,15 @@ struct TasksList: View {
                 return
             }
             presentedArticle = article
-            // we consider simply presenting the component as being sufficient to complete the event.
-            // NOTE ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
-            // BUT: in this case, we do wanna allow this to happen again! how should we go about this?
-            do {
-                try event.complete()
-            } catch {
-                logger.error("Was unable to complete() event: \(error)")
+            if shouldComplete {
+                // we consider simply presenting the component as being sufficient to complete the event.
+                // NOTE ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
+                // BUT: in this case, we do wanna allow this to happen again! how should we go about this?
+                do {
+                    try event.complete()
+                } catch {
+                    logger.error("Was unable to complete() event: \(error)")
+                }
             }
         case .answerQuestionnaire(let component):
             guard let enrollment = studyManager.enrollment(withId: context.enrollmentId),
@@ -203,9 +244,14 @@ struct TasksList: View {
                 logger.error("Unable to find SPC")
                 return
             }
-            questionnaireBeingAnswered = .init(questionnaire: questionnaire, enrollment: enrollment, event: event)
+            questionnaireBeingAnswered = .init(
+                questionnaire: questionnaire,
+                enrollment: enrollment,
+                event: event,
+                shouldCompleteEvent: shouldComplete
+            )
         case .promptTimedWalkingTest(let component):
-            presentedTimedWalkingTest = component
+            activeTimedWalkingTest = .init(test: component.test, event: event, shouldCompleteEvent: shouldComplete)
         }
     }
 }
@@ -260,14 +306,92 @@ extension TasksList {
             self.content = content
         }
     }
+}
+
+
+extension TasksList {
+    /// Defines how the ``TasksList`` should treat an Event, w.r.t. to its completion status, for the purposes of completing the event, and possibly re-triggering it.
+    private struct AllowedEventInteractions: OptionSet {
+        static let perform = Self(rawValue: 1 << 0)
+        static let complete = Self(rawValue: 1 << 1)
+        
+        let rawValue: UInt8
+        init(rawValue: UInt8) {
+            self.rawValue = rawValue
+        }
+    }
     
-    
+    private enum EventInteractionConfig: Hashable {
+        /// We don't allow the user to perform the event's associated action.
+        case disabled
+        /// We allow the user to perform the event's associated action.
+        /// - parameter shouldComplete: whether the user successfully performing the action should result in the event getting marked as completed.
+        case canPerform(shouldComplete: Bool)
+        
+        var canPerform: Bool {
+            switch self {
+            case .disabled: false
+            case .canPerform: true
+            }
+        }
+        var shouldComplete: Bool {
+            switch self {
+            case .disabled:
+                false
+            case .canPerform(let shouldComplete):
+                shouldComplete
+            }
+        }
+    }
+}
+
+
+extension TasksList {
     private struct Impl: View {
-        typealias SelectionHandler = @MainActor (
-            _ action: StudyManager.ScheduledTaskAction,
-            _ event: Event,
-            _ context: Task.Context.StudyContext
-        ) async -> Void
+        typealias SelectionHandler = @MainActor (TaskToPerform) -> Void
+        
+        /// A task we might offer the user to perform, that isn't associated with any particular scheduled event.
+        enum UnscheduledTask: Hashable {
+            case timedWalkingTest(TimedWalkingTestConfiguration)
+            
+            var symbol: SFSymbol {
+                switch self {
+                case .timedWalkingTest(let test):
+                    test.kind.symbol
+                }
+            }
+            
+            var displayTitle: LocalizedStringResource {
+                switch self {
+                case .timedWalkingTest(let test):
+                    test.displayTitle
+                }
+            }
+            
+            var instructions: LocalizedStringResource? {
+                switch self {
+                case .timedWalkingTest:
+                    nil
+                }
+            }
+            
+            var actionLabel: LocalizedStringResource {
+                switch self {
+                case .timedWalkingTest:
+                    "Take Test"
+                }
+            }
+        }
+        
+        enum TaskToPerform {
+            case regular(
+                action: StudyManager.ScheduledTaskAction,
+                event: Event,
+                context: Task.Context.StudyContext,
+                shouldCompleteEvent: Bool
+            )
+            case unscheduled(UnscheduledTask)
+        }
         
         private struct SectionedEvents {
             let startOfDay: Date
@@ -284,22 +408,8 @@ extension TasksList {
                 let eventsByDay = eventsByDay
                 ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
                     Section {
-                        ForEach(sectionedEvents.events) { event in
-                            if let context = event.task.studyContext,
-                               let action = event.task.studyScheduledTaskAction {
-                                InstructionsTile(event) {
-                                    // IDEA(@lukas):
-                                    // - add an official overload with an optional label text?
-                                    // - make the button use an AsyncButton (or have a dedicated init overload that takes a ViewState and makes the button async)
-                                    EventActionButton(event: event, label: eventButtonTitle(for: event.task.category)) {
-                                        _Concurrency.Task {
-                                            await selectionHandler(action, event, context)
-                                        }
-                                    }
-                                }
-                            } else {
-                                InstructionsTile(event)
-                            }
+                        ForEach(sectionedEvents.events) { (event: Event) in
+                            tile(for: event)
                         }
                     } header: {
                         if eventsByDay.count > 1 {
@@ -309,11 +419,19 @@ extension TasksList {
                 }
                 .injectingCustomTaskCategoryAppearances()
             } else {
-                ContentUnavailableView(
-                    "No Upcoming Tasks",
-                    systemSymbol: .partyPopper,
-                    description: Text("All tasks have already been completed!")
+                Section {
+                    ContentUnavailableView(
+                        "No Upcoming Tasks",
+                        systemSymbol: .partyPopper,
+                        description: Text("All tasks have already been completed!")
+                    )
+                }
+                UpcomingTasksTab.sectionHeader(
+                    title: "Other Tasks",
+                    subtitle: "Always Available"
                 )
+                .background(Color.red)
+                fallbackSections
             }
         }
         
@@ -325,20 +443,203 @@ extension TasksList {
                 .map { SectionedEvents(startOfDay: cal.startOfDay(for: $0.first!.occurrence.start), events: Array($0)) }
         }
         
+        @ViewBuilder private var fallbackSections: some View {
+            let tasks: [UnscheduledTask] = [
+                .timedWalkingTest(.sixMinuteWalkTest),
+                .timedWalkingTest(.twelveMinuteRunTest)
+            ]
+            ForEach(tasks, id: \.self) { task in
+                Section {
+                    FakeEventTile(
+                        symbol: task.symbol,
+                        title: task.displayTitle,
+                        instructions: task.instructions,
+                        actionLabel: task.actionLabel
+                    ) {
+                        selectionHandler(.unscheduled(task))
+                    }
+                }
+                .listSectionSpacing(.compact)
+            }
+        }
+        
+        
         init(events: [Event], selectionHandler: @escaping SelectionHandler) {
             self.events = events
             self.selectionHandler = selectionHandler
         }
         
-        private func eventButtonTitle(for category: Task.Category?) -> LocalizedStringResource? {
-            switch category {
-            case .informational:
+        @ViewBuilder
+        private func tile(for event: Event) -> some View {
+            if let context = event.task.studyContext,
+               let action = event.task.studyScheduledTaskAction {
+                let interactions = eventInteractionConfig(for: event)
+                InstructionsTile(event, footerVisibility: !event.isCompleted || interactions.canPerform ? .showAlways : .hideIfCompleted) {
+                    DefaultTileHeader(event)
+                } footer: {
+                    EventActionButton(event: event, label: eventButtonTitle(for: event)) {
+                        selectionHandler(.regular(
+                            action: action,
+                            event: event,
+                            context: context,
+                            shouldCompleteEvent: !event.isCompleted || interactions.shouldComplete
+                        ))
+                    }
+                }
+            } else {
+                InstructionsTile(event)
+            }
+        }
+        
+        private func eventButtonTitle(for event: Event) -> LocalizedStringResource? {
+            enum EventActionState {
+                case disabled
+                case enabled(wouldBeFirstCompletion: Bool)
+            }
+            let state: EventActionState = switch eventInteractionConfig(for: event) {
+            case .disabled: .disabled
+            case .canPerform: .enabled(wouldBeFirstCompletion: !event.isCompleted)
+            }
+            return switch (event.task.category, state) {
+            case (.informational, .disabled), (.informational, .enabled(wouldBeFirstCompletion: true)):
                 "Read Article"
-            case .questionnaire:
-                "Complete Questionnaire"
+            case (.informational, .enabled(wouldBeFirstCompletion: false)):
+                "Read Article Again"
+            case (.questionnaire, .disabled), (.questionnaire, .enabled(wouldBeFirstCompletion: true)):
+                "Answer Survey"
+            case (.questionnaire, .enabled(wouldBeFirstCompletion: false)):
+                "Answer Survey Again"
+            case (.timedWalkingTest, .disabled), (.timedWalkingTest, .enabled(wouldBeFirstCompletion: true)),
+                (.timedRunningTest, .disabled), (.timedRunningTest, .enabled(wouldBeFirstCompletion: true)):
+                "Take Test"
+            case (.timedWalkingTest, .enabled(wouldBeFirstCompletion: false)), (.timedRunningTest, .enabled(wouldBeFirstCompletion: false)):
+                "Take Test Again"
             default:
                 nil
             }
+        }
+        
+        
+        private func eventInteractionConfig(for event: Event) -> EventInteractionConfig {
+            let numDaysAway = abs(cal.offsetInDays(from: event.occurrence.start, to: .now))
+            let activeTasks = [Task.Category.timedWalkingTest, .timedRunningTest]
+            let isActiveTask = event.task.category.map { activeTasks.contains($0) } ?? false
+            return if !event.isCompleted {
+                // the event in question has not been completed yet.
+                if cal.isDateInToday(event.occurrence.start) {
+                    if let earliestCompletionDate = event.task.completionPolicy.dateOnceCompletionIsAllowed(for: event),
+                       earliestCompletionDate <= .now {
+                        .canPerform(shouldComplete: true)
+                    } else {
+                        .disabled
+                    }
+                } else {
+                    .canPerform(shouldComplete: !isActiveTask && numDaysAway <= 14)
+                }
+            } else { // the event has already been completed
+                // NOTE: the checks in this branch will only every apply to already-completed events that were scheduled for the current day;
+                // if they're older than that the TaskList won't be displaying them in the first place.
+                if isActiveTask {
+                    // we always allow active tasks to be repeated.
+                    .canPerform(shouldComplete: false)
+                } else {
+                    .disabled
+                }
+            }
+        }
+        
+//        /// If we want to allow the user to perform the event's associated action again, if it has already been completed once.
+//        private func canPerformAgain(_ event: Event) -> Bool {
+//            if !event.isCompleted {
+//                // if the event hasn't been completed yet, we always allow performing it.
+//                true
+//            } else { // the event has already been completed
+//                if [Task.Category.timedWalkingTest, .timedRunningTest].contains(event.task.category) {
+//                    true
+//                }
+//            }
+//        }
+//        
+//        /// Whether performing the specified event now should also mark it as completed.
+//        ///
+//        /// This function allows us to give ppl the ability to
+//        private func shouldComplete(_ event: Event) -> Bool {
+//            if event.isCompleted {
+//                // if the event is already completed, we don't want to complete it again
+//                false
+//            } else if event.occurrence.start <= .now {
+//                // the event is in the past
+//                true
+//            } else {
+//                // the event is in the future
+//                if [Task.Category.timedRunningTest, .timedWalkingTest].contains(event.task.category) {
+//                    // if the event is a timed walking/running test, we allow performing it now, w/out already marking the future occurrence as completed.
+//                    false
+//                } else if let daysApart = cal.dateComponents([.day], from: cal.startOfDay(for: .now), to: event.occurrence.start).day {
+//                    // if it is more than 2 weeks away, we mark the event as completed if the associated action is performed now
+//                    daysApart > 14
+//                } else {
+//                    true
+//                }
+//            }
+//        }
+    }
+}
+
+
+extension TasksList {
+    private struct FakeEventTile: View {
+        private let symbol: SFSymbol
+        private let title: LocalizedStringResource
+        private let subtitle: LocalizedStringResource?
+        private let instructions: LocalizedStringResource?
+        private let actionLabel: LocalizedStringResource
+        private let action: @MainActor () -> Void
+        
+        var body: some View {
+            SimpleTile(alignment: .leading) {
+                TileHeader(alignment: .leading) {
+                    Image(systemSymbol: symbol)
+                        .foregroundColor(.accentColor)
+                        .accessibilityHidden(true)
+                        .font(.custom("Task Icon", size: 30, relativeTo: .headline))
+                        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+                } title: {
+                    Text(title)
+                } subheadline: {
+                    if let subtitle {
+                        Text(subtitle)
+                    }
+                }
+            } body: {
+                if let instructions {
+                    Text(instructions)
+                }
+            } footer: {
+                Button {
+                    action()
+                } label: {
+                    Text(actionLabel)
+                        .frame(maxWidth: .infinity, minHeight: 30)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        
+        init(
+            symbol: SFSymbol,
+            title: LocalizedStringResource,
+            subtitle: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+            instructions: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+            actionLabel: LocalizedStringResource,
+            action: @escaping @MainActor () -> Void
+        ) {
+            self.symbol = symbol
+            self.title = title
+            self.subtitle = subtitle
+            self.instructions = instructions
+            self.actionLabel = actionLabel
+            self.action = action
         }
     }
 }

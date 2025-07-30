@@ -11,6 +11,7 @@ import SpeziAccount
 import SpeziLicense
 import SpeziStudy
 import SwiftUI
+import XCTSpeziNotificationsUI
 
 
 struct AccountSheet: View {
@@ -154,12 +155,15 @@ struct AccountSheet: View {
     }
     
     @ViewBuilder private var debugSection: some View {
-        Section("Debug Mode") {
+        Section("Debug") {
             NavigationLink("Health Data Bulk Upload") {
                 HealthImporterControlView()
             }
             NavigationLink("NotificationsManager") {
                 NotificationsManagerControlView()
+            }
+            NavigationLink("Scheduled Local Notifications") {
+                PendingNotificationsList()
             }
             NavigationLink("Debug Stuff") {
                 DebugStuffView()

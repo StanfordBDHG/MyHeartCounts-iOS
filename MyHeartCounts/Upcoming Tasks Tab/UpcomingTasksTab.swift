@@ -57,3 +57,37 @@ struct UpcomingTasksTab: RootViewTab {
         }
     }
 }
+
+
+extension UpcomingTasksTab {
+    static func sectionHeader(
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource?
+    ) -> some View {
+        sectionHeader(title: title.localizedString(), subtitle: subtitle?.localizedString() ?? "")
+    }
+    
+    static func sectionHeader(
+        title: some StringProtocol,
+        subtitle: some StringProtocol = ""
+    ) -> some View {
+        Section {
+            VStack(alignment: .leading) {
+                Text(title)
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                        .fontDesign(.rounded)
+                }
+            }
+            .foregroundStyle(.secondary)
+            .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 0))
+            .listRowBackground(Color.clear)
+            .font(.title2)
+            .fontDesign(.rounded)
+            .fontWeight(.bold)
+        }
+        .listSectionSpacing(.compact)
+    }
+}

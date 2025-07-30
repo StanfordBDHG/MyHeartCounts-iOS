@@ -1,5 +1,5 @@
 {
-  "originHash" : "2dbb9f60f92203fa8795492a8bb1c26c00e6a83e20ba0ec2c3e2ad380a3a8949",
+  "originHash" : "0096512a2cc540e7aa3d35b2c320a934464d676fad8beee8de6e9c16db0036c3",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -258,8 +258,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "branch" : "lukas/OrderedArray-improvements",
-        "revision" : "2765595207765d6908be7299355770f3243db383"
+        "revision" : "759e28cd36338d83900eef3a0839fd9edecf616d",
+        "version" : "2.2.0"
       }
     },
     {
@@ -311,8 +311,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "cc09442d8a3667ca6a534845940bc75e43237a07",
-        "version" : "1.2.11"
+        "revision" : "6deb3cf810dd56fc984929859d0ea1366f0a8f45"
       }
     },
     {
@@ -329,7 +328,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "e469a17ce600ecf5ad2e467ffa67be1791d6a17c"
+        "revision" : "0ce510593c20f09c12f65fa4774a7b3409a631a3"
       }
     },
     {

@@ -76,10 +76,6 @@ struct CVHScore: DynamicProperty {
         self
     }
     
-    init() {
-        print(Self.self, #function)
-    }
-    
     nonisolated func update() {
         Task {
             await updateSleepScore()
@@ -87,14 +83,18 @@ struct CVHScore: DynamicProperty {
     }
     
     nonisolated private func updateSleepScore() async {
-        guard await !lastSeenSleepSamples.elementsEqual(sleepSamples) else {
-            return
-        }
-        let sleepSamples = await MainActor.run {
+        let sleepSamples = await MainActor.run { () -> [HKCategorySample] in
+            guard !lastSeenSleepSamples.elementsEqual(self.sleepSamples) else {
+                // if we don't need an update, we return an empty array here, which will cause the code below to return early.
+                return []
+            }
             // this ensures that any subsequent calls (including while the computation below is running) will return early, unless data actually changed.
             let sleepSamples = Array(self.sleepSamples)
             self.lastSeenSleepSamples = sleepSamples
             return sleepSamples
+        }
+        guard !sleepSamples.isEmpty else {
+            return
         }
         dispatchPrecondition(condition: .notOnQueue(.main))
         let sleepSessions = (try? sleepSamples.splitIntoSleepSessions()) ?? []

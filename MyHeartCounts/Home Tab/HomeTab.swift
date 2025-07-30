@@ -159,16 +159,3 @@ extension EventActionButton {
         }
     }
 }
-
-
-extension View {
-    func styleAsMHCSectionHeader() -> some View {
-        self
-            .foregroundStyle(.secondary)
-            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-            .listRowBackground(Color.clear)
-            .font(.title2)
-            .fontDesign(.rounded)
-            .fontWeight(.bold)
-    }
-}

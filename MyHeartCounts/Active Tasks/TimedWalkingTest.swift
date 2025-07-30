@@ -34,7 +34,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     final class ActiveSession: Hashable, Sendable {
         private(set) var inProgressResult: TimedWalkingTestResult
         /// The `Task` that waits for the session's duration to pass, and then ends the session
-        fileprivate var completeSessionTask: Task<Void, any Error>?
+        fileprivate var completeSessionTask: Task<TimedWalkingTestResult?, any Error>?
         
         var startDate: Date {
             inProgressResult.startDate
@@ -68,6 +68,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         }
         
         case unableToStart(StartFailureReason)
+        case other(any Error)
         
         var errorDescription: String? {
             switch self {
@@ -75,6 +76,8 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
                 "Another Timed Walking Test is already active"
             case .unableToStart(.missingSensorPermissions):
                 "There are missing Motion Sensor permissions"
+            case .other(let error):
+                "\(error)"
             }
         }
     }
@@ -96,7 +99,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     private(set) var pedometerMeasurements: [PedometerData] = []
     private(set) var pedometerEvents: [PedometerEvent] = []
     
-    func start(_ test: TimedWalkingTestConfiguration) async throws(TestError) {
+    func start(_ test: TimedWalkingTestConfiguration) async throws(TestError) -> TimedWalkingTestResult? {
         switch state {
         case .idle:
             break
@@ -117,13 +120,17 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         let session = ActiveSession(test: test, startDate: .now)
         state = .testActive(session)
         startPhoneSensorDataCollection(for: session)
-        session.completeSessionTask = Task {
+        let sessionTask = Task {
             try await Task.sleep(until: startInstant.advanced(by: test.duration))
-            if let result = try await stop() {
-                await MainActor.run {
-                    self.mostRecentResult = result
-                }
-            }
+            return try await stop()
+        }
+        session.completeSessionTask = sessionTask
+        let result = try await sessionTask.result
+        switch result {
+        case .success(let result):
+            return result
+        case .failure(let error):
+            throw .other(error)
         }
     }
     
