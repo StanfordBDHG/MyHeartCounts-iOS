@@ -46,7 +46,6 @@ jobs:
     name: Upload Coverage Report
     needs: [buildandtest_unittests, buildandtest_uitests]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
-    if: ${{ false }}
     permissions:
       contents: read
     with:
