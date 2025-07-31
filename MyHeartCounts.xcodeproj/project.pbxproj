@@ -894,6 +894,7 @@
 				SWIFT_ENABLE_OPAQUE_TYPE_ERASURE = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Test;
@@ -933,7 +934,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.0;
-				OTHER_SWIFT_FLAGS = "";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -944,8 +945,6 @@
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Test;
@@ -1057,6 +1056,7 @@
 				SWIFT_ENABLE_OPAQUE_TYPE_ERASURE = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
@@ -1118,6 +1118,7 @@
 				SWIFT_ENABLE_OPAQUE_TYPE_ERASURE = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1158,7 +1159,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.0;
-				OTHER_SWIFT_FLAGS = "";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1169,8 +1170,6 @@
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1215,7 +1214,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.0;
-				OTHER_SWIFT_FLAGS = "";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1226,8 +1225,6 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				"SWIFT_ELicenseRef-MyHeartCounts_LOC_STRINGS" = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -1350,8 +1347,6 @@
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
@@ -1388,8 +1383,6 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
@@ -1431,8 +1424,6 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
@@ -1480,8 +1471,6 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1531,8 +1520,6 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1582,8 +1569,6 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1806,8 +1791,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				kind = revision;
-				revision = 6deb3cf810dd56fc984929859d0ea1366f0a8f45;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.13;
 			};
 		};
 		80A3A4812E1EB270002A8515 /* XCRemoteSwiftPackageReference "ResearchKit" */ = {
@@ -1838,8 +1823,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = revision;
-				revision = 0ce510593c20f09c12f65fa4774a7b3409a631a3;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.8;
 			};
 		};
 		80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {
@@ -1862,8 +1847,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
-				kind = revision;
-				revision = b31c981f4c1dee235ca04ea11f9ebca2a941b50f;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.2;
 			};
 		};
 		A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */ = {

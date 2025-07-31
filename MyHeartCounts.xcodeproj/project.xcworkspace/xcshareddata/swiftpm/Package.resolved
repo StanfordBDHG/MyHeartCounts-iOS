@@ -1,5 +1,5 @@
 {
-  "originHash" : "0096512a2cc540e7aa3d35b2c320a934464d676fad8beee8de6e9c16db0036c3",
+  "originHash" : "2863b108d84a2ce2a61e83b5d3beb700c30165d4069e1f1ea6af32d471f4a2d7",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -267,7 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "b31c981f4c1dee235ca04ea11f9ebca2a941b50f"
+        "revision" : "94a08688b93aae720f7aa3d8f88ac0e486e97980",
+        "version" : "1.2.2"
       }
     },
     {
@@ -311,7 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "6deb3cf810dd56fc984929859d0ea1366f0a8f45"
+        "revision" : "af631078adbb0b18925256af406ccba4fe7f6745",
+        "version" : "1.2.13"
       }
     },
     {
@@ -328,7 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "0ce510593c20f09c12f65fa4774a7b3409a631a3"
+        "revision" : "2d9f41513c3e7ff8d5518cf256c36cdd294e6fcf",
+        "version" : "0.1.8"
       }
     },
     {
