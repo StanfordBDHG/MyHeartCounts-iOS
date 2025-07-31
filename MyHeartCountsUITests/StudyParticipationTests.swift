@@ -17,6 +17,7 @@ final class StudyParticipationTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testStudyEnrollment() throws {
         try launchAppAndEnrollIntoStudy()
+        openAccountSheet()
         XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["lelandstanford@stanford.edu"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["STUDY PARTICIPATIONS"].waitForExistence(timeout: 1))
