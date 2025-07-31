@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import XCTHealthKit
 
 
 class MHCTestCase: XCTestCase, @unchecked Sendable {
@@ -36,6 +37,26 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
             app = nil
         }
     }
+    
+    @MainActor
+    func launchAppAndEnrollIntoStudy() throws {
+        app.launchArguments = [
+            "--useFirebaseEmulator",
+            "--skipOnboarding",
+            "--setupTestAccount",
+            "--overrideStudyBundleLocation", try studyBundleUrl.path,
+            "--disableAutomaticBulkHealthExport"
+        ]
+        app.launch()
+        XCTAssert(app.wait(for: .runningForeground, timeout: 2))
+        try app.handleHealthKitAuthorization()
+        sleep(for: .seconds(2))
+        goToTab(.home)
+        XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 1))
+        XCTAssert(app.staticTexts["Heart Risk"].waitForExistence(timeout: 1))
+        XCTAssert(app.staticTexts["Par-Q+"].waitForExistence(timeout: 1))
+    }
 }
 
 
@@ -53,6 +74,13 @@ extension MHCTestCase {
         XCTAssert(button.waitForExistence(timeout: 2))
         XCTAssert(button.isEnabled)
         XCTAssert(button.isHittable)
+        button.tap()
+    }
+    
+    @MainActor
+    func openAccountSheet() {
+        let button = app.navigationBars.buttons["Your Account"]
+        XCTAssert(button.waitForExistence(timeout: 1))
         button.tap()
     }
 }

@@ -16,17 +16,7 @@ import XCTSpeziNotifications
 final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testRootLevelNavigation() throws {
-        app.launchArguments = [
-            "--useFirebaseEmulator",
-            "--skipOnboarding",
-            "--setupTestAccount",
-            "--overrideStudyBundleLocation", try studyBundleUrl.path,
-            "--disableAutomaticBulkHealthExport"
-        ]
-        app.launch()
-        XCTAssert(app.wait(for: .runningForeground, timeout: 2))
-        try app.handleHealthKitAuthorization()
-        sleep(for: .seconds(2))
+        try launchAppAndEnrollIntoStudy()
         
         goToTab(.upcoming)
         XCTAssert(app.navigationBars.staticTexts["Upcoming Tasks"].waitForExistence(timeout: 2))
@@ -38,5 +28,14 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.navigationBars.staticTexts["News & Information"].waitForExistence(timeout: 2))
         
         print(app.debugDescription)
+    }
+    
+    
+    @MainActor
+    func testDemographicsSheet() throws {
+        try launchAppAndEnrollIntoStudy()
+        openAccountSheet()
+        app.buttons["Demographics"].tap()
+        XCTAssert(app.navigationBars.staticTexts["Demographics"].waitForExistence(timeout: 1))
     }
 }
