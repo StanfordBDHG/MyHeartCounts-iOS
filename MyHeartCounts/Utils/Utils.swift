@@ -181,7 +181,15 @@ extension View {
 }
 
 
+extension Int {
+    @inlinable
+    init(_ decimal: Decimal) {
+        self = NSDecimalNumber(decimal: decimal).intValue // swiftlint:disable:this legacy_objc_type
+    }
+}
+
 extension Double {
+    @inlinable
     init(_ decimal: Decimal) {
         self = NSDecimalNumber(decimal: decimal).doubleValue // swiftlint:disable:this legacy_objc_type
     }

@@ -32,8 +32,10 @@ extension HKSample: HealthObservation {
 
 
 extension TimedWalkingTestResult: HealthObservation {
+    static let sampleTypeIdentifier = "MHCHealthObservationTimedWalkingTestResultIdentifier"
+    
     var sampleTypeIdentifier: String {
-        "MHCHealthObservationTimedWalkingTestResultIdentifier"
+        Self.sampleTypeIdentifier
     }
 }
 

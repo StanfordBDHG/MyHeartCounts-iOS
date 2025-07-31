@@ -6,9 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable file_types_order
 
 import FirebaseFirestore
+import Foundation
 import HealthKitOnFHIR
 import struct ModelsR4.DateTime
 import struct ModelsR4.FHIRPrimitive
@@ -18,7 +19,6 @@ import enum ModelsR4.ResourceProxy
 import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit
-import Foundation
 import SwiftUI
 
 
@@ -43,7 +43,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     }
     
     init(
-        _: Element.Type = Element.self,
+        _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
         collection: String,
         filter: Filter,
         sortBy sortDescriptors: [SortDescriptor] = [],
@@ -84,7 +84,7 @@ extension MHCFirestoreQuery {
         var sortDescriptors: [SortDescriptor]
         var limit: Int?
         var decode: DecodeFn
-        var postDecodeSort: (any SortComparator<Element>)?
+        var postDecodeSort: [any SortComparator<Element>] = []
         var postDecodeLimit: Int?
     }
 }
@@ -137,9 +137,7 @@ private final class Impl<Element: Sendable>: Sendable {
                 elements.append(element)
             }
         }
-        if let comparator = input.postDecodeSort {
-            elements.sort(using: comparator)
-        }
+        elements.sort(using: input.postDecodeSort)
         if let limit = input.postDecodeLimit, limit > elements.count {
             elements.removeFirst(elements.count - limit)
         }
@@ -152,18 +150,20 @@ private final class Impl<Element: Sendable>: Sendable {
 
 // MARK: Extensions
 
-extension MHCFirestoreQuery where Element == QuantitySample {
+extension MHCFirestoreQuery {
     init(
-        sampleType: CustomQuantitySampleType,
+        sampleTypeIdentifier: String,
         timeRange: HealthKitQueryTimeRange,
-        sorted sortDescriptor: some SortComparator<QuantitySample> = KeyPathComparator(\.startDate, order: .reverse),
-        limit: Int? = nil
+        sorted sortDescriptors: [any SortComparator<Element>] = [],
+        limit: Int? = nil,
+        transform: @escaping @Sendable (ResourceProxy) -> Element?
     ) {
         input = .init(
-            collection: "HealthObservations_\(sampleType.id)",
+            collection: "HealthObservations_\(sampleTypeIdentifier)",
             filter: nil,
             sortDescriptors: [],
-            decode: { document -> QuantitySample? in
+            limit: nil,
+            decode: { document -> Element? in
                 if timeRange != .ever {
                     let data = document.data()
                     if let dateString = data["effectiveDateTime"] as? String {
@@ -189,10 +189,29 @@ extension MHCFirestoreQuery where Element == QuantitySample {
                 guard let proxy = try? document.data(as: ResourceProxy.self) else {
                     return nil
                 }
-                return QuantitySample(proxy, sampleTypeHint: .custom(sampleType))
+                return transform(proxy)
             },
-            postDecodeSort: sortDescriptor,
+            postDecodeSort: sortDescriptors,
             postDecodeLimit: limit
         )
+    }
+}
+
+
+extension MHCFirestoreQuery where Element == QuantitySample {
+    init(
+        sampleType: CustomQuantitySampleType,
+        timeRange: HealthKitQueryTimeRange,
+        sorted sortDescriptor: some SortComparator<QuantitySample> = KeyPathComparator(\.startDate, order: .reverse),
+        limit: Int? = nil
+    ) {
+        self.init(
+            sampleTypeIdentifier: sampleType.id,
+            timeRange: timeRange,
+            sorted: [sortDescriptor],
+            limit: limit
+        ) { resourceProxy in
+            QuantitySample(resourceProxy, sampleTypeHint: .custom(sampleType))
+        }
     }
 }

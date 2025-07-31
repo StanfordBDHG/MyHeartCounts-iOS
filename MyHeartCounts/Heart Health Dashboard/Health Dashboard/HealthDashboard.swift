@@ -55,7 +55,7 @@ func healthDashboardComponentView(
 }
 
 
-struct HealthDashboard<Footer: View>: View {
+struct HealthDashboard: View {
     typealias SelectionHandler = @MainActor (SelectionHandlerInput) -> Void
     enum SelectionHandlerInput {
         case healthKit(SampleTypeProxy)
@@ -65,10 +65,9 @@ struct HealthDashboard<Footer: View>: View {
     private let layout: HealthDashboardLayout
     private let goalProvider: HealthDashboardGoalProvider?
     private let selectionHandler: SelectionHandler?
-    private let footer: (@MainActor () -> Footer)
     
     var body: some View {
-        ScrollView {
+        Group {
             ForEach(0..<layout.blocks.endIndex, id: \.self) { blockIdx in
                 let block = layout.blocks[blockIdx]
                 Section {
@@ -95,14 +94,13 @@ struct HealthDashboard<Footer: View>: View {
                                 .font(.title3.bold())
                             Spacer()
                         }
-                        .padding(.top, 17)
                     }
                 }
+                .listRowInsets(.zero)
+                .listRowBackground(Color.clear)
             }
-            .padding(.horizontal)
-            footer()
+//            .padding([.horizontal, .bottom])
         }
-        .makeBackgroundMatchFormBackground()
         .environment(\.healthDashboardGoalProvider, goalProvider)
     }
     
@@ -111,12 +109,10 @@ struct HealthDashboard<Footer: View>: View {
         layout: HealthDashboardLayout,
         goalProvider: HealthDashboardGoalProvider? = nil,
         selectionHandler: SelectionHandler? = nil,
-        @ViewBuilder footer: @MainActor @escaping () -> Footer = { EmptyView() }
     ) {
         self.layout = layout
         self.goalProvider = goalProvider
         self.selectionHandler = selectionHandler
-        self.footer = footer
     }
     
     
@@ -169,23 +165,13 @@ struct HealthDashboard<Footer: View>: View {
                 config.tapAction
             }
         }()
-        Group {
-            if let tapAction {
-                Button(action: tapAction) {
-                    view
-                        .contentShape(Rectangle())
-                }.buttonStyle(.plain)
-            } else {
+        if let tapAction {
+            Button(action: tapAction) {
                 view
-            }
-        }
-        .contextMenu {
-            switch component {
-            case .quantityDisplay:
-                EmptyView()
-            case .custom(let config):
-                config.contextMenu()
-            }
+                    .contentShape(Rectangle())
+            }.buttonStyle(.plain)
+        } else {
+            view
         }
     }
 }

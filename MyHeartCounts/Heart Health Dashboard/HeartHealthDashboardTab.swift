@@ -14,6 +14,23 @@ import SpeziViews
 import SwiftUI
 
 
+struct TestView: View {
+    var body: some View {
+        TestView2()
+    }
+}
+
+
+struct TestView2: View {
+    var body: some View {
+        Text("X")
+            .contextMenu {
+                Button("CM") {}
+            }
+    }
+}
+
+
 struct HeartHealthDashboardTab: RootViewTab {
     static var tabTitle: LocalizedStringResource {
         "Heart Health"
@@ -24,7 +41,7 @@ struct HeartHealthDashboardTab: RootViewTab {
     
     var body: some View {
         NavigationStack {
-            Group {
+            Form {
                 HeartHealthDashboard()
             }
             .toolbar {

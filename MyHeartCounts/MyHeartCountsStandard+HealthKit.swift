@@ -34,9 +34,9 @@ extension LocalPreferenceKey {
 
 extension MyHeartCountsStandard: HealthKitConstraint {
     private var enableNotifications: Bool {
-        true
-//        let prefs = LocalPreferencesStore.standard
-//        return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendHealthSampleUploadNotifications]
+//        true
+        let prefs = LocalPreferencesStore.standard
+        return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendHealthSampleUploadNotifications]
     }
     
     func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample>, ofType sampleType: SampleType<Sample>) async {

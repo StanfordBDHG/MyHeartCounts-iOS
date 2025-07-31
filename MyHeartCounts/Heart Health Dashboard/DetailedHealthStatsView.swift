@@ -296,19 +296,18 @@ private struct FurtherReadingSection: View {
             Text(title)
                 .font(.title)
             MarkdownView(markdownDocument: document)
-            if let link {
-                Button {
-                    openURL(link)
-                } label: {
-                    HStack {
-                        Text("Learn More")
-                        Spacer()
-                        Image(systemSymbol: .safari)
-                            .accessibilityLabel("Open In Browser")
-                    }
-                    .contentShape(Rectangle())
+        }
+        if let link {
+            Button {
+                openURL(link)
+            } label: {
+                HStack {
+                    Text("Learn More")
+                    Spacer()
+                    Image(systemSymbol: .safari)
+                        .accessibilityLabel("Open In Browser")
                 }
-                .buttonStyle(.bordered)
+                .contentShape(Rectangle())
             }
         }
     }

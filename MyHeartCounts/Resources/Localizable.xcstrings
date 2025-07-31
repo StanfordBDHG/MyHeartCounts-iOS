@@ -273,6 +273,9 @@
         }
       }
     },
+    "CM" : {
+
+    },
     "Colorado" : {
 
     },
@@ -416,9 +419,6 @@
 
     },
     "Depending on the amount of samples, this might take a bit" : {
-
-    },
-    "Details" : {
 
     },
     "Disable Override" : {
@@ -1170,6 +1170,19 @@
     "Participation Criteria" : {
 
     },
+    "Past Data" : {
+
+    },
+    "PAST_TIMED_WALKING_RUNNING_TEST_RESULTS_BUTTON_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Past Timed Walk/Run Test Results"
+          }
+        }
+      }
+    },
     "Pennsylvania" : {
 
     },
@@ -1572,6 +1585,9 @@
     "Tennessee" : {
 
     },
+    "Test" : {
+
+    },
     "Texas" : {
 
     },
@@ -1614,6 +1630,9 @@
 
     },
     "Timed Walking Test" : {
+
+    },
+    "Timed Walking/Running Tests" : {
 
     },
     "TODO: make this look pretty!" : {
@@ -1801,6 +1820,9 @@
 
     },
     "Wyoming" : {
+
+    },
+    "X" : {
 
     },
     "Yes" : {

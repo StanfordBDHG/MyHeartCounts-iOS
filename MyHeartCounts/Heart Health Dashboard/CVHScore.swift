@@ -56,6 +56,7 @@ struct CVHScore: DynamicProperty {
     
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
     var wrappedValue: Double? {
+        _ = sleepSamples
         Task {
             await updateSleepScore()
         }
