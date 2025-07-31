@@ -13,10 +13,9 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
-final class StudyParticipationTests: MHCTestCase {
+final class StudyParticipationTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testStudyEnrollment() throws {
-        let app = XCUIApplication()
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--skipOnboarding",
@@ -24,7 +23,6 @@ final class StudyParticipationTests: MHCTestCase {
             "--overrideStudyBundleLocation", try studyBundleUrl.path,
             "--disableAutomaticBulkHealthExport"
         ]
-        app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         try app.handleHealthKitAuthorization()

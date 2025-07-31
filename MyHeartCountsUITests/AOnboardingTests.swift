@@ -13,10 +13,9 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
-final class AOnboardingTests: MHCTestCase {
+final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testAOnboardingFlow() throws {
-        let app = XCUIApplication()
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--overrideStudyBundleLocation",
