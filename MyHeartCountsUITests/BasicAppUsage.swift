@@ -63,8 +63,8 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         )
         switch Locale.current.measurementSystem {
         case .us:
-            XCTAssert(app.buttons["Height, 186 cm"].waitForExistence(timeout: 2))
-            XCTAssert(app.buttons["Weight, 70 kg"].waitForExistence(timeout: 2))
+            XCTAssert(app.buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
+            XCTAssert(app.buttons["Weight, 154.32 lb"].waitForExistence(timeout: 2))
         default:
             XCTAssert(app.buttons["Height, 186 cm"].waitForExistence(timeout: 2))
             XCTAssert(app.buttons["Weight, 70 kg"].waitForExistence(timeout: 2))

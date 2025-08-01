@@ -60,7 +60,7 @@ struct SaveQuantitySampleView: View {
     }
     
     init(
-        _ title: LocalizedStringKey = "Add Sample",
+        _ title: LocalizedStringKey = "Add Sample", // swiftlint:disable:this function_default_parameter_at_end
         sampleType: MHCQuantitySampleType,
         completionHandler: (@MainActor (QuantitySample) -> Void)? = nil
     ) {
