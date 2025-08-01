@@ -80,6 +80,5 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.buttons["Race / Ethnicity, White, Japanese"].waitForExistence(timeout: 1))
         
         print(app.debugDescription)
-        fatalError()
     }
 }
