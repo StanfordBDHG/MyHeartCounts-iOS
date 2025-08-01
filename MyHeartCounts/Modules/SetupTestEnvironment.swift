@@ -10,6 +10,7 @@ import Foundation
 import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
+import SpeziHealthKit
 import SpeziStudy
 
 
@@ -21,6 +22,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @Dependency(Account.self) private var account: Account? // optional, as Firebase might be disabled
     @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
     @Dependency(StudyBundleLoader.self) private var studyBundleLoader
+    @Dependency(HealthKit.self) private var healthKit
     @Dependency(StudyManager.self) private var studyManager: StudyManager?
     // swiftlint:enable attributes
     
@@ -63,6 +65,9 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
+        let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
+            .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
+        try await healthKit.askForAuthorization(for: accessReqs)
         try await studyManager.enroll(in: studyBundle)
     }
 }

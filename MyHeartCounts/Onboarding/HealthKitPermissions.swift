@@ -54,22 +54,8 @@ struct HealthKitPermissions: View {
                     if ProcessInfo.processInfo.isPreviewSimulator {
                         try await _Concurrency.Task.sleep(for: .seconds(5))
                     } else {
-                        var accessReqs = HealthKit.DataAccessRequirements(
-                            read: studyBundle.studyDefinition.allCollectedHealthData,
-                            write: [
-                                SampleType.workout,
-                                SampleType.height, SampleType.bodyMass, SampleType.bodyMassIndex,
-                                SampleType.bloodGlucose, SampleType.bloodPressure
-                            ] as [any AnySampleType]
-                        )
-                        accessReqs.merge(with: .init(read: [
-                            HealthKitCharacteristic.activityMoveMode.hkType,
-                            HealthKitCharacteristic.biologicalSex.hkType,
-                            HealthKitCharacteristic.bloodType.hkType,
-                            HealthKitCharacteristic.dateOfBirth.hkType,
-                            HealthKitCharacteristic.fitzpatrickSkinType.hkType,
-                            HealthKitCharacteristic.wheelchairUse.hkType
-                        ]))
+                        let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
+                            .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
                         try await healthKit.askForAuthorization(for: accessReqs)
                     }
                 } catch {
@@ -83,6 +69,25 @@ struct HealthKitPermissions: View {
         // Small fix as otherwise "Login" or "Sign up" is still shown in the nav bar
         .navigationTitle(Text(verbatim: ""))
     }
+}
+
+
+extension MyHeartCountsStandard {
+    static let baselineHealthAccessReqs = HealthKit.DataAccessRequirements(
+        read: [
+            HealthKitCharacteristic.activityMoveMode.hkType,
+            HealthKitCharacteristic.biologicalSex.hkType,
+            HealthKitCharacteristic.bloodType.hkType,
+            HealthKitCharacteristic.dateOfBirth.hkType,
+            HealthKitCharacteristic.fitzpatrickSkinType.hkType,
+            HealthKitCharacteristic.wheelchairUse.hkType
+        ],
+        write: ([
+            SampleType.workout,
+            SampleType.height, SampleType.bodyMass, SampleType.bodyMassIndex,
+            SampleType.bloodGlucose, SampleType.bloodPressure
+        ] as [any AnySampleType]).map { $0.hkSampleType }
+    )
 }
 
 
