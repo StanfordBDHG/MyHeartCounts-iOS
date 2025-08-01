@@ -39,10 +39,13 @@ struct RaceEthnicityPicker: View {
     
     private func makeRow(for option: RaceEthnicity) -> some View {
         Button {
-            if option == .preferNotToState {
-                selection = option
-            } else {
-                selection.toggleMembership(of: option)
+            selection.update { selection in
+                if option == .preferNotToState {
+                    selection = option
+                } else {
+                    selection.toggleMembership(of: option)
+                    selection.remove(.preferNotToState)
+                }
             }
         } label: {
             HStack {
@@ -56,5 +59,12 @@ struct RaceEthnicityPicker: View {
                 }
             }
         }
+    }
+}
+
+
+extension OptionSet {
+    mutating func update(_ transform: (inout Self) -> Void) {
+        transform(&self)
     }
 }

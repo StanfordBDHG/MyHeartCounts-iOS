@@ -171,6 +171,9 @@
     "Add Data" : {
 
     },
+    "Add Height & Weight Samples" : {
+
+    },
     "Add Sample" : {
 
     },
@@ -283,22 +286,64 @@
 
     },
     "COMORBIDITY_ACHD" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adult Congenital Heart Disease"
+          }
+        }
+      }
     },
     "COMORBIDITY_CAD" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coronary Artery Disease"
+          }
+        }
+      }
     },
     "COMORBIDITY_DIABETES" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diabetes"
+          }
+        }
+      }
     },
     "COMORBIDITY_HEART_FAILURE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Failure"
+          }
+        }
+      }
     },
     "COMORBIDITY_NONE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
     },
     "COMORBIDITY_PAH" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulmonary Arterial Hypertension"
+          }
+        }
+      }
     },
     "Companion Watch App Not Installed" : {
 
@@ -455,6 +500,12 @@
 
     },
     "Enter BMI" : {
+
+    },
+    "Enter Height" : {
+
+    },
+    "Enter Weight" : {
 
     },
     "Error" : {
@@ -1249,7 +1300,14 @@
       }
     },
     "RACE_ASIAN_INDIAN" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asian Indian"
+          }
+        }
+      }
     },
     "RACE_CAUCASIAN" : {
       "extractionState" : "stale",
@@ -1263,10 +1321,24 @@
       }
     },
     "RACE_CHINESE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chinese"
+          }
+        }
+      }
     },
     "RACE_FILIPINO" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filipino"
+          }
+        }
+      }
     },
     "RACE_HISPANIC_LATINO" : {
       "extractionState" : "stale",
@@ -1280,10 +1352,24 @@
       }
     },
     "RACE_JAPANESE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Japanese"
+          }
+        }
+      }
     },
     "RACE_KOREAN" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Korean"
+          }
+        }
+      }
     },
     "RACE_MENA" : {
       "extractionState" : "stale",
@@ -1358,15 +1444,29 @@
       }
     },
     "RACE_VIETNAMESE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vietnamese"
+          }
+        }
+      }
     },
     "RACE_WHITE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "White"
+          }
+        }
+      }
     },
     "Read Article" : {
 
     },
-    "Read from HealthKit" : {
+    "Read from Health App" : {
 
     },
     "Recent Sleep Data" : {
@@ -1588,6 +1688,9 @@
     "Test" : {
 
     },
+    "Testing Support" : {
+
+    },
     "Texas" : {
 
     },
@@ -1702,7 +1805,7 @@
     "US State / Territory" : {
 
     },
-    "Use this option to auto-fill Blood Type, Height and Weight, by reading each from HealthKit, if available.\nAlternatively, you can also tap the respective fields below to manually enter a value." : {
+    "Use this option to auto-fill Blood Type, Height, Weight, Date of Birth, and Biological Sex, by reading each from the Health app, if available.\nAlternatively, you can also tap the respective fields below to manually enter a value, or to override the value read from the Health app." : {
 
     },
     "Utah" : {

@@ -15,7 +15,7 @@ import SwiftUI
 
 struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     @Environment(StudyManager.self)
-    private var mhc
+    private var studyManager
     @Environment(\.dismiss)
     private var _dismiss
     
@@ -115,7 +115,7 @@ struct StudyInfoView: View { // swiftlint:disable:this file_types_order
                         _Concurrency.Task {
                             viewState = .processing
                             do {
-                                try mhc.unenroll(from: enrollment)
+                                try studyManager.unenroll(from: enrollment)
                                 dismiss()
                             } catch {
                                 viewState = .error(error)
@@ -126,7 +126,7 @@ struct StudyInfoView: View { // swiftlint:disable:this file_types_order
             } else {
                 // not yet enrolled
                 AsyncButton(state: $viewState) {
-                    try await mhc.enroll(in: studyBundle)
+                    try await studyManager.enroll(in: studyBundle)
                     dismiss()
                 } label: {
                     HStack {

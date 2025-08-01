@@ -23,6 +23,7 @@ struct SaveQuantitySampleView: View {
     @Environment(MyHeartCountsStandard.self)
     private var standard
     
+    private let title: LocalizedStringKey
     private let sampleType: MHCQuantitySampleType
     private let completionHandler: (@MainActor (QuantitySample) -> Void)?
     @State private var date: Date = .now
@@ -39,7 +40,7 @@ struct SaveQuantitySampleView: View {
                     .focused($valueFieldIsFocused)
             }
         }
-        .navigationTitle("Add Sample")
+        .navigationTitle(title)
         .viewStateAlert(state: $viewState)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -58,7 +59,12 @@ struct SaveQuantitySampleView: View {
         }
     }
     
-    init(sampleType: MHCQuantitySampleType, completionHandler: (@MainActor (QuantitySample) -> Void)? = nil) {
+    init(
+        _ title: LocalizedStringKey = "Add Sample",
+        sampleType: MHCQuantitySampleType,
+        completionHandler: (@MainActor (QuantitySample) -> Void)? = nil
+    ) {
+        self.title = title
         self.sampleType = sampleType
         self.completionHandler = completionHandler
     }

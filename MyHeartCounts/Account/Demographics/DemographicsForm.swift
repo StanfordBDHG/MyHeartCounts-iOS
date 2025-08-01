@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order type_body_length closure_body_length
+// swiftlint:disable file_types_order type_body_length closure_body_length file_length
 
 import Foundation
 import HealthKit
@@ -40,11 +40,14 @@ private struct Impl: View {
     // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.locale) private var locale
+    @Environment(\.calendar) private var calendar
     @Environment(HealthKit.self) private var healthKit
     @Environment(StudyManager.self) private var studyManager
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     
     @HealthKitCharacteristicQuery(.bloodType) private var healthKitBloodType
+    @HealthKitCharacteristicQuery(.dateOfBirth) private var healthKitDateOfBirth
+    @HealthKitCharacteristicQuery(.biologicalSex) private var healthKitBiologicalSex
     @HealthKitQuery(.height, timeRange: .ever, limit: 1) private var heightSamples
     @HealthKitQuery(.bodyMass, timeRange: .ever, limit: 1) private var weightSamples
     // swiftlint:enable attributes
@@ -63,14 +66,23 @@ private struct Impl: View {
         regionOverride ?? studyManager.preferredLocale.region ?? .unitedStates
     }
     
+    private var dateOfBirthBinding: Binding<Date> {
+        accountValueBinding(\.mhcDateOfBirth).withDefaultValue(.now)
+    }
     private var bloodTypeBinding: Binding<HKBloodType> {
         accountValueBinding(\.bloodType).withDefaultValue(.notSet)
     }
-    var heightInCMBinding: Binding<Double?> {
+    private var heightInCMBinding: Binding<Double?> {
         accountValueBinding(\.heightInCM)
     }
-    var weightInKGBinding: Binding<Double?> {
+    private var weightInKGBinding: Binding<Double?> {
         accountValueBinding(\.weightInKG)
+    }
+    private var genderBinding: Binding<GenderIdentity> {
+        accountValueBinding(\.mhcGenderIdentity).withDefaultValue(.preferNotToState)
+    }
+    private var sexAtBirthBinding: Binding<BiologicalSex> {
+        accountValueBinding(\.biologicalSexAtBirth).withDefaultValue(.preferNotToState)
     }
     
     var body: some View {
@@ -122,14 +134,41 @@ private struct Impl: View {
                 }
             }
         }
+        .accessibilityIdentifier("DemographicsForm")
+        .viewStateAlert(state: $viewState)
+        .toolbar {
+            if ProcessInfo.isBeingUITested {
+                testingSupportMenu
+            }
+        }
+        .sheet(isPresented: $isShowingEnterHeightSheet) {
+            NavigationStack {
+                SaveQuantitySampleView("Enter Height", sampleType: .healthKit(.height)) { sample in
+                    heightInCMBinding.wrappedValue = sample.value(as: .meterUnit(with: .centi))
+                }
+            }
+        }
+        .sheet(isPresented: $isShowingEnterWeightSheet) {
+            NavigationStack {
+                SaveQuantitySampleView("Enter Weight", sampleType: .healthKit(.bodyMass)) { sample in
+                    weightInKGBinding.wrappedValue = sample.value(as: .gramUnit(with: .kilo))
+                }
+            }
+        }
     }
     
     @ViewBuilder private var readFromHealthKitButton: some View {
         AsyncButton(state: $viewState) {
+            // this likely isn't necessary
             try await healthKit.askForAuthorization(for: .init(read: [
                 HealthKitCharacteristic.bloodType.hkType,
+                HealthKitCharacteristic.biologicalSex.hkType,
                 SampleType.height.hkSampleType, SampleType.bodyMass.hkSampleType
             ]))
+            if calendar.isDateInToday(dateOfBirthBinding.wrappedValue), let healthKitDateOfBirth {
+                // we set the time to noon to try to work around time zone issues
+                dateOfBirthBinding.wrappedValue = calendar.makeNoon(healthKitDateOfBirth)
+            }
             if bloodTypeBinding.wrappedValue == .notSet, let healthKitBloodType {
                 bloodTypeBinding.wrappedValue = healthKitBloodType
             }
@@ -139,16 +178,25 @@ private struct Impl: View {
             if let weightSample = weightSamples.last {
                 weightInKGBinding.wrappedValue = weightSample.quantity.doubleValue(for: .gramUnit(with: .kilo))
             }
+            if sexAtBirthBinding.wrappedValue == .preferNotToState, let healthKitBiologicalSex {
+                sexAtBirthBinding.wrappedValue = switch healthKitBiologicalSex {
+                case .female: .female
+                case .male: .male
+                case .other: .preferNotToState // not perfect but the best we can do
+                case .notSet: .preferNotToState
+                @unknown default: .preferNotToState
+                }
+            }
         } label: {
             HStack(alignment: .firstTextBaseline) {
                 Image(systemSymbol: .heartTextSquare)
                     .accessibilityHidden(true)
                 VStack(alignment: .listRowSeparatorLeading) {
-                    Text("Read from HealthKit")
+                    Text("Read from Health App")
                     Text(
                         """
-                        Use this option to auto-fill Blood Type, Height and Weight, by reading each from HealthKit, if available.
-                        Alternatively, you can also tap the respective fields below to manually enter a value.
+                        Use this option to auto-fill Blood Type, Height, Weight, Date of Birth, and Biological Sex, by reading each from the Health app, if available.
+                        Alternatively, you can also tap the respective fields below to manually enter a value, or to override the value read from the Health app.
                         """
                     )
                     .font(.footnote)
@@ -156,14 +204,22 @@ private struct Impl: View {
                 }
             }
         }
+        .accessibilityLabel("Read from Health App")
     }
     
     @ViewBuilder private var dateOfBirthAndGenderSection: some View {
-        let dobBinding = accountValueBinding(\.dateOfBirth).withDefaultValue(.now)
-        let genderBinding = accountValueBinding(\.mhcGenderIdentity).withDefaultValue(.preferNotToState)
-        let sexAtBirthBinding = accountValueBinding(\.biologicalSexAtBirth).withDefaultValue(.preferNotToState)
         Section {
-            DatePicker("Date of Birth", selection: dobBinding, displayedComponents: .date)
+            DatePicker(
+                "Date of Birth",
+                selection: Binding<Date> {
+                    calendar.makeNoon(dateOfBirthBinding.wrappedValue)
+                } set: { newValue in
+                    dateOfBirthBinding.wrappedValue = calendar.makeNoon(newValue)
+                },
+                displayedComponents: .date
+            )
+            .accessibilityLabel("Date of Birth")
+            .accessibilityValue(dateOfBirthBinding.wrappedValue.formatted(.iso8601.year().month().day()))
             Picker("Gender Identity", selection: genderBinding) {
                 ForEach(GenderIdentity.allCases, id: \.self) { option in
                     Text(option.displayTitle)
@@ -185,6 +241,19 @@ private struct Impl: View {
             case .female, .transMale:
                 sexAtBirthBinding.wrappedValue = .female
             case .other, .preferNotToState:
+                break
+            }
+        }
+        .onChange(of: sexAtBirthBinding.wrappedValue) { _, newSexAtBirth in
+            guard genderBinding.wrappedValue == .preferNotToState else {
+                return
+            }
+            switch newSexAtBirth {
+            case .male:
+                genderBinding.wrappedValue = .male
+            case .female:
+                genderBinding.wrappedValue = .female
+            case .preferNotToState, .intersex:
                 break
             }
         }
@@ -222,14 +291,16 @@ private struct Impl: View {
     }
     
     @ViewBuilder private var bodyMeasurementsSection: some View {
-        let cmUnit = HKUnit.meterUnit(with: .centi)
-        let kgUnit = HKUnit.gramUnit(with: .kilo)
+        let makeSample = { (sampleType: SampleType<HKQuantitySample>, value: Double, unit: HKUnit) -> QuantitySample in
+            let now = Date.now
+            return QuantitySample(id: UUID(), sampleType: .healthKit(sampleType), unit: unit, value: value, startDate: now, endDate: now)
+        }
         Section {
             Button {
                 isShowingEnterHeightSheet = true
             } label: {
                 let sample: QuantitySample? = heightInCMBinding.wrappedValue.map {
-                    QuantitySample(id: UUID(), sampleType: .healthKit(.height), unit: cmUnit, value: $0, startDate: .now, endDate: .now)
+                    makeSample(.height, $0, .meterUnit(with: .centi))
                 }
                 HStack {
                     Text("Height")
@@ -244,7 +315,7 @@ private struct Impl: View {
                 isShowingEnterWeightSheet = true
             } label: {
                 let sample: QuantitySample? = weightInKGBinding.wrappedValue.map {
-                    QuantitySample(id: UUID(), sampleType: .healthKit(.bodyMass), unit: kgUnit, value: $0, startDate: .now, endDate: .now)
+                    makeSample(.bodyMass, $0, .gramUnit(with: .kilo))
                 }
                 HStack {
                     Text("Weight")
@@ -254,16 +325,6 @@ private struct Impl: View {
                         .foregroundStyle(colorScheme.textLabelForegroundStyle.secondary)
                 }
                 .contentShape(Rectangle())
-            }
-        }
-        .sheet(isPresented: $isShowingEnterHeightSheet) {
-            SaveQuantitySampleView(sampleType: .healthKit(.height)) { sample in
-                heightInCMBinding.wrappedValue = sample.value(as: cmUnit)
-            }
-        }
-        .sheet(isPresented: $isShowingEnterWeightSheet) {
-            SaveQuantitySampleView(sampleType: .healthKit(.bodyMass)) { sample in
-                weightInKGBinding.wrappedValue = sample.value(as: kgUnit)
             }
         }
     }
@@ -407,6 +468,35 @@ private struct Impl: View {
                 } catch {
                     logger.error("Error updating account details: \(error)")
                 }
+            }
+        }
+    }
+}
+
+
+extension Impl {
+    @ToolbarContentBuilder private var testingSupportMenu: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                AsyncButton("Add Height & Weight Samples", state: $viewState) {
+                    let samples = [
+                        HKQuantitySample(
+                            type: SampleType.height.hkSampleType,
+                            quantity: HKQuantity(unit: .meterUnit(with: .centi), doubleValue: 186),
+                            start: .now,
+                            end: .now
+                        ),
+                        HKQuantitySample(
+                            type: SampleType.bodyMass.hkSampleType,
+                            quantity: HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: 70),
+                            start: .now,
+                            end: .now
+                        )
+                    ]
+                    try await healthKit.save(samples)
+                }
+            } label: {
+                Text("Testing Support")
             }
         }
     }
