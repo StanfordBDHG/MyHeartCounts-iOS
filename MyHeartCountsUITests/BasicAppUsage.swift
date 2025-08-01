@@ -70,15 +70,11 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
             XCTAssert(app.buttons["Weight, 70 kg"].waitForExistence(timeout: 2))
         }
         
-        print(app.debugDescription)
-        
-        app.buttons["Race / Ethnicity"].tap()
+        app.staticTexts["Race / Ethnicity"].tap()
         app.buttons["Prefer not to Answer"].tap()
         app.buttons["White"].tap()
         app.buttons["Japanese"].tap()
-        app.buttons["Demographics"].tap()
+        app.navigationBars["Race / Ethnicity"].buttons["Demographics"].tap()
         XCTAssert(app.buttons["Race / Ethnicity, White, Japanese"].waitForExistence(timeout: 1))
-        
-        print(app.debugDescription)
     }
 }

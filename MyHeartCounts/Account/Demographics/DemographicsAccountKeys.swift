@@ -152,21 +152,10 @@ extension AccountDetails {
     
     @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
     var futureStudies: Bool?
-    
-    @AccountKey(
-        id: "mhcDateOfBirth",
-        name: "Date of Birth",
-        category: .demographics,
-        options: .mutable,
-        as: Date.self,
-        initial: .empty(.init(timeIntervalSince1970: 0))
-    )
-    var mhcDateOfBirth: Date?
 }
 
 
 @KeyEntry(
-    \.mhcDateOfBirth,
     \.usRegion, \.usZipCodePrefix, \.householdIncomeUS, \.educationUS,
     \.ukRegion, \.ukCounty, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,

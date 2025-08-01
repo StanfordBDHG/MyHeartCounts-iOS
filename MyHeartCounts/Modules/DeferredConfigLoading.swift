@@ -221,7 +221,7 @@ enum DeferredConfigLoading {
                         .requires(\.userId),
                         .requires(\.name),
                         // additional values stored using the `FirestoreAccountStorage` within our Standard implementation
-                        .manual(\.mhcDateOfBirth),
+                        .manual(\.dateOfBirth),
                         .manual(\.fcmToken),
                         .manual(\.timeZone),
                         .manual(\.enableDebugMode),

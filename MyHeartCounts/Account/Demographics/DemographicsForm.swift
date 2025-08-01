@@ -67,7 +67,7 @@ private struct Impl: View {
     }
     
     private var dateOfBirthBinding: Binding<Date> {
-        accountValueBinding(\.mhcDateOfBirth).withDefaultValue(.now)
+        accountValueBinding(\.dateOfBirth).withDefaultValue(.now)
     }
     private var bloodTypeBinding: Binding<HKBloodType> {
         accountValueBinding(\.bloodType).withDefaultValue(.notSet)
