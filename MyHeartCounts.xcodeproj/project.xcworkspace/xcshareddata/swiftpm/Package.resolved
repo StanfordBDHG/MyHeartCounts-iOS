@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/Spezi.git",
       "state" : {
-        "revision" : "a15b01c99cf7f8f9357af1be092d30bfcfd21dad",
-        "version" : "1.9.0"
+        "revision" : "6bed41a437cba200a8ce0182e6a30dc787bbc836",
+        "version" : "1.9.1"
       }
     },
     {
