@@ -27,8 +27,8 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         try app.navigateOnboardingFlow(
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
-            email: "leland@stanford.edu",
-            password: "testTest123",
+            email: "lelandstanford@stanford.edu",
+            password: "StanfordRocks!",
             signUpForExtraTrial: true
         )
     }
