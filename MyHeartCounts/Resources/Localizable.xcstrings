@@ -448,7 +448,7 @@
     "Debug" : {
 
     },
-    "Debug Stuff" : {
+    "Debug Options" : {
 
     },
     "Delaware" : {
@@ -884,6 +884,9 @@
     "Link Arrow Symbol" : {
 
     },
+    "Live Health Upload Notifications" : {
+
+    },
     "Loading Firebase Test Setup" : {
 
     },
@@ -1065,7 +1068,7 @@
         }
       }
     },
-    "NotificationsManager" : {
+    "Notifications Status" : {
 
     },
     "offWristDate" : {

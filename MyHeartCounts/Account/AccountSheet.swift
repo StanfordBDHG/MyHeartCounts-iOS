@@ -6,12 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-@_spi(TestingSupport)
 import SpeziAccount
 import SpeziLicense
 import SpeziStudy
 import SwiftUI
-import XCTSpeziNotificationsUI
 
 
 struct AccountSheet: View {
@@ -111,9 +109,6 @@ struct AccountSheet: View {
                 }
             }
         }
-        if accountFeatureFlags.isDebugModeEnabled {
-            debugSection
-        }
         Section {
             if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
@@ -144,29 +139,19 @@ struct AccountSheet: View {
                 Label("My Heart Counts", systemSymbol: .infoCircle)
                     .foregroundStyle(colorScheme.textLabelForegroundStyle)
             }
-
             NavigationLink {
                 ContributionsList(projectLicense: .mit)
             } label: {
                 Label("License Information", systemSymbol: .buildingColumns)
                     .foregroundStyle(colorScheme.textLabelForegroundStyle)
             }
-        }
-    }
-    
-    @ViewBuilder private var debugSection: some View {
-        Section("Debug") {
-            NavigationLink("Health Data Bulk Upload") {
-                HealthImporterControlView()
-            }
-            NavigationLink("NotificationsManager") {
-                NotificationsManagerControlView()
-            }
-            NavigationLink("Scheduled Local Notifications") {
-                PendingNotificationsList()
-            }
-            NavigationLink("Debug Stuff") {
-                DebugStuffView()
+            if accountFeatureFlags.isDebugModeEnabled {
+                NavigationLink {
+                    DebugOptions()
+                } label: {
+                    Label("Debug", systemSymbol: .wrenchAdjustable)
+                        .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                }
             }
         }
     }
