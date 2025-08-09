@@ -571,42 +571,6 @@ extension TasksList {
                 }
             }
         }
-        
-//        /// If we want to allow the user to perform the event's associated action again, if it has already been completed once.
-//        private func canPerformAgain(_ event: Event) -> Bool {
-//            if !event.isCompleted {
-//                // if the event hasn't been completed yet, we always allow performing it.
-//                true
-//            } else { // the event has already been completed
-//                if [Task.Category.timedWalkingTest, .timedRunningTest].contains(event.task.category) {
-//                    true
-//                }
-//            }
-//        }
-//        
-//        /// Whether performing the specified event now should also mark it as completed.
-//        ///
-//        /// This function allows us to give ppl the ability to
-//        private func shouldComplete(_ event: Event) -> Bool {
-//            if event.isCompleted {
-//                // if the event is already completed, we don't want to complete it again
-//                false
-//            } else if event.occurrence.start <= .now {
-//                // the event is in the past
-//                true
-//            } else {
-//                // the event is in the future
-//                if [Task.Category.timedRunningTest, .timedWalkingTest].contains(event.task.category) {
-//                    // if the event is a timed walking/running test, we allow performing it now, w/out already marking the future occurrence as completed.
-//                    false
-//                } else if let daysApart = cal.dateComponents([.day], from: cal.startOfDay(for: .now), to: event.occurrence.start).day {
-//                    // if it is more than 2 weeks away, we mark the event as completed if the associated action is performed now
-//                    daysApart > 14
-//                } else {
-//                    true
-//                }
-//            }
-//        }
     }
 }
 

@@ -48,10 +48,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     }
     
     
-    func handleDeletedObjects<Sample>( // swiftlint:disable:this function_body_length
-        _ deletedObjects: some Collection<HKDeletedObject>,
-        ofType sampleType: SampleType<Sample>
-    ) async {
+    func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
         logger.notice("\(#function) \(deletedObjects.count) deleted HKObjects for \(sampleType.displayTitle)")
         let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
             for: .deleted(sampleTypeTitle: sampleType.displayTitle, count: deletedObjects.count)

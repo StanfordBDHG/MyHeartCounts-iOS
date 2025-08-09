@@ -15,16 +15,6 @@ struct RaceEthnicity: OptionSet, Hashable, Sendable, RawRepresentableAccountKey 
     init(rawValue: RawValue) {
         self.rawValue = rawValue
     }
-    
-//    init(from decoder: any Decoder) throws {
-//        let container = try decoder.singleValueContainer()
-//        rawValue = try container.decode(RawValue.self)
-//    }
-//    
-//    func encode(to encoder: any Encoder) throws {
-//        var container = encoder.singleValueContainer()
-//        try container.encode(rawValue)
-//    }
 }
 
 
