@@ -76,7 +76,6 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
         } else {
             print("No last-signed version")
             // we're unable to get the most recent signed, so we'll make the user re-sign it
-            // TODO is this actually a good idea?
             await MainActor.run {
                 self.needsToSignNewConsentVersion = true
             }
