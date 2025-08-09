@@ -39,42 +39,32 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
         let studyBundle = withObservationTracking {
             studyBundleLoader.studyBundle?.value
         } onChange: {
-            print("ON CHANGE")
             Task {
                 await self.doUpdate()
             }
         }
-        print("HMMM")
         guard await onboardingFlowComplete else {
-            print("still in onboarding :/")
             return
         }
         guard await !needsToSignNewConsentVersion else {
-            print("flag already set :/")
             return
         }
         guard let studyBundle else {
-            print("no study bundle :/")
             return
         }
         guard let accountDetails = await account?.details else {
-            print("no account :/")
             return
         }
         guard let consentFile = studyBundle.studyDefinition.metadata.consentFileRef,
               let consentText = studyBundle.consentText(for: consentFile, in: await studyManager.preferredLocale),
               let consentVersion = (try? MarkdownDocument.Metadata(parsing: consentText))?.version else {
-                  print("unable to get current consent version :/")
                   return
         }
-        print("consent version: \(consentVersion)")
         if let lastSignedVersion = accountDetails.lastSignedConsentVersion.flatMap(Version.init) {
-            print("last-signed version: \(lastSignedVersion)")
             await MainActor.run {
                 self.needsToSignNewConsentVersion = consentVersion.isGreaterThan(lastSignedVersion, upFrom: .minor)
             }
         } else {
-            print("No last-signed version")
             // we're unable to get the most recent signed, so we'll make the user re-sign it
             await MainActor.run {
                 self.needsToSignNewConsentVersion = true

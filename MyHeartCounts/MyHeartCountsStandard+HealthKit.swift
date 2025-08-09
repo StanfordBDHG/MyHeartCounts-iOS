@@ -56,61 +56,21 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
             for: .deleted(sampleTypeTitle: sampleType.displayTitle, count: deletedObjects.count)
         )
-        let logger = logger
         guard let accountId = await account?.details?.accountId else {
             return
         }
-        if true {
-            do {
-                let collection = "HealthObservations_\(sampleType.id)"
-                logger.notice("Will use bulk-delete function to delete \(deletedObjects.count) HealthKit object(s) for \(sampleType.id)")
-                _ = try await Functions.functions()
-                    .httpsCallable("deleteHealthSamples")
-                    .call([
-                        "userId": accountId,
-                        "collection": collection,
-                        "samples": deletedObjects.map(\.uuid.uuidString)
-                    ])
-            } catch {
-                logger.notice("Error calling bulk-delete function: \(error)")
-            }
-            await triggerDidUploadNotification()
-            return
-        }
-        for object in deletedObjects {
-            do {
-                let doc = try await healthObservationDocument(forSampleType: sampleType.hkSampleType.identifier, id: object.uuid)
-                let deleteDoc = { @Sendable in
-                    await self.logger.notice("Deleting document for now-deleted HKObject (id: \(object.uuid); sampleType: \(sampleType.displayTitle))")
-                    try await doc.delete()
-                }
-                do {
-                    let resourceProxy: ResourceProxy
-                    do {
-                        resourceProxy = try await doc.getDocument(as: ResourceProxy.self)
-                    } catch {
-                        logger.error("Unable to decode ResourceProxy: \(error). Deleting instead, as fallback.")
-                        try await deleteDoc()
-                        continue
-                    }
-                    if let observation = resourceProxy.get(if: Observation.self) {
-                        // For Observation-backed Health samples (which should be all of them),
-                        // we intentionally don't delete the doc when the sample gets deleted from HealthKit,
-                        // but rather set the Observation's ststus to `.enteredInError`,
-                        // which indicates a previously published but now withdrawn value.
-                        logger.notice("Updating status of FHIR Observation created from now-deleted HKObject to enteredInError (id: \(object.uuid))")
-                        observation.status = .init(.enteredInError)
-                        try await doc.setData(from: resourceProxy)
-                    } else {
-                        logger.error("ResourceProxy isn't an Observation (found a \(type(of: resourceProxy.get())). Deleting instead, as fallback.")
-                        try await deleteDoc()
-                        continue
-                    }
-                }
-            } catch {
-                logger.error("Error saving HealthKit sample to Firebase: \(error)")
-                // (probably not needed, since firebase already seems to be doing this for us...)
-            }
+        do {
+            let collection = "HealthObservations_\(sampleType.id)"
+            logger.notice("Will use bulk-delete function to delete \(deletedObjects.count) HealthKit object(s) for \(sampleType.id)")
+            _ = try await Functions.functions()
+                .httpsCallable("deleteHealthSamples")
+                .call([
+                    "userId": accountId,
+                    "collection": collection,
+                    "samples": deletedObjects.map(\.uuid.uuidString)
+                ])
+        } catch {
+            logger.notice("Error calling bulk-delete function: \(error)")
         }
         await triggerDidUploadNotification()
     }
