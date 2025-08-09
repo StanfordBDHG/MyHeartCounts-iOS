@@ -1,5 +1,5 @@
 {
-  "originHash" : "2863b108d84a2ce2a61e83b5d3beb700c30165d4069e1f1ea6af32d471f4a2d7",
+  "originHash" : "331f81cad4d4af5af817965295f3342b3ac9b1792b2a5edea0c7c1f9a5bdc7e6",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -267,7 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "168e1895e4b5f97a702842cb6a12ec3ce49f8de7"
+        "revision" : "4fab93e2ba8b62ddc45f50a61043d7df376243ba",
+        "version" : "1.2.3"
       }
     },
     {
@@ -316,6 +317,14 @@
       }
     },
     {
+      "identity" : "spezisensorkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
+      "state" : {
+        "revision" : "3992d60dca8f3f3f24f8d4c7899ce5dcf32b05f0"
+      }
+    },
+    {
       "identity" : "spezistorage",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
@@ -338,8 +347,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "dc9403578fea702525b462448a00cd917634a8a1",
-        "version" : "1.12.0"
+        "revision" : "9a7cd323ae6023a57bdf57af644538e723902f67",
+        "version" : "1.12.1"
       }
     },
     {

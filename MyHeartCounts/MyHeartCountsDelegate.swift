@@ -40,6 +40,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             FeedbackManager()
             SensorKit()
             ConsentManager()
+//            ECGExporter()
         }
     }
 }

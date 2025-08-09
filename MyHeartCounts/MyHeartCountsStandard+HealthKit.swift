@@ -8,6 +8,7 @@
 
 import Algorithms
 import FirebaseFirestore
+import FirebaseFunctions
 import Foundation
 import HealthKit
 import HealthKitOnFHIR
@@ -47,12 +48,35 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     }
     
     
-    func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
+    func handleDeletedObjects<Sample>( // swiftlint:disable:this function_body_length
+        _ deletedObjects: some Collection<HKDeletedObject>,
+        ofType sampleType: SampleType<Sample>
+    ) async {
         logger.notice("\(#function) \(deletedObjects.count) deleted HKObjects for \(sampleType.displayTitle)")
         let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
             for: .deleted(sampleTypeTitle: sampleType.displayTitle, count: deletedObjects.count)
         )
         let logger = logger
+        guard let accountId = await account?.details?.accountId else {
+            return
+        }
+        if true {
+            do {
+                let collection = "HealthObservations_\(sampleType.id)"
+                logger.notice("Will use bulk-delete function to delete \(deletedObjects.count) HealthKit object(s) for \(sampleType.id)")
+                _ = try await Functions.functions()
+                    .httpsCallable("deleteHealthSamples")
+                    .call([
+                        "userId": accountId,
+                        "collection": collection,
+                        "samples": deletedObjects.map(\.uuid.uuidString)
+                    ])
+            } catch {
+                logger.notice("Error calling bulk-delete function: \(error)")
+            }
+            await triggerDidUploadNotification()
+            return
+        }
         for object in deletedObjects {
             do {
                 let doc = try await healthObservationDocument(forSampleType: sampleType.hkSampleType.identifier, id: object.uuid)

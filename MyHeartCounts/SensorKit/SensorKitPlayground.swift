@@ -12,6 +12,7 @@ import CoreMotion
 import Foundation
 @preconcurrency import SensorKit
 import SpeziFoundation
+import SpeziSensorKit
 import SpeziViews
 import SwiftUI
 
@@ -20,16 +21,16 @@ struct SensorKitPlayground: View {
     @Environment(\.calendar) private var cal
     @Environment(SensorKit.self) private var sensorKit
     
-    private let onWristReader = SensorReader(sensor: .onWrist)
-    private let ambientLightReader = SensorReader(sensor: .ambientLight)
-    private let ambientPressureReader = SensorReader(sensor: .ambientPressure)
-    private let heartRateReader = SensorReader(sensor: .heartRate)
-    private let pedometerReader = SensorReader(sensor: .pedometer)
-    private let wristTemperatureReader = SensorReader(sensor: .wristTemperature)
-    private let ppgReader = SensorReader(sensor: .ppg)
-    private let ecgReader = SensorReader(sensor: .ecg)
-    private let visitsReader = SensorReader(sensor: .visits)
-    private let deviceUsageReader = SensorReader(sensor: .deviceUsage)
+    private let onWristReader = SensorReader(.onWrist)
+    private let ambientLightReader = SensorReader(.ambientLight)
+    private let ambientPressureReader = SensorReader(.ambientPressure)
+    private let heartRateReader = SensorReader(.heartRate)
+    private let pedometerReader = SensorReader(.pedometer)
+    private let wristTemperatureReader = SensorReader(.wristTemperature)
+    private let ppgReader = SensorReader(.ppg)
+    private let ecgReader = SensorReader(.ecg)
+    private let visitsReader = SensorReader(.visits)
+    private let deviceUsageReader = SensorReader(.deviceUsage)
     
     @State private var viewState: ViewState = .idle
     
@@ -73,16 +74,16 @@ struct SensorKitPlayground: View {
     @ViewBuilder private var permissionsSection: some View {
         AsyncButton("Request Permissions", state: $viewState) {
             try await sensorKit.requestAccess(to: [
-                .onWristState,
-                .heartRate,
-                .pedometerData,
-                .wristTemperature,
-                .photoplethysmogram,
-                .electrocardiogram,
-                .ambientLightSensor,
-                .ambientPressure,
-                .visits,
-                .deviceUsageReport
+                Sensor.onWrist,
+                Sensor.heartRate,
+                Sensor.pedometer,
+                Sensor.wristTemperature,
+                Sensor.ppg,
+                Sensor.ecg,
+                Sensor.ambientLight,
+                Sensor.ambientPressure,
+                Sensor.visits,
+                Sensor.deviceUsage
             ])
         }
         LabeledContent("Permissions", value: "n/a")
@@ -112,7 +113,7 @@ struct SensorKitPlayground: View {
     
     private nonisolated func fetchWristTempData() async throws {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        let reader = SensorReader(sensor: .wristTemperature)
+        let reader = SensorReader(.wristTemperature)
         let devices = try await reader.fetchDevices()
         var sessions: [SRWristTemperatureSession] = []
         for device in devices {
@@ -147,6 +148,7 @@ extension SensorKitPlayground {
         @State private var fetchResults: [SensorKit.FetchResult<Sample>] = []
         @State private var numSamples: Int = 0
         @State private var coveredTimeRange: Range<Date>?
+        @State private var filterEmptyFetchResults = false
         
         var body: some View {
             Form {
@@ -175,21 +177,22 @@ extension SensorKitPlayground {
                             ProgressView()
                         }
                     } else {
-                        List(fetchResults/*.reversed().prefix(100)*/, id: \.self) { fetchResult in
-                            NavigationLink {
-                                FetchResultView(fetchResult: fetchResult)
-                            } label: {
-                                HStack {
-                                    Text(fetchResult.sensorKitTimestamp, format: .iso8601)
-                                    Spacer()
-                                    if fetchResult.count == 1, let sample = fetchResult.first as? CMHighFrequencyHeartRateData {
-                                        Text("\(sample.heartRate, format: .number) bpm")
-                                    } else {
-                                        Text("#=\(fetchResult.count)")
-                                    }
-                                }
-                            }
-                        }
+//                        let fetchResults = filterEmptyFetchResults ? fetchResults.filter { !$0.isEmpty } : fetchResults
+//                        List(fetchResults, id: \.self) { fetchResult in
+//                            NavigationLink {
+//                                FetchResultView(fetchResult: fetchResult)
+//                            } label: {
+//                                HStack {
+//                                    Text(fetchResult.sensorKitTimestamp, format: .iso8601)
+//                                    Spacer()
+//                                    if fetchResult.count == 1, let sample = fetchResult.first as? CMHighFrequencyHeartRateData {
+//                                        Text("\(sample.heartRate, format: .number) bpm")
+//                                    } else {
+//                                        Text("#=\(fetchResult.count)")
+//                                    }
+//                                }
+//                            }
+//                        }
                     }
                 }
             }
@@ -200,6 +203,24 @@ extension SensorKitPlayground {
             .interactiveDismissDisabled(viewState == .processing)
             .navigationBarBackButtonHidden(viewState == .processing)
             .viewStateAlert(state: $viewState)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Toggle(isOn: $filterEmptyFetchResults.animation()) {
+                            Text("Ignore Empty Fetch Results")
+                        }
+                    } label: {
+                        Image(systemSymbol: filterEmptyFetchResults ? .line3HorizontalDecreaseCircleFill : .line3HorizontalDecreaseCircle)
+                            .accessibilityLabel("Filter Options")
+                    }
+//                    Button {
+//                        filterEmptyFetchResults.toggle()
+//                    } label: {
+//                        Image(systemSymbol: filterEmptyFetchResults ? .line3HorizontalDecreaseCircleFill : .line3HorizontalDecreaseCircle)
+//                            .accessibilityLabel("Filter empty Fetch Results")
+//                    }
+                }
+            }
             .task {
                 guard !didPerformInitialFetch else {
                     return
@@ -225,7 +246,7 @@ extension SensorKitPlayground {
                 var fetchResults: [SensorKit.FetchResult<Sample>] = []
                 let timeRange = { () -> Range<Date> in
                     let end = cal.date(byAdding: .init(day: -1, minute: -10), to: .now)!
-                    let start = cal.date(byAdding: .day, value: -6, to: end)!
+                    let start = cal.date(byAdding: .day, value: -1, to: end)!
                     return start..<end
                 }()
                 for device in devices {
