@@ -13,6 +13,7 @@ import SpeziHealthKitBulkExport
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziScheduler
+import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
 import UserNotifications
@@ -38,6 +39,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             TimedWalkingTest()
             FeedbackManager()
             SensorKit()
+            ConsentManager()
         }
     }
 }

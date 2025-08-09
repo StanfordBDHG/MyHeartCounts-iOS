@@ -13,9 +13,6 @@
     "—" : {
 
     },
-    "#=%lld" : {
-
-    },
     "%@ (%lld)" : {
       "localizations" : {
         "en" : {
@@ -25,9 +22,6 @@
           }
         }
       }
-    },
-    "%@ bpm" : {
-
     },
     "%lld ft" : {
 
@@ -410,7 +404,16 @@
     "Consent" : {
 
     },
+    "Consent Date" : {
+
+    },
     "Consent Documents" : {
+
+    },
+    "Consent Renewal" : {
+
+    },
+    "Consent Version" : {
 
     },
     "CONSENT_LOADING_ERROR" : {
@@ -552,6 +555,9 @@
 
     },
     "Fetching…" : {
+
+    },
+    "Filter Options" : {
 
     },
     "FINAL_ENROLLMENT_STEP_MESSAGE" : {
@@ -797,6 +803,9 @@
 
     },
     "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
+
+    },
+    "Ignore Empty Fetch Results" : {
 
     },
     "Illinois" : {
@@ -1077,6 +1086,9 @@
     "Ohio" : {
 
     },
+    "OK" : {
+
+    },
     "Oklahoma" : {
 
     },
@@ -1216,6 +1228,9 @@
 
     },
     "Other Territories" : {
+
+    },
+    "Our Study Consent document has been updated since you last signed it%@.\n\nPlease review the new Consent document and sign it again." : {
 
     },
     "Override Region" : {

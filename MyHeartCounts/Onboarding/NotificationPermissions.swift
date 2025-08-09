@@ -34,24 +34,21 @@ struct NotificationPermissions: View {
                 Spacer()
             }
         } footer: {
-            OnboardingActionsView(
-                "Allow Notifications",
-                action: {
-                    do {
-                        notificationProcessing = true
-                        // Notification Authorization is not available in the preview simulator.
-                        if ProcessInfo.processInfo.isPreviewSimulator {
-                            try await _Concurrency.Task.sleep(for: .seconds(0.75))
-                        } else {
-                            try await notificationsManager.requestNotificationPermissions()
-                        }
-                    } catch {
-                        print("Could not request notification permissions.")
+            OnboardingActionsView("Allow Notifications") {
+                do {
+                    notificationProcessing = true
+                    // Notification Authorization is not available in the preview simulator.
+                    if ProcessInfo.processInfo.isPreviewSimulator {
+                        try await _Concurrency.Task.sleep(for: .seconds(0.75))
+                    } else {
+                        try await notificationsManager.requestNotificationPermissions()
                     }
-                    notificationProcessing = false
-                    onboardingPath.nextStep()
+                } catch {
+                    print("Could not request notification permissions.")
                 }
-            )
+                notificationProcessing = false
+                onboardingPath.nextStep()
+            }
         }
         .navigationBarBackButtonHidden(notificationProcessing)
         // Small fix as otherwise "Login" or "Sign up" is still shown in the nav bar

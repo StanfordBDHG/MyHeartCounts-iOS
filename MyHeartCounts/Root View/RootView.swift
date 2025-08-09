@@ -22,9 +22,12 @@ struct RootView: View {
     @LocalPreference(.rootTabSelection) private var selectedTab
     @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
     @Environment(Account.self) private var account: Account?
+    @Environment(ConsentManager.self) private var consentManager
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
-    @State private var viewState: ViewState = .idle
     // swiftlint:enable attributes
+    
+    @State private var isShowingConsentRenewalSheet = false
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
         ZStack {
@@ -57,6 +60,15 @@ struct RootView: View {
                     viewState = .error(AnyLocalizedError(error: error, defaultErrorDescription: "\(error)"))
                 }
             }
+        }
+        .onChange(of: consentManager.needsToSignNewConsentVersion) { oldValue, newValue in
+            guard !oldValue && newValue else {
+                return
+            }
+            isShowingConsentRenewalSheet = true
+        }
+        .sheet(isPresented: $isShowingConsentRenewalSheet) {
+            ConsentRenewalFlow()
         }
     }
     

@@ -16,6 +16,7 @@ import SwiftUI
 
 struct Consent: View {
     // swiftlint:disable attributes
+    @Environment(\.dismiss) private var dismiss
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(OnboardingDataCollection.self) private var onboardingData
     @Environment(MyHeartCountsStandard.self) private var standard
@@ -38,7 +39,16 @@ struct Consent: View {
             onboardingData.consentResponses = consentDocument.userResponses
             let result = try consentDocument.export(using: pdfExportConfig)
             try await standard.uploadConsentDocument(result)
-            path.nextStep()
+            do {
+                var accountDetailUpdates = AccountDetails()
+                accountDetailUpdates.lastSignedConsentDate = .now
+                accountDetailUpdates.lastSignedConsentVersion = consentDocument.metadata.version?.description
+                let modifications = try AccountModifications(modifiedDetails: accountDetailUpdates)
+                try await account.accountService.updateAccountDetails(modifications)
+            }
+            if !path.nextStep() {
+                dismiss()
+            }
         }
         .navigationTitle("Consent")
         .scrollIndicators(.visible)
