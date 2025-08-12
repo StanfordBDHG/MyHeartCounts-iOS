@@ -117,7 +117,7 @@ struct SensorKitPlayground: View {
         let devices = try await reader.fetchDevices()
         var sessions: [SRWristTemperatureSession] = []
         for device in devices {
-            sessions.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: .days(6)).flatMap(\.self))
+            sessions.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: .days(1)).flatMap(\.self))
         }
         print("#sessions: \(sessions.count)")
         for (idx, session) in sessions.enumerated() {
@@ -177,22 +177,22 @@ extension SensorKitPlayground {
                             ProgressView()
                         }
                     } else {
-//                        let fetchResults = filterEmptyFetchResults ? fetchResults.filter { !$0.isEmpty } : fetchResults
-//                        List(fetchResults, id: \.self) { fetchResult in
-//                            NavigationLink {
-//                                FetchResultView(fetchResult: fetchResult)
-//                            } label: {
-//                                HStack {
-//                                    Text(fetchResult.sensorKitTimestamp, format: .iso8601)
-//                                    Spacer()
-//                                    if fetchResult.count == 1, let sample = fetchResult.first as? CMHighFrequencyHeartRateData {
-//                                        Text("\(sample.heartRate, format: .number) bpm")
-//                                    } else {
-//                                        Text("#=\(fetchResult.count)")
-//                                    }
-//                                }
-//                            }
-//                        }
+                        let fetchResults = filterEmptyFetchResults ? fetchResults.filter { !$0.isEmpty } : fetchResults
+                        List(fetchResults, id: \.self) { fetchResult in
+                            NavigationLink {
+                                FetchResultView(fetchResult: fetchResult)
+                            } label: {
+                                HStack {
+                                    Text(fetchResult.sensorKitTimestamp, format: .iso8601)
+                                    Spacer()
+                                    if fetchResult.count == 1, let sample = fetchResult.first as? CMHighFrequencyHeartRateData {
+                                        Text("\(sample.heartRate, format: .number) bpm")
+                                    } else {
+                                        Text("#=\(fetchResult.count)")
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
