@@ -185,6 +185,7 @@ enum DeferredConfigLoading {
     private static func baseModules(preferredLocale: Locale) -> [any Module] {
         StudyManager(preferredLocale: preferredLocale)
         NotificationsManager()
+        ConsentManager()
     }
     
     /// Constructs an Array of Spezi Modules for loading Firebase and the other related modules, configured based on the specified selector.

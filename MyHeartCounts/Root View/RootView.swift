@@ -22,7 +22,7 @@ struct RootView: View {
     @LocalPreference(.rootTabSelection) private var selectedTab
     @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
     @Environment(Account.self) private var account: Account?
-    @Environment(ConsentManager.self) private var consentManager
+    @Environment(ConsentManager.self) private var consentManager: ConsentManager?
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
     // swiftlint:enable attributes
     
@@ -61,8 +61,8 @@ struct RootView: View {
                 }
             }
         }
-        .onChange(of: consentManager.needsToSignNewConsentVersion) { oldValue, newValue in
-            guard !oldValue && newValue else {
+        .onChange(of: consentManager?.needsToSignNewConsentVersion) { oldValue, newValue in
+            guard let oldValue, let newValue, !oldValue && newValue else {
                 return
             }
             isShowingConsentRenewalSheet = true
