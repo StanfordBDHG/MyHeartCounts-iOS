@@ -29,6 +29,7 @@ struct AccountSetupHeader: View {
                 Text("ACCOUNT_SIGNED_IN_DESCRIPTION")
             } else {
                 Text("ACCOUNT_SETUP_DESCRIPTION")
+                    .padding(.bottom, 17)
                 Text("ACCOUNT_SETUP_DESCRIPTION_SUBTITLE")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -37,13 +38,3 @@ struct AccountSetupHeader: View {
         .multilineTextAlignment(.center)
     }
 }
-
-
-#if DEBUG
-#Preview {
-    AccountSetupHeader()
-        .previewWith {
-            AccountConfiguration(service: InMemoryAccountService())
-        }
-}
-#endif

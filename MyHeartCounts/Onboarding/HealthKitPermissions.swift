@@ -89,15 +89,3 @@ extension MyHeartCountsStandard {
         ] as [any AnySampleType]).map { $0.hkSampleType }
     )
 }
-
-
-#if DEBUG
-#Preview {
-    ManagedNavigationStack {
-        HealthKitPermissions()
-    }
-    .previewWith(standard: MyHeartCountsStandard()) {
-        HealthKit()
-    }
-}
-#endif

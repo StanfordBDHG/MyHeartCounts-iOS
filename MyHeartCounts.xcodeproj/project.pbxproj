@@ -674,6 +674,7 @@
 				en,
 				Base,
 				es,
+				"en-GB",
 			);
 			mainGroup = 653A2544283387FE005D4D48;
 			packageReferences = (
@@ -931,12 +932,14 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "My Heart Counts";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts uses Healthkit data to understand all aspects of health.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses Health data to understand all aspects of health.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "My Heart Counts uses motion data to conduct a timed walking test";
+				INFOPLIST_KEY_NSSensorKitPrivacyPolicyURL = "https://myheartcounts.su.domains/privacy-policy/";
+				INFOPLIST_KEY_NSSensorKitUsageDescription = "My Heart Counts uses SensorKit to better TODO TODO TODO TODO";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1156,12 +1159,14 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "My Heart Counts";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts uses Healthkit data to understand all aspects of health.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses Health data to understand all aspects of health.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "My Heart Counts uses motion data to conduct a timed walking test";
+				INFOPLIST_KEY_NSSensorKitPrivacyPolicyURL = "https://myheartcounts.su.domains/privacy-policy/";
+				INFOPLIST_KEY_NSSensorKitUsageDescription = "My Heart Counts uses SensorKit to better TODO TODO TODO TODO";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1209,12 +1214,14 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "My Heart Counts";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts uses Healthkit data to understand all aspects of health.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "My Heart Counts uses Health data to understand all aspects of health.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "My Heart Counts uses motion data to conduct a timed walking test";
+				INFOPLIST_KEY_NSSensorKitPrivacyPolicyURL = "https://myheartcounts.su.domains/privacy-policy/";
+				INFOPLIST_KEY_NSSensorKitUsageDescription = "My Heart Counts uses SensorKit to better TODO TODO TODO TODO";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1813,8 +1820,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
-				kind = revision;
-				revision = 7ccea8a4423248cdb94cb80ac047f84e41a46ef0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
 			};
 		};
 		808A92C92E47E159007046E0 /* XCRemoteSwiftPackageReference "SpeziConsent" */ = {
@@ -1853,8 +1860,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.8;
+				kind = revision;
+				revision = d64a5ba1368a97902041c198750283ff55333cb6;
 			};
 		};
 		80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {

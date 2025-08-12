@@ -24,8 +24,8 @@ struct EligibilityScreening: View {
     
     var body: some View {
         SinglePageScreening(
-            title: "SCREENING_STEP_TITLE",
-            subtitle: "SCREENING_STEP_SUBTITLE"
+            title: "ELIGIBILITY_STEP_TITLE",
+            subtitle: "ELIGIBILITY_STEP_SUBTITLE"
         ) {
             components
         } didAnswerAllRequestedFields: { data in

@@ -35,6 +35,7 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
         }
     }
     
+    @MainActor
     private func doUpdate() async {
         let studyBundle = withObservationTracking {
             studyBundleLoader.studyBundle?.value
@@ -43,27 +44,25 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
                 await self.doUpdate()
             }
         }
-        guard await onboardingFlowComplete else {
+        guard onboardingFlowComplete else {
             return
         }
-        guard await !needsToSignNewConsentVersion else {
+        guard !needsToSignNewConsentVersion else {
             return
         }
         guard let studyBundle else {
             return
         }
-        guard let accountDetails = await account?.details else {
+        guard let accountDetails = account?.details else {
             return
         }
         guard let consentFile = studyBundle.studyDefinition.metadata.consentFileRef,
-              let consentText = studyBundle.consentText(for: consentFile, in: await studyManager.preferredLocale),
+              let consentText = studyBundle.consentText(for: consentFile, in: studyManager.preferredLocale),
               let consentVersion = (try? MarkdownDocument.Metadata(parsing: consentText))?.version else {
                   return
         }
         if let lastSignedVersion = accountDetails.lastSignedConsentVersion.flatMap(Version.init) {
-            await MainActor.run {
-                self.needsToSignNewConsentVersion = consentVersion.isGreaterThan(lastSignedVersion, upFrom: .minor)
-            }
+            needsToSignNewConsentVersion = consentVersion.isGreaterThan(lastSignedVersion, upFrom: .minor)
         } else {
             // we're unable to get the most recent signed, so we'll make the user re-sign it
 //            await MainActor.run {

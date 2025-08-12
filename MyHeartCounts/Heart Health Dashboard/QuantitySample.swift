@@ -54,9 +54,15 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     let aggregationKind: StatisticsAggregationOption
     let preferredTintColor: Color
     
-    init(id: String, displayTitle: String, displayUnit: HKUnit, aggregationKind: StatisticsAggregationOption, preferredTintColor: Color) {
+    init(
+        id: String,
+        displayTitle: LocalizedStringResource,
+        displayUnit: HKUnit,
+        aggregationKind: StatisticsAggregationOption,
+        preferredTintColor: Color
+    ) {
         self.id = id
-        self.displayTitle = displayTitle
+        self.displayTitle = displayTitle.localizedString()
         self.displayUnit = displayUnit
         self.aggregationKind = aggregationKind
         self.preferredTintColor = preferredTintColor
@@ -75,7 +81,7 @@ extension CustomQuantitySampleType {
     
     static let dietMEPAScore = Self(
         id: "MHCCustomSampleTypeDietMEPAScore",
-        displayTitle: "Diet (MEPA Score)",
+        displayTitle: "Diet",
         displayUnit: .count(),
         aggregationKind: .avg,
         preferredTintColor: .blue // ???

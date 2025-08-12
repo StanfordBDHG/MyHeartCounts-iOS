@@ -4,63 +4,6 @@
 <dict>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<false/>
-	<key>NSSensorKitUsageDescription</key>
-	<string>My Heart Counts uses SensorKit to better TODO TODO TODO TODO</string>
-	<key>NSSensorKitPrivacyPolicyURL</key>
-	<string>https://myheartcounts.su.domains/privacy-policy/</string>
-	<key>NSSensorKitUsageDetail</key>
-	<dict>
-		<key>SRSensorUsageWristDetection</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses On-Wrist Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageHeartRate</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsagePedometer</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageWristTemperature</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsagePPG</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageECG</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageAmbientLightSensor</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageElevation</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageVisits</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageDeviceUsage</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-	</dict>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>
@@ -72,6 +15,59 @@
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
+		</dict>
+	</dict>
+	<key>NSSensorKitUsageDetail</key>
+	<dict>
+		<key>SRSensorUsageAmbientLightSensor</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsageDeviceUsage</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsageECG</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsageElevation</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsageHeartRate</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsagePPG</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsagePedometer</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsageVisits</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsageWristDetection</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses On-Wrist Data to TODO TODO TODO</string>
+		</dict>
+		<key>SRSensorUsageWristTemperature</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
 	</dict>
 	<key>UIApplicationSceneManifest</key>

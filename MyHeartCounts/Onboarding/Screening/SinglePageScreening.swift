@@ -49,7 +49,7 @@ struct SinglePageScreening: View {
         OnboardingView(wrapInScrollView: false) {
             OnboardingTitleView(title: title, subtitle: subtitle)
                 .padding(.horizontal)
-        } content: {
+        } content: { // swiftlint:disable:this closure_body_length
             Form {
                 ForEach(0..<components.endIndex, id: \.self) { idx in
                     let component = components[idx]
@@ -70,6 +70,7 @@ struct SinglePageScreening: View {
                     } label: {
                         Text("Continue")
                             .frame(maxWidth: .infinity, minHeight: 38)
+                            .bold()
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(!canAdvanceToNextStep)

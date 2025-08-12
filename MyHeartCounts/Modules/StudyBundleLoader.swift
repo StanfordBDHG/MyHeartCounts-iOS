@@ -117,6 +117,7 @@ final class StudyBundleLoader: Module, Sendable {
         do {
             return try StudyBundle(bundleUrl: dstUrl)
         } catch {
+            logger.error("Error opening StudyBundle: \(error)")
             throw .unableToDecode(error)
         }
     }

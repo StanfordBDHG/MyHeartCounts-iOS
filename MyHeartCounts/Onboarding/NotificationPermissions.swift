@@ -55,12 +55,3 @@ struct NotificationPermissions: View {
         .navigationTitle(Text(verbatim: ""))
     }
 }
-
-
-#if DEBUG
-#Preview {
-    ManagedNavigationStack {
-        NotificationPermissions()
-    }
-}
-#endif
