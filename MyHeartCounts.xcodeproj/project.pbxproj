@@ -1741,7 +1741,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
 			requirement = {
-				kind = upToNextMinorVersion;
+				kind = upToNextMajorVersion;
 				minimumVersion = 1.1.1;
 			};
 		};
@@ -1814,7 +1814,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
 				kind = revision;
-				revision = 3992d60dca8f3f3f24f8d4c7899ce5dcf32b05f0;
+				revision = f2f2ead12897cf011a39822f567b592dc8878809;
 			};
 		};
 		808A92C92E47E159007046E0 /* XCRemoteSwiftPackageReference "SpeziConsent" */ = {
