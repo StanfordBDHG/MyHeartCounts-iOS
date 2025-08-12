@@ -66,9 +66,9 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
             }
         } else {
             // we're unable to get the most recent signed, so we'll make the user re-sign it
-            await MainActor.run {
-                self.needsToSignNewConsentVersion = true
-            }
+//            await MainActor.run {
+//                self.needsToSignNewConsentVersion = true
+//            }
         }
     }
 }
