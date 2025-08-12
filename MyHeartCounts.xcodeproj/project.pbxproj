@@ -1814,7 +1814,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
 				kind = revision;
-				revision = f2f2ead12897cf011a39822f567b592dc8878809;
+				revision = 7ccea8a4423248cdb94cb80ac047f84e41a46ef0;
 			};
 		};
 		808A92C92E47E159007046E0 /* XCRemoteSwiftPackageReference "SpeziConsent" */ = {
@@ -1822,7 +1822,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziConsent.git";
 			requirement = {
 				kind = revision;
-				revision = a3e6bba0096a28d0296ea00ff3d0733d538add83;
+				revision = d40c2ff7668f7d3137fedd61edf207deb2cca078;
 			};
 		};
 		80A3A4812E1EB270002A8515 /* XCRemoteSwiftPackageReference "ResearchKit" */ = {
@@ -1870,7 +1870,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziOnboarding.git";
 			requirement = {
 				kind = revision;
-				revision = 9948c00c52230e124765b7d83147079cea55edd1;
+				revision = 70bf9044f477a42e93b7780fbb15c2c143153f8c;
 			};
 		};
 		80F8A3A52E20496E00C6322F /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
