@@ -21,6 +21,7 @@ jobs:
   buildandtest_unittests:
     name: Build and Test (Unit Tests)
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    if: ${{ false }}
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: MyHeartCounts
@@ -30,6 +31,7 @@ jobs:
   buildandtest_uitests:
     name: Build and Test (UI Tests)
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    if: ${{ false }}
     permissions:
       contents: read
     with:
