@@ -933,9 +933,6 @@
     "Height" : {
 
     },
-    "Historical Data Bulk Export" : {
-
-    },
     "Household Income" : {
 
     },
@@ -1553,6 +1550,9 @@
     "placement" : {
 
     },
+    "Processing Health Data…" : {
+
+    },
     "Processing Sleep Data…" : {
 
     },
@@ -1962,7 +1962,7 @@
     "Study not available" : {
 
     },
-    "Study Participations" : {
+    "Study Participation" : {
 
     },
     "Summarized" : {

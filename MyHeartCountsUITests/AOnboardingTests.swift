@@ -56,7 +56,7 @@ extension XCUIApplication {
     
     
     private func navigateWelcome() {
-        XCTAssert(staticTexts["Welcome to the My Heart Counts Cardiovascular Health Study"].waitForExistence(timeout: 2))
+        XCTAssert(staticTexts["Welcome to the My Heart Counts\nCardiovascular Health Study"].waitForExistence(timeout: 2))
         buttons["Continue"].tap()
     }
     
@@ -132,7 +132,7 @@ extension XCUIApplication {
         let steps = [
             StepInfo(
                 title: "Study Overview & Participation",
-                bodyPrefix: "You're invited to join a Stanford research study",
+                bodyPrefix: "You’re invited to join a Stanford research study",
                 learnMorePrefix: "This research study is conducted by Stanford University School of Medicine researchers"
             ),
             StepInfo(
@@ -142,7 +142,7 @@ extension XCUIApplication {
             ),
             StepInfo(
                 title: "Data Collection & Privacy",
-                bodyPrefix: "We'll collect data from the Health app",
+                bodyPrefix: "We will collect data from the Health app",
                 learnMorePrefix: "The study collects data through your phone's sensors"
             ),
             StepInfo(

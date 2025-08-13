@@ -21,6 +21,7 @@ struct AccountSheet: View {
     @Environment(Account.self) private var account
     @Environment(\.accountRequired) private var accountRequired
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
     // swiftlint:enable attributes
     
     @State private var isInSetup = false
@@ -92,20 +93,26 @@ struct AccountSheet: View {
             }
         }
         
-        if !enrollments.isEmpty {
-            Section("Study Participations") {
-                ForEach(enrollments) { enrollment in
-                    NavigationLink {
-                        if let studyBundle = enrollment.studyBundle {
-                            StudyInfoView(studyBundle: studyBundle)
-                        } else {
-                            Text("Study not available")
-                                .foregroundStyle(.secondary)
-                        }
-                    } label: {
-                        makeEnrolledStudyRow(for: enrollment)
+        if let enrollment = enrollments.first {
+            Section("Study Participation") {
+                NavigationLink {
+                    if let studyBundle = enrollment.studyBundle {
+                        StudyInfoView(studyBundle: studyBundle)
+                    } else {
+                        Text("Study not available")
+                            .foregroundStyle(.secondary)
                     }
-                    .disabled(enrollment.studyBundle == nil)
+                } label: {
+                    makeEnrolledStudyRow(for: enrollment)
+                }
+                .disabled(enrollment.studyBundle == nil)
+                if historicalDataExportMgr.session.map({ $0.state == .running || $0.state == .paused }) ?? false
+                    || historicalDataExportMgr.fileUploader.uploadProgress != nil {
+                    HStack {
+                        Text("Processing Health Data…")
+                        Spacer()
+                        ProgressView()
+                    }
                 }
             }
         }

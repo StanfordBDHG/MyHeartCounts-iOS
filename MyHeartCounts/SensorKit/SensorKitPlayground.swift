@@ -26,11 +26,12 @@ struct SensorKitPlayground: View {
     private let ambientPressureReader = SensorReader(.ambientPressure)
     private let heartRateReader = SensorReader(.heartRate)
     private let pedometerReader = SensorReader(.pedometer)
-    private let wristTemperatureReader = SensorReader(.wristTemperature)
+//    private let wristTemperatureReader = SensorReader(.wristTemperature)
     private let ppgReader = SensorReader(.ppg)
     private let ecgReader = SensorReader(.ecg)
     private let visitsReader = SensorReader(.visits)
     private let deviceUsageReader = SensorReader(.deviceUsage)
+    private let accelerometerReader = SensorReader(.accelerometer)
     
     @State private var viewState: ViewState = .idle
     
@@ -60,11 +61,12 @@ struct SensorKitPlayground: View {
                 sensorReaderNavigationLink(for: ambientPressureReader)
                 sensorReaderNavigationLink(for: heartRateReader)
                 sensorReaderNavigationLink(for: pedometerReader)
-                sensorReaderNavigationLink(for: wristTemperatureReader)
+//                sensorReaderNavigationLink(for: wristTemperatureReader)
                 sensorReaderNavigationLink(for: ppgReader)
                 sensorReaderNavigationLink(for: ecgReader)
                 sensorReaderNavigationLink(for: visitsReader)
                 sensorReaderNavigationLink(for: deviceUsageReader)
+                sensorReaderNavigationLink(for: accelerometerReader)
             }
         }
         .viewStateAlert(state: $viewState)
@@ -77,7 +79,8 @@ struct SensorKitPlayground: View {
                 Sensor.onWrist,
                 Sensor.heartRate,
                 Sensor.pedometer,
-                Sensor.wristTemperature,
+//                Sensor.wristTemperature,
+                Sensor.accelerometer,
                 Sensor.ppg,
                 Sensor.ecg,
                 Sensor.ambientLight,
@@ -96,7 +99,8 @@ struct SensorKitPlayground: View {
             ambientPressureReader,
             heartRateReader,
             pedometerReader,
-            wristTemperatureReader,
+//            wristTemperatureReader,
+            accelerometerReader,
             ppgReader,
             ecgReader,
             visitsReader,
@@ -119,7 +123,7 @@ struct SensorKitPlayground: View {
         for device in devices {
             sessions.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: .days(1)).flatMap(\.self))
         }
-        print("#sessions: \(sessions.count)")
+        print("#sessions: \(sessions.count)") // x
         for (idx, session) in sessions.enumerated() {
 //            print("- [\(idx)]: \(session.startDate) \(session.temperatures.count(where: { _ in true }))")
             print(session)

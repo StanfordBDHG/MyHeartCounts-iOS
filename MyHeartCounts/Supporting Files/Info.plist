@@ -69,6 +69,11 @@
 			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
+		<key>SRSensorUsageMotion</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
 	</dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

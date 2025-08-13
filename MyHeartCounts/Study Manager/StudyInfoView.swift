@@ -34,7 +34,7 @@ struct StudyInfoView: View { // swiftlint:disable:this file_types_order
         let study = studyBundle.studyDefinition
         Form {
             Section {
-                VStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text(study.metadata.title)
                         .font(.title.bold())
                     Text(study.metadata.shortExplanationText)
@@ -101,7 +101,8 @@ struct StudyInfoView: View { // swiftlint:disable:this file_types_order
                 .tint(.red)
                 .confirmationDialog(
                     "Are you sure you want to leave the '\(studyBundle.studyDefinition.metadata.title)' study?",
-                    isPresented: $isPresentingUnenrollConfirmationDialog
+                    isPresented: $isPresentingUnenrollConfirmationDialog,
+                    titleVisibility: .visible
                 ) {
                     Button("Cancel", role: .cancel) {
                         isPresentingUnenrollConfirmationDialog = false

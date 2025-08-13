@@ -26,9 +26,6 @@ struct HomeTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "My Heart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
-    @Environment(HistoricalHealthSamplesExportManager.self)
-    private var historicalDataExportMgr
-    
     @Environment(Account.self)
     private var account
     
@@ -42,7 +39,6 @@ struct HomeTab: RootViewTab {
         NavigationStack {
             Form {
                 topActionsFormContent
-                historicalHealthDataUploadSection
                 TasksList(
                     mode: .upcoming(showFallbackTasks: false),
                     timeRange: .today,
@@ -79,26 +75,6 @@ struct HomeTab: RootViewTab {
                         await action()
                     }
                 }
-            }
-        }
-    }
-        
-    @ViewBuilder private var historicalHealthDataUploadSection: some View {
-        switch (historicalDataExportMgr.exportProgress, historicalDataExportMgr.fileUploader.uploadProgress) {
-        case (nil, nil):
-            EmptyView()
-        case (.some(let exportProgress), nil):
-            Section("Historical Data Bulk Export") {
-                ProgressView(exportProgress)
-            }
-        case (nil, .some(let uploadProgress)):
-            Section("Historical Data Bulk Export") {
-                ProgressView(uploadProgress)
-            }
-        case let (.some(exportProgress), .some(uploadProgress)):
-            Section("Historical Data Bulk Export") {
-                ProgressView(exportProgress)
-                ProgressView(uploadProgress)
             }
         }
     }
@@ -157,7 +133,7 @@ struct HomeTab: RootViewTab {
 
 
 extension EventActionButton {
-    init(event: Event, label: LocalizedStringResource?, action: @escaping () -> Void) {
+    init(event: Event, label: LocalizedStringResource?, action: @escaping @MainActor () -> Void) {
         if let label {
             self.init(event: event, label, action: action)
         } else {
