@@ -6,6 +6,7 @@
 	<array>
 		<string>on-wrist</string>
 		<string>ambient-light-sensor</string>
+		<string>Motion-accelerometer</string>
 		<string>visits</string>
 		<string>pedometer</string>
 		<string>device-usage</string>
@@ -13,7 +14,6 @@
 		<string>PPG</string>
 		<string>ambient-pressure</string>
 		<string>heart-rate</string>
-		<string>wrist-temperature</string>
 	</array>
 	<key>aps-environment</key>
 	<string>development</string>
