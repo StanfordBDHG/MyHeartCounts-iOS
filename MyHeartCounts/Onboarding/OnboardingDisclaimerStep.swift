@@ -28,11 +28,11 @@ struct OnboardingDisclaimerStep: View {
             Text(primaryText)
         } footer: {
             OnboardingActionsView(
-                primaryText: "Continue",
+                primaryTitle: "Continue",
                 primaryAction: {
                     path.nextStep()
                 },
-                secondaryText: "Learn More",
+                secondaryTitle: "Learn More",
                 secondaryAction: {
                     isShowingLearnMoreText = true
                 }
