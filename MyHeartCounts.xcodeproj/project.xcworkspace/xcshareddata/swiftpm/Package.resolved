@@ -240,7 +240,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziConsent.git",
       "state" : {
-        "revision" : "d40c2ff7668f7d3137fedd61edf207deb2cca078"
+        "revision" : "7215f884abe4d0d22fa15f4d4811cb9103c846b1",
+        "version" : "0.1.1"
       }
     },
     {
@@ -302,7 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
       "state" : {
-        "revision" : "70bf9044f477a42e93b7780fbb15c2c143153f8c"
+        "revision" : "ba3c4d89f7f5de537a4610d55dc46c25373375e1",
+        "version" : "2.0.0"
       }
     },
     {
@@ -328,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "7ccea8a4423248cdb94cb80ac047f84e41a46ef0",
-        "version" : "0.1.0"
+        "revision" : "565c276b46ad24c1644d1fe4b2e7fe5f37e2d112",
+        "version" : "0.1.1"
       }
     },
     {
