@@ -39,7 +39,6 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             TimedWalkingTest()
             FeedbackManager()
             SensorKit()
-//            ECGExporter()
         }
     }
 }
