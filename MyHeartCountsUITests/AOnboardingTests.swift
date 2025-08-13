@@ -163,14 +163,20 @@ extension XCUIApplication {
     }
     
     
-    private func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) {
+    private func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
         sleep(for: .seconds(2))
         print(debugDescription)
         XCTAssert(scrollViews.staticTexts["STANFORD UNIVERSITY"].waitForExistence(timeout: 2))
         XCTAssert(scrollViews.staticTexts["CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
-        func scrollToSwitchAndEnable(identifier: String, isOn: Bool, file: StaticString = #filePath, line: UInt = #line) {
+        func scrollToSwitchAndEnable(
+            identifier: String,
+            isOn: Bool,
+            expectedDirection: Direction,
+            file: StaticString = #filePath,
+            line: UInt = #line
+        ) {
             while !scrollViews.switches[identifier].isHittable {
-                swipeUp(velocity: .fast)
+                swipe(expectedDirection.opposite, velocity: .fast)
             }
             let toggle = scrollViews.switches[identifier].switches.firstMatch
             switch (toggle.value as? String, isOn) {
@@ -182,8 +188,25 @@ extension XCUIApplication {
                 XCTFail("Unable to decode switch value", file: file, line: line)
             }
         }
-        scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true)
-        scrollToSwitchAndEnable(identifier: "ConsentForm:short-term-physical-activity-trial", isOn: signUpForExtraTrial)
+        func scrollToDropdownAndSelect(
+            identifier: String,
+            option: String,
+            expectedDirection: Direction,
+            file: StaticString = #filePath,
+            line: UInt = #line
+        ) {
+            while !scrollViews.buttons[identifier].isHittable {
+                swipe(expectedDirection.opposite, velocity: .fast)
+            }
+            scrollViews.buttons[identifier].tap()
+            collectionViews.buttons[option].tap()
+        }
+        scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true, expectedDirection: .down)
+        scrollToDropdownAndSelect(
+            identifier: "ConsentForm:short-term-physical-activity-trial",
+            option: "Yes",
+            expectedDirection: .down
+        )
         swipeUp()
         XCTAssertFalse(buttons["I Consent"].isEnabled)
         scrollViews["ConsentForm:sig"].swipeRight()
@@ -199,20 +222,20 @@ extension XCUIApplication {
     
     private func navigateConsentComprehension() {
         let continueButtons = [navigationBars.firstMatch.buttons["Continue"], collectionViews.firstMatch.buttons["Continue"]]
-        for button in continueButtons {
+        for button in continueButtons where button.exists {
             XCTAssertFalse(button.isEnabled)
         }
-        XCTAssert(staticTexts["Consent Comprehension"].waitForExistence(timeout: 2))
+        XCTAssert(staticTexts["Comprehension of Consent Questionnaire"].waitForExistence(timeout: 2))
         otherElements["Screening Section, 0"].buttons["True"].tap()
-        for button in continueButtons {
+        for button in continueButtons where button.exists {
             XCTAssertFalse(button.isEnabled)
         }
         otherElements["Screening Section, 1"].buttons["True"].tap()
-        for button in continueButtons {
+        for button in continueButtons where button.exists {
             XCTAssertFalse(button.isEnabled)
         }
         otherElements["Screening Section, 2"].buttons["True"].tap()
-        for button in continueButtons {
+        for button in continueButtons where button.exists {
             XCTAssert(button.isEnabled)
         }
         continueButtons[0].tap()

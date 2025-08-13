@@ -46,7 +46,7 @@ struct FinalEnrollmentStep: View {
     
     private func loadText() -> String {
         var text = String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE")
-        if onboardingData.consentResponses?.toggles["short-term-physical-activity-trial"] == true {
+        if onboardingData.consentResponses?.selects["short-term-physical-activity-trial"] == "short-term-physical-activity-trial-yes" {
             text.append("\n\n")
             text.append(String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE_TRIAL_SECTION"))
         }
