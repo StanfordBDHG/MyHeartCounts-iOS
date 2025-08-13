@@ -1855,8 +1855,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = revision;
-				revision = d64a5ba1368a97902041c198750283ff55333cb6;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.9;
 			};
 		};
 		80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {
