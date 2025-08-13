@@ -6,7 +6,7 @@
 	<array>
 		<string>on-wrist</string>
 		<string>ambient-light-sensor</string>
-		<string>Motion-accelerometer</string>
+		<string>motion-accelerometer</string>
 		<string>visits</string>
 		<string>pedometer</string>
 		<string>device-usage</string>
