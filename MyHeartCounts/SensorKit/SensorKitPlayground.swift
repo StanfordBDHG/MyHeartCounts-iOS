@@ -26,7 +26,7 @@ struct SensorKitPlayground: View {
     private let ambientPressureReader = SensorReader(.ambientPressure)
     private let heartRateReader = SensorReader(.heartRate)
     private let pedometerReader = SensorReader(.pedometer)
-//    private let wristTemperatureReader = SensorReader(.wristTemperature)
+    private let wristTemperatureReader = SensorReader(.wristTemperature)
     private let ppgReader = SensorReader(.ppg)
     private let ecgReader = SensorReader(.ecg)
     private let visitsReader = SensorReader(.visits)
@@ -61,7 +61,7 @@ struct SensorKitPlayground: View {
                 sensorReaderNavigationLink(for: ambientPressureReader)
                 sensorReaderNavigationLink(for: heartRateReader)
                 sensorReaderNavigationLink(for: pedometerReader)
-//                sensorReaderNavigationLink(for: wristTemperatureReader)
+                sensorReaderNavigationLink(for: wristTemperatureReader)
                 sensorReaderNavigationLink(for: ppgReader)
                 sensorReaderNavigationLink(for: ecgReader)
                 sensorReaderNavigationLink(for: visitsReader)
@@ -79,7 +79,7 @@ struct SensorKitPlayground: View {
                 Sensor.onWrist,
                 Sensor.heartRate,
                 Sensor.pedometer,
-//                Sensor.wristTemperature,
+                Sensor.wristTemperature,
                 Sensor.accelerometer,
                 Sensor.ppg,
                 Sensor.ecg,
@@ -99,7 +99,7 @@ struct SensorKitPlayground: View {
             ambientPressureReader,
             heartRateReader,
             pedometerReader,
-//            wristTemperatureReader,
+            wristTemperatureReader,
             accelerometerReader,
             ppgReader,
             ecgReader,

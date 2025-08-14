@@ -14,6 +14,7 @@
 		<string>PPG</string>
 		<string>ambient-pressure</string>
 		<string>heart-rate</string>
+		<string>wrist-temperature</string>
 	</array>
 	<key>aps-environment</key>
 	<string>development</string>
