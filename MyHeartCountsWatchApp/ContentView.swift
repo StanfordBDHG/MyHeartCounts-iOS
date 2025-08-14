@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-import MyHeartCountsShared
 import SpeziViews
 import SwiftUI
 import WatchKit

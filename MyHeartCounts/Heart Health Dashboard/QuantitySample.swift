@@ -54,9 +54,15 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     let aggregationKind: StatisticsAggregationOption
     let preferredTintColor: Color
     
-    init(id: String, displayTitle: String, displayUnit: HKUnit, aggregationKind: StatisticsAggregationOption, preferredTintColor: Color) {
+    init(
+        id: String,
+        displayTitle: LocalizedStringResource,
+        displayUnit: HKUnit,
+        aggregationKind: StatisticsAggregationOption,
+        preferredTintColor: Color
+    ) {
         self.id = id
-        self.displayTitle = displayTitle
+        self.displayTitle = displayTitle.localizedString()
         self.displayUnit = displayUnit
         self.aggregationKind = aggregationKind
         self.preferredTintColor = preferredTintColor
@@ -75,7 +81,7 @@ extension CustomQuantitySampleType {
     
     static let dietMEPAScore = Self(
         id: "MHCCustomSampleTypeDietMEPAScore",
-        displayTitle: "Diet (MEPA Score)",
+        displayTitle: "Diet",
         displayUnit: .count(),
         aggregationKind: .avg,
         preferredTintColor: .blue // ???
@@ -192,6 +198,21 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
     
     private func checkDateRangeValid() {
         precondition(endDate >= startDate)
+    }
+    
+    func value(as unit: HKUnit) -> Double {
+        self.unit == unit ? value : HKQuantity(unit: self.unit, doubleValue: value).doubleValue(for: unit)
+    }
+    
+    func valueAndUnitDescription(for unit: HKUnit? = nil) -> String {
+        let unit = unit ?? self.unit
+        let quantity = HKQuantity(unit: self.unit, doubleValue: self.value)
+        if unit == HKUnit.foot() && sampleType == .healthKit(.height) {
+            let (feet, inches) = quantity.valuesForFeetAndInches()
+            return "\(feet)‘ \(Int(inches))“"
+        } else {
+            return "\(quantity.doubleValue(for: unit).formatted(.number.precision(.fractionLength(0...2)))) \(unit.unitString)"
+        }
     }
 }
 

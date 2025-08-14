@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-@_spi(TestingSupport)
 import SpeziAccount
 import SpeziLicense
 import SpeziStudy
@@ -15,27 +14,24 @@ import SwiftUI
 
 struct AccountSheet: View {
     private let dismissAfterSignIn: Bool
-    
-    @Environment(\.dismiss)
-    private var dismiss
-    
-    @Environment(Account.self)
-    private var account
-    @Environment(\.accountRequired)
-    private var accountRequired
+    // swiftlint:disable attributes
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.openAppSettings) private var openAppSettings
+    @Environment(Account.self) private var account
+    @Environment(\.accountRequired) private var accountRequired
+    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
+    // swiftlint:enable attributes
     
     @State private var isInSetup = false
-    
-    @Environment(\.openAppSettings)
-    private var openAppSettings
+    @State private var isPresentingDemographicsSheet = false
+    @State private var isPresentingFeedbackSheet = false
     
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
-    @LocalPreference(.enableDebugMode)
-    private var enableDebugMode
-    
     var body: some View {
-        NavigationStack {
+        NavigationStack { // swiftlint:disable:this closure_body_length
             ZStack {
                 if account.signedIn && !isInSetup {
                     AccountOverview(close: .showCloseButton) {
@@ -59,6 +55,24 @@ struct AccountSheet: View {
                     }
                 }
             }
+            .sheet(isPresented: $isPresentingDemographicsSheet) {
+                NavigationStack {
+                    DemographicsForm()
+                        .toolbar {
+                            ToolbarItem(placement: .primaryAction) {
+                                Button("Done") {
+                                    isPresentingDemographicsSheet = false
+                                }
+                                .bold()
+                            }
+                        }
+                }
+            }
+            .sheet(isPresented: $isPresentingFeedbackSheet) {
+                NavigationStack {
+                    FeedbackForm()
+                }
+            }
         }
     }
     
@@ -71,37 +85,37 @@ struct AccountSheet: View {
     }
     
     @ViewBuilder private var accountSheetExtraContent: some View {
-        if !enrollments.isEmpty {
-            Section("Study Participations") {
-                ForEach(enrollments) { enrollment in
-                    NavigationLink {
-                        if let studyBundle = enrollment.studyBundle {
-                            StudyInfoView(studyBundle: studyBundle)
-                        } else {
-                            Text("Study not available")
-                                .foregroundStyle(.secondary)
-                        }
-                    } label: {
-                        makeEnrolledStudyRow(for: enrollment)
+        Section {
+            Button {
+                isPresentingDemographicsSheet = true
+            } label: {
+                Label("Demographics", systemSymbol: .personTextRectangle)
+            }
+        }
+        
+        if let enrollment = enrollments.first {
+            Section("Study Participation") {
+                NavigationLink {
+                    if let studyBundle = enrollment.studyBundle {
+                        StudyInfoView(studyBundle: studyBundle)
+                    } else {
+                        Text("Study not available")
+                            .foregroundStyle(.secondary)
                     }
-                    .disabled(enrollment.studyBundle == nil)
+                } label: {
+                    makeEnrolledStudyRow(for: enrollment)
+                }
+                .disabled(enrollment.studyBundle == nil)
+                if historicalDataExportMgr.session.map({ $0.state == .running || $0.state == .paused }) ?? false
+                    || historicalDataExportMgr.fileUploader.uploadProgress != nil {
+                    HStack {
+                        Text("Processing Health Data…")
+                        Spacer()
+                        ProgressView()
+                    }
                 }
             }
         }
-        //        Section("Debug Mode") {
-        //            Toggle("Enable Debug Mode", isOn: $enableDebugMode)
-        //            if enableDebugMode {
-        //                NavigationLink("Health Data Bulk Upload") {
-        //                    HealthImporterControlView()
-        //                }
-        //                NavigationLink("NotificationsManager") {
-        //                    NotificationsManagerControlView()
-        //                }
-        //                NavigationLink("Debug Stuff") {
-        //                    DebugStuffView()
-        //                }
-        //            }
-        //        }
         Section {
             if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
                 NavigationLink("Study Information") {
@@ -116,23 +130,35 @@ struct AccountSheet: View {
             Button {
                 openAppSettings()
             } label: {
-                HStack {
-                    Text("Change Language")
-                    Spacer()
-                    Image(systemSymbol: .arrowUpRightSquare)
-                        .accessibilityHidden(true)
-                        .foregroundStyle(.secondary)
-                        .font(.footnote)
-                }
-                .contentShape(Rectangle())
+                Label("Change Language", systemSymbol: .globe)
             }
-            .buttonStyle(.plain)
+            Button {
+                isPresentingFeedbackSheet = true
+            } label: {
+                Label("Send Feedback", systemSymbol: .textBubble)
+            }
         }
         Section {
+            LabeledContent {
+                let bundle = Bundle.main
+                Text("\(bundle.appVersion) (\(bundle.appBuildNumber ?? -1))")
+            } label: {
+                Label("My Heart Counts", systemSymbol: .infoCircle)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+            }
             NavigationLink {
                 ContributionsList(projectLicense: .mit)
             } label: {
-                Text("License Information")
+                Label("License Information", systemSymbol: .buildingColumns)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+            }
+            if accountFeatureFlags.isDebugModeEnabled {
+                NavigationLink {
+                    DebugOptions()
+                } label: {
+                    Label("Debug", systemSymbol: .wrenchAdjustable)
+                        .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                }
             }
         }
     }

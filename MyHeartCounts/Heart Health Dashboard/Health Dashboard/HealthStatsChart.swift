@@ -15,9 +15,9 @@ import SpeziHealthKitUI
 import SwiftUI
 
 
-public struct ChartDataSetDrawingConfig: Sendable {
+struct ChartDataSetDrawingConfig: Sendable {
     /// A chart type.
-    public enum ChartType: Sendable {
+    enum ChartType: Sendable {
         /// The entry is drawn as a line chart, i.e. a line that moves from data point to data point
         case line(interpolationMethod: InterpolationMethod = .linear)
         /// bar chart
@@ -26,11 +26,11 @@ public struct ChartDataSetDrawingConfig: Sendable {
         case point(area: Double? = 10)
     }
     
-    public let chartType: ChartType
-    public let color: Color
+    let chartType: ChartType
+    let color: Color
     
     /// Creates a new drawing config for an entry in a health chart.
-    public init(chartType: ChartType, color: Color) {
+    init(chartType: ChartType, color: Color) {
         self.chartType = chartType
         self.color = color
     }

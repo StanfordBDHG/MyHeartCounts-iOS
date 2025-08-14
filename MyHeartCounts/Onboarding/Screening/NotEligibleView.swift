@@ -26,7 +26,7 @@ struct NotEligibleView: View {
                 Section {
                     Link(destination: "https://bdh.stanford.edu") {
                         HStack {
-                            Text("Learn more about My Heart Counts")
+                            Text("INELIGIBLE_LEARN_MORE")
                             Spacer()
                             Image(systemSymbol: .arrowUpRight)
                                 .accessibilityLabel("Link Arrow Symbol")

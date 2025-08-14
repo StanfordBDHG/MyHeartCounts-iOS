@@ -185,6 +185,7 @@ enum DeferredConfigLoading {
     private static func baseModules(preferredLocale: Locale) -> [any Module] {
         StudyManager(preferredLocale: preferredLocale)
         NotificationsManager()
+        ConsentManager()
     }
     
     /// Constructs an Array of Spezi Modules for loading Firebase and the other related modules, configured based on the specified selector.
@@ -211,20 +212,39 @@ enum DeferredConfigLoading {
                 logger.notice("FirebaseOptions fetch returned nil. Not initializing anything.")
                 return []
             }
-            return Array {
+            return Array { // swiftlint:disable:this closure_body_length
                 ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
                 LoadFirebaseTracking()
                 AccountConfiguration(
                     service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: accountEmulator),
-                    storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.userCollection),
+                    storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.usersCollection),
                     configuration: [
                         .requires(\.userId),
                         .requires(\.name),
                         // additional values stored using the `FirestoreAccountStorage` within our Standard implementation
-                        .collects(\.genderIdentity),
-                        .collects(\.dateOfBirth),
+                        .manual(\.dateOfBirth),
                         .manual(\.fcmToken),
-                        .manual(\.timeZone)
+                        .manual(\.timeZone),
+                        .manual(\.enableDebugMode),
+                        .manual(\.mhcGenderIdentity),
+                        .manual(\.usRegion),
+                        .manual(\.usZipCodePrefix),
+                        .manual(\.householdIncomeUS),
+                        .manual(\.ukRegion),
+                        .manual(\.ukPostcodePrefix),
+                        .manual(\.householdIncomeUK),
+                        .manual(\.heightInCM),
+                        .manual(\.weightInKG),
+                        .manual(\.raceEthnicity),
+                        .manual(\.latinoStatus),
+                        .manual(\.biologicalSexAtBirth),
+                        .manual(\.bloodType),
+                        .manual(\.educationUS),
+                        .manual(\.educationUK),
+                        .manual(\.comorbidities),
+                        .manual(\.nhsNumber),
+                        .manual(\.lastSignedConsentDate),
+                        .manual(\.lastSignedConsentVersion)
                     ]
                 )
                 firestore

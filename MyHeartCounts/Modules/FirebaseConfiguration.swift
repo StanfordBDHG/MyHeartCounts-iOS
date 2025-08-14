@@ -11,93 +11,52 @@ import FirebaseStorage
 import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
+import SpeziStudy
 
 
-public final class FirebaseConfiguration: Module, DefaultInitializable, @unchecked Sendable {
+final class FirebaseConfiguration: Module, EnvironmentAccessible, @unchecked Sendable {
     enum ConfigurationError: Error {
         case userNotAuthenticatedYet
     }
 
-    public static var userCollection: CollectionReference {
+    // swiftlint:disable attributes
+    @Application(\.logger) private var logger
+    @Dependency(Account.self) private var account: Account? // optional, as Firebase might be disabled
+    @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
+    // swiftlint:enable attributes
+    
+    init() {}
+}
+
+
+extension FirebaseConfiguration {
+    static var usersCollection: CollectionReference {
         Firestore.firestore().collection("users")
     }
-
-
-    @MainActor public var userDocumentReference: DocumentReference {
+    
+    @MainActor var userDocumentReference: DocumentReference {
         get throws {
-            guard let details = account?.details else {
-                throw ConfigurationError.userNotAuthenticatedYet
-            }
-            return userDocumentReference(for: details.accountId)
+            Self.usersCollection.document(try accountId)
         }
     }
 
-    @MainActor public var userBucketReference: StorageReference {
+    @MainActor var userBucketReference: StorageReference {
         get throws {
-            guard let details = account?.details else {
-                throw ConfigurationError.userNotAuthenticatedYet
-            }
-            return Storage.storage().reference().child("users/\(details.accountId)")
+            Storage.storage().reference().child("users/\(try accountId)")
         }
     }
     
-    private let setupTestAccount: Bool
-
-    @Application(\.logger)
-    private var logger
-
-    @Dependency(Account.self)
-    private var account: Account? // optional, as Firebase might be disabled
-    @Dependency(FirebaseAccountService.self)
-    private var accountService: FirebaseAccountService?
-
-    public convenience init() {
-        self.init(setupTestAccount: false)
+    var feedbackCollection: CollectionReference {
+        Firestore.firestore().collection("feedback")
     }
     
-    public init(setupTestAccount: Bool) {
-        self.setupTestAccount = setupTestAccount
-    }
-
-    func userDocumentReference(for accountId: String) -> DocumentReference {
-        Self.userCollection.document(accountId)
-    }
-
-
-    public func configure() {
-        Task {
-            await setupTestAccount()
-        }
-    }
-
-
-    private func setupTestAccount() async {
-        guard let accountService, setupTestAccount else {
-            return
-        }
-
-        do {
-            try await accountService.login(userId: "lelandstanford@stanford.edu", password: "StanfordRocks!")
-            return
-        } catch {
-            guard let accountError = error as? FirebaseAccountError,
-                  case .invalidCredentials = accountError else {
-                logger.error("Failed to login into test account: \(error)")
-                return
+    /// Retrieves the `accountId` of the currently logged-in user, or throws an error if there is no logged-in user.
+    @MainActor var accountId: String {
+        get throws(ConfigurationError) {
+            guard let details = account?.details else {
+                throw ConfigurationError.userNotAuthenticatedYet
             }
-        }
-
-        // account doesn't exist yet, signup
-        var details = AccountDetails()
-        details.userId = "lelandstanford@stanford.edu"
-        details.password = "StanfordRocks!"
-        details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-        details.genderIdentity = .male
-
-        do {
-            try await accountService.signUp(with: details)
-        } catch {
-            logger.error("Failed to setup test account: \(error)")
+            return details.accountId
         }
     }
 }

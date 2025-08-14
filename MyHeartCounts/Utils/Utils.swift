@@ -6,46 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
-
 import Algorithms
 import Foundation
-import SFSafeSymbols
 import SpeziViews
-import SwiftUI
-
-
-struct LazyView<Body: View>: View {
-    private let makeBody: @MainActor () -> Body
-    
-    var body: Body {
-        makeBody()
-    }
-    
-    init(@ViewBuilder makeBody: @MainActor @escaping () -> Body) {
-        self.makeBody = makeBody
-    }
-}
 
 
 extension RangeReplaceableCollection {
-    func appending(_ element: Element) -> Self {
-        var copy = self
-        copy.append(element)
-        return copy
-    }
-    
     func appending(contentsOf other: some Sequence<Element>) -> Self {
         var copy = self
         copy.append(contentsOf: other)
         return copy
-    }
-}
-
-
-extension ImageReference {
-    static func systemSymbol(_ symbol: SFSymbol) -> Self {
-        .system(symbol.rawValue)
     }
 }
 
@@ -58,30 +28,6 @@ extension ViewState {
 }
 
 
-/// marks a code path as being unreachable.
-///
-/// - Important: only use this in cases where you can prove that the path is actually unreachable; otherwise, this will introduce UB.
-@_transparent
-func unsafeUnreachable() -> Never {
-    unsafeBitCast((), to: Never.self)
-}
-
-
-extension View {
-    consuming func intoAnyView() -> AnyView {
-        AnyView(self)
-    }
-    
-    consuming func transforming(@ViewBuilder _ transform: (Self) -> some View) -> some View {
-        transform(self)
-    }
-}
-
-extension EdgeInsets {
-    static let zero = Self(top: 0, leading: 0, bottom: 0, trailing: 0)
-}
-
-
 extension URL: @retroactive ExpressibleByStringLiteral, @retroactive ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         if let url = URL(string: value) {
@@ -89,13 +35,6 @@ extension URL: @retroactive ExpressibleByStringLiteral, @retroactive Expressible
         } else {
             fatalError("Unable to create URL from string '\(value)'")
         }
-    }
-}
-
-
-extension Collection {
-    subscript(safe idx: Index) -> Element? {
-        idx >= startIndex && idx < endIndex ? self[idx] : nil
     }
 }
 
@@ -118,50 +57,6 @@ extension StringProtocol {
         } else {
             self[...]
         }
-    }
-}
-
-
-extension EdgeInsets {
-    init(horizontal: CGFloat, vertical: CGFloat) {
-        self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
-    }
-}
-
-
-extension Color {
-    static func random() -> Color {
-        Color(
-            red: .random(in: 0...1),
-            green: .random(in: 0...1),
-            blue: .random(in: 0...1)
-        )
-    }
-}
-
-
-extension Angle {
-    @inlinable
-    func sin() -> Angle {
-        .radians(_math.sin(radians))
-    }
-    
-    @inlinable
-    func cos() -> Angle {
-        .radians(_math.cos(radians))
-    }
-}
-
-
-extension CGPoint {
-    func move(towards dstPoint: CGPoint, by distance: CGFloat) -> CGPoint {
-        let difference = CGVector(dx: dstPoint.x - x, dy: dstPoint.y - y)
-        let curDistance = (pow(x - dstPoint.x, 2) + pow(y - dstPoint.y, 2)).squareRoot()
-        let relDistance = distance / curDistance
-        return CGPoint(
-            x: x + difference.dx * relDistance,
-            y: y + difference.dy * relDistance
-        )
     }
 }
 
@@ -205,43 +100,15 @@ extension Collection where Index == Int {
 }
 
 
-private struct IdentifiableAdaptor<Value, ID: Hashable>: Identifiable {
-    let value: Value
-    let keyPath: KeyPath<Value, ID>
-    
-    var id: ID {
-        value[keyPath: keyPath]
+extension Int {
+    @inlinable
+    init(_ decimal: Decimal) {
+        self = NSDecimalNumber(decimal: decimal).intValue // swiftlint:disable:this legacy_objc_type
     }
 }
-
-extension View {
-    func sheet<Item, ID: Hashable>(
-        item: Binding<Item?>,
-        id: KeyPath<Item, ID>,
-        onDismiss: (@MainActor () -> Void)? = nil,
-        @ViewBuilder content: @MainActor @escaping (Item) -> some View
-    ) -> some View {
-        let binding = Binding<IdentifiableAdaptor<Item, ID>?> {
-            if let item = item.wrappedValue {
-                IdentifiableAdaptor(value: item, keyPath: id)
-            } else {
-                nil
-            }
-        } set: { newValue in
-            if let newValue {
-                item.wrappedValue = newValue.value
-            } else {
-                item.wrappedValue = nil
-            }
-        }
-        return self.sheet(item: binding, onDismiss: onDismiss) { item in
-            content(item.value)
-        }
-    }
-}
-
 
 extension Double {
+    @inlinable
     init(_ decimal: Decimal) {
         self = NSDecimalNumber(decimal: decimal).doubleValue // swiftlint:disable:this legacy_objc_type
     }
@@ -261,11 +128,22 @@ extension Result {
 
 
 extension Bundle {
-    var version: String {
+    var appVersion: String {
         infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
     }
     
-    var buildNumber: Int? {
+    var appBuildNumber: Int? {
         (infoDictionary?["CFBundleVersion"] as? String).flatMap(Int.init)
+    }
+}
+
+
+extension OptionSet {
+    mutating func toggleMembership(of member: Element) {
+        if contains(member) {
+            remove(member)
+        } else {
+            insert(member)
+        }
     }
 }

@@ -50,13 +50,13 @@ struct UnableToLoadStudyDefinitionStep: View {
                 message: "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed.",
                 additionalErrorInfo: error.localizedDescription
             ) {
-                ShareLink(
-                    item: "https://spezi.stanford.edu",
-                    subject: Text("Subject?"),
-                    message: Text("Message?")
-                ) {
-                    Text("Label?")
-                }
+//                ShareLink(
+//                    item: "https://spezi.stanford.edu",
+//                    subject: Text("Subject?"),
+//                    message: Text("Message?")
+//                ) {
+//                    Text("Label?")
+//                }
             }
         case .success:
             // we were able to load the study, but somehow ended up in here regardless.
@@ -89,7 +89,7 @@ struct UnableToLoadStudyDefinitionStep: View {
         title: LocalizedStringResource,
         message: LocalizedStringResource,
         additionalErrorInfo: String? = nil,
-        @ViewBuilder actionButton: @escaping () -> some View
+        @ViewBuilder actionButton: @escaping @MainActor () -> some View = { EmptyView() }
     ) -> some View {
         HorizontalGeometryReader { width in
             ContentUnavailableView {

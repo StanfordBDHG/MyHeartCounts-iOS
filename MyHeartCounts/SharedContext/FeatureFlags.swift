@@ -45,7 +45,7 @@ enum FeatureFlags {
     
     /// Disables the automatic bulk export and upload of historical Health data
     static var disableAutomaticBulkHealthExport: Bool {
-        LaunchOptions.launchOptions[.disableAutomaticBulkHealthExport]
+        true // LaunchOptions.launchOptions[.disableAutomaticBulkHealthExport]
     }
     
     /// Whether the should load a special, different Firebase config instead of the one that would regularly get loaded.
@@ -53,6 +53,13 @@ enum FeatureFlags {
     /// If specified, the ``DeferredConfigLoading`` module will unconditionally attempt to load the override config.
     static var overrideFirebaseConfig: DeferredConfigLoading.FirebaseConfigSelector? {
         LaunchOptions.launchOptions[.overrideFirebaseConfig]
+    }
+}
+
+
+extension ProcessInfo {
+    static var isBeingUITested: Bool {
+        ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
     }
 }
 
@@ -68,5 +75,5 @@ extension LaunchOptions {
     
     static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)
     
-    static let overrideStudyDefinitionLocation = LaunchOption<URL?>("--overrideStudyDefinitionLocation", default: nil)
+    static let overrideStudyBundleLocation = LaunchOption<URL?>("--overrideStudyBundleLocation", default: nil)
 }

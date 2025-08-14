@@ -8,7 +8,6 @@
 
 import CoreMotion
 import Foundation
-import MyHeartCountsShared
 import SFSafeSymbols
 import Spezi
 import SpeziFoundation
@@ -18,6 +17,8 @@ import SwiftUI
 
 
 struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
+    typealias ResultHandler = @Sendable @MainActor (TimedWalkingTestResult?) async -> Void
+    
     @Environment(\.openAppSettings)
     private var openAppSettings
     
@@ -31,6 +32,7 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     private var timedWalkingTest
     
     private let test: TimedWalkingTestConfiguration
+    private let resultHandler: ResultHandler
     
     @State private var viewState: ViewState = .idle
     @State private var showPermissionsErrorSection = false
@@ -108,6 +110,13 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                     }
                 }
             }
+            if let results = timedWalkingTest.mostRecentResult {
+                Section("Results") {
+                    LabeledContent("Date", value: results.startDate, format: .dateTime)
+                    LabeledContent("#Steps", value: results.numberOfSteps, format: .number)
+                    LabeledContent("Distance", value: results.distanceCovered, format: .number)
+                }
+            }
             if showPermissionsErrorSection {
                 ErrorSection(
                     title: "Missing Required Motion Data Access Permission",
@@ -135,7 +144,8 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                 // Q: do we want to have an option to cancel the test?
                 AsyncButton(state: $viewState) {
                     do {
-                        try await timedWalkingTest.start(test)
+                        let result = try await timedWalkingTest.start(test)
+                        await resultHandler(result)
                     } catch TimedWalkingTest.TestError.unableToStart(.missingSensorPermissions) {
                         showPermissionsErrorSection = true
                     }
@@ -161,18 +171,12 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                 }
             }
         }
-        if let results = timedWalkingTest.mostRecentResult {
-            Section("Results") {
-                LabeledContent("Date", value: results.startDate, format: .dateTime)
-                LabeledContent("#Steps", value: results.numberOfSteps, format: .number)
-                LabeledContent("Distance", value: results.distanceCovered, format: .number)
-            }
-        }
     }
     
     
-    init(_ test: TimedWalkingTestConfiguration) {
+    init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler = { _ in }) {
         self.test = test
+        self.resultHandler = resultHandler
     }
 }
 
@@ -195,7 +199,7 @@ private struct PlainSection<Content: View>: View {
     
     var body: some View {
         content
-            .multilineTextAlignment(.center)
+            .multilineTextAlignment(.leading)
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
     }

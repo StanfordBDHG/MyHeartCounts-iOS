@@ -10,6 +10,7 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 import ModelsR4
+import SpeziFoundation
 import SpeziHealthKit
 
 
@@ -121,6 +122,7 @@ extension QuantitySample {
         guard let id = (observation.id?.value?.string).flatMap({ UUID(uuidString: $0) }),
               case .quantity(let quantity) = observation.value,
               let rawUnit = quantity.unit?.value?.string,
+              let unit = try? catchingNSException({ HKUnit(from: rawUnit) }),
               let value = (quantity.value?.value?.decimal).map({ Double($0) }),
               let effective = observation.effective,
               let coding = observation.code.coding else {
@@ -171,7 +173,7 @@ extension QuantitySample {
         self.init(
             id: id,
             sampleType: sampleType,
-            unit: HKUnit(from: rawUnit),
+            unit: unit,
             value: value,
             startDate: startDate,
             endDate: endDate

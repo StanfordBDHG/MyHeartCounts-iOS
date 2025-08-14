@@ -12,8 +12,8 @@ APP_CONFIG = {
   default_environment: "staging",
   default_app_identifier: "edu.stanford.MyHeartCounts",
   default_secondary_app_identifier: "edu.stanford.MyHeartCounts.watchkitapp",
-  default_provisioningProfile: "MyHeart Counts - Biodesign Digital Health",
-  default_secondary_provisioningProfile: "MyHeart Counts - Biodesign Digital Health - Watch",
+  default_provisioningProfile: "My Heart Counts - Biodesign Digital Health",
+  default_secondary_provisioningProfile: "My Heart Counts - Biodesign Digital Health - Watch",
   default_version_name: "3.0.0",
   default_release_notes: "Bug fixes and performance improvements.",
   scheme: "MyHeartCounts",
@@ -163,6 +163,7 @@ platform :ios do
     secondaryProvisioningProfile = options[:secondaryProvisioningProfile].to_s.strip.empty? ? APP_CONFIG[:default_secondary_provisioningProfile] : options[:secondaryProvisioningProfile]
     versionname = options[:versionname].to_s.strip.empty? ? APP_CONFIG[:default_version_name] : options[:versionname]
     releasenotes = options[:releasenotes].to_s.strip.empty? ? APP_CONFIG[:default_release_notes] : options[:releasenotes]
+    strip_sensorkit_entitlement = options[:strip_sensorkit_entitlement].to_s == "true"
 
     UI.message("Using environment: #{environment}")
     UI.message("Using app identifier: #{appidentifier}")
@@ -187,6 +188,12 @@ platform :ios do
     increment_build_number(
       build_number: latest_build_number + 1
     )
+
+    if strip_sensorkit_entitlement
+      puts 'Stripping SensorKit entitlement'
+      sh('plutil', '-remove', 'com\.apple\.developer\.sensorkit\.reader\.allow', '../MyHeartCounts/Supporting Files/MyHeartCounts.entitlements')
+    end
+
     archive(
       appidentifier: appidentifier,
       secondaryAppIdentifier: secondaryAppIdentifier,

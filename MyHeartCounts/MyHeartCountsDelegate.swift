@@ -13,6 +13,7 @@ import SpeziHealthKitBulkExport
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziScheduler
+import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
 import UserNotifications
@@ -25,6 +26,8 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
         }
         return Configuration(standard: MyHeartCountsStandard()) {
+            FirebaseConfiguration()
+            SetupTestEnvironment()
             DeferredConfigLoading.initialAppLaunchConfig
             HealthKit()
             Scheduler()
@@ -34,6 +37,8 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             StudyBundleLoader.shared
             WatchConnection()
             TimedWalkingTest()
+            FeedbackManager()
+            SensorKit()
         }
     }
 }

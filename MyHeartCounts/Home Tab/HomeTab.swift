@@ -26,30 +26,42 @@ struct HomeTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "My Heart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
     
-    @Environment(HistoricalHealthSamplesExportManager.self)
-    private var historicalDataExportMgr
-    
-    @Environment(\.calendar)
-    private var calendar
-    
-    @LocalPreference(.enableDebugMode)
-    private var enableDebugMode
-    
     @Environment(Account.self)
     private var account
     
     @State private var actionCards: [ActionCard] = []
+    @State private var showSensorKitSheet = false
+    
+    @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
+    private var missedEvents
     
     var body: some View {
         NavigationStack {
             Form {
                 topActionsFormContent
-                historicalHealthDataUploadSection
-                scheduleFormContent
+                TasksList(
+                    mode: .upcoming(showFallbackTasks: false),
+                    timeRange: .today,
+                    headerConfig: .custom("Today's Tasks"),
+                    noTasksMessageLabels: .init(title: "You're All Set")
+                )
+                missedEventsSection
             }
             .navigationTitle(String(localized: Self.tabTitle))
             .toolbar {
                 accountToolbarItem
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showSensorKitSheet = true
+                    } label: {
+                        Image(systemSymbol: .waveformPathEcgRectangle)
+                    }
+                }
+            }
+            .sheet(isPresented: $showSensorKitSheet) {
+                NavigationStack {
+                    SensorKitPlayground()
+                }
             }
         }
     }
@@ -67,28 +79,32 @@ struct HomeTab: RootViewTab {
         }
     }
     
-    @ViewBuilder private var scheduleFormContent: some View {
-        makeSection("Today's Tasks") {
-            UpcomingTasksList(timeRange: .today, calendar: calendar)
-        }
-    }
-        
-    @ViewBuilder private var historicalHealthDataUploadSection: some View {
-        switch (historicalDataExportMgr.exportProgress, historicalDataExportMgr.uploadProgress) {
-        case (nil, nil):
-            EmptyView()
-        case (.some(let exportProgress), nil):
-            Section("Historical Data Bulk Export") {
-                ProgressView(exportProgress)
-            }
-        case (nil, .some(let uploadProgress)):
-            Section("Historical Data Bulk Export") {
-                ProgressView(uploadProgress)
-            }
-        case let (.some(exportProgress), .some(uploadProgress)):
-            Section("Historical Data Bulk Export") {
-                ProgressView(exportProgress)
-                ProgressView(uploadProgress)
+    @ViewBuilder private var missedEventsSection: some View {
+        if !missedEvents.isEmpty {
+            Section {
+                NavigationLink {
+                    Form {
+                        TasksList(
+                            mode: .missed,
+                            timeRange: .weeks(2),
+                            headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks"),
+                            noTasksMessageLabels: .init(title: "No Missed Tasks")
+                        )
+                    }
+                    .navigationTitle("Missed Tasks")
+                    .navigationBarTitleDisplayMode(.inline)
+                } label: {
+                    let numMissedTasks = missedEvents.count
+                    Label(symbol: .calendar) {
+                        VStack(alignment: .leading) {
+                            Text("Missed Tasks")
+                                .fontWeight(.medium)
+                            Text("\(numMissedTasks) missed tasks in the past 2 weeks")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
         }
     }
@@ -113,26 +129,11 @@ struct HomeTab: RootViewTab {
             nil
         }
     }
-    
-    private func makeSection(_ title: LocalizedStringResource, @ViewBuilder content: () -> some View) -> some View {
-        Section {
-            content()
-        } header: {
-            Text(title)
-                .foregroundStyle(.secondary)
-                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .listRowBackground(Color.clear)
-                .font(.title2)
-                .fontDesign(.rounded)
-                .fontWeight(.bold)
-                .padding(.bottom, 12)
-        }
-    }
 }
 
 
 extension EventActionButton {
-    init(event: Event, label: LocalizedStringResource?, action: @escaping () -> Void) {
+    init(event: Event, label: LocalizedStringResource?, action: @escaping @MainActor () -> Void) {
         if let label {
             self.init(event: event, label, action: action)
         } else {

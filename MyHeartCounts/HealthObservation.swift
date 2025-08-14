@@ -10,7 +10,6 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 import ModelsR4
-import MyHeartCountsShared
 
 
 protocol HealthObservation {
@@ -33,8 +32,10 @@ extension HKSample: HealthObservation {
 
 
 extension TimedWalkingTestResult: HealthObservation {
+    static let sampleTypeIdentifier = "MHCHealthObservationTimedWalkingTestResultIdentifier"
+    
     var sampleTypeIdentifier: String {
-        "MHCHealthObservationTimedWalkingTestResultIdentifier"
+        Self.sampleTypeIdentifier
     }
 }
 
@@ -43,7 +44,7 @@ extension Observation {
     func addMHCAppAsSource() throws {
         let revision = HKSourceRevision(
             source: HKSource.default(),
-            version: "\(Bundle.main.version) (\(Bundle.main.buildNumber ?? 0))",
+            version: "\(Bundle.main.appVersion) (\(Bundle.main.appBuildNumber ?? -1))",
             productType: nil,
             operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersion
         )

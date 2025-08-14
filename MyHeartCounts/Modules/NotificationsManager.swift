@@ -47,7 +47,7 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
     }
     
     func requestNotificationPermissions() async throws {
-        try await notifications.requestNotificationAuthorization(options: [.alert, .badge, .sound, .providesAppNotificationSettings])
+        _ = try await notifications.requestNotificationAuthorization(options: [.alert, .badge, .sound, .providesAppNotificationSettings])
         try await _setup(requestPermissionsIfNotDetermined: false)
     }
     

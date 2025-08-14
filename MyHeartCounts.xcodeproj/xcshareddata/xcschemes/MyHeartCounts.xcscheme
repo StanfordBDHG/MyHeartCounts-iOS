@@ -29,11 +29,11 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:MyHeartCounts UI Tests.xctestplan">
+            reference = "container:MyHeartCounts UI Tests.xctestplan"
+            default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:MyHeartCounts Unit Tests.xctestplan"
-            default = "YES">
+            reference = "container:MyHeartCounts Unit Tests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
@@ -85,8 +85,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--overrideFirebaseConfigOnDevice"
+            argument = "--overrideStudyBundleLocation https://firebasestorage.googleapis.com/v0/b/myheart-counts-development.firebasestorage.app/o/public%2FmhcStudyBundle.spezistudybundle.aar?alt=media"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--overrideStudyBundleLocation /Users/lukas/Desktop/mhcStudyBundle.spezistudybundle.aar"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--showOnboarding"
@@ -101,12 +105,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--testSchedule"
+            argument = "--setupTestAccount"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--useFirebaseEmulator"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=/Users/lukas/Desktop/MHC.plist"
@@ -125,11 +129,16 @@
          <EnvironmentVariable
             key = "IDEPreferLogStreaming"
             value = "YES"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "IDELogRedirectionPolicy"
             value = "oslogToStdio"
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "TZ"
+            value = "America/Los_Angeles"
             isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>

@@ -17,25 +17,18 @@ struct UpcomingTasksTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "Upcoming Tasks" }
     static var tabSymbol: SFSymbol { .calendar }
     
-    @Environment(\.calendar)
-    private var calendar
-    
     @State private var activeTimedWalkingTest: TimedWalkingTestConfiguration?
     
     var body: some View {
         NavigationStack {
             Form {
-                Text("Next 2 weeks")
-                    .foregroundStyle(.secondary)
-                    .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-                    .listRowBackground(Color.clear)
-                    .font(.title2)
-                    .fontDesign(.rounded)
-                    .fontWeight(.bold)
-                // maybe lower the spacing inbetween these?
-                UpcomingTasksList(timeRange: .fortnight, calendar: calendar)
+                TasksList(
+                    mode: .upcoming(showFallbackTasks: true),
+                    timeRange: .weeks(2),
+                    noTasksMessageLabels: .init(title: "No Upcoming Tasks")
+                )
             }
-            .navigationTitle("Upcoming Tasks")
+            .navigationTitle(String(localized: Self.tabTitle))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -48,6 +41,7 @@ struct UpcomingTasksTab: RootViewTab {
             }
         }
     }
+    
     
     @ViewBuilder private var timedWalkingTestMenu: some View {
         let tests = [
@@ -65,5 +59,39 @@ struct UpcomingTasksTab: RootViewTab {
         } label: {
             Label("Timed Walking Test", systemSymbol: .figureWalk)
         }
+    }
+}
+
+
+extension UpcomingTasksTab {
+    static func sectionHeader(
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource?
+    ) -> some View {
+        sectionHeader(title: title.localizedString(), subtitle: subtitle?.localizedString() ?? "")
+    }
+    
+    static func sectionHeader(
+        title: some StringProtocol,
+        subtitle: some StringProtocol = ""
+    ) -> some View {
+        Section {
+            VStack(alignment: .leading) {
+                Text(title)
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                        .fontDesign(.rounded)
+                }
+            }
+            .foregroundStyle(.secondary)
+            .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 0))
+            .listRowBackground(Color.clear)
+            .font(.title2)
+            .fontDesign(.rounded)
+            .fontWeight(.bold)
+        }
+        .listSectionSpacing(.compact)
     }
 }

@@ -50,6 +50,9 @@ final class StudyBundleLoader: Module, Sendable {
         Task {
             _ = try? await update()
         }
+        Task(priority: .background) {
+            try? await cleanupOldStudyBundles()
+        }
     }
     
     
@@ -60,57 +63,62 @@ final class StudyBundleLoader: Module, Sendable {
             // we need to do `.result.get()` here, instead of a simple `.value`, since the throw in the later case isn't typed.
             return try await loadStudyBundleTask.result.get().get()
         }
-        if let selector = FeatureFlags.overrideFirebaseConfig ?? LocalPreferencesStore.standard[.lastUsedFirebaseConfig],
-           let firebaseOptions = try? DeferredConfigLoading.firebaseOptions(for: selector),
-           let storageBucket = firebaseOptions.storageBucket {
-            logger.notice("Attempting to load study definition from firebase storage bucket '\(storageBucket)'")
-            let task = Task<Result<StudyBundle, LoadError>, Never> {
-                let result: Result<StudyBundle, LoadError>
-                do {
-                    result = .success(try await load(fromBucket: storageBucket))
-                } catch let error as LoadError {
-                    result = .failure(error)
-                } catch {
-                    // unresachable, but swiftc doesn't seem to understand.
-                    result = .failure(.unableToFetchFromServer(error))
-                }
-                await MainActor.run {
-                    self.studyBundle = result
-                    self.loadStudyBundleTask = nil
-                }
-                return result
-            }
-            self.loadStudyBundleTask = task
-            return try await task.result.get().get()
+        let studyBundleArchiveUrl: URL
+        if let url = LaunchOptions.launchOptions[.overrideStudyBundleLocation] {
+            studyBundleArchiveUrl = url
+        } else if let selector = FeatureFlags.overrideFirebaseConfig ?? LocalPreferencesStore.standard[.lastUsedFirebaseConfig],
+                  let options = try? DeferredConfigLoading.firebaseOptions(for: selector),
+                  let bucket = options.storageBucket {
+            studyBundleArchiveUrl = Self.url(ofFile: "mhcStudyBundle.\(StudyBundle.fileExtension).aar", inBucket: bucket)
         } else {
             logger.error("No last-used firebase config")
             throw .noLastUsedFirebaseConfig
         }
+        let task = Task<Result<StudyBundle, LoadError>, Never> {
+            let result: Result<StudyBundle, LoadError>
+            do {
+                let downloadUrl: URL
+                do {
+                    downloadUrl = try await download(studyBundleArchiveUrl)
+                } catch {
+                    throw LoadError.unableToFetchFromServer(error)
+                }
+                result = .success(try await openDownloadedStudyBundle(at: downloadUrl))
+            } catch let error as LoadError {
+                result = .failure(error)
+            } catch {
+                // unresachable, but swiftc doesn't seem to understand.
+                result = .failure(.unableToFetchFromServer(error))
+            }
+            await MainActor.run {
+                self.studyBundle = result
+                self.loadStudyBundleTask = nil
+            }
+            return result
+        }
+        self.loadStudyBundleTask = task
+        return try await task.result.get().get()
     }
     
     
     @discardableResult
-    private func load(fromBucket bucketName: String) async throws(LoadError) -> StudyBundle {
-        let downloadUrl: URL
-        do {
-            downloadUrl = try await download(
-                fileName: "mhcStudyBundle.\(StudyBundle.fileExtension).aar",
-                inBucket: bucketName
-            )
-        } catch {
-            throw .unableToFetchFromServer(error)
-        }
+    private func openDownloadedStudyBundle(at url: URL) async throws(LoadError) -> StudyBundle {
         let tmpUrl = URL.temporaryDirectory.appending(component: UUID().uuidString).appendingPathExtension("\(StudyBundle.fileExtension).aar")
         let dstUrl = self.studyBundlesUrl.appendingPathComponent(UUID().uuidString, conformingTo: .speziStudyBundle)
         do {
-            try fileManager.copyItem(at: downloadUrl, to: tmpUrl, overwriteExisting: true)
+            try fileManager.copyItem(at: url, to: tmpUrl, overwriteExisting: true)
             defer {
                 try? fileManager.removeItem(at: tmpUrl)
             }
             try fileManager.unarchiveDirectory(at: tmpUrl, to: dstUrl)
+        } catch {
+            throw .unableToFetchFromServer(error)
+        }
+        do {
             return try StudyBundle(bundleUrl: dstUrl)
         } catch {
-            fatalError("\(error)")
+            logger.error("Error opening StudyBundle: \(error)")
+            throw .unableToDecode(error)
         }
     }
     
@@ -118,12 +126,20 @@ final class StudyBundleLoader: Module, Sendable {
     /// Downloads the file with the specified `filename` from the Firebase Storage bucket `bucketName`
     @discardableResult
     private func download(fileName: String, inBucket bucketName: String) async throws -> URL {
-        let url = Self.url(ofFile: fileName, inBucket: bucketName)
+        try await download(Self.url(ofFile: fileName, inBucket: bucketName))
+    }
+    
+    @discardableResult
+    private func download(_ url: URL) async throws -> URL {
         logger.notice("will try to download '\(url.absoluteString)'")
         let session = URLSession(configuration: .ephemeral)
         let (downloadUrl, response) = try await session.download(from: url)
         logger.notice("did finish download of '\(url.lastPathComponent)'")
         guard let response = response as? HTTPURLResponse else {
+            guard !url.isFileURL else {
+                // we were "downloading" a local file, so it's expected that we don't get back a HTTPURLResponse
+                return downloadUrl
+            }
             throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
                 NSLocalizedDescriptionKey: "Unable to decode HTTP response"
             ])
@@ -133,11 +149,11 @@ final class StudyBundleLoader: Module, Sendable {
             return downloadUrl
         case 404:
             throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "Unable to find file '\(bucketName)/\(fileName)'"
+                NSLocalizedDescriptionKey: "Unable to find file '\(url)'"
             ])
         default:
             throw NSError(domain: "edu.stanford.MHC", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "Unable to fetch file '\(bucketName)/\(fileName)'"
+                NSLocalizedDescriptionKey: "Unable to fetch file '\(url)'"
             ])
         }
     }
@@ -167,14 +183,6 @@ final class StudyBundleLoader: Module, Sendable {
 
 
 extension StudyBundleLoader {
-    private static func studyLocation(inBucket bucketName: String) -> URL {
-        if let url = LaunchOptions.launchOptions[.overrideStudyDefinitionLocation] {
-            url
-        } else {
-            url(ofFile: "mhcStudyDefinition.json", inBucket: bucketName)
-        }
-    }
-    
     private static func url(ofFile filename: String, inBucket bucketName: String) -> URL {
         "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2F\(filename)?alt=media"
     }

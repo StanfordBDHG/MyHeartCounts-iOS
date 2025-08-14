@@ -29,20 +29,51 @@ struct HeartHealthDashboard: View {
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
-    @CVHScore private var cvhScore
+    @Environment(\.colorScheme)
+    private var colorScheme
     
-    @Environment(NewsManager.self)
-    private var newsManager
+    @CVHScore private var cvhScore
     
     @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
     @State private var presentedArticle: Article?
     @State private var scoreResultToExplain: ScoreResultToExplain?
+    @State private var isPresentingPastTimedWalkTestResults = false
     
     var body: some View {
         healthDashboard
     }
     
     @ViewBuilder var healthDashboard: some View {
+        Text("HEART_HEALTH_DASHBOARD_HEADER")
+            .navigationTitle("Heart Health Dashboard")
+            .listRowInsets(.zero)
+            .listRowBackground(Color.clear)
+            .sheet(item: $addNewSampleDescriptor) { descriptor in
+                NavigationStack {
+                    Self.addSampleView(for: descriptor.keyPath, locale: Locale.current)
+                }
+            }
+            .sheet(item: $presentedArticle) { article in
+                ArticleSheet(article: article)
+            }
+            .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
+                NavigationStack {
+                    DetailedHealthStatsView(
+                        scoreResult: input.result,
+                        cvhKeyPath: input.keyPath
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            DismissButton()
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $isPresentingPastTimedWalkTestResults) {
+                NavigationStack {
+                    PastTimedWalkTestResults()
+                }
+            }
         HealthDashboard(layout: [
             .large(sectionTitle: nil, content: {
                 topSection
@@ -57,55 +88,59 @@ struct HeartHealthDashboard: View {
                 makeGridComponent(for: \.sleepHealthScore),
                 makeGridComponent(for: \.bloodPressureScore)
             ])
-        ], footer: {
-            LearnMore()
-        })
-        .navigationTitle("Heart Health Dashboard")
-        .sheet(item: $addNewSampleDescriptor) { descriptor in
-            NavigationStack {
-                Self.addSampleView(for: descriptor.keyPath, locale: Locale.current)
-            }
-        }
-        .sheet(item: $presentedArticle) { article in
-            ArticleSheet(article: article)
-        }
-        .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
-            NavigationStack {
-                DetailedHealthStatsView(
-                    scoreResult: input.result,
-                    cvhKeyPath: input.keyPath
-                )
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        DismissButton()
-                    }
-                }
-            }
-        }
+        ])
+        learnMoreSection
+        pastDataSection
     }
     
     
     @ViewBuilder private var topSection: some View {
-        Text("HEART_HEALTH_DASHBOARD_HEADER")
-        Gauge(
-            lineWidth: .relative(1.5),
-            gradient: .redToGreen,
-            progress: cvhScore
-        ) {
-            if let cvhScore, !cvhScore.isNaN {
-                Text(Int(cvhScore * 100), format: .number)
-                    .font(.system(size: 27, weight: .medium))
-            } else {
-                Text("")
+        HStack {
+            Spacer()
+            Gauge(
+                lineWidth: .relative(1.5),
+                gradient: .redToGreen,
+                progress: cvhScore
+            ) {
+                if let cvhScore, !cvhScore.isNaN {
+                    Text(Int(cvhScore * 100), format: .number)
+                        .font(.system(size: 27, weight: .medium))
+                } else {
+                    Text("")
+                }
+            } minimumValueText: {
+                Text("0")
+                    .font(.callout)
+            } maximumValueText: {
+                Text("100")
+                    .font(.callout)
             }
-        } minimumValueText: {
-            Text("0")
-                .font(.callout)
-        } maximumValueText: {
-            Text("100")
-                .font(.callout)
+            .frame(width: 100, height: 100)
+            Spacer()
         }
-        .frame(width: 100, height: 100)
+    }
+    
+    private var learnMoreSection: some View {
+        Section("Learn More") {
+            let text = String(localized: "HEART_HEALTH_DASHBOARD_LEARN_MORE_TEXT")
+            MarkdownView(markdownDocument: .init(metadata: [:], blocks: [.markdown(id: nil, rawContents: text)]))
+        }
+    }
+    
+    private var pastDataSection: some View {
+        Section("Past Data") {
+            Button {
+                isPresentingPastTimedWalkTestResults = true
+            } label: {
+                HStack {
+                    Text("PAST_TIMED_WALKING_RUNNING_TEST_RESULTS_BUTTON_TITLE")
+                        .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                    Spacer()
+                    DisclosureIndicator()
+                }
+                .contentShape(Rectangle())
+            }
+        }
     }
     
     private func makeGridComponent(
@@ -132,20 +167,6 @@ struct HeartHealthDashboard: View {
             }
         } onTap: {
             scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
-        } contextMenu: {
-            if Self.canAddSample(for: scoreKeyPath) {
-                Button {
-                    addNewSample(for: scoreKeyPath)
-                } label: {
-                    Label("Add Sample", systemSymbol: .plusSquare)
-                }
-            }
-            Divider()
-            Button {
-                scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
-            } label: {
-                Label("Details", systemSymbol: .infoCircle)
-            }
         }
     }
     

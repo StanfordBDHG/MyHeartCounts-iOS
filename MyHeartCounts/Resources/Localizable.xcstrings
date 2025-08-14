@@ -4,10 +4,29 @@
     "" : {
 
     },
+    "- %@" : {
+
+    },
     "– %@" : {
 
     },
     "—" : {
+
+    },
+    "#=%lld" : {
+
+    },
+    "%@ (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$lld)"
+          }
+        }
+      }
+    },
+    "%@ bpm" : {
 
     },
     "%lld ft" : {
@@ -15,6 +34,28 @@
     },
     "%lld in" : {
 
+    },
+    "%lld missed tasks in the past 2 weeks" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld missed task in the past 2 weeks"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld missed tasks in the past 2 weeks"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "%lld‘ %lld“" : {
       "localizations" : {
@@ -25,6 +66,48 @@
           }
         }
       }
+    },
+    "$15,000 – $24,999" : {
+
+    },
+    "$25,000 – $34,999" : {
+
+    },
+    "$35,000 – $49,999" : {
+
+    },
+    "$50,000 – $74,999" : {
+
+    },
+    "$75,000 – $99,999" : {
+
+    },
+    "$100,000 – $149,999" : {
+
+    },
+    "$150,000 and above" : {
+
+    },
+    "£15,000 – £24,999" : {
+
+    },
+    "£25,000 – £34,999" : {
+
+    },
+    "£35,000 – £49,999" : {
+
+    },
+    "£50,000 – £74,999" : {
+
+    },
+    "£75,000 – £99,999" : {
+
+    },
+    "£100,000 – £149,999" : {
+
+    },
+    "£150,000 and above" : {
+
     },
     "0" : {
 
@@ -43,7 +126,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Please login to your existing account. If you do not have an existing account, please sign up."
+            "value" : "Please log in to your existing account. If you do not have an existing account, please sign up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, inicie sesión en su cuenta existente. Si no tiene una cuenta existente, por favor regístrese."
           }
         }
       }
@@ -53,7 +142,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If you were part of the original My Heart Counts study, your account will not transfer over and you will need to create a new one."
+            "value" : "If you were part of the original My Heart Counts study, your account will not transfer over and you will need to create a new account."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si formó parte del estudio original de My Heart Counts, su cuenta no se transferirá y necesitará crear una nueva cuenta."
           }
         }
       }
@@ -88,10 +183,25 @@
     "Add Data" : {
 
     },
+    "Add Height & Weight Samples" : {
+
+    },
     "Add Sample" : {
 
     },
-    "All tasks have already been completed!" : {
+    "Age" : {
+
+    },
+    "Alabama" : {
+
+    },
+    "Alaska" : {
+
+    },
+    "All Samples" : {
+
+    },
+    "All tasks have been completed!" : {
 
     },
     "Allow Notifications" : {
@@ -101,16 +211,44 @@
             "state" : "translated",
             "value" : "Allow Notifications"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permitir Notificaciones"
+          }
         }
       }
     },
-    "Are you %lld years old or older?" : {
+    "American Samoa" : {
 
+    },
+    "App Usage" : {
+
+    },
+    "Are you %lld years old or older?" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Tiene %lld años o más?"
+          }
+        }
+      }
     },
     "Are you able to perform physical activities?" : {
 
     },
+    "Are you Hispanic/Latino?" : {
+
+    },
     "Are you sure you want to leave the '%@' study?" : {
+
+    },
+    "Arizona" : {
+
+    },
+    "Arkansas" : {
 
     },
     "As part of the %@, we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for %@ minute%@" : {
@@ -126,16 +264,48 @@
     "AuthorizationStatus" : {
 
     },
+    "Biological Sex at Birth" : {
+
+    },
+    "Blood Lipids" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lípidos en Sangre"
+          }
+        }
+      }
+    },
+    "Blood Type" : {
+
+    },
     "Bulk Export Manager" : {
 
     },
-    "Can you read and understand %@ in order to provide informed consent and follow instructions?" : {
+    "bundle id" : {
 
+    },
+    "California" : {
+
+    },
+    "Can you read and understand %@ in order to provide informed consent and follow instructions?" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Puede leer y entender %@ para proporcionar su consentimiento informado y seguir las instrucciones?"
+          }
+        }
+      }
     },
     "Cancel" : {
 
     },
     "Change Language" : {
+
+    },
+    "chromaticity" : {
 
     },
     "Close" : {
@@ -144,6 +314,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Close"
+          }
+        }
+      }
+    },
+    "Colorado" : {
+
+    },
+    "Comorbidities" : {
+
+    },
+    "COMORBIDITY_ACHD" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adult Congenital Heart Disease"
+          }
+        }
+      }
+    },
+    "COMORBIDITY_CAD" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coronary Artery Disease"
+          }
+        }
+      }
+    },
+    "COMORBIDITY_DIABETES" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diabetes"
+          }
+        }
+      }
+    },
+    "COMORBIDITY_HEART_FAILURE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Failure"
+          }
+        }
+      }
+    },
+    "COMORBIDITY_NONE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "COMORBIDITY_PAH" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulmonary Arterial Hypertension"
           }
         }
       }
@@ -161,6 +397,12 @@
             "state" : "translated",
             "value" : "If at any point during this study I do not feel well, I should immediately contact my healthcare provider."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si en algún momento durante este estudio no me siento bien, debo ponerme en contacto inmediatamente con mi proveedor de atención médica."
+          }
         }
       }
     },
@@ -170,6 +412,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "I am not required to complete all or any parts of this study if I don’t want to."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No estoy obligado a completar todas o ninguna de las partes de este estudio si no quiero."
           }
         }
       }
@@ -181,6 +429,12 @@
             "state" : "translated",
             "value" : "Once I start participating in this study, I can choose to not continue at any time with no repercussions to me."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez que empiece a participar en este estudio, puedo decidir no continuar en cualquier momento sin repercusiones para mí."
+          }
         }
       }
     },
@@ -190,6 +444,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please answer a few review questions to ensure you understand the consent form"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, responda algunas preguntas de repaso para asegurarse de que entiende el formulario de consentimiento."
           }
         }
       }
@@ -201,13 +461,34 @@
             "state" : "translated",
             "value" : "Comprehension of Consent Questionnaire"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuestionario de Comprensión del Consentimiento"
+          }
         }
       }
+    },
+    "conficence" : {
+
+    },
+    "Connecticut" : {
+
     },
     "Consent" : {
 
     },
+    "Consent Date" : {
+
+    },
     "Consent Documents" : {
+
+    },
+    "Consent Renewal" : {
+
+    },
+    "Consent Version" : {
 
     },
     "CONSENT_LOADING_ERROR" : {
@@ -224,7 +505,16 @@
     "Continue" : {
 
     },
+    "County" : {
+
+    },
+    "crownOrientation" : {
+
+    },
     "Current Test" : {
+
+    },
+    "date" : {
 
     },
     "Date" : {
@@ -233,19 +523,88 @@
     "Date of Birth" : {
 
     },
-    "Delete ~/HealthKitUploads/*" : {
+    "Debug" : {
+
+    },
+    "Debug Options" : {
+
+    },
+    "Delaware" : {
+
+    },
+    "Delete ~/%@/*" : {
 
     },
     "Delete&Reset Session" : {
 
     },
-    "Details" : {
+    "Demographics" : {
+
+    },
+    "Depending on the amount of samples, this might take a bit" : {
+
+    },
+    "Diet" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieta"
+          }
+        }
+      }
+    },
+    "Disable Override" : {
 
     },
     "Disclosure Indicator" : {
 
     },
+    "District of Columbia" : {
+
+    },
     "Done" : {
+
+    },
+    "Educational Level" : {
+
+    },
+    "Effective Region" : {
+
+    },
+    "ELIGIBILITY_STEP_SUBTITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before you begin, we’ll ask you a few quick questions to ensure the study is a good fit for you."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de comenzar, le haremos unas preguntas rápidas para asegurarnos de que el estudio sea adecuado para usted."
+          }
+        }
+      }
+    },
+    "ELIGIBILITY_STEP_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligibility"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegibilidad"
+          }
+        }
+      }
+    },
+    "Enable App Debug Mode" : {
 
     },
     "End Study Participation" : {
@@ -263,6 +622,15 @@
     "Enter BMI" : {
 
     },
+    "Enter Height" : {
+
+    },
+    "Enter Weight" : {
+
+    },
+    "Error" : {
+
+    },
     "Failed to Download Study Information" : {
 
     },
@@ -273,15 +641,47 @@
 
     },
     "False" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falso"
+          }
+        }
+      }
     },
     "FCM Token" : {
 
     },
+    "Feedback" : {
+
+    },
+    "FEEDBACK_FORM_FOOTER_TEXT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your feedback helps us improve My Heart Counts and [TODO some text about better helping more people???]\n\nThe feedback you share with us will be associated with your Email address.\nThis allows us to reach out to you if required."
+          }
+        }
+      }
+    },
     "Feel free to check back later!" : {
 
     },
+    "Fetch Results" : {
+
+    },
+    "Fetch WristTemp Data" : {
+
+    },
+    "Fetching Data…" : {
+
+    },
     "Fetching…" : {
+
+    },
+    "Filter Options" : {
 
     },
     "FINAL_ENROLLMENT_STEP_MESSAGE" : {
@@ -290,6 +690,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "What happens next:\n- Baseline Monitoring Week: Over the next 7 days, you'll be guided through several short activities:\n    - Completing surveys about your health, lifestyle, and well-being\n    - Recording your baseline physical activity through the app\n    - Performing optional fitness assessments if appropriate for your health status\n- Daily Tasks: Each day, you'll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete.\n- Data Collection: The app will begin collecting activity data from your phone and any connected wearable devices you've authorized."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué sucede a continuación?:\n- Semana de Monitoreo Inicial: Durante los próximos 7 días, será guiado a través de varias actividades cortas:\n    - Completar encuestas sobre su salud, estilo de vida y bienestar\n    - Registrar su actividad física inicial a través de la aplicación\n    - Realizar evaluaciones de condición física óptima si es adecuado para su estado de salud\n- Tareas Diarias: Cada día, verá una lista personalizada de tareas en su tablero. Normalmente toman solo 5-10 minutos para completar.\n- Recolección de Datos: La aplicación comenzará a recopilar datos de actividad de su teléfono y cualquier dispositivo portátil conectado que haya autorizado."
           }
         }
       }
@@ -300,6 +706,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "By joining this study, you're contributing to important research that may help improve our understanding of heart health for people across diverse communities."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al unirse a este estudio, está contribuyendo a una investigación importante que puede ayudar a mejorar nuestra comprensión de la salud del corazón en personas de diversas comunidades"
           }
         }
       }
@@ -314,10 +726,88 @@
         }
       }
     },
+    "First 3 Digits of ZIP Code" : {
+
+    },
+    "First half of Postcode" : {
+
+    },
+    "Florida" : {
+
+    },
     "For optimal results, please keep your Phone in your pocket, and %@ until it vibrates to indicate that the test has ended." : {
 
     },
     "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
+
+    },
+    "Future Studies" : {
+
+    },
+    "Gender Identity" : {
+
+    },
+    "GENDER_FEMALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Female"
+          }
+        }
+      }
+    },
+    "GENDER_MALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Male"
+          }
+        }
+      }
+    },
+    "GENDER_OTHER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gender Variant / Non-Conforming"
+          }
+        }
+      }
+    },
+    "GENDER_PREFER_NOT_TO_STATE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer not to state"
+          }
+        }
+      }
+    },
+    "GENDER_TRANS_FEMALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transgender Female"
+          }
+        }
+      }
+    },
+    "GENDER_TRANS_MALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transgender Male"
+          }
+        }
+      }
+    },
+    "Georgia" : {
 
     },
     "Go to next field" : {
@@ -336,7 +826,16 @@
         }
       }
     },
+    "Guam" : {
+
+    },
+    "Hawaii" : {
+
+    },
     "Health Data" : {
+
+    },
+    "Health Data Bulk Upload" : {
 
     },
     "HealthKit Access" : {
@@ -354,7 +853,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My Heart Counts needs read-access to some of the Health data collected by your iPhone and Apple Watch. We will automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research team unless you allow broad sharing. Broadly shared data will have all information de-identified and not traceable to you. Moreover, the data will only be shared with qualified researchers who must submit applications to access de-identified data\n\nYou can revoke this access at any time."
+            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research Team unless you have selected to allow broader data sharing. Prior to sharing data outside of the My Heart Counts Research Team, researchers will need to denominated they are qualified to persome research that will review. Broadly shared data will have all information de-identified and not traceable to you.\n\nMoreover, the data will only be shared with qualified researchers who must submit applications to access de-identified data.\n\nYou can revoke this access at any time.\n"
           }
         }
       }
@@ -364,7 +863,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My Heart Counts uses Health Data to further study goals. Granting access to all fields ensures the most well powered study possible"
+            "value" : "The My Heart Counts Study uses Health Data collected on your iPhone to further our research goals. Granting access to all fields (or as many as you are comfortable with) ensures the most well powered study possible."
           }
         }
       }
@@ -373,7 +872,20 @@
 
     },
     "Heart Health Dashboard" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Health Dashboard"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tablero de Salud del Corazón"
+          }
+        }
+      }
     },
     "HEART_HEALTH_DASHBOARD_HEADER" : {
       "localizations" : {
@@ -381,6 +893,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your personalized score reflects your overall health based on the factors listed below. Track it over time to see how lifestyle changes impact your heart health."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su puntuación personalizada refleja su salud general basada en los factores que se enumeran a continuación. Sígala con el tiempo para ver cómo los cambios en el estilo de vida afectan la salud de su corazón."
           }
         }
       }
@@ -390,7 +908,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "## Understanding Your My Heart Counts Health Score\n\n### What is this score?\nYour My Heart Counts Health Score provides a snapshot of your overall cardiovascular health based on the information you've shared with us. This score combines multiple factors that research has shown to be important for heart health.\n\n### How is it calculated?\nYour score incorporates:\n- Physical activity levels from your daily movement patterns\n- Heart risk factors you reported in surveys (like blood pressure, cholesterol)\n- Lifestyle factors such as diet, sleep, and overall mental health\n- Health behaviors like smoking status\n\n### What to do with this information:\n- **Track changes** over time to see how your heart health evolves. Understand that higher scores mean better overall health. By tracking your changes over time you can try and improve your overall health!\n- **Identify specific areas** where small changes might have the biggest impact.\n- **Set personal goals** based on which components have the most room for improvement. \n\nImportant note: This score is provided for research and educational purposes only. It is not a medical diagnosis and should not replace consultation with healthcare providers. The My Heart Counts Health Score is designed to encourage positive health behaviors and support your heart health journey."
+            "value" : "## Understanding Your My Heart Counts Health Score\n\n### What is this score?\nYour My Heart Counts Health Score provides a snapshot of your overall cardiovascular health based on the information you've shared with us. This score combines multiple factors that research has shown to be important for cardiovascular health.\n\n### How is it calculated?\nYour score incorporates:\n- Physical activity levels from your daily movement patterns\n- Heart health risk factors you reported in surveys (like blood pressure, cholesterol, if you know these)\n- Lifestyle factors such as diet, sleep, and overall mental health\n- Health behaviors like smoking status\n\n### What to do with this information:\n- **Track changes** over time to see how your heart health evolves. Understand that higher scores mean better overall health. By tracking your changes over time you can try and improve your overall health!\n- **Identify specific areas** where small changes might have the biggest impact.\n- **Set personal goals** based on which components have the most room for improvement. \n\nImportant note: This score is provided for research and educational purposes only. It is not a medical diagnosis and should not replace consultation with healthcare providers. The My Heart Counts Health Score is designed to encourage positive health behaviors and support your heart health journey."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "## Entienda su Puntuación de Salud de My Heart Counts\n\n### ¿Qué es esta puntuación?\nSu Puntuación de Salud de My Heart Counts proporciona una instantánea de su salud cardiovascular general basada en la información que ha compartido con nosotros. Esta puntuación combina varios factores que la investigación ha demostrado que son importantes para la salud cardiovascular.\n\n### ¿Cómo se calcula?\nSu puntuación incorpora:\n- Niveles de actividad física de sus patrones de movimiento diarios\n- Factores de riesgo para la salud del corazón que reportó en las encuestas (como presión arterial, colesterol - si los conoce)\n- Factores de estilo de vida como la dieta, el sueño y la salud mental en general\n- Comportamientos de salud como el estado de fumador\n\n### Qué hacer con esta información:\n- Rastree los cambios a lo largo del tiempo para ver cómo evoluciona la salud de su corazón. Entienda que puntuaciones más altas significan mejor salud en general. Al rastrear sus cambios a lo largo del tiempo, ¡puede intentar mejorar su salud general!\n- Identifique áreas específicas donde pequeños cambios puedan tener el mayor impacto.\n- Establezca metas personales basadas en qué componentes tienen más margen de mejora.\n\nNota importante: Esta puntuación se proporciona sólo con fines de investigación y educativos. No es un diagnóstico médico y no debe reemplazar la consulta con proveedores de atención médica. La Puntuación de Salud de My Heart Counts está diseñada para fomentar comportamientos de salud positivos y apoyar su viaje hacia la salud del corazón.\n\n\n\n"
           }
         }
       }
@@ -406,7 +930,10 @@
         }
       }
     },
-    "Historical Data Bulk Export" : {
+    "Height" : {
+
+    },
+    "Household Income" : {
 
     },
     "I have never smoked" : {
@@ -424,8 +951,42 @@
     "I'm actively smoking" : {
 
     },
+    "id" : {
+
+    },
+    "Idaho" : {
+
+    },
+    "identifier" : {
+
+    },
     "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
 
+    },
+    "Ignore Empty Fetch Results" : {
+
+    },
+    "Illinois" : {
+
+    },
+    "Indiana" : {
+
+    },
+    "INELIGIBLE_LEARN_MORE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn more about My Heart Counts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenga más información sobre My Heart Counts."
+          }
+        }
+      }
     },
     "INELIGIBLE_SUBTITLE" : {
       "localizations" : {
@@ -433,6 +994,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You are not eligible to participate in this study because you did not meet the eligibility criteria."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No es elegible para participar en este estudio porque no cumple con los criterios de elegibilidad."
           }
         }
       }
@@ -444,6 +1011,12 @@
             "state" : "translated",
             "value" : "Ineligible for Participation"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Elegible para Participar"
+          }
         }
       }
     },
@@ -453,10 +1026,19 @@
     "Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
 
     },
-    "Label?" : {
+    "Iowa" : {
+
+    },
+    "Kansas" : {
+
+    },
+    "Kentucky" : {
 
     },
     "Language" : {
+
+    },
+    "Latino / Hispanic?" : {
 
     },
     "Launch Watch App" : {
@@ -473,6 +1055,20 @@
       }
     },
     "Learn more about My Heart Counts" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenga más información sobre My Heart Counts."
+          }
+        }
+      }
+    },
+    "Less than $15,000" : {
+
+    },
+    "Less than £15,000" : {
 
     },
     "License Information" : {
@@ -488,19 +1084,58 @@
     "Link Arrow Symbol" : {
 
     },
+    "Live Health Upload Notifications" : {
+
+    },
+    "Loading Firebase Test Setup" : {
+
+    },
     "Local Notifications Status" : {
+
+    },
+    "locationCategory" : {
+
+    },
+    "Louisiana" : {
+
+    },
+    "Maine" : {
 
     },
     "Make sure your device is connected to the internet and try again" : {
 
     },
+    "Maryland" : {
+
+    },
+    "Massachusetts" : {
+
+    },
     "Matching Entry" : {
 
     },
-    "Message?" : {
+    "May we contact you about future studies that may be of interest to you?" : {
+
+    },
+    "Michigan" : {
+
+    },
+    "Minnesota" : {
+
+    },
+    "Missed Tasks" : {
 
     },
     "Missing Required Motion Data Access Permission" : {
+
+    },
+    "Mississippi" : {
+
+    },
+    "Missouri" : {
+
+    },
+    "Montana" : {
 
     },
     "More than 5 years ago" : {
@@ -525,10 +1160,28 @@
     "n/a" : {
 
     },
+    "Nebraska" : {
+
+    },
     "Network Issue" : {
 
     },
+    "Nevada" : {
+
+    },
     "Never" : {
+
+    },
+    "New Hampshire" : {
+
+    },
+    "New Jersey" : {
+
+    },
+    "New Mexico" : {
+
+    },
+    "New York" : {
 
     },
     "News" : {
@@ -547,14 +1200,31 @@
         }
       }
     },
-    "Next 2 weeks" : {
+    "NHS Number" : {
+
+    },
+    "NHS Number (Optional)" : {
 
     },
     "Nicotine Exposure" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exposición a la Nicotina"
+          }
+        }
+      }
     },
     "No" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        }
+      }
     },
     "No data" : {
 
@@ -565,13 +1235,31 @@
     "No Internet" : {
 
     },
+    "No Missed Tasks" : {
+
+    },
     "No News Yet" : {
 
     },
     "No Upcoming Tasks" : {
 
     },
+    "No, not Spanish/Hispanic/Latino" : {
+
+    },
+    "North Carolina" : {
+
+    },
+    "North Dakota" : {
+
+    },
+    "Northern Mariana Islands" : {
+
+    },
     "Not logged in" : {
+
+    },
+    "Not Set" : {
 
     },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
@@ -580,6 +1268,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please allow My Heart Counts to send you notifications so that we can properly carry out research.\n\nWe will do our best to keep the notifications to a minimum."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, permita que My Heart Counts le envíe notificaciones para que podamos llevar a cabo la investigación de manera adecuada.\n\nHaremos nuestro mejor esfuerzo para mantener las notificaciones al mínimo."
           }
         }
       }
@@ -591,8 +1285,29 @@
             "state" : "translated",
             "value" : "Notifications"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificaciones"
+          }
         }
       }
+    },
+    "Notifications Status" : {
+
+    },
+    "offWristDate" : {
+
+    },
+    "Ohio" : {
+
+    },
+    "OK" : {
+
+    },
+    "Oklahoma" : {
+
     },
     "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT" : {
       "localizations" : {
@@ -609,7 +1324,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You're invited to join a Stanford research study that tracks physical activity through your smartphone to improve heart health knowledge. You'll complete brief health surveys and perform simple fitness assessments like the 6-minute walk test using your phone."
+            "value" : "You’re invited to join a Stanford research study that tracks physical activity through your smartphone to improve heart health knowledge. You’ll complete brief health surveys and perform simple fitness assessments like the 6-minute walk test using your phone."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are invited to join an Imperial research study that uses physical activity collected from your smartphone to better understand how your previous, current and future levels of physical activity influence your your overall health today and in the future.\n\nYou’ll complete brief health surveys and perform simple fitness assessments like the 6-minute walk test using your phone.\n\nYou will also help us test whether personalised digital coaching can support improving your physical activity and health.\n"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usted está invitado a unirse a un estudio de investigación de Stanford que rastrea la actividad física a través de su teléfono inteligente para mejorar el conocimiento sobre la salud del corazón. Completará breves encuestas de salud y realizará evaluaciones de condición física simples como la prueba de caminata de 6 minutos usando su teléfono."
           }
         }
       }
@@ -620,6 +1347,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Study Overview & Participation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descripción General del Estudio y Participación"
           }
         }
       }
@@ -641,6 +1374,18 @@
             "state" : "translated",
             "value" : "You have the option to enroll in a 2-week physical activity coaching trial. If you choose to join, you'll experience both personalized and standard coaching messages for 7 days each, helping us learn which approaches better motivate healthy behaviors."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You will have the option to enroll in a 2-week physical activity coaching trial. If you choose to join, you’ll experience both personalised and standard coaching messages for 7 days each, helping us learn which approaches better motivate healthy behaviors."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiene la opción de inscribirse en una prueba de entrenamiento físico de 2 semanas. Si decide unirse, experimentará tanto mensajes de entrenamiento personalizados como estándar durante 7 días cada uno, ayudándonos a aprender qué enfoques motivan mejor los comportamientos saludables."
+          }
         }
       }
     },
@@ -650,6 +1395,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trial Component"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Componente del Ensayo"
           }
         }
       }
@@ -669,7 +1420,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We'll collect data from the Health app which will be protected through encryption. Your personal information is stored separately from health data, and you control what sensors and data you share with the study."
+            "value" : "We will collect data from the Health app on your iPhone which will be protected through encryption. Your personal information is stored separately from health data, and you control what sensor and health data you share with us.\n\nBy agreeing to this consent, your data will be will be combined with data from other participants for analysis by Stanford researchers and its research partners."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We will collect data from the Health app on your iPhone which will be protected through encryption. Your personal information is stored separately from health data, and you control what sensor and health data you share with us. \n\nBy agreeing to this consent, your data will be will be combined with data from other participants for analysis by Imperial researchers and its research partners."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recopilaremos datos de la aplicación Salud en su iPhone, los cuales estarán protegidos mediante cifrado. Su información personal se almacena separadamente de los datos de salud, y usted controla qué datos de sensores y salud comparte con nosotros.\n\nAl aceptar este consentimiento, sus datos se combinarán con datos de otros participantes para ser analizados por los investigadores de Stanford y sus socios de investigación."
           }
         }
       }
@@ -680,6 +1443,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Data Collection & Privacy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recolección de Datos y Privacidad"
           }
         }
       }
@@ -699,7 +1468,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Participation is completely voluntary with minimal risks. Benefits include gaining insights about your heart health and contributing to cardiovascular research. You can withdraw anytime."
+            "value" : "Participation is completely voluntary with minimal risks. Benefits include gaining insights about your heart health and contributing to cardiovascular research. You can withdraw from the study at anytime."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La participación es completamente voluntaria y con riesgos mínimos. Los beneficios incluyen obtener información sobre la salud de su corazón y contribuir a la investigación cardiovascular. Puede retirarse del estudio en cualquier momento."
           }
         }
       }
@@ -711,8 +1486,20 @@
             "state" : "translated",
             "value" : "Risks, Benefits & Your Rights"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riesgos, Beneficios y Sus Derechos"
+          }
         }
       }
+    },
+    "onWrist" : {
+
+    },
+    "onWristDate" : {
+
     },
     "Open In Browser" : {
 
@@ -720,19 +1507,270 @@
     "Open Settings" : {
 
     },
+    "Oregon" : {
+
+    },
+    "Other Territories" : {
+
+    },
+    "Our Study Consent document has been updated since you last signed it%@.\n\nPlease review the new Consent document and sign it again." : {
+
+    },
+    "Override Region" : {
+
+    },
     "Participation Criteria" : {
+
+    },
+    "Past Data" : {
+
+    },
+    "PAST_TIMED_WALKING_RUNNING_TEST_RESULTS_BUTTON_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Past Timed Walk/Run Test Results"
+          }
+        }
+      }
+    },
+    "Pennsylvania" : {
 
     },
     "Percentage in Phase" : {
 
     },
+    "Permissions" : {
+
+    },
     "Physical Activity" : {
+
+    },
+    "placement" : {
+
+    },
+    "Processing Health Data…" : {
 
     },
     "Processing Sleep Data…" : {
 
     },
+    "Puerto Rico" : {
+
+    },
+    "Race / Ethnicity" : {
+
+    },
+    "RACE_AFRICAN_AMERICAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "African American"
+          }
+        }
+      }
+    },
+    "RACE_ALASKA_NATIVE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alaska Native"
+          }
+        }
+      }
+    },
+    "RACE_AMERICAN_INDIAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "American Indian"
+          }
+        }
+      }
+    },
+    "RACE_ASIAN" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asian"
+          }
+        }
+      }
+    },
+    "RACE_ASIAN_INDIAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asian Indian"
+          }
+        }
+      }
+    },
+    "RACE_CAUCASIAN" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caucasian"
+          }
+        }
+      }
+    },
+    "RACE_CHINESE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chinese"
+          }
+        }
+      }
+    },
+    "RACE_FILIPINO" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filipino"
+          }
+        }
+      }
+    },
+    "RACE_HISPANIC_LATINO" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hispanic / Latino"
+          }
+        }
+      }
+    },
+    "RACE_JAPANESE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Japanese"
+          }
+        }
+      }
+    },
+    "RACE_KOREAN" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Korean"
+          }
+        }
+      }
+    },
+    "RACE_MENA" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Middle East and Northern Africa"
+          }
+        }
+      }
+    },
+    "RACE_NATIVE_HAWAIIAN" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Native Hawaiian"
+          }
+        }
+      }
+    },
+    "RACE_NO_SELECTION" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        }
+      }
+    },
+    "RACE_OTHER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        }
+      }
+    },
+    "RACE_PACIFIC_ISLANDER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pacific Islander"
+          }
+        }
+      }
+    },
+    "RACE_PREFER_NOT_TO_ANSWER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer not to Answer"
+          }
+        }
+      }
+    },
+    "RACE_SELECTOR_LIST_FOOTER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can select multiple options."
+          }
+        }
+      }
+    },
+    "RACE_VIETNAMESE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vietnamese"
+          }
+        }
+      }
+    },
+    "RACE_WHITE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "White"
+          }
+        }
+      }
+    },
     "Read Article" : {
+
+    },
+    "Read from Health App" : {
 
     },
     "Recent Sleep Data" : {
@@ -747,6 +1785,12 @@
     "Replace Root View Controller" : {
 
     },
+    "reportApplicationIdentifier" : {
+
+    },
+    "Request Permissions" : {
+
+    },
     "Results" : {
 
     },
@@ -756,16 +1800,29 @@
     "Review Consent Forms" : {
 
     },
+    "Rhode Island" : {
+
+    },
+    "Sample" : {
+
+    },
     "Sample Type" : {
 
     },
+    "sampleType" : {
+
+    },
     "Save" : {
+
+    },
+    "Scheduled Local Notifications" : {
 
     },
     "Score Result" : {
 
     },
     "SCREENING_STEP_SUBTITLE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -776,6 +1833,7 @@
       }
     },
     "SCREENING_STEP_TITLE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -788,6 +1846,12 @@
     "Select a Region" : {
 
     },
+    "Select County" : {
+
+    },
+    "Select your State or Territory" : {
+
+    },
     "Selected" : {
 
     },
@@ -797,10 +1861,65 @@
     "Selection Checkmark" : {
 
     },
+    "Send" : {
+
+    },
+    "Send Feedback" : {
+
+    },
+    "Sensors" : {
+
+    },
     "Series" : {
 
     },
+    "SEX_FEMALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Female"
+          }
+        }
+      }
+    },
+    "SEX_INTERSEX" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intersex"
+          }
+        }
+      }
+    },
+    "SEX_MALE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Male"
+          }
+        }
+      }
+    },
+    "SEX_PREFER_NOT_TO_STATE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer not to state"
+          }
+        }
+      }
+    },
     "Sleep Phase" : {
+
+    },
+    "South Carolina" : {
+
+    },
+    "South Dakota" : {
 
     },
     "Spezi Modules" : {
@@ -825,10 +1944,16 @@
         }
       }
     },
+    "Start All" : {
+
+    },
     "Start Test" : {
 
     },
     "State" : {
+
+    },
+    "Stop All" : {
 
     },
     "Study Information" : {
@@ -837,10 +1962,13 @@
     "Study not available" : {
 
     },
-    "Study Participations" : {
+    "Study Participation" : {
 
     },
-    "Subject?" : {
+    "Summarized" : {
+
+    },
+    "Supplemental Categories" : {
 
     },
     "Swift Package Manager" : {
@@ -853,6 +1981,21 @@
           }
         }
       }
+    },
+    "Take Test" : {
+
+    },
+    "Tennessee" : {
+
+    },
+    "Test" : {
+
+    },
+    "Testing Support" : {
+
+    },
+    "Texas" : {
+
     },
     "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
 
@@ -883,6 +2026,9 @@
     "Time Elapsed" : {
 
     },
+    "Time Info" : {
+
+    },
     "Time Remaining" : {
 
     },
@@ -892,7 +2038,7 @@
     "Timed Walking Test" : {
 
     },
-    "Today's Tasks" : {
+    "Timed Walking/Running Tests" : {
 
     },
     "TODO: make this look pretty!" : {
@@ -901,7 +2047,41 @@
     "TODO: rough information about (at least some) key study components here?" : {
 
     },
+    "Total Household Income" : {
+
+    },
     "True" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verdadero"
+          }
+        }
+      }
+    },
+    "Trust Territories" : {
+
+    },
+    "UK Country" : {
+
+    },
+    "UK County" : {
+
+    },
+    "UK_REGION_ENGLAND" : {
+
+    },
+    "UK_REGION_NORTHERN_IRELAND" : {
+
+    },
+    "UK_REGION_NOT_SET" : {
+
+    },
+    "UK_REGION_SCOTLAND" : {
+
+    },
+    "UK_REGION_WALES" : {
 
     },
     "Unable to find Questionnaire" : {
@@ -911,6 +2091,9 @@
 
     },
     "Unenroll" : {
+
+    },
+    "unit" : {
 
     },
     "Upcoming Tasks" : {
@@ -923,14 +2106,51 @@
         }
       }
     },
-    "Uploading Collected Health Data" : {
+    "Uploading Health Data" : {
+
+    },
+    "US State / Region" : {
+
+    },
+    "US State / Territory" : {
+
+    },
+    "Use this option to auto-fill Blood Type, Height, Weight, Date of Birth, and Biological Sex, by reading each from the Health app, if available.\nAlternatively, you can also tap the respective fields below to manually enter a value, or to override the value read from the Health app." : {
+
+    },
+    "Utah" : {
+
+    },
+    "Vermont" : {
+
+    },
+    "version" : {
+
+    },
+    "Virgin Islands" : {
+
+    },
+    "Virginia" : {
 
     },
     "Warning Sign" : {
 
     },
-    "Welcome to My Heart Counts" : {
+    "Washington" : {
 
+    },
+    "Weight" : {
+
+    },
+    "Welcome to My Heart Counts" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenido a My Heart Counts"
+          }
+        }
+      }
     },
     "WELCOME_AREA1_DESCRIPTION" : {
       "localizations" : {
@@ -938,6 +2158,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your involvement helps Stanford researchers understand how personalized digital coaching can improve physical activity and your overall health today and in the future."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your involvement will help researchers from Imperial understand how your previous, current and future levels of physical activity influence your your overall health today. You will also help us test whether personalised digital coaching can support improving your physical activity and health in the future."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su participación ayuda a los investigadores de Stanford a comprender cómo el entrenamiento digital personalizado puede mejorar la actividad física y su salud general hoy y en el futuro."
           }
         }
       }
@@ -949,6 +2181,12 @@
             "state" : "translated",
             "value" : "Contribute to Heart Health Research"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contribuya a la Investigación de la Salud del Corazón"
+          }
         }
       }
     },
@@ -959,18 +2197,55 @@
             "state" : "translated",
             "value" : "Experience the re-designed version of one of the largest research study applications ever."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We have significantly re-designed one of the first research study smartphone applications."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimente la versión rediseñada de una de las aplicaciones de estudios de investigación más grandes jamás realizadas."
+          }
         }
       }
     },
     "WELCOME_AREA2_TITLE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Redesigned App to Support You"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una Aplicación Rediseñada para Apoyarlo"
+          }
+        }
+      }
     },
     "WELCOME_AREA3_DESCRIPTION" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Participate entirely online, securely sharing your activity data directly from your iPhone and Apple Watch"
+            "value" : "Participate entirely online, securely sharing your activity data directly from your iPhone and Apple Watch."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participate entirely online and control  which data you are sharing securely directly from your iPhone."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participe completamente en línea, compartiendo de manera segura sus datos de actividad directamente desde su iPhone y Apple Watch."
           }
         }
       }
@@ -982,6 +2257,12 @@
             "state" : "translated",
             "value" : "Easy and Secure Participation"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participación Fácil y Segura"
+          }
         }
       }
     },
@@ -990,24 +2271,31 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Welcome to the My Heart Counts Cardiovascular Health Study"
+            "value" : "Welcome to the My Heart Counts\nCardiovascular Health Study"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "¡Bienvenido al Estudio My Heart Counts!"
+            "state" : "translated",
+            "value" : "Bienvenido al Estudio de Salud Cardiovascular My Heart Counts"
           }
         }
       }
     },
+    "West Virginia" : {
+
+    },
     "What country do you currently live in?" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿En qué país vive actualmente?"
+          }
+        }
+      }
     },
-    "What's your level of nicotine exposure? How often do you smoke?" : {
-
-    },
-    "When were you born?" : {
+    "Wisconsin" : {
 
     },
     "Within last year, or am using NDS" : {
@@ -1016,7 +2304,41 @@
     "World" : {
 
     },
+    "wristLocation" : {
+
+    },
+    "Wyoming" : {
+
+    },
     "Yes" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sí"
+          }
+        }
+      }
+    },
+    "Yes, Caribbean Hispanic, including Cuban and Puerto Rican" : {
+
+    },
+    "Yes, European Hispanic, including Spanish and Portuguese, Hispanic, Latina" : {
+
+    },
+    "Yes, Mexican, Mexican American, or Chicano" : {
+
+    },
+    "Yes, other Hispanic, Latino" : {
+
+    },
+    "Yes, South American Hispanic" : {
+
+    },
+    "You can select multiple options" : {
+
+    },
+    "You're All Set" : {
 
     },
     "Your Account" : {

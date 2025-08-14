@@ -50,7 +50,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store."
+            "value" : "My Heart Counts uses Health data to understand all aspects of health."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts utiliza datos de HealthKit para comprender todos los aspectos de la salud."
           }
         }
       }
@@ -62,7 +68,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "My Heart Counts uses Healthkit data to understand all aspects of health."
+            "value" : "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts puede guardar opcionalmente alguna información de Salud recolectada a través de encuestas y otros mecanismos de la aplicación en el Almacén de Datos de Salud."
           }
         }
       }
@@ -111,6 +123,30 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "My Heart Counts uses motion data to conduct a timed walking test"
+          }
+        }
+      }
+    },
+    "NSSensorKitPrivacyPolicyURL" : {
+      "comment" : "Privacy - SensorKit Privacy Policy URL",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "https://myheartcounts.su.domains/privacy-policy/"
+          }
+        }
+      }
+    },
+    "NSSensorKitUsageDescription" : {
+      "comment" : "Privacy - SensorKit Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "My Heart Counts uses SensorKit to better TODO TODO TODO TODO"
           }
         }
       }

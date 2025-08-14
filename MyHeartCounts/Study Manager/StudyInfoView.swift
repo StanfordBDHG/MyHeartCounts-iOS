@@ -13,9 +13,9 @@ import SpeziViews
 import SwiftUI
 
 
-public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
+struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     @Environment(StudyManager.self)
-    private var mhc
+    private var studyManager
     @Environment(\.dismiss)
     private var _dismiss
     
@@ -30,11 +30,11 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
         injectedDismiss ?? _dismiss
     }
     
-    public var body: some View {
+    var body: some View {
         let study = studyBundle.studyDefinition
         Form {
             Section {
-                VStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text(study.metadata.title)
                         .font(.title.bold())
                     Text(study.metadata.shortExplanationText)
@@ -101,7 +101,8 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
                 .tint(.red)
                 .confirmationDialog(
                     "Are you sure you want to leave the '\(studyBundle.studyDefinition.metadata.title)' study?",
-                    isPresented: $isPresentingUnenrollConfirmationDialog
+                    isPresented: $isPresentingUnenrollConfirmationDialog,
+                    titleVisibility: .visible
                 ) {
                     Button("Cancel", role: .cancel) {
                         isPresentingUnenrollConfirmationDialog = false
@@ -115,10 +116,10 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
                         _Concurrency.Task {
                             viewState = .processing
                             do {
-                                try mhc.unenroll(from: enrollment)
+                                try studyManager.unenroll(from: enrollment)
                                 dismiss()
                             } catch {
-                                viewState = .error(AnyLocalizedError(error: error))
+                                viewState = .error(error)
                             }
                         }
                     }
@@ -126,7 +127,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
             } else {
                 // not yet enrolled
                 AsyncButton(state: $viewState) {
-                    try await mhc.enroll(in: studyBundle)
+                    try await studyManager.enroll(in: studyBundle)
                     dismiss()
                 } label: {
                     HStack {
@@ -145,7 +146,7 @@ public struct StudyInfoView: View { // swiftlint:disable:this file_types_order
     }
     
     
-    public init(studyBundle: StudyBundle, dismiss: DismissAction? = nil) {
+    init(studyBundle: StudyBundle, dismiss: DismissAction? = nil) {
         self.studyBundle = studyBundle
         self.injectedDismiss = dismiss
     }

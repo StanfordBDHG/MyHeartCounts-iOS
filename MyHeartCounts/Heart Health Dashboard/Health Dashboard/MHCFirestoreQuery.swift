@@ -6,9 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable file_types_order
 
 import FirebaseFirestore
+import Foundation
 import HealthKitOnFHIR
 import struct ModelsR4.DateTime
 import struct ModelsR4.FHIRPrimitive
@@ -18,7 +19,6 @@ import enum ModelsR4.ResourceProxy
 import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit
-import Foundation
 import SwiftUI
 
 
@@ -43,7 +43,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     }
     
     init(
-        _: Element.Type = Element.self,
+        _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
         collection: String,
         filter: Filter,
         sortBy sortDescriptors: [SortDescriptor] = [],
@@ -84,6 +84,8 @@ extension MHCFirestoreQuery {
         var sortDescriptors: [SortDescriptor]
         var limit: Int?
         var decode: DecodeFn
+        var postDecodeSort: [any SortComparator<Element>] = []
+        var postDecodeLimit: Int?
     }
 }
 
@@ -135,6 +137,10 @@ private final class Impl<Element: Sendable>: Sendable {
                 elements.append(element)
             }
         }
+        elements.sort(using: input.postDecodeSort)
+        if let limit = input.postDecodeLimit, limit > elements.count {
+            elements.removeFirst(elements.count - limit)
+        }
         await MainActor.run {
             self.elements = elements
         }
@@ -144,39 +150,22 @@ private final class Impl<Element: Sendable>: Sendable {
 
 // MARK: Extensions
 
-extension MHCFirestoreQuery where Element == QuantitySample {
-    init(sampleType: CustomQuantitySampleType, timeRange: HealthKitQueryTimeRange, limit: Int? = nil) {
+extension MHCFirestoreQuery {
+    init(
+        sampleTypeIdentifier: String,
+        timeRange: HealthKitQueryTimeRange,
+        sorted sortDescriptors: [any SortComparator<Element>] = [],
+        limit: Int? = nil,
+        transform: @escaping @Sendable (ResourceProxy) -> Element?
+    ) {
         input = .init(
-            collection: "HealthObservations_\(sampleType.id)",
+            collection: "HealthObservations_\(sampleTypeIdentifier)",
             filter: nil,
             sortDescriptors: [],
-            limit: nil
-        ) { document -> QuantitySample? in
-            if timeRange != .ever {
-                let data = document.data()
-                if false {
-                    return nil
-//                    guard let extensions = data["extension"] as? [[String: Any]] else {
-//                        return nil
-//                    }
-//                    let getDate = { (url: FHIRPrimitive<FHIRURI>) -> Date? in
-//                        extensions.firstNonNil { extensionDict -> Date? in
-//                            guard extensionDict["url"] as? String == url.value?.url.absoluteString,
-//                                  let value = extensionDict["valueDecimal"] as? Double else {
-//                                return nil
-//                            }
-//                            return Date(timeIntervalSince1970: value)
-//                        }
-//                    }
-//                    guard let startDate = getDate(FHIRExtensionUrls.absoluteTimeRangeStart),
-//                          let endDate = getDate(FHIRExtensionUrls.absoluteTimeRangeEnd) else {
-//                        // we want to filter based on time range, but we can't extract a time range to filter against from the document
-//                        return nil
-//                    }
-//                    guard (startDate..<endDate).overlaps(timeRange.range) else {
-//                        return nil
-//                    }
-                } else {
+            limit: nil,
+            decode: { document -> Element? in
+                if timeRange != .ever {
+                    let data = document.data()
                     if let dateString = data["effectiveDateTime"] as? String {
                         guard let date = try? DateTime(dateString).asNSDate() else {
                             return nil
@@ -197,11 +186,32 @@ extension MHCFirestoreQuery where Element == QuantitySample {
                         return nil
                     }
                 }
-            }
-            guard let proxy = try? document.data(as: ResourceProxy.self) else {
-                return nil
-            }
-            return QuantitySample(proxy, sampleTypeHint: .custom(sampleType))
+                guard let proxy = try? document.data(as: ResourceProxy.self) else {
+                    return nil
+                }
+                return transform(proxy)
+            },
+            postDecodeSort: sortDescriptors,
+            postDecodeLimit: limit
+        )
+    }
+}
+
+
+extension MHCFirestoreQuery where Element == QuantitySample {
+    init(
+        sampleType: CustomQuantitySampleType,
+        timeRange: HealthKitQueryTimeRange,
+        sorted sortDescriptor: some SortComparator<QuantitySample> = KeyPathComparator(\.startDate, order: .reverse),
+        limit: Int? = nil
+    ) {
+        self.init(
+            sampleTypeIdentifier: sampleType.id,
+            timeRange: timeRange,
+            sorted: [sortDescriptor],
+            limit: limit
+        ) { resourceProxy in
+            QuantitySample(resourceProxy, sampleTypeHint: .custom(sampleType))
         }
     }
 }

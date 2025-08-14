@@ -21,13 +21,13 @@ struct CVHScore: DynamicProperty {
         var timeRange: Range<Date> { get }
     }
     
-    @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2), limit: 1)
+    @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2))
     private var dietScores
     
-    @MHCFirestoreQuery(sampleType: .bloodLipids, timeRange: .last(months: 2), limit: 1)
+    @MHCFirestoreQuery(sampleType: .bloodLipids, timeRange: .last(months: 2))
     private var bloodLipids
     
-    @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2), limit: 1)
+    @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2))
     private var nicotineExposure
     
     @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 14))
@@ -51,8 +51,15 @@ struct CVHScore: DynamicProperty {
     @HealthKitQuery(.bloodPressure, timeRange: .last(months: 3))
     private var bloodPressure
     
+    @State private var lastSeenSleepSamples: [HKCategorySample] = []
+    @State private(set) var sleepHealthScore = ScoreResult(sampleType: .healthKit(.category(.sleepAnalysis)), definition: .cvhSleep)
+    
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
     var wrappedValue: Double? {
+        _ = sleepSamples
+        Task {
+            await updateSleepScore()
+        }
         let scores: [Double] = [
             dietScore.score,
             physicalExerciseScore.score,
@@ -68,6 +75,39 @@ struct CVHScore: DynamicProperty {
     
     var projectedValue: Self {
         self
+    }
+    
+    nonisolated func update() {
+        Task {
+            await updateSleepScore()
+        }
+    }
+    
+    nonisolated private func updateSleepScore() async {
+        let sleepSamples = await MainActor.run { () -> [HKCategorySample] in
+            guard !lastSeenSleepSamples.elementsEqual(self.sleepSamples) else {
+                // if we don't need an update, we return an empty array here, which will cause the code below to return early.
+                return []
+            }
+            // this ensures that any subsequent calls (including while the computation below is running) will return early, unless data actually changed.
+            let sleepSamples = Array(self.sleepSamples)
+            self.lastSeenSleepSamples = sleepSamples
+            return sleepSamples
+        }
+        guard !sleepSamples.isEmpty else {
+            return
+        }
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        let sleepSessions = (try? sleepSamples.splitIntoSleepSessions()) ?? []
+        let score = ScoreResult(
+            sampleType: .healthKit(.category(.sleepAnalysis)),
+            sample: sleepSessions.last,
+            value: { $0.totalTimeSpentAsleep / 60 / 60 },
+            definition: .cvhSleep
+        )
+        await MainActor.run {
+            self.sleepHealthScore = score
+        }
     }
 }
 
@@ -97,15 +137,6 @@ extension CVHScore {
             sample: nicotineExposure.first,
             value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
             definition: .cvhNicotine
-        )
-    }
-    
-    var sleepHealthScore: ScoreResult {
-        ScoreResult(
-            sampleType: .healthKit(.category(.sleepAnalysis)),
-            sample: ((try? sleepSamples.splitIntoSleepSessions()) ?? []).last,
-            value: { $0.totalTimeSpentAsleep / 60 / 60 },
-            definition: .cvhSleep
         )
     }
     

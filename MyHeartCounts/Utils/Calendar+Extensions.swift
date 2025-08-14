@@ -10,13 +10,6 @@ import Foundation
 import SpeziFoundation
 
 
-extension Date {
-    var withoutNanoseconds: Date {
-        Date(timeIntervalSinceReferenceDate: self.timeIntervalSinceReferenceDate.rounded())
-    }
-}
-
-
 extension Calendar {
     func makeNoon(_ date: Date) -> Date {
         if let result = self.date(bySettingHour: 12, minute: 0, second: 0, of: date, direction: .forward), isDate(result, inSameDayAs: date) {
@@ -46,9 +39,24 @@ extension Date.FormatStyle {
     }
     
     func omittingTime() -> Self {
-        self.hour(.omitted).minute(.omitted).second(.omitted).secondFraction(.omitted)
+        self.hour(.omitted)
+            .minute(.omitted)
+            .second(.omitted)
+            .secondFraction(.omitted)
+    }
+    
+    func omittingDate() -> Self {
+        self.era(.omitted)
+            .year(.omitted)
+            .quarter(.omitted)
+            .month(.omitted)
+            .week(.omitted)
+            .day(.omitted)
+            .dayOfYear(.omitted)
+            .weekday(.omitted)
     }
 }
+
 
 extension Date.ISO8601FormatStyle {
     func timeZone(_ timeZone: TimeZone) -> Self {

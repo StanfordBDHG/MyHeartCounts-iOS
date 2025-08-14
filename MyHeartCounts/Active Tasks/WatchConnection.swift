@@ -19,7 +19,6 @@ import WatchConnectivity
 @MainActor
 final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
-    @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     // swiftlint:enable attributes
     

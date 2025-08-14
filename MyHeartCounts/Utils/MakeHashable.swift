@@ -10,6 +10,8 @@ import Foundation
 
 
 /// A property wrapper that makes an `any Hashable` value hashable.
+///
+/// Intended to be used on a property within a struct, so that the compiler can auto-synthesize a `Hashable` conformance for the struct as a whole.
 @propertyWrapper
 struct MakeHashable: Hashable, Sendable {
     let wrappedValue: (any Hashable & Sendable)?

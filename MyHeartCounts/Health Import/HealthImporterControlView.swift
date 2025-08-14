@@ -22,8 +22,8 @@ struct HealthImporterControlView: View {
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var exportManager
     
+    private let fileManager = FileManager.default
     @State private var viewState: ViewState = .idle
-    
     
     var body: some View {
         Form {
@@ -42,10 +42,13 @@ struct HealthImporterControlView: View {
     
     @ViewBuilder private var actionsSection: some View {
         Section {
-            AsyncButton("Delete ~/HealthKitUploads/*", state: $viewState) {
-                let fileManager = FileManager.default
-                for url in (try? fileManager.contentsOfDirectory(at: .scheduledHealthKitUploads, includingPropertiesForKeys: nil)) ?? [] {
-                    try fileManager.removeItem(at: url)
+            ForEach([URL.scheduledLiveHealthKitUploads, .scheduledHistoricalHealthKitUploads], id: \.self) { url in
+                let documentsPath = URL.documentsDirectory.resolvingSymlinksInPath().absoluteURL.path
+                let relativePath = String(url.resolvingSymlinksInPath().absoluteURL.path.dropFirst(documentsPath.count))
+                AsyncButton("Delete ~/\(relativePath)/*", state: $viewState) {
+                    for url in (try? fileManager.contents(of: url)) ?? [] {
+                        try fileManager.removeItem(at: url)
+                    }
                 }
             }
         }
@@ -66,16 +69,6 @@ struct HealthImporterControlView: View {
     }
 }
 
-
-extension Sequence {
-    func compactMapIntoSet<Result: Hashable>(_ transform: (Element) -> Result?) -> Set<Result> {
-        reduce(into: Set<Result>()) { set, element in
-            if let element = transform(element) {
-                set.insert(element)
-            }
-        }
-    }
-}
 
 extension BulkExportSessionState {
     var displayTitle: String {

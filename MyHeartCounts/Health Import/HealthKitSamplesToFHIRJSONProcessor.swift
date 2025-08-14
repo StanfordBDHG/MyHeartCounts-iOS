@@ -8,11 +8,12 @@
 
 import Foundation
 import HealthKitOnFHIR
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 
 
-struct HistoricalSamplesToFHIRJSONProcessor: BatchProcessor {
+struct HealthKitSamplesToFHIRJSONProcessor: BatchProcessor {
     typealias Output = URL?
     
     func process<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) async throws -> URL? {
@@ -24,29 +25,16 @@ struct HistoricalSamplesToFHIRJSONProcessor: BatchProcessor {
     
     private func storeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
         let fileManager = FileManager.default
-        let resources = try samples.mapIntoResourceProxies(extensions: [.includeAbsoluteTimeRange])
+        let resources = try samples.mapIntoResourceProxies()
         _ = consume samples
         let encoded = try JSONEncoder().encode(resources)
         _ = consume resources
         
         let compressed = try encoded.compressed(using: Zlib.self)
-        let decompressed = try compressed.decompressed(using: Zlib.self)
-        precondition(decompressed == encoded)
         _ = consume encoded
         let compressedUrl = fileManager.temporaryDirectory.appendingPathComponent("\(sampleType.id)_\(UUID().uuidString).json.zlib")
         try compressed.write(to: compressedUrl)
         _ = consume compressed
-        
-        let dstUrl = URL.scheduledHealthKitUploads.appending(path: compressedUrl.lastPathComponent)
-        try fileManager.createDirectory(at: URL.scheduledHealthKitUploads, withIntermediateDirectories: true)
-        try fileManager.moveItem(at: compressedUrl, to: dstUrl)
-        return dstUrl
-    }
-}
-
-
-extension URL {
-    static var scheduledHealthKitUploads: URL {
-        URL.documentsDirectory.appending(component: "HealthKitUpload", directoryHint: .isDirectory)
+        return compressedUrl
     }
 }
