@@ -10,6 +10,7 @@
 import Foundation
 import Spezi
 import SpeziAccount
+import SpeziFoundation
 
 
 @Observable

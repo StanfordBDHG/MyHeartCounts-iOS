@@ -1810,8 +1810,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				branch = "lukas/iOS26-SwiftData-fix";
-				kind = branch;
+				kind = revision;
+				revision = 5a6d946907e08e5e765953712fdbab57dd53ee49;
 			};
 		};
 		808A927B2E47900B007046E0 /* XCRemoteSwiftPackageReference "SpeziSensorKit" */ = {
@@ -1851,7 +1851,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFoundation.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.0;
+				minimumVersion = 2.2.1;
 			};
 		};
 		80D0E7042E3A3728000227E9 /* XCRemoteSwiftPackageReference "SpeziStudy" */ = {

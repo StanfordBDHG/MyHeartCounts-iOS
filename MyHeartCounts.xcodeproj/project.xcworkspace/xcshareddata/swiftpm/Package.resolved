@@ -321,8 +321,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "branch" : "lukas/iOS26-SwiftData-fix",
-        "revision" : "115b152f73a472fc625535f03f8cff3f6b6866c7"
+        "revision" : "5a6d946907e08e5e765953712fdbab57dd53ee49"
       }
     },
     {
