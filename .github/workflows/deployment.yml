@@ -89,7 +89,7 @@ jobs:
         id: get-latest-tag
         with:
           semver_only: true
-          initial_version: "3.0.0"
+          initial_version: "4.0.0"
       - id: script
         run: |
           echo "Injecting Environment Variables In Deployment Workflow ..."
