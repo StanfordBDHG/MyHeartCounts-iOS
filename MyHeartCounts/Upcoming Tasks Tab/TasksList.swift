@@ -429,7 +429,7 @@ extension TasksList {
                 let eventsByDay = eventsByDay
                 ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
                     Section {
-                        ForEach(sectionedEvents.events) { (event: Event) in
+                        ForEach(data: sectionedEvents.events) { (event: Event) in
                             tile(for: event)
                         }
                     } header: {
@@ -632,5 +632,17 @@ extension TasksList {
             self.actionLabel = actionLabel
             self.action = action
         }
+    }
+}
+
+
+extension SwiftUI.ForEach {
+    // we need this, for some unknown reason, to explicitly select the correct overload in one place above,
+    // where, for also unknown reasons, the compiler would otherwise select the @ChartContentBuilder init.
+    fileprivate init(
+        data: Data,
+        @ViewBuilder content: @escaping (Data.Element) -> Content
+    ) where Data: RandomAccessCollection, ID == Data.Element.ID, Data.Element: Identifiable, Content: View {
+        self.init(data) { content($0) }
     }
 }
