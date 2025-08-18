@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1640"
+   LastUpgradeVersion = "2600"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -90,7 +90,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideStudyBundleLocation /Users/lukas/Desktop/mhcStudyBundle.spezistudybundle.aar"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--showOnboarding"
@@ -110,7 +110,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--useFirebaseEmulator"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=/Users/lukas/Desktop/MHC.plist"
@@ -134,7 +134,7 @@
          <EnvironmentVariable
             key = "IDELogRedirectionPolicy"
             value = "oslogToStdio"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "TZ"

@@ -1226,9 +1226,6 @@
         }
       }
     },
-    "No data" : {
-
-    },
     "No Data" : {
 
     },
@@ -1983,6 +1980,9 @@
       }
     },
     "Take Test" : {
+
+    },
+    "Tap to enter data…" : {
 
     },
     "Tennessee" : {

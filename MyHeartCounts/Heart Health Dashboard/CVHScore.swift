@@ -21,6 +21,13 @@ struct CVHScore: DynamicProperty {
         var timeRange: Range<Date> { get }
     }
     
+    enum PreferredExerciseMetric {
+        case exerciseMinutes
+        case stepCount
+    }
+    
+    @State private(set) var preferredExerciseMetric: PreferredExerciseMetric = .exerciseMinutes
+    
     @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2))
     private var dietScores
     
@@ -32,6 +39,9 @@ struct CVHScore: DynamicProperty {
     
     @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 14))
     private var dailyExerciseTime
+    
+    @HealthKitStatisticsQuery(.stepCount, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 14))
+    private var dailyStepCount
     
     @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 14), source: .appleHealthSystem)
     private var sleepSamples
@@ -60,17 +70,23 @@ struct CVHScore: DynamicProperty {
         Task {
             await updateSleepScore()
         }
-        let scores: [Double] = [
-            dietScore.score,
-            physicalExerciseScore.score,
-            nicotineExposureScore.score,
-            sleepHealthScore.score,
-            bodyMassIndexScore.score,
-            bloodLipidsScore.score,
-            bloodGlucoseScore.score,
-            bloodPressureScore.score
-        ].compactMap { $0.map { max(0, min(1, $0)) } }
-        return scores.count < 5 ? nil : scores.reduce(0, +) / Double(scores.count)
+        let scores: [ScoreResult] = Array {
+            dietScore
+            switch preferredExerciseMetric {
+            case .exerciseMinutes:
+                physicalExerciseScore
+            case .stepCount:
+                stepCountScore
+            }
+            nicotineExposureScore
+            sleepHealthScore
+            bodyMassIndexScore
+            bloodLipidsScore
+            bloodGlucoseScore
+            bloodPressureScore
+        }
+        let scoreResults = scores.compactMap { $0.score.map { $0.clamped(to: 0...1) } }
+        return scoreResults.count < 5 ? nil : scoreResults.reduce(0, +) / Double(scoreResults.count)
     }
     
     var projectedValue: Self {
@@ -126,6 +142,15 @@ extension CVHScore {
         ScoreResult(
             sampleType: .healthKit(.quantity(.appleExerciseTime)),
             sample: dailyExerciseTime.last,
+            value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
+            definition: .cvhPhysicalExercise
+        )
+    }
+    
+    var stepCountScore: ScoreResult {
+        ScoreResult(
+            sampleType: .healthKit(.quantity(.appleExerciseTime)),
+            sample: dailyStepCount.last,
             value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
             definition: .cvhPhysicalExercise
         )
@@ -247,6 +272,15 @@ extension ScoreDefinition {
         .inRange(60..<90, score: 0.6),
         .inRange(30..<60, score: 0.4),
         .inRange(1..<30, score: 0.2)
+    ])
+    
+    static let cvhStepCount = ScoreDefinition(default: 0, mapping: [
+        .inRange(10_000..., score: 1),
+        .inRange(120..<150, score: 0.9),
+        .inRange(90..<120, score: 0.8),
+        .inRange(60..<90, score: 0.6),
+        .inRange(30..<60, score: 0.4),
+        .inRange(1..<2000, score: 0.2)
     ])
     
     static let cvhNicotine: ScoreDefinition = {
