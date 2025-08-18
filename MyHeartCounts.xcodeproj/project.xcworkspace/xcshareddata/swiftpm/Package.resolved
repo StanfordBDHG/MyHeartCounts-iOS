@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziAccount.git",
       "state" : {
-        "revision" : "b85bd877f7fedc9866981590e4ac715adb0ff81f",
-        "version" : "2.3.1"
+        "branch" : "feature/swift62",
+        "revision" : "b755edfca0095154e00e5b3bd7534bcf0e8e14b4"
       }
     },
     {
@@ -267,8 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "759e28cd36338d83900eef3a0839fd9edecf616d",
-        "version" : "2.2.0"
+        "revision" : "89f3334e685ddad1bbf2e8b33fa0820620aec6c1",
+        "version" : "2.2.1"
       }
     },
     {
@@ -321,8 +321,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "af631078adbb0b18925256af406ccba4fe7f6745",
-        "version" : "1.2.13"
+        "branch" : "lukas/iOS26-SwiftData-fix",
+        "revision" : "115b152f73a472fc625535f03f8cff3f6b6866c7"
       }
     },
     {
@@ -359,6 +359,15 @@
       "state" : {
         "revision" : "9a7cd323ae6023a57bdf57af644538e723902f67",
         "version" : "1.12.1"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "392dd6058624d9f6c5b4c769d165ddd8c7293394",
+        "version" : "0.15.4"
       }
     },
     {
@@ -449,6 +458,15 @@
       "state" : {
         "revision" : "1103c45ece4f7fe160b8f75b4ea1ee2e5fac1841",
         "version" : "601.0.0"
+      }
+    },
+    {
+      "identity" : "swift-toolchain-sqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-toolchain-sqlite",
+      "state" : {
+        "revision" : "b626d3002773b1a1304166643e7f118f724b2132",
+        "version" : "1.0.4"
       }
     },
     {
