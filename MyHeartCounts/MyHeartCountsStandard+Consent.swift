@@ -8,9 +8,11 @@
 
 @preconcurrency import FirebaseStorage
 import Foundation
+import OSLog
 import PDFKit
 import SpeziAccount
 import SpeziConsent
+import SpeziFoundation
 import SpeziStudyDefinition
 
 

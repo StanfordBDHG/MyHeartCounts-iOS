@@ -9,6 +9,8 @@
 import Foundation
 import ModelsR4
 import SpeziHealthKit
+import SpeziStudyDefinition
+import SpeziViews
 import SwiftUI
 
 

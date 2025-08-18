@@ -25,6 +25,10 @@ protocol HealthObservation {
 
 
 extension HKSample: HealthObservation {
+    var id: UUID {
+        uuid
+    }
+    
     var sampleTypeIdentifier: String {
         sampleType.identifier
     }

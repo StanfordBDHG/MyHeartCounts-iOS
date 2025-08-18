@@ -9,6 +9,7 @@
 // swiftlint:disable file_types_order discouraged_optional_boolean
 
 import Foundation
+import SpeziFoundation
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI

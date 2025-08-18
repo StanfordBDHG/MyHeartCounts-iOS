@@ -13,6 +13,8 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 @preconcurrency import ModelsR4
+import OSLog
+import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit
 import UserNotifications

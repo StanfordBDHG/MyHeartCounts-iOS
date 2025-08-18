@@ -9,6 +9,8 @@
 // swiftlint:disable file_types_order
 
 import Foundation
+import SFSafeSymbols
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziQuestionnaire

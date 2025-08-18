@@ -10,6 +10,8 @@
 
 import Foundation
 import HealthKit
+import OSLog
+import SFSafeSymbols
 import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit

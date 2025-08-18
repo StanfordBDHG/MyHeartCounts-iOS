@@ -6,10 +6,14 @@
 // SPDX-License-Identifier: MIT
 //
 
+import FirebaseCore
 import Foundation
 import OSLog
 import Spezi
+import SpeziFoundation
 import SpeziStudyDefinition
+import UniformTypeIdentifiers
+
 
 @Observable
 final class StudyBundleLoader: Module, Sendable {

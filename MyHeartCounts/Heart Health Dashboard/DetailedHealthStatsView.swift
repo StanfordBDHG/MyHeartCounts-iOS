@@ -10,6 +10,7 @@
 
 import Charts
 import Foundation
+import SFSafeSymbols
 import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit

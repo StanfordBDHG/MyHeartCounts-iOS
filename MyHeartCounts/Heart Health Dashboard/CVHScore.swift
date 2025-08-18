@@ -9,6 +9,7 @@
 import Foundation
 import HealthKit
 import SpeziAccount
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SwiftUI

@@ -6,8 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
+import OSLog
 import SpeziAccount
 import SpeziConsent
+import SpeziFoundation
 import SpeziOnboarding
 import SpeziStudy
 import SpeziViews

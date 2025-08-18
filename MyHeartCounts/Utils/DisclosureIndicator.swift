@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SFSafeSymbols
 import SwiftUI
 import class UIKit.UIColor
 import class UIKit.UIFont

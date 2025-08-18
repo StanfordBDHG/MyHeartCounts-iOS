@@ -12,6 +12,7 @@ import Foundation
 import HealthKit
 import SpeziHealthKit
 import SpeziHealthKitUI
+import SpeziViews
 import struct SwiftUI.Color
 
 

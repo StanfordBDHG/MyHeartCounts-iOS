@@ -33,28 +33,3 @@ struct AccountOnboarding: View {
         }
     }
 }
-
-
-#if DEBUG
-#Preview("Account Onboarding SignIn") {
-    ManagedNavigationStack {
-        AccountOnboarding()
-    }
-        .previewWith {
-            AccountConfiguration(service: InMemoryAccountService())
-        }
-}
-
-#Preview("Account Onboarding") {
-    var details = AccountDetails()
-    details.userId = "lelandstanford@stanford.edu"
-    details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-    
-    return ManagedNavigationStack {
-        AccountOnboarding()
-    }
-        .previewWith {
-            AccountConfiguration(service: InMemoryAccountService(), activeDetails: details)
-        }
-}
-#endif

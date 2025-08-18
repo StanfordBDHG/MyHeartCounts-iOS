@@ -8,6 +8,7 @@
 
 import Foundation
 import HealthKit
+import SFSafeSymbols
 import SpeziHealthKit
 import SpeziViews
 import SwiftUI

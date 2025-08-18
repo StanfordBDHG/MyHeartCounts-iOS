@@ -25,6 +25,7 @@ import SpeziFirestore
 import SpeziFoundation
 import SpeziStudy
 import SwiftUI
+import UniformTypeIdentifiers
 
 
 extension LocalPreferenceKey {

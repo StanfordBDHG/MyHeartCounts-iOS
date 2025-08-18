@@ -7,9 +7,11 @@
 //
 
 import SFSafeSymbols
+import SpeziFoundation
 import SpeziScheduler
 import SpeziSchedulerUI
 import SpeziStudyDefinition
+import SpeziViews
 import SwiftUI
 
 

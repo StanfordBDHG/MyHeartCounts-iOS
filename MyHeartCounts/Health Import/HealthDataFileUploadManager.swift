@@ -8,6 +8,7 @@
 
 @preconcurrency import FirebaseStorage
 import Foundation
+import OSLog
 import Spezi
 import SpeziAccount
 import SpeziFoundation
