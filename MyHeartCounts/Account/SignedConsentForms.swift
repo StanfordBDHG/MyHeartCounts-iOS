@@ -10,7 +10,9 @@
 
 @preconcurrency import FirebaseStorage
 import Foundation
+import OSLog
 import QuickLook
+import SFSafeSymbols
 import SpeziAccount
 import SpeziConsent
 import SpeziFoundation

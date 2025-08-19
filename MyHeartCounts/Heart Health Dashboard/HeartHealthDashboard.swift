@@ -9,6 +9,8 @@
 // swiftlint:disable file_types_order
 
 import Foundation
+import SFSafeSymbols
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziQuestionnaire
@@ -78,16 +80,21 @@ struct HeartHealthDashboard: View {
             .large(sectionTitle: nil, content: {
                 topSection
             }),
-            .grid(sectionTitle: "", components: [
-                makeGridComponent(for: \.dietScore),
-                makeGridComponent(for: \.bodyMassIndexScore),
-                makeGridComponent(for: \.physicalExerciseScore),
-                makeGridComponent(for: \.bloodLipidsScore),
-                makeGridComponent(for: \.nicotineExposureScore),
-                makeGridComponent(for: \.bloodGlucoseScore),
-                makeGridComponent(for: \.sleepHealthScore),
+            .grid(sectionTitle: "") {
+                makeGridComponent(for: \.dietScore)
+                makeGridComponent(for: \.bodyMassIndexScore)
+                switch $cvhScore.preferredExerciseMetric {
+                case .exerciseMinutes:
+                    makeGridComponent(for: \.physicalExerciseScore)
+                case .stepCount:
+                    makeGridComponent(for: \.stepCountScore)
+                }
+                makeGridComponent(for: \.bloodLipidsScore)
+                makeGridComponent(for: \.nicotineExposureScore)
+                makeGridComponent(for: \.bloodGlucoseScore)
+                makeGridComponent(for: \.sleepHealthScore)
                 makeGridComponent(for: \.bloodPressureScore)
-            ])
+            }
         ])
         learnMoreSection
         pastDataSection
@@ -147,6 +154,7 @@ struct HeartHealthDashboard: View {
         for scoreKeyPath: KeyPath<CVHScore, ScoreResult>
     ) -> HealthDashboardLayout.GridComponent {
         let score = $cvhScore[keyPath: scoreKeyPath]
+        let tapShouldEnterData = score.score == nil && HeartHealthDashboard.canAddSample(for: scoreKeyPath)
         return .custom(title: score.sampleType.displayTitle) {
             if let scoreValue = score.score {
                 VStack {
@@ -162,11 +170,15 @@ struct HeartHealthDashboard: View {
                     }
                 }
             } else {
-                Text("No data")
+                Text(tapShouldEnterData ? "Tap to enter data…" : "No Data")
                     .foregroundStyle(.secondary)
             }
         } onTap: {
-            scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
+            if score.score != nil {
+                scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
+            } else if tapShouldEnterData {
+                addNewSample(for: scoreKeyPath)
+            }
         }
     }
     

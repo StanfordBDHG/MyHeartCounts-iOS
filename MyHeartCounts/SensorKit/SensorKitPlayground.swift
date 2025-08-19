@@ -11,6 +11,7 @@
 import CoreMotion
 import Foundation
 @preconcurrency import SensorKit
+import SFSafeSymbols
 import SpeziFoundation
 import SpeziSensorKit
 import SpeziViews

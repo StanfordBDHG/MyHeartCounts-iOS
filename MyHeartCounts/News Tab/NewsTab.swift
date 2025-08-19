@@ -33,7 +33,7 @@ struct NewsTab: RootViewTab {
                         ContentUnavailableView(
                             "No Internet",
                             systemSymbol: .networkSlash,
-                            description: Text("\(error)")
+                            description: Text(String(describing: error))
                         )
                     } else {
                         ContentUnavailableView(

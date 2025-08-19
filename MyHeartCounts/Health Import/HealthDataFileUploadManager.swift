@@ -8,8 +8,10 @@
 
 @preconcurrency import FirebaseStorage
 import Foundation
+import OSLog
 import Spezi
 import SpeziAccount
+import SpeziFoundation
 
 
 @Observable
@@ -90,9 +92,12 @@ extension HealthDataFileUploadManager {
         }
     }
     
-    nonisolated func scheduleForUpload(_ stream: some AsyncSequence<URL, Never> & Sendable, category: Category) {
+    nonisolated func scheduleForUpload<S: AsyncSequence<URL, Never>>(
+        _ sequence: S,
+        category: Category
+    ) where S: Sendable, S.AsyncIterator: SendableMetatype {
         Task {
-            for await url in stream {
+            for await url in sequence {
                 scheduleForUpload(url, category: category)
             }
         }

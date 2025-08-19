@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SFSafeSymbols
 import SpeziViews
 import SwiftUI
 

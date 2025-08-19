@@ -8,9 +8,11 @@
 
 import FirebaseMessaging
 import Foundation
+import OSLog
 import Spezi
 import SpeziAccount
 import SpeziNotifications
+import enum UIKit.UIBackgroundFetchResult
 
 
 @Observable

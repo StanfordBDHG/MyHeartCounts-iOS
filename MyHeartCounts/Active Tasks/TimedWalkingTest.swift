@@ -10,7 +10,9 @@
 
 import CoreMotion
 import Foundation
+import OSLog
 import Spezi
+import SpeziFoundation
 import SpeziStudyDefinition
 
 

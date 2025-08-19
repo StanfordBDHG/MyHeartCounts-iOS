@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziAccount

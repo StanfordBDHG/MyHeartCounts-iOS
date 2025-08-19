@@ -14,7 +14,7 @@ APP_CONFIG = {
   default_secondary_app_identifier: "edu.stanford.MyHeartCounts.watchkitapp",
   default_provisioningProfile: "My Heart Counts - Biodesign Digital Health",
   default_secondary_provisioningProfile: "My Heart Counts - Biodesign Digital Health - Watch",
-  default_version_name: "3.0.0",
+  default_version_name: "4.0.0",
   default_release_notes: "Bug fixes and performance improvements.",
   scheme: "MyHeartCounts",
   plist_path: "MyHeartCounts/Supporting Files/Info.plist"

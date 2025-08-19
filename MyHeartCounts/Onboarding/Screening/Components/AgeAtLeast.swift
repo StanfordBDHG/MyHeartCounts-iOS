@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziFoundation
 import SwiftUI
 
 
@@ -83,7 +84,7 @@ struct AgeAtLeast: ScreeningComponent {
         case nil:
             return false
         case .date(let date):
-            let age = cal.dateComponents([.year], from: date, to: .tomorrow).year ?? 0
+            let age = cal.dateComponents([.year], from: date, to: cal.startOfNextDay(for: .now)).year ?? 0
             return age >= minAge
         case .binaryAtLeast(minAge: _, let response):
             return response

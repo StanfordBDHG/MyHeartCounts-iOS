@@ -8,6 +8,7 @@
 
 import HealthKit
 import Spezi
+import SpeziFoundation
 import SpeziHealthKit
 
 final class MHCWatchAppDelegate: SpeziAppDelegate {

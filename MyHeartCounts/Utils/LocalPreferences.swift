@@ -9,10 +9,11 @@
 // swiftlint:disable file_types_order
 
 import Foundation
+import SpeziFoundation
 import SwiftUI
 
 
-struct LocalPreferenceKey<Value>: Sendable {
+struct LocalPreferenceKey<Value: SendableMetatype>: Sendable {
     /// The full key for which this preference's values are stored.
     fileprivate let key: String
     fileprivate let read: @Sendable (UserDefaults) -> Value
@@ -45,7 +46,7 @@ struct LocalPreferenceKey<Value>: Sendable {
     static func make(
         _ key: String,
         default makeDefault: @autoclosure @escaping @Sendable () -> Value
-    ) -> Self where Value: RawRepresentable, Value.RawValue: HasDirectUserDefaultsSupport {
+    ) -> Self where Value: RawRepresentable, Value.RawValue: HasDirectUserDefaultsSupport, Value.RawValue: SendableMetatype {
         Self(key: key) { key, defaults in
             Value.RawValue.load(from: defaults, forKey: key).flatMap(Value.init(rawValue:)) ?? makeDefault()
         } write: { key, newValue, defaults in
@@ -241,7 +242,7 @@ private final class UserDefaultsKeyObserver: NSObject {
 /// A type-safe alternative to SwiftUI's `AppStorage`.
 @MainActor
 @propertyWrapper
-struct LocalPreference<T: Codable>: DynamicProperty {
+struct LocalPreference<T: Codable & SendableMetatype>: DynamicProperty {
     private let key: LocalPreferenceKey<T>
     private let store: LocalPreferencesStore
     @State private var kvoObserver = UserDefaultsKeyObserver()

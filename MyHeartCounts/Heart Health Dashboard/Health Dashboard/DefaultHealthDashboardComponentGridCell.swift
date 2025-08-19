@@ -8,6 +8,7 @@
 
 // swiftlint:disable file_types_order
 
+import Charts
 import Foundation
 import HealthKit
 import SpeziFoundation

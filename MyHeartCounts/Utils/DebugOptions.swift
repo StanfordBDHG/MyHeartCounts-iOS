@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import SFSafeSymbols
+import SpeziFoundation
+import SpeziStudyDefinition
 import SwiftUI
 import UIKit
 import XCTSpeziNotificationsUI
