@@ -1813,8 +1813,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				kind = revision;
-				revision = 5a6d946907e08e5e765953712fdbab57dd53ee49;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.14;
 			};
 		};
 		808A927B2E47900B007046E0 /* XCRemoteSwiftPackageReference "SpeziSensorKit" */ = {
