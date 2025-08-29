@@ -83,6 +83,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             try? FileManager.default.removeItem(at: .scheduledLiveHealthKitUploads)
             try? FileManager.default.removeItem(at: .scheduledHistoricalHealthKitUploads)
             try? await firebaseConfiguration.userDocumentReference.delete()
+            let studyManager = studyManager
             await MainActor.run {
                 guard let enrollment = studyManager.studyEnrollments.first else { // this works bc we only ever enroll into the MHC study.
                     return
