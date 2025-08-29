@@ -1822,7 +1822,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.1;
+				minimumVersion = 0.1.2;
 			};
 		};
 		808A92C92E47E159007046E0 /* XCRemoteSwiftPackageReference "SpeziConsent" */ = {
@@ -1885,8 +1885,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.3;
+				kind = revision;
+				revision = 54426680cc9ede334674b8f1d41c787539344207;
 			};
 		};
 		A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */ = {

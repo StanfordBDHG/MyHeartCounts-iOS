@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order all
 
 import Charts
 import Foundation
@@ -14,6 +14,7 @@ import HealthKit
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
+import SpeziViews
 import SwiftUI
 
 
@@ -462,7 +463,6 @@ extension SamplesProviderView {
     private struct FirestoreImpl: View {
         @MHCFirestoreQuery<QuantitySample> var samples: [QuantitySample]
         let content: @MainActor ([QuantitySample]) -> Content
-        
         
         var body: some View {
             content(samples)

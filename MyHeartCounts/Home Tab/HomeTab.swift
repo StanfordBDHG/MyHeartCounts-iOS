@@ -64,6 +64,9 @@ struct HomeTab: RootViewTab {
                 }
             }
         }
+        .sheet(isPresented: .constant(true)) {
+            ECGInstructionsSheet()
+        }
     }
     
     @ViewBuilder private var topActionsFormContent: some View {

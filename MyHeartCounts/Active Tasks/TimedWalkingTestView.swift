@@ -65,11 +65,22 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     }
     
     @ViewBuilder private var sections: some View {
+        let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
         PlainSection {
             CenterH {
-                Text("Timed Walking Test")
-                    .font(.title.bold())
+                switch test.kind {
+                case .walking:
+                    Text("\(durationInMinutes)-Minute Walk Test")
+                case .running:
+                    if test == .twelveMinuteRunTest {
+                        Text("12-Minute Run Test (Cooper Test)")
+                    } else {
+                        Text("\(durationInMinutes)-Minute Run Test")
+                    }
+                }
             }
+            .font(.title.bold())
+            .multilineTextAlignment(.center)
         }
         PlainSection {
             CenterH {
@@ -84,17 +95,25 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
             }
         }
         PlainSection {
-            let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
-            let kindText = switch test.kind {
-            case .walking: "walking"
-            case .running: "running"
+            let kindText: LocalizedStringResource = switch test.kind {
+            case .walking: "walk"
+            case .running: "run"
             }
-            Text("As part of the \(test.displayTitle), we'll collect some mobility information from your iPhone and Apple Watch, such as Step Count, Distance, and Heart Rate, while you go on a short walk for \(durationInMinutes) minute\(test.duration == .minutes(1) ? "" : "s")")
+            switch test {
+            case .sixMinuteWalkTest:
+                Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
+            case .twelveMinuteRunTest:
+                Text("TIMED_WALK_TEST_EXPLAINER_12_MIN_RUN")
+            default:
+                // ???
+                Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
+            }
             if watchParticipatesInTest {
                 Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until your Watch vibrates to indicate that the test has ended.")
             } else {
                 Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
             }
+            Text("TIMED_WALK_TEST_EXPLAINER_FOOTER")
         }
         if !testIsRunning {
             if watchManager.userHasWatch && !watchManager.isWatchAppReachable {

@@ -276,8 +276,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "4fab93e2ba8b62ddc45f50a61043d7df376243ba",
-        "version" : "1.2.3"
+        "revision" : "54426680cc9ede334674b8f1d41c787539344207"
       }
     },
     {
@@ -330,8 +329,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "565c276b46ad24c1644d1fe4b2e7fe5f37e2d112",
-        "version" : "0.1.1"
+        "revision" : "a80ecba0b4c0a966f5d176e2be73b27278f7b7e0",
+        "version" : "0.1.2"
       }
     },
     {

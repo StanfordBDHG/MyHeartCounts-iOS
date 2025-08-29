@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SFSafeSymbols
 import Spezi
 import SpeziOnboarding
 import SpeziViews
@@ -23,7 +24,7 @@ struct Welcome: View {
             areas: [
                 OnboardingInformationView.Area(
                     icon: {
-                        Image(systemName: "apps.iphone")
+                        Image(systemSymbol: .appsIphone)
                             .accessibilityHidden(true)
                     },
                     title: "WELCOME_AREA1_TITLE",
@@ -31,7 +32,7 @@ struct Welcome: View {
                 ),
                 OnboardingInformationView.Area(
                     icon: {
-                        Image(systemName: "shippingbox.fill")
+                        Image(systemSymbol: .shippingboxFill)
                             .accessibilityHidden(true)
                     },
                     title: "WELCOME_AREA2_TITLE",
@@ -39,7 +40,7 @@ struct Welcome: View {
                 ),
                 OnboardingInformationView.Area(
                     icon: {
-                        Image(systemName: "list.bullet.clipboard.fill")
+                        Image(systemSymbol: .listBulletClipboardFill)
                             .accessibilityHidden(true)
                     },
                     title: "WELCOME_AREA3_TITLE",
