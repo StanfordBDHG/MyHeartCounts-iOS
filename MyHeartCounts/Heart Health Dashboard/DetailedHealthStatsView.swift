@@ -285,51 +285,68 @@ private struct ScoreExplanationView: View {
 
 
 private struct FurtherReadingSection: View {
-    @Environment(\.openURL)
-    private var openURL
+    // swiftlint:disable attributes
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.openURL) private var openURL
+    // swiftlint:enable attributes
     
     private let title: LocalizedStringResource
     private let document: MarkdownDocument
-    private let link: URL?
+    private let links: [URL]
     
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .font(.title)
+                .font(.title2.weight(.semibold))
             MarkdownView(markdownDocument: document)
+                .padding(.vertical, 5)
         }
-        if let link {
-            Button {
-                openURL(link)
-            } label: {
-                HStack {
-                    Text("Learn More")
-                    Spacer()
-                    Image(systemSymbol: .safari)
-                        .accessibilityLabel("Open In Browser")
-                }
-                .contentShape(Rectangle())
-            }
+        ForEach(Array(links.indices), id: \.self) { idx in
+            makeLinkButton(idx == links.startIndex ? "Learn More" : nil, for: links[idx])
         }
     }
     
     init(title: LocalizedStringResource, document: MarkdownDocument) {
         self.title = title
         self.document = document
-        self.link = document.metadata["link"].flatMap { try? URL($0, strategy: .url) }
+        self.links = document.metadata
+            .filter { $0.key.starts(with: "link") }
+            .sorted(using: KeyPathComparator(\.key))
+            .compactMap { try? URL($0.value, strategy: .url) }
+    }
+    
+    private func makeLinkButton(_ title: LocalizedStringResource?, for url: URL) -> some View {
+        Button {
+            openURL(url)
+        } label: {
+            HStack {
+                if let title {
+                    Text(title)
+                }
+                Spacer()
+                if let host = url.host() {
+                    // drop the initial "www.", if present
+                    let host = if let range = host.range(of: "www."), range.lowerBound == host.startIndex {
+                        host.replacingCharacters(in: range, with: "")
+                    } else {
+                        host
+                    }
+                    Text(host)
+                        .foregroundStyle(colorScheme.textLabelForegroundStyle.secondary)
+                }
+                Image(systemSymbol: .safari)
+                    .accessibilityLabel("Open In Browser")
+            }
+            .contentShape(Rectangle())
+        }
     }
 }
 
 
 extension DetailedHealthStatsView {
-    private func explainerText(for sampleType: MHCSampleType) -> String? { // swiftlint:disable:this cyclomatic_complexity
+    private func explainerText(for sampleType: MHCSampleType) -> String? {
         let imp = { (key: String) -> String? in
-            let fileRef = StudyBundle.FileReference(category: .init(rawValue: "hhdExplainer"), filename: key, fileExtension: "md")
-            guard let studyBundle = studyManager.studyEnrollments.first?.studyBundle,
-                  let url = studyBundle.resolve(fileRef, in: studyManager.preferredLocale) else {
-                return nil
-            }
-            return try? String(contentsOf: url, encoding: .utf8)
+            studyManager.localizedMarkdown(for: key, in: .hhdExplainer)
         }
         return switch sampleType {
         case .custom(.dietMEPAScore):
@@ -353,6 +370,21 @@ extension DetailedHealthStatsView {
         default:
             nil
         }
+    }
+}
+
+
+extension StudyBundle.FileReference.Category {
+    static let hhdExplainer = Self(rawValue: "hhdExplainer")
+}
+
+extension StudyManager {
+    func localizedMarkdown(for filename: String, in category: StudyBundle.FileReference.Category) -> String? {
+        let fileRef = StudyBundle.FileReference(category: category, filename: filename, fileExtension: "md")
+        guard let studyBundle = studyEnrollments.first?.studyBundle, let url = studyBundle.resolve(fileRef, in: preferredLocale) else {
+            return nil
+        }
+        return try? String(contentsOf: url, encoding: .utf8)
     }
 }
 
