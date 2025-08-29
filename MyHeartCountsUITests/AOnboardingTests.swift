@@ -56,7 +56,7 @@ extension XCUIApplication {
     
     
     private func navigateWelcome() {
-        let predicate = NSPredicate(format: "label MATCHES 'Welcome to the My Heart Counts(\n| )Cardiovascular Health Study'")
+        let predicate = NSPredicate(format: "label MATCHES 'Welcome to the My Heart Counts(\\n| )Cardiovascular Health Study'")
         XCTAssert(staticTexts.element(matching: predicate).waitForExistence(timeout: 2))
         //XCTAssert(staticTexts["Welcome to the My Heart Counts\nCardiovascular Health Study"].waitForExistence(timeout: 2))
         buttons["Continue"].tap()

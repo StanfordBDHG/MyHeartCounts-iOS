@@ -2648,13 +2648,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Welcome to the My Heart Counts Cardiovascular Health Study"
+            "value" : "Welcome to the My Heart Counts\nCardiovascular Health Study"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Welcome to the My Heart Counts Cardiovascular Health Study"
+            "value" : "Welcome to the My Heart Counts\nCardiovascular Health Study"
           }
         },
         "es" : {
