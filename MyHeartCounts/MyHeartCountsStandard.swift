@@ -25,7 +25,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     // swiftlint:disable attributes
     @Application(\.logger) var logger
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
-    @Dependency(StudyManager.self) private var studyManager//: StudyManager?
+    @Dependency(StudyManager.self) private var studyManager
     @Dependency(Account.self) var account: Account?
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
