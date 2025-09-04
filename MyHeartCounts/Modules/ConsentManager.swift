@@ -9,6 +9,7 @@
 import FirebaseStorage
 import Foundation
 import Spezi
+import SpeziLocalization
 import SpeziAccount
 import SpeziFoundation
 import SpeziStudy

@@ -37,6 +37,16 @@
     "#=%lld" : {
 
     },
+    "%@ – %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@"
+          }
+        }
+      }
+    },
     "%@ (%lld)" : {
       "localizations" : {
         "en" : {
@@ -476,6 +486,9 @@
           }
         }
       }
+    },
+    "Always Available" : {
+
     },
     "American Samoa" : {
       "localizations" : {
@@ -3183,6 +3196,9 @@
         }
       }
     },
+    "Other Tasks" : {
+
+    },
     "Other Territories" : {
       "localizations" : {
         "es" : {
@@ -3222,6 +3238,9 @@
           }
         }
       }
+    },
+    "Past 2 Weeks" : {
+
     },
     "Past Data" : {
       "localizations" : {
@@ -3704,6 +3723,9 @@
           }
         }
       }
+    },
+    "Refresh" : {
+
     },
     "Region" : {
       "localizations" : {
@@ -4301,6 +4323,9 @@
         }
       }
     },
+    "Timed Walk Test" : {
+
+    },
     "Timed Walking Test" : {
       "localizations" : {
         "es" : {
@@ -4370,6 +4395,9 @@
       }
     },
     "Today" : {
+
+    },
+    "Today's Tasks" : {
 
     },
     "TODO: make this look pretty!" : {
