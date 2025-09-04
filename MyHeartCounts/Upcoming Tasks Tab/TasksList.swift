@@ -52,7 +52,7 @@ struct TasksList: View {
     
     enum HeaderConfig {
         case none
-        case custom(String, subtitle: String = "")
+        case custom(LocalizedStringResource, subtitle: LocalizedStringResource? = nil)
         case timeRange
     }
     
@@ -178,14 +178,14 @@ struct TasksList: View {
         )
     }
     
-    private var headerContents: (String, String) {
+    private var headerContents: (LocalizedStringResource, LocalizedStringResource?) {
         switch headerConfig {
         case .none:
-            return ("", "")
+            return ("", nil)
         case let .custom(title, subtitle):
             return (title, subtitle)
         case .timeRange:
-            let (title, needsSubtitle) = switch timeRange {
+            let (title, needsSubtitle): (LocalizedStringResource, Bool) = switch timeRange {
             case .days(1):
                 ("Today", false)
             case .days(let numDays):
@@ -205,7 +205,7 @@ struct TasksList: View {
                 let end = timeRange.upperBound.addingTimeInterval(-1).formatted(date: .numeric, time: .omitted)
                 return (title, "\(start) – \(end)")
             } else {
-                return (title, "")
+                return (title, nil)
             }
         }
     }
