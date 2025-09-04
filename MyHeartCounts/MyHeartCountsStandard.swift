@@ -25,7 +25,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     // swiftlint:disable attributes
     @Application(\.logger) var logger
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
-    @Dependency(StudyManager.self) private var studyManager
+    @Dependency(StudyManager.self) private var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
@@ -39,8 +39,11 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @MainActor
     func configure() {
         Task {
+            guard let studyManager = await self.studyManager else {
+                return
+            }
             await logger.notice("STUDIES:")
-            for enrollment in await studyManager.studyEnrollments {
+            for enrollment in studyManager.studyEnrollments {
                 await logger.notice("- \(enrollment.studyBundle?.studyDefinition.metadata.title ?? "uhhh")")
             }
             if let studyBundle = try? await studyLoader.update() {
@@ -85,7 +88,8 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             try? await firebaseConfiguration.userDocumentReference.delete()
             let studyManager = studyManager
             await MainActor.run {
-                guard let enrollment = studyManager.studyEnrollments.first else { // this works bc we only ever enroll into the MHC study.
+                // this works bc we only ever enroll into the MHC study.
+                guard let studyManager, let enrollment = studyManager.studyEnrollments.first else {
                     return
                 }
                 logger.notice("unenrolling from study.")
