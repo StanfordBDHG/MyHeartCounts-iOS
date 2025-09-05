@@ -42,10 +42,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             guard let studyManager = await self.studyManager else {
                 return
             }
-            await logger.notice("STUDIES:")
-            for enrollment in studyManager.studyEnrollments {
-                await logger.notice("- \(enrollment.studyBundle?.studyDefinition.metadata.title ?? "uhhh")")
-            }
             if let studyBundle = try? await studyLoader.update() {
                 await logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
                 try await studyManager.informAboutStudies([studyBundle])

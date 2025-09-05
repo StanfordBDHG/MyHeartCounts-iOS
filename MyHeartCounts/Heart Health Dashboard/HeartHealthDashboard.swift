@@ -167,19 +167,10 @@ struct HeartHealthDashboard: View {
                             .font(.caption2)
                     }
                     .frame(width: 50, height: 50)
-//                    if let date = score.timeRange?.upperBound {
-//                        Text(date, format: .dateTime)
-//                            .font(.footnote)
-//                            .foregroundStyle(.secondary)
-//                    }
                     if let timeRange = score.timeRange {
                         Text(timeRange.displayText(using: cal))
                             .font(.footnote)
                             .foregroundStyle(.secondary)
-                        Text(timeRange.lowerBound, format: .iso8601)
-                            .font(.system(size: 7).monospaced())
-                        Text(timeRange.upperBound, format: .iso8601)
-                            .font(.system(size: 7).monospaced())
                     }
                 }
             } else {

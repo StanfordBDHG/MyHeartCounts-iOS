@@ -102,13 +102,8 @@ struct HealthDashboardQuantityLabel: View {
             // if we have a single-value grid cell that displays the max heart rate measured today, we'd have the label at the bottom say
             // "Today", even though displaying the precise time of this max heart rate measurement would be more correct.
             Text(input.timeRange.displayText(using: cal))
-//                .foregroundStyle(.secondary)
-                .foregroundStyle(.red)
+                .foregroundStyle(.secondary)
                 .font(.footnote)
-            Text(input.timeRange.lowerBound, format: .iso8601)
-                .font(.system(size: 7).monospaced())
-            Text(input.timeRange.upperBound, format: .iso8601)
-                .font(.system(size: 7).monospaced())
         }
     }
 }
