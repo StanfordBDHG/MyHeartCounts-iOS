@@ -82,7 +82,6 @@ final class NewsManager: Module, EnvironmentAccessible {
                     }
                     return storageRefs.first(where: { $0.name == result.url.lastPathComponent })
                 }
-            print("# NEWS ARTICLES: \(newsArticleStorageRefs.count)")
             var articles = await withTaskGroup(of: Article?.self, returning: [Article].self) { taskGroup in
                 for storageRef in newsArticleStorageRefs {
                     taskGroup.addTask {
