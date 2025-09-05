@@ -154,7 +154,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "$35,000 – $49,999\n"
+            "value" : "$35,000 – $49,999"
           }
         }
       }
@@ -164,7 +164,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "$50,000 – $74,999\n"
+            "value" : "$50,000 – $74,999"
           }
         }
       }
@@ -174,7 +174,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "$75,000 – $99,999\n"
+            "value" : "$75,000 – $99,999"
           }
         }
       }
@@ -184,7 +184,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "$100,000 – $149,999\n"
+            "value" : "$100,000 – $149,999"
           }
         }
       }
@@ -194,7 +194,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "$150,000 y más\n"
+            "value" : "$150,000 y más"
           }
         }
       }
@@ -204,7 +204,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "£15,000 – £24,999\n"
+            "value" : "£15,000 – £24,999"
           }
         }
       }
@@ -214,7 +214,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "£25,000 – £34,999\n"
+            "value" : "£25,000 – £34,999"
           }
         }
       }
@@ -224,7 +224,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "£35,000 – £49,999\n"
+            "value" : "£35,000 – £49,999"
           }
         }
       }
@@ -234,7 +234,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "£50,000 – £74,999\n"
+            "value" : "£50,000 – £74,999"
           }
         }
       }
@@ -244,7 +244,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "£75,000 – £99,999\n"
+            "value" : "£75,000 – £99,999"
           }
         }
       }
@@ -254,7 +254,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "£100,000 – £149,999\n"
+            "value" : "£100,000 – £149,999"
           }
         }
       }
@@ -264,7 +264,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "£150,000 y más\n"
+            "value" : "£150,000 y más"
           }
         }
       }
@@ -284,7 +284,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 a 5 años atrás\n"
+            "value" : "1 a 5 años atrás"
           }
         }
       }
@@ -376,7 +376,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fumar activamente\n"
+            "value" : "Fumar activamente"
           }
         }
       }
@@ -396,7 +396,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar Datos\n"
+            "value" : "Agregar Datos"
           }
         }
       }
@@ -406,7 +406,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar Muestras de Altura y Peso\n"
+            "value" : "Agregar Muestras de Altura y Peso"
           }
         }
       }
@@ -416,7 +416,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agregar Muestra\n"
+            "value" : "Agregar Muestra"
           }
         }
       }
@@ -456,7 +456,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas las Muestras\n"
+            "value" : "Todas las Muestras"
           }
         }
       }
@@ -466,7 +466,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Todas las tareas han sido completadas!\n"
+            "value" : "¡Todas las tareas han sido completadas!"
           }
         }
       }
@@ -495,7 +495,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Samoa Americana\n"
+            "value" : "Samoa Americana"
           }
         }
       }
@@ -505,7 +505,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uso de la aplicación\n"
+            "value" : "Uso de la aplicación"
           }
         }
       }
@@ -525,7 +525,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Eres capaz de realizar actividades físicas?\n"
+            "value" : "¿Eres capaz de realizar actividades físicas?"
           }
         }
       }
@@ -535,7 +535,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Eres hispano/latino?\n"
+            "value" : "¿Eres hispano/latino?"
           }
         }
       }
@@ -545,7 +545,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Estás seguro de que deseas abandonar el estudio de '%@'?\n"
+            "value" : "¿Estás seguro de que deseas abandonar el estudio de '%@'?"
           }
         }
       }
@@ -578,7 +578,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sexo Biológico al Nacer\n"
+            "value" : "Sexo Biológico al Nacer"
           }
         }
       }
@@ -598,7 +598,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tipo de Sangre\n"
+            "value" : "Tipo de Sangre"
           }
         }
       }
@@ -608,7 +608,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gerente de Exportación Masiva\n"
+            "value" : "Gerente de Exportación Masiva"
           }
         }
       }
@@ -618,7 +618,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "id de paquete\n"
+            "value" : "id de paquete"
           }
         }
       }
@@ -628,7 +628,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "California\n"
+            "value" : "California"
           }
         }
       }
@@ -658,7 +658,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambiar Idioma\n"
+            "value" : "Cambiar Idioma"
           }
         }
       }
@@ -726,7 +726,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enfermedad Cardíaca Congénita en Adultos\n"
+            "value" : "Enfermedad Cardíaca Congénita en Adultos"
           }
         }
       }
@@ -748,7 +748,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enfermedad Arterial Coronaria\n"
+            "value" : "Enfermedad Arterial Coronaria"
           }
         }
       }
@@ -792,7 +792,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Insuficiencia Cardíaca\n"
+            "value" : "Insuficiencia Cardíaca"
           }
         }
       }
@@ -836,7 +836,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hipertensión Arterial Pulmonar\n"
+            "value" : "Hipertensión Arterial Pulmonar"
           }
         }
       }
@@ -846,7 +846,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aplicación de Reloj Complementario No Instalada\n"
+            "value" : "Aplicación de Reloj Complementario No Instalada"
           }
         }
       }
@@ -999,7 +999,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fecha de Consentimiento\n"
+            "value" : "Fecha de Consentimiento"
           }
         }
       }
@@ -1009,7 +1009,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Documentos de Consentimiento\n"
+            "value" : "Documentos de Consentimiento"
           }
         }
       }
@@ -1019,7 +1019,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Renovación de Consentimiento\n"
+            "value" : "Renovación de Consentimiento"
           }
         }
       }
@@ -1029,7 +1029,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versión de Consentimiento\n"
+            "value" : "Versión de Consentimiento"
           }
         }
       }
@@ -1059,7 +1059,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "orientación de la corona\n"
+            "value" : "orientación de la corona"
           }
         }
       }
@@ -1069,7 +1069,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba Actual\n"
+            "value" : "Prueba Actual"
           }
         }
       }
@@ -1099,7 +1099,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fecha de Nacimiento\n"
+            "value" : "Fecha de Nacimiento"
           }
         }
       }
@@ -1119,7 +1119,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opciones de Depuración\n"
+            "value" : "Opciones de Depuración"
           }
         }
       }
@@ -1149,7 +1149,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar y Restablecer Sesión\n"
+            "value" : "Eliminar y Restablecer Sesión"
           }
         }
       }
@@ -1169,7 +1169,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dependiendo de la cantidad de muestras, esto podría tardar un poco.\n"
+            "value" : "Dependiendo de la cantidad de muestras, esto podría tardar un poco."
           }
         }
       }
@@ -1199,7 +1199,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Indicador de Divulgación\n"
+            "value" : "Indicador de Divulgación"
           }
         }
       }
@@ -1209,7 +1209,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Distrito de Columbia\n"
+            "value" : "Distrito de Columbia"
           }
         }
       }
@@ -1274,7 +1274,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nivel Educativo\n"
+            "value" : "Nivel Educativo"
           }
         }
       }
@@ -1284,7 +1284,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Región Efectiva\n"
+            "value" : "Región Efectiva"
           }
         }
       }
@@ -1338,7 +1338,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Habilitar Modo de Depuración de la Aplicación\n"
+            "value" : "Habilitar Modo de Depuración de la Aplicación"
           }
         }
       }
@@ -1348,7 +1348,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finalizar Participación en el Estudio\n"
+            "value" : "Finalizar Participación en el Estudio"
           }
         }
       }
@@ -1358,7 +1358,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inscribirse en el Estudio\n"
+            "value" : "Inscribirse en el Estudio"
           }
         }
       }
@@ -1378,7 +1378,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingresar Presión Arterial\n"
+            "value" : "Ingresar Presión Arterial"
           }
         }
       }
@@ -1388,7 +1388,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingresar IMC (Índice de Masa Corporal)\n"
+            "value" : "Ingresar IMC (Índice de Masa Corporal)"
           }
         }
       }
@@ -1398,7 +1398,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingresar Altura\n"
+            "value" : "Ingresar Altura"
           }
         }
       }
@@ -1408,7 +1408,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingresar Peso\n"
+            "value" : "Ingresar Peso"
           }
         }
       }
@@ -1418,7 +1418,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Error\n"
+            "value" : "Error"
           }
         }
       }
@@ -1428,7 +1428,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falló al Descargar Información del Estudio\n"
+            "value" : "Falló al Descargar Información del Estudio"
           }
         }
       }
@@ -1438,7 +1438,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falló al Cargar el Estudio en la Aplicación\n"
+            "value" : "Falló al Cargar el Estudio en la Aplicación"
           }
         }
       }
@@ -1448,7 +1448,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falló al procesar las Sesiones de Sueño\n"
+            "value" : "Falló al procesar las Sesiones de Sueño"
           }
         }
       }
@@ -1468,7 +1468,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Token de FCM\n"
+            "value" : "Token de FCM"
           }
         }
       }
@@ -1478,7 +1478,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retroalimentación\n"
+            "value" : "Retroalimentación"
           }
         }
       }
@@ -1504,7 +1504,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Siéntete libre de volver más tarde!\n"
+            "value" : "¡Siéntete libre de volver más tarde!"
           }
         }
       }
@@ -1514,7 +1514,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtener Resultados\n"
+            "value" : "Obtener Resultados"
           }
         }
       }
@@ -1524,7 +1524,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtener Datos de Temperatura de Muñeca\n"
+            "value" : "Obtener Datos de Temperatura de Muñeca"
           }
         }
       }
@@ -1534,7 +1534,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obteniendo Datos…\n"
+            "value" : "Obteniendo Datos…"
           }
         }
       }
@@ -1544,7 +1544,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obteniendo…\n"
+            "value" : "Obteniendo…"
           }
         }
       }
@@ -1554,7 +1554,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opciones de Filtro\n"
+            "value" : "Opciones de Filtro"
           }
         }
       }
@@ -1570,7 +1570,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What happens next:\n- Baseline Monitoring Week: Over the next 7 days, you’ll be guided through several short activities:\n    - Completing surveys about your health, lifestyle, and well-being\n    - Recording your baseline physical activity through the app\n    - Performing optimal fitness assessments if appropriate for your health status\n- Daily Tasks: Each day, you’ll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete.\n- Data Collection: The app will begin collecting activity data from your phone and any connected wearable devices you’ve authorized.\n"
+            "value" : "What happens next:\n- Baseline Monitoring Week: Over the next 7 days, you’ll be guided through several short activities:\n    - Completing surveys about your health, lifestyle, and well-being\n    - Recording your baseline physical activity through the app\n    - Performing optimal fitness assessments if appropriate for your health status\n- Daily Tasks: Each day, you’ll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete.\n- Data Collection: The app will begin collecting activity data from your phone and any connected wearable devices you’ve authorized."
           }
         },
         "es" : {
@@ -1620,7 +1620,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Después de tu semana basal, comenzarás el ensayo de 2 semanas comparando diferentes tipos de entrenamiento de actividad física. Recibirás notificaciones cuando esta fase comience.\n"
+            "value" : "Después de tu semana basal, comenzarás el ensayo de 2 semanas comparando diferentes tipos de entrenamiento de actividad física. Recibirás notificaciones cuando esta fase comience."
           }
         }
       }
@@ -1630,7 +1630,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primeros 3 Dígitos del Código Postal\n"
+            "value" : "Primeros 3 Dígitos del Código Postal"
           }
         }
       }
@@ -1640,7 +1640,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primera mitad del Código Postal\n"
+            "value" : "Primera mitad del Código Postal"
           }
         }
       }
@@ -1660,7 +1660,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para obtener resultados óptimos, por favor, mantén tu teléfono en tu bolsillo y %@ hasta que vibre indicando que la prueba ha terminado.\n"
+            "value" : "Para obtener resultados óptimos, por favor, mantén tu teléfono en tu bolsillo y %@ hasta que vibre indicando que la prueba ha terminado."
           }
         }
       }
@@ -1670,7 +1670,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para obtener resultados óptimos, por favor, mantén tu teléfono en tu bolsillo y %@ hasta que tu reloj vibre indicando que la prueba ha terminado.\n"
+            "value" : "Para obtener resultados óptimos, por favor, mantén tu teléfono en tu bolsillo y %@ hasta que tu reloj vibre indicando que la prueba ha terminado."
           }
         }
       }
@@ -1680,7 +1680,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudios Futuros\n"
+            "value" : "Estudios Futuros"
           }
         }
       }
@@ -1690,7 +1690,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identidad de Género\n"
+            "value" : "Identidad de Género"
           }
         }
       }
@@ -1712,7 +1712,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Femenino\n"
+            "value" : "Femenino"
           }
         }
       }
@@ -1756,7 +1756,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Variante de género / No conforme\n"
+            "value" : "Variante de género / No conforme"
           }
         }
       }
@@ -1778,7 +1778,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefiero no declarar\n"
+            "value" : "Prefiero no declarar"
           }
         }
       }
@@ -1800,7 +1800,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mujer transgénero\n"
+            "value" : "Mujer transgénero"
           }
         }
       }
@@ -1822,7 +1822,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hombre transgénero\n"
+            "value" : "Hombre transgénero"
           }
         }
       }
@@ -1842,7 +1842,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ir al siguiente campo\n"
+            "value" : "Ir al siguiente campo"
           }
         }
       }
@@ -1852,7 +1852,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ir al campo anterior\n"
+            "value" : "Ir al campo anterior"
           }
         }
       }
@@ -1868,7 +1868,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conceder acceso\n"
+            "value" : "Conceder acceso"
           }
         }
       }
@@ -1898,7 +1898,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datos de salud\n"
+            "value" : "Datos de salud"
           }
         }
       }
@@ -1908,7 +1908,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carga masiva de datos de salud\n"
+            "value" : "Carga masiva de datos de salud"
           }
         }
       }
@@ -1924,7 +1924,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acceso a HealthKit\n"
+            "value" : "Acceso a HealthKit"
           }
         }
       }
@@ -2030,7 +2030,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingreso Familiar\n"
+            "value" : "Ingreso Familiar"
           }
         }
       }
@@ -2040,7 +2040,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nunca he fumado\n"
+            "value" : "Nunca he fumado"
           }
         }
       }
@@ -2050,7 +2050,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fumé por última vez entre 1 y 5 años atrás\n"
+            "value" : "Fumé por última vez entre 1 y 5 años atrás"
           }
         }
       }
@@ -2060,7 +2060,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fumé por última vez hace más de 5 años\n"
+            "value" : "Fumé por última vez hace más de 5 años"
           }
         }
       }
@@ -2070,7 +2070,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fumé por última vez en el último año, o estoy usando NDS\n"
+            "value" : "Fumé por última vez en el último año, o estoy usando NDS"
           }
         }
       }
@@ -2080,7 +2080,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estoy fumando activamente\n"
+            "value" : "Estoy fumando activamente"
           }
         }
       }
@@ -2110,7 +2110,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "identificador\n"
+            "value" : "identificador"
           }
         }
       }
@@ -2120,7 +2120,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si tienes un Apple Watch, asegúrate de que la aplicación Mi Corazón Cuenta esté en funcionamiento\n"
+            "value" : "Si tienes un Apple Watch, asegúrate de que la aplicación Mi Corazón Cuenta esté en funcionamiento"
           }
         }
       }
@@ -2130,7 +2130,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ignorar Resultados Vacíos\n"
+            "value" : "Ignorar Resultados Vacíos"
           }
         }
       }
@@ -2208,7 +2208,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Instalar en Apple Watch\n"
+            "value" : "Instalar en Apple Watch"
           }
         }
       }
@@ -2218,7 +2218,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Instalar Mi Corazón Cuenta en tu Apple Watch nos permitirá aumentar considerablemente la calidad de los datos registrados.\n"
+            "value" : "Instalar Mi Corazón Cuenta en tu Apple Watch nos permitirá aumentar considerablemente la calidad de los datos registrados."
           }
         }
       }
@@ -2268,7 +2268,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Latino / Hispano?\n"
+            "value" : "¿Latino / Hispano?"
           }
         }
       }
@@ -2278,7 +2278,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar la Aplicación del Reloj\n"
+            "value" : "Iniciar la Aplicación del Reloj"
           }
         }
       }
@@ -2294,7 +2294,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprender Más\n"
+            "value" : "Aprender Más"
           }
         }
       }
@@ -2304,7 +2304,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menos de $15,000\n"
+            "value" : "Menos de $15,000"
           }
         }
       }
@@ -2314,7 +2314,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menos de £15,000\n"
+            "value" : "Menos de £15,000"
           }
         }
       }
@@ -2330,7 +2330,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Información de Licencia\n"
+            "value" : "Información de Licencia"
           }
         }
       }
@@ -2340,7 +2340,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Símbolo de Flecha de Enlace\n"
+            "value" : "Símbolo de Flecha de Enlace"
           }
         }
       }
@@ -2350,7 +2350,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notificaciones de Carga de Salud en Vivo\n"
+            "value" : "Notificaciones de Carga de Salud en Vivo"
           }
         }
       }
@@ -2360,7 +2360,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cargando Configuración de Prueba de Firebase\n"
+            "value" : "Cargando Configuración de Prueba de Firebase"
           }
         }
       }
@@ -2370,7 +2370,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estado de Notificaciones Locales\n"
+            "value" : "Estado de Notificaciones Locales"
           }
         }
       }
@@ -2410,7 +2410,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asegúrate de que tu dispositivo esté conectado a Internet y vuelve a intentarlo\n"
+            "value" : "Asegúrate de que tu dispositivo esté conectado a Internet y vuelve a intentarlo"
           }
         }
       }
@@ -2440,7 +2440,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrada Coincidente\n"
+            "value" : "Entrada Coincidente"
           }
         }
       }
@@ -2450,7 +2450,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Podemos ponernos en contacto contigo sobre estudios futuros que puedan interesarte?\n"
+            "value" : "¿Podemos ponernos en contacto contigo sobre estudios futuros que puedan interesarte?"
           }
         }
       }
@@ -2480,7 +2480,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tareas Perdidas\n"
+            "value" : "Tareas Perdidas"
           }
         }
       }
@@ -2490,7 +2490,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faltando Permiso de Acceso a Datos de Movimiento Requerido\n"
+            "value" : "Faltando Permiso de Acceso a Datos de Movimiento Requerido"
           }
         }
       }
@@ -2530,7 +2530,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hace más de 5 años\n"
+            "value" : "Hace más de 5 años"
           }
         }
       }
@@ -2576,7 +2576,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Problema de Red\n"
+            "value" : "Problema de Red"
           }
         }
       }
@@ -2586,7 +2586,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nevada\n"
+            "value" : "Nevada"
           }
         }
       }
@@ -2606,7 +2606,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueva Hampshire\n"
+            "value" : "Nueva Hampshire"
           }
         }
       }
@@ -2616,7 +2616,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueva Jersey\n"
+            "value" : "Nueva Jersey"
           }
         }
       }
@@ -2626,7 +2626,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuevo México\n"
+            "value" : "Nuevo México"
           }
         }
       }
@@ -2636,7 +2636,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueva York\n"
+            "value" : "Nueva York"
           }
         }
       }
@@ -2656,7 +2656,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noticias e Información\n"
+            "value" : "Noticias e Información"
           }
         }
       }
@@ -2682,7 +2682,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Número NHS\n"
+            "value" : "Número NHS"
           }
         }
       }
@@ -2692,7 +2692,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Número NHS (Opcional)\n"
+            "value" : "Número NHS (Opcional)"
           }
         }
       }
@@ -2722,7 +2722,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin Datos\n"
+            "value" : "Sin Datos"
           }
         }
       }
@@ -2732,7 +2732,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin Internet\n"
+            "value" : "Sin Internet"
           }
         }
       }
@@ -2742,7 +2742,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay Tareas Perdidas\n"
+            "value" : "No hay Tareas Perdidas"
           }
         }
       }
@@ -2752,7 +2752,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay Noticias Aún\n"
+            "value" : "No hay Noticias Aún"
           }
         }
       }
@@ -2762,7 +2762,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay Tareas Próximas\n"
+            "value" : "No hay Tareas Próximas"
           }
         }
       }
@@ -2772,7 +2772,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No, no soy hispano/latino\n"
+            "value" : "No, no soy hispano/latino"
           }
         }
       }
@@ -2782,7 +2782,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carolina del Norte\n"
+            "value" : "Carolina del Norte"
           }
         }
       }
@@ -2792,7 +2792,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dakota del Norte\n"
+            "value" : "Dakota del Norte"
           }
         }
       }
@@ -2802,7 +2802,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Islas Marianas del Norte\n"
+            "value" : "Islas Marianas del Norte"
           }
         }
       }
@@ -2812,7 +2812,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No ha iniciado sesión\n"
+            "value" : "No ha iniciado sesión"
           }
         }
       }
@@ -2822,7 +2822,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No Establecido\n"
+            "value" : "No Establecido"
           }
         }
       }
@@ -2870,7 +2870,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estado de Notificaciones\n"
+            "value" : "Estado de Notificaciones"
           }
         }
       }
@@ -2883,7 +2883,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ohio\n"
+            "value" : "Ohio"
           }
         }
       }
@@ -2903,7 +2903,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oklahoma\n"
+            "value" : "Oklahoma"
           }
         }
       }
@@ -2925,7 +2925,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este estudio de investigación es llevado a cabo por investigadores de la Facultad de Medicina de la Universidad de Stanford para entender cómo la actividad física se relaciona con la salud cardiovascular. La aplicación te guiará a través de varias evaluaciones, incluyendo la prueba de caminata de 6 minutos. Tu participación es flexible, lo que significa que puedes participar en el estudio tanto como desees. El enfoque basado en teléfonos inteligentes nos permite recopilar datos en tu entorno natural en lugar de requerir visitas a una instalación clínica.\n"
+            "value" : "Este estudio de investigación es llevado a cabo por investigadores de la Facultad de Medicina de la Universidad de Stanford para entender cómo la actividad física se relaciona con la salud cardiovascular. La aplicación te guiará a través de varias evaluaciones, incluyendo la prueba de caminata de 6 minutos. Tu participación es flexible, lo que significa que puedes participar en el estudio tanto como desees. El enfoque basado en teléfonos inteligentes nos permite recopilar datos en tu entorno natural en lugar de requerir visitas a una instalación clínica."
           }
         }
       }
@@ -2941,7 +2941,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You are invited to join an Imperial research study that uses physical activity collected from your smartphone to better understand how your previous, current and future levels of physical activity influence your your overall health today and in the future. \n\nYou’ll complete brief health surveys and perform simple fitness assessments like the 6-minute walk test using your phone. \n\nYou will also help us test whether personalised digital coaching can support improving your physical activity and health.\n"
+            "value" : "You are invited to join an Imperial research study that uses physical activity collected from your smartphone to better understand how your previous, current and future levels of physical activity influence your your overall health today and in the future. \n\nYou’ll complete brief health surveys and perform simple fitness assessments like the 6-minute walk test using your phone. \n\nYou will also help us test whether personalised digital coaching can support improving your physical activity and health."
           }
         },
         "es" : {
@@ -3171,7 +3171,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir en el navegador\n"
+            "value" : "Abrir en el navegador"
           }
         }
       }
@@ -3181,7 +3181,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir configuración\n"
+            "value" : "Abrir configuración"
           }
         }
       }
@@ -3191,7 +3191,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oregón\n"
+            "value" : "Oregón"
           }
         }
       }
@@ -3204,7 +3204,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otros territorios\n"
+            "value" : "Otros territorios"
           }
         }
       }
@@ -3214,7 +3214,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuestro documento de consentimiento del estudio ha sido actualizado desde la última vez que lo firmaste %@.\n\nPor favor, revisa el nuevo documento de consentimiento y fírmalo nuevamente.\n"
+            "value" : "Nuestro documento de consentimiento del estudio ha sido actualizado desde la última vez que lo firmaste %@.\n\nPor favor, revisa el nuevo documento de consentimiento y fírmalo nuevamente."
           }
         }
       }
@@ -3224,7 +3224,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anular región\n"
+            "value" : "Anular región"
           }
         }
       }
@@ -3234,7 +3234,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criterios de participación\n"
+            "value" : "Criterios de participación"
           }
         }
       }
@@ -3247,7 +3247,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datos pasados\n"
+            "value" : "Datos pasados"
           }
         }
       }
@@ -3269,7 +3269,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resultados de pruebas de caminata/corrida cronometradas pasadas\n"
+            "value" : "Resultados de pruebas de caminata/corrida cronometradas pasadas"
           }
         }
       }
@@ -3289,7 +3289,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Porcentaje en fase\n"
+            "value" : "Porcentaje en fase"
           }
         }
       }
@@ -3309,7 +3309,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Actividad Física\n"
+            "value" : "Actividad Física"
           }
         }
       }
@@ -3329,7 +3329,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Procesando datos de salud...\n"
+            "value" : "Procesando datos de salud..."
           }
         }
       }
@@ -3339,7 +3339,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Procesando datos de sueño...\n"
+            "value" : "Procesando datos de sueño..."
           }
         }
       }
@@ -3349,7 +3349,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puerto Rico\n"
+            "value" : "Puerto Rico"
           }
         }
       }
@@ -3359,7 +3359,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Raza / Etnicidad\n"
+            "value" : "Raza / Etnicidad"
           }
         }
       }
@@ -3381,7 +3381,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afroamericano\n"
+            "value" : "Afroamericano"
           }
         }
       }
@@ -3403,7 +3403,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nativo de Alaska\n"
+            "value" : "Nativo de Alaska"
           }
         }
       }
@@ -3425,7 +3425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Indígena Americano\n"
+            "value" : "Indígena Americano"
           }
         }
       }
@@ -3447,7 +3447,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Indio Asiático\n"
+            "value" : "Indio Asiático"
           }
         }
       }
@@ -3557,7 +3557,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin selección\n"
+            "value" : "Sin selección"
           }
         }
       }
@@ -3601,7 +3601,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isleño del Pacífico\n"
+            "value" : "Isleño del Pacífico"
           }
         }
       }
@@ -3623,7 +3623,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefiero no responder\n"
+            "value" : "Prefiero no responder"
           }
         }
       }
@@ -3645,7 +3645,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes seleccionar múltiples opciones.\n"
+            "value" : "Puedes seleccionar múltiples opciones."
           }
         }
       }
@@ -3667,7 +3667,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vietnamita\n"
+            "value" : "Vietnamita"
           }
         }
       }
@@ -3699,7 +3699,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leer artículo\n"
+            "value" : "Leer artículo"
           }
         }
       }
@@ -3709,7 +3709,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leer desde la aplicación de salud\n"
+            "value" : "Leer desde la aplicación de salud"
           }
         }
       }
@@ -3719,13 +3719,10 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datos recientes de sueño\n"
+            "value" : "Datos recientes de sueño"
           }
         }
       }
-    },
-    "Refresh" : {
-
     },
     "Region" : {
       "localizations" : {
@@ -3742,7 +3739,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Registro de Notificaciones Remotas\n"
+            "value" : "Registro de Notificaciones Remotas"
           }
         }
       }
@@ -3752,7 +3749,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reemplazar el Controlador de Vista Raíz\n"
+            "value" : "Reemplazar el Controlador de Vista Raíz"
           }
         }
       }
@@ -3765,7 +3762,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solicitar Permisos\n"
+            "value" : "Solicitar Permisos"
           }
         }
       }
@@ -3775,7 +3772,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resultados\n"
+            "value" : "Resultados"
           }
         }
       }
@@ -3785,7 +3782,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reintentar\n"
+            "value" : "Reintentar"
           }
         }
       }
@@ -3795,7 +3792,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisar Formularios de Consentimiento\n"
+            "value" : "Revisar Formularios de Consentimiento"
           }
         }
       }
@@ -3805,7 +3802,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rhode Island\n"
+            "value" : "Rhode Island"
           }
         }
       }
@@ -3818,7 +3815,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muestra\n"
+            "value" : "Muestra"
           }
         }
       }
@@ -3828,7 +3825,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tipo de Muestra\n"
+            "value" : "Tipo de Muestra"
           }
         }
       }
@@ -3851,7 +3848,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notificaciones Locales Programadas\n"
+            "value" : "Notificaciones Locales Programadas"
           }
         }
       }
@@ -3861,7 +3858,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resultado de Puntaje\n"
+            "value" : "Resultado de Puntaje"
           }
         }
       }
@@ -3871,7 +3868,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Selecciona una Región\n"
+            "value" : "Selecciona una Región"
           }
         }
       }
@@ -3881,7 +3878,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Selecciona un Condado\n"
+            "value" : "Selecciona un Condado"
           }
         }
       }
@@ -3891,7 +3888,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Selecciona tu Estado o Territorio\n"
+            "value" : "Selecciona tu Estado o Territorio"
           }
         }
       }
@@ -3921,7 +3918,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marca de selección\n"
+            "value" : "Marca de selección"
           }
         }
       }
@@ -3931,7 +3928,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar\n"
+            "value" : "Enviar"
           }
         }
       }
@@ -3941,7 +3938,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar Comentarios\n"
+            "value" : "Enviar Comentarios"
           }
         }
       }
@@ -3951,7 +3948,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sensores\n"
+            "value" : "Sensores"
           }
         }
       }
@@ -4005,7 +4002,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intersex\n"
+            "value" : "Intersex"
           }
         }
       }
@@ -4049,7 +4046,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefiero no declarar\n"
+            "value" : "Prefiero no declarar"
           }
         }
       }
@@ -4059,7 +4056,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fase del Sueño\n"
+            "value" : "Fase del Sueño"
           }
         }
       }
@@ -4069,7 +4066,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carolina del Sur\n"
+            "value" : "Carolina del Sur"
           }
         }
       }
@@ -4079,7 +4076,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dakota del Sur\n"
+            "value" : "Dakota del Sur"
           }
         }
       }
@@ -4089,7 +4086,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar Todo\n"
+            "value" : "Iniciar Todo"
           }
         }
       }
@@ -4099,7 +4096,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar Prueba\n"
+            "value" : "Iniciar Prueba"
           }
         }
       }
@@ -4119,7 +4116,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detener Todo\n"
+            "value" : "Detener Todo"
           }
         }
       }
@@ -4129,7 +4126,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Información del Estudio\n"
+            "value" : "Información del Estudio"
           }
         }
       }
@@ -4139,7 +4136,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudio no disponible\n"
+            "value" : "Estudio no disponible"
           }
         }
       }
@@ -4149,7 +4146,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Participación en el Estudio\n"
+            "value" : "Participación en el Estudio"
           }
         }
       }
@@ -4175,7 +4172,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Categorías Suplementarias\n"
+            "value" : "Categorías Suplementarias"
           }
         }
       }
@@ -4185,7 +4182,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Realizar Prueba\n"
+            "value" : "Realizar Prueba"
           }
         }
       }
@@ -4208,7 +4205,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba\n"
+            "value" : "Prueba"
           }
         }
       }
@@ -4218,7 +4215,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soporte de Pruebas\n"
+            "value" : "Soporte de Pruebas"
           }
         }
       }
@@ -4238,7 +4235,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La aplicación pudo descargar el estudio, pero no pudo decodificarlo. Asegúrate de tener instalada la versión más reciente.\n"
+            "value" : "La aplicación pudo descargar el estudio, pero no pudo decodificarlo. Asegúrate de tener instalada la versión más reciente."
           }
         }
       }
@@ -4248,7 +4245,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La aplicación no pudo cargar el estudio, pero no estamos seguros de por qué\n"
+            "value" : "La aplicación no pudo cargar el estudio, pero no estamos seguros de por qué"
           }
         }
       }
@@ -4258,7 +4255,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Prueba de Caminata cronometrada requiere acceso de lectura a los Datos de Movimiento y Fitness.\n"
+            "value" : "La Prueba de Caminata cronometrada requiere acceso de lectura a los Datos de Movimiento y Fitness."
           }
         }
       }
@@ -4268,7 +4265,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este estudio solicitará acceso de lectura para recopilar las siguientes muestras de Salud:\n"
+            "value" : "Este estudio solicitará acceso de lectura para recopilar las siguientes muestras de Salud:"
           }
         }
       }
@@ -4278,7 +4275,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiempo Dormido\n"
+            "value" : "Tiempo Dormido"
           }
         }
       }
@@ -4288,7 +4285,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiempo Transcurrido\n"
+            "value" : "Tiempo Transcurrido"
           }
         }
       }
@@ -4298,7 +4295,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Información del Tiempo\n"
+            "value" : "Información del Tiempo"
           }
         }
       }
@@ -4308,7 +4305,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiempo Restante\n"
+            "value" : "Tiempo Restante"
           }
         }
       }
@@ -4318,7 +4315,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zona Horaria\n"
+            "value" : "Zona Horaria"
           }
         }
       }
@@ -4331,7 +4328,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba de Caminata Cronometrada\n"
+            "value" : "Prueba de Caminata Cronometrada"
           }
         }
       }
@@ -4341,7 +4338,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pruebas de Caminata/Corrida Cronometradas\n"
+            "value" : "Pruebas de Caminata/Corrida Cronometradas"
           }
         }
       }
@@ -4411,7 +4408,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingreso Total del Hogar\n"
+            "value" : "Ingreso Total del Hogar"
           }
         }
       }
@@ -4520,7 +4517,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo encontrar el Cuestionario\n"
+            "value" : "No se pudo encontrar el Cuestionario"
           }
         }
       }
@@ -4530,7 +4527,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo cargar los datos\n"
+            "value" : "No se pudo cargar los datos"
           }
         }
       }
@@ -4540,7 +4537,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Darse de baja\n"
+            "value" : "Darse de baja"
           }
         }
       }
@@ -4570,7 +4567,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cargando Datos de Salud\n"
+            "value" : "Cargando Datos de Salud"
           }
         }
       }
@@ -4580,7 +4577,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estado / Región de EE. UU.\n"
+            "value" : "Estado / Región de EE. UU."
           }
         }
       }
@@ -4590,7 +4587,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estado / Territorio de EE. UU.\n"
+            "value" : "Estado / Territorio de EE. UU."
           }
         }
       }
@@ -4600,7 +4597,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utiliza esta opción para autocompletar el Tipo de Sangre, Altura, Peso, Fecha de Nacimiento y Sexo Biológico, leyendo cada uno desde la aplicación de Salud, si está disponible. Alternativamente, también puedes tocar los campos respectivos a continuación para ingresar un valor manualmente, o para sobrescribir el valor leído de la aplicación de Salud.\n"
+            "value" : "Utiliza esta opción para autocompletar el Tipo de Sangre, Altura, Peso, Fecha de Nacimiento y Sexo Biológico, leyendo cada uno desde la aplicación de Salud, si está disponible. Alternativamente, también puedes tocar los campos respectivos a continuación para ingresar un valor manualmente, o para sobrescribir el valor leído de la aplicación de Salud."
           }
         }
       }
@@ -4640,7 +4637,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Islas Vírgenes\n"
+            "value" : "Islas Vírgenes"
           }
         }
       }
@@ -4663,7 +4660,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Señal de Advertencia\n"
+            "value" : "Señal de Advertencia"
           }
         }
       }
@@ -4857,7 +4854,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Virginia Occidental\n"
+            "value" : "Virginia Occidental"
           }
         }
       }
@@ -4887,7 +4884,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En el último año, o estoy usando NDS\n"
+            "value" : "En el último año, o estoy usando NDS"
           }
         }
       }
@@ -4930,7 +4927,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sí, Hispano del Caribe, incluyendo Cubano y Puertorriqueño\n"
+            "value" : "Sí, Hispano del Caribe, incluyendo Cubano y Puertorriqueño"
           }
         }
       }
@@ -4940,7 +4937,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sí, Hispano Europeo, incluyendo Español y Portugués, Hispano, Latina\n"
+            "value" : "Sí, Hispano Europeo, incluyendo Español y Portugués, Hispano, Latina"
           }
         }
       }
@@ -4950,7 +4947,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sí, Mexicano, Mexicano Americano, o Chicano\n"
+            "value" : "Sí, Mexicano, Mexicano Americano, o Chicano"
           }
         }
       }
@@ -4960,7 +4957,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sí, otro Hispano, Latino\n"
+            "value" : "Sí, otro Hispano, Latino"
           }
         }
       }
@@ -4970,7 +4967,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sí, Hispano Sudamericano\n"
+            "value" : "Sí, Hispano Sudamericano"
           }
         }
       }
@@ -4983,7 +4980,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes seleccionar múltiples opciones\n"
+            "value" : "Puedes seleccionar múltiples opciones"
           }
         }
       }
@@ -4993,7 +4990,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Estás listo!\n"
+            "value" : "¡Estás listo!"
           }
         }
       }
@@ -5009,7 +5006,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu Cuenta\n"
+            "value" : "Tu Cuenta"
           }
         }
       }
