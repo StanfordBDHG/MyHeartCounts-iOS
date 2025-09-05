@@ -14,7 +14,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi Corazón Cuenta"
+            "value" : "My Heart Counts"
           }
         }
       }
@@ -26,6 +26,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "MyHeartCounts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "MyHeartCounts"
           }
         }

@@ -59,28 +59,28 @@ struct UpcomingTasksTab: RootViewTab {
                 }
             }
         } label: {
-            Label("Timed Walking Test", systemSymbol: .figureWalk)
+            Label("Timed Walk Test", systemSymbol: .figureWalk)
         }
     }
 }
 
 
 extension UpcomingTasksTab {
-    static func sectionHeader(
-        title: LocalizedStringResource,
-        subtitle: LocalizedStringResource?
-    ) -> some View {
-        sectionHeader(title: title.localizedString(), subtitle: subtitle?.localizedString() ?? "")
-    }
+//    static func sectionHeader(
+//        title: LocalizedStringResource,
+//        subtitle: LocalizedStringResource?
+//    ) -> some View {
+//        sectionHeader(title: title.localizedString(), subtitle: subtitle?.localizedString() ?? "")
+//    }
     
     static func sectionHeader(
-        title: some StringProtocol,
-        subtitle: some StringProtocol = ""
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource? = nil
     ) -> some View {
         Section {
             VStack(alignment: .leading) {
                 Text(title)
-                if !subtitle.isEmpty {
+                if let subtitle, !String(localized: subtitle).isEmpty {
                     Text(subtitle)
                         .foregroundStyle(.secondary)
                         .font(.footnote)

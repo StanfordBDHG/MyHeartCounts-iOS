@@ -21,8 +21,8 @@ extension HealthDashboardConstants {
 struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
     private static var insets: EdgeInsets { EdgeInsets(horizontal: 9, vertical: 5) }
     
-    private let title: String
-    private let subtitle: String?
+    private let title: Text
+    private let subtitle: Text?
     private let accessory: @MainActor () -> Accessory
     private let content: @MainActor () -> Content
     
@@ -31,10 +31,10 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
             VStack(spacing: 0) {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(title)
+                        title
                             .font(.headline)
                         if let subtitle {
-                            Text(subtitle)
+                            subtitle
                                 .font(.subheadline)
                         }
                     }
@@ -54,15 +54,27 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
         .background(.background)
     }
     
-    
     init(
-        title: String,
-        subtitle: String? = nil,
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource? = nil,
         @ViewBuilder accessory: @MainActor @escaping () -> Accessory = { EmptyView() },
         @ViewBuilder content: @MainActor @escaping () -> Content
     ) {
-        self.title = title
-        self.subtitle = subtitle
+        self.title = Text(title)
+        self.subtitle = subtitle.map(Text.init)
+        self.accessory = accessory
+        self.content = content
+    }
+    
+    @_disfavoredOverload
+    init(
+        title: some StringProtocol,
+        subtitle: (some StringProtocol)? = String?.none,
+        @ViewBuilder accessory: @MainActor @escaping () -> Accessory = { EmptyView() },
+        @ViewBuilder content: @MainActor @escaping () -> Content
+    ) {
+        self.title = Text(title)
+        self.subtitle = subtitle.map(Text.init)
         self.accessory = accessory
         self.content = content
     }

@@ -43,6 +43,9 @@ final class NewsManager: Module, EnvironmentAccessible {
         }
         let logger = logger
         let refreshTask = Task { // swiftlint:disable:this closure_body_length
+            defer {
+                self.refreshTask = nil
+            }
             let startTS = CACurrentMediaTime()
             defer {
                 let endTS = CACurrentMediaTime()
@@ -55,18 +58,26 @@ final class NewsManager: Module, EnvironmentAccessible {
                 return
             }
             logger.trace("TIME SPENT FETCHING FILEREFS: \(CACurrentMediaTime() - startTS)")
+            for fileRef in newsArticleFiles.items {
+                self.logger.notice("- \(fileRef.fullPath)")
+            }
             let newsArticleStorageRefs = newsArticleFiles.items
                 .reduce(into: [String: [StorageReference]]()) { mapping, storageRef in
-                    let url = URL(filePath: storageRef.fullPath)
-                    guard let filename = Localization.parseLocalizedFileResource(from: url)?.unlocalizedFilename else {
-                        self.logger.notice("Skipping news articles files \(storageRef) bc we were unable to extract the filename.")
+                    let url = URL(filePath: storageRef.fullPath).absoluteURL
+                    guard let fileInfo = LocalizedFileResolution.parse(url) else {
+                        self.logger.notice("Skipping news articles file \(storageRef) bc we were unable to extract the filename.")
                         return
                     }
-                    mapping[filename, default: []].append(storageRef)
+                    mapping[fileInfo.unlocalizedUrl.lastPathComponent, default: []].append(storageRef)
                 }
                 .compactMap { filename, storageRefs -> StorageReference? in
-                    let urls = storageRefs.map { URL(filePath: $0.fullPath) }
-                    guard let result = Localization.resolveFile(named: filename, from: urls, locale: locale) else {
+                    let urls = storageRefs.map { URL(filePath: $0.fullPath).absoluteURL }
+                    guard let result = LocalizedFileResolution.resolve(
+                        LocalizedFileResource(filename, locale: locale),
+                        from: urls,
+                        using: .preferLanguageMatch,
+                        fallback: .enUS
+                    ) else {
                         return nil
                     }
                     return storageRefs.first(where: { $0.name == result.url.lastPathComponent })

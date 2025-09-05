@@ -39,8 +39,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @MainActor
     func configure() {
         Task {
-            if let studyManager = await self.studyManager,
-               let studyBundle = try? await studyLoader.update() {
+            guard let studyManager = await self.studyManager else {
+                return
+            }
+            if let studyBundle = try? await studyLoader.update() {
                 await logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
                 try await studyManager.informAboutStudies([studyBundle])
             }
@@ -57,6 +59,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     }
     
     func respondToEvent(_ event: AccountNotifications.Event) async {
+        let logger = logger
         switch event {
         case .deletingAccount:
             logger.notice("account is being deleted")
@@ -79,12 +82,17 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             try? FileManager.default.removeItem(at: .scheduledLiveHealthKitUploads)
             try? FileManager.default.removeItem(at: .scheduledHistoricalHealthKitUploads)
             try? await firebaseConfiguration.userDocumentReference.delete()
-            if let studyManager {
-                await MainActor.run {
-                    guard let enrollment = studyManager.studyEnrollments.first else { // this works bc we only ever enroll into the MHC study.
-                        return
-                    }
-                    try? studyManager.unenroll(from: enrollment)
+            let studyManager = studyManager
+            await MainActor.run {
+                // this works bc we only ever enroll into the MHC study.
+                guard let studyManager, let enrollment = studyManager.studyEnrollments.first else {
+                    return
+                }
+                logger.notice("unenrolling from study.")
+                do {
+                    try studyManager.unenroll(from: enrollment)
+                } catch {
+                    logger.error("Error unenrolling from study: \(error)")
                 }
             }
         case .associatedAccount(let details):

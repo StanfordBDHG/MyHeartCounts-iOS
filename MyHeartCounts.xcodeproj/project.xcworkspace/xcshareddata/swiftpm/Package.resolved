@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/Spezi.git",
       "state" : {
-        "revision" : "6bed41a437cba200a8ce0182e6a30dc787bbc836",
-        "version" : "1.9.1"
+        "revision" : "aea262c1bba638494c3ce9a749e834aafd10ba63",
+        "version" : "1.9.2"
       }
     },
     {
@@ -267,8 +267,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "89f3334e685ddad1bbf2e8b33fa0820620aec6c1",
-        "version" : "2.2.1"
+        "revision" : "eaf89f70c255f21cafabdca5c731fa15f618432b",
+        "version" : "2.4.1"
       }
     },
     {
@@ -276,8 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "4fab93e2ba8b62ddc45f50a61043d7df376243ba",
-        "version" : "1.2.3"
+        "revision" : "368ac5a67bb03f1c5c24bc554868a38b527416b9",
+        "version" : "1.2.4"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "565c276b46ad24c1644d1fe4b2e7fe5f37e2d112",
-        "version" : "0.1.1"
+        "revision" : "a80ecba0b4c0a966f5d176e2be73b27278f7b7e0",
+        "version" : "0.1.2"
       }
     },
     {
@@ -348,8 +348,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "de1e38f04c52813bdc7d0949628b5f712bb7d43b",
-        "version" : "0.1.9"
+        "revision" : "15ae5191fe6104806ca5e390965b23ebb93822e4",
+        "version" : "0.1.10"
       }
     },
     {
@@ -357,8 +357,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "9a7cd323ae6023a57bdf57af644538e723902f67",
-        "version" : "1.12.1"
+        "revision" : "8c12a94fcd118128db87736b849e71dbca7d1a46",
+        "version" : "1.12.2"
       }
     },
     {
@@ -528,8 +528,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTRuntimeAssertions.git",
       "state" : {
-        "revision" : "d3394b8c432f4e3d30cdf14cb5892695e923b06d",
-        "version" : "2.1.0"
+        "revision" : "ba5753f59905b80fd98d0da0f552f4e5d5c0488e",
+        "version" : "2.2.0"
       }
     },
     {

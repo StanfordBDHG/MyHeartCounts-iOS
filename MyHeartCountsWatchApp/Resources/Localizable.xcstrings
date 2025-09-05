@@ -1,0 +1,46 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "My Heart Counts" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts"
+          }
+        }
+      }
+    },
+    "Open the app on your iPhone to start a\nSix-Minute Walk Test" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la aplicación en tu iPhone para iniciar una Prueba de Caminata de Seis Minutos"
+          }
+        }
+      }
+    },
+    "See your iPhone for more information." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta tu iPhone para más información."
+          }
+        }
+      }
+    },
+    "Test ongoing" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba en curso"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

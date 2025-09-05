@@ -31,8 +31,11 @@ struct HeartHealthDashboard: View {
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
-    @Environment(\.colorScheme)
-    private var colorScheme
+    // swiftlint:disable attributes
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.calendar) private var cal
+    @Environment(StudyManager.self) private var studyManager
+    // swiftlint:enable attributes
     
     @CVHScore private var cvhScore
     
@@ -127,10 +130,11 @@ struct HeartHealthDashboard: View {
         }
     }
     
-    private var learnMoreSection: some View {
-        Section("Learn More") {
-            let text = String(localized: "HEART_HEALTH_DASHBOARD_LEARN_MORE_TEXT")
-            MarkdownView(markdownDocument: .init(metadata: [:], blocks: [.markdown(id: nil, rawContents: text)]))
+    @ViewBuilder private var learnMoreSection: some View {
+        if let learnMoreText = studyManager.localizedMarkdown(for: "LearnMore", in: .hhdExplainer) {
+            Section("Learn More") {
+                MarkdownView(markdownDocument: .init(metadata: [:], blocks: [.markdown(id: nil, rawContents: learnMoreText)]))
+            }
         }
     }
     
@@ -163,8 +167,8 @@ struct HeartHealthDashboard: View {
                             .font(.caption2)
                     }
                     .frame(width: 50, height: 50)
-                    if let date = score.timeRange?.upperBound {
-                        Text(date, format: .dateTime)
+                    if let timeRange = score.timeRange {
+                        Text(timeRange.displayText(using: cal))
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
