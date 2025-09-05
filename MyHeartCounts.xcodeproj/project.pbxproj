@@ -1768,8 +1768,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFoundation.git";
 			requirement = {
-				kind = revision;
-				revision = bf05098ed12ff89972388017975bb9cd12ebb340;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
 			};
 		};
 		8043E0092DC2348600E0DF01 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
@@ -1888,8 +1888,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
-				kind = revision;
-				revision = c9e719c9dcfeba885b4214afebe8acc7106b7c42;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.4;
 			};
 		};
 		A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */ = {
