@@ -50,7 +50,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyHeart Counts crea datos de Salud relacionados con el ejercicio como parte de la realización de una Prueba de Caminata de Seis Minutos\n"
+            "value" : "MyHeart Counts crea datos de Salud relacionados con el ejercicio como parte de la realización de una Prueba de Caminata de Seis Minutos"
           }
         }
       }
@@ -68,7 +68,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MyHeart Counts accede a algunos datos de Salud, como la frecuencia cardíaca, el conteo de pasos, etc., como parte de la realización de una Prueba de Caminata de Seis Minutos\n"
+            "value" : "MyHeart Counts accede a algunos datos de Salud, como la frecuencia cardíaca, el conteo de pasos, etc., como parte de la realización de una Prueba de Caminata de Seis Minutos"
           }
         }
       }
