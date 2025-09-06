@@ -160,7 +160,15 @@ private struct Impl: View {
     }
     
     @ViewBuilder private var readFromHealthKitButton: some View {
-        AsyncButton(state: $viewState) {
+        LabeledButton(
+            symbol: .heartTextSquare,
+            title: "Read from Health App",
+            subtitle: """
+                Use this option to auto-fill Blood Type, Height, Weight, Date of Birth, and Biological Sex, by reading each from the Health app, if available.
+                Alternatively, you can also tap the respective fields below to manually enter a value, or to override the value read from the Health app.
+                """,
+            state: $viewState
+        ) {
             // this likely isn't necessary
             try await healthKit.askForAuthorization(for: .init(read: [
                 HealthKitCharacteristic.bloodType.hkType,
@@ -187,22 +195,6 @@ private struct Impl: View {
                 case .other: .preferNotToState // not perfect but the best we can do
                 case .notSet: .preferNotToState
                 @unknown default: .preferNotToState
-                }
-            }
-        } label: {
-            HStack(alignment: .firstTextBaseline) {
-                Image(systemSymbol: .heartTextSquare)
-                    .accessibilityHidden(true)
-                VStack(alignment: .listRowSeparatorLeading) {
-                    Text("Read from Health App")
-                    Text(
-                        """
-                        Use this option to auto-fill Blood Type, Height, Weight, Date of Birth, and Biological Sex, by reading each from the Health app, if available.
-                        Alternatively, you can also tap the respective fields below to manually enter a value, or to override the value read from the Health app.
-                        """
-                    )
-                    .font(.footnote)
-                    .foregroundStyle(colorScheme.textLabelForegroundStyle.secondary)
                 }
             }
         }
