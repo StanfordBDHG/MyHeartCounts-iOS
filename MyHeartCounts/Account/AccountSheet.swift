@@ -10,7 +10,9 @@ import SFSafeSymbols
 import SpeziAccount
 import SpeziHealthKitBulkExport
 import SpeziLicense
+import SpeziSensorKit
 import SpeziStudy
+import SpeziViews
 import SwiftUI
 
 
@@ -24,8 +26,10 @@ struct AccountSheet: View {
     @Environment(\.accountRequired) private var accountRequired
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
+    @Environment(SensorKit.self) private var sensorKit
     // swiftlint:enable attributes
     
+    @State private var viewState: ViewState = .idle
     @State private var isInSetup = false
     @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
@@ -92,6 +96,21 @@ struct AccountSheet: View {
                 isPresentingDemographicsSheet = true
             } label: {
                 Label("Demographics", systemSymbol: .personTextRectangle)
+            }
+        }
+        
+        // swiftlint:disable:next line_length
+        let shouldOfferSensorKit = sensorKit.authorizationStatus(for: .ecg) == .notDetermined || sensorKit.authorizationStatus(for: .onWrist) == .notDetermined
+        if shouldOfferSensorKit {
+            Section {
+                LabeledButton(
+                    symbol: .waveformPathEcgRectangle,
+                    title: "Enable SensorKit",
+                    subtitle: "TODO: SensorKit sales pitch",
+                    state: $viewState
+                ) {
+                    try await sensorKit.requestAccess(to: [Sensor.ecg, Sensor.onWrist])
+                }
             }
         }
         

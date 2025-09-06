@@ -30,7 +30,6 @@ struct HomeTab: RootViewTab {
     private var account
     
     @State private var actionCards: [ActionCard] = []
-    @State private var showSensorKitSheet = false
     
     @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
     private var missedEvents
@@ -50,18 +49,6 @@ struct HomeTab: RootViewTab {
             .navigationTitle(String(localized: Self.tabTitle))
             .toolbar {
                 accountToolbarItem
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        showSensorKitSheet = true
-                    } label: {
-                        Image(systemSymbol: .waveformPathEcgRectangle)
-                    }
-                }
-            }
-            .sheet(isPresented: $showSensorKitSheet) {
-                NavigationStack {
-                    SensorKitPlayground()
-                }
             }
         }
     }
