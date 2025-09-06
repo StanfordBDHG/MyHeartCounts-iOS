@@ -1343,6 +1343,9 @@
         }
       }
     },
+    "Enable SensorKit" : {
+
+    },
     "End Study Participation" : {
       "localizations" : {
         "es" : {
@@ -1520,6 +1523,7 @@
       }
     },
     "Fetch WristTemp Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1674,6 +1678,9 @@
           }
         }
       }
+    },
+    "frequency" : {
+
     },
     "Future Studies" : {
       "localizations" : {
@@ -2282,6 +2289,9 @@
           }
         }
       }
+    },
+    "lead" : {
+
     },
     "Learn More" : {
       "localizations" : {
@@ -3943,6 +3953,9 @@
         }
       }
     },
+    "SensorKit" : {
+
+    },
     "Sensors" : {
       "localizations" : {
         "es" : {
@@ -3962,6 +3975,15 @@
           }
         }
       }
+    },
+    "session.guidance" : {
+
+    },
+    "session.id" : {
+
+    },
+    "session.state" : {
+
     },
     "SEX_FEMALE" : {
       "localizations" : {
@@ -4403,6 +4425,9 @@
     "TODO: rough information about (at least some) key study components here?" : {
 
     },
+    "TODO: SensorKit sales pitch" : {
+
+    },
     "Total Household Income" : {
       "localizations" : {
         "es" : {
@@ -4412,6 +4437,12 @@
           }
         }
       }
+    },
+    "Trigger ECG Upload" : {
+
+    },
+    "Trigger On-Wrist Upload" : {
+
     },
     "True" : {
       "localizations" : {

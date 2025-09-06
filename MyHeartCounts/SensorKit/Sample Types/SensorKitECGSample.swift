@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Algorithms
 import Foundation
 import HealthKitOnFHIR
@@ -87,12 +85,11 @@ extension SRElectrocardiogramSample: HasCustomSamplesProcessor {
             // Instead, there will be multiple `SRElectrocardiogramSession` objects for a single logical session
             // (they will all have the same `identifier`), each representing a different state of the session.
             let sessionsByIdentifier = Dictionary(grouping: samplesBySession.keys, by: \.identifier)
-            return sessionsByIdentifier.compactMap { (sessionId, sessions) -> SensorKitECGSession? in
+            return sessionsByIdentifier.compactMap { _, sessions -> SensorKitECGSession? in
                 assert(sessions.count == 3)
                 assert(sessions.mapIntoSet(\.state) == [.begin, .active, .end])
                 guard let beginSession = sessions.first(where: { $0.state == .begin }),
-                      let activeSession = sessions.first(where: { $0.state == .active }),
-                      let endSession = sessions.first(where: { $0.state == .end }) else {
+                      let activeSession = sessions.first(where: { $0.state == .active }) else {
                     return nil
                 }
                 assert(
@@ -104,11 +101,12 @@ extension SRElectrocardiogramSample: HasCustomSamplesProcessor {
                 precondition(samples.mapIntoSet(\.lead).count == 1) // all samples should have same frequency?
                 precondition(samples.mapIntoSet(\.frequency).count == 1) // all samples should have same frequency?
                 precondition(samples.mapIntoSet(\.date).count == samples.count)
+                // swiftlint:disable:next force_unwrapping
                 let startDate = samplesBySession[beginSession]?.min(of: \.date) ?? samples.first!.date // we just sorted samples by date.
                 return SensorKitECGSession(
                     startDate: startDate,
-                    frequency: samples.first!.frequency,
-                    lead: samples.first!.lead,
+                    frequency: samples.first!.frequency, // swiftlint:disable:this force_unwrapping
+                    lead: samples.first!.lead, // swiftlint:disable:this force_unwrapping
                     batches: samples.map { (sample: SRElectrocardiogramSample) -> SensorKitECGSession.Batch in
                         SensorKitECGSession.Batch(
                             offset: sample.date.timeIntervalSince(startDate),
@@ -129,7 +127,7 @@ extension SensorKitECGSession: HealthObservation {
         Self.sensor.id
     }
     
-    func resource(
+    func resource( // swiftlint:disable:this function_body_length
         withMapping mapping: HKSampleMapping,
         issuedDate: FHIRPrimitive<Instant>?,
         extensions: [any FHIRExtensionBuilderProtocol]
@@ -184,7 +182,7 @@ extension SensorKitECGSession: HealthObservation {
                     data: batch.samples.lazy.map { sample in
                         let value = sample.voltage.converted(to: .microvolts).value
                         return String(format: "%.\(precision)f", value)
-                    }.joined(separator: " ").asFHIRStringPrimitive(),
+                    }.joined(separator: " ").asFHIRStringPrimitive(), // swiftlint:disable:this multiline_function_chains
                     dimensions: 1,
                     lowerLimit: nil,
                     origin: origin,

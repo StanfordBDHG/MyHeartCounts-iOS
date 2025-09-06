@@ -77,6 +77,21 @@ extension Sequence {
     func max<T: Comparable>(of keyPath: KeyPath<Element, T>) -> T? {
         self.max { $0[keyPath: keyPath] < $1[keyPath: keyPath] }?[keyPath: keyPath]
     }
+    
+    func minAndMax<T: Comparable>(of keyPath: KeyPath<Element, T>) -> (min: T, max: T)? {
+        var iterator = self.makeIterator()
+        guard let first = iterator.next() else {
+            return nil
+        }
+        var min = first[keyPath: keyPath]
+        var max = min
+        while let next = iterator.next() {
+            let val = next[keyPath: keyPath]
+            min = Swift.min(min, val)
+            max = Swift.max(max, val)
+        }
+        return (min, max)
+    }
 }
 
 

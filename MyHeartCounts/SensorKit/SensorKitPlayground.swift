@@ -20,6 +20,7 @@ import SwiftUI
 
 struct SensorKitPlayground: View {
     @Environment(\.calendar) private var cal
+    @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(SensorKit.self) private var sensorKit
     
     private let onWristReader = SensorReader(.onWrist)
@@ -53,8 +54,13 @@ struct SensorKitPlayground: View {
                     }
                 }
             }
-            AsyncButton("Fetch WristTemp Data", state: $viewState) {
-                try await fetchWristTempData()
+            Section {
+                AsyncButton("Trigger On-Wrist Upload", state: $viewState) {
+                    try await sensorKit.exportNewSamples(for: .onWrist, standard: standard)
+                }
+                AsyncButton("Trigger ECG Upload", state: $viewState) {
+                    try await sensorKit.exportNewSamples(for: .ecg, standard: standard)
+                }
             }
             Section("Sensors") {
                 sensorReaderNavigationLink(for: onWristReader)
@@ -115,31 +121,6 @@ struct SensorKitPlayground: View {
             SensorReaderView(reader: reader)
         }
     }
-    
-    private nonisolated func fetchWristTempData() async throws {
-        dispatchPrecondition(condition: .notOnQueue(.main))
-        let reader = SensorReader(.wristTemperature)
-        let devices = try await reader.fetchDevices()
-        var sessions: [SRWristTemperatureSession] = []
-        for device in devices {
-            sessions.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: .days(1)).flatMap(\.self))
-        }
-        print("#sessions: \(sessions.count)") // x
-        for (idx, session) in sessions.enumerated() {
-//            print("- [\(idx)]: \(session.startDate) \(session.temperatures.count(where: { _ in true }))")
-            print(session)
-            print(session.startDate, session.duration, session.version)
-            print(type(of: session.temperatures))
-            let samples: NSEnumerator = session.__temperatures
-            while let sample = samples.nextObject() {
-                print(sample)
-            }
-//            for sample in session.temperatures {
-//                print(sample)
-//            }
-        }
-        fatalError()
-    }
 }
 
 
@@ -168,6 +149,10 @@ extension SensorKitPlayground {
                     }
                     LabeledContent("#fetchResults", value: fetchResults.count, format: .number)
                     LabeledContent("#samples", value: fetchResults.reduce(0) { $0 + $1.count }, format: .number)
+                    if let (min, max) = fetchResults.minAndMax(of: \.sensorKitTimestamp) {
+                        LabeledContent("startDate", value: min, format: .iso8601)
+                        LabeledContent("endDate", value: max, format: .iso8601)
+                    }
                 }
                 Section("Fetch Results") {
                     if viewState == .processing {
@@ -251,7 +236,7 @@ extension SensorKitPlayground {
                 var fetchResults: [SensorKit.FetchResult<Sample>] = []
                 let timeRange = { () -> Range<Date> in
                     let end = cal.date(byAdding: .init(day: -1, minute: -10), to: .now)!
-                    let start = cal.date(byAdding: .day, value: -1, to: end)!
+                    let start = cal.date(byAdding: .day, value: -7, to: end)!
                     return start..<end
                 }()
                 for device in devices {
@@ -288,7 +273,6 @@ extension SensorKitPlayground {
                     if let sample = fetchResult.first, fetchResult.count == 1 {
                         sampleFields(for: sample)
                     } else {
-                        let _ = print(fetchResult.reduce(into: 0, { $0 ^ $1.hashValue }))
                         List(fetchResult, id: \.self) { sample in
                             NavigationLink {
                                 Form {
@@ -349,6 +333,8 @@ extension SensorKitPlayground {
                         Text(measurement.value, format: .measurement(width: .abbreviated))
                     }
                 }
+            case let sample as SRElectrocardiogramSample:
+                ECGView(sample: sample)
             default:
                 Text("Unhandled sample type \(type(of: sample)) :/")
             }
@@ -356,6 +342,73 @@ extension SensorKitPlayground {
     }
 }
 
+
+
+private struct ECGView: View {
+    let sample: SRElectrocardiogramSample
+    
+    var body: some View {
+        LabeledContent("date", value: sample.date, format: .dateTime)
+        LabeledContent("frequency", value: sample.frequency.formatted())
+        LabeledContent("session.id", value: sample.session.identifier)
+        LabeledContent("session.state", value: sample.session.state.debugDescription)
+        LabeledContent("session.guidance", value: sample.session.sessionGuidance.debugDescription)
+        LabeledContent("lead", value: sample.lead.debugDescription)
+        Section {
+            ForEach(sample.data) { (data: SRElectrocardiogramData) in
+                HStack {
+                    Text(String(describing: data.flags))
+                    Spacer()
+                    Text(data.value, format: .measurement(width: .abbreviated))
+                }
+            }
+        }
+    }
+}
+
+
+extension SRElectrocardiogramData: @retroactive Identifiable {}
+
+extension SRElectrocardiogramSession.State: @retroactive CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .active:
+            "active"
+        case .begin:
+            "begin"
+        case .end:
+            "end"
+        @unknown default:
+            "unknown<\(rawValue)>"
+        }
+    }
+}
+
+extension SRElectrocardiogramSession.SessionGuidance: @retroactive CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .guided:
+            "guided"
+        case .unguided:
+            "unguided"
+        @unknown default:
+            "unknown<\(rawValue)>"
+        }
+    }
+}
+
+extension SRElectrocardiogramSample.Lead: @retroactive CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .rightArmMinusLeftArm:
+            "rightArmMinusLeftArm"
+        case .leftArmMinusRightArm:
+            "leftArmMinusRightArm"
+        @unknown default:
+            "unknown<\(rawValue)>"
+        }
+    }
+}
 
 extension SRWristTemperatureSession {
     var mhc_id: ObjectIdentifier {

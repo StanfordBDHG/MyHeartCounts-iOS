@@ -9,20 +9,22 @@
 import Foundation
 import SFSafeSymbols
 import SpeziFoundation
+import SpeziSensorKit
 import SpeziStudyDefinition
+import SpeziViews
 import SwiftUI
 import UIKit
 import XCTSpeziNotificationsUI
 
 
 struct DebugOptions: View {
-    @Environment(\.colorScheme)
-    private var colorScheme
+    // swiftlint:disable attributes
+    @Environment(\.colorScheme) private var colorScheme
+    @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
+    // swiftlint:enable attributes
     
     @State private var isTimedWalkingTestSheetShown = false
-    
-    @LocalPreference(.sendHealthSampleUploadNotifications)
-    private var healthUploadNotifications
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
         Form {
@@ -46,6 +48,11 @@ struct DebugOptions: View {
                     isTimedWalkingTestSheetShown = true
                 } label: {
                     Label("Timed Walking Test", systemSymbol: .figureWalk)
+                }
+            }
+            Section {
+                NavigationLink("SensorKit") {
+                    SensorKitPlayground()
                 }
             }
             Section {
