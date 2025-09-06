@@ -46,6 +46,7 @@ extension XCUIApplication {
         navigateWelcome()
         try navigateEligibility(region: region)
         try navigateSignup(name: name, email: email, password: password)
+        sleep(for: .seconds(1))
         navigateOnboardingDisclaimers()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         navigateConsentComprehension()

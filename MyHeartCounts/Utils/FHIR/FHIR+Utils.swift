@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable function_default_parameter_at_end
 
 import ModelsR4
 
@@ -49,50 +49,6 @@ extension ModelsR4.ResourceProxy {
 }
 
 
-//extension Coding {
-//    convenience init(loinc: LOINC) {
-//        self.init(
-//            code: loinc.code.asFHIRStringPrimitive(),
-//            system: "http://loinc.org".asFHIRURIPrimitive()
-//        )
-//    }
-//}
-
-
-@available(*, deprecated)
-func buildObservationComponent(
-    loinc: LOINC,
-    quantityUnit: String,
-    quantityValue: Double
-) -> ObservationComponent {
-    ObservationComponent.init(code: loinc, value: .quantity(.init(code: loinc, unit: quantityUnit, value: quantityValue)))
-//    buildObservationComponent(
-//        code: loinc.code,
-//        system: "http://loinc.org",
-//        quantityUnit: quantityUnit,
-//        quantityValue: quantityValue
-//    )
-}
-
-@available(*, deprecated)
-func buildObservationComponent(
-    code: String,
-    system: String,
-    quantityUnit: String,
-    quantityValue: Double
-) -> ObservationComponent {
-    ObservationComponent(
-        code: CodeableConcept(coding: [Coding(code: code.asFHIRStringPrimitive(), system: system.asFHIRURIPrimitive())]),
-        value: .quantity(.init(
-            code: code.asFHIRStringPrimitive(),
-            system: system.asFHIRURIPrimitive(),
-            unit: quantityUnit.asFHIRStringPrimitive(),
-            value: quantityValue.asFHIRDecimalPrimitive()
-        ))
-    )
-}
-
-
 extension Coding {
     convenience init<C: CodingProtocol>(system: C.Type = C.self, code: C) {
         self.init(
@@ -129,11 +85,14 @@ extension ObservationComponent {
         quantityUnit: String,
         quantityValue: Double
     ) {
-        self.init(code: code, value: .quantity(.init(
+        self.init(
             code: code,
-            unit: quantityUnit,
-            value: quantityValue)
-        ))
+            value: .quantity(.init(
+                code: code,
+                unit: quantityUnit,
+                value: quantityValue
+            ))
+        )
     }
 }
 
