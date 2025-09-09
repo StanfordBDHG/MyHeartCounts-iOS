@@ -122,7 +122,6 @@ struct TasksList: View {
             .sheet(item: $questionnaireBeingAnswered) { input in
                 QuestionnaireView(
                     questionnaire: input.questionnaire,
-                    completionStepMessage: "COMPLETION_STEP_MESSAGE",
                     cancelBehavior: .cancel
                 ) { result in
                     questionnaireBeingAnswered = nil

@@ -51,9 +51,13 @@ struct NewsTab: RootViewTab {
                 accountToolbarItem
             }
             .task {
-                isInitialLoad = true
-                await newsManager.refresh()
-                isInitialLoad = false
+                if newsManager.articles.isEmpty {
+                    isInitialLoad = true
+                    await newsManager.refresh()
+                    isInitialLoad = false
+                } else {
+                    await newsManager.refresh()
+                }
             }
             .refreshable {
                 await newsManager.refresh()

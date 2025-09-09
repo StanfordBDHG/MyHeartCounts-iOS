@@ -39,7 +39,16 @@ enum MHCSampleType: Hashable, Identifiable, Sendable {
     }
     
     var displayUnit: HKUnit? {
-        asQuantityType?.displayUnit
+        if let unit = asQuantityType?.displayUnit {
+            unit
+        } else {
+            switch self {
+            case .healthKit(.correlation(.bloodPressure)):
+                SampleType.bloodPressure.associatedQuantityTypes.first?.displayUnit
+            default:
+                nil
+            }
+        }
     }
     
     var asQuantityType: MHCQuantitySampleType? {
@@ -122,6 +131,8 @@ enum MHCQuantitySampleType: Hashable, Identifiable, Sendable {
     
     var displayTitle: String {
         switch self {
+        case .healthKit(.bloodGlucose):
+            String(localized: "Hemoglobin A1c (HbA1c)")
         case .healthKit(let sampleType):
             sampleType.displayTitle
         case .custom(let sampleType):

@@ -51,6 +51,7 @@ struct HeartHealthDashboard: View {
     @ViewBuilder var healthDashboard: some View {
         Text("HEART_HEALTH_DASHBOARD_HEADER")
             .navigationTitle("Heart Health Dashboard")
+            .navigationBarTitleDisplayMode(.inline)
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             .sheet(item: $addNewSampleDescriptor) { descriptor in
@@ -158,7 +159,6 @@ struct HeartHealthDashboard: View {
         for scoreKeyPath: KeyPath<CVHScore, ScoreResult>
     ) -> HealthDashboardLayout.GridComponent {
         let score = $cvhScore[keyPath: scoreKeyPath]
-        let tapShouldEnterData = score.score == nil && HeartHealthDashboard.canAddSample(for: scoreKeyPath)
         return .custom(title: score.sampleType.displayTitle) {
             if let scoreValue = score.score {
                 VStack {
@@ -174,15 +174,11 @@ struct HeartHealthDashboard: View {
                     }
                 }
             } else {
-                Text(tapShouldEnterData ? "Tap to enter data…" : "No Data")
+                Text("No Data…")
                     .foregroundStyle(.secondary)
             }
         } onTap: {
-            if score.score != nil {
-                scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
-            } else if tapShouldEnterData {
-                addNewSample(for: scoreKeyPath)
-            }
+            scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
         }
     }
     

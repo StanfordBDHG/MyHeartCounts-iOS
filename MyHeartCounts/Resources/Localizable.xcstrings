@@ -582,9 +582,21 @@
     },
     "Blood Lipids" : {
       "localizations" : {
-        "es" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "LDL Cholesterol"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LDL Cholesterol"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
             "value" : "Lípidos en Sangre"
           }
         }
@@ -1488,13 +1500,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your feedback helps us improve My Heart Counts and [TODO some text about better helping more people???]\n\nThe feedback you share with us will be associated with your Email address.\nThis allows us to reach out to you if required."
+            "value" : "Your feedback helps us improve My Heart Counts and all feedback is greatly appreciated.\n\nThe feedback you share with us will be associated with your Email address.\nThis allows us to reach out to you if required."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your feedback helps us improve My Heart Counts and [TODO some text about better helping more people???]\n\nThe feedback you share with us will be associated with your Email address.\nThis allows us to reach out to you if required."
+            "value" : "Your feedback helps us improve My Heart Counts and all feedback is greatly appreciated.\n\nThe feedback you share with us will be associated with your Email address.\nThis allows us to reach out to you if required."
           }
         }
       }
@@ -1939,13 +1951,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research Team unless you have selected to allow broader data sharing. Prior to sharing data outside of the My Heart Counts Research Team, researchers will need to denominated they are qualified to persome research that will review. Broadly shared data will have all information de-identified and not traceable to you.\n\nMoreover, the data will only be shared with qualified researchers who must submit applications to access de-identified data.\n\nYou can revoke this access at any time."
+            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research Team unless you have selected to allow broader data sharing. Before any sharing takes place, outside researchers must demonstrate that they are qualified to conduct approved studies. Broadly shared data will have all information de-identified and not traceable to you. \n\n\nYou can revoke this access at any time."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research Team unless you have selected to allow broader data sharing. Prior to sharing data outside of the My Heart Counts Research Team, researchers will need to denominated they are qualified to persome research that will review. Broadly shared data will have all information de-identified and not traceable to you.\n\nMoreover, the data will only be shared with qualified researchers who must submit applications to access de-identified data.\n\nYou can revoke this access at any time."
+            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research Team unless you have selected to allow broader data sharing. Before any sharing takes place, outside researchers must demonstrate that they are qualified to conduct approved studies. Broadly shared data will have all information de-identified and not traceable to you. \n\n\nYou can revoke this access at any time."
           }
         }
       }
@@ -2029,6 +2041,9 @@
           }
         }
       }
+    },
+    "Hemoglobin A1c (HbA1c)" : {
+
     },
     "Household Income" : {
       "localizations" : {
@@ -2169,6 +2184,12 @@
             "value" : "Learn more about My Heart Counts"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn more about My Heart Counts"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2185,6 +2206,12 @@
             "value" : "You are not eligible to participate in this study because you did not meet the eligibility criteria."
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are not eligible to participate in this study because you did not meet the eligibility criteria."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2196,6 +2223,12 @@
     "INELIGIBLE_TITLE" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ineligible for Participation"
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ineligible for Participation"
@@ -2640,6 +2673,9 @@
         }
       }
     },
+    "New Test" : {
+
+    },
     "New York" : {
       "localizations" : {
         "es" : {
@@ -2735,6 +2771,9 @@
           }
         }
       }
+    },
+    "No Data…" : {
+
     },
     "No Internet" : {
       "localizations" : {
@@ -2969,6 +3008,12 @@
             "value" : "Study Overview & Participation"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Study Overview & Participation"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3029,6 +3074,12 @@
             "value" : "Trial Component"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trial Component"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3042,18 +3093,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement, GPS for location during specific fitness tests, and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
+            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement, GPS for location during specific fitness tests, and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared. We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement, GPS for location during specific fitness tests, and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
+            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement, GPS for location during specific fitness tests, and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared. We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "El estudio recopila datos a través de los sensores de tu teléfono, incluidos los datos del acelerómetro para el movimiento, el GPS para la ubicación durante pruebas de fitness específicas y la frecuencia cardíaca si está disponible a través de dispositivos conectados. Toda la transmisión de datos utiliza tecnología de cifrado para proteger tu información. Separamos tu información identificativa de tus datos de salud en nuestras bases de datos seguras. Tendrás opciones dentro de la aplicación para controlar qué información se comparte. Seguimos protocolos estrictos aprobados por la Junta de Revisión Institucional de Stanford para mantener tu privacidad."
           }
         }
@@ -3260,6 +3311,9 @@
           }
         }
       }
+    },
+    "Past Tests" : {
+
     },
     "PAST_TIMED_WALKING_RUNNING_TEST_RESULTS_BUTTON_TITLE" : {
       "localizations" : {
@@ -4203,9 +4257,6 @@
         }
       }
     },
-    "Tap to enter data…" : {
-
-    },
     "Tennessee" : {
       "localizations" : {
         "es" : {
@@ -4367,6 +4418,12 @@
             "value" : "The 6-Minute Walk Test measures your functional exercise capacity by tracking how far you can walk in 6 minutes on a flat surface. It's a simple way to evaluate your physical fitness and is commonly used to monitor conditions affecting the heart and lungs.\n\nTo perform the test, find a flat path where you can walk without obstacles. Wear comfortable shoes. Tap \"Start\" and walk at a steady pace that's comfortable but challenging. Your goal is to cover as much distance as possible in 6 minutes."
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The 6-Minute Walk Test measures your functional exercise capacity by tracking how far you can walk in 6 minutes on a flat surface. It's a simple way to evaluate your physical fitness and is commonly used to monitor conditions affecting the heart and lungs.\n\nTo perform the test, find a flat path where you can walk without obstacles. Wear comfortable shoes. Tap \"Start\" and walk at a steady pace that's comfortable but challenging. Your goal is to cover as much distance as possible in 6 minutes."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -4383,6 +4440,12 @@
             "value" : "The 12-Minute Run Test measures your cardiovascular fitness by tracking how far you can run or jog in 12 minutes. This simple endurance test helps assess your aerobic fitness level and can be used to monitor progress over time. This test is best for people who already have some running experience.\n\nTo perform the test, find a flat area where you can run continuously without interruption. Wear appropriate running shoes and comfortable clothing. Warm up for 5-10 minutes with light jogging and stretching. When ready, tap \"Start\" on the app and begin running at a steady pace. Your goal is to cover as much distance as possible in the 12 minutes. Pace yourself - starting too fast might force you to slow down later. The app will alert you when 12 minutes have elapsed."
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The 12-Minute Run Test measures your cardiovascular fitness by tracking how far you can run or jog in 12 minutes. This simple endurance test helps assess your aerobic fitness level and can be used to monitor progress over time. This test is best for people who already have some running experience.\n\nTo perform the test, find a flat area where you can run continuously without interruption. Wear appropriate running shoes and comfortable clothing. Warm up for 5-10 minutes with light jogging and stretching. When ready, tap \"Start\" on the app and begin running at a steady pace. Your goal is to cover as much distance as possible in the 12 minutes. Pace yourself - starting too fast might force you to slow down later. The app will alert you when 12 minutes have elapsed."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4394,6 +4457,12 @@
     "TIMED_WALK_TEST_EXPLAINER_FOOTER" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."

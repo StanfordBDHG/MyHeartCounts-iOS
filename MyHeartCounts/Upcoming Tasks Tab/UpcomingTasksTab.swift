@@ -66,13 +66,6 @@ struct UpcomingTasksTab: RootViewTab {
 
 
 extension UpcomingTasksTab {
-//    static func sectionHeader(
-//        title: LocalizedStringResource,
-//        subtitle: LocalizedStringResource?
-//    ) -> some View {
-//        sectionHeader(title: title.localizedString(), subtitle: subtitle?.localizedString() ?? "")
-//    }
-    
     static func sectionHeader(
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource? = nil

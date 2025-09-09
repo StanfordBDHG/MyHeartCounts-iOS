@@ -45,6 +45,7 @@ struct Consent: View {
                 var accountDetailUpdates = AccountDetails()
                 accountDetailUpdates.lastSignedConsentDate = .now
                 accountDetailUpdates.lastSignedConsentVersion = consentDocument.metadata.version?.description
+                accountDetailUpdates.futureStudies = consentDocument.userResponses.toggles["future-studies"] == true
                 let modifications = try AccountModifications(modifiedDetails: accountDetailUpdates)
                 try await account.accountService.updateAccountDetails(modifications)
             }
