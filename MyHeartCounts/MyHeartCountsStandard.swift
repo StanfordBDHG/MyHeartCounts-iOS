@@ -17,7 +17,6 @@ import SpeziFirebaseAccount
 import SpeziFirestore
 import SpeziHealthKit
 import SpeziQuestionnaire
-import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
 
@@ -33,7 +32,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(HealthDataFileUploadManager.self) var healthDataUploader
     @Dependency(AccountFeatureFlags.self) private var accountFeatureFlags
     @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
-    @Dependency(SensorKit.self) private var sensorKit
     // swiftlint:disable attributes
     
     init() {}
@@ -48,15 +46,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 await logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
                 try await studyManager.informAboutStudies([studyBundle])
             }
-            
-            if await sensorKit.authorizationStatus(for: .onWrist) == .authorized {
-                try await sensorKit.exportNewSamples(for: .onWrist, standard: self)
-            }
-            if await sensorKit.authorizationStatus(for: .ecg) == .authorized {
-                try await sensorKit.exportNewSamples(for: .onWrist, standard: self)
-            }
         }
     }
+    
+    // MARK: Account Stuff
     
     private func propagateDebugModeValue(_ isEnabled: Bool) async {
         LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey] = isEnabled

@@ -30,27 +30,13 @@ extension SensorKit {
         Sensor.deviceUsage
     ]
     
-    @SensorKitActor
+    
     func exportNewSamples<Sample>(
         for sensor: Sensor<Sample>,
         standard: MyHeartCountsStandard
-    ) async throws where Sample: HasCustomSamplesProcessor, Sample.Processor.Input == Sample, Sample.Processor.Output.Element: HealthObservation {
-        try await exportNewSamples(for: sensor, standard: standard) {
-            try await Sample.Processor.process($0)
-        }
-    }
-    
-    @SensorKitActor
-    func exportNewSamples<Sample>(
-        for sensor: Sensor<Sample>,
-        standard: MyHeartCountsStandard,
-        makeHealthObservations: @Sendable (
-            SensorKit.FetchResultsIterator<Sample, [SensorKit.FetchResult<Sample>]>
-        ) async throws -> some Collection<some HealthObservation> & Sendable
-    ) async throws {
+    ) async throws where Sample.SafeRepresentation: HealthObservation {
         for try await batch in try await fetchAnchored(sensor) {
-            let healthObservations = try await makeHealthObservations(FetchResultsIterator(batch))
-            try await standard.uploadHealthObservations(healthObservations)
+            try await standard.uploadHealthObservations(batch)
         }
     }
 }

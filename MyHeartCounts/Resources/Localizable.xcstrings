@@ -34,9 +34,6 @@
         }
       }
     },
-    "#=%lld" : {
-
-    },
     "%@ – %@" : {
       "localizations" : {
         "en" : {
@@ -57,9 +54,6 @@
         }
       }
     },
-    "%@ bpm" : {
-
-    },
     "%@-Minute Run Test" : {
 
     },
@@ -72,6 +66,9 @@
           }
         }
       }
+    },
+    "%lf" : {
+
     },
     "%lld ft" : {
 
@@ -1554,6 +1551,7 @@
       }
     },
     "Filter Options" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2133,6 +2131,7 @@
       }
     },
     "Ignore Empty Fetch Results" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3821,6 +3820,7 @@
 
     },
     "Sample" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3977,12 +3977,6 @@
       }
     },
     "session.guidance" : {
-
-    },
-    "session.id" : {
-
-    },
-    "session.state" : {
 
     },
     "SEX_FEMALE" : {

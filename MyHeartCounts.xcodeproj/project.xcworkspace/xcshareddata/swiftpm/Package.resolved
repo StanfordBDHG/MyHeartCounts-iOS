@@ -330,7 +330,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "a0c9b64b5822c1d6aa7493a4da9e8229115462f2"
+        "revision" : "8930b0e2bff1a0f034020b531c93ad9005197c34"
       }
     },
     {

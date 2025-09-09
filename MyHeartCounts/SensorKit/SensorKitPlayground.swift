@@ -125,16 +125,15 @@ struct SensorKitPlayground: View {
 
 
 extension SensorKitPlayground {
-    private struct SensorReaderView<Sample: AnyObject & Hashable>: View {
+    private struct SensorReaderView<Sample: SensorKitSampleProtocol>: View {
         @Environment(\.calendar) private var cal
         let reader: SensorReader<Sample>
         @State private var viewState: ViewState = .idle
         @State private var devices: [SRDevice] = []
         @State private var didPerformInitialFetch = false
-        @State private var fetchResults: [SensorKit.FetchResult<Sample>] = []
+        @State private var samples: [Sample.SafeRepresentation] = []
         @State private var numSamples: Int = 0
         @State private var coveredTimeRange: Range<Date>?
-        @State private var filterEmptyFetchResults = false
         
         var body: some View {
             Form {
@@ -147,9 +146,8 @@ extension SensorKitPlayground {
                                 .font(.caption)
                         }
                     }
-                    LabeledContent("#fetchResults", value: fetchResults.count, format: .number)
-                    LabeledContent("#samples", value: fetchResults.reduce(0) { $0 + $1.count }, format: .number)
-                    if let (min, max) = fetchResults.minAndMax(of: \.sensorKitTimestamp) {
+                    LabeledContent("#samples", value: samples.count, format: .number)
+                    if let (min, max) = samples.minAndMax(of: \.timestamp) {
                         LabeledContent("startDate", value: min, format: .iso8601)
                         LabeledContent("endDate", value: max, format: .iso8601)
                     }
@@ -167,19 +165,18 @@ extension SensorKitPlayground {
                             ProgressView()
                         }
                     } else {
-                        let fetchResults = filterEmptyFetchResults ? fetchResults.filter { !$0.isEmpty } : fetchResults
-                        List(fetchResults, id: \.self) { fetchResult in
+                        List(samples, id: \.self) { sample in
                             NavigationLink {
-                                FetchResultView(fetchResult: fetchResult)
+                                SampleInfoView<Sample>(sample: sample)
                             } label: {
                                 HStack {
-                                    Text(fetchResult.sensorKitTimestamp, format: .iso8601)
-                                    Spacer()
-                                    if fetchResult.count == 1, let sample = fetchResult.first as? CMHighFrequencyHeartRateData {
-                                        Text("\(sample.heartRate, format: .number) bpm")
-                                    } else {
-                                        Text("#=\(fetchResult.count)")
-                                    }
+                                    Text(sample.timestamp, format: .iso8601)
+//                                    Spacer()
+//                                    if let sample = sample as? CMHighFrequencyHeartRateData {
+//                                        Text("\(sample.heartRate, format: .number) bpm")
+//                                    } else {
+//                                        Text("#=\(fetchResult.count)")
+//                                    }
                                 }
                             }
                         }
@@ -193,24 +190,6 @@ extension SensorKitPlayground {
             .interactiveDismissDisabled(viewState == .processing)
             .navigationBarBackButtonHidden(viewState == .processing)
             .viewStateAlert(state: $viewState)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Toggle(isOn: $filterEmptyFetchResults.animation()) {
-                            Text("Ignore Empty Fetch Results")
-                        }
-                    } label: {
-                        Image(systemSymbol: filterEmptyFetchResults ? .line3HorizontalDecreaseCircleFill : .line3HorizontalDecreaseCircle)
-                            .accessibilityLabel("Filter Options")
-                    }
-//                    Button {
-//                        filterEmptyFetchResults.toggle()
-//                    } label: {
-//                        Image(systemSymbol: filterEmptyFetchResults ? .line3HorizontalDecreaseCircleFill : .line3HorizontalDecreaseCircle)
-//                            .accessibilityLabel("Filter empty Fetch Results")
-//                    }
-                }
-            }
             .task {
                 guard !didPerformInitialFetch else {
                     return
@@ -230,29 +209,20 @@ extension SensorKitPlayground {
                 return
             }
             viewState = .processing
-            fetchResults = []
+            samples.removeAll(keepingCapacity: true)
             do {
                 devices = try await reader.fetchDevices()
-                var fetchResults: [SensorKit.FetchResult<Sample>] = []
-                let timeRange = { () -> Range<Date> in
-                    let end = cal.date(byAdding: .init(day: -1, minute: -10), to: .now)!
-                    let start = cal.date(byAdding: .day, value: -7, to: end)!
-                    return start..<end
-                }()
+                var samples: [Sample.SafeRepresentation] = []
                 for device in devices {
-                    fetchResults.append(contentsOf: try await reader.fetch(from: device, timeRange: timeRange))
+                    samples.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: reader.sensor.suggestedBatchSize))
                 }
-                if let firstResult = fetchResults.first {
-                    var numSamples = firstResult.count
-                    var totalTimeRange: Range<Date> = firstResult.sensorKitTimestamp..<firstResult.sensorKitTimestamp
-                    for fetchResult in fetchResults.dropFirst() {
-                        numSamples += fetchResult.count
-                        totalTimeRange = min(totalTimeRange.lowerBound, fetchResult.sensorKitTimestamp)..<max(totalTimeRange.upperBound, fetchResult.sensorKitTimestamp)
-                    }
-                    self.numSamples = numSamples
-                    self.coveredTimeRange = totalTimeRange
+                samples.sort(using: KeyPathComparator(\.timestamp, order: .reverse))
+                if let first = samples.first, let last = samples.last {
+                    coveredTimeRange = last.timestamp..<first.timestamp
+                } else {
+                    coveredTimeRange = nil
                 }
-                self.fetchResults = fetchResults.sorted(using: KeyPathComparator(\.sensorKitTimestamp, order: .reverse))
+                self.samples = samples
                 viewState = .idle
             } catch {
                 viewState = .error(error)
@@ -261,36 +231,36 @@ extension SensorKitPlayground {
     }
     
     
-    private struct FetchResultView<Sample: AnyObject & Hashable>: View {
-        let fetchResult: SensorKit.FetchResult<Sample>
+    private struct SampleInfoView<Sample: SensorKitSampleProtocol>: View {
+        let sample: Sample.SafeRepresentation
         
         var body: some View {
             Form {
                 Section {
-                    LabeledContent("SensorKit Timestamp", value: fetchResult.sensorKitTimestamp, format: .dateTime)
+                    LabeledContent("SensorKit Timestamp", value: sample.timestamp, format: .dateTime)
                 }
                 Section {
-                    if let sample = fetchResult.first, fetchResult.count == 1 {
-                        sampleFields(for: sample)
-                    } else {
-                        List(fetchResult, id: \.self) { sample in
-                            NavigationLink {
-                                Form {
-                                    sampleFields(for: sample)
-                                }
-                            } label: {
-                                Text("Sample") // TODO have more here?!
-                            }
-                        }
-                    }
+//                    if let sample = fetchResult.first, fetchResult.count == 1 {
+                    sampleFields(for: sample)
+//                    } else {
+//                        List(fetchResult, id: \.self) { sample in
+//                            NavigationLink {
+//                                Form {
+//                                    sampleFields(for: sample)
+//                                }
+//                            } label: {
+//                                Text("Sample") // TODO have more here?!
+//                            }
+//                        }
+//                    }
                 }
             }
         }
         
         @ViewBuilder
-        private func sampleFields(for sample: Sample) -> some View {
+        private func sampleFields(for sample: Sample.SafeRepresentation) -> some View {
             switch sample {
-            case let sample as SRAmbientLightSample:
+            case let sample as DefaultSensorKitSampleSafeRepresentation<SRAmbientLightSample>:
                 LabeledContent("placement", value: sample.placement.displayTitle)
                 LabeledContent("chromaticity", value: "\(sample.chromaticity.x); \(sample.chromaticity.y)")
                 LabeledContent("lux", value: sample.lux, format: .measurement(width: .abbreviated))
@@ -300,13 +270,13 @@ extension SensorKitPlayground {
                 LabeledContent("pressure", value: sample.pressure, format: .measurement(width: .abbreviated))
                 LabeledContent("temperature", value: sample.temperature, format: .measurement(width: .abbreviated))
                 LabeledContent("timestamp", value: Date(timeIntervalSinceReferenceDate: sample.timestamp), format: .iso8601)
-            case let sample as SRDeviceUsageReport:
-                DeviceUsageReportView(report: sample)
+            case let sample as DefaultSensorKitSampleSafeRepresentation<SRDeviceUsageReport>:
+                DeviceUsageReportView(report: sample.sample)
             case let sample as CMHighFrequencyHeartRateData:
                 LabeledContent("heartRate", value: sample.heartRate, format: .number)
                 LabeledContent("conficence", value: sample.confidence.displayTitle)
                 LabeledContent("date", value: (sample.date?.formatted()) ?? "n/a")
-            case let sample as SRWristDetection:
+            case let sample as SensorKitOnWristEventSample:
                 LabeledContent("onWrist", value: sample.onWrist.description)
                 LabeledContent("wristLocation", value: sample.wristLocation.displayTitle)
                 LabeledContent("crownOrientation", value: sample.crownOrientation.displayTitle)
@@ -318,7 +288,7 @@ extension SensorKitPlayground {
                 LabeledContent("departureDateInterval", value: sample.departureDateInterval, format: .humanReadable())
                 LabeledContent("locationCategory", value: sample.locationCategory.displayTitle)
                 LabeledContent("identifier", value: sample.identifier.uuidString)
-            case let sample as SRWristTemperatureSession:
+            case let sample as DefaultSensorKitSampleSafeRepresentation<SRWristTemperatureSession>:
                 LabeledContent("startDate", value: sample.startDate, format: .dateTime)
                 LabeledContent("duration", value: sample.duration, format: .timeInterval)
                 LabeledContent("version", value: sample.version)
@@ -333,8 +303,8 @@ extension SensorKitPlayground {
                         Text(measurement.value, format: .measurement(width: .abbreviated))
                     }
                 }
-            case let sample as SRElectrocardiogramSample:
-                ECGView(sample: sample)
+            case let sample as SensorKitECGSession:
+                ECGSessionView(session: sample)
             default:
                 Text("Unhandled sample type \(type(of: sample)) :/")
             }
@@ -344,23 +314,23 @@ extension SensorKitPlayground {
 
 
 
-private struct ECGView: View {
-    let sample: SRElectrocardiogramSample
+private struct ECGSessionView: View {
+    let session: SensorKitECGSession
     
     var body: some View {
-        LabeledContent("date", value: sample.date, format: .dateTime)
-        LabeledContent("frequency", value: sample.frequency.formatted())
-        LabeledContent("session.id", value: sample.session.identifier)
-        LabeledContent("session.state", value: sample.session.state.debugDescription)
-        LabeledContent("session.guidance", value: sample.session.sessionGuidance.debugDescription)
-        LabeledContent("lead", value: sample.lead.debugDescription)
-        Section {
-            ForEach(sample.data) { (data: SRElectrocardiogramData) in
-                HStack {
-                    Text(String(describing: data.flags))
-                    Spacer()
-                    Text(data.value, format: .measurement(width: .abbreviated))
-                }
+        LabeledContent("date", value: session.timestamp, format: .dateTime)
+        LabeledContent("frequency", value: session.frequency.formatted())
+        LabeledContent("session.guidance", value: session.guidance.debugDescription)
+        LabeledContent("lead", value: session.lead.debugDescription)
+        ForEach(session.batches, id: \.offset) { (batch: SensorKitECGSession.Batch) in
+            Section("\(batch.offset)") {
+//                ForEach(Array(batch.samples.indices), id: \.self) { sampleIdx in
+//                    let sample: SensorKitECGSession.Batch.VoltageSample = batch.samples[sampleIdx]
+//                    HStack {
+//                        Spacer()
+//                        Text(sample.voltage, format: .measurement(width: .abbreviated))
+//                    }
+//                }
             }
         }
     }
