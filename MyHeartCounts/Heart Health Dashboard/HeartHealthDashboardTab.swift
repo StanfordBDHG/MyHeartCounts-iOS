@@ -27,6 +27,7 @@ struct HeartHealthDashboardTab: RootViewTab {
             Form {
                 HeartHealthDashboard()
             }
+            .navigationTitle(Self.tabTitle)
             .toolbar {
                 accountToolbarItem
             }

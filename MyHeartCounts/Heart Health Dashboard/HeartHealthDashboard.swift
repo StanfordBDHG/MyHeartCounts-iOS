@@ -50,8 +50,6 @@ struct HeartHealthDashboard: View {
     
     @ViewBuilder var healthDashboard: some View {
         Text("HEART_HEALTH_DASHBOARD_HEADER")
-            .navigationTitle("Heart Health Dashboard")
-            .navigationBarTitleDisplayMode(.inline)
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             .sheet(item: $addNewSampleDescriptor) { descriptor in
