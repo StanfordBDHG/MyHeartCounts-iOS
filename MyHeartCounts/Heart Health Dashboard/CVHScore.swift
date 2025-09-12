@@ -113,7 +113,8 @@ struct CVHScore: DynamicProperty {
         }
     }
     
-    nonisolated private func updateSleepScore() async {
+    @concurrent
+    private func updateSleepScore() async {
         let sleepSamples = await MainActor.run { () -> [HKCategorySample] in
             guard !lastSeenSleepSamples.elementsEqual(self.sleepSamples) else {
                 // if we don't need an update, we return an empty array here, which will cause the code below to return early.

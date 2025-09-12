@@ -25,7 +25,8 @@ final class SensorKitDataFetcher: Module {
     }
     
     
-    nonisolated private func doFetch() async {
+    @concurrent
+    private func doFetch() async {
         func imp<Sample>(_ sensor: Sensor<Sample>) async where Sample.SafeRepresentation: HealthObservation {
             guard sensorKit.authorizationStatus(for: sensor) == .authorized else {
                 logger.notice("Skipping Sensor '\(sensor.displayName)' bc it's not authorized.")
