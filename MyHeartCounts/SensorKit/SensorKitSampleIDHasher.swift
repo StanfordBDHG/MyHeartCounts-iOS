@@ -9,6 +9,11 @@
 import Foundation
 
 
+/// A Hasher that finalizes into a `UUID`; intended to obtain stable unique IDs for SensorKit samples.
+///
+/// This hasher's `combine` functions work by XOR-ing the input data onto the hasher's internal state (a `UInt128`),
+/// in a way that the range of the state onto which an XOR operation is applied is always shifted relative to the previous XOR,
+/// by half the size of the previous input (but at least 8 bits).
 struct SensorKitSampleIDHasher: ~Copyable {
     private var state: UInt128 = 85073555474209096226415955104694206904
     private var nextShift: Int = 0
