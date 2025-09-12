@@ -63,8 +63,4 @@ extension FixedWidthInteger {
     static func bitmask(_ numBits: Int) -> Self {
         (1 << numBits) - 1
     }
-    
-    func assertRepresentsContiguousBitRange() {
-        assert(self.leadingZeroBitCount + self.trailingZeroBitCount + self.nonzeroBitCount == Self.bitWidth)
-    }
 }
