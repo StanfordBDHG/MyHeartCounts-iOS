@@ -36,8 +36,18 @@ struct SaveQuantitySampleView: View {
             Section {
                 LabeledContent("Sample Type", value: sampleType.displayTitle)
                 DatePicker("Date", selection: $date)
-                QuantityInputRow(title: "Value", value: $value, unit: sampleType.displayUnit)
-                    .focused($valueFieldIsFocused)
+                if sampleType == .healthKit(.height) {
+                    let binding = Binding<HKQuantity?> {
+                        value.map { HKQuantity(unit: sampleType.displayUnit, doubleValue: $0) }
+                    } set: { newValue in
+                        value = newValue?.doubleValue(for: sampleType.displayUnit)
+                    }
+                    HeightInputRow(title: "Value", quantity: binding, preferredUnit: sampleType.displayUnit)
+                        .focused($valueFieldIsFocused)
+                } else {
+                    QuantityInputRow(title: "Value", value: $value, unit: sampleType.displayUnit)
+                        .focused($valueFieldIsFocused)
+                }
             }
         }
         .navigationTitle(title)
@@ -47,7 +57,7 @@ struct SaveQuantitySampleView: View {
                 DismissButton()
             }
             ToolbarItem(placement: .confirmationAction) {
-                AsyncButton("Add", state: $viewState) {
+                AsyncButton("Save", state: $viewState) {
                     try await save()
                     dismiss()
                 }

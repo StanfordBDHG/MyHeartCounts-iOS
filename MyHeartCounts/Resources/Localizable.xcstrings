@@ -379,6 +379,7 @@
       }
     },
     "Add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1354,6 +1355,22 @@
     },
     "Enable SensorKit" : {
 
+    },
+    "ENABLE_SENSORKIT_SUBTITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+          }
+        }
+      }
     },
     "End Study Participation" : {
       "localizations" : {
@@ -4488,9 +4505,6 @@
 
     },
     "TODO: rough information about (at least some) key study components here?" : {
-
-    },
-    "TODO: SensorKit sales pitch" : {
 
     },
     "Total Household Income" : {

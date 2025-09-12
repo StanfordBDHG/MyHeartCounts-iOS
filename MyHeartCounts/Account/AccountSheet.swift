@@ -106,7 +106,7 @@ struct AccountSheet: View {
                 LabeledButton(
                     symbol: .waveformPathEcgRectangle,
                     title: "Enable SensorKit",
-                    subtitle: "TODO: SensorKit sales pitch",
+                    subtitle: "ENABLE_SENSORKIT_SUBTITLE",
                     state: $viewState
                 ) {
                     try await sensorKit.requestAccess(to: [Sensor.ecg, Sensor.onWrist])

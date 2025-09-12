@@ -42,8 +42,15 @@ final class SensorKitDataFetcher: Module {
                 logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
             }
         }
-        await imp(.onWrist)
-        await imp(.ecg)
+        await withDiscardingTaskGroup { taskGroup in
+            taskGroup.addTask {
+                await imp(.onWrist)
+            }
+            taskGroup.addTask {
+                await imp(.ecg)
+            }
+            for try await _ in taskGroup {} // not sure if this is actually needed...
+        }
     }
     
     
