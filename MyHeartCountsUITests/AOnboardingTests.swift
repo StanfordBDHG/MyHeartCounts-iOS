@@ -236,7 +236,7 @@ extension XCUIApplication {
     private func navigateHealthKitAccess() throws {
         XCTAssert(staticTexts["HealthKit Access"].waitForExistence(timeout: 2))
         buttons["Grant Access"].tap()
-        try handleHealthKitAuthorization()
+        handleHealthKitAuthorization()
     }
     
     

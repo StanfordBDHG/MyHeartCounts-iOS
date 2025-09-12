@@ -50,13 +50,17 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         ]
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
-        try app.handleHealthKitAuthorization()
+        app.handleHealthKitAuthorization()
         sleep(for: .seconds(2))
         goToTab(.home)
         XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 5))
         XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 1))
-        XCTAssert(app.staticTexts["Heart Risk"].waitForExistence(timeout: 1))
-        XCTAssert(app.staticTexts["Par-Q+"].waitForExistence(timeout: 1))
+        XCTAssertGreaterThan(
+            ["Diet", "Par-Q+", "Six-Minute Walk Test", "Heart Risk"].count {
+                app.staticTexts[$0].waitForExistence(timeout: 1)
+            },
+            2
+        )
     }
 }
 

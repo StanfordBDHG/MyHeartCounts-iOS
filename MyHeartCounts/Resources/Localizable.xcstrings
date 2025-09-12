@@ -2698,6 +2698,7 @@
       }
     },
     "News & Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

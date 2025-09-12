@@ -46,7 +46,7 @@ struct NewsTab: RootViewTab {
                     makeContent(for: newsManager.articles)
                 }
             }
-            .navigationTitle("News & Information")
+            .navigationTitle("News")
             .toolbar {
                 accountToolbarItem
             }
