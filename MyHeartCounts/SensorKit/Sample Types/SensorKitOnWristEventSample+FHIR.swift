@@ -14,6 +14,18 @@ import SpeziSensorKit
 
 
 extension SensorKitOnWristEventSample: HealthObservation {
+    var id: UUID {
+        var hasher = SensorKitSampleIDHasher()
+        hasher.combine(sampleTypeIdentifier)
+        hasher.combine(timestamp)
+        hasher.combine(onWrist ? 1 : 0)
+        hasher.combine(wristLocation.rawValue)
+        hasher.combine(crownOrientation.rawValue)
+        hasher.combine(onWristDate?.timeIntervalSince1970.bitPattern ?? 0)
+        hasher.combine(offWristDate?.timeIntervalSince1970.bitPattern ?? 0)
+        return hasher.finalize()
+    }
+    
     var sampleTypeIdentifier: String {
         Sensor.onWrist.id
     }

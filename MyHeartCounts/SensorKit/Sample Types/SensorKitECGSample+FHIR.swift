@@ -15,8 +15,25 @@ import SpeziSensorKit
 
 
 extension SensorKitECGSession: HealthObservation {
+    var id: UUID {
+        var hasher = SensorKitSampleIDHasher()
+        hasher.combine(sampleTypeIdentifier)
+        hasher.combine(timestamp)
+        hasher.combine(duration)
+        hasher.combine(frequency.value)
+        hasher.combine(batches.count)
+        for batch in batches {
+            hasher.combine(batch.offset)
+            hasher.combine(batch.samples.count)
+            for sample in batch.samples {
+                hasher.combine(sample.voltage.value)
+            }
+        }
+        return hasher.finalize()
+    }
+    
     var sampleTypeIdentifier: String {
-        Self.sensor.id
+        Sensor.ecg.id
     }
     
     func resource( // swiftlint:disable:this function_body_length

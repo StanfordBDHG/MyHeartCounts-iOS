@@ -54,14 +54,6 @@ struct SensorKitPlayground: View {
                     }
                 }
             }
-            Section {
-                AsyncButton("Trigger On-Wrist Upload", state: $viewState) {
-                    try await sensorKit.exportNewSamples(for: .onWrist, standard: standard)
-                }
-                AsyncButton("Trigger ECG Upload", state: $viewState) {
-                    try await sensorKit.exportNewSamples(for: .ecg, standard: standard)
-                }
-            }
             Section("Sensors") {
                 sensorReaderNavigationLink(for: onWristReader)
                 sensorReaderNavigationLink(for: ambientLightReader)
@@ -214,7 +206,7 @@ extension SensorKitPlayground {
                 devices = try await reader.fetchDevices()
                 var samples: [Sample.SafeRepresentation] = []
                 for device in devices {
-                    samples.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: reader.sensor.suggestedBatchSize))
+                    samples.append(contentsOf: try await reader.fetch(from: device, mostRecentAvailable: .days(2)))
                 }
                 samples.sort(using: KeyPathComparator(\.timestamp, order: .reverse))
                 if let first = samples.first, let last = samples.last {

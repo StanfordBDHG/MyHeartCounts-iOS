@@ -8,6 +8,7 @@
 
 import OSLog
 import Spezi
+import SpeziFoundation
 import SpeziSensorKit
 
 
@@ -19,7 +20,7 @@ final class SensorKitDataFetcher: Module {
     // swiftlint:enable attributes
     
     func configure() {
-        Task(priority: .background) {
+        _Concurrency.Task(priority: .background) {
             await doFetch()
         }
     }
@@ -34,7 +35,9 @@ final class SensorKitDataFetcher: Module {
             }
             do {
                 logger.notice("will fetch new samples for Sensor '\(sensor.displayName)'")
-                try await sensorKit.exportNewSamples(for: sensor, standard: standard)
+                for try await batch in try await sensorKit.fetchAnchored(sensor) {
+                    try await standard.uploadHealthObservations(batch)
+                }
             } catch {
                 logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
             }
@@ -42,4 +45,45 @@ final class SensorKitDataFetcher: Module {
         await imp(.onWrist)
         await imp(.ecg)
     }
+    
+    
+    /// Fetches all SensorKit samples for the specified sensor, and uploads them all into the Firestore.
+    ///
+    /// Primarily intended for testing purposes.
+    @concurrent
+    private func fetchAndUploadAll<Sample>(for sensor: Sensor<Sample>) async throws where Sample.SafeRepresentation: HealthObservation {
+        let reader = SensorReader(sensor)
+        let devices = try await reader.fetchDevices()
+        for device in devices {
+            let newestSampleDate = Date.now.addingTimeInterval(-sensor.dataQuarantineDuration.timeInterval)
+            let oldestSampleDate = newestSampleDate.addingTimeInterval(-TimeConstants.day * 5.5)
+            for startDate in stride(from: oldestSampleDate, through: newestSampleDate, by: sensor.suggestedBatchSize.timeInterval) {
+                let timeRange = startDate..<min(startDate.addingTimeInterval(sensor.suggestedBatchSize.timeInterval), newestSampleDate)
+                let samples = (try? await reader.fetch(from: device, timeRange: timeRange)) ?? []
+                try await standard.uploadHealthObservations(samples)
+            }
+        }
+    }
+}
+
+
+extension SensorKit {
+    static let mhcSensors: [any AnySensor] = [
+        Sensor.onWrist,
+        Sensor.ecg
+    ]
+    
+    static let mhcSensorsExtended: [any AnySensor] = [
+        Sensor.onWrist,
+        Sensor.heartRate,
+        Sensor.pedometer,
+        Sensor.wristTemperature,
+        Sensor.accelerometer,
+        Sensor.ppg,
+        Sensor.ecg,
+        Sensor.ambientLight,
+        Sensor.ambientPressure,
+        Sensor.visits,
+        Sensor.deviceUsage
+    ]
 }

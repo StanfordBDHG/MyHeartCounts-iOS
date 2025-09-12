@@ -1995,6 +1995,7 @@
       }
     },
     "Heart Health Dashboard" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4501,12 +4502,6 @@
         }
       }
     },
-    "Trigger ECG Upload" : {
-
-    },
-    "Trigger On-Wrist Upload" : {
-
-    },
     "True" : {
       "localizations" : {
         "es" : {
@@ -4635,6 +4630,9 @@
           }
         }
       }
+    },
+    "Unhandled sample type %@ :/" : {
+
     },
     "unit" : {
       "localizations" : {
