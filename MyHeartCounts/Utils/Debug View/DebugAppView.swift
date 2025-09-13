@@ -9,7 +9,6 @@
 import Foundation
 import SFSafeSymbols
 import SpeziFoundation
-import SpeziSensorKit
 import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
@@ -52,7 +51,7 @@ struct DebugOptions: View {
             }
             Section {
                 NavigationLink("SensorKit") {
-                    SensorKitPlayground()
+                    SensorKitControlView()
                 }
             }
             Section {
