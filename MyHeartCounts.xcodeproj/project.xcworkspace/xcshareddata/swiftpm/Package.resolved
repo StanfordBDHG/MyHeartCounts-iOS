@@ -276,8 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "368ac5a67bb03f1c5c24bc554868a38b527416b9",
-        "version" : "1.2.4"
+        "revision" : "164140d4fce0d0918f2c97fa027880f69d5c6e3e",
+        "version" : "1.2.6"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "a80ecba0b4c0a966f5d176e2be73b27278f7b7e0",
-        "version" : "0.1.2"
+        "revision" : "bb58f40cf9b4a3545e5d7fee607d60243a8b5f45",
+        "version" : "0.2.0"
       }
     },
     {
@@ -474,8 +474,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/SwiftLint.git",
       "state" : {
-        "revision" : "625792423014cc49b0a1e5a1a5c0d6b8b3de10f9",
-        "version" : "0.59.1"
+        "revision" : "ce8ca6a6e7e4038235af3d7319a872e6b87e4137",
+        "version" : "0.59.0"
       }
     },
     {
@@ -519,8 +519,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTHealthKit.git",
       "state" : {
-        "revision" : "550a6f5feb05d8b08a4f4a1c512701f4622bd2d4",
-        "version" : "1.1.2"
+        "revision" : "907d85095d2129e8ccb2cb2d1e5542df5f6ba0ad",
+        "version" : "1.1.5"
       }
     },
     {

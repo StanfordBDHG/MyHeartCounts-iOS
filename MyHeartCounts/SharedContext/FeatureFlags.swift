@@ -30,10 +30,9 @@ enum FeatureFlags {
     
     /// Defines if the application should connect to the local firebase emulator.
     ///
-    /// Always `true` in test builds.
     /// Specifying this flag implicitly also sets the ``disableFirebase`` to `false`.
     static var useFirebaseEmulator: Bool {
-        ProcessInfo.isTestBuild || setupTestAccount || LaunchOptions.launchOptions[.useFirebaseEmulator]
+        setupTestAccount || LaunchOptions.launchOptions[.useFirebaseEmulator]
     }
     
     /// Automatically sign in into a test account upon app launch.

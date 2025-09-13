@@ -10,11 +10,15 @@ import Foundation
 import struct ModelsR4.FHIRPrimitive
 
 
-struct LOINC: Hashable, Sendable {
-    let code: String
+struct LOINC: CodingProtocol {
+    static var system: String { "http://loinc.org" }
     
-    init(_ code: String) {
-        self.code = code
+    let rawValue: String
+    let displayTitle: String?
+    
+    init(_ code: String, displayTitle: String? = nil) {
+        self.rawValue = code
+        self.displayTitle = displayTitle
     }
 }
 

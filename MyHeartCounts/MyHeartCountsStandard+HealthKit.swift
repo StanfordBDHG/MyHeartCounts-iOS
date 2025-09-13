@@ -36,7 +36,7 @@ extension LocalPreferenceKey {
 
 
 extension MyHeartCountsStandard: HealthKitConstraint {
-    private var enableNotifications: Bool {
+    var enableDebugNotifications: Bool {
         let prefs = LocalPreferencesStore.standard
         return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendHealthSampleUploadNotifications]
     }
@@ -167,7 +167,7 @@ extension MyHeartCountsStandard {
     private func showDebugWillUploadHealthDataUploadEventNotification(
         for change: HealthDocumentChange
     ) async -> @Sendable () async -> Void {
-        guard enableNotifications else {
+        guard enableDebugNotifications else {
             logger.notice("NOT SCHEDULING NOTIFICATION")
             return {}
         }

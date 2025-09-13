@@ -11,6 +11,7 @@ import Foundation
 import OSLog
 import Spezi
 import SpeziAccount
+import SpeziFoundation
 import SpeziNotifications
 import enum UIKit.UIBackgroundFetchResult
 
@@ -62,13 +63,13 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
         switch settings.authorizationStatus {
         case .authorized, .provisional, .ephemeral:
             isAuthorized = true
-            #if !TEST
-            do {
-                try await registerRemoteNotifications()
-            } catch {
-                logger.error("Unable to register for remote notifications: \(error)")
+            if !(ProcessInfo.isBeingUITested || ProcessInfo.isRunningInXCTest) {
+                do {
+                    try await registerRemoteNotifications()
+                } catch {
+                    logger.error("Unable to register for remote notifications: \(error)")
+                }
             }
-            #endif
         case .denied:
             isAuthorized = false
         case .notDetermined:

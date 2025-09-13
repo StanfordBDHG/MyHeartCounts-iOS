@@ -30,7 +30,7 @@ struct NotificationPermissions: View {
                     .foregroundColor(.accentColor)
                     .accessibilityHidden(true)
                 Text("NOTIFICATION_PERMISSIONS_DESCRIPTION")
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(.leading)
                     .padding(.vertical, 16)
                 Spacer()
             }

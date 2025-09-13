@@ -109,7 +109,8 @@ extension HealthDataFileUploadManager {
         }
     }
     
-    nonisolated func upload(_ url: URL, category: Category) async throws {
+    @concurrent
+    func upload(_ url: URL, category: Category) async throws {
         let stagingUrl = category.stagingDirUrl.appending(path: url.lastPathComponent)
         try FileManager.default.moveItem(at: url, to: stagingUrl)
         await Task.yield()
@@ -136,7 +137,8 @@ extension HealthDataFileUploadManager {
     }
     
     /// Uploads the specified file into the current user's `bulkHealthKitUploads` Firebase Storage directory, and deletes the local file afterwards.
-    private nonisolated func uploadAndDelete(_ url: URL, category: Category) async throws(UploadError) {
+    @concurrent
+    private func uploadAndDelete(_ url: URL, category: Category) async throws(UploadError) {
         await MainActor.run {
             incrementTotalNumUploads()
         }

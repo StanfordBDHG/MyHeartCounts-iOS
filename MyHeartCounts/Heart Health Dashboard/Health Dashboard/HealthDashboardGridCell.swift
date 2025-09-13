@@ -69,7 +69,7 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
     @_disfavoredOverload
     init(
         title: some StringProtocol,
-        subtitle: (some StringProtocol)? = String?.none,
+        subtitle: (some StringProtocol & SendableMetatype)? = String?.none,
         @ViewBuilder accessory: @MainActor @escaping () -> Accessory = { EmptyView() },
         @ViewBuilder content: @MainActor @escaping () -> Content
     ) {

@@ -39,6 +39,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             TimedWalkingTest()
             FeedbackManager()
             SensorKit()
+            SensorKitDataFetcher()
         }
     }
 }

@@ -43,3 +43,16 @@ extension XCUIElement {
         }
     }
 }
+
+
+extension XCUIElement {
+    // This is required to work around an apparent XCTest bug when trying to tap e.g. the Health App's Profile button.
+    // See also: https://stackoverflow.com/a/33534187
+    func tryToTapReallySoftlyMaybeThisWillMakeItWork() {
+        if isHittable {
+            tap()
+        } else {
+            coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
+    }
+}

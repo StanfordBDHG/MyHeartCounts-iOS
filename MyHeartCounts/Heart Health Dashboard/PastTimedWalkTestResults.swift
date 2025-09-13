@@ -8,6 +8,7 @@
 
 import Foundation
 import ModelsR4
+import SFSafeSymbols
 import SpeziHealthKit
 import SpeziStudyDefinition
 import SpeziViews
@@ -16,20 +17,57 @@ import SwiftUI
 
 struct PastTimedWalkTestResults: View {
     @MHCFirestoreQuery(fetching: TimedWalkingTestResult.self, timeRange: .ever)
-    private var results
+    private var pastTests
+    
+    @State private var activeTest: TimedWalkingTestConfiguration?
     
     var body: some View {
         Form {
-            ForEach(results, id: \.id) { result in
-                NavigationLink {
-                    makeDetailsView(for: result)
-                } label: {
-                    Text(result.startDate, format: .dateTime)
+            Section("New Test") {
+                newTestSection
+            }
+            if !pastTests.isEmpty {
+                Section("Past Tests") {
+                    ForEach(pastTests, id: \.id) { (result: TimedWalkingTestResult) in
+                        NavigationLink {
+                            makeDetailsView(for: result)
+                        } label: {
+                            LabeledContent(result.test.displayTitle, value: result.startDate, format: .dateTime)
+                        }
+                    }
                 }
             }
         }
         .navigationTitle("Timed Walking/Running Tests")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                DismissButton()
+            }
+        }
+        .sheet(item: $activeTest, id: \.self) { test in
+            TimedWalkingTestView(test)
+        }
+    }
+    
+    @ViewBuilder private var newTestSection: some View {
+        let tests: [TimedWalkingTestConfiguration] = [
+            .sixMinuteWalkTest,
+            .twelveMinuteRunTest,
+            .init(duration: .seconds(1), kind: .walking)
+        ]
+        ForEach(tests, id: \.self) { test in
+            Button {
+                activeTest = test
+            } label: {
+                Label {
+                    Text(test.displayTitle)
+                } icon: {
+                    Image(systemSymbol: test.kind.symbol)
+                        .accessibilityHidden(true)
+                }
+            }
+        }
     }
     
     @ViewBuilder

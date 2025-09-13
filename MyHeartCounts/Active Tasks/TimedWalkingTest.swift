@@ -8,6 +8,7 @@
 
 // swiftlint:disable type_contents_order
 
+import CoreHaptics
 import CoreMotion
 import Foundation
 import OSLog
@@ -89,6 +90,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(WatchConnection.self) private var watchManager
     // swiftlint:enable attributes
     
+    private let hapticEngine = try? CHHapticEngine()
     nonisolated(unsafe) private let pedometer = CMPedometer()
     nonisolated(unsafe) private let altimeter = CMAltimeter()
     
@@ -147,6 +149,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             }
             session.completeSessionTask?.cancel()
             stopPhoneSensorDataCollection()
+            try? vibrate()
             try? await watchManager.stopWorkoutOnWatch()
             var result = session.inProgressResult
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
@@ -170,6 +173,33 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             }
             try? await standard.uploadHealthObservation(result)
             return result
+        }
+    }
+    
+    
+    private func vibrate() throws {
+        guard let engine = hapticEngine else {
+            return
+        }
+        let tapDuration: TimeInterval = 0.15
+        let pattern = try CHHapticPattern(
+            events: (0..<5).map { idx in
+                CHHapticEvent(
+                    eventType: .hapticContinuous,
+                    parameters: [
+                        CHHapticEventParameter(parameterID: .hapticIntensity, value: 1),
+                        CHHapticEventParameter(parameterID: .hapticSharpness, value: 1)
+                    ],
+                    relativeTime: TimeInterval(idx) * tapDuration * 2,
+                    duration: tapDuration
+                )
+            },
+            parameters: []
+        )
+        let player = try engine.makePlayer(with: pattern)
+        _Concurrency.Task {
+            try await engine.start()
+            try player.start(atTime: 0)
         }
     }
 }

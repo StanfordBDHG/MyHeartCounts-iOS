@@ -46,14 +46,18 @@ struct NewsTab: RootViewTab {
                     makeContent(for: newsManager.articles)
                 }
             }
-            .navigationTitle("News & Information")
+            .navigationTitle("News")
             .toolbar {
                 accountToolbarItem
             }
             .task {
-                isInitialLoad = true
-                await newsManager.refresh()
-                isInitialLoad = false
+                if newsManager.articles.isEmpty {
+                    isInitialLoad = true
+                    await newsManager.refresh()
+                    isInitialLoad = false
+                } else {
+                    await newsManager.refresh()
+                }
             }
             .refreshable {
                 await newsManager.refresh()

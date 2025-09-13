@@ -34,7 +34,7 @@ struct ContentView: View {
                 .frame(height: 40)
             Text("Open the app on your iPhone to start a\nSix-Minute Walk Test")
                 .font(.subheadline)
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(.leading)
         }
     }
     

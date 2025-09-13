@@ -9,9 +9,13 @@
 import Foundation
 
 
-struct BloodPressureMeasurement: Hashable, Sendable {
+struct BloodPressureMeasurement: Hashable, CustomStringConvertible, Sendable {
     /// The systolic blood pressure, in mmHg
     let systolic: Int
     /// The diastolic blood pressure, in mmHg
     let diastolic: Int
+    
+    var description: String {
+        "\(systolic)/\(diastolic)"
+    }
 }

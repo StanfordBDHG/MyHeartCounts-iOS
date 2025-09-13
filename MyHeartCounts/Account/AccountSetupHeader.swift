@@ -35,6 +35,6 @@ struct AccountSetupHeader: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .multilineTextAlignment(.center)
+        .multilineTextAlignment(.leading)
     }
 }
