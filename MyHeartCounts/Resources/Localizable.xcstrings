@@ -3839,6 +3839,9 @@
         }
       }
     },
+    "Reset Query Anchors" : {
+
+    },
     "Results" : {
       "localizations" : {
         "es" : {
@@ -4015,6 +4018,9 @@
           }
         }
       }
+    },
+    "SensorKit" : {
+
     },
     "Sensors" : {
       "extractionState" : "stale",

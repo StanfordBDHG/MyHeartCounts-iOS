@@ -20,26 +20,41 @@ struct SensorKitControlView: View {
     
     var body: some View {
         Form {
-            AsyncButton("Start Recording Data", state: $viewState) {
-                func imp<Sample>(_ sensor: some AnySensor<Sample>) async throws {
-                    let sensor = Sensor(sensor)
-                    let reader = SensorReader(sensor)
-                    try await reader.startRecording()
+            Section {
+                AsyncButton("Start Recording Data", state: $viewState) {
+                    func imp<Sample>(_ sensor: some AnySensor<Sample>) async throws {
+                        let sensor = Sensor(sensor)
+                        let reader = SensorReader(sensor)
+                        try await reader.startRecording()
+                    }
+                    for sensor in SensorKit.mhcSensors {
+                        try await imp(sensor)
+                    }
                 }
-                for sensor in SensorKit.mhcSensors {
-                    try await imp(sensor)
+                AsyncButton("Stop Recording Data", state: $viewState) {
+                    func imp<Sample>(_ sensor: some AnySensor<Sample>) async throws {
+                        let sensor = Sensor(sensor)
+                        let reader = SensorReader(sensor)
+                        try await reader.stopRecording()
+                    }
+                    for sensor in SensorKit.mhcSensors {
+                        try await imp(sensor)
+                    }
                 }
             }
-            AsyncButton("Stop Recording Data", state: $viewState) {
-                func imp<Sample>(_ sensor: some AnySensor<Sample>) async throws {
-                    let sensor = Sensor(sensor)
-                    let reader = SensorReader(sensor)
-                    try await reader.stopRecording()
-                }
-                for sensor in SensorKit.mhcSensors {
-                    try await imp(sensor)
+            Section {
+                AsyncButton("Reset Query Anchors", state: $viewState) {
+                    func imp<Sample>(_ sensor: some AnySensor<Sample>) throws {
+                        let sensor = Sensor(sensor)
+                        try sensorKit.resetQueryAnchor(for: sensor)
+                    }
+                    for sensor in SensorKit.allKnownSensors {
+                        try imp(sensor)
+                    }
                 }
             }
         }
+        .navigationTitle("SensorKit")
+        .viewStateAlert(state: $viewState)
     }
 }

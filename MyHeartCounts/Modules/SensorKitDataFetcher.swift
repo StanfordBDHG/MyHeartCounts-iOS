@@ -14,14 +14,14 @@ import SpeziFoundation
 import SpeziSensorKit
 
 
-final class SensorKitDataFetcher: Module, @unchecked Sendable {
+final class SensorKitDataFetcher: ServiceModule, @unchecked Sendable {
     // swiftlint:disable attributes
     @StandardActor private var standard: MyHeartCountsStandard
     @Dependency(SensorKit.self) private var sensorKit
     @Application(\.logger) private var logger
     // swiftlint:enable attributes
     
-    func configure() {
+    func run() async {
         _Concurrency.Task(priority: .background) {
             await doFetch()
         }
@@ -51,6 +51,7 @@ final class SensorKitDataFetcher: Module, @unchecked Sendable {
         do {
             logger.notice("will fetch new samples for Sensor '\(sensor.displayName)'")
             for try await batch in try await sensorKit.fetchAnchored(sensor) {
+                logger.notice("\(batch.count) new sample(s) for \(sensor.displayName)")
                 try await standard.uploadHealthObservations(batch)
             }
         } catch {
