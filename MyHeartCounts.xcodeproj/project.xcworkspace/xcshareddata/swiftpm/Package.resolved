@@ -276,7 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "73a37fc169992490dadb13c1f76d30d94e75ff96"
+        "revision" : "164140d4fce0d0918f2c97fa027880f69d5c6e3e",
+        "version" : "1.2.6"
       }
     },
     {
