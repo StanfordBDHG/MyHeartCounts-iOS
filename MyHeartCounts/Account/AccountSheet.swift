@@ -97,12 +97,9 @@ struct AccountSheet: View {
             } label: {
                 Label("Demographics", systemSymbol: .personTextRectangle)
             }
-        }
-        
-        // swiftlint:disable:next line_length
-        let shouldOfferSensorKit = sensorKit.authorizationStatus(for: .ecg) == .notDetermined || sensorKit.authorizationStatus(for: .onWrist) == .notDetermined
-        if shouldOfferSensorKit {
-            Section {
+            // swiftlint:disable:next line_length
+            let shouldOfferSensorKit = sensorKit.authorizationStatus(for: .ecg) == .notDetermined || sensorKit.authorizationStatus(for: .onWrist) == .notDetermined
+            if shouldOfferSensorKit {
                 LabeledButton(
                     symbol: .waveformPathEcgRectangle,
                     title: "Enable SensorKit",
