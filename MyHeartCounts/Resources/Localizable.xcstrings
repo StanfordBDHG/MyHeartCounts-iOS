@@ -3824,6 +3824,9 @@
         }
       }
     },
+    "Repeat" : {
+
+    },
     "Replace Root View Controller" : {
       "localizations" : {
         "es" : {
@@ -4294,6 +4297,7 @@
       }
     },
     "Test" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4302,6 +4306,9 @@
           }
         }
       }
+    },
+    "Test Completed" : {
+
     },
     "Testing Support" : {
       "localizations" : {
@@ -5091,6 +5098,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Puedes seleccionar múltiples opciones"
+          }
+        }
+      }
+    },
+    "You covered %@, and took %lld steps." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You covered %1$@, and took %2$lld steps."
           }
         }
       }
