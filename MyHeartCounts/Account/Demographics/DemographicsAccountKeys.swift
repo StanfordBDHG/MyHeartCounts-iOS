@@ -152,6 +152,17 @@ extension AccountDetails {
     
     @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
     var futureStudies: Bool?
+    
+    
+//    @AccountKey(
+//        id: "dateOfEnrollment",
+//        name: "Date of Enrollment",
+//        category: .other,
+//        options: .mutable,
+//        as: Date.self,
+//        initial: .empty(.distantPast),
+//    )
+//    public var dateOfEnrollment: Date?
 }
 
 
@@ -160,7 +171,8 @@ extension AccountDetails {
     \.ukRegion, \.ukCounty, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,
     \.raceEthnicity, \.latinoStatus,
-    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies
+    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies,
+//    \.dateOfEnrollment
 )
 extension AccountKeys {}
 
