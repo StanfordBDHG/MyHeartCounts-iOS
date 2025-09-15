@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "8c12a94fcd118128db87736b849e71dbca7d1a46",
-        "version" : "1.12.2"
+        "revision" : "45fa2677530aba4c305fab2be5a4e4abfbfffc32",
+        "version" : "1.12.3"
       }
     },
     {
