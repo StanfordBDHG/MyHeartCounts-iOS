@@ -596,8 +596,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Lípidos en Sangre"
+            "state" : "translated",
+            "value" : "Colesterol LDL"
           }
         }
       }
@@ -1362,13 +1362,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al habilitar SensorKit, se obtienen datos más precisos y detallados para mediciones como el electrocardiograma (ECG), lo que contribuye al avance de la investigación cardiovascular"
           }
         }
       }

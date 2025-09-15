@@ -22,7 +22,7 @@ final class SensorKitDataFetcher: ServiceModule, @unchecked Sendable {
     // swiftlint:enable attributes
     
     func run() async {
-        _Concurrency.Task(priority: .background) {
+        Task(priority: .background) {
             await doFetch()
         }
     }

@@ -44,6 +44,7 @@ struct SensorKitControlView: View {
             }
             Section {
                 AsyncButton("Reset Query Anchors", state: $viewState) {
+                    @MainActor
                     func imp<Sample>(_ sensor: some AnySensor<Sample>) throws {
                         let sensor = Sensor(sensor)
                         try sensorKit.resetQueryAnchor(for: sensor)
