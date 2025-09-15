@@ -59,6 +59,12 @@
             "value" : "My Heart Counts uses Health data to understand all aspects of health."
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts uses Health data to understand all aspects of health."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -74,6 +80,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "My Heart Counts can optionally save some Health information collected via surveys and other in-app mechanisms into the Health Data Store."
           }
         },
@@ -152,7 +164,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "My Heart Counts uses SensorKit to better TODO TODO TODO TODO"
+            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al habilitar SensorKit, se obtienen datos más precisos y detallados para mediciones como el electrocardiograma (ECG), lo que contribuye al avance de la investigación cardiovascular."
           }
         }
       }
@@ -165,6 +183,52 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        }
+      }
+    },
+    "SENSORKIT_USAGE_DESC_ECG" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit ECG provides the most in-depth and accurate heart readings possible"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit ECG provides the most in-depth and accurate heart readings possible"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El ECG de SensorKit proporciona las lecturas cardíacas más detalladas y precisas posibles."
+          }
+        }
+      }
+    },
+    "SENSORKIT_USAGE_DESC_ON_WRIST" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit On-Wrist data helps us interpret your ECG and watch data more accurately."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit On-Wrist data helps us interpret your ECG and watch data more accurately."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los datos On-Wrist de SensorKit nos ayudan a interpretar su ECG y los datos de su reloj con mayor precisión."
           }
         }
       }

@@ -113,7 +113,8 @@ struct CVHScore: DynamicProperty {
         }
     }
     
-    nonisolated private func updateSleepScore() async {
+    @concurrent
+    private func updateSleepScore() async {
         let sleepSamples = await MainActor.run { () -> [HKCategorySample] in
             guard !lastSeenSleepSamples.elementsEqual(self.sleepSamples) else {
                 // if we don't need an update, we return an empty array here, which will cause the code below to return early.
@@ -273,10 +274,12 @@ extension CVHScore {
 
 extension ScoreDefinition {
     static let cvhDiet = ScoreDefinition(default: 0, mapping: [
-        .inRange(15...16, score: 1, textualRepresentation: "15 – 16"),
-        .inRange(12...14, score: 0.8, textualRepresentation: "15 – 16"),
-        .inRange(8...11, score: 0.5, textualRepresentation: "15 – 16"),
-        .inRange(4...7, score: 0.25, textualRepresentation: "15 – 16")
+        .inRange(17...21, score: 1, textualRepresentation: "17 – 21"),
+        .inRange(14...16, score: 0.85, textualRepresentation: "14 – 16"),
+        .inRange(11...14, score: 0.7, textualRepresentation: "11 – 14"),
+        .inRange(8...10, score: 0.5, textualRepresentation: "8 – 10"),
+        .inRange(5...7, score: 0.25, textualRepresentation: "5 – 7"),
+        .inRange(...7, score: 0, textualRepresentation: "< 7")
     ])
     
     static let cvhPhysicalExercise = ScoreDefinition(default: 0, mapping: [

@@ -12,7 +12,7 @@ import HealthKitOnFHIR
 import ModelsR4
 
 
-protocol HealthObservation {
+protocol HealthObservation: Sendable {
     var id: UUID { get }
     var sampleTypeIdentifier: String { get }
     

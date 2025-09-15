@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>edu.stanford.MyHeartCounts.backgroundTasks.SensorKitFetch</string>
+		<string>edu.stanford.spezi.scheduler.notifications-scheduling</string>
+	</array>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<false/>
 	<key>FirebaseAppDelegateProxyEnabled</key>
@@ -44,6 +49,11 @@
 			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
 		</dict>
+		<key>SRSensorUsageMotion</key>
+		<dict>
+			<key>Description</key>
+			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+		</dict>
 		<key>SRSensorUsagePPG</key>
 		<dict>
 			<key>Description</key>
@@ -62,14 +72,9 @@
 		<key>SRSensorUsageWristDetection</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses On-Wrist Data to TODO TODO TODO</string>
+			<string>SensorKit On-Wrist data helps us interpret your ECG and watch data more accurately.</string>
 		</dict>
 		<key>SRSensorUsageWristTemperature</key>
-		<dict>
-			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
-		</dict>
-		<key>SRSensorUsageMotion</key>
 		<dict>
 			<key>Description</key>
 			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
@@ -86,6 +91,7 @@
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
+		<string>processing</string>
 	</array>
 </dict>
 </plist>

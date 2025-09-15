@@ -49,6 +49,8 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         }
     }
     
+    // MARK: Account Stuff
+    
     private func propagateDebugModeValue(_ isEnabled: Bool) async {
         LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey] = isEnabled
         await accountFeatureFlags._updateIsDebugModeEnabled(isEnabled)

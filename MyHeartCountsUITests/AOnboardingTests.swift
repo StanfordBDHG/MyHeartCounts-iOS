@@ -46,9 +46,10 @@ extension XCUIApplication {
         navigateWelcome()
         try navigateEligibility(region: region)
         try navigateSignup(name: name, email: email, password: password)
+        sleep(for: .seconds(1))
         navigateOnboardingDisclaimers()
-        navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         navigateConsentComprehension()
+        navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         try navigateHealthKitAccess()
         navigateNotifications()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
@@ -63,24 +64,18 @@ extension XCUIApplication {
     
     
     private func navigateEligibility(region: Locale.Region) throws {
-        let continueButtons = [navigationBars.firstMatch.buttons["Continue"], collectionViews.firstMatch.buttons["Continue"]]
-        for button in continueButtons {
-            XCTAssertFalse(button.isEnabled)
-        }
+        let continueButton = collectionViews.firstMatch.buttons["Continue"]
+        XCTAssertFalse(continueButton.isEnabled)
         let ofAgeToggle = switches["Are you 18 years old or older?"].descendants(matching: .switch).firstMatch
         XCTAssert(ofAgeToggle.waitForExistence(timeout: 2))
         XCTAssertEqual(try XCTUnwrap(ofAgeToggle.value as? String), "0")
         ofAgeToggle.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         sleep(for: .seconds(0.25))
         XCTAssertEqual(try XCTUnwrap(ofAgeToggle.value as? String), "1")
-        for button in continueButtons {
-            XCTAssertFalse(button.isEnabled)
-        }
+        XCTAssertFalse(continueButton.isEnabled)
         buttons["What country do you currently live in?"].tap()
         sleep(for: .seconds(0.55))
-        for button in continueButtons {
-            XCTAssertFalse(button.isEnabled)
-        }
+        XCTAssertFalse(continueButton.isEnabled)
         do {
             searchFields["Search"].firstMatch.tap()
             searchFields["Search"].firstMatch.typeText(try XCTUnwrap(region.name()))
@@ -88,15 +83,11 @@ extension XCUIApplication {
             XCTAssert(countryButton.waitForExistence(timeout: 1))
             countryButton.tap()
             sleep(for: .seconds(0.25))
-            for button in continueButtons {
-                XCTAssertFalse(button.isEnabled)
-            }
+            XCTAssertFalse(continueButton.isEnabled)
         }
-        otherElements["Screening Section, Language"].buttons["Yes"].tap()
-        for button in continueButtons {
-            XCTAssertTrue(button.isEnabled)
-        }
-        continueButtons[0].tap()
+        otherElements["Screening Section, Language"].buttons["Yes"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        XCTAssertTrue(continueButton.isEnabled)
+        continueButton.tap()
     }
     
     
@@ -222,31 +213,30 @@ extension XCUIApplication {
     
     
     private func navigateConsentComprehension() {
-        let continueButtons = [navigationBars.firstMatch.buttons["Continue"], collectionViews.firstMatch.buttons["Continue"]]
-        for button in continueButtons where button.exists {
-            XCTAssertFalse(button.isEnabled)
+        let continueButton = collectionViews.firstMatch.buttons["Continue"]
+        if continueButton.exists {
+            XCTAssertFalse(continueButton.isEnabled)
         }
         XCTAssert(staticTexts["Comprehension of Consent Questionnaire"].waitForExistence(timeout: 2))
-        otherElements["Screening Section, 0"].buttons["True"].tap()
-        for button in continueButtons where button.exists {
-            XCTAssertFalse(button.isEnabled)
+        otherElements["Screening Section, 0"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        if continueButton.exists {
+            XCTAssertFalse(continueButton.isEnabled)
         }
-        otherElements["Screening Section, 1"].buttons["True"].tap()
-        for button in continueButtons where button.exists {
-            XCTAssertFalse(button.isEnabled)
+        otherElements["Screening Section, 1"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        if continueButton.exists {
+            XCTAssertFalse(continueButton.isEnabled)
         }
-        otherElements["Screening Section, 2"].buttons["True"].tap()
-        for button in continueButtons where button.exists {
-            XCTAssert(button.isEnabled)
-        }
-        continueButtons[0].tap()
+        swipeUp()
+        otherElements["Screening Section, 2"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        XCTAssertTrue(continueButton.isEnabled)
+        continueButton.tap()
     }
     
     
     private func navigateHealthKitAccess() throws {
         XCTAssert(staticTexts["HealthKit Access"].waitForExistence(timeout: 2))
         buttons["Grant Access"].tap()
-        try handleHealthKitAuthorization()
+        handleHealthKitAuthorization()
     }
     
     

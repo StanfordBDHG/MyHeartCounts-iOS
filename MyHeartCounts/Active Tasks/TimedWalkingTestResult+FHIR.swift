@@ -42,48 +42,42 @@ extension TimedWalkingTestResult {
             try observation.setIssued(on: .now)
         }
         if test == .sixMinuteWalkTest {
-            observation.appendCoding(Coding(loinc: .phenXSixMinuteWalkTest))
-            observation.appendComponent(
-                buildObservationComponent(
-                    loinc: .sixMinuteWalkTest,
-                    quantityUnit: "m",
-                    quantityValue: distanceCovered
-                )
-            )
-        }
-        observation.appendCoding(Coding(loinc: .pedometerTrackingPanel))
-        observation.appendComponent(
-            buildObservationComponent(
-                loinc: .pedometerNumStepsInUnspecifiedTime,
-                quantityUnit: "count",
-                quantityValue: Double(numberOfSteps)
-            )
-        )
-        observation.appendComponent(
-            buildObservationComponent(
-                loinc: .pedometerWalkingDistanceInUnspecifiedTime,
+            observation.appendCoding(Coding(code: LOINC.phenXSixMinuteWalkTest))
+            observation.appendComponent(.init(
+                code: LOINC.sixMinuteWalkTest,
                 quantityUnit: "m",
                 quantityValue: distanceCovered
-            )
-        )
+            ))
+        }
+        observation.appendCoding(Coding(code: LOINC.pedometerTrackingPanel))
+        observation.appendComponent(.init(
+            code: LOINC.pedometerNumStepsInUnspecifiedTime,
+            quantityUnit: "count",
+            quantityValue: Double(numberOfSteps)
+        ))
+        observation.appendComponent(.init(
+            code: LOINC.pedometerWalkingDistanceInUnspecifiedTime,
+            quantityUnit: "m",
+            quantityValue: distanceCovered
+        ))
         // we also append the duration and the activity type
         // in the case of the six-minute walk test, this is redundant, but for all other cases it's important.
-        observation.appendComponent(
-            buildObservationComponent(loinc: .exerciseDuration, quantityUnit: "min", quantityValue: test.duration.timeInterval / 60)
-        )
-        observation.appendComponent(
-            ObservationComponent(
-                code: CodeableConcept(coding: [Coding(loinc: .exerciseActivity)]),
-                value: .codeableConcept(CodeableConcept(coding: [
-                    Coding(loinc: { () -> LOINC in
-                        switch test.kind {
-                        case .walking: .exerciseActivityWalking
-                        case .running: .exerciseActivityRunning
-                        }
-                    }())
-                ]))
-            )
-        )
+        observation.appendComponent(.init(
+            code: LOINC.exerciseDuration,
+            quantityUnit: "min",
+            quantityValue: test.duration.timeInterval / 60
+        ))
+        observation.appendComponent(.init(
+            code: CodeableConcept(coding: [Coding(code: LOINC.exerciseActivity)]),
+            value: .codeableConcept(CodeableConcept(coding: [
+                Coding(code: { () -> LOINC in
+                    switch test.kind {
+                    case .walking: .exerciseActivityWalking
+                    case .running: .exerciseActivityRunning
+                    }
+                }())
+            ]))
+        ))
         for builder in extensions {
             try builder.apply(typeErasedInput: self, to: observation)
         }
@@ -96,7 +90,7 @@ extension TimedWalkingTestResult {
 extension TimedWalkingTestResult {
     init?(_ observation: ModelsR4.Observation) {
         func getComponent(_ loinc: LOINC) -> ObservationComponent? {
-            observation.component?.first { ($0.code.coding ?? []).contains { $0.code?.value?.string == loinc.code } }
+            observation.component?.first { ($0.code.coding ?? []).contains { $0.code?.value?.string == loinc.rawValue } }
         }
         func getQuantityValue(_ loinc: LOINC) -> Decimal? {
             switch getComponent(loinc)?.value {
@@ -114,21 +108,12 @@ extension TimedWalkingTestResult {
                 nil
             }
         }
-//        func getQuantity(forComponent componentCode: String) -> Quantity? {
-//            if let component = observation.component?.first(where: { component in
-//                (component.code.coding ?? []).contains { $0.code?.value?.string == componentCode }
-//            }), case .quantity(let value) = component.value {
-//                return value
-//            } else {
-//                return nil
-//            }
-//        }
         guard let id = (observation.id?.value?.string).flatMap({ UUID(uuidString: $0) }),
               let timeRange = try? observation.effectiveTimePeriod,
               let duration = getQuantityValue(.exerciseDuration)?.doubleValue,
               let numSteps = getQuantityValue(.pedometerNumStepsInUnspecifiedTime)?.intValue,
               let distance = getQuantityValue(.pedometerWalkingDistanceInUnspecifiedTime)?.doubleValue,
-              let activity = (getCodeableConceptValue(.exerciseActivity)?.coding?.first?.code?.value?.string).map(LOINC.init),
+              let activity = (getCodeableConceptValue(.exerciseActivity)?.coding?.first?.code?.value?.string).map({ LOINC($0) }),
               let activity = TimedWalkingTestConfiguration.Kind(activity) else {
             return nil
         }

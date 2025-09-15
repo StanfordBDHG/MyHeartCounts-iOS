@@ -49,7 +49,7 @@ struct SinglePageScreening: View {
         OnboardingView(wrapInScrollView: false) {
             OnboardingTitleView(title: title, subtitle: subtitle)
                 .padding(.horizontal)
-        } content: { // swiftlint:disable:this closure_body_length
+        } content: {
             Form {
                 ForEach(0..<components.endIndex, id: \.self) { idx in
                     let component = components[idx]
@@ -75,17 +75,6 @@ struct SinglePageScreening: View {
                     .buttonStyle(.borderedProminent)
                     .disabled(!canAdvanceToNextStep)
                     .listRowInsets(.zero)
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    // IDEA: have this button always be active, but if the screening hasn't been filled out yet entirely,
-                    // it is grey (to appear disabled), but tapping it simply scrolls down to the first-non-completed screennig section?
-                    AsyncButton("Continue", state: $viewState) {
-                        await evaluateEligibilityAndProceed()
-                    }
-                    .bold()
-                    .disabled(!canAdvanceToNextStep)
                 }
             }
         } footer: {

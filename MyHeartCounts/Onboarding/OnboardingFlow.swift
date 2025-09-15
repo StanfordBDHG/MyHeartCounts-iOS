@@ -34,7 +34,7 @@ struct OnboardingSheet: View {
 /// Displays a multi-step onboarding flow for the My Heart Counts iOS app
 ///
 /// - Note: This is the general app onboarding flow, **not** the study-specific onboarding
-struct AppOnboardingFlow: View {
+private struct AppOnboardingFlow: View {
     @Environment(\.scenePhase)
     private var scenePhase
     @Environment(\.notificationSettings)
@@ -75,12 +75,12 @@ struct AppOnboardingFlow: View {
                 primaryText: "ONBOARDING_DISCLAIMER_4_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_4_LEARN_MORE_TEXT"
             )
+            ComprehensionScreening()
             #if !(targetEnvironment(simulator) && (arch(i386) || arch(x86_64)))
             Consent()
                 .injectingSpezi()
                 .navigationStepIdentifier("Consent")
             #endif
-            ComprehensionScreening()
             if HKHealthStore.isHealthDataAvailable() {
                 // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()

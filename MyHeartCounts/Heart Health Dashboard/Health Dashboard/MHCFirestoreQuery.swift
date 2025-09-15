@@ -130,7 +130,8 @@ private final class Impl<Element: Sendable>: Sendable {
         }
     }
     
-    nonisolated private func handleSnapshot(_ snapshot: QuerySnapshot, input: QueryInput) async {
+    @concurrent
+    private func handleSnapshot(_ snapshot: QuerySnapshot, input: QueryInput) async {
         var elements = await self.elements
         elements.removeAll(keepingCapacity: true)
         for document in snapshot.documents {
