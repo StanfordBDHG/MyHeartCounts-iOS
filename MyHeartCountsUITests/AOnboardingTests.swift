@@ -149,7 +149,7 @@ extension XCUIApplication {
             XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.bodyPrefix)).firstMatch.waitForExistence(timeout: 2))
             buttons["Learn More"].tap()
             XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.learnMorePrefix)).firstMatch.waitForExistence(timeout: 2))
-            navigationBars.buttons["Dismiss"].tap()
+            navigationBars.buttons["Close"].tap()
             buttons["Continue"].tap()
         }
     }
