@@ -46,6 +46,7 @@ struct HeartHealthDashboard: View {
     
     var body: some View {
         healthDashboard
+            .makeBackgroundMatchFormBackground()
     }
     
     @ViewBuilder var healthDashboard: some View {
