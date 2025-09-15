@@ -53,8 +53,7 @@ struct PastTimedWalkTestResults: View {
     @ViewBuilder private var newTestSection: some View {
         let tests: [TimedWalkingTestConfiguration] = [
             .sixMinuteWalkTest,
-            .twelveMinuteRunTest,
-            .init(duration: .seconds(1), kind: .walking)
+            .twelveMinuteRunTest
         ]
         ForEach(tests, id: \.self) { test in
             Button {
