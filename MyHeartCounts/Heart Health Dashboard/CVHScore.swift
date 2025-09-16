@@ -51,8 +51,8 @@ struct CVHScore: DynamicProperty {
     @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2))
     private var nicotineExposure
     
-    @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .day, timeRange: Self.queryTimeRangeLastFullDayInLast2Weeks)
-    private var dailyExerciseTime
+    @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 7))
+    private var weeklyExerciseTime
     
     @HealthKitStatisticsQuery(.stepCount, aggregatedBy: [.sum], over: .day, timeRange: Self.queryTimeRangeLastFullDayInLast2Weeks)
     private var dailyStepCount
@@ -156,7 +156,7 @@ extension CVHScore {
     var physicalExerciseScore: ScoreResult {
         ScoreResult(
             sampleType: .healthKit(.quantity(.appleExerciseTime)),
-            sample: dailyExerciseTime.last,
+            sample: weeklyExerciseTime.last,
             value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
             definition: .cvhPhysicalExercise
         )
