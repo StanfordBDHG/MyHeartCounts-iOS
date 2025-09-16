@@ -154,15 +154,15 @@ extension AccountDetails {
     var futureStudies: Bool?
     
     
-//    @AccountKey(
-//        id: "dateOfEnrollment",
-//        name: "Date of Enrollment",
-//        category: .other,
-//        options: .mutable,
-//        as: Date.self,
-//        initial: .empty(.distantPast),
-//    )
-//    public var dateOfEnrollment: Date?
+    @AccountKey(
+        id: "dateOfEnrollment",
+        name: "Date of Enrollment",
+        category: .other,
+        options: .mutable,
+        as: Date.self,
+        initial: .empty(.distantPast),
+    )
+    public var dateOfEnrollment: Date?
 }
 
 
@@ -172,7 +172,7 @@ extension AccountDetails {
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,
     \.raceEthnicity, \.latinoStatus,
     \.biologicalSexAtBirth, \.comorbidities, \.futureStudies,
-//    \.dateOfEnrollment
+    \.dateOfEnrollment
 )
 extension AccountKeys {}
 

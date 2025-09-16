@@ -64,21 +64,21 @@ struct FinalEnrollmentStep: View {
             return
         }
         do {
-//            if let enrollmentDate = account.details?.dateOfEnrollment {
-//                // the user already has enrolled at some point in the past.
-//                // we now explicitly specify this enrollment date, to make sure the StudyManager
-//                // can schedule all study components relative to that.
-//                try await studyManager.enroll(in: study, enrollmentDate: enrollmentDate)
-//            } else {
+            if let enrollmentDate = account.details?.dateOfEnrollment {
+                // the user already has enrolled at some point in the past.
+                // we now explicitly specify this enrollment date, to make sure the StudyManager
+                // can schedule all study components relative to that.
+                try await studyManager.enroll(in: study, enrollmentDate: enrollmentDate)
+            } else {
                 let enrollmentDate = Date.now
                 try await studyManager.enroll(in: study, enrollmentDate: enrollmentDate)
-//                do {
-//                    var newDetails = AccountDetails()
-//                    newDetails.dateOfEnrollment = enrollmentDate
-//                    let modifications = try AccountModifications(modifiedDetails: newDetails)
-//                    try await account.accountService.updateAccountDetails(modifications)
-//                }
-//            }
+                do {
+                    var newDetails = AccountDetails()
+                    newDetails.dateOfEnrollment = enrollmentDate
+                    let modifications = try AccountModifications(modifiedDetails: newDetails)
+                    try await account.accountService.updateAccountDetails(modifications)
+                }
+            }
             Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
             }
