@@ -9,6 +9,7 @@
 // swiftlint:disable file_types_order type_contents_order
 
 import Foundation
+import SpeziLocalization
 import SwiftUI
 
 
@@ -24,29 +25,54 @@ protocol ScoreDefinitionPatternRange<Bound>: RangeExpression, Sendable {
 
 /// Intended to be declared as a static property somewhere.
 final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
-    enum Variant: Sendable {
-        enum CustomTextualRepresentation: Sendable {
-            struct Band: Hashable, Sendable { // swiftlint:disable:this nesting
-                let leadingText: String
-                let trailingText: String
-                let color: Color
+    struct TextualExplainer: Sendable {
+        final class Band: Sendable {
+            enum Background: Sendable { // swiftlint:disable:this nesting
+                case color(Color)
+                case gradient(Gradient)
             }
-            case simple(String)
-            case bands([Band])
+            let leadingText: LocalizedStringResource?
+            let trailingText: LocalizedStringResource?
+            let background: Background
+            init(
+                leadingText: LocalizedStringResource,
+                trailingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+                background: Background
+            ) {
+                self.leadingText = leadingText
+                self.trailingText = trailingText
+                self.background = background
+            }
+            @_disfavoredOverload
+            init(
+                leadingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+                trailingText: LocalizedStringResource,
+                background: Background
+            ) {
+                self.leadingText = leadingText
+                self.trailingText = trailingText
+                self.background = background
+            }
         }
-        case distinctMapping(default: Double, elements: [Element])
-        case range(Range<Double>)
-        case custom(@Sendable (Any) -> Double, textualRepresentation: CustomTextualRepresentation)
+        
+        let headerText: LocalizedStringResource?
+        let bands: [Band]
     }
     
-    final class Element: Hashable, Sendable, AnyObjectBasedDefaultImpls { // not ideal but we need this to be a class so that it can be Hashable
+    enum Variant: Sendable {
+        case distinctMapping(default: Double, scoringBands: [ScoringBand], explainer: TextualExplainer)
+        case range(Range<Double>, explainer: TextualExplainer)
+        case custom(@Sendable (Any) -> Double, explainer: TextualExplainer)
+    }
+    
+    final class ScoringBand: Hashable, Sendable, AnyObjectBasedDefaultImpls { // not ideal but we need this to be a class so that it can be Hashable
         let score: Double
-        let textualRepresentation: String
+        let explainerBand: TextualExplainer.Band
         private let matchImp: @Sendable (Any) -> Bool
         
-        init<Input>(score: Double, textualRepresentation: String, _ matches: @escaping @Sendable (Input) -> Bool) {
+        init<Input>(score: Double, explainerBand: TextualExplainer.Band, _ matches: @escaping @Sendable (Input) -> Bool) {
             self.score = score
-            self.textualRepresentation = textualRepresentation
+            self.explainerBand = explainerBand
             let matches = erasingClosureInputType(floatToIntHandlingRule: .allowRounding, matches)
             self.matchImp = { matches($0) ?? false }
         }
@@ -59,9 +85,16 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
         static func inRange(
             _ range: some ScoreDefinitionPatternRange<Double>,
             score: Double,
-            textualRepresentation: String? = nil
-        ) -> ScoreDefinition.Element {
-            .init(score: score, textualRepresentation: textualRepresentation ?? range.textualDescription) { input in
+            explainer: LocalizedStringResource? = nil
+        ) -> ScoreDefinition.ScoringBand {
+            .init(
+                score: score,
+                explainerBand: .init(
+                    leadingText: "\(explainer?.localizedString() ?? range.textualDescription)",
+                    trailingText: "\(Int(score * 100).formatted(.number))",
+                    background: .color(Gradient.redToGreen.color(at: score))
+                )
+            ) { input in
                 range.contains(input)
             }
         }
@@ -70,14 +103,18 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
         static func inRange(
             _ range: some ScoreDefinitionPatternRange<Int>,
             score: Double,
-            textualRepresentation: String? = nil
-        ) -> ScoreDefinition.Element {
+            explainer: LocalizedStringResource? = nil
+        ) -> ScoreDefinition.ScoringBand {
             let doubleRange = range.map(Double.init)
-            return .inRange(doubleRange, score: score, textualRepresentation: textualRepresentation ?? range.textualDescription)
+            return .inRange(doubleRange, score: score, explainer: explainer)
         }
         
-        static func equal(to value: some Equatable & Sendable, score: Double, textualRepresentation: String) -> ScoreDefinition.Element {
-            .init(score: score, textualRepresentation: textualRepresentation) { input in
+        static func equal(
+            to value: some Equatable & Sendable,
+            score: Double,
+            explainerBand: TextualExplainer.Band
+        ) -> ScoreDefinition.ScoringBand {
+            .init(score: score, explainerBand: explainerBand) { input in
                 input == value
             }
         }
@@ -85,8 +122,17 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     
     let variant: Variant
     
-    init(`default`: Double, mapping: [Element]) {
-        self.variant = .distinctMapping(default: `default`, elements: mapping)
+    
+    init(
+        `default`: Double,
+        scoringBands: [ScoringBand],
+        explainerHeaderText: LocalizedStringResource? = nil
+    ) {
+        self.variant = .distinctMapping(
+            default: `default`,
+            scoringBands: scoringBands,
+            explainer: .init(headerText: explainerHeaderText, bands: scoringBands.map(\.explainerBand))
+        )
     }
     
     /// Creates a ``ScoreDefinition`` that uses a custom closure to calculate score values.
@@ -96,22 +142,19 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     /// - parameter calcScore: closure that determines the score of an input.
     init<Input>(
         `default`: Double,
-        textualRepresentation: Variant.CustomTextualRepresentation,
+        explainer: TextualExplainer,
         _ calcScore: @Sendable @escaping (Input) -> Double
     ) {
         let mapping = erasingClosureInputType(floatToIntHandlingRule: .allowRounding, calcScore)
-        self.variant = .custom({ mapping($0) ?? `default` }, textualRepresentation: textualRepresentation)
+        self.variant = .custom({ mapping($0) ?? `default` }, explainer: explainer)
     }
     
-    init(range: Range<Double>) {
-        self.variant = .range(range)
-    }
     
     func apply(to value: some Any) -> Double {
         switch variant {
-        case let .distinctMapping(`default`, elements):
+        case let .distinctMapping(`default`, elements, _):
             elements.first { $0.matches(value) }?.score ?? `default`
-        case .range(let range):
+        case .range(let range, _):
             // we pipe our matching code through `erasingClosureInputType` so that it can also handle `Int` inputs.
             erasingClosureInputType(floatToIntHandlingRule: .allowRounding) { (value: Double) in
                 if value < range.lowerBound {

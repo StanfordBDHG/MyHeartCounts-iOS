@@ -35,6 +35,9 @@
         }
       }
     },
+    "%@" : {
+
+    },
     "%@ – %@" : {
       "localizations" : {
         "en" : {
@@ -67,6 +70,9 @@
           }
         }
       }
+    },
+    "%lld" : {
+
     },
     "%lld ft" : {
 
@@ -123,6 +129,12 @@
           }
         }
       }
+    },
+    "< 7" : {
+
+    },
+    "<120 / <80" : {
+
     },
     "$15,000 – $24,999" : {
       "localizations" : {
@@ -284,7 +296,40 @@
         }
       }
     },
+    "4 to 5 hours" : {
+
+    },
+    "5 – 7" : {
+
+    },
+    "5 to 6 hours" : {
+
+    },
+    "6 to 7 hours" : {
+
+    },
+    "7 to 9 hours" : {
+
+    },
+    "8 – 10" : {
+
+    },
+    "9 to 10 hours" : {
+
+    },
+    "10+ hours" : {
+
+    },
+    "11 – 14" : {
+
+    },
     "12-Minute Run Test (Cooper Test)" : {
+
+    },
+    "14 – 16" : {
+
+    },
+    "17 – 21" : {
 
     },
     "100" : {
@@ -296,6 +341,15 @@
           }
         }
       }
+    },
+    "120–129 / 80–89" : {
+
+    },
+    "130–139 / 90–99" : {
+
+    },
+    "140+ / 90+" : {
+
     },
     "About %@" : {
 
@@ -2501,6 +2555,7 @@
       }
     },
     "Matching Entry" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5137,6 +5192,9 @@
           }
         }
       }
+    },
+    "Your physical exercise score is determined based on the total amount of exercise minutes tracked over the past 7 days." : {
+
     }
   },
   "version" : "1.0"

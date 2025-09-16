@@ -228,69 +228,65 @@ private struct ScoreExplanationView: View {
     
     var body: some View {
         switch scoreResult.definition.variant {
-        case let .distinctMapping(_, elements):
-            VStack(spacing: 8) {
-                ForEach(elements, id: \.self) { element in
-                    makeRow(for: element)
+        case let .distinctMapping(_, bands, explainer):
+            makeViews(for: explainer, matchingBandIdx: { () -> Int? in
+                guard bands.count == explainer.bands.count, let inputValue = scoreResult.inputValue else {
+                    return nil
                 }
-            }
+                return bands.firstIndex { $0.matches(inputValue) }
+            }())
             .listRowInsets(.zero)
-        case .range(let range):
-            makeColorBar(didMatch: false, background: Gradient.redToGreen) {
-                Text(range.lowerBound, format: .number)
-                Spacer()
-                Text(range.upperBound, format: .number)
+        case .range(_, let explainer):
+            makeViews(for: explainer)
+                .listRowInsets(.zero)
+        case .custom(_, let explainer):
+            makeViews(for: explainer)
+        }
+    }
+    
+    @ViewBuilder
+    private func makeViews(for explainer: ScoreDefinition.TextualExplainer, matchingBandIdx: Int? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let headerText = explainer.headerText {
+                Text(headerText)
+                    .padding(.horizontal)
             }
-            .listRowInsets(.zero)
-        case .custom(_, .simple(let textualRepresentation)):
-            Text(textualRepresentation)
-        case .custom(_, .bands(let bands)):
-            VStack(spacing: 8) {
-                ForEach(bands, id: \.self) { band in
-                    makeColorBar(didMatch: false, background: band.color) {
-                        HStack {
-                            Text(band.leadingText)
-                            Spacer()
-                            Text(band.trailingText)
+            ForEach(Array(explainer.bands.indices), id: \.self) { idx in
+                let band = explainer.bands[idx]
+                makeColorBar(didMatch: idx == matchingBandIdx, background: band.background) {
+                    HStack {
+                        if let leadingText = band.leadingText {
+                            Text(leadingText)
+                        }
+                        Spacer()
+                        if let trailingText = band.trailingText {
+                            Text(trailingText)
                         }
                     }
                 }
             }
-            .listRowInsets(.zero)
         }
     }
     
     @ViewBuilder
-    private func makeRow(for element: ScoreDefinition.Element) -> some View {
-        let color = Gradient.redToGreen.color(at: element.score)
-        let didMatch = { () -> Bool in
-            if let inputValue = scoreResult.inputValue,
-               case let ScoreDefinition.Variant.distinctMapping(default: _, elements) = scoreResult.definition.variant {
-                element == elements.first { $0.matches(inputValue) }
-            } else {
-                false
-            }
-        }()
-        makeColorBar(didMatch: didMatch, background: color.opacity(didMatch ? 1 : 0.9)) {
-            Text(element.textualRepresentation)
-            Spacer()
-            if didMatch {
-                Image(systemSymbol: .checkmarkCircle)
-                    .accessibilityLabel("Matching Entry")
-            }
-            Text(Int(element.score * 100), format: .number)
-        }
-    }
-    
-    
-    @ViewBuilder
-    private func makeColorBar(didMatch: Bool, background: some ShapeStyle, @ViewBuilder content: () -> some View) -> some View {
+    private func makeColorBar(
+        didMatch: Bool,
+        background: ScoreDefinition.TextualExplainer.Band.Background,
+        @ViewBuilder content: () -> some View
+    ) -> some View {
         HStack {
             content()
         }
         .padding(.horizontal)
         .padding(.vertical, 5)
-        .background(background)
+        .transforming { view in
+            switch background {
+            case .color(let color):
+                view.background(color)
+            case .gradient(let gradient):
+                view.background(gradient)
+            }
+        }
         .clipShape(RoundedRectangle(cornerRadius: 7))
         .foregroundStyle(.black)
         .font(.subheadline.weight(didMatch ? .semibold : .medium))
