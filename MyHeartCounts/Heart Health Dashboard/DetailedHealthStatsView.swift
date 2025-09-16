@@ -241,8 +241,22 @@ private struct ScoreExplanationView: View {
                 Spacer()
                 Text(range.upperBound, format: .number)
             }
-        case .custom(_, let textualRepresentation):
+            .listRowInsets(.zero)
+        case .custom(_, .simple(let textualRepresentation)):
             Text(textualRepresentation)
+        case .custom(_, .bands(let bands)):
+            VStack(spacing: 8) {
+                ForEach(bands, id: \.self) { band in
+                    makeColorBar(didMatch: false, background: band.color) {
+                        HStack {
+                            Text(band.leadingText)
+                            Spacer()
+                            Text(band.trailingText)
+                        }
+                    }
+                }
+            }
+            .listRowInsets(.zero)
         }
     }
     

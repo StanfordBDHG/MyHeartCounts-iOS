@@ -352,7 +352,12 @@ extension ScoreDefinition {
         default: 0,
         // ideally we'd simply put the explanation directly into the ScoreDefinition, and have it work in a way that
         // the UI gets created based on that; but for the time being we simply have this ScoreDefinition hardcoded.
-        textualRepresentation: ""
+        textualRepresentation: .bands([
+            .init(leadingText: "<120 / <80", trailingText: "", color: Gradient.redToGreen.color(at: 1)),
+            .init(leadingText: "120–129 / 80–89", trailingText: "", color: Gradient.redToGreen.color(at: 0.8)),
+            .init(leadingText: "130–139 / 90–99", trailingText: "", color: Gradient.redToGreen.color(at: 0.5)),
+            .init(leadingText: "140+ / 90+", trailingText: "", color: Gradient.redToGreen.color(at: 0.1))
+        ])
     ) { (measurement: BloodPressureMeasurement) in
         let systolicScore: Double = switch measurement.systolic as Int {
         case ..<120: 0.75

@@ -25,9 +25,18 @@ protocol ScoreDefinitionPatternRange<Bound>: RangeExpression, Sendable {
 /// Intended to be declared as a static property somewhere.
 final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     enum Variant: Sendable {
+        enum CustomTextualRepresentation: Sendable {
+            struct Band: Hashable, Sendable { // swiftlint:disable:this nesting
+                let leadingText: String
+                let trailingText: String
+                let color: Color
+            }
+            case simple(String)
+            case bands([Band])
+        }
         case distinctMapping(default: Double, elements: [Element])
         case range(Range<Double>)
-        case custom(@Sendable (Any) -> Double, textualRepresentation: String)
+        case custom(@Sendable (Any) -> Double, textualRepresentation: CustomTextualRepresentation)
     }
     
     final class Element: Hashable, Sendable, AnyObjectBasedDefaultImpls { // not ideal but we need this to be a class so that it can be Hashable
@@ -85,7 +94,11 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     /// - parameter default: the score value that should be used for inputs that aren't compatible with the closure's input type.
     /// - parameter textualRepresentation: a textual description that will be used to explain the scoring rules in the app's UI.
     /// - parameter calcScore: closure that determines the score of an input.
-    init<Input>(`default`: Double, textualRepresentation: String, _ calcScore: @Sendable @escaping (Input) -> Double) {
+    init<Input>(
+        `default`: Double,
+        textualRepresentation: Variant.CustomTextualRepresentation,
+        _ calcScore: @Sendable @escaping (Input) -> Double
+    ) {
         let mapping = erasingClosureInputType(floatToIntHandlingRule: .allowRounding, calcScore)
         self.variant = .custom({ mapping($0) ?? `default` }, textualRepresentation: textualRepresentation)
     }
