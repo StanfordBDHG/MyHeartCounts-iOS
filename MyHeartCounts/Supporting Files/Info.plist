@@ -37,7 +37,7 @@
 		<key>SRSensorUsageECG</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_ECG</string>
 		</dict>
 		<key>SRSensorUsageElevation</key>
 		<dict>
@@ -72,7 +72,7 @@
 		<key>SRSensorUsageWristDetection</key>
 		<dict>
 			<key>Description</key>
-			<string>SensorKit On-Wrist data helps us interpret your ECG and watch data more accurately.</string>
+			<string>SENSORKIT_USAGE_DESC_ON_WRIST</string>
 		</dict>
 		<key>SRSensorUsageWristTemperature</key>
 		<dict>

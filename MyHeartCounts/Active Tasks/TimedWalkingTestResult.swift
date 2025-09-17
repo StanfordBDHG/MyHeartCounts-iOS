@@ -20,6 +20,7 @@ struct TimedWalkingTestResult: Hashable, Codable, Sendable {
     let startDate: Date
     let endDate: Date
     var numberOfSteps: Int
+    /// The distance covered, in meters.
     var distanceCovered: Double
 }
 

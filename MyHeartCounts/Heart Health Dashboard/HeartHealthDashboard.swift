@@ -46,6 +46,7 @@ struct HeartHealthDashboard: View {
     
     var body: some View {
         healthDashboard
+            .makeBackgroundMatchFormBackground()
     }
     
     @ViewBuilder var healthDashboard: some View {
@@ -208,7 +209,7 @@ extension HeartHealthDashboard {
         case \.nicotineExposureScore:
             HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
         case \.dietScore:
-            HealthDashboardQuestionnaireView(questionnaireName: "DietScore")
+            HealthDashboardQuestionnaireView(questionnaireName: "Diet")
         case \.bodyMassIndexScore:
             SaveBMISampleView()
         case \.bloodLipidsScore:

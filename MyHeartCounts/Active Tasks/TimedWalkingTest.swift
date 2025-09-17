@@ -67,7 +67,6 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         enum StartFailureReason {
             case missingSensorPermissions
             case alreadyActive
-            //            case other
         }
         
         case unableToStart(StartFailureReason)

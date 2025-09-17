@@ -25,6 +25,9 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     @Environment(\.openURL)
     private var openUrl
     
+    @Environment(\.dismiss)
+    private var dismiss
+    
     @Environment(WatchConnection.self)
     private var watchManager
     
@@ -36,6 +39,8 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     
     @State private var viewState: ViewState = .idle
     @State private var showPermissionsErrorSection = false
+    
+    @State private var mostRecentResult: TimedWalkingTestResult?
     
     private var testIsRunning: Bool {
         timedWalkingTest.state.isActive
@@ -56,6 +61,29 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
             @unknown default:
                 break
             }
+        }
+        .alert(
+            "Test Completed",
+            isPresented: Binding<Bool> {
+                self.mostRecentResult != nil
+            } set: { newValue in
+                // Note that we intentionally ignore `newValue == true` in here!
+                if !newValue {
+                    self.mostRecentResult = nil
+                }
+            },
+            presenting: mostRecentResult
+        ) { _ in
+            Button(role: .cancel) {
+                dismiss()
+            } label: {
+                Text("OK")
+            }
+            .keyboardShortcut(.defaultAction)
+            Button("Repeat") {}
+        } message: { result in
+            let meters = Measurement<UnitLength>(value: result.distanceCovered, unit: .meters)
+            Text("You covered \(meters, format: .measurement(width: .wide, usage: .road)), and took \(result.numberOfSteps) steps.")
         }
     }
     
@@ -160,10 +188,10 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
         switch timedWalkingTest.state {
         case .idle:
             Section {
-                // Q: do we want to have an option to cancel the test?
                 AsyncButton(state: $viewState) {
                     do {
                         let result = try await timedWalkingTest.start(test)
+                        self.mostRecentResult = result
                         await resultHandler(result)
                     } catch TimedWalkingTest.TestError.unableToStart(.missingSensorPermissions) {
                         showPermissionsErrorSection = true

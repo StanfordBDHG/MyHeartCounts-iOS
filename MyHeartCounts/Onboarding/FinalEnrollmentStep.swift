@@ -8,6 +8,7 @@
 
 import Foundation
 import Spezi
+import SpeziAccount
 import SpeziConsent
 import SpeziFoundation
 import SpeziNotifications
@@ -22,6 +23,7 @@ struct FinalEnrollmentStep: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(OnboardingDataCollection.self) private var onboardingData
     @Environment(StudyManager.self) private var studyManager
+    @Environment(Account.self) private var account
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
     @Environment(StudyBundleLoader.self) private var studyLoader
     // swiftlint:enable attributes
@@ -62,7 +64,21 @@ struct FinalEnrollmentStep: View {
             return
         }
         do {
-            try await studyManager.enroll(in: study)
+            if let enrollmentDate = account.details?.dateOfEnrollment {
+                // the user already has enrolled at some point in the past.
+                // we now explicitly specify this enrollment date, to make sure the StudyManager
+                // can schedule all study components relative to that.
+                try await studyManager.enroll(in: study, enrollmentDate: enrollmentDate)
+            } else {
+                let enrollmentDate = Date.now
+                try await studyManager.enroll(in: study, enrollmentDate: enrollmentDate)
+                do {
+                    var newDetails = AccountDetails()
+                    newDetails.dateOfEnrollment = enrollmentDate
+                    let modifications = try AccountModifications(modifiedDetails: newDetails)
+                    try await account.accountService.updateAccountDetails(modifications)
+                }
+            }
             Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
             }

@@ -162,3 +162,15 @@ extension OptionSet {
         }
     }
 }
+
+
+extension Sequence {
+    func map<Result, E>(_ transform: (Element) async throws(E) -> Result) async throws(E) -> [Result] {
+        var results: [Result] = []
+        results.reserveCapacity(underestimatedCount)
+        for element in self {
+            results.append(try await transform(element))
+        }
+        return results
+    }
+}

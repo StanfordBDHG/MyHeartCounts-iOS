@@ -92,14 +92,8 @@ struct SaveQuantitySampleView: View {
                 start: self.date,
                 end: self.date
             )
-            do {
-                try await self.healthKit.save(sample)
-                completionHandler?(.init(sample))
-            } catch let error as HKError where error.code == .errorAuthorizationDenied {
-                throw CustomError.missingHealthKitPermissions(sampleType)
-            } catch {
-                throw error
-            }
+            try await self.healthKit.save(sample)
+            completionHandler?(.init(sample))
         case .custom(let sampleType):
             let sample = QuantitySample(
                 id: UUID(),
@@ -111,34 +105,6 @@ struct SaveQuantitySampleView: View {
             )
             try await self.standard.uploadHealthObservation(sample)
             completionHandler?(sample)
-        }
-    }
-}
-
-
-extension SaveQuantitySampleView {
-    private enum CustomError: Error, LocalizedError {
-        case missingHealthKitPermissions(SampleType<HKQuantitySample>)
-        
-        var errorDescription: String? {
-            switch self {
-            case .missingHealthKitPermissions(let sampleType):
-                "Unable to save \(sampleType.displayTitle)"
-            }
-        }
-        
-        var failureReason: String? {
-            switch self {
-            case .missingHealthKitPermissions:
-                "You haven't granted My Heart Counts permission to add data to HealthKit"
-            }
-        }
-        
-        var recoverySuggestion: String? {
-            switch self {
-            case .missingHealthKitPermissions:
-                "You can change this in the iOS Settings app, under Privacy & Security → Health → My Heart Counts"
-            }
         }
     }
 }

@@ -53,8 +53,7 @@ struct PastTimedWalkTestResults: View {
     @ViewBuilder private var newTestSection: some View {
         let tests: [TimedWalkingTestConfiguration] = [
             .sixMinuteWalkTest,
-            .twelveMinuteRunTest,
-            .init(duration: .seconds(1), kind: .walking)
+            .twelveMinuteRunTest
         ]
         ForEach(tests, id: \.self) { test in
             Button {
@@ -73,8 +72,6 @@ struct PastTimedWalkTestResults: View {
     @ViewBuilder
     private func makeDetailsView(for result: TimedWalkingTestResult) -> some View {
         Form {
-            LabeledContent("id", value: result.id.uuidString)
-            LabeledContent("Test", value: result.test.displayTitle.localizedString())
             LabeledContent("Start", value: result.startDate, format: .dateTime)
             LabeledContent("End", value: result.endDate, format: .dateTime)
             LabeledContent("Number of Steps", value: result.numberOfSteps, format: .number)
@@ -84,6 +81,8 @@ struct PastTimedWalkTestResults: View {
                 format: .measurement(width: .abbreviated)
             )
         }
+        .navigationTitle(result.test.displayTitle.localizedString())
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

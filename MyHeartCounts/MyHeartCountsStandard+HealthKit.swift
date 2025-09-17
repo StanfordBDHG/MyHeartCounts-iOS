@@ -41,7 +41,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendHealthSampleUploadNotifications]
     }
     
-    func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample>, ofType sampleType: SampleType<Sample>) async {
+    func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample> & Sendable, ofType sampleType: SampleType<Sample>) async {
         do {
             try await uploadHealthObservations(addedSamples, batchSize: 100)
         } catch {
@@ -50,7 +50,8 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     }
     
     
-    func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
+    func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject> & Sendable, ofType sampleType: SampleType<Sample>) async {
+        let deletedObjects = Array(deletedObjects)
         logger.notice("\(#function) \(deletedObjects.count) deleted HKObjects for \(sampleType.displayTitle)")
         let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
             for: .deleted(sampleTypeTitle: sampleType.displayTitle, count: deletedObjects.count)
@@ -81,23 +82,38 @@ extension MyHeartCountsStandard {
         try await uploadHealthObservations(CollectionOfOne(observation), batchSize: 1)
     }
     
-    func uploadHealthObservations(
-        _ observations: consuming some Collection<some HealthObservation & Sendable>,
+    func uploadHealthObservations( // swiftlint:disable:this function_body_length
+        _ observations: consuming some Collection<some HealthObservation & Sendable> & Sendable,
         batchSize: Int = 100
     ) async throws {
         guard !observations.isEmpty, let sampleTypeIdentifier = observations.first?.sampleTypeIdentifier else {
             return
         }
         let issuedDate = FHIRPrimitive<ModelsR4.Instant>(try .init(date: .now))
+        @Sendable
+        func turnIntoFHIRResource(_ observation: some HealthObservation) async throws -> ResourceProxy {
+            if let observation = observation as? HKElectrocardiogram {
+                let symptoms = try await observation.symptoms(from: healthKit)
+                let voltages = try await observation.voltageMeasurements(from: healthKit.healthStore)
+                let observation = try observation.observation(
+                    symptoms: symptoms,
+                    voltageMeasurements: voltages.map { (time: $0.timeOffset, value: $0.voltage) },
+                    withMapping: .default,
+                    issuedDate: issuedDate,
+                    extensions: [.sampleUploadTimeZone]
+                )
+                return ResourceProxy(with: observation)
+            } else {
+                return try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
+            }
+        }
         if observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
             let numObservations = observations.count
             logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' via zlib upload")
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
             )
-            let resources = try observations.map { observation in
-                try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
-            }
+            let resources = try await observations.map(turnIntoFHIRResource)
             _ = consume observations
             let encoded = try JSONEncoder().encode(resources)
             let compressed = try encoded.compressed(using: Zlib.self)
@@ -120,11 +136,7 @@ extension MyHeartCountsStandard {
                         let document = try await healthObservationDocument(for: observation)
                         let path = document.path
                         logger.notice("Uploading Health Observation to \(path)")
-                        let resource = try observation.resource(
-                            withMapping: .default,
-                            issuedDate: issuedDate,
-                            extensions: [.sampleUploadTimeZone]
-                        )
+                        let resource = try await turnIntoFHIRResource(observation)
                         try batch.setData(from: resource, forDocument: document)
                     } catch {
                         logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")

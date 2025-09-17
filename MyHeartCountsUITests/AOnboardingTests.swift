@@ -52,6 +52,7 @@ extension XCUIApplication {
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         try navigateHealthKitAccess()
         navigateNotifications()
+        navigateDemographics()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
     
@@ -149,7 +150,7 @@ extension XCUIApplication {
             XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.bodyPrefix)).firstMatch.waitForExistence(timeout: 2))
             buttons["Learn More"].tap()
             XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.learnMorePrefix)).firstMatch.waitForExistence(timeout: 2))
-            navigationBars.buttons["Dismiss"].tap()
+            navigationBars.buttons["Close"].tap()
             buttons["Continue"].tap()
         }
     }
@@ -244,6 +245,17 @@ extension XCUIApplication {
         XCTAssert(staticTexts["Notifications"].waitForExistence(timeout: 2))
         buttons["Allow Notifications"].tap()
         confirmNotificationAuthorization()
+    }
+    
+    
+    private func navigateDemographics() {
+        XCTAssert(staticTexts["Demographics"].waitForExistence(timeout: 2))
+        // not doing anything here bc we have a dedicated demographics test case.
+        let continueButton = buttons["Continue"]
+        while !continueButton.exists {
+            swipeUp()
+        }
+        continueButton.tap()
     }
     
     

@@ -24,6 +24,7 @@ import SwiftUI
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConstraint {
     // swiftlint:disable attributes
     @Application(\.logger) var logger
+    @Dependency(HealthKit.self) var healthKit
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
     @Dependency(StudyManager.self) private var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?

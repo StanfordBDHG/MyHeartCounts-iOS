@@ -218,7 +218,7 @@ private struct GridCellImpl: View {
                         gradient: .redToGreen,
                         progress: progress
                     ) { currentValueText }
-                case .range(let range):
+                case .range(let range, _):
                     Gauge(gradient: .redToGreen, progress: progress) {
                         currentValueText
                     } minimumValueText: {

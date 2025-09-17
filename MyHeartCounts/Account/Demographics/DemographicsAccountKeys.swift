@@ -147,11 +147,29 @@ extension AccountDetails {
     )
     var comorbidities: Comorbidities?
     
-    @AccountKey(id: "nhsNumber", name: "NHS Number", category: .demographics, options: .mutable, as: String.self)
-    var nhsNumber: String?
+    @AccountKey(
+        id: "nhsNumber",
+        name: "NHS Number",
+        category: .demographics,
+        options: .mutable,
+        as: NHSNumber.self,
+        initial: .empty(NHSNumber(unchecked: ""))
+    )
+    var nhsNumber: NHSNumber?
     
     @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
     var futureStudies: Bool?
+    
+    
+    @AccountKey(
+        id: "dateOfEnrollment",
+        name: "Date of Enrollment",
+        category: .other,
+        options: .mutable,
+        as: Date.self,
+        initial: .empty(.distantPast),
+    )
+    public var dateOfEnrollment: Date?
 }
 
 
@@ -160,7 +178,8 @@ extension AccountDetails {
     \.ukRegion, \.ukCounty, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,
     \.raceEthnicity, \.latinoStatus,
-    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies
+    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies,
+    \.dateOfEnrollment
 )
 extension AccountKeys {}
 

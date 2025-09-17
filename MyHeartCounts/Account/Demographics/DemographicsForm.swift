@@ -21,24 +21,30 @@ import SpeziViews
 import SwiftUI
 
 
-struct DemographicsForm: View {
+struct DemographicsForm<Footer: View>: View {
     @Environment(Account.self)
     private var account: Account?
+    
+    private let footer: @MainActor () -> Footer
     
     var body: some View {
         Group {
             if let account, let details = account.details {
-                Impl(account: account, details: details)
+                Impl(account: account, details: details, footer: footer())
             } else {
                 ContentUnavailableView("Not logged in", systemSymbol: nil)
             }
         }
         .navigationTitle("Demographics")
     }
+    
+    init(@ViewBuilder footer: @MainActor @escaping () -> Footer = { EmptyView() }) {
+        self.footer = footer
+    }
 }
 
 
-private struct Impl: View {
+private struct Impl<Footer: View>: View {
     // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.locale) private var locale
@@ -56,12 +62,12 @@ private struct Impl: View {
     
     let account: Account
     let details: AccountDetails
+    let footer: Footer
     
     @State private var viewState: ViewState = .idle
     @State private var regionOverride: Locale.Region?
     @State private var isShowingEnterHeightSheet = false
     @State private var isShowingEnterWeightSheet = false
-    @State private var nhsNumberTextEntry = ""
     @State private var isPresentingUKCountyPicker = false
     
     private var region: Locale.Region {
@@ -129,12 +135,13 @@ private struct Impl: View {
                 Toggle(isOn: binding) {
                     VStack(alignment: .leading) {
                         Text("Future Studies")
-                        Text("May we contact you about future studies that may be of interest to you?")
+                        Text("Can we contact you about future studies that may be of interest to you?")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
+            footer
         }
         .accessibilityIdentifier("DemographicsForm")
         .viewStateAlert(state: $viewState)
@@ -324,22 +331,15 @@ private struct Impl: View {
     }
     
     @ViewBuilder private var nhsNumberSection: some View {
-        let binding = accountValueBinding(\.nhsNumber).withDefaultValue("")
+        let binding = accountValueBinding(\.nhsNumber).withDefaultValue(NHSNumber(unchecked: ""))
         Section {
-            let title: LocalizedStringResource = "NHS Number (Optional)"
-            HStack {
-                Text(title)
-                TextField(text: $nhsNumberTextEntry, prompt: Text("0")) {
-                    Text(title)
-                }
-                .multilineTextAlignment(.trailing)
-                .onAppear {
-                    nhsNumberTextEntry = binding.wrappedValue
-                }
-                .onChange(of: nhsNumberTextEntry) { _, newValue in
-                    binding.wrappedValue = newValue
-                }
-            }
+            NHSNumberTextField(value: binding)
+        } header: {
+            Text("NHS Number")
+        } footer: {
+            let url = try! URL("https://www.nhs.uk/nhs-services/online-services/find-nhs-number/", strategy: .url) // swiftlint:disable:this force_try
+            Link("Find your NHS Number", destination: url)
+                .font(.footnote)
         }
     }
     
