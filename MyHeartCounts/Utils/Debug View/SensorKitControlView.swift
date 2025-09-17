@@ -22,23 +22,13 @@ struct SensorKitControlView: View {
         Form {
             Section {
                 AsyncButton("Start Recording Data", state: $viewState) {
-                    func imp<Sample>(_ sensor: some AnySensor<Sample>) async throws {
-                        let sensor = Sensor(sensor)
-                        let reader = SensorReader(sensor)
-                        try await reader.startRecording()
-                    }
                     for sensor in SensorKit.mhcSensors {
-                        try await imp(sensor)
+                        try await sensor.startRecording()
                     }
                 }
                 AsyncButton("Stop Recording Data", state: $viewState) {
-                    func imp<Sample>(_ sensor: some AnySensor<Sample>) async throws {
-                        let sensor = Sensor(sensor)
-                        let reader = SensorReader(sensor)
-                        try await reader.stopRecording()
-                    }
                     for sensor in SensorKit.mhcSensors {
-                        try await imp(sensor)
+                        try await sensor.stopRecording()
                     }
                 }
             }
