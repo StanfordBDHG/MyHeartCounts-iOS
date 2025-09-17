@@ -21,24 +21,30 @@ import SpeziViews
 import SwiftUI
 
 
-struct DemographicsForm: View {
+struct DemographicsForm<Footer: View>: View {
     @Environment(Account.self)
     private var account: Account?
+    
+    private let footer: @MainActor () -> Footer
     
     var body: some View {
         Group {
             if let account, let details = account.details {
-                Impl(account: account, details: details)
+                Impl(account: account, details: details, footer: footer())
             } else {
                 ContentUnavailableView("Not logged in", systemSymbol: nil)
             }
         }
         .navigationTitle("Demographics")
     }
+    
+    init(@ViewBuilder footer: @MainActor @escaping () -> Footer = { EmptyView() }) {
+        self.footer = footer
+    }
 }
 
 
-private struct Impl: View {
+private struct Impl<Footer: View>: View {
     // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.locale) private var locale
@@ -56,6 +62,7 @@ private struct Impl: View {
     
     let account: Account
     let details: AccountDetails
+    let footer: Footer
     
     @State private var viewState: ViewState = .idle
     @State private var regionOverride: Locale.Region?
@@ -134,6 +141,7 @@ private struct Impl: View {
                     }
                 }
             }
+            footer
         }
         .accessibilityIdentifier("DemographicsForm")
         .viewStateAlert(state: $viewState)

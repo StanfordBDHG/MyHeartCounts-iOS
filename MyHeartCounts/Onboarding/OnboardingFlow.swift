@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Spezi
 @_spi(TestingSupport)
 import SpeziAccount
@@ -90,6 +92,8 @@ private struct AppOnboardingFlow: View {
                 NotificationPermissions()
                     .injectingSpezi()
             }
+            DemographicsStep()
+                .injectingSpezi()
             FinalEnrollmentStep()
                 .injectingSpezi()
         }
@@ -102,6 +106,21 @@ private struct AppOnboardingFlow: View {
             Task {
                 localNotificationAuthorization = await notificationSettings().authorizationStatus == .authorized
             }
+        }
+    }
+}
+
+
+private struct DemographicsStep: View {
+    @Environment(ManagedNavigationStack.Path.self)
+    private var path
+    
+    var body: some View {
+        DemographicsForm {
+            OnboardingActionsView("Continue") {
+                path.nextStep()
+            }
+            .listRowInsets(.zero)
         }
     }
 }

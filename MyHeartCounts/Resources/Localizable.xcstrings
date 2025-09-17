@@ -4720,6 +4720,9 @@
         }
       }
     },
+    "Unable to save" : {
+
+    },
     "Unenroll" : {
       "localizations" : {
         "es" : {
@@ -5161,6 +5164,9 @@
     "Yesterday" : {
 
     },
+    "You can change this in the iOS Settings app, under Privacy & Security → Health → My Heart Counts" : {
+
+    },
     "You can select multiple options" : {
       "localizations" : {
         "es" : {
@@ -5180,6 +5186,9 @@
           }
         }
       }
+    },
+    "You haven't granted My Heart Counts permission to add data to HealthKit for the following data types:\n%@" : {
+
     },
     "You're All Set" : {
       "localizations" : {
