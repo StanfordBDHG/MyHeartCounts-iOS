@@ -209,7 +209,7 @@ extension HeartHealthDashboard {
         case \.nicotineExposureScore:
             HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
         case \.dietScore:
-            HealthDashboardQuestionnaireView(questionnaireName: "DietScore")
+            HealthDashboardQuestionnaireView(questionnaireName: "Diet")
         case \.bodyMassIndexScore:
             SaveBMISampleView()
         case \.bloodLipidsScore:
