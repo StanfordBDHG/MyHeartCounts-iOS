@@ -4,17 +4,6 @@
     "" : {
 
     },
-    "- %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "- %@"
-          }
-        }
-      }
-    },
     "– %@" : {
       "localizations" : {
         "es" : {
@@ -430,17 +419,6 @@
         }
       }
     },
-    "Add" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar"
-          }
-        }
-      }
-    },
     "Add Data" : {
       "localizations" : {
         "es" : {
@@ -546,17 +524,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Samoa Americana"
-          }
-        }
-      }
-    },
-    "App Usage" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uso de la aplicación"
           }
         }
       }
@@ -676,17 +643,6 @@
         }
       }
     },
-    "bundle id" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "id de paquete"
-          }
-        }
-      }
-    },
     "California" : {
       "localizations" : {
         "es" : {
@@ -726,17 +682,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cambiar Idioma"
-          }
-        }
-      }
-    },
-    "chromaticity" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cromaticidad"
           }
         }
       }
@@ -1119,34 +1064,12 @@
         }
       }
     },
-    "crownOrientation" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "orientación de la corona"
-          }
-        }
-      }
-    },
     "Current Test" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prueba Actual"
-          }
-        }
-      }
-    },
-    "date" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "fecha"
           }
         }
       }
@@ -1230,17 +1153,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Demografía"
-          }
-        }
-      }
-    },
-    "Depending on the amount of samples, this might take a bit" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dependiendo de la cantidad de muestras, esto podría tardar un poco."
           }
         }
       }
@@ -1592,6 +1504,12 @@
             "state" : "translated",
             "value" : "Your feedback helps us improve My Heart Counts and all feedback is greatly appreciated.\n\nThe feedback you share with us will be associated with your Email address.\nThis allows us to reach out to you if required."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus comentarios nos ayudan a mejorar My Heart Counts y te los agradecemos de corazón."
+          }
         }
       }
     },
@@ -1605,56 +1523,12 @@
         }
       }
     },
-    "Fetch Results" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtener Resultados"
-          }
-        }
-      }
-    },
-    "Fetch WristTemp Data" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtener Datos de Temperatura de Muñeca"
-          }
-        }
-      }
-    },
-    "Fetching Data…" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obteniendo Datos…"
-          }
-        }
-      }
-    },
     "Fetching…" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obteniendo…"
-          }
-        }
-      }
-    },
-    "Filter Options" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opciones de Filtro"
           }
         }
       }
@@ -2080,23 +1954,6 @@
         }
       }
     },
-    "Heart Health Dashboard" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heart Health Dashboard"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tablero de Salud del Corazón"
-          }
-        }
-      }
-    },
     "HEART_HEALTH_DASHBOARD_HEADER" : {
       "localizations" : {
         "en" : {
@@ -2212,34 +2069,12 @@
         }
       }
     },
-    "identifier" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "identificador"
-          }
-        }
-      }
-    },
     "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Si tienes un Apple Watch, asegúrate de que la aplicación Mi Corazón Cuenta esté en funcionamiento"
-          }
-        }
-      }
-    },
-    "Ignore Empty Fetch Results" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ignorar Resultados Vacíos"
           }
         }
       }
@@ -2502,17 +2337,6 @@
         }
       }
     },
-    "locationCategory" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "categoríaDeUbicación"
-          }
-        }
-      }
-    },
     "Louisiana" : {
       "localizations" : {
         "es" : {
@@ -2559,28 +2383,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Massachusetts"
-          }
-        }
-      }
-    },
-    "Matching Entry" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrada Coincidente"
-          }
-        }
-      }
-    },
-    "May we contact you about future studies that may be of interest to you?" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Podemos ponernos en contacto contigo sobre estudios futuros que puedan interesarte?"
           }
         }
       }
@@ -2784,17 +2586,6 @@
         }
       }
     },
-    "News & Information" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noticias e Información"
-          }
-        }
-      }
-    },
     "Next" : {
       "localizations" : {
         "en" : {
@@ -2817,17 +2608,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Número NHS"
-          }
-        }
-      }
-    },
-    "NHS Number (Optional)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Número NHS (Opcional)"
           }
         }
       }
@@ -3441,34 +3221,12 @@
         }
       }
     },
-    "Permissions" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Permisos"
-          }
-        }
-      }
-    },
     "Physical Activity" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Actividad Física"
-          }
-        }
-      }
-    },
-    "placement" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colocación"
           }
         }
       }
@@ -3906,17 +3664,6 @@
         }
       }
     },
-    "Request Permissions" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solicitar Permisos"
-          }
-        }
-      }
-    },
     "Reset Query Anchors" : {
 
     },
@@ -3962,17 +3709,6 @@
     },
     "run" : {
 
-    },
-    "Sample" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muestra"
-          }
-        }
-      }
     },
     "Sample Type" : {
       "localizations" : {
@@ -4099,17 +3835,6 @@
     },
     "SensorKit" : {
 
-    },
-    "Sensors" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sensores"
-          }
-        }
-      }
     },
     "Series" : {
       "localizations" : {
@@ -4239,17 +3964,6 @@
         }
       }
     },
-    "Start All" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iniciar Todo"
-          }
-        }
-      }
-    },
     "Start Recording Data" : {
 
     },
@@ -4269,17 +3983,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estado"
-          }
-        }
-      }
-    },
-    "Stop All" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detener Todo"
           }
         }
       }
@@ -4317,34 +4020,6 @@
         }
       }
     },
-    "Summarized" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Summarised"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resumido"
-          }
-        }
-      }
-    },
-    "Supplemental Categories" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Categorías Suplementarias"
-          }
-        }
-      }
-    },
     "Take Test" : {
       "localizations" : {
         "es" : {
@@ -4361,17 +4036,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tennessee"
-          }
-        }
-      }
-    },
-    "Test" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prueba"
           }
         }
       }
@@ -4455,17 +4119,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tiempo Transcurrido"
-          }
-        }
-      }
-    },
-    "Time Info" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Información del Tiempo"
           }
         }
       }
@@ -4809,17 +4462,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vermont"
-          }
-        }
-      }
-    },
-    "version" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "versión"
           }
         }
       }
