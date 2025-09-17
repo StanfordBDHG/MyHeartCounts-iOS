@@ -23,7 +23,7 @@ final class SensorKitDataFetcher: ServiceModule, @unchecked Sendable {
     
     func run() async {
         Task(priority: .background) {
-            for sensor in SensorKit.mhcSensors {
+            for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
             await doFetch()
