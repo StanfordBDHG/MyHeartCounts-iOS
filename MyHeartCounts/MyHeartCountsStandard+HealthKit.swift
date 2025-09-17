@@ -41,16 +41,16 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendHealthSampleUploadNotifications]
     }
     
-    func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample>, ofType sampleType: SampleType<Sample>) async {
+    func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample> & Sendable, ofType sampleType: SampleType<Sample>) async {
         do {
-            try await uploadHealthObservations(Array(addedSamples), batchSize: 100)
+            try await uploadHealthObservations(addedSamples, batchSize: 100)
         } catch {
             logger.error("Error uploading HealthKit samples: \(error)")
         }
     }
     
     
-    func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject>, ofType sampleType: SampleType<Sample>) async {
+    func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject> & Sendable, ofType sampleType: SampleType<Sample>) async {
         let deletedObjects = Array(deletedObjects)
         logger.notice("\(#function) \(deletedObjects.count) deleted HKObjects for \(sampleType.displayTitle)")
         let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
