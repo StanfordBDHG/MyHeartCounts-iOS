@@ -18,11 +18,12 @@ struct NHSNumber: Codable, Hashable, Sendable {
         self.stringValue = stringValue
     }
     
-    init?(validating stringValue: String) {
-        guard Self.validate(stringValue) else {
+    init?(validating input: String) {
+        let input = input.replacing(/\ |-/, with: "")
+        guard Self.validate(input) else {
             return nil
         }
-        self.stringValue = stringValue
+        self.stringValue = input
     }
     
     init(from decoder: any Decoder) throws {
@@ -39,6 +40,7 @@ struct NHSNumber: Codable, Hashable, Sendable {
 
 extension NHSNumber {
     static func checksum(_ input: String) -> Int? {
+        let input = input.replacing(/\ |-/, with: "")
         guard input.count == 10 else {
             return nil
         }
