@@ -52,6 +52,7 @@ extension XCUIApplication {
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         try navigateHealthKitAccess()
         navigateNotifications()
+        navigateDemographics()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
     
@@ -244,6 +245,17 @@ extension XCUIApplication {
         XCTAssert(staticTexts["Notifications"].waitForExistence(timeout: 2))
         buttons["Allow Notifications"].tap()
         confirmNotificationAuthorization()
+    }
+    
+    
+    private func navigateDemographics() {
+        XCTAssert(staticTexts["Demographics"].waitForExistence(timeout: 2))
+        // not doing anything here bc we have a dedicated demographics test case.
+        let continueButton = buttons["Continue"]
+        while !continueButton.exists {
+            swipeUp()
+        }
+        continueButton.tap()
     }
     
     
