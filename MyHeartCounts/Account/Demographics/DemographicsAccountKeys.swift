@@ -147,8 +147,15 @@ extension AccountDetails {
     )
     var comorbidities: Comorbidities?
     
-    @AccountKey(id: "nhsNumber", name: "NHS Number", category: .demographics, options: .mutable, as: String.self)
-    var nhsNumber: String?
+    @AccountKey(
+        id: "nhsNumber",
+        name: "NHS Number",
+        category: .demographics,
+        options: .mutable,
+        as: NHSNumber.self,
+        initial: .empty(NHSNumber(unchecked: ""))
+    )
+    var nhsNumber: NHSNumber?
     
     @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
     var futureStudies: Bool?

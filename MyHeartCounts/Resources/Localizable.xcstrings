@@ -697,6 +697,9 @@
         }
       }
     },
+    "Can we contact you about future studies that may be of interest to you?" : {
+
+    },
     "Can you read and understand %@ in order to provide informed consent and follow instructions?" : {
       "localizations" : {
         "es" : {
@@ -1722,6 +1725,9 @@
         }
       }
     },
+    "Find your NHS Number" : {
+
+    },
     "First 3 Digits of ZIP Code" : {
       "localizations" : {
         "es" : {
@@ -2569,6 +2575,7 @@
       }
     },
     "May we contact you about future studies that may be of interest to you?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2815,6 +2822,7 @@
       }
     },
     "NHS Number (Optional)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2936,6 +2944,9 @@
           }
         }
       }
+    },
+    "Not a valid NHS number" : {
+
     },
     "Not logged in" : {
       "localizations" : {
