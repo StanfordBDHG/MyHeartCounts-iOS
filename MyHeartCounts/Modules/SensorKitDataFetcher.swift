@@ -14,7 +14,7 @@ import SpeziFoundation
 import SpeziSensorKit
 
 
-final class SensorKitDataFetcher: ServiceModule, @unchecked Sendable {
+final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
     // swiftlint:disable attributes
     @StandardActor private var standard: MyHeartCountsStandard
     @Dependency(SensorKit.self) private var sensorKit
