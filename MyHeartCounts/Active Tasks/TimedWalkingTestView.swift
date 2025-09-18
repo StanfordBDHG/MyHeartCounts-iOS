@@ -19,8 +19,8 @@ import SwiftUI
 struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     typealias ResultHandler = @Sendable @MainActor (TimedWalkingTestResult?) async -> Void
     
-    @Environment(\.openAppSettings)
-    private var openAppSettings
+    @Environment(\.openSettingsApp)
+    private var openSettingsApp
     
     @Environment(\.openURL)
     private var openUrl
@@ -170,7 +170,7 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                     explanation: "The Timed Walking Test requires read access to Motion and Fitness Data.",
                     actionText: "Open Settings",
                     action: {
-                        openAppSettings()
+                        openSettingsApp()
                     }
                 )
             }

@@ -14,7 +14,7 @@ import SpeziFoundation
 import SpeziSensorKit
 
 
-final class SensorKitDataFetcher: ServiceModule, @unchecked Sendable {
+final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
     // swiftlint:disable attributes
     @StandardActor private var standard: MyHeartCountsStandard
     @Dependency(SensorKit.self) private var sensorKit
@@ -23,6 +23,9 @@ final class SensorKitDataFetcher: ServiceModule, @unchecked Sendable {
     
     func run() async {
         Task(priority: .background) {
+            for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
+                try? await sensor.startRecording()
+            }
             await doFetch()
         }
     }
@@ -64,14 +67,13 @@ final class SensorKitDataFetcher: ServiceModule, @unchecked Sendable {
     /// Primarily intended for testing purposes.
     @concurrent
     private func fetchAndUploadAll<Sample>(for sensor: Sensor<Sample>) async throws where Sample.SafeRepresentation: HealthObservation {
-        let reader = SensorReader(sensor)
-        let devices = try await reader.fetchDevices()
+        let devices = try await sensor.fetchDevices()
         for device in devices {
             let newestSampleDate = Date.now.addingTimeInterval(-sensor.dataQuarantineDuration.timeInterval)
             let oldestSampleDate = newestSampleDate.addingTimeInterval(-TimeConstants.day * 5.5)
             for startDate in stride(from: oldestSampleDate, through: newestSampleDate, by: sensor.suggestedBatchSize.timeInterval) {
                 let timeRange = startDate..<min(startDate.addingTimeInterval(sensor.suggestedBatchSize.timeInterval), newestSampleDate)
-                let samples = (try? await reader.fetch(from: device, timeRange: timeRange)) ?? []
+                let samples = (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? []
                 try await standard.uploadHealthObservations(samples)
             }
         }
