@@ -51,52 +51,71 @@ private struct AppOnboardingFlow: View {
     var body: some View {
         ManagedNavigationStack(didComplete: $didCompleteOnboarding) { // swiftlint:disable:this closure_body_length
             Welcome()
+                .onboardingStep(.welcome)
             EligibilityScreening()
+                .onboardingStep(.eligibility)
             if !FeatureFlags.disableFirebase {
                 AccountOnboarding()
                     .injectingSpezi()
                     .navigationBarBackButtonHidden()
+                    .onboardingStep(.login)
             }
             OnboardingDisclaimerStep(
                 title: "ONBOARDING_DISCLAIMER_1_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_1_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT"
             )
+            .onboardingStep(.disclaimer1)
+            .injectingSpezi()
             OnboardingDisclaimerStep(
                 title: "ONBOARDING_DISCLAIMER_2_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_2_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_2_LEARN_MORE_TEXT"
             )
+            .onboardingStep(.disclaimer2)
+            .injectingSpezi()
             OnboardingDisclaimerStep(
                 title: "ONBOARDING_DISCLAIMER_3_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_3_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_3_LEARN_MORE_TEXT"
             )
+            .onboardingStep(.disclaimer3)
+            .injectingSpezi()
             OnboardingDisclaimerStep(
                 title: "ONBOARDING_DISCLAIMER_4_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_4_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_4_LEARN_MORE_TEXT"
             )
+            .onboardingStep(.disclaimer4)
+            .injectingSpezi()
             ComprehensionScreening()
+                .onboardingStep(.comprehension)
+                .injectingSpezi()
             #if !(targetEnvironment(simulator) && (arch(i386) || arch(x86_64)))
             Consent()
+                .onboardingStep(.consent)
                 .injectingSpezi()
                 .navigationStepIdentifier("Consent")
             #endif
             if HKHealthStore.isHealthDataAvailable() {
                 // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()
+                    .onboardingStep(.healthAccess)
                     .injectingSpezi()
             }
             if !localNotificationAuthorization {
                 NotificationPermissions()
+                    .onboardingStep(.notifications)
                     .injectingSpezi()
             }
             DemographicsStep()
+                .onboardingStep(.demographics)
                 .injectingSpezi()
             FinalEnrollmentStep()
+                .onboardingStep(.finalStep)
                 .injectingSpezi()
         }
+        .environment(\.isInOnboardingFlow, true)
         .environment(onboardingData)
         .interactiveDismissDisabled(!didCompleteOnboarding)
         .onChange(of: scenePhase, initial: true) {
@@ -123,4 +142,21 @@ private struct DemographicsStep: View {
             .listRowInsets(.zero)
         }
     }
+}
+
+
+extension OnboardingStep {
+    static let welcome = Self(rawValue: "welcome")
+    static let eligibility = Self(rawValue: "eligibility")
+    static let login = Self(rawValue: "login")
+    static let disclaimer1 = Self(rawValue: "disclaimer1")
+    static let disclaimer2 = Self(rawValue: "disclaimer2")
+    static let disclaimer3 = Self(rawValue: "disclaimer3")
+    static let disclaimer4 = Self(rawValue: "disclaimer4")
+    static let comprehension = Self(rawValue: "comprehension")
+    static let consent = Self(rawValue: "consent")
+    static let healthAccess = Self(rawValue: "healthAccess")
+    static let notifications = Self(rawValue: "notifications")
+    static let demographics = Self(rawValue: "demographics")
+    static let finalStep = Self(rawValue: "finalStep")
 }
