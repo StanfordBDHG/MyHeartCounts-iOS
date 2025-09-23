@@ -1438,8 +1438,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.2;
+				kind = revision;
+				revision = 2e37bc55e2c7bc045df95990711eb70f65a6ec4a;
 			};
 		};
 		2FE5DC6529EDD894004B9AB4 /* XCRemoteSwiftPackageReference "SpeziContact" */ = {
@@ -1471,7 +1471,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziViews.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.12.3;
+				minimumVersion = 1.12.4;
 			};
 		};
 		2FE5DC9029EDD9C3004B9AB4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -1574,8 +1574,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.14;
+				kind = revision;
+				revision = fa2fd9707b2ecc0828a038a60678567d1f0da412;
 			};
 		};
 		808A92C92E47E159007046E0 /* XCRemoteSwiftPackageReference "SpeziConsent" */ = {
@@ -1606,8 +1606,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.11;
+				kind = revision;
+				revision = 095e83d87040d50f7040a890dbf32866d67b3471;
 			};
 		};
 		80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {

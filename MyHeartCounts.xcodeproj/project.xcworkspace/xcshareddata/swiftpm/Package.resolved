@@ -204,8 +204,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziAccount.git",
       "state" : {
-        "revision" : "e1eea32a1814d8527e4c43af0e5f347220a40c53",
-        "version" : "2.3.2"
+        "revision" : "2e37bc55e2c7bc045df95990711eb70f65a6ec4a"
       }
     },
     {
@@ -267,8 +266,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziNotifications.git",
       "state" : {
-        "revision" : "5ea35ac06e245b5350b382647ec21d6a5a486d24",
-        "version" : "1.0.7"
+        "revision" : "827b7ecefe44eaac2412a3b7d669f16d0d1e906b",
+        "version" : "1.0.8"
       }
     },
     {
@@ -294,8 +293,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziScheduler.git",
       "state" : {
-        "revision" : "9ef998ccfc358cb35519157143fc77ddb233cdfa",
-        "version" : "1.2.14"
+        "revision" : "fa2fd9707b2ecc0828a038a60678567d1f0da412"
       }
     },
     {
@@ -321,8 +319,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "6486bd3ae251a24b5c6c0cc46238b669658d4b72",
-        "version" : "0.1.11"
+        "revision" : "095e83d87040d50f7040a890dbf32866d67b3471"
       }
     },
     {
@@ -330,8 +327,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "45fa2677530aba4c305fab2be5a4e4abfbfffc32",
-        "version" : "1.12.3"
+        "revision" : "d05ffbcedf6760d1a9671f629475c46ee6b1fe19",
+        "version" : "1.12.4"
       }
     },
     {
@@ -429,8 +426,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "1103c45ece4f7fe160b8f75b4ea1ee2e5fac1841",
-        "version" : "601.0.0"
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
       }
     },
     {

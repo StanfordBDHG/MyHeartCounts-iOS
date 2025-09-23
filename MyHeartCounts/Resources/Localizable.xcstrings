@@ -1207,6 +1207,9 @@
         }
       }
     },
+    "ECG" : {
+
+    },
     "ECG_INSTRUCTIONS_TEXT" : {
       "localizations" : {
         "en" : {
@@ -4023,6 +4026,9 @@
         }
       }
     },
+    "Success" : {
+
+    },
     "Take Test" : {
       "localizations" : {
         "es" : {
@@ -4860,6 +4866,9 @@
           }
         }
       }
+    },
+    "Your ECG has successfully been recorded" : {
+
     },
     "Your physical exercise score is determined based on the total amount of exercise minutes tracked over the past 7 days." : {
 

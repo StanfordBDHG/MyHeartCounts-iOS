@@ -179,6 +179,8 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
             case let .line(interpolationMethod):
                 LineMark(x: xVal, y: yVal, series: series)
                     .interpolationMethod(interpolationMethod)
+                PointMark(x: xVal, y: yVal)
+                    .symbolSize(10)
             case .bar:
                 BarMark(x: xVal, y: yVal)
             case let .point(area):

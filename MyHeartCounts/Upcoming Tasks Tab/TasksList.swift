@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_length
+// swiftlint:disable file_length attributes
 
 import Algorithms
 import Foundation
@@ -99,12 +99,15 @@ struct TasksList: View {
         }
     }
     
+    private struct ActiveECG: Identifiable {
+        let id = UUID()
+        let didComplete: @MainActor () -> Void
+    }
     
-    // swiftlint:disable attributes
+    
     @Environment(\.calendar) private var cal
     @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(StudyManager.self) private var studyManager
-    // swiftlint:enable attributes
     
     private let mode: Mode
     private let timeRange: TimeRange
@@ -115,6 +118,7 @@ struct TasksList: View {
     @State private var presentedArticle: Article?
     @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
     @State private var activeTimedWalkingTest: ActiveTimedWalkingTest?
+    @State private var activeECG: ActiveECG?
     
     var body: some View {
         header
@@ -150,6 +154,11 @@ struct TasksList: View {
                             _ = try? event.complete()
                         }
                     }
+                }
+            }
+            .sheet(item: $activeECG) { input in
+                NavigationStack {
+                    ECGInstructionsSheet(successHandler: input.didComplete)
                 }
             }
         let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
@@ -270,6 +279,15 @@ struct TasksList: View {
             )
         case .promptTimedWalkingTest(let component):
             activeTimedWalkingTest = .init(test: component.test, event: event, shouldCompleteEvent: shouldComplete)
+        case .performCustomActiveTask:
+            activeECG = .init {
+                do {
+                    try event.complete()
+                } catch {
+                    logger.error("Was unable to complete() event: \(error)")
+                }
+                activeECG = nil
+            }
         }
     }
 }
@@ -416,8 +434,9 @@ extension TasksList {
             let events: [Event]
         }
         
-        @Environment(\.calendar)
-        private var cal
+        @Environment(\.calendar) private var cal
+        @Environment(Scheduler.self) private var scheduler
+        @Environment(StudyManager.self) private var studyManager
         private let events: [Event]
         private let showFallbackTasks: Bool
         private let noTasksMessageLabels: NoTasksMessageLabels
