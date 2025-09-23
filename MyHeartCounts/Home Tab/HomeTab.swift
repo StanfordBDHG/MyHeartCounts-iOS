@@ -39,7 +39,7 @@ struct HomeTab: RootViewTab {
             Form {
                 topActionsFormContent
                 TasksList(
-                    mode: .upcoming(showFallbackTasks: false),
+                    mode: .upcoming(includeIndefinitePastTasks: true, showFallbackTasks: false),
                     timeRange: .today,
                     headerConfig: .custom("Today's Tasks"),
                     noTasksMessageLabels: .init(title: "You're All Set")

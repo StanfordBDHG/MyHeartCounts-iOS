@@ -25,7 +25,7 @@ struct UpcomingTasksTab: RootViewTab {
         NavigationStack {
             Form {
                 TasksList(
-                    mode: .upcoming(showFallbackTasks: true),
+                    mode: .upcoming(includeIndefinitePastTasks: false, showFallbackTasks: true),
                     timeRange: .weeks(2),
                     noTasksMessageLabels: .init(title: "No Upcoming Tasks")
                 )

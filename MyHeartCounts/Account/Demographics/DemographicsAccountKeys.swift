@@ -169,7 +169,7 @@ extension AccountDetails {
         as: Date.self,
         initial: .empty(.distantPast),
     )
-    public var dateOfEnrollment: Date?
+    var dateOfEnrollment: Date?
 }
 
 

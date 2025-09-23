@@ -45,7 +45,7 @@ struct TasksList: View {
     
     enum Mode {
         /// The ``TasksList`` should display a list of upcoming Tasks
-        case upcoming(showFallbackTasks: Bool)
+        case upcoming(includeIndefinitePastTasks: Bool, showFallbackTasks: Bool)
         /// The ``TasksList`` should display a list of missed but not yet expired Tasks
         case missed
     }
@@ -163,10 +163,18 @@ struct TasksList: View {
             }
         let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
         switch mode {
-        case .upcoming(let showFallbackTasks):
-            UpcomingEventsQuery(effectiveTimeRange) { events in
-                Impl(events: events, showFallbackTasks: showFallbackTasks, noTasksMessageLabels: noTasksMessageLabels) {
-                    handleAction($0)
+        case let .upcoming(includeIndefinitePastTasks, showFallbackTasks):
+            if includeIndefinitePastTasks, let dateOfEnrollment = studyManager.studyEnrollments.first?.enrollmentDate {
+                UpcomingEventsQueryWithMissedPastEvents(effectiveTimeRange, dateOfEnrollment: dateOfEnrollment) { events in
+                    Impl(events: events, showFallbackTasks: showFallbackTasks, noTasksMessageLabels: noTasksMessageLabels) {
+                        handleAction($0)
+                    }
+                }
+            } else {
+                UpcomingEventsQuery(effectiveTimeRange) { events in
+                    Impl(events: events, showFallbackTasks: showFallbackTasks, noTasksMessageLabels: noTasksMessageLabels) {
+                        handleAction($0)
+                    }
                 }
             }
         case .missed:
@@ -329,6 +337,21 @@ extension TasksList {
     }
     
     
+    private struct UpcomingEventsQueryWithMissedPastEvents<Content: View>: View {
+        @MHCTodaysEventsQuery private var events: [Event]
+        private let content: @MainActor ([Event]) -> Content
+        
+        var body: some View {
+            content(events)
+        }
+        
+        init(_ timeRange: Range<Date>, dateOfEnrollment: Date, @ViewBuilder content: @escaping @MainActor ([Event]) -> Content) {
+            _events = .init(timeRange, dateOfEnrollment: dateOfEnrollment)
+            self.content = content
+        }
+    }
+    
+    
     private struct MissedEventsQuery<Content: View>: View {
         @MissedEventQuery private var events: [Event]
         private let content: @MainActor ([Event]) -> Content
@@ -445,18 +468,25 @@ extension TasksList {
         var body: some View {
             if !events.isEmpty {
                 let eventsByDay = eventsByDay
-                ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
-                    Section {
-                        ForEach(data: sectionedEvents.events) { (event: Event) in
-                            tile(for: event)
-                        }
-                    } header: {
-                        if eventsByDay.count > 1 {
+                if eventsByDay.count > 1 {
+                    ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
+                        Section {
+                            ForEach(data: sectionedEvents.events) { (event: Event) in
+                                tile(for: event)
+                            }
+                        } header: {
                             Text(sectionedEvents.startOfDay.formatted(date: .long, time: .omitted))
                         }
                     }
+                    .injectingCustomTaskCategoryAppearances()
+                } else if let events = eventsByDay.first {
+                    ForEach(events.events) { event in
+                        Section {
+                            tile(for: event)
+                        }
+                    }
+                    .injectingCustomTaskCategoryAppearances()
                 }
-                .injectingCustomTaskCategoryAppearances()
             } else {
                 Section {
                     ContentUnavailableView(
