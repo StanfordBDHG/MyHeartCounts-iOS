@@ -73,8 +73,6 @@ struct HomeTab: RootViewTab {
                         .font(.headline)
                     Text(dailyNudge.message)
                         .font(.subheadline)
-                    Text(dailyNudge.message)
-                        .font(.body)
                 }
             }
         }

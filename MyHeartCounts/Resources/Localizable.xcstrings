@@ -2377,6 +2377,9 @@
     "Manage SensorKit" : {
 
     },
+    "Mark as Complete" : {
+
+    },
     "Maryland" : {
       "localizations" : {
         "es" : {
@@ -2466,6 +2469,9 @@
           }
         }
       }
+    },
+    "More" : {
+
     },
     "More than 5 years ago" : {
       "localizations" : {

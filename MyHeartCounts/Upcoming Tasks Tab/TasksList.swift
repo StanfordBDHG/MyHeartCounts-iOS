@@ -165,7 +165,10 @@ struct TasksList: View {
             }
             .sheet(item: $activeECG) { input in
                 NavigationStack {
-                    ECGInstructionsSheet(successHandler: input.didComplete)
+                    ECGInstructionsSheet(
+                        shouldOfferManualCompletion: true,
+                        successHandler: input.didComplete
+                    )
                 }
             }
         tasksList

@@ -25,6 +25,7 @@ struct ECGInstructionsSheet: View {
     @State private var viewTimestamp = Date()
     @State private var didRecordECG = false
     
+    private let shouldOfferManualCompletion: Bool
     private let successHandler: @MainActor () -> Void
     
     var body: some View {
@@ -34,6 +35,18 @@ struct ECGInstructionsSheet: View {
                 if !didRecordECG {
                     ToolbarItem(placement: .cancellationAction) {
                         DismissButton()
+                    }
+                    if shouldOfferManualCompletion {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Menu {
+                                Button(action: successHandler) {
+                                    Label("Mark as Complete", systemSymbol: .checkmarkCircle)
+                                }
+                            } label: {
+                                Image(systemSymbol: .ellipsisCircle)
+                                    .accessibilityLabel("More")
+                            }
+                        }
                     }
                 }
             }
@@ -82,7 +95,9 @@ struct ECGInstructionsSheet: View {
         }
     }
     
-    init(successHandler: @escaping @MainActor () -> Void) {
+    /// - parameter shouldOfferManualCompletion: whether the sheet should offer, via a button hidden behind a "more" menu, the user the ability to manually consider the ECG as completed.
+    init(shouldOfferManualCompletion: Bool, successHandler: @escaping @MainActor () -> Void) {
+        self.shouldOfferManualCompletion = shouldOfferManualCompletion
         self.successHandler = successHandler
     }
 }

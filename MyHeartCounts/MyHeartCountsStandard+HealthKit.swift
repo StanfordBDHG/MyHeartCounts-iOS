@@ -180,7 +180,6 @@ extension MyHeartCountsStandard {
         for change: HealthDocumentChange
     ) async -> @Sendable () async -> Void {
         guard enableDebugNotifications else {
-            logger.notice("NOT SCHEDULING NOTIFICATION")
             return {}
         }
         @Sendable

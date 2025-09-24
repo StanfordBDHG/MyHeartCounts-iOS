@@ -35,6 +35,6 @@ struct DailyNudge: DynamicProperty {
         guard let notificaton = notifications.first, cal.isDateInToday(notificaton.timestamp) || cal.isDateInYesterday(notificaton.timestamp) else {
             return nil
         }
-        return .init(title: notificaton.title, message: notificaton.body + notificaton.timestamp.ISO8601Format())
+        return .init(title: notificaton.title, message: notificaton.body)
     }
 }
