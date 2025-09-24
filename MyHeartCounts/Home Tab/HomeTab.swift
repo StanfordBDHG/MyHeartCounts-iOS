@@ -29,10 +29,11 @@ struct HomeTab: RootViewTab {
     @Environment(Account.self)
     private var account
     
-    @State private var actionCards: [ActionCard] = []
-    
     @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
     private var missedEvents
+    
+    @DailyNudge private var dailyNudge
+    @State private var actionCards: [ActionCard] = []
     
     var body: some View {
         NavigationStack {
@@ -62,6 +63,18 @@ struct HomeTab: RootViewTab {
                     case .custom(let action):
                         await action()
                     }
+                }
+            }
+        }
+        if let dailyNudge {
+            Section {
+                VStack(alignment: .leading) {
+                    Text(dailyNudge.title)
+                        .font(.headline)
+                    Text(dailyNudge.message)
+                        .font(.subheadline)
+                    Text(dailyNudge.message)
+                        .font(.body)
                 }
             }
         }
@@ -95,27 +108,6 @@ struct HomeTab: RootViewTab {
                     }
                 }
             }
-        }
-    }
-    
-    @ViewBuilder
-    private func sectionContent(for session: any BulkExportSession) -> some View {
-        LabeledContent("State") {
-            Text(session.state.displayTitle)
-        }
-        if let progress = session.progress {
-            ProgressView(progress)
-        }
-    }
-    
-    private func eventButtonTitle(for category: Task.Category?) -> LocalizedStringResource? {
-        switch category {
-        case .informational:
-            "Read Article"
-        case .questionnaire:
-            "Complete Questionnaire"
-        default:
-            nil
         }
     }
 }
