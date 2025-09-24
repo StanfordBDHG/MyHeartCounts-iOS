@@ -1,5 +1,5 @@
 {
-  "originHash" : "547598ef1cde02264492b89ac29efda2d9d3e01efc9d52e6740c29b8e77eaac5",
+  "originHash" : "9bffd478f1a62b4e44195c36f9b51c49289acdd08c3a48ed6d688933f0e47e35",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -319,7 +319,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "095e83d87040d50f7040a890dbf32866d67b3471"
+        "revision" : "e46ab3b7541b92270e4f3131a1378b2a9c1dd0b9"
       }
     },
     {
