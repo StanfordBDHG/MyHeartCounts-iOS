@@ -865,6 +865,7 @@
       }
     },
     "Complete" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1274,6 +1275,9 @@
           }
         }
       }
+    },
+    "Electrocardiogram" : {
+
     },
     "ELIGIBILITY_STEP_SUBTITLE" : {
       "localizations" : {
@@ -3970,6 +3974,9 @@
         }
       }
     },
+    "Start" : {
+
+    },
     "Start Recording Data" : {
 
     },
@@ -3997,6 +4004,7 @@
 
     },
     "Study Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

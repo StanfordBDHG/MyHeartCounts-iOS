@@ -40,7 +40,7 @@ struct FinalEnrollmentStep: View {
             )
             MarkdownView(markdownDocument: doc)
         } footer: {
-            OnboardingActionsView("Complete") {
+            OnboardingActionsView("Start") {
                 await completeStudyEnrollment()
             }
             .disabled(viewState != .idle)
