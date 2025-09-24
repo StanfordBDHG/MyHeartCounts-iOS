@@ -20,6 +20,7 @@ struct UpcomingTasksTab: RootViewTab {
     static var tabSymbol: SFSymbol { .calendar }
     
     @State private var activeTimedWalkingTest: TimedWalkingTestConfiguration?
+    @State private var isECGSheetPresented = false
     
     var body: some View {
         NavigationStack {
@@ -35,32 +36,43 @@ struct UpcomingTasksTab: RootViewTab {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    timedWalkingTestMenu
+                    initiateActiveTaskMenu 
                 }
                 accountToolbarItem
             }
             .sheet(item: $activeTimedWalkingTest, id: \.self) { test in
                 TimedWalkingTestView(test)
             }
+            .sheet(isPresented: $isECGSheetPresented) {
+                NavigationStack {
+                    ECGInstructionsSheet(shouldOfferManualCompletion: false, successHandler: {})
+                }
+            }
         }
     }
     
     
-    @ViewBuilder private var timedWalkingTestMenu: some View {
-        let tests = [
+    @ViewBuilder private var initiateActiveTaskMenu: some View {
+        let timedWalkTests = [
             TimedWalkingTestConfiguration(duration: .minutes(6), kind: .walking),
             TimedWalkingTestConfiguration(duration: .minutes(12), kind: .running)
         ]
         Menu {
-            ForEach(tests, id: \.self) { test in
+            ForEach(timedWalkTests, id: \.self) { test in
                 Button {
                     activeTimedWalkingTest = test
                 } label: {
                     Label(String(localized: test.displayTitle), systemSymbol: test.kind.symbol)
                 }
             }
+            Divider()
+            Button {
+                isECGSheetPresented = true
+            } label: {
+                Label("Take ECG", systemSymbol: .waveformPathEcgRectangle)
+            }
         } label: {
-            Label("Timed Walk Test", systemSymbol: .figureWalk)
+            Label("Perform Active Task", systemSymbol: .plus)
         }
     }
 }

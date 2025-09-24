@@ -3237,6 +3237,9 @@
         }
       }
     },
+    "Perform Active Task" : {
+
+    },
     "Physical Activity" : {
       "localizations" : {
         "es" : {
@@ -4043,6 +4046,9 @@
     "Success" : {
 
     },
+    "Take ECG" : {
+
+    },
     "Take Test" : {
       "localizations" : {
         "es" : {
@@ -4165,9 +4171,6 @@
           }
         }
       }
-    },
-    "Timed Walk Test" : {
-
     },
     "Timed Walking Test" : {
       "localizations" : {
