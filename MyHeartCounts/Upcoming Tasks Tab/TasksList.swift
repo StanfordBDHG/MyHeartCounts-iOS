@@ -44,10 +44,16 @@ struct TasksList: View {
     }
     
     enum Mode {
-        /// The ``TasksList`` should display a list of upcoming Tasks
+        /// The list should display a list of upcoming Tasks
         case upcoming(includeIndefinitePastTasks: Bool, showFallbackTasks: Bool)
-        /// The ``TasksList`` should display a list of missed but not yet expired Tasks
+        /// The list should display a list of missed but not yet expired Tasks
         case missed
+    }
+    
+    /// How the individual events in the list should be grouped.
+    enum EventGroupingConfig {
+        case none
+        case byDay
     }
     
     enum HeaderConfig {
@@ -112,6 +118,7 @@ struct TasksList: View {
     private let mode: Mode
     private let timeRange: TimeRange
     private let headerConfig: HeaderConfig
+    private let eventGroupingConfig: EventGroupingConfig
     private let noTasksMessageLabels: NoTasksMessageLabels
     
     @State private var viewState: ViewState = .idle
@@ -161,29 +168,9 @@ struct TasksList: View {
                     ECGInstructionsSheet(successHandler: input.didComplete)
                 }
             }
-        let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
-        switch mode {
-        case let .upcoming(includeIndefinitePastTasks, showFallbackTasks):
-            if includeIndefinitePastTasks, let dateOfEnrollment = studyManager.studyEnrollments.first?.enrollmentDate {
-                UpcomingEventsQueryWithMissedPastEvents(effectiveTimeRange, dateOfEnrollment: dateOfEnrollment) { events in
-                    Impl(events: events, showFallbackTasks: showFallbackTasks, noTasksMessageLabels: noTasksMessageLabels) {
-                        handleAction($0)
-                    }
-                }
-            } else {
-                UpcomingEventsQuery(effectiveTimeRange) { events in
-                    Impl(events: events, showFallbackTasks: showFallbackTasks, noTasksMessageLabels: noTasksMessageLabels) {
-                        handleAction($0)
-                    }
-                }
-            }
-        case .missed:
-            MissedEventsQuery(effectiveTimeRange) { events in
-                Impl(events: events, showFallbackTasks: false, noTasksMessageLabels: noTasksMessageLabels) {
-                    handleAction($0)
-                }
-            }
-        }
+        tasksList
+            .injectingCustomTaskCategoryAppearances()
+            .taskCategoryAppearance(for: .customActiveTask(.ecg), label: "Electrocardiogram", image: .system(.waveformPathEcgRectangle))
     }
     
     @ViewBuilder private var header: some View {
@@ -226,18 +213,64 @@ struct TasksList: View {
         }
     }
     
+    @ViewBuilder private var tasksList: some View {
+        let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
+        switch mode {
+        case let .upcoming(includeIndefinitePastTasks, showFallbackTasks):
+            if includeIndefinitePastTasks, let dateOfEnrollment = studyManager.studyEnrollments.first?.enrollmentDate {
+                UpcomingEventsQueryWithMissedPastEvents(effectiveTimeRange, dateOfEnrollment: dateOfEnrollment) { events in
+                    Impl(
+                        events: events,
+                        showFallbackTasks: showFallbackTasks,
+                        eventGroupingConfig: eventGroupingConfig,
+                        noTasksMessageLabels: noTasksMessageLabels
+                    ) {
+                        handleAction($0)
+                    }
+                }
+            } else {
+                UpcomingEventsQuery(effectiveTimeRange) { events in
+                    Impl(
+                        events: events,
+                        showFallbackTasks: showFallbackTasks,
+                        eventGroupingConfig: eventGroupingConfig,
+                        noTasksMessageLabels: noTasksMessageLabels
+                    ) {
+                        handleAction($0)
+                    }
+                }
+            }
+        case .missed:
+            MissedEventsQuery(effectiveTimeRange) { events in
+                Impl(
+                    events: events,
+                    showFallbackTasks: false,
+                    eventGroupingConfig: eventGroupingConfig,
+                    noTasksMessageLabels: noTasksMessageLabels
+                ) {
+                    handleAction($0)
+                }
+            }
+        }
+    }
+    
     init(
         mode: Mode,
         timeRange: TimeRange,
         headerConfig: HeaderConfig = .timeRange, // swiftlint:disable:this function_default_parameter_at_end
+        eventGroupingConfig: EventGroupingConfig,
         noTasksMessageLabels: NoTasksMessageLabels
     ) {
         self.mode = mode
         self.timeRange = timeRange
         self.headerConfig = headerConfig
+        self.eventGroupingConfig = eventGroupingConfig
         self.noTasksMessageLabels = noTasksMessageLabels
     }
-    
+}
+
+
+extension TasksList {
     private func handleAction(_ taskToPerform: Impl.TaskToPerform) {
         switch taskToPerform {
         case let .regular(action, event, context, shouldCompleteEvent):
@@ -462,13 +495,24 @@ extension TasksList {
         @Environment(StudyManager.self) private var studyManager
         private let events: [Event]
         private let showFallbackTasks: Bool
+        private let eventGroupingConfig: TasksList.EventGroupingConfig
         private let noTasksMessageLabels: NoTasksMessageLabels
         private let selectionHandler: SelectionHandler
         
         var body: some View {
             if !events.isEmpty {
                 let eventsByDay = eventsByDay
-                if eventsByDay.count > 1 {
+                switch eventGroupingConfig {
+                case .none:
+                    ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
+                        ForEach(sectionedEvents.events) { event in
+                            Section {
+                                tile(for: event)
+                            }
+                            .listSectionSpacing(.compact)
+                        }
+                    }
+                case .byDay:
                     ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
                         Section {
                             ForEach(data: sectionedEvents.events) { (event: Event) in
@@ -478,14 +522,6 @@ extension TasksList {
                             Text(sectionedEvents.startOfDay.formatted(date: .long, time: .omitted))
                         }
                     }
-                    .injectingCustomTaskCategoryAppearances()
-                } else if let events = eventsByDay.first {
-                    ForEach(events.events) { event in
-                        Section {
-                            tile(for: event)
-                        }
-                    }
-                    .injectingCustomTaskCategoryAppearances()
                 }
             } else {
                 Section {
@@ -535,11 +571,13 @@ extension TasksList {
         init(
             events: [Event],
             showFallbackTasks: Bool,
+            eventGroupingConfig: TasksList.EventGroupingConfig,
             noTasksMessageLabels: NoTasksMessageLabels,
             selectionHandler: @escaping SelectionHandler
         ) {
             self.events = events
             self.showFallbackTasks = showFallbackTasks
+            self.eventGroupingConfig = eventGroupingConfig
             self.noTasksMessageLabels = noTasksMessageLabels
             self.selectionHandler = selectionHandler
         }
@@ -589,6 +627,8 @@ extension TasksList {
                 "Take Test"
             case (.timedWalkingTest, .enabled(wouldBeFirstCompletion: false)), (.timedRunningTest, .enabled(wouldBeFirstCompletion: false)):
                 "Take Test Again"
+            case (.customActiveTask(.ecg), _):
+                "Take ECG"
             default:
                 nil
             }

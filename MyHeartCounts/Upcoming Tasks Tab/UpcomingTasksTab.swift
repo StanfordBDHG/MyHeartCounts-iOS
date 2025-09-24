@@ -27,6 +27,7 @@ struct UpcomingTasksTab: RootViewTab {
                 TasksList(
                     mode: .upcoming(includeIndefinitePastTasks: false, showFallbackTasks: true),
                     timeRange: .weeks(2),
+                    eventGroupingConfig: .byDay,
                     noTasksMessageLabels: .init(title: "No Upcoming Tasks")
                 )
             }

@@ -42,6 +42,7 @@ struct HomeTab: RootViewTab {
                     mode: .upcoming(includeIndefinitePastTasks: true, showFallbackTasks: false),
                     timeRange: .today,
                     headerConfig: .custom("Today's Tasks"),
+                    eventGroupingConfig: .none,
                     noTasksMessageLabels: .init(title: "You're All Set")
                 )
                 missedEventsSection
@@ -75,6 +76,7 @@ struct HomeTab: RootViewTab {
                             mode: .missed,
                             timeRange: .weeks(2),
                             headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks"),
+                            eventGroupingConfig: .byDay,
                             noTasksMessageLabels: .init(title: "No Missed Tasks")
                         )
                     }
