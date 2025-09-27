@@ -6,43 +6,17 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable attributes function_body_length closure_body_length cyclomatic_complexity
 
-import Foundation
-import SFSafeSymbols
 import SpeziFoundation
 import SpeziScheduler
 import SpeziStudy
-import SpeziStudyDefinition
 import SwiftUI
-
-
-struct AlwaysAvailableActiveTasksMenu: View {
-    @AlwaysAvailableTasks private var alwaysAvailableTasks
-    @PerformTask private var performTask
-    
-    var body: some View {
-        Menu {
-            ForEach(alwaysAvailableTasks.taskActions(), id: \.self) { actions in
-                ForEach(actions, id: \.self) { action in
-                    Button {
-                        performTask(action)
-                    } label: {
-                        Label(action.title, systemSymbol: action.symbol)
-                    }
-                }
-                Divider()
-            }
-        } label: {
-            Label("Perform Active Task", systemSymbol: .plus)
-        }
-    }
-}
 
 
 @propertyWrapper
 @MainActor
-struct AlwaysAvailableTasks: DynamicProperty { // TODO rename AlwaysAvailableActions?
+struct AlwaysAvailableTaskActions: DynamicProperty {
     @Environment(\.calendar) private var cal
     @Environment(Scheduler.self) private var scheduler
     @Environment(StudyManager.self) private var studyManager
@@ -51,11 +25,12 @@ struct AlwaysAvailableTasks: DynamicProperty { // TODO rename AlwaysAvailableAct
         self
     }
     
+    /// Determines the available task actions, optionally excluding duplicates based on an array of `Event`s that are displayed alongside these always-available tasks.
     func taskActions(excludingBasedOn events: [Event] = []) -> [[PerformTask.Task.Action]] {
         // All actions we want to offer as "always available"
         let allActions: [[PerformTask.Task.Action]] = [
             [.ecg],
-            [.timedWalkTest(.sixMinuteWalkTest), .timedWalkTest(.twelveMinuteRunTest)]
+            [.timedWalkTest(.sixMinuteWalkTest), .timedWalkTest(.twelveMinuteRunTest), .timedWalkTest(.init(duration: .seconds(30), kind: .walking))]
         ]
         guard !events.isEmpty else {
             return allActions
@@ -79,7 +54,12 @@ struct AlwaysAvailableTasks: DynamicProperty { // TODO rename AlwaysAvailableAct
                     !events.contains { event in
                         switch event.task.studyScheduledTaskAction {
                         case .answerQuestionnaire(let component):
-                            studyManager.studyEnrollments.first?.studyBundle?.questionnaire(for: component.fileRef, in: studyManager.preferredLocale)?.id == questionnaire.id
+                            studyManager
+                                .studyEnrollments
+                                .first?
+                                .studyBundle?
+                                .questionnaire(for: component.fileRef, in: studyManager.preferredLocale)?
+                                .id == questionnaire.id
                         default:
                             false
                         }

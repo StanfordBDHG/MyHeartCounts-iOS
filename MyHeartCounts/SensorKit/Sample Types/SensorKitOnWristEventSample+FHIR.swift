@@ -32,7 +32,7 @@ extension SensorKitOnWristEventSample: HealthObservation {
     
     func resource(
         withMapping mapping: HKSampleMapping,
-        issuedDate issuedDate: FHIRPrimitive<Instant>?,
+        issuedDate: FHIRPrimitive<Instant>?,
         extensions: [any FHIRExtensionBuilderProtocol]
     ) throws -> ResourceProxy {
         let observation = Observation(

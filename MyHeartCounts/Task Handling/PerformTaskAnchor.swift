@@ -8,6 +8,8 @@
 
 // swiftlint:disable all
 
+// TODO terminology here!!! (perform vs present vs active! task vs action!)
+
 import Foundation
 import class ModelsR4.Questionnaire
 import ResearchKitSwiftUI
@@ -19,6 +21,9 @@ import SpeziStudyDefinition
 import SwiftUI
 
 
+/// Keeps track of the currently active task.
+///
+/// Modeled as an `@Observable` object injected into the environment so that we can easily set it from within the view hierarchy, without having to deal with view preferences.
 @Observable
 @MainActor
 private final class MHCCurrentlyActiveTask: Sendable {
@@ -26,9 +31,11 @@ private final class MHCCurrentlyActiveTask: Sendable {
 }
 
 
+/// Initiate task actions.
 @propertyWrapper
 @MainActor
 struct PerformTask: DynamicProperty {
+    /// A task we might offer the user to perform, that isn't necessarily associated with any particular scheduled event.
     struct Task {
         enum Action: Hashable {
             case answerQuestionnaire(Questionnaire)
@@ -48,6 +55,10 @@ struct PerformTask: DynamicProperty {
         self
     }
     
+    /// Initiates a task action, and does not attempt to complete any `Event`s in response.
+    ///
+    /// - Note: This function does not attempt to auto-complete any `Event`s in response to successful completion of the task.
+    ///     If you want this behaviour, use ``callAsFunction(_:context:)`` instead.
     func callAsFunction(_ action: Task.Action) async -> Bool {
         guard currentlyActiveTask.task == nil else {
             print("Error: Attempted to initiate a new active task, while one was already ongoing. Ignoring.")
@@ -61,6 +72,7 @@ struct PerformTask: DynamicProperty {
     }
     
     
+    /// Initiates a task action, and attempts to complete a corresponding `Event` in response.
     func callAsFunction(_ action: Task.Action, context: Event? = nil) {
         _Concurrency.Task {
             guard await self(action) else {
@@ -75,6 +87,7 @@ struct PerformTask: DynamicProperty {
     }
     
     
+    /// Attempts to find a `Task.Action`'s corresponding `Event`, and marks it as complete if possible.
     func reportCompletion(of action: Task.Action) throws {
         // see if we can find a scheduled event with the same action, and mark it as complete if possible.
         let eventQueryTimeRange: Range<Date> = cal.startOfDay(for: .now)..<cal.date(byAdding: .weekOfYear, value: 1, to: cal.startOfDay(for: .now))!
@@ -94,17 +107,20 @@ struct PerformTask: DynamicProperty {
                 }
             }
         case .article, .answerQuestionnaire:
-            nil // ignored // TODO explain why!
+            // we always ignore article actions in here, bc they are only triggered directly in response to
+            // the user performing an event, in which case we don't end up in here.
+            nil
         }
         guard let event else {
             return
         }
-//        try event.complete()
+        try event.complete()
     }
 }
 
 
-private struct PerformTaskModifier: ViewModifier {
+/// Implements logic and code for initiating user-actionable tasks, such as filling out a questionnaire, taking a timed walk test, etc.
+private struct UserTaskPerforming: ViewModifier {
     @Environment(MyHeartCountsStandard.self)
     private var standard
     
@@ -161,36 +177,49 @@ extension View {
     /// causing the first sheet to get dismissed so that the second (task specific) sheet can be displayed.
     func taskPerformingAnchor() -> some View {
         self
-            .modifier(PerformTaskModifier())
+            .modifier(UserTaskPerforming())
             .environment(MHCCurrentlyActiveTask())
     }
 }
 
 
 extension PerformTask.Task.Action {
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .answerQuestionnaire(let questionnaire):
-            questionnaire.title?.value?.string ?? "Questionnaire"
+            (questionnaire.title?.value?.string).map { "\($0)" } ?? "Questionnaire"
         case .article(let article):
-            article.title
+            "\(article.title)"
         case .timedWalkTest(let test):
-            String(localized: test.displayTitle)
+            test.displayTitle
         case .ecg:
-            String(localized: "ECG")
+            "ECG"
         }
     }
     
-    var subtitle: String? {
+    var subtitle: LocalizedStringResource? {
+        switch self {
+        case .answerQuestionnaire:
+            "Questionnaire"
+        case .article:
+            "Article"
+        case .timedWalkTest:
+            nil
+        case .ecg:
+            "Electrocardiogram"
+        }
+    }
+    
+    var instructions: LocalizedStringResource? {
         switch self {
         case .answerQuestionnaire(let questionnaire):
-            questionnaire.purpose?.value?.string
+            (questionnaire.purpose?.value?.string).map { "\($0)" }
         case .article:
             nil // TODO lede?
         case .timedWalkTest:
             nil
         case .ecg:
-            String(localized: "Electrocardiogram")
+            nil
         }
     }
     

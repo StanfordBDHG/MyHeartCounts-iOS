@@ -109,14 +109,3 @@ struct HomeTab: RootViewTab {
         }
     }
 }
-
-
-extension EventActionButton {
-    init(event: Event, label: LocalizedStringResource?, action: @escaping @MainActor () -> Void) {
-        if let label {
-            self.init(event: event, label, action: action)
-        } else {
-            self.init(event: event, action: action)
-        }
-    }
-}

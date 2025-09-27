@@ -196,10 +196,8 @@ extension TasksList {
         switch taskToPerform {
         case let .regular(action, event, context, shouldCompleteEvent):
             handleAction(action, for: event, context: context, shouldComplete: shouldCompleteEvent)
-        case .unscheduled(.ecg):
-            performTask(.ecg)
-        case .unscheduled(.timedWalkingTest(let test)):
-            performTask(.timedWalkTest(test))
+        case .unscheduled(let action):
+            performTask(action)
         }
     }
     
@@ -382,57 +380,6 @@ extension TasksList {
     private struct Impl: View {
         typealias SelectionHandler = @MainActor (TaskToPerform) -> Void
         
-        /// A task we might offer the user to perform, that isn't associated with any particular scheduled event.
-        enum UnscheduledTask: Hashable {
-            case ecg
-            case timedWalkingTest(TimedWalkingTestConfiguration)
-            
-            var symbol: SFSymbol {
-                switch self {
-                case .ecg:
-                    .waveformPathEcgRectangle
-                case .timedWalkingTest(let test):
-                    test.kind.symbol
-                }
-            }
-            
-            var displayTitle: LocalizedStringResource {
-                switch self {
-                case .ecg:
-                    "ECG"
-                case .timedWalkingTest(let test):
-                    test.displayTitle
-                }
-            }
-            
-            var subtitle: LocalizedStringResource? {
-                switch self {
-                case .ecg:
-                    "Electrocardiogram"
-                case .timedWalkingTest:
-                    nil
-                }
-            }
-            
-            var instructions: LocalizedStringResource? {
-                switch self {
-                case .ecg:
-                    nil
-                case .timedWalkingTest:
-                    nil
-                }
-            }
-            
-            var actionLabel: LocalizedStringResource {
-                switch self {
-                case .ecg:
-                    "Take ECG"
-                case .timedWalkingTest:
-                    "Take Test"
-                }
-            }
-        }
-        
         enum TaskToPerform {
             case regular(
                 action: StudyManager.ScheduledTaskAction,
@@ -440,7 +387,7 @@ extension TasksList {
                 context: Task.Context.StudyContext,
                 shouldCompleteEvent: Bool
             )
-            case unscheduled(UnscheduledTask)
+            case unscheduled(PerformTask.Task.Action)
         }
         
         private struct SectionedEvents {
@@ -451,6 +398,7 @@ extension TasksList {
         @Environment(\.calendar) private var cal
         @Environment(Scheduler.self) private var scheduler
         @Environment(StudyManager.self) private var studyManager
+        @AlwaysAvailableTaskActions private var alwaysAvailableTaskActions
         private let events: [Event]
         private let showFallbackTasks: Bool
         private let eventGroupingConfig: TasksList.EventGroupingConfig
@@ -508,41 +456,56 @@ extension TasksList {
         }
         
         @ViewBuilder private var fallbackSections: some View {
-            // All tasks we want to offer as "always available"
-            let allTasks: [UnscheduledTask] = [
-                .ecg,
-                .timedWalkingTest(.sixMinuteWalkTest),
-                .timedWalkingTest(.twelveMinuteRunTest)
-            ]
-            // filter out anything that's already prompted above
-            let tasks = allTasks.filter { task in
-                switch task {
-                case .ecg:
-                    !events.contains { $0.task.category == .customActiveTask(.ecg) }
-                case .timedWalkingTest(let testConfig):
-                    !events.contains { (event: Event) -> Bool in
-                        guard event.task.category == .timedWalkingTest else {
-                            return false
-                        }
-                        return switch event.task.studyScheduledTaskAction {
-                        case .promptTimedWalkingTest(let component):
-                            component.test == testConfig
-                        default:
-                            false
-                        }
-                    }
-                }
-            }
-            ForEach(tasks, id: \.self) { task in
+//            // All tasks we want to offer as "always available"
+//            let allTasks: [UnscheduledTask] = [
+//                .ecg,
+//                .timedWalkingTest(.sixMinuteWalkTest),
+//                .timedWalkingTest(.twelveMinuteRunTest)
+//            ]
+//            // filter out anything that's already prompted above
+//            let tasks = allTasks.filter { task in
+//                switch task {
+//                case .ecg:
+//                    !events.contains { $0.task.category == .customActiveTask(.ecg) }
+//                case .timedWalkingTest(let testConfig):
+//                    !events.contains { (event: Event) -> Bool in
+//                        guard event.task.category == .timedWalkingTest else {
+//                            return false
+//                        }
+//                        return switch event.task.studyScheduledTaskAction {
+//                        case .promptTimedWalkingTest(let component):
+//                            component.test == testConfig
+//                        default:
+//                            false
+//                        }
+//                    }
+//                }
+//            }
+//            ForEach(tasks, id: \) { task in
+//                Section {
+//                    FakeEventTile(
+//                        symbol: task.symbol,
+//                        title: task.displayTitle,
+//                        subtitle: task.subtitle,
+//                        instructions: task.instructions,
+//                        actionLabel: task.actionLabel
+//                    ) {
+//                        selectionHandler(.unscheduled(task))
+//                    }
+//                }
+//                .listSectionSpacing(.compact)
+//            }
+            let actions = alwaysAvailableTaskActions.taskActions(excludingBasedOn: events).flatMap(\.self)
+            ForEach(actions, id: \.self) { action in
                 Section {
                     FakeEventTile(
-                        symbol: task.symbol,
-                        title: task.displayTitle,
-                        subtitle: task.subtitle,
-                        instructions: task.instructions,
-                        actionLabel: task.actionLabel
+                        symbol: action.symbol,
+                        title: action.title,
+                        subtitle: action.subtitle,
+                        instructions: action.instructions,
+                        actionLabel: action.actionLabel
                     ) {
-                        selectionHandler(.unscheduled(task))
+                        selectionHandler(.unscheduled(action))
                     }
                 }
                 .listSectionSpacing(.compact)
@@ -714,5 +677,16 @@ extension SwiftUI.ForEach {
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) where Data: RandomAccessCollection, ID == Data.Element.ID, Data.Element: Identifiable, Content: View {
         self.init(data) { content($0) }
+    }
+}
+
+
+extension EventActionButton {
+    init(event: Event, label: LocalizedStringResource?, action: @escaping @MainActor () -> Void) {
+        if let label {
+            self.init(event: event, label, action: action)
+        } else {
+            self.init(event: event, action: action)
+        }
     }
 }

@@ -33,7 +33,7 @@ struct UpcomingTasksTab: RootViewTab {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    AlwaysAvailableActiveTasksMenu()
+                    AlwaysAvailableTaskActionsMenu()
                 }
                 accountToolbarItem
             }
