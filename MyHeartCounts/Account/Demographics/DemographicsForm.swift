@@ -9,7 +9,6 @@
 // swiftlint:disable file_types_order type_body_length closure_body_length file_length
 
 import Foundation
-import HealthKit
 import OSLog
 import SFSafeSymbols
 import SpeziAccount

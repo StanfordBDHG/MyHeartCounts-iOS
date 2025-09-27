@@ -8,17 +8,8 @@
 
 import Foundation
 import SFSafeSymbols
-import Spezi
 import SpeziAccount
-import SpeziHealthKitBulkExport
-import SpeziQuestionnaire
-import SpeziScheduler
-import SpeziSchedulerUI
-import SpeziStudy
-import SpeziStudyDefinition
-import SpeziViews
 import SwiftUI
-import class ModelsR4.Questionnaire
 
 
 /// The View for the "Home" tab in the root tab view.
