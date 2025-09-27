@@ -8,7 +8,9 @@
 
 import Foundation
 import SFSafeSymbols
+import SpeziAccount
 import SpeziFoundation
+import SpeziStudy
 import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
@@ -80,5 +82,39 @@ struct DebugOptions: View {
             return
         }
         window.rootViewController = UIViewController()
+    }
+}
+
+
+extension DebugOptions {
+    struct EnrollmentTestingView: View {
+        @Environment(Account.self)
+        private var account: Account
+        @Environment(StudyManager.self)
+        private var studyManager
+        @State private var viewState: ViewState = .idle
+        
+        let refresh: @MainActor () -> Void
+        
+        var body: some View {
+            AsyncButton("Enroll", state: $viewState) {
+                guard let enrollmentDate = account.details?.dateOfEnrollment else {
+                    throw NSError(domain: "edu.stanford.MHC", code: -1, userInfo: [
+                        NSLocalizedDescriptionKey: "No Enrollment Date"
+                    ])
+                }
+                let studyBundle = try await StudyBundleLoader.shared.update()
+                try await studyManager.enroll(in: studyBundle, enrollmentDate: enrollmentDate - Duration.days(5).timeInterval)
+                refresh()
+            }
+            AsyncButton("Unenroll", state: $viewState) {
+                guard let enrollment = studyManager.studyEnrollments.first else {
+                    return
+                }
+                try studyManager.unenroll(from: enrollment)
+                refresh()
+            }
+            .viewStateAlert(state: $viewState)
+        }
     }
 }

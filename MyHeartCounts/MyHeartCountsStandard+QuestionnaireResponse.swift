@@ -15,7 +15,7 @@ import Foundation
 
 extension MyHeartCountsStandard {
     // periphery:ignore:parameters isolation
-    func add(response: ModelsR4.QuestionnaireResponse, isolation: isolated (any Actor)? = #isolation) async {
+    func add(isolation: isolated (any Actor)? = #isolation, _ response: ModelsR4.QuestionnaireResponse) async {
         let logger = await self.logger
         let id = response.identifier?.value?.value?.string ?? UUID().uuidString
         if FeatureFlags.disableFirebase {

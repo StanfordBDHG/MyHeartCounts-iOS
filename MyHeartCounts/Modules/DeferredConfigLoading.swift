@@ -245,7 +245,10 @@ enum DeferredConfigLoading {
                         .manual(\.comorbidities),
                         .manual(\.nhsNumber),
                         .manual(\.lastSignedConsentDate),
-                        .manual(\.lastSignedConsentVersion)
+                        .manual(\.lastSignedConsentVersion),
+                        .manual(\.futureStudies),
+                        .manual(\.mostRecentOnboardingStep),
+                        .manual(\.dateOfEnrollment)
                     ]
                 )
                 firestore

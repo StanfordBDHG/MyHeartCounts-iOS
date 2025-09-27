@@ -72,7 +72,7 @@ struct SinglePageScreening: View {
                             .frame(maxWidth: .infinity, minHeight: 38)
                             .bold()
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyleGlassProminent()
                     .disabled(!canAdvanceToNextStep)
                     .listRowInsets(.zero)
                 }

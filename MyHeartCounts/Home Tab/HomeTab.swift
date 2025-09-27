@@ -8,17 +8,8 @@
 
 import Foundation
 import SFSafeSymbols
-import Spezi
 import SpeziAccount
-import SpeziHealthKitBulkExport
-import SpeziQuestionnaire
-import SpeziScheduler
-import SpeziSchedulerUI
-import SpeziStudy
-import SpeziStudyDefinition
-import SpeziViews
 import SwiftUI
-import class ModelsR4.Questionnaire
 
 
 /// The View for the "Home" tab in the root tab view.
@@ -29,19 +20,21 @@ struct HomeTab: RootViewTab {
     @Environment(Account.self)
     private var account
     
-    @State private var actionCards: [ActionCard] = []
-    
     @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
     private var missedEvents
+    
+    @DailyNudge private var dailyNudge
+    @State private var actionCards: [ActionCard] = []
     
     var body: some View {
         NavigationStack {
             Form {
                 topActionsFormContent
                 TasksList(
-                    mode: .upcoming(showFallbackTasks: false),
+                    mode: .upcoming(includeIndefinitePastTasks: true, showFallbackTasks: false),
                     timeRange: .today,
                     headerConfig: .custom("Today's Tasks"),
+                    eventGroupingConfig: .none,
                     noTasksMessageLabels: .init(title: "You're All Set")
                 )
                 missedEventsSection
@@ -64,6 +57,16 @@ struct HomeTab: RootViewTab {
                 }
             }
         }
+        if let dailyNudge {
+            Section {
+                VStack(alignment: .leading) {
+                    Text(dailyNudge.title)
+                        .font(.headline)
+                    Text(dailyNudge.message)
+                        .font(.subheadline)
+                }
+            }
+        }
     }
     
     @ViewBuilder private var missedEventsSection: some View {
@@ -75,6 +78,7 @@ struct HomeTab: RootViewTab {
                             mode: .missed,
                             timeRange: .weeks(2),
                             headerConfig: .custom("Missed Tasks", subtitle: "Past 2 Weeks"),
+                            eventGroupingConfig: .byDay,
                             noTasksMessageLabels: .init(title: "No Missed Tasks")
                         )
                     }
@@ -93,38 +97,6 @@ struct HomeTab: RootViewTab {
                     }
                 }
             }
-        }
-    }
-    
-    @ViewBuilder
-    private func sectionContent(for session: any BulkExportSession) -> some View {
-        LabeledContent("State") {
-            Text(session.state.displayTitle)
-        }
-        if let progress = session.progress {
-            ProgressView(progress)
-        }
-    }
-    
-    private func eventButtonTitle(for category: Task.Category?) -> LocalizedStringResource? {
-        switch category {
-        case .informational:
-            "Read Article"
-        case .questionnaire:
-            "Complete Questionnaire"
-        default:
-            nil
-        }
-    }
-}
-
-
-extension EventActionButton {
-    init(event: Event, label: LocalizedStringResource?, action: @escaping @MainActor () -> Void) {
-        if let label {
-            self.init(event: event, label, action: action)
-        } else {
-            self.init(event: event, action: action)
         }
     }
 }

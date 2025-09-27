@@ -71,6 +71,7 @@ struct RootView: View {
         .sheet(isPresented: $isShowingConsentRenewalSheet) {
             ConsentRenewalFlow()
         }
+        .taskPerformingAnchor()
     }
     
     @ViewBuilder private var content: some View {

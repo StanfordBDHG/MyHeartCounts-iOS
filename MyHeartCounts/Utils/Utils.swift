@@ -8,6 +8,7 @@
 
 import Algorithms
 import Foundation
+import SFSafeSymbols
 import SpeziViews
 
 
@@ -24,6 +25,13 @@ extension ViewState {
     @_disfavoredOverload
     static func error(_ error: some Error) -> Self {
         Self.error(AnyLocalizedError(error: error))
+    }
+}
+
+
+extension ImageReference {
+    static func system(_ symbol: SFSymbol) -> Self {
+        .system(symbol.rawValue)
     }
 }
 

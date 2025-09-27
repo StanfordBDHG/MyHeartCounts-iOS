@@ -528,6 +528,9 @@
         }
       }
     },
+    "Answer Questionnaire" : {
+
+    },
     "Are you %lld years old or older?" : {
       "localizations" : {
         "es" : {
@@ -865,6 +868,7 @@
       }
     },
     "Complete" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1207,6 +1211,9 @@
         }
       }
     },
+    "ECG" : {
+
+    },
     "ECG_INSTRUCTIONS_TEXT" : {
       "localizations" : {
         "en" : {
@@ -1271,6 +1278,9 @@
           }
         }
       }
+    },
+    "Electrocardiogram" : {
+
     },
     "ELIGIBILITY_STEP_SUBTITLE" : {
       "localizations" : {
@@ -1360,6 +1370,9 @@
           }
         }
       }
+    },
+    "Enroll" : {
+
     },
     "Enroll in Study" : {
       "localizations" : {
@@ -2370,6 +2383,9 @@
     "Manage SensorKit" : {
 
     },
+    "Mark as Complete" : {
+
+    },
     "Maryland" : {
       "localizations" : {
         "es" : {
@@ -2459,6 +2475,9 @@
           }
         }
       }
+    },
+    "More" : {
+
     },
     "More than 5 years ago" : {
       "localizations" : {
@@ -3224,6 +3243,9 @@
         }
       }
     },
+    "Perform Active Task" : {
+
+    },
     "Physical Activity" : {
       "localizations" : {
         "es" : {
@@ -3263,6 +3285,9 @@
           }
         }
       }
+    },
+    "Questionnaire" : {
+
     },
     "Race / Ethnicity" : {
       "localizations" : {
@@ -3603,6 +3628,9 @@
           }
         }
       }
+    },
+    "Read" : {
+
     },
     "Read Article" : {
       "localizations" : {
@@ -3967,6 +3995,9 @@
         }
       }
     },
+    "Start" : {
+
+    },
     "Start Recording Data" : {
 
     },
@@ -3994,6 +4025,7 @@
 
     },
     "Study Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4022,6 +4054,12 @@
           }
         }
       }
+    },
+    "Success" : {
+
+    },
+    "Take ECG" : {
+
     },
     "Take Test" : {
       "localizations" : {
@@ -4145,9 +4183,6 @@
           }
         }
       }
-    },
-    "Timed Walk Test" : {
-
     },
     "Timed Walking Test" : {
       "localizations" : {
@@ -4860,6 +4895,9 @@
           }
         }
       }
+    },
+    "Your ECG has successfully been recorded" : {
+
     },
     "Your physical exercise score is determined based on the total amount of exercise minutes tracked over the past 7 days." : {
 

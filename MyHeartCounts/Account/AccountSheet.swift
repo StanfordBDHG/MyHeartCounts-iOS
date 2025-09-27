@@ -113,6 +113,9 @@ struct AccountSheet: View {
                     makeEnrolledStudyRow(for: enrollment)
                 }
                 .disabled(enrollment.studyBundle == nil)
+                NavigationLink("Review Consent Forms") {
+                    SignedConsentForms()
+                }
                 if historicalDataExportMgr.session.map({ $0.state == .running || $0.state == .paused }) ?? false
                     || historicalDataExportMgr.fileUploader.uploadProgress != nil {
                     HStack {
@@ -121,16 +124,6 @@ struct AccountSheet: View {
                         ProgressView()
                     }
                 }
-            }
-        }
-        Section {
-            if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
-                NavigationLink("Study Information") {
-                    StudyInfoView(studyBundle: studyBundle)
-                }
-            }
-            NavigationLink("Review Consent Forms") {
-                SignedConsentForms()
             }
         }
         Section {
