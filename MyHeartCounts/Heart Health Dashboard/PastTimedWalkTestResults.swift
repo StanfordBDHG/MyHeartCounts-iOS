@@ -19,7 +19,7 @@ struct PastTimedWalkTestResults: View {
     @MHCFirestoreQuery(fetching: TimedWalkingTestResult.self, timeRange: .ever)
     private var pastTests
     
-    @State private var activeTest: TimedWalkingTestConfiguration?
+    @PerformTask private var performTask
     
     var body: some View {
         Form {
@@ -45,9 +45,6 @@ struct PastTimedWalkTestResults: View {
                 DismissButton()
             }
         }
-        .sheet(item: $activeTest, id: \.self) { test in
-            TimedWalkingTestView(test)
-        }
     }
     
     @ViewBuilder private var newTestSection: some View {
@@ -57,7 +54,7 @@ struct PastTimedWalkTestResults: View {
         ]
         ForEach(tests, id: \.self) { test in
             Button {
-                activeTest = test
+                performTask(.timedWalkTest(test))
             } label: {
                 Label {
                     Text(test.displayTitle)

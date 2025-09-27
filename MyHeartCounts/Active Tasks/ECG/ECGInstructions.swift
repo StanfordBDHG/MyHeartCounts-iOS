@@ -26,11 +26,12 @@ struct ECGInstructionsSheet: View {
     @State private var didRecordECG = false
     
     private let shouldOfferManualCompletion: Bool
-    private let successHandler: @MainActor () -> Void
+    private let resultHandler: @MainActor (_ success: Bool) -> Void
     
     var body: some View {
         content
             .navigationTitle("ECG")
+            .interactiveDismissDisabled()
             .toolbar {
                 if !didRecordECG {
                     ToolbarItem(placement: .cancellationAction) {
@@ -39,7 +40,10 @@ struct ECGInstructionsSheet: View {
                     if shouldOfferManualCompletion {
                         ToolbarItem(placement: .confirmationAction) {
                             Menu {
-                                Button(action: successHandler) {
+                                Button {
+                                    didRecordECG = true
+                                    resultHandler(true)
+                                } label: {
                                     Label("Mark as Complete", systemSymbol: .checkmarkCircle)
                                 }
                             } label: {
@@ -53,7 +57,12 @@ struct ECGInstructionsSheet: View {
             .onChange(of: ecgSamples.last) { (_, sample: HKElectrocardiogram?) in
                 if !didRecordECG, let sample, sample.startDate >= viewTimestamp {
                     didRecordECG = true
-                    successHandler()
+                    resultHandler(true)
+                }
+            }
+            .onDisappear {
+                if !didRecordECG {
+                    resultHandler(false)
                 }
             }
     }
@@ -96,8 +105,8 @@ struct ECGInstructionsSheet: View {
     }
     
     /// - parameter shouldOfferManualCompletion: whether the sheet should offer, via a button hidden behind a "more" menu, the user the ability to manually consider the ECG as completed.
-    init(shouldOfferManualCompletion: Bool, successHandler: @escaping @MainActor () -> Void) {
+    init(shouldOfferManualCompletion: Bool, resultHandler: @escaping @MainActor (Bool) -> Void) {
         self.shouldOfferManualCompletion = shouldOfferManualCompletion
-        self.successHandler = successHandler
+        self.resultHandler = resultHandler
     }
 }

@@ -19,9 +19,6 @@ struct UpcomingTasksTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "Upcoming Tasks" }
     static var tabSymbol: SFSymbol { .calendar }
     
-    @State private var activeTimedWalkingTest: TimedWalkingTestConfiguration?
-    @State private var isECGSheetPresented = false
-    
     var body: some View {
         NavigationStack {
             Form {
@@ -36,43 +33,10 @@ struct UpcomingTasksTab: RootViewTab {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    initiateActiveTaskMenu 
+                    AlwaysAvailableActiveTasksMenu()
                 }
                 accountToolbarItem
             }
-            .sheet(item: $activeTimedWalkingTest, id: \.self) { test in
-                TimedWalkingTestView(test)
-            }
-            .sheet(isPresented: $isECGSheetPresented) {
-                NavigationStack {
-                    ECGInstructionsSheet(shouldOfferManualCompletion: false, successHandler: {})
-                }
-            }
-        }
-    }
-    
-    
-    @ViewBuilder private var initiateActiveTaskMenu: some View {
-        let timedWalkTests = [
-            TimedWalkingTestConfiguration(duration: .minutes(6), kind: .walking),
-            TimedWalkingTestConfiguration(duration: .minutes(12), kind: .running)
-        ]
-        Menu {
-            ForEach(timedWalkTests, id: \.self) { test in
-                Button {
-                    activeTimedWalkingTest = test
-                } label: {
-                    Label(String(localized: test.displayTitle), systemSymbol: test.kind.symbol)
-                }
-            }
-            Divider()
-            Button {
-                isECGSheetPresented = true
-            } label: {
-                Label("Take ECG", systemSymbol: .waveformPathEcgRectangle)
-            }
-        } label: {
-            Label("Perform Active Task", systemSymbol: .plus)
         }
     }
 }

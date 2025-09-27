@@ -77,6 +77,7 @@ struct HeartHealthDashboard: View {
                 NavigationStack {
                     PastTimedWalkTestResults()
                 }
+                .taskPerformingAnchor()
             }
         HealthDashboard(layout: [
             .large(sectionTitle: nil, content: {
@@ -244,7 +245,7 @@ private struct HealthDashboardQuestionnaireView: View {
                 QuestionnaireView(questionnaire: questionnaire) { result in
                     switch result {
                     case .completed(let response):
-                        await standard.add(response: response)
+                        await standard.add(response)
                     case .cancelled, .failed:
                         break
                     }
