@@ -67,7 +67,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
                 .call([
                     "userId": accountId,
                     "collection": collection,
-                    "samples": deletedObjects.map(\.uuid.uuidString)
+                    "documentIds": deletedObjects.map(\.uuid.uuidString)
                 ])
         } catch {
             logger.notice("Error calling bulk-delete function: \(error)")
