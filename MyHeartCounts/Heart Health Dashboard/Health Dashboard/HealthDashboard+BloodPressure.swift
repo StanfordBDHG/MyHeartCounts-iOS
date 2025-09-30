@@ -18,7 +18,7 @@ struct BloodPressureGridCell: View {
     private var samples
     
     var body: some View {
-        HealthDashboardSmallGridCell(title: $samples.sampleType.displayTitle) {
+        HealthDashboardSmallGridCell(title: $samples.sampleType.mhcDisplayTitle) {
             if let sample = samples.last,
                let systolic = sample.firstSample(ofType: .bloodPressureSystolic),
                let diastolic = sample.firstSample(ofType: .bloodPressureDiastolic) {
@@ -29,6 +29,9 @@ struct BloodPressureGridCell: View {
                     unit: unit,
                     timeRange: sample.timeRange
                 ))
+            } else {
+                Text("No Data")
+                    .foregroundStyle(.secondary)
             }
         }
     }

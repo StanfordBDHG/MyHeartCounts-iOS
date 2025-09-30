@@ -27,6 +27,7 @@ typealias HealthDashboardGoalProvider = @Sendable @MainActor (QuantitySample.Sam
 
 extension EnvironmentValues {
     @Entry var healthDashboardGoalProvider: HealthDashboardGoalProvider?
+    @Entry var isRecentValuesViewInDetailedStatsSheet: Bool = false
 }
 
 

@@ -208,7 +208,7 @@ extension HealthDashboardLayout {
         var sampleTypeDisplayTitle: String {
             switch self {
             case .healthKit(let sampleType):
-                sampleType.underlyingSampleType.displayTitle
+                sampleType.underlyingSampleType.mhcDisplayTitle
             case .firebase(let sampleType):
                 sampleType.displayTitle
             }

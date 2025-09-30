@@ -69,7 +69,6 @@ struct SleepPhasesCharts: View {
         .chartForegroundStyleScale({ () -> KeyValuePairs<String, Color> in
             var mapping: [(String, Color)] = []
             for phase in SleepSession.SleepPhase.allPhases {
-//                mapping.append((phase.displayTitle, color(for: phase)))
                 mapping.append((phase.displayTitle, sleepPhaseColors[phase]))
             }
             return KeyValuePairs<String, Color>(mapping)

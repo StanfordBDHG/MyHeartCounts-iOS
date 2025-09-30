@@ -24,13 +24,25 @@ struct HeartHealthDashboardTab: RootViewTab {
     
     var body: some View {
         NavigationStack {
-            Form {
-                HeartHealthDashboard()
-            }
-            .navigationTitle(Self.tabTitle)
-            .toolbar {
-                accountToolbarItem
-            }
+            HeartHealthDashboard()
+                .navigationTitle(Self.tabTitle)
+                .toolbar {
+                    accountToolbarItem
+                }
+        }
+    }
+}
+
+
+extension AnySampleType {
+    /// The sample type's display name, for usage in My Heart Counts.
+    ///
+    /// - Important: Always use this property instead of `displayTitle`!
+    var mhcDisplayTitle: String {
+        if self == .bloodGlucose {
+            String(localized: "Hemoglobin A1c (HbA1c)")
+        } else {
+            self.displayTitle
         }
     }
 }

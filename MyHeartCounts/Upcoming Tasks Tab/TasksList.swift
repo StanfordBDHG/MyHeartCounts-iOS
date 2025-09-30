@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_length attributes all
+// swiftlint:disable file_length attributes
 
 import Algorithms
 import Foundation
@@ -201,7 +201,7 @@ extension TasksList {
         }
     }
     
-    private func handleAction(
+    private func handleAction( // swiftlint:disable:this function_body_length cyclomatic_complexity
         _ action: StudyManager.ScheduledTaskAction,
         for event: Event,
         context: Task.Context.StudyContext,

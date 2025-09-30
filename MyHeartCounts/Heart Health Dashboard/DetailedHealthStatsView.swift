@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order file_length
 
 import Charts
 import Foundation
@@ -20,17 +20,13 @@ import SpeziViews
 import SwiftUI
 
 
-/*
- known issues:
- - line chart doesn't display anything if it has only a single data point (since there is nothing to connect it to..., apparently)
- */
-
 struct DetailedHealthStatsView: View {
     private enum Input {
         case scoreResult(result: ScoreResult, keyPath: KeyPath<CVHScore, ScoreResult>)
     }
     
     // swiftlint:disable attributes
+    @Environment(\.calendar) private var cal
     @Environment(Account.self) private var account: Account?
     @Environment(StudyManager.self) private var studyManager
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
@@ -139,9 +135,10 @@ struct DetailedHealthStatsView: View {
                 ),
                 withSize: .large
             )
-            //        .padding() // Issue: some of them need padding, some dont :/
+            .padding(.horizontal)
             .healthStatsChartHoverHighlightEnabled()
             .environment(\.showTimeRangeAsGridCellSubtitle, true)
+            .environment(\.isRecentValuesViewInDetailedStatsSheet, true)
         } else {
             HStack {
                 Spacer()
@@ -159,36 +156,28 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func scoreResultBasedTopSection(for scoreResult: ScoreResult) -> some View { // swiftlint:disable:this function_body_length
+    private func scoreResultBasedTopSection(for scoreResult: ScoreResult) -> some View {
         let spacing: Double = 24
         GeometryReader { geometry in // swiftlint:disable:this closure_body_length
             let gaugePartWidth = (geometry.size.width - spacing) * 0.37
             let leftPartWidth = geometry.size.width - spacing - gaugePartWidth
-            HStack(spacing: spacing / 2 - 1) { // swiftlint:disable:this closure_body_length
+            HStack(spacing: spacing / 2 - 1) {
                 VStack(alignment: .leading) {
-                    Text(sampleType.displayTitle)
-                        .font(.headline)
-                    if let value = scoreResult.inputValue {
-                        HStack {
-                            let valueDesc = { () -> String in
-                                if let value = value as? any FloatingPoint & CVarArg {
-                                    String(format: "%.2f", value)
-                                } else {
-                                    String(describing: value)
-                                }
-                            }()
-                            Text(valueDesc)
-                                .font(.system(.body).bold().monospacedDigit())
-                            if let displayUnit = sampleType.displayUnit, displayUnit != .count() {
-                                Text(displayUnit.unitString)
-                                    .font(.footnote.smallCaps())
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
+                    Text("Most Recent Sample")
+                        .foregroundStyle(.secondary)
+                    Group {
+                        if let value = scoreResult.inputValue {
+                            ValueDisplay(value, sampleType: sampleType)
+                        } else {
+                            Text("No Data")
+                                .foregroundStyle(.secondary)
                         }
-                        if let timeRange = scoreResult.timeRange {
-                            Text(timeRange.upperBound.addingTimeInterval(-1), format: .dateTime)
-                        }
+                    }
+                    .font(.headline)
+                    if let timeRange = scoreResult.timeRange {
+                        Text(timeRange.displayText(using: cal))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .frame(width: leftPartWidth, alignment: .leading)
@@ -203,7 +192,7 @@ struct DetailedHealthStatsView: View {
                         Text(Int(score * 100), format: .number)
                             .bold()
                     } else {
-                        Text("")
+                        Text("n/a")
                     }
                 }
                 .frame(width: 90, height: 90)
@@ -218,6 +207,94 @@ struct DetailedHealthStatsView: View {
     private func scoreResultExplainer(for scoreResult: ScoreResult) -> some View {
         ScoreExplanationView(scoreResult: scoreResult)
             .listRowBackground(Color.clear)
+    }
+}
+
+
+private struct ValueDisplay: View {
+    private struct Component {
+        let value: String
+        let unit: String?
+        
+        init(value: String, unit: String?) {
+            self.value = value
+            self.unit = unit
+        }
+        
+        init(value: String, unit: HKUnit?) {
+            self.init(value: value, unit: unit == .count() ? nil : unit?.unitString)
+        }
+    }
+    
+    private let components: [Component]
+    
+    var body: some View {
+        if components.isEmpty {
+            Text("No Data")
+                .foregroundStyle(.secondary)
+        } else {
+            HStack(alignment: .bottom) {
+                ForEach(Array(components.indices), id: \.self) { idx in
+                    let component = components[idx]
+                    HStack(spacing: 2) {
+                        Text(component.value)
+                            .bold()
+                            .monospacedDigit()
+                        if let unit = component.unit {
+                            Text(unit)
+                                .textScale(.secondary)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private init(components: [Component]) {
+        self.components = components
+    }
+    
+    init(_ value: Any, sampleType: MHCSampleType) {
+        switch value {
+        case let value as any BinaryFloatingPoint:
+            self.init(value, sampleType: sampleType)
+        case let value as BloodPressureMeasurement:
+            self.init(value)
+        default:
+            self.init(components: [
+                .init(value: String(describing: value), unit: sampleType.displayUnit)
+            ])
+        }
+    }
+    
+    init<V: BinaryFloatingPoint>(_ value: V, sampleType: MHCSampleType) {
+        switch sampleType {
+        case .healthKit(.category(.sleepAnalysis)):
+            let (hours, minutes) = Int(value * 60).quotientAndRemainder(dividingBy: 60)
+            components = Array {
+                if hours > 0 {
+                    Component(value: String(hours), unit: .hour())
+                }
+                if minutes > 0 {
+                    Component(value: String(minutes), unit: .minute())
+                }
+            }
+        default:
+            let value = value.formatted(FloatingPointFormatStyle<V>().precision(.fractionLength(...2)))
+            components = [
+                Component(value: value, unit: sampleType.displayUnit)
+            ]
+        }
+    }
+    
+    init(_ bloodPressure: BloodPressureMeasurement) {
+        components = [
+            .init(
+                value: "\(bloodPressure.systolic)/\(bloodPressure.diastolic)",
+                unit: .millimeterOfMercury()
+            )
+        ]
     }
 }
 

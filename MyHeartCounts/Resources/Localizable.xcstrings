@@ -2489,6 +2489,9 @@
         }
       }
     },
+    "Most Recent Sample" : {
+
+    },
     "My Heart Counts" : {
       "localizations" : {
         "en" : {
@@ -3185,6 +3188,95 @@
         }
       }
     },
+    "Past %lld days" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Past %lld months" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld months"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Past %lld weeks" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld weeks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Past %lld years" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past year"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld years"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Past 2 Weeks" : {
 
     },
@@ -3653,6 +3745,7 @@
       }
     },
     "Recent Sleep Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

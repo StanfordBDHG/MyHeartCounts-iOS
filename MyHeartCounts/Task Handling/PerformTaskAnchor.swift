@@ -6,9 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
-// TODO terminology here!!! (perform vs present vs active! task vs action!)
+// swiftlint:disable file_types_order
 
 import Foundation
 import class ModelsR4.Questionnaire
@@ -47,9 +45,12 @@ struct PerformTask: DynamicProperty {
         fileprivate let completionHandler: @Sendable @MainActor (_ success: Bool) -> Void
     }
     
-    @Environment(\.calendar) private var cal
-    @Environment(MHCCurrentlyActiveTask.self) private var currentlyActiveTask
-    @Environment(Scheduler.self) private var scheduler
+    @Environment(\.calendar)
+    private var cal
+    @Environment(MHCCurrentlyActiveTask.self)
+    private var currentlyActiveTask
+    @Environment(Scheduler.self)
+    private var scheduler
     
     var wrappedValue: Self {
         self
@@ -90,7 +91,13 @@ struct PerformTask: DynamicProperty {
     /// Attempts to find a `Task.Action`'s corresponding `Event`, and marks it as complete if possible.
     func reportCompletion(of action: Task.Action) throws {
         // see if we can find a scheduled event with the same action, and mark it as complete if possible.
-        let eventQueryTimeRange: Range<Date> = cal.startOfDay(for: .now)..<cal.date(byAdding: .weekOfYear, value: 1, to: cal.startOfDay(for: .now))!
+        let eventQueryTimeRange: Range<Date> = {
+            let start = cal.startOfDay(for: .now)
+            guard let end = cal.date(byAdding: .weekOfYear, value: 1, to: start) else {
+                fatalError("Unable to compute date")
+            }
+            return start..<end
+        }()
         let candidateEvents = try scheduler.queryEvents(for: eventQueryTimeRange).lazy.filter { !$0.isCompleted }
         let event: Event? = switch action {
         case .ecg:
@@ -111,7 +118,7 @@ struct PerformTask: DynamicProperty {
             // the user performing an event, in which case we don't end up in here.
             nil
         }
-        guard let event else {
+        guard let event, event.task.completionPolicy.isAllowedToComplete(event: event) else {
             return
         }
         try event.complete()

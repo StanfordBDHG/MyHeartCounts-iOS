@@ -124,6 +124,7 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
             .chartOverlay { _ in
                 if !hasData {
                     Text("No Data")
+                        .foregroundStyle(.secondary)
                 }
             }
     }
@@ -151,6 +152,9 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
             ChartHighlightRuleMark(
                 x: .value("Selection", xSelection, unit: .day, calendar: calendar),
                 primaryText: "\(dataPoint.value)", // unit?
+                // Issue here is that, depending on the specific chart context, we sometimes don't actually want the time
+                // (bc the chart entry is representing eg an entire day worth of data reduced into a single value...)
+                // challenge ist that we can't easily pass around this context :/
                 secondaryText: dataPoint.timeRange.middle.formatted(.dateTime)
             )
         }
@@ -229,7 +233,7 @@ private struct ChartXAxisModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.chartXAxis {
             let duration = timeRange.timeInterval
-            let daysStride = if duration <= TimeConstants.week {
+            let daysStride = if duration <= TimeConstants.week * 2 {
                 1
             } else if duration <= TimeConstants.month {
                 7
@@ -239,7 +243,8 @@ private struct ChartXAxisModifier: ViewModifier {
             AxisMarks(values: .stride(by: .day, count: daysStride)) { value in
                 if let date = value.as(Date.self) {
                     if let prevDate = cal.date(byAdding: .day, value: -daysStride, to: date) {
-                        let format: Date.FormatStyle = .dateTime.omittingTime()
+                        let format: Date.FormatStyle = .dateTime
+                            .omittingTime()
                             .year(cal.isDate(prevDate, equalTo: date, toGranularity: .year) ? .omitted : .defaultDigits)
                             .month(cal.isDate(prevDate, equalTo: date, toGranularity: .month) ? .omitted : .defaultDigits)
                         AxisValueLabel(format: format)
