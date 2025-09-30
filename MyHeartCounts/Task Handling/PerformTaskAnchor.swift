@@ -222,7 +222,7 @@ extension PerformTask.Task.Action {
         case .answerQuestionnaire(let questionnaire):
             (questionnaire.purpose?.value?.string).map { "\($0)" }
         case .article:
-            nil // TODO lede?
+            nil // lede?
         case .timedWalkTest:
             nil
         case .ecg:
