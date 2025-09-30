@@ -97,6 +97,8 @@ struct LargeSleepAnalysisView: View {
         ])
         .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
         .chartXSelection(value: $xSelection)
+        // we need to place this modifier within the grid cell, rather than directly on the
+        // HealthDashboardSmallGridCell, for reasons (https://github.com/swiftlang/swift/issues/84587)
         .onChange(of: Array(sleepAnalysis)) { _, samples in
             // the sleep session computation isn't exactly super slow,
             // but it might take a little bit (~0.1 sec),
