@@ -50,13 +50,7 @@ struct UnableToLoadStudyDefinitionStep: View {
                 message: "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed.",
                 additionalErrorInfo: error.localizedDescription
             ) {
-//                ShareLink(
-//                    item: "https://spezi.stanford.edu",
-//                    subject: Text("Subject?"),
-//                    message: Text("Message?")
-//                ) {
-//                    Text("Label?")
-//                }
+                // maybe have a link to the app store entry here? or our website?
             }
         case .success:
             // we were able to load the study, but somehow ended up in here regardless.

@@ -25,7 +25,7 @@ struct NotEligibleView: View {
                 .listRowBackground(Color.clear)
                 .listRowInsets(.zero)
                 Section {
-                    Link(destination: "https://bdh.stanford.edu") {
+                    Link(destination: MyHeartCounts.website) {
                         HStack {
                             Text("INELIGIBLE_LEARN_MORE")
                             Spacer()
