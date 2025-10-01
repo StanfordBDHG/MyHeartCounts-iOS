@@ -84,26 +84,30 @@ struct HeartHealthDashboard: View {
                     }
                 }
         }
-        HealthDashboard(layout: [
-            .large(sectionTitle: nil, content: {
-                topSection
-            }),
-            .grid(sectionTitle: "") {
-                makeGridComponent(for: \.dietScore)
-                makeGridComponent(for: \.bodyMassIndexScore)
-                switch $cvhScore.preferredExerciseMetric {
-                case .exerciseMinutes:
-                    makeGridComponent(for: \.physicalExerciseScore)
-                case .stepCount:
-                    makeGridComponent(for: \.stepCountScore)
+        HealthDashboard(
+            layout: [
+                .large {
+                    topSection
+                },
+                .grid(
+                    footer: "HHD_APPLE_WATCH_REQUIRED_FOOTER"
+                ) {
+                    makeGridComponent(for: \.dietScore)
+                    makeGridComponent(for: \.bodyMassIndexScore)
+                    switch $cvhScore.preferredExerciseMetric {
+                    case .exerciseMinutes:
+                        makeGridComponent(for: \.physicalExerciseScore)
+                    case .stepCount:
+                        makeGridComponent(for: \.stepCountScore)
+                    }
+                    makeGridComponent(for: \.bloodLipidsScore)
+                    makeGridComponent(for: \.nicotineExposureScore)
+                    makeGridComponent(for: \.bloodGlucoseScore)
+                    makeGridComponent(for: \.sleepHealthScore)
+                    makeGridComponent(for: \.bloodPressureScore)
                 }
-                makeGridComponent(for: \.bloodLipidsScore)
-                makeGridComponent(for: \.nicotineExposureScore)
-                makeGridComponent(for: \.bloodGlucoseScore)
-                makeGridComponent(for: \.sleepHealthScore)
-                makeGridComponent(for: \.bloodPressureScore)
-            }
-        ])
+            ]
+        )
         .makeBackgroundMatchFormBackground()
         learnMoreSection
         pastDataSection

@@ -154,6 +154,7 @@ private struct GridCellImpl: View {
                 )
                 let dataSet = HealthStatsChartDataSet(
                     name: sampleType.displayTitle,
+                    sampleType: sampleType,
                     drawingConfig: drawingConfig,
                     data: samples,
                     id: \.id

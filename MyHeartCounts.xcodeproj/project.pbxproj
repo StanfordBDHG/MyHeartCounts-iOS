@@ -1435,8 +1435,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
-				kind = revision;
-				revision = 2e37bc55e2c7bc045df95990711eb70f65a6ec4a;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.4;
 			};
 		};
 		2FE5DC6529EDD894004B9AB4 /* XCRemoteSwiftPackageReference "SpeziContact" */ = {
@@ -1579,8 +1579,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				kind = revision;
-				revision = fa2fd9707b2ecc0828a038a60678567d1f0da412;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.16;
 			};
 		};
 		808A92C92E47E159007046E0 /* XCRemoteSwiftPackageReference "SpeziConsent" */ = {
@@ -1619,8 +1619,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziOnboarding.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.2;
+				kind = revision;
+				revision = e28b4b628affd49d67a9499ac22a91c6599b1230;
 			};
 		};
 		80F8A3A52E20496E00C6322F /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {

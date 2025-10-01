@@ -23,14 +23,13 @@ struct NotEligibleView: View {
                     Text("INELIGIBLE_SUBTITLE")
                 }
                 .listRowBackground(Color.clear)
-                .listRowInsets(.zero)
                 Section {
                     Link(destination: MyHeartCounts.website) {
                         HStack {
                             Text("INELIGIBLE_LEARN_MORE")
                             Spacer()
                             Image(systemSymbol: .arrowUpRight)
-                                .accessibilityLabel("Link Arrow Symbol")
+                                .accessibilityHidden(true)
                         }
                     }
                 }

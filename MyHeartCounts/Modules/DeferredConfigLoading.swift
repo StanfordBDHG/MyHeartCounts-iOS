@@ -217,7 +217,7 @@ enum DeferredConfigLoading {
                 ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
                 LoadFirebaseTracking()
                 AccountConfiguration(
-                    service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: accountEmulator),
+                    service: FirebaseAccountService(providers: [.emailAndPassword], emulatorSettings: accountEmulator),
                     storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.usersCollection),
                     configuration: [
                         .requires(\.userId),

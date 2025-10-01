@@ -90,17 +90,20 @@ struct HealthDashboard: View {
                     }
                 } header: {
                     if let title = block.title {
-                        HStack {
-                            Text(title)
-                                .font(.title3.bold())
-                            Spacer()
-                        }
+                        Text(title)
+                            .padding(.horizontal)
+                            .padding(.bottom, 7)
+                    }
+                } footer: {
+                    if let footer = block.footer {
+                        Text(footer)
+                            .padding(.horizontal)
+                            .padding(.top, 6)
                     }
                 }
                 .listRowInsets(.zero)
                 .listRowBackground(Color.clear)
             }
-//            .padding([.horizontal, .bottom])
         }
         .environment(\.healthDashboardGoalProvider, goalProvider)
     }
@@ -109,7 +112,7 @@ struct HealthDashboard: View {
     init(
         layout: HealthDashboardLayout,
         goalProvider: HealthDashboardGoalProvider? = nil,
-        selectionHandler: SelectionHandler? = nil,
+        selectionHandler: SelectionHandler? = nil
     ) {
         self.layout = layout
         self.goalProvider = goalProvider

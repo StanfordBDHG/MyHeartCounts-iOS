@@ -10,6 +10,7 @@
 
 import Charts
 import Foundation
+import HealthKit
 import SpeziFoundation
 import SpeziHealthKitUI
 import SpeziViews
@@ -61,7 +62,7 @@ protocol HealthStatsChartDataSetProtocol<Data> {
     associatedtype ID: Hashable
     
     var name: String { get }
-    
+    var sampleType: MHCQuantitySampleType { get }
     var drawingConfig: ChartDataSetDrawingConfig { get }
     var data: Data { get }
     var id: KeyPath<Data.Element, ID> { get }
@@ -71,6 +72,7 @@ protocol HealthStatsChartDataSetProtocol<Data> {
 
 struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: HealthStatsChartDataSetProtocol {
     let name: String
+    let sampleType: MHCQuantitySampleType
     let drawingConfig: ChartDataSetDrawingConfig
     let data: Data
     let id: KeyPath<Data.Element, ID>
@@ -78,12 +80,14 @@ struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: Heal
     
     init(
         name: String,
+        sampleType: MHCQuantitySampleType,
         drawingConfig: ChartDataSetDrawingConfig,
         data: Data,
         id: KeyPath<Data.Element, ID>,
         makeDataPoint: @escaping (Data.Element) -> HealthStatsChartDataPoint?
     ) {
         self.name = name
+        self.sampleType = sampleType
         self.drawingConfig = drawingConfig
         self.data = data
         self.id = id
@@ -92,10 +96,18 @@ struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: Heal
     
     init(
         name: String,
+        sampleType: MHCQuantitySampleType,
         drawingConfig: ChartDataSetDrawingConfig,
         dataPoints: Data
     ) where Data.Element == HealthStatsChartDataPoint, ID == HealthStatsChartDataPoint {
-        self.init(name: name, drawingConfig: drawingConfig, data: dataPoints, id: \.self, makeDataPoint: { $0 })
+        self.init(
+            name: name,
+            sampleType: sampleType,
+            drawingConfig: drawingConfig,
+            data: dataPoints,
+            id: \.self,
+            makeDataPoint: { $0 }
+        )
     }
 }
 
@@ -148,10 +160,21 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
         if enableHoverHighlight,
            let xSelection,
            case let dataPoints = xAxisSelectionDataPoints(for: xSelection),
-           let (_, dataPoint) = dataPoints.last {
+           let (dataSet, dataPoint) = dataPoints.last {
             ChartHighlightRuleMark(
                 x: .value("Selection", xSelection, unit: .day, calendar: calendar),
-                primaryText: "\(dataPoint.value)", // unit?
+                primaryText: { () -> String in
+                    let labelInput = HealthDashboardQuantityLabel.Input(
+                        value: dataPoint.value,
+                        sampleType: dataSet.sampleType,
+                        timeRange: dataPoint.timeRange
+                    )
+                    return if labelInput.unitString.isEmpty {
+                        labelInput.valueString
+                    } else {
+                        "\(labelInput.valueString) \(labelInput.unitString)"
+                    }
+                }(),
                 // Issue here is that, depending on the specific chart context, we sometimes don't actually want the time
                 // (bc the chart entry is representing eg an entire day worth of data reduced into a single value...)
                 // challenge ist that we can't easily pass around this context :/

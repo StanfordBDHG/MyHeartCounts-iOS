@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable type_contents_order
+// swiftlint:disable type_contents_order function_default_parameter_at_end
 
 import Foundation
 import SpeziFoundation
@@ -41,36 +41,48 @@ extension HealthDashboardLayout {
             case grid([GridComponent])
         }
         
-        let title: String?
+        let title: LocalizedStringResource?
+        let footer: LocalizedStringResource?
         let content: Content
         
-        private init(title: String?, content: Content) {
+        private init(title: LocalizedStringResource?, footer: LocalizedStringResource?, content: Content) {
             self.title = title
+            self.footer = footer
             self.content = content
         }
         
         static func largeChart(
-            sectionTitle: String?,
+            sectionTitle: LocalizedStringResource? = nil,
+            footer: LocalizedStringResource? = nil,
             component: LargeChartComponent
         ) -> Self {
-            .init(title: sectionTitle, content: .largeChart(component))
+            .init(title: sectionTitle, footer: footer, content: .largeChart(component))
         }
         
         static func large(
-            sectionTitle: String?,
+            sectionTitle: LocalizedStringResource? = nil,
+            footer: LocalizedStringResource? = nil,
             @ViewBuilder content: @MainActor @escaping () -> some View
         ) -> Self {
-            .init(title: sectionTitle, content: .largeCustom {
+            .init(title: sectionTitle, footer: footer, content: .largeCustom {
                 content().intoAnyView()
             })
         }
         
-        static func grid(sectionTitle: String, components: [GridComponent]) -> Self {
-            .init(title: sectionTitle, content: .grid(components))
+        static func grid(
+            sectionTitle: LocalizedStringResource? = nil,
+            footer: LocalizedStringResource? = nil,
+            components: [GridComponent]
+        ) -> Self {
+            .init(title: sectionTitle, footer: footer, content: .grid(components))
         }
         
-        static func grid(sectionTitle: String, @ArrayBuilder<GridComponent> components: () -> [GridComponent]) -> Self {
-            .init(title: sectionTitle, content: .grid(components()))
+        static func grid(
+            sectionTitle: LocalizedStringResource? = nil,
+            footer: LocalizedStringResource? = nil,
+            @ArrayBuilder<GridComponent> components: () -> [GridComponent]
+        ) -> Self {
+            .init(title: sectionTitle, footer: footer, content: .grid(components()))
         }
     }
 }

@@ -25,6 +25,13 @@ struct DetailedHealthStatsView: View {
         case scoreResult(result: ScoreResult, keyPath: KeyPath<CVHScore, ScoreResult>)
     }
     
+    private enum RecentValuesChartConfig {
+        /// no chart
+        case disabled
+        /// chart
+        case enabled(timeRange: HealthKitQueryTimeRange)
+    }
+    
     // swiftlint:disable attributes
     @Environment(\.calendar) private var cal
     @Environment(Account.self) private var account: Account?
@@ -37,7 +44,7 @@ struct DetailedHealthStatsView: View {
     @State private var isPresentingAddSampleSheet = false
     
     var body: some View {
-        Form { // swiftlint:disable:this closure_body_length
+        Form {
             switch input {
             case .scoreResult(let result, keyPath: _):
                 Section {
@@ -46,11 +53,7 @@ struct DetailedHealthStatsView: View {
                 .listRowInsets(.zero)
                 .listRowBackground(Color.clear)
             }
-            Section {
-                recentValuesChart
-                    .frame(height: 220)
-                    .listRowInsets(.zero)
-            }
+            recentValuesChart(recentValuesChartConfig)
             switch input {
             case .scoreResult(let result, keyPath: _):
                 Section("Score Result") {
@@ -101,50 +104,12 @@ struct DetailedHealthStatsView: View {
     }
     
     
-    @ViewBuilder private var recentValuesChart: some View {
-        let timeRange: HealthKitQueryTimeRange = .last(days: 14) // 14!
-        let dataSource = { () -> HealthDashboardLayout.DataSource? in
-            switch sampleType {
-            case .healthKit(let proxy):
-                return .healthKit(proxy)
-            case .custom(let sampleType):
-                return .firebase(sampleType)
-            }
-        }()
-        if let dataSource {
-            // Note: we're creating a chart config here, but depending on the specific sample type it might end up getting discarded
-            // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
-            let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
-                switch sampleType {
-                case .healthKit(.quantity(let sampleType)):
-                    return .default(for: sampleType, in: timeRange)
-                case .healthKit:
-                    return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
-                    return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                case .custom:
-                    return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                }
-            }()
-            healthDashboardComponentView(
-                for: .init(
-                    dataSource: dataSource,
-                    timeRange: timeRange,
-                    style: .chart(chartConfig),
-                    enableSelection: false
-                ),
-                withSize: .large
-            )
-            .padding(.horizontal)
-            .healthStatsChartHoverHighlightEnabled()
-            .environment(\.showTimeRangeAsGridCellSubtitle, true)
-            .environment(\.isRecentValuesViewInDetailedStatsSheet, true)
-        } else {
-            HStack {
-                Spacer()
-                Text("Unable to load data")
-                Spacer()
-            }
+    private var recentValuesChartConfig: RecentValuesChartConfig {
+        switch input {
+        case .scoreResult(result: _, keyPath: \.nicotineExposureScore):
+            .disabled
+        default:
+            .enabled(timeRange: .last(days: 14))
         }
     }
     
@@ -152,6 +117,63 @@ struct DetailedHealthStatsView: View {
     init(scoreResult: ScoreResult, cvhKeyPath: KeyPath<CVHScore, ScoreResult>) {
         self.sampleType = scoreResult.sampleType
         self.input = .scoreResult(result: scoreResult, keyPath: cvhKeyPath)
+    }
+    
+    
+    @ViewBuilder
+    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View {
+        switch config {
+        case .disabled:
+            EmptyView()
+        case .enabled(let timeRange):
+            let dataSource = { () -> HealthDashboardLayout.DataSource? in
+                switch sampleType {
+                case .healthKit(let proxy):
+                    return .healthKit(proxy)
+                case .custom(let sampleType):
+                    return .firebase(sampleType)
+                }
+            }()
+            Section {
+                if let dataSource {
+                    // Note: we're creating a chart config here, but depending on the specific sample type it might end up getting discarded
+                    // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
+                    let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
+                        switch sampleType {
+                        case .healthKit(.quantity(let sampleType)):
+                            return .default(for: sampleType, in: timeRange)
+                        case .healthKit:
+                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
+                        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
+                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
+                        case .custom:
+                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
+                        }
+                    }()
+                    healthDashboardComponentView(
+                        for: .init(
+                            dataSource: dataSource,
+                            timeRange: timeRange,
+                            style: .chart(chartConfig),
+                            enableSelection: false
+                        ),
+                        withSize: .large
+                    )
+                    .padding(.horizontal)
+                    .healthStatsChartHoverHighlightEnabled()
+                    .environment(\.showTimeRangeAsGridCellSubtitle, true)
+                    .environment(\.isRecentValuesViewInDetailedStatsSheet, true)
+                } else {
+                    HStack {
+                        Spacer()
+                        Text("Unable to load data")
+                        Spacer()
+                    }
+                }
+            }
+            .frame(height: 220)
+            .listRowInsets(.zero)
+        }
     }
     
     

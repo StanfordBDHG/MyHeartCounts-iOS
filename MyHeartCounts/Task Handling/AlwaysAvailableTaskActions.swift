@@ -20,6 +20,7 @@ struct AlwaysAvailableTaskActions: DynamicProperty {
     @Environment(\.calendar) private var cal
     @Environment(Scheduler.self) private var scheduler
     @Environment(StudyManager.self) private var studyManager
+    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     
     var wrappedValue: Self {
         self
@@ -28,10 +29,14 @@ struct AlwaysAvailableTaskActions: DynamicProperty {
     /// Determines the available task actions, optionally excluding duplicates based on an array of `Event`s that are displayed alongside these always-available tasks.
     func taskActions(excludingBasedOn events: [Event] = []) -> [[PerformTask.Task.Action]] {
         // All actions we want to offer as "always available"
-        let allActions: [[PerformTask.Task.Action]] = [
-            [.ecg],
-            [.timedWalkTest(.sixMinuteWalkTest), .timedWalkTest(.twelveMinuteRunTest), .timedWalkTest(.init(duration: .seconds(30), kind: .walking))]
-        ]
+        let allActions: [[PerformTask.Task.Action]] = Array {
+            [.ecg]
+            [.timedWalkTest(.sixMinuteWalkTest), .timedWalkTest(.twelveMinuteRunTest)]
+            if accountFeatureFlags.isDebugModeEnabled {
+                // we offer this as a debug option, to be able to test the 6MWT, without having to wait for 6 minutes.
+                [.timedWalkTest(.init(duration: .seconds(30), kind: .walking))]
+            }
+        }
         guard !events.isEmpty else {
             return allActions
         }
