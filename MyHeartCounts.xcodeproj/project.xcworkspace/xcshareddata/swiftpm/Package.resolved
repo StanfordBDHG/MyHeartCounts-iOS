@@ -276,7 +276,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziOnboarding.git",
       "state" : {
-        "revision" : "e28b4b628affd49d67a9499ac22a91c6599b1230"
+        "revision" : "13851755c753c3294c058043099ea0d3e63cc746",
+        "version" : "2.0.3"
       }
     },
     {
