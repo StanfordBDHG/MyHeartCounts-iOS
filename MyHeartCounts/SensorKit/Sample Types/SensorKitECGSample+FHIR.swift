@@ -53,6 +53,7 @@ extension SensorKitECGSession: HealthObservation {
         } else {
             try observation.setIssued(on: .now)
         }
+        observation.effective = .dateTime(FHIRPrimitive(try DateTime(date: timestamp)))
         let ecgCodableConcept = CodeableConcept(
             coding: ecgMapping.codings.map { mappedCode -> Coding in
                 Coding(

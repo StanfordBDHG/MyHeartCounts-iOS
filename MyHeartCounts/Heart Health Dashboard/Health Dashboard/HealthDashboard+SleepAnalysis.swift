@@ -22,7 +22,7 @@ struct SmallSleepAnalysisGridCell: View {
     var body: some View {
         let sleepSessions = (try? sleepAnalysis.splitIntoSleepSessions()) ?? []
         
-        HealthDashboardSmallGridCell(title: $sleepAnalysis.sampleType.displayTitle) {
+        HealthDashboardSmallGridCell(title: $sleepAnalysis.sampleType.mhcDisplayTitle) {
             EmptyView() // ?
         } content: {
             if let session = sleepSessions.last {
@@ -49,6 +49,9 @@ struct LargeSleepAnalysisView: View {
     
     @Environment(\.calendar)
     private var cal
+    @Environment(\.showTimeRangeAsGridCellSubtitle)
+    private var showTimeRangeAsSubtitle
+    
     private let timeRange: HealthKitQueryTimeRange
     @HealthKitQuery<HKCategorySample> private var sleepAnalysis: Slice<OrderedArray<HKCategorySample>>
     @SleepPhaseColors private var sleepPhaseColors
@@ -57,72 +60,54 @@ struct LargeSleepAnalysisView: View {
     @State private var xSelection: Date?
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("Recent Sleep Data")
-                .font(.headline)
-            Text(timeRange.range.displayText(using: cal))
-                .font(.subheadline)
-            Chart {
-                switch sleepData {
-                case nil, .failure:
-                    EmptyChartContent()
-                case .success(let data):
-                    if !data.sessions.isEmpty {
-                        chartContent(for: data)
-                    } else {
-                        // ???
-                    }
-                }
-            }
-            .chartOverlay { _ in
-                switch sleepData {
-                case nil:
-                    ProgressView("Processing Sleep Data…")
-                case .success:
-                    EmptyView()
-                case .failure:
-                    Text("Failed to process Sleep Sessions")
-                }
-            }
-            .chartXScale(domain: [
-                cal.startOfDay(for: timeRange.range.lowerBound),
-                cal.startOfNextDay(for: timeRange.range.upperBound).addingTimeInterval(-1)
-            ])
-            .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
-            //            .chartXAxis {
-            //                let daysStride: Int = { () -> Int in
-            //                    if timeRange.duration <= TimeConstants.week {
-            //                        1
-            //                    } else if timeRange.duration <= TimeConstants.month {
-            //                        7
-            //                    } else {
-            //                        14
-            //                    }
-            //                }()
-            //                AxisMarks(values: .stride(by: .day, count: daysStride)) { value in
-            //                    if let date = value.as(Date.self) {
-            //                        if let prevDate = cal.date(byAdding: .day, value: -daysStride, to: date) {
-            //                            let format: Date.FormatStyle = .dateTime.omittingTime()
-            //                                .year(cal.isDate(prevDate, equalTo: date, toGranularity: .year) ? .omitted : .defaultDigits)
-            //                                .month(cal.isDate(prevDate, equalTo: date, toGranularity: .month) ? .omitted : .defaultDigits)
-            //                            AxisValueLabel(format: format)
-            //                        } else {
-            //                            AxisValueLabel(format: .dateTime.omittingTime())
-            //                        }
-            //                    }
-            //                    AxisGridLine()
-            //                    AxisTick()
-            //                }
-            //            }
-            .chartXSelection(value: $xSelection)
+        HealthDashboardSmallGridCell(
+            title: SampleType.sleepAnalysis.mhcDisplayTitle,
+            subtitle: showTimeRangeAsSubtitle ? timeRange.range.displayText(using: cal) : nil
+        ) {
+            cellContent
         }
+    }
+    
+    @ViewBuilder private var cellContent: some View {
+        Chart {
+            switch sleepData {
+            case nil, .failure:
+                EmptyChartContent()
+            case .success(let data):
+                if !data.sessions.isEmpty {
+                    chartContent(for: data)
+                } else {
+                    // ???
+                }
+            }
+        }
+        .chartOverlay { _ in
+            switch sleepData {
+            case nil:
+                ProgressView("Processing Sleep Data…")
+            case .success:
+                EmptyView()
+            case .failure:
+                Text("Failed to process Sleep Sessions")
+            }
+        }
+        .chartXScale(domain: [
+            cal.startOfDay(for: timeRange.range.lowerBound),
+            cal.startOfNextDay(for: timeRange.range.upperBound).addingTimeInterval(-1)
+        ])
+        .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
+        .chartXSelection(value: $xSelection)
+        // we need to place this modifier within the grid cell, rather than directly on the
+        // HealthDashboardSmallGridCell, for reasons (https://github.com/swiftlang/swift/issues/84587)
         .onChange(of: Array(sleepAnalysis)) { _, samples in
             // the sleep session computation isn't exactly super slow,
             // but it might take a little bit (~0.1 sec),
             // so we want it to happen off the main thread.
             Task(priority: .userInitiated) {
                 do {
-                    let sessions = try samples.splitIntoSleepSessions()
+                    let sessions = try await Task { @concurrent in
+                        try samples.splitIntoSleepSessions()
+                    }.value
                     sleepData = .success(.init(
                         sessions: sessions,
                         timeAsleepByDay: sessions.reduce(into: [:], { acc, session in
@@ -132,6 +117,11 @@ struct LargeSleepAnalysisView: View {
                 } catch {
                     sleepData = .failure(error)
                 }
+            }
+        }
+        .onChange(of: $sleepAnalysis.isCurrentlyPerformingInitialFetch) { oldValue, newValue in
+            if oldValue && !newValue && sleepAnalysis.isEmpty {
+                sleepData = .success(.init(sessions: [], timeAsleepByDay: [:]))
             }
         }
     }
@@ -154,7 +144,6 @@ struct LargeSleepAnalysisView: View {
         }
         if let xSelection,
            case let timeAsleepInDay = sleepData.timeAsleepByDay[cal.makeNoon(xSelection)] ?? 0 {
-//           case let timeAsleepInDay = sleepData.timeAsleepByDay.first { cal.isDate(xSelection, inSameDayAs: $0.key) }?.value ?? 0 {
             ChartHighlightRuleMark(
                 x: .value("Selected", xSelection, unit: .day, calendar: cal),
                 primaryText: formatDuration(timeAsleepInDay),

@@ -40,7 +40,14 @@ struct CVHScore: DynamicProperty {
         return .init(twoWeeksAgo..<today)
     }()
     
-    @State private(set) var preferredExerciseMetric: PreferredExerciseMetric = .exerciseMinutes
+    var preferredExerciseMetric: PreferredExerciseMetric {
+        switch (weeklyExerciseTime.isEmpty, dailyStepCount.isEmpty) {
+        case (false, _), (true, true):
+            .exerciseMinutes
+        case (true, false):
+            .stepCount
+        }
+    }
     
     @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2))
     private var dietScores
@@ -164,10 +171,10 @@ extension CVHScore {
     
     var stepCountScore: ScoreResult {
         ScoreResult(
-            sampleType: .healthKit(.quantity(.appleExerciseTime)),
+            sampleType: .healthKit(.quantity(.stepCount)),
             sample: dailyStepCount.last,
-            value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
-            definition: .cvhPhysicalExercise
+            value: { $0.sumQuantity()?.doubleValue(for: .count()) ?? 0 },
+            definition: .cvhStepCount
         )
     }
     
@@ -276,7 +283,7 @@ extension ScoreDefinition {
     static let cvhDiet = ScoreDefinition(default: 0, scoringBands: [
         .inRange(17...21, score: 1, explainer: "17 – 21"),
         .inRange(14...16, score: 0.85, explainer: "14 – 16"),
-        .inRange(11...14, score: 0.7, explainer: "11 – 14"),
+        .inRange(11...13, score: 0.7, explainer: "11 – 13"),
         .inRange(8...10, score: 0.5, explainer: "8 – 10"),
         .inRange(5...7, score: 0.25, explainer: "5 – 7"),
         .inRange(...7, score: 0, explainer: "< 7")
@@ -285,18 +292,18 @@ extension ScoreDefinition {
     static let cvhPhysicalExercise = ScoreDefinition(
         default: 0,
         scoringBands: [
-            .inRange(150..., score: 1),
-            .inRange(120..<150, score: 0.9),
-            .inRange(90..<120, score: 0.8),
-            .inRange(60..<90, score: 0.6),
-            .inRange(30..<60, score: 0.4),
-            .inRange(1..<30, score: 0.2)
+            .inRange(150..., score: 1, explainer: "150+"),
+            .inRange(120..<150, score: 0.9, explainer: "120 – 149"),
+            .inRange(90..<120, score: 0.8, explainer: "90 – 119"),
+            .inRange(60..<90, score: 0.6, explainer: "60 – 89"),
+            .inRange(30..<60, score: 0.4, explainer: "30 – 59"),
+            .inRange(1..<30, score: 0.2, explainer: "1 – 29")
         ],
-        explainerHeaderText: "Your physical exercise score is determined based on the total amount of exercise minutes tracked over the past 7 days."
+        explainerHeaderText: "EXERCISE_MINUTES_SCORE_EXPLAINER"
     )
     
     static let cvhStepCount = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(10_000..., score: 1),
+        .inRange(10_000..., score: 1, explainer: "\(10000)+"),
         .inRange(120..<150, score: 0.9),
         .inRange(90..<120, score: 0.8),
         .inRange(60..<90, score: 0.6),
@@ -335,29 +342,29 @@ extension ScoreDefinition {
     ])
     
     static let cvhBMI = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<25, score: 1),
-        .inRange(25..<30, score: 0.7),
-        .inRange(30..<35, score: 0.3),
-        .inRange(35..<40, score: 0.15),
-        .inRange(40..., score: 0)
+        .inRange(..<25, score: 1, explainer: "< 25"),
+        .inRange(25..<30, score: 0.7, explainer: "25 – 29"),
+        .inRange(30..<35, score: 0.3, explainer: "30 – 34"),
+        .inRange(35..<40, score: 0.15, explainer: "35 – 39"),
+        .inRange(40..., score: 0, explainer: "40+")
     ])
     
     static let cvhBloodLipids = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<130, score: 1),
-        .inRange(130..<160, score: 0.6),
-        .inRange(160..<190, score: 0.4),
-        .inRange(190..<220, score: 0.2),
-        .inRange(220..., score: 0)
+        .inRange(..<130, score: 1, explainer: "< 130"),
+        .inRange(130..<160, score: 0.6, explainer: "130 – 159"),
+        .inRange(160..<190, score: 0.4, explainer: "160 – 189"),
+        .inRange(190..<220, score: 0.2, explainer: "190 – 219"),
+        .inRange(220..., score: 0, explainer: "220+")
     ])
     
     static let cvhBloodGlucose = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<5.7, score: 1),
-        .inRange(5.7..<6.5, score: 0.75),
-        .inRange(6.5..<7, score: 0.5),
-        .inRange(7..<8, score: 0.3),
-        .inRange(8..<9, score: 0.2),
-        .inRange(9..<10, score: 0.1),
-        .inRange(10..., score: 0)
+        .inRange(..<5.7, score: 1, explainer: "< 5.7"),
+        .inRange(5.7..<6.5, score: 0.75, explainer: "5.7 – 6.4"),
+        .inRange(6.5..<7, score: 0.5, explainer: "6.5 – 6.9"),
+        .inRange(7..<8, score: 0.3, explainer: "7 – 7.9"),
+        .inRange(8..<9, score: 0.2, explainer: "8 – 8.9"),
+        .inRange(9..<10, score: 0.1, explainer: "9 – 9.9"),
+        .inRange(10..., score: 0, explainer: "10+")
     ])
     
     static let cvhBloodPressure = ScoreDefinition(

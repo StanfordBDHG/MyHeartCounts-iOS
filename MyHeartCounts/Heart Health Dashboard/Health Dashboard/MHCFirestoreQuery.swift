@@ -33,11 +33,20 @@ import SwiftUI
 struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     typealias DecodeFn = @Sendable (QueryDocumentSnapshot) -> Element?
     
+    /// The collection which should be queried
+    enum Collection {
+        /// The query should observe `users/{USER}/{path}`, where `USER` is the account id of the currently logged in user.
+        case user(path: String)
+        /// The query should observe the collection at `path`.
+        case root(path: String)
+    }
+    
     @Environment(Account.self)
     private var account: Account?
     
     @State private var impl = Impl<Element>()
     private let input: QueryInput
+    private let logger = Logger(subsystem: "edu.stanford.MyHeartCounts.MHCFirestoreQuery<\(Element.self)>", category: "Firebase")
     
     var wrappedValue: [Element] {
         impl.elements
@@ -45,29 +54,80 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     
     init(
         _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
-        collection: String,
-        filter: Filter,
+        collection: Collection,
+        filter: Filter? = nil,
         sortBy sortDescriptors: [SortDescriptor] = [],
         limit: Int? = nil,
         decode: @escaping DecodeFn
     ) {
+        self.init(
+            Element.self,
+            collection: collection,
+            preDecodeFilter: filter,
+            preDecodeSort: sortDescriptors,
+            preDecodeLimit: limit,
+            decode: decode,
+            postDecodeSort: [],
+            postDecodeLimit: nil
+        )
+    }
+    
+    @_disfavoredOverload
+    init(
+        _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
+        collection: Collection,
+        decode: @escaping DecodeFn,
+        sort: [any SortComparator<Element>] = [],
+        limit: Int? = nil
+    ) {
+        self.init(
+            Element.self,
+            collection: collection,
+            preDecodeFilter: nil,
+            preDecodeSort: [],
+            preDecodeLimit: nil,
+            decode: decode,
+            postDecodeSort: sort,
+            postDecodeLimit: limit
+        )
+    }
+    
+    
+    private init(
+        _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
+        collection: Collection,
+        preDecodeFilter: Filter?,
+        preDecodeSort: [SortDescriptor],
+        preDecodeLimit: Int?,
+        decode: @escaping DecodeFn,
+        postDecodeSort: [any SortComparator<Element>],
+        postDecodeLimit: Int?
+    ) {
         input = .init(
             collection: collection,
-            filter: filter,
-            sortDescriptors: sortDescriptors,
-            limit: limit,
-            decode: decode
+            preDecodeFilter: preDecodeFilter,
+            preDecodeSort: preDecodeSort,
+            preDecodeLimit: preDecodeLimit,
+            decode: decode,
+            postDecodeSort: postDecodeSort,
+            postDecodeLimit: postDecodeLimit
         )
     }
     
     nonisolated func update() {
         var input = self.input
         Task { @MainActor in
-            guard let accountId = account?.details?.accountId else {
-                return
+            switch input.collection {
+            case .user(let path):
+                guard let accountId = account?.details?.accountId else {
+                    logger.error("Asked to query in user collection, but no user logged in. (path: \(path))")
+                    return
+                }
+                input.collection = .root(path: "users/\(accountId)/" + path)
+            case .root:
+                break
             }
-            input.collection = "users/\(accountId)/" + input.collection
-            impl.setup(input: input)
+            impl.setup(input: input, logger: logger)
         }
     }
 }
@@ -80,10 +140,10 @@ extension MHCFirestoreQuery {
     }
     
     fileprivate struct QueryInput: Sendable {
-        var collection: String
-        var filter: Filter?
-        var sortDescriptors: [SortDescriptor]
-        var limit: Int?
+        var collection: Collection
+        var preDecodeFilter: Filter?
+        var preDecodeSort: [SortDescriptor]
+        var preDecodeLimit: Int?
         var decode: DecodeFn
         var postDecodeSort: [any SortComparator<Element>] = []
         var postDecodeLimit: Int?
@@ -101,19 +161,28 @@ private final class Impl<Element: Sendable>: Sendable {
     
     init() {}
     
-    func setup(input: QueryInput) {
+    func setup(input: QueryInput, logger: Logger) {
         guard listener == nil else {
+            logger.error("[impl] skipping setup request bc listener is non-nil.")
             return
         }
         listener?.remove()
-        var query: Query = Firestore.firestore().collection(input.collection)
-        if let filter = input.filter {
+        var query: Query
+        switch input.collection {
+        case .root(let path):
+            query = Firestore.firestore().collection(path)
+        default:
+            // unreachable
+            logger.error("[impl] skipping setup request bc input contains an unresolved path.")
+            return
+        }
+        if let filter = input.preDecodeFilter {
             query = query.whereFilter(filter)
         }
-        for sortDescriptor in input.sortDescriptors {
+        for sortDescriptor in input.preDecodeSort {
             query = query.order(by: sortDescriptor.fieldName, descending: sortDescriptor.order == .reverse)
         }
-        if let limit = input.limit, limit > 0 {
+        if let limit = input.preDecodeLimit, limit > 0 {
             query = query.limit(to: limit)
         }
         listener = query.addSnapshotListener { @Sendable [weak self] snapshot, error in
@@ -160,11 +229,8 @@ extension MHCFirestoreQuery {
         limit: Int? = nil,
         transform: @escaping @Sendable (ResourceProxy) -> Element?
     ) {
-        input = .init(
-            collection: "HealthObservations_\(sampleTypeIdentifier)",
-            filter: nil,
-            sortDescriptors: [],
-            limit: nil,
+        self.init(
+            collection: .user(path: "HealthObservations_\(sampleTypeIdentifier)"),
             decode: { document -> Element? in
                 if timeRange != .ever {
                     let data = document.data()
@@ -193,8 +259,8 @@ extension MHCFirestoreQuery {
                 }
                 return transform(proxy)
             },
-            postDecodeSort: sortDescriptors,
-            postDecodeLimit: limit
+            sort: sortDescriptors,
+            limit: limit
         )
     }
 }

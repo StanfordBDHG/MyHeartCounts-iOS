@@ -48,7 +48,14 @@
       }
     },
     "%@-Minute Run Test" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba de Carrera de %@ Minutos"
+          }
+        }
+      }
     },
     "%@-Minute Walk Test" : {
       "localizations" : {
@@ -56,6 +63,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@-Minute Walk Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba de Caminata de %@ Minutos"
           }
         }
       }
@@ -119,7 +132,19 @@
         }
       }
     },
+    "%lld+" : {
+
+    },
+    "< 5.7" : {
+
+    },
     "< 7" : {
+
+    },
+    "< 25" : {
+
+    },
+    "< 130" : {
 
     },
     "<120 / <80" : {
@@ -275,6 +300,9 @@
         }
       }
     },
+    "1 – 29" : {
+
+    },
     "1 to 5 years ago" : {
       "localizations" : {
         "es" : {
@@ -294,22 +322,40 @@
     "5 to 6 hours" : {
 
     },
+    "5.7 – 6.4" : {
+
+    },
     "6 to 7 hours" : {
+
+    },
+    "6.5 – 6.9" : {
+
+    },
+    "7 – 7.9" : {
 
     },
     "7 to 9 hours" : {
 
     },
+    "8 – 8.9" : {
+
+    },
     "8 – 10" : {
+
+    },
+    "9 – 9.9" : {
 
     },
     "9 to 10 hours" : {
 
     },
+    "10+" : {
+
+    },
     "10+ hours" : {
 
     },
-    "11 – 14" : {
+    "11 – 13" : {
 
     },
     "12-Minute Run Test (Cooper Test)" : {
@@ -319,6 +365,27 @@
 
     },
     "17 – 21" : {
+
+    },
+    "25 – 29" : {
+
+    },
+    "30 – 34" : {
+
+    },
+    "30 – 59" : {
+
+    },
+    "35 – 39" : {
+
+    },
+    "40+" : {
+
+    },
+    "60 – 89" : {
+
+    },
+    "90 – 119" : {
 
     },
     "100" : {
@@ -331,13 +398,31 @@
         }
       }
     },
+    "120 – 149" : {
+
+    },
     "120–129 / 80–89" : {
+
+    },
+    "130 – 159" : {
 
     },
     "130–139 / 90–99" : {
 
     },
     "140+ / 90+" : {
+
+    },
+    "150+" : {
+
+    },
+    "160 – 189" : {
+
+    },
+    "190 – 219" : {
+
+    },
+    "220+" : {
 
     },
     "About %@" : {
@@ -527,6 +612,9 @@
           }
         }
       }
+    },
+    "Answer Questionnaire" : {
+
     },
     "Are you %lld years old or older?" : {
       "localizations" : {
@@ -865,6 +953,7 @@
       }
     },
     "Complete" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1207,6 +1296,9 @@
         }
       }
     },
+    "ECG" : {
+
+    },
     "ECG_INSTRUCTIONS_TEXT" : {
       "localizations" : {
         "en" : {
@@ -1271,6 +1363,9 @@
           }
         }
       }
+    },
+    "Electrocardiogram" : {
+
     },
     "ELIGIBILITY_STEP_SUBTITLE" : {
       "localizations" : {
@@ -1361,6 +1456,9 @@
         }
       }
     },
+    "Enroll" : {
+
+    },
     "Enroll in Study" : {
       "localizations" : {
         "es" : {
@@ -1427,6 +1525,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Error"
+          }
+        }
+      }
+    },
+    "EXERCISE_MINUTES_SCORE_EXPLAINER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your physical exercise score is determined based on the total amount of exercise minutes tracked over the past 7 days, by an Apple Watch or compatible third-party app."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your physical exercise score is determined based on the total amount of exercise minutes tracked over the past 7 days, by an Apple Watch or compatible third-party app."
           }
         }
       }
@@ -1911,13 +2025,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research Team unless you have selected to allow broader data sharing. Before any sharing takes place, outside researchers must demonstrate that they are qualified to conduct approved studies. Broadly shared data will have all information de-identified and not traceable to you. \n\n\nYou can revoke this access at any time."
+            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc. Further, granting write-access will give the best user experience with the application for dashboard features. To enhance research and optimize user experience, select **“Turn On All”**.\n\nWe are committed to protecting your privacy. Your data will be securely shared only among the My Heart Counts Research Team and our trusted research partners. Any data shared publicly will be thoroughly de-identified to ensure it cannot be traced back to you. Additionally, we require all external researchers to prove their qualifications and obtain approval before accessing any shared data for their studies.\n\nYou can revoke this access at any time."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc.\n\nYour data will not be shared with anyone outside of the My Heart Counts Research Team unless you have selected to allow broader data sharing. Before any sharing takes place, outside researchers must demonstrate that they are qualified to conduct approved studies. Broadly shared data will have all information de-identified and not traceable to you. \n\n\nYou can revoke this access at any time."
+            "value" : "My Heart Counts needs read-access to automatically collect data such as heart rate, step counts, active calories, sleep durations, etc. Further, granting write-access will give the best user experience with the application for dashboard features. To enhance research and optimize user experience, select **“Turn On All”**.\n\nWe are committed to protecting your privacy. Your data will be securely shared only among the My Heart Counts Research Team and our trusted research partners. Any data shared publicly will be thoroughly de-identified to ensure it cannot be traced back to you. Additionally, we require all external researchers to prove their qualifications and obtain approval before accessing any shared data for their studies.\n\nYou can revoke this access at any time."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts necesita acceso de lectura para recopilar automáticamente datos como frecuencia cardíaca, conteos de pasos, calorías activas, duraciones de sueño, etc. Además, otorgar acceso de escritura brindará la mejor experiencia de uso de la aplicación para las funciones del panel. Para potenciar la investigación y optimizar la experiencia del usuario, seleccione **“Activar todo”**.\n\nEstamos comprometidos con la protección de su privacidad. Sus datos se compartirán de forma segura únicamente entre el Equipo de Investigación de My Heart Counts y nuestros socios de investigación de confianza. Cualquier dato que se comparta públicamente será minuciosamente desidentificado para garantizar que no pueda vincularse con usted. Además, exigimos que todos los investigadores externos acrediten sus calificaciones y obtengan la aprobación antes de acceder a cualquier dato compartido para sus estudios.\n\nPuede revocar este acceso en cualquier momento."
           }
         }
       }
@@ -1927,19 +2047,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The My Heart Counts Study uses Health Data collected on your iPhone to further our research goals. Granting access to all fields (or as many as you are comfortable with) ensures the most well powered study possible."
+            "value" : "The My Heart Counts Study uses Health Data collected on your iPhone to further research. Granting access to all fields (or as many as you are comfortable with) ensures the most well powered study possible."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The My Heart Counts Study uses Health Data collected on your iPhone to further our research goals. Granting access to all fields (or as many as you are comfortable with) ensures the most well powered study possible."
+            "value" : "The My Heart Counts Study uses Health Data collected on your iPhone to further research. Granting access to all fields (or as many as you are comfortable with) ensures the most well powered study possible."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El Estudio Mi Corazón Cuenta utiliza Datos de Salud recopilados en tu iPhone para avanzar en nuestros objetivos de investigación. Conceder acceso a todos los campos (o a tantos como te sientas cómodo) asegura que el estudio esté lo más optimizado posible."
+            "value" : "El estudio My Heart Counts utiliza los Datos de Salud recopilados en su iPhone para avanzar la investigación. Conceder acceso a todos los campos (o a tantos como le resulten cómodos) garantiza el estudio con la mayor potencia estadística posible."
           }
         }
       }
@@ -1988,6 +2108,22 @@
     },
     "Hemoglobin A1c (HbA1c)" : {
 
+    },
+    "HHD_APPLE_WATCH_REQUIRED_FOOTER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some metrics, such as Sleep or Exercise Minutes, are only available if you have an Apple Watch connected to this iPhone."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some metrics, such as Sleep or Exercise Minutes, are only available if you have an Apple Watch connected to this iPhone."
+          }
+        }
+      }
     },
     "Household Income" : {
       "localizations" : {
@@ -2298,6 +2434,7 @@
       }
     },
     "Link Arrow Symbol" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2368,6 +2505,9 @@
       }
     },
     "Manage SensorKit" : {
+
+    },
+    "Mark as Complete" : {
 
     },
     "Maryland" : {
@@ -2460,6 +2600,9 @@
         }
       }
     },
+    "More" : {
+
+    },
     "More than 5 years ago" : {
       "localizations" : {
         "es" : {
@@ -2469,6 +2612,9 @@
           }
         }
       }
+    },
+    "Most Recent Sample" : {
+
     },
     "My Heart Counts" : {
       "localizations" : {
@@ -2756,19 +2902,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Please allow My Heart Counts to send you notifications so that we can properly carry out research.\n\nWe will do our best to keep the notifications to a minimum."
+            "value" : "Allowing Notifications for My Heart Counts is important because this is where you will be sent prompts from the physical activity promoting trial. In order to carry out research goals, this is an important step that we ask participants to grant access to. \n\nParticipants will also be sent notifications about new surveys, activities, etc.\n\nWe will do our best to keep the notifications to a minimum."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Please allow My Heart Counts to send you notifications so that we can properly carry out research.\n\nWe will do our best to keep the notifications to a minimum."
+            "value" : "Allowing Notifications for My Heart Counts is important because this is where you will be sent prompts from the physical activity promoting trial. In order to carry out research goals, this is an important step that we ask participants to grant access to. \n\nParticipants will also be sent notifications about new surveys, activities, etc.\n\nWe will do our best to keep the notifications to a minimum."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por favor, permita que My Heart Counts le envíe notificaciones para que podamos llevar a cabo la investigación de manera adecuada.\n\nHaremos nuestro mejor esfuerzo para mantener las notificaciones al mínimo."
+            "value" : "Permitir las notificaciones de My Heart Counts es importante, ya que por este medio recibirá indicaciones del ensayo de promoción de la actividad física. Para cumplir los objetivos de investigación, le solicitamos que conceda este permiso.\n\nTambién le enviaremos notificaciones sobre nuevas encuestas, actividades, etc.\n\nHaremos todo lo posible por mantener las notificaciones al mínimo."
           }
         }
       }
@@ -3166,6 +3312,95 @@
         }
       }
     },
+    "Past %lld days" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Past %lld months" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld months"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Past %lld weeks" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld weeks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Past %lld years" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Past year"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Past %lld years"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Past 2 Weeks" : {
 
     },
@@ -3224,6 +3459,9 @@
         }
       }
     },
+    "Perform Active Task" : {
+
+    },
     "Physical Activity" : {
       "localizations" : {
         "es" : {
@@ -3263,6 +3501,9 @@
           }
         }
       }
+    },
+    "Questionnaire" : {
+
     },
     "Race / Ethnicity" : {
       "localizations" : {
@@ -3604,6 +3845,9 @@
         }
       }
     },
+    "Read" : {
+
+    },
     "Read Article" : {
       "localizations" : {
         "es" : {
@@ -3625,6 +3869,7 @@
       }
     },
     "Recent Sleep Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3967,6 +4212,16 @@
         }
       }
     },
+    "Start" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comenzar"
+          }
+        }
+      }
+    },
     "Start Recording Data" : {
 
     },
@@ -3994,6 +4249,7 @@
 
     },
     "Study Information" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4022,6 +4278,12 @@
           }
         }
       }
+    },
+    "Success" : {
+
+    },
+    "Take ECG" : {
+
     },
     "Take Test" : {
       "localizations" : {
@@ -4146,9 +4408,6 @@
         }
       }
     },
-    "Timed Walk Test" : {
-
-    },
     "Timed Walking Test" : {
       "localizations" : {
         "es" : {
@@ -4174,12 +4433,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The 6-Minute Walk Test measures your functional exercise capacity by tracking how far you can walk in 6 minutes on a flat surface. It's a simple way to evaluate your physical fitness and is commonly used to monitor conditions affecting the heart and lungs.\n\nTo perform the test, find a flat path where you can walk without obstacles. Wear comfortable shoes. Tap \"Start\" and walk at a steady pace that's comfortable but challenging. Your goal is to cover as much distance as possible in 6 minutes."
+            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance. Keep your phone in your hand until it vibrates."
           }
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "The 6-Minute Walk Test measures your functional exercise capacity by tracking how far you can walk in 6 minutes on a flat surface. It's a simple way to evaluate your physical fitness and is commonly used to monitor conditions affecting the heart and lungs.\n\nTo perform the test, find a flat path where you can walk without obstacles. Wear comfortable shoes. Tap \"Start\" and walk at a steady pace that's comfortable but challenging. Your goal is to cover as much distance as possible in 6 minutes."
           }
         },
@@ -4559,18 +4818,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contribute to Heart Health Research"
+            "value" : "Contribute to Research"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contribute to Heart Health Research"
+            "value" : "Contribute to Research"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Contribuya a la Investigación de la Salud del Corazón"
           }
         }
@@ -4861,7 +5120,7 @@
         }
       }
     },
-    "Your physical exercise score is determined based on the total amount of exercise minutes tracked over the past 7 days." : {
+    "Your ECG has successfully been recorded" : {
 
     }
   },

@@ -19,14 +19,13 @@ struct UpcomingTasksTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "Upcoming Tasks" }
     static var tabSymbol: SFSymbol { .calendar }
     
-    @State private var activeTimedWalkingTest: TimedWalkingTestConfiguration?
-    
     var body: some View {
         NavigationStack {
             Form {
                 TasksList(
-                    mode: .upcoming(showFallbackTasks: true),
+                    mode: .upcoming(includeIndefinitePastTasks: false, showFallbackTasks: true),
                     timeRange: .weeks(2),
+                    eventGroupingConfig: .byDay,
                     noTasksMessageLabels: .init(title: "No Upcoming Tasks")
                 )
             }
@@ -34,32 +33,10 @@ struct UpcomingTasksTab: RootViewTab {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    timedWalkingTestMenu
+                    AlwaysAvailableTaskActionsMenu()
                 }
                 accountToolbarItem
             }
-            .sheet(item: $activeTimedWalkingTest, id: \.self) { test in
-                TimedWalkingTestView(test)
-            }
-        }
-    }
-    
-    
-    @ViewBuilder private var timedWalkingTestMenu: some View {
-        let tests = [
-            TimedWalkingTestConfiguration(duration: .minutes(6), kind: .walking),
-            TimedWalkingTestConfiguration(duration: .minutes(12), kind: .running)
-        ]
-        Menu {
-            ForEach(tests, id: \.self) { test in
-                Button {
-                    activeTimedWalkingTest = test
-                } label: {
-                    Label(String(localized: test.displayTitle), systemSymbol: test.kind.symbol)
-                }
-            }
-        } label: {
-            Label("Timed Walk Test", systemSymbol: .figureWalk)
         }
     }
 }

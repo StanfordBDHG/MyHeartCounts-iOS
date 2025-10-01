@@ -65,7 +65,7 @@ extension HealthKit {
         var failureReason: LocalizedStringResource? {
             switch self {
             case .missingHealthKitPermissions(let sampleTypes):
-                let sampleTypes = sampleTypes.map { "- \($0.displayTitle)" }.joined(separator: "\n")
+                let sampleTypes = sampleTypes.map { "- \($0.mhcDisplayTitle)" }.joined(separator: "\n")
                 return "You haven't granted My Heart Counts permission to add data to HealthKit for the following data types:\n\(sampleTypes)"
             }
         }

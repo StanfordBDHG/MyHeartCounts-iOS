@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order file_length
 
 import Charts
 import Foundation
@@ -20,17 +20,20 @@ import SpeziViews
 import SwiftUI
 
 
-/*
- known issues:
- - line chart doesn't display anything if it has only a single data point (since there is nothing to connect it to..., apparently)
- */
-
 struct DetailedHealthStatsView: View {
     private enum Input {
         case scoreResult(result: ScoreResult, keyPath: KeyPath<CVHScore, ScoreResult>)
     }
     
+    private enum RecentValuesChartConfig {
+        /// no chart
+        case disabled
+        /// chart
+        case enabled(timeRange: HealthKitQueryTimeRange)
+    }
+    
     // swiftlint:disable attributes
+    @Environment(\.calendar) private var cal
     @Environment(Account.self) private var account: Account?
     @Environment(StudyManager.self) private var studyManager
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
@@ -41,7 +44,7 @@ struct DetailedHealthStatsView: View {
     @State private var isPresentingAddSampleSheet = false
     
     var body: some View {
-        Form { // swiftlint:disable:this closure_body_length
+        Form {
             switch input {
             case .scoreResult(let result, keyPath: _):
                 Section {
@@ -50,11 +53,7 @@ struct DetailedHealthStatsView: View {
                 .listRowInsets(.zero)
                 .listRowBackground(Color.clear)
             }
-            Section {
-                recentValuesChart
-                    .frame(height: 220)
-                    .listRowInsets(.zero)
-            }
+            recentValuesChart(recentValuesChartConfig)
             switch input {
             case .scoreResult(let result, keyPath: _):
                 Section("Score Result") {
@@ -105,49 +104,12 @@ struct DetailedHealthStatsView: View {
     }
     
     
-    @ViewBuilder private var recentValuesChart: some View {
-        let timeRange: HealthKitQueryTimeRange = .last(days: 14) // 14!
-        let dataSource = { () -> HealthDashboardLayout.DataSource? in
-            switch sampleType {
-            case .healthKit(let proxy):
-                return .healthKit(proxy)
-            case .custom(let sampleType):
-                return .firebase(sampleType)
-            }
-        }()
-        if let dataSource {
-            // Note: we're creating a chart config here, but depending on the specific sample type it might end up getting discarded
-            // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
-            let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
-                switch sampleType {
-                case .healthKit(.quantity(let sampleType)):
-                    return .default(for: sampleType, in: timeRange)
-                case .healthKit:
-                    return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
-                    return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                case .custom:
-                    return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                }
-            }()
-            healthDashboardComponentView(
-                for: .init(
-                    dataSource: dataSource,
-                    timeRange: timeRange,
-                    style: .chart(chartConfig),
-                    enableSelection: false
-                ),
-                withSize: .large
-            )
-            //        .padding() // Issue: some of them need padding, some dont :/
-            .healthStatsChartHoverHighlightEnabled()
-            .environment(\.showTimeRangeAsGridCellSubtitle, true)
-        } else {
-            HStack {
-                Spacer()
-                Text("Unable to load data")
-                Spacer()
-            }
+    private var recentValuesChartConfig: RecentValuesChartConfig {
+        switch input {
+        case .scoreResult(result: _, keyPath: \.nicotineExposureScore):
+            .disabled
+        default:
+            .enabled(timeRange: .last(days: 14))
         }
     }
     
@@ -159,36 +121,85 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func scoreResultBasedTopSection(for scoreResult: ScoreResult) -> some View { // swiftlint:disable:this function_body_length
+    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View {
+        switch config {
+        case .disabled:
+            EmptyView()
+        case .enabled(let timeRange):
+            let dataSource = { () -> HealthDashboardLayout.DataSource? in
+                switch sampleType {
+                case .healthKit(let proxy):
+                    return .healthKit(proxy)
+                case .custom(let sampleType):
+                    return .firebase(sampleType)
+                }
+            }()
+            Section {
+                if let dataSource {
+                    // Note: we're creating a chart config here, but depending on the specific sample type it might end up getting discarded
+                    // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
+                    let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
+                        switch sampleType {
+                        case .healthKit(.quantity(let sampleType)):
+                            return .default(for: sampleType, in: timeRange)
+                        case .healthKit:
+                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
+                        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
+                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
+                        case .custom:
+                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
+                        }
+                    }()
+                    healthDashboardComponentView(
+                        for: .init(
+                            dataSource: dataSource,
+                            timeRange: timeRange,
+                            style: .chart(chartConfig),
+                            enableSelection: false
+                        ),
+                        withSize: .large
+                    )
+                    .padding(.horizontal)
+                    .healthStatsChartHoverHighlightEnabled()
+                    .environment(\.showTimeRangeAsGridCellSubtitle, true)
+                    .environment(\.isRecentValuesViewInDetailedStatsSheet, true)
+                } else {
+                    HStack {
+                        Spacer()
+                        Text("Unable to load data")
+                        Spacer()
+                    }
+                }
+            }
+            .frame(height: 220)
+            .listRowInsets(.zero)
+        }
+    }
+    
+    
+    @ViewBuilder
+    private func scoreResultBasedTopSection(for scoreResult: ScoreResult) -> some View {
         let spacing: Double = 24
         GeometryReader { geometry in // swiftlint:disable:this closure_body_length
             let gaugePartWidth = (geometry.size.width - spacing) * 0.37
             let leftPartWidth = geometry.size.width - spacing - gaugePartWidth
-            HStack(spacing: spacing / 2 - 1) { // swiftlint:disable:this closure_body_length
+            HStack(spacing: spacing / 2 - 1) {
                 VStack(alignment: .leading) {
-                    Text(sampleType.displayTitle)
-                        .font(.headline)
-                    if let value = scoreResult.inputValue {
-                        HStack {
-                            let valueDesc = { () -> String in
-                                if let value = value as? any FloatingPoint & CVarArg {
-                                    String(format: "%.2f", value)
-                                } else {
-                                    String(describing: value)
-                                }
-                            }()
-                            Text(valueDesc)
-                                .font(.system(.body).bold().monospacedDigit())
-                            if let displayUnit = sampleType.displayUnit, displayUnit != .count() {
-                                Text(displayUnit.unitString)
-                                    .font(.footnote.smallCaps())
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
+                    Text("Most Recent Sample")
+                        .foregroundStyle(.secondary)
+                    Group {
+                        if let value = scoreResult.inputValue {
+                            ValueDisplay(value, sampleType: sampleType)
+                        } else {
+                            Text("No Data")
+                                .foregroundStyle(.secondary)
                         }
-                        if let timeRange = scoreResult.timeRange {
-                            Text(timeRange.upperBound.addingTimeInterval(-1), format: .dateTime)
-                        }
+                    }
+                    .font(.headline)
+                    if let timeRange = scoreResult.timeRange {
+                        Text(timeRange.displayText(using: cal))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .frame(width: leftPartWidth, alignment: .leading)
@@ -203,7 +214,7 @@ struct DetailedHealthStatsView: View {
                         Text(Int(score * 100), format: .number)
                             .bold()
                     } else {
-                        Text("")
+                        Text("n/a")
                     }
                 }
                 .frame(width: 90, height: 90)
@@ -218,6 +229,94 @@ struct DetailedHealthStatsView: View {
     private func scoreResultExplainer(for scoreResult: ScoreResult) -> some View {
         ScoreExplanationView(scoreResult: scoreResult)
             .listRowBackground(Color.clear)
+    }
+}
+
+
+private struct ValueDisplay: View {
+    private struct Component {
+        let value: String
+        let unit: String?
+        
+        init(value: String, unit: String?) {
+            self.value = value
+            self.unit = unit
+        }
+        
+        init(value: String, unit: HKUnit?) {
+            self.init(value: value, unit: unit == .count() ? nil : unit?.unitString)
+        }
+    }
+    
+    private let components: [Component]
+    
+    var body: some View {
+        if components.isEmpty {
+            Text("No Data")
+                .foregroundStyle(.secondary)
+        } else {
+            HStack(alignment: .bottom) {
+                ForEach(Array(components.indices), id: \.self) { idx in
+                    let component = components[idx]
+                    HStack(spacing: 2) {
+                        Text(component.value)
+                            .bold()
+                            .monospacedDigit()
+                        if let unit = component.unit {
+                            Text(unit)
+                                .textScale(.secondary)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private init(components: [Component]) {
+        self.components = components
+    }
+    
+    init(_ value: Any, sampleType: MHCSampleType) {
+        switch value {
+        case let value as any BinaryFloatingPoint:
+            self.init(value, sampleType: sampleType)
+        case let value as BloodPressureMeasurement:
+            self.init(value)
+        default:
+            self.init(components: [
+                .init(value: String(describing: value), unit: sampleType.displayUnit)
+            ])
+        }
+    }
+    
+    init<V: BinaryFloatingPoint>(_ value: V, sampleType: MHCSampleType) {
+        switch sampleType {
+        case .healthKit(.category(.sleepAnalysis)):
+            let (hours, minutes) = Int(value * 60).quotientAndRemainder(dividingBy: 60)
+            components = Array {
+                if hours > 0 {
+                    Component(value: String(hours), unit: .hour())
+                }
+                if minutes > 0 {
+                    Component(value: String(minutes), unit: .minute())
+                }
+            }
+        default:
+            let value = value.formatted(FloatingPointFormatStyle<V>().precision(.fractionLength(...2)))
+            components = [
+                Component(value: value, unit: sampleType.displayUnit)
+            ]
+        }
+    }
+    
+    init(_ bloodPressure: BloodPressureMeasurement) {
+        components = [
+            .init(
+                value: "\(bloodPressure.systolic)/\(bloodPressure.diastolic)",
+                unit: .millimeterOfMercury()
+            )
+        ]
     }
 }
 

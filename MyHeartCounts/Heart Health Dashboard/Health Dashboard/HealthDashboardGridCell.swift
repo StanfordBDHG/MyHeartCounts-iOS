@@ -10,6 +10,7 @@
 
 import Foundation
 import SpeziHealthKit
+import SpeziViews
 import SwiftUI
 
 
@@ -21,10 +22,13 @@ extension HealthDashboardConstants {
 struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
     private static var insets: EdgeInsets { EdgeInsets(horizontal: 9, vertical: 5) }
     
+    @Environment(\.isRecentValuesViewInDetailedStatsSheet)
+    private var isRecentValuesViewInDetailedStatsSheet
+    
     private let title: Text
     private let subtitle: Text?
-    private let accessory: @MainActor () -> Accessory
-    private let content: @MainActor () -> Content
+    private let accessory: Accessory
+    private let content: Content
     
     var body: some View {
         VStack(spacing: 0) {
@@ -39,44 +43,47 @@ struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
                         }
                     }
                     Spacer()
-                    accessory()
+                    accessory
                 }
                 .padding(EdgeInsets(top: Self.insets.top, leading: 0, bottom: Self.insets.top, trailing: 0))
                 .frame(height: 57)
                 Divider()
             }
             Spacer()
-            content()
+            content
             Spacer()
         }
-        .padding(EdgeInsets(top: 0, leading: Self.insets.leading, bottom: Self.insets.bottom, trailing: Self.insets.trailing))
+        .if(!isRecentValuesViewInDetailedStatsSheet) {
+            $0
+                .padding(EdgeInsets(top: 0, leading: Self.insets.leading, bottom: Self.insets.bottom, trailing: Self.insets.trailing))
+                .background(.background)
+        }
         .frame(minHeight: 129)
-        .background(.background)
     }
     
     init(
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource? = nil,
-        @ViewBuilder accessory: @MainActor @escaping () -> Accessory = { EmptyView() },
-        @ViewBuilder content: @MainActor @escaping () -> Content
+        @ViewBuilder accessory: () -> Accessory = { EmptyView() },
+        @ViewBuilder content: () -> Content
     ) {
         self.title = Text(title)
         self.subtitle = subtitle.map(Text.init)
-        self.accessory = accessory
-        self.content = content
+        self.accessory = accessory()
+        self.content = content()
     }
     
     @_disfavoredOverload
     init(
         title: some StringProtocol,
         subtitle: (some StringProtocol & SendableMetatype)? = String?.none,
-        @ViewBuilder accessory: @MainActor @escaping () -> Accessory = { EmptyView() },
-        @ViewBuilder content: @MainActor @escaping () -> Content
+        @ViewBuilder accessory: () -> Accessory = { EmptyView() },
+        @ViewBuilder content: () -> Content
     ) {
         self.title = Text(title)
         self.subtitle = subtitle.map(Text.init)
-        self.accessory = accessory
-        self.content = content
+        self.accessory = accessory()
+        self.content = content()
     }
 }
 

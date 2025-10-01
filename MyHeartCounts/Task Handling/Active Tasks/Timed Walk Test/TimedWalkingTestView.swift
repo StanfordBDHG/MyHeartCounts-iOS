@@ -40,6 +40,7 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     @State private var viewState: ViewState = .idle
     @State private var showPermissionsErrorSection = false
     
+    @State private var didCompleteAtLeastOneTest = false
     @State private var mostRecentResult: TimedWalkingTestResult?
     
     private var testIsRunning: Bool {
@@ -60,6 +61,14 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                 break
             @unknown default:
                 break
+            }
+        }
+        .onDisappear {
+            if !didCompleteAtLeastOneTest {
+                // view is getting dismissed without having performed the action
+                Task {
+                    await resultHandler(nil)
+                }
             }
         }
         .alert(
@@ -192,6 +201,9 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                     do {
                         let result = try await timedWalkingTest.start(test)
                         self.mostRecentResult = result
+                        if !didCompleteAtLeastOneTest && result != nil {
+                            didCompleteAtLeastOneTest = true
+                        }
                         await resultHandler(result)
                     } catch TimedWalkingTest.TestError.unableToStart(.missingSensorPermissions) {
                         showPermissionsErrorSection = true

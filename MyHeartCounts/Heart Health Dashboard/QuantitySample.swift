@@ -32,7 +32,7 @@ enum MHCSampleType: Hashable, Identifiable, Sendable {
     var displayTitle: String {
         switch self {
         case .healthKit(let sampleType):
-            sampleType.underlyingSampleType.displayTitle
+            sampleType.underlyingSampleType.mhcDisplayTitle
         case .custom(let sampleType):
             sampleType.displayTitle
         }
@@ -72,7 +72,7 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
         preferredTintColor: Color
     ) {
         self.id = id
-        self.displayTitle = displayTitle.localizedString()
+        self.displayTitle = String(localized: displayTitle)
         self.displayUnit = displayUnit
         self.aggregationKind = aggregationKind
         self.preferredTintColor = preferredTintColor
@@ -131,10 +131,8 @@ enum MHCQuantitySampleType: Hashable, Identifiable, Sendable {
     
     var displayTitle: String {
         switch self {
-        case .healthKit(.bloodGlucose):
-            String(localized: "Hemoglobin A1c (HbA1c)")
         case .healthKit(let sampleType):
-            sampleType.displayTitle
+            sampleType.mhcDisplayTitle
         case .custom(let sampleType):
             sampleType.displayTitle
         }

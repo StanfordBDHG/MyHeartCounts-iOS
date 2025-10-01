@@ -63,14 +63,14 @@ struct RootView: View {
             }
         }
         .onChange(of: consentManager?.needsToSignNewConsentVersion) { oldValue, newValue in
-            guard let oldValue, let newValue, !oldValue && newValue else {
-                return
+            if let oldValue, let newValue, !oldValue && newValue {
+                isShowingConsentRenewalSheet = true
             }
-            isShowingConsentRenewalSheet = true
         }
         .sheet(isPresented: $isShowingConsentRenewalSheet) {
             ConsentRenewalFlow()
         }
+        .taskPerformingAnchor()
     }
     
     @ViewBuilder private var content: some View {

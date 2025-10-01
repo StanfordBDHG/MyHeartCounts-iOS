@@ -111,7 +111,7 @@ struct SaveBloodPressureSampleView: View {
     }
     
     private func makeRow(for value: Binding<Int?>, sampleType: SampleType<HKQuantitySample>) -> some View {
-        QuantityInputRow(title: sampleType.displayTitle, value: value, sampleType: sampleType)
+        QuantityInputRow(title: sampleType.mhcDisplayTitle, value: value, sampleType: sampleType)
     }
     
     private func save() async throws {

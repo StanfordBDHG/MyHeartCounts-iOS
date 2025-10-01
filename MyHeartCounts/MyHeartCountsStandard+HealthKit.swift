@@ -52,9 +52,9 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     
     func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject> & Sendable, ofType sampleType: SampleType<Sample>) async {
         let deletedObjects = Array(deletedObjects)
-        logger.notice("\(#function) \(deletedObjects.count) deleted HKObjects for \(sampleType.displayTitle)")
+        logger.notice("\(#function) \(deletedObjects.count) deleted HKObjects for \(sampleType.mhcDisplayTitle)")
         let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
-            for: .deleted(sampleTypeTitle: sampleType.displayTitle, count: deletedObjects.count)
+            for: .deleted(sampleTypeTitle: sampleType.mhcDisplayTitle, count: deletedObjects.count)
         )
         guard let accountId = await account?.details?.accountId else {
             return
@@ -67,7 +67,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
                 .call([
                     "userId": accountId,
                     "collection": collection,
-                    "samples": deletedObjects.map(\.uuid.uuidString)
+                    "documentIds": deletedObjects.map(\.uuid.uuidString)
                 ])
         } catch {
             logger.notice("Error calling bulk-delete function: \(error)")
@@ -180,7 +180,6 @@ extension MyHeartCountsStandard {
         for change: HealthDocumentChange
     ) async -> @Sendable () async -> Void {
         guard enableDebugNotifications else {
-            logger.notice("NOT SCHEDULING NOTIFICATION")
             return {}
         }
         @Sendable

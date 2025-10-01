@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import HealthKit
 import SpeziAccount
@@ -158,7 +156,7 @@ extension AccountDetails {
     var nhsNumber: NHSNumber?
     
     @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
-    var futureStudies: Bool?
+    var futureStudies: Bool? // swiftlint:disable:this discouraged_optional_boolean
     
     
     @AccountKey(
@@ -169,7 +167,7 @@ extension AccountDetails {
         as: Date.self,
         initial: .empty(.distantPast),
     )
-    public var dateOfEnrollment: Date?
+    var dateOfEnrollment: Date?
 }
 
 

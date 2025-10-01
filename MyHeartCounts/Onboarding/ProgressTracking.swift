@@ -32,7 +32,6 @@ private struct OnboardingStepModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.task {
             guard isInOnboarding, let account else {
-                print("Skipping onboarding progress report", isInOnboarding, self.account)
                 return
             }
             do {

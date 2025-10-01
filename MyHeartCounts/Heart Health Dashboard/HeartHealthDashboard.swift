@@ -45,59 +45,69 @@ struct HeartHealthDashboard: View {
     @State private var isPresentingPastTimedWalkTestResults = false
     
     var body: some View {
-        healthDashboard
+        Form {
+            healthDashboard
+        }
     }
     
     @ViewBuilder var healthDashboard: some View {
-        Text("HEART_HEALTH_DASHBOARD_HEADER")
-            .listRowInsets(.zero)
-            .listRowBackground(Color.clear)
-            .sheet(item: $addNewSampleDescriptor) { descriptor in
-                NavigationStack {
-                    Self.addSampleView(for: descriptor.keyPath, locale: Locale.current)
+        Section {
+            Text("HEART_HEALTH_DASHBOARD_HEADER")
+                .listRowInsets(.zero)
+                .padding([.top, .horizontal])
+                .listRowBackground(Color.clear)
+                .sheet(item: $addNewSampleDescriptor) { descriptor in
+                    NavigationStack {
+                        Self.addSampleView(for: descriptor.keyPath, locale: Locale.current)
+                    }
                 }
-            }
-            .sheet(item: $presentedArticle) { article in
-                ArticleSheet(article: article)
-            }
-            .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
-                NavigationStack {
-                    DetailedHealthStatsView(
-                        scoreResult: input.result,
-                        cvhKeyPath: input.keyPath
-                    )
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            DismissButton()
+                .sheet(item: $presentedArticle) { article in
+                    ArticleSheet(article: article)
+                }
+                .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
+                    NavigationStack {
+                        DetailedHealthStatsView(
+                            scoreResult: input.result,
+                            cvhKeyPath: input.keyPath
+                        )
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                DismissButton()
+                            }
                         }
                     }
                 }
-            }
-            .sheet(isPresented: $isPresentingPastTimedWalkTestResults) {
-                NavigationStack {
-                    PastTimedWalkTestResults()
+                .sheet(isPresented: $isPresentingPastTimedWalkTestResults) {
+                    NavigationStack {
+                        PastTimedWalkTestResults()
+                            .taskPerformingAnchor()
+                    }
                 }
-            }
-        HealthDashboard(layout: [
-            .large(sectionTitle: nil, content: {
-                topSection
-            }),
-            .grid(sectionTitle: "") {
-                makeGridComponent(for: \.dietScore)
-                makeGridComponent(for: \.bodyMassIndexScore)
-                switch $cvhScore.preferredExerciseMetric {
-                case .exerciseMinutes:
-                    makeGridComponent(for: \.physicalExerciseScore)
-                case .stepCount:
-                    makeGridComponent(for: \.stepCountScore)
+        }
+        HealthDashboard(
+            layout: [
+                .large {
+                    topSection
+                },
+                .grid(
+                    footer: "HHD_APPLE_WATCH_REQUIRED_FOOTER"
+                ) {
+                    makeGridComponent(for: \.dietScore)
+                    makeGridComponent(for: \.bodyMassIndexScore)
+                    switch $cvhScore.preferredExerciseMetric {
+                    case .exerciseMinutes:
+                        makeGridComponent(for: \.physicalExerciseScore)
+                    case .stepCount:
+                        makeGridComponent(for: \.stepCountScore)
+                    }
+                    makeGridComponent(for: \.bloodLipidsScore)
+                    makeGridComponent(for: \.nicotineExposureScore)
+                    makeGridComponent(for: \.bloodGlucoseScore)
+                    makeGridComponent(for: \.sleepHealthScore)
+                    makeGridComponent(for: \.bloodPressureScore)
                 }
-                makeGridComponent(for: \.bloodLipidsScore)
-                makeGridComponent(for: \.nicotineExposureScore)
-                makeGridComponent(for: \.bloodGlucoseScore)
-                makeGridComponent(for: \.sleepHealthScore)
-                makeGridComponent(for: \.bloodPressureScore)
-            }
-        ])
+            ]
+        )
         .makeBackgroundMatchFormBackground()
         learnMoreSection
         pastDataSection
@@ -149,7 +159,6 @@ struct HeartHealthDashboard: View {
                     Spacer()
                     DisclosureIndicator()
                 }
-                .contentShape(Rectangle())
             }
         }
     }
@@ -244,7 +253,7 @@ private struct HealthDashboardQuestionnaireView: View {
                 QuestionnaireView(questionnaire: questionnaire) { result in
                     switch result {
                     case .completed(let response):
-                        await standard.add(response: response)
+                        await standard.add(response)
                     case .cancelled, .failed:
                         break
                     }

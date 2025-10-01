@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_length
+// swiftlint:disable file_length attributes
 
 import Algorithms
 import Foundation
@@ -44,10 +44,16 @@ struct TasksList: View {
     }
     
     enum Mode {
-        /// The ``TasksList`` should display a list of upcoming Tasks
-        case upcoming(showFallbackTasks: Bool)
-        /// The ``TasksList`` should display a list of missed but not yet expired Tasks
+        /// The list should display a list of upcoming Tasks
+        case upcoming(includeIndefinitePastTasks: Bool, showFallbackTasks: Bool)
+        /// The list should display a list of missed but not yet expired Tasks
         case missed
+    }
+    
+    /// How the individual events in the list should be grouped.
+    enum EventGroupingConfig {
+        case none
+        case byDay
     }
     
     enum HeaderConfig {
@@ -69,104 +75,23 @@ struct TasksList: View {
         }
     }
     
-    private struct QuestionnaireBeingAnswered: Identifiable {
-        let questionnaire: Questionnaire
-        let enrollment: StudyEnrollment
-        let event: Event
-        let shouldCompleteEvent: Bool
-        var id: Questionnaire.ID { questionnaire.id }
-    }
     
-    private struct ActiveTimedWalkingTest: Identifiable {
-        let test: TimedWalkingTestConfiguration
-        let event: Event?
-        let shouldCompleteEvent: Bool
-        
-        var id: AnyHashable {
-            (event?.id).map { AnyHashable($0) } ?? AnyHashable(test)
-        }
-        
-        init(test: TimedWalkingTestConfiguration, event: Event, shouldCompleteEvent: Bool) {
-            self.test = test
-            self.event = event
-            self.shouldCompleteEvent = shouldCompleteEvent
-        }
-        
-        init(test: TimedWalkingTestConfiguration) {
-            self.test = test
-            self.event = nil
-            self.shouldCompleteEvent = false
-        }
-    }
-    
-    
-    // swiftlint:disable attributes
     @Environment(\.calendar) private var cal
     @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(StudyManager.self) private var studyManager
-    // swiftlint:enable attributes
+    @PerformTask private var performTask
     
     private let mode: Mode
     private let timeRange: TimeRange
     private let headerConfig: HeaderConfig
+    private let eventGroupingConfig: EventGroupingConfig
     private let noTasksMessageLabels: NoTasksMessageLabels
-    
-    @State private var viewState: ViewState = .idle
-    @State private var presentedArticle: Article?
-    @State private var questionnaireBeingAnswered: QuestionnaireBeingAnswered?
-    @State private var activeTimedWalkingTest: ActiveTimedWalkingTest?
     
     var body: some View {
         header
-            .viewStateAlert(state: $viewState)
-            .sheet(item: $questionnaireBeingAnswered) { input in
-                QuestionnaireView(
-                    questionnaire: input.questionnaire,
-                    cancelBehavior: .cancel
-                ) { result in
-                    questionnaireBeingAnswered = nil
-                    switch result {
-                    case .completed(let response):
-                        do {
-                            if input.shouldCompleteEvent {
-                                try input.event.complete()
-                            }
-                            await standard.add(response: response)
-                        } catch {
-                            viewState = .error(error)
-                        }
-                    case .cancelled, .failed:
-                        break
-                    }
-                }
-            }
-            .sheet(item: $presentedArticle) { article in
-                ArticleSheet(article: article)
-            }
-            .sheet(item: $activeTimedWalkingTest) { input in
-                NavigationStack {
-                    TimedWalkingTestView(input.test) { result in
-                        if result != nil, let event = input.event, input.shouldCompleteEvent {
-                            _ = try? event.complete()
-                        }
-                    }
-                }
-            }
-        let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
-        switch mode {
-        case .upcoming(let showFallbackTasks):
-            UpcomingEventsQuery(effectiveTimeRange) { events in
-                Impl(events: events, showFallbackTasks: showFallbackTasks, noTasksMessageLabels: noTasksMessageLabels) {
-                    handleAction($0)
-                }
-            }
-        case .missed:
-            MissedEventsQuery(effectiveTimeRange) { events in
-                Impl(events: events, showFallbackTasks: false, noTasksMessageLabels: noTasksMessageLabels) {
-                    handleAction($0)
-                }
-            }
-        }
+        tasksList
+            .injectingCustomTaskCategoryAppearances()
+            .taskCategoryAppearance(for: .customActiveTask(.ecg), label: "Electrocardiogram", image: .system(.waveformPathEcgRectangle))
     }
     
     @ViewBuilder private var header: some View {
@@ -209,28 +134,74 @@ struct TasksList: View {
         }
     }
     
+    @ViewBuilder private var tasksList: some View {
+        let effectiveTimeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
+        switch mode {
+        case let .upcoming(includeIndefinitePastTasks, showFallbackTasks):
+            if includeIndefinitePastTasks, let dateOfEnrollment = studyManager.studyEnrollments.first?.enrollmentDate {
+                UpcomingEventsQueryWithMissedPastEvents(effectiveTimeRange, dateOfEnrollment: dateOfEnrollment) { events in
+                    Impl(
+                        events: events,
+                        showFallbackTasks: showFallbackTasks,
+                        eventGroupingConfig: eventGroupingConfig,
+                        noTasksMessageLabels: noTasksMessageLabels
+                    ) {
+                        handleAction($0)
+                    }
+                }
+            } else {
+                UpcomingEventsQuery(effectiveTimeRange) { events in
+                    Impl(
+                        events: events,
+                        showFallbackTasks: showFallbackTasks,
+                        eventGroupingConfig: eventGroupingConfig,
+                        noTasksMessageLabels: noTasksMessageLabels
+                    ) {
+                        handleAction($0)
+                    }
+                }
+            }
+        case .missed:
+            MissedEventsQuery(effectiveTimeRange) { events in
+                Impl(
+                    events: events,
+                    showFallbackTasks: false,
+                    eventGroupingConfig: eventGroupingConfig,
+                    noTasksMessageLabels: noTasksMessageLabels
+                ) {
+                    handleAction($0)
+                }
+            }
+        }
+    }
+    
     init(
         mode: Mode,
         timeRange: TimeRange,
         headerConfig: HeaderConfig = .timeRange, // swiftlint:disable:this function_default_parameter_at_end
+        eventGroupingConfig: EventGroupingConfig,
         noTasksMessageLabels: NoTasksMessageLabels
     ) {
         self.mode = mode
         self.timeRange = timeRange
         self.headerConfig = headerConfig
+        self.eventGroupingConfig = eventGroupingConfig
         self.noTasksMessageLabels = noTasksMessageLabels
     }
-    
+}
+
+
+extension TasksList {
     private func handleAction(_ taskToPerform: Impl.TaskToPerform) {
         switch taskToPerform {
         case let .regular(action, event, context, shouldCompleteEvent):
             handleAction(action, for: event, context: context, shouldComplete: shouldCompleteEvent)
-        case .unscheduled(.timedWalkingTest(let test)):
-            activeTimedWalkingTest = .init(test: test)
+        case .unscheduled(let action):
+            performTask(action)
         }
     }
     
-    private func handleAction(
+    private func handleAction( // swiftlint:disable:this function_body_length cyclomatic_complexity
         _ action: StudyManager.ScheduledTaskAction,
         for event: Event,
         context: Task.Context.StudyContext,
@@ -241,18 +212,15 @@ struct TasksList: View {
             guard let enrollment = studyManager.enrollment(withId: context.enrollmentId),
                   let studyBundle = enrollment.studyBundle,
                   let article = Article(component, in: studyBundle, locale: studyManager.preferredLocale) else {
-                logger.error("Error fetching&loading&procesing Article")
+                logger.error("Error fetching & loading & procesing Article")
                 return
             }
-            presentedArticle = article
-            if shouldComplete {
-                // we consider simply presenting the component as being sufficient to complete the event.
-                // NOTE ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
-                // BUT: in this case, we do wanna allow this to happen again! how should we go about this?
-                do {
+            _Concurrency.Task {
+                guard await performTask(.article(article)) else {
+                    return
+                }
+                if shouldComplete {
                     try event.complete()
-                } catch {
-                    logger.error("Was unable to complete() event: \(error)")
                 }
             }
         case .answerQuestionnaire(let component):
@@ -262,18 +230,47 @@ struct TasksList: View {
                 logger.error("Unable to find SPC")
                 return
             }
-            questionnaireBeingAnswered = .init(
-                questionnaire: questionnaire,
-                enrollment: enrollment,
-                event: event,
-                shouldCompleteEvent: shouldComplete
-            )
+            _Concurrency.Task {
+                guard await performTask(.answerQuestionnaire(questionnaire)) else {
+                    return
+                }
+                if shouldComplete {
+                    try event.complete()
+                }
+            }
         case .promptTimedWalkingTest(let component):
-            activeTimedWalkingTest = .init(test: component.test, event: event, shouldCompleteEvent: shouldComplete)
+            _Concurrency.Task {
+                guard await performTask(.timedWalkTest(component.test)) else {
+                    return
+                }
+                if shouldComplete {
+                    try event.complete()
+                }
+            }
+        case .performCustomActiveTask(let component):
+            switch component.activeTask {
+            case .ecg:
+                _Concurrency.Task {
+                    guard await performTask(.ecg) else {
+                        return
+                    }
+                    if shouldComplete {
+                        try event.complete()
+                    }
+                }
+            default:
+                logger.warning("Unhandled custom active task: \(component.activeTask.identifier)")
+            }
         }
     }
 }
 
+
+extension StudyDefinition.CustomActiveTaskComponent.ActiveTask {
+    static func ~= (pattern: Self, value: Self) -> Bool {
+        pattern.identifier == value.identifier
+    }
+}
 
 extension TasksList {
     static func effectiveTimeRange(for timeRange: TimeRange, cal: Calendar) -> Range<Date> {
@@ -306,6 +303,21 @@ extension TasksList {
         
         init(_ timeRange: Range<Date>, @ViewBuilder content: @escaping @MainActor ([Event]) -> Content) {
             _events = .init(in: timeRange)
+            self.content = content
+        }
+    }
+    
+    
+    private struct UpcomingEventsQueryWithMissedPastEvents<Content: View>: View {
+        @MHCTodaysEventsQuery private var events: [Event]
+        private let content: @MainActor ([Event]) -> Content
+        
+        var body: some View {
+            content(events)
+        }
+        
+        init(_ timeRange: Range<Date>, dateOfEnrollment: Date, @ViewBuilder content: @escaping @MainActor ([Event]) -> Content) {
+            _events = .init(timeRange, dateOfEnrollment: dateOfEnrollment)
             self.content = content
         }
     }
@@ -368,39 +380,6 @@ extension TasksList {
     private struct Impl: View {
         typealias SelectionHandler = @MainActor (TaskToPerform) -> Void
         
-        /// A task we might offer the user to perform, that isn't associated with any particular scheduled event.
-        enum UnscheduledTask: Hashable {
-            case timedWalkingTest(TimedWalkingTestConfiguration)
-            
-            var symbol: SFSymbol {
-                switch self {
-                case .timedWalkingTest(let test):
-                    test.kind.symbol
-                }
-            }
-            
-            var displayTitle: LocalizedStringResource {
-                switch self {
-                case .timedWalkingTest(let test):
-                    test.displayTitle
-                }
-            }
-            
-            var instructions: LocalizedStringResource? {
-                switch self {
-                case .timedWalkingTest:
-                    nil
-                }
-            }
-            
-            var actionLabel: LocalizedStringResource {
-                switch self {
-                case .timedWalkingTest:
-                    "Take Test"
-                }
-            }
-        }
-        
         enum TaskToPerform {
             case regular(
                 action: StudyManager.ScheduledTaskAction,
@@ -408,7 +387,7 @@ extension TasksList {
                 context: Task.Context.StudyContext,
                 shouldCompleteEvent: Bool
             )
-            case unscheduled(UnscheduledTask)
+            case unscheduled(PerformTask.Task.Action)
         }
         
         private struct SectionedEvents {
@@ -416,28 +395,40 @@ extension TasksList {
             let events: [Event]
         }
         
-        @Environment(\.calendar)
-        private var cal
+        @Environment(\.calendar) private var cal
+        @Environment(Scheduler.self) private var scheduler
+        @Environment(StudyManager.self) private var studyManager
+        @AlwaysAvailableTaskActions private var alwaysAvailableTaskActions
         private let events: [Event]
         private let showFallbackTasks: Bool
+        private let eventGroupingConfig: TasksList.EventGroupingConfig
         private let noTasksMessageLabels: NoTasksMessageLabels
         private let selectionHandler: SelectionHandler
         
         var body: some View {
             if !events.isEmpty {
                 let eventsByDay = eventsByDay
-                ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
-                    Section {
-                        ForEach(data: sectionedEvents.events) { (event: Event) in
-                            tile(for: event)
+                switch eventGroupingConfig {
+                case .none:
+                    ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
+                        ForEach(sectionedEvents.events) { event in
+                            Section {
+                                tile(for: event)
+                            }
+                            .listSectionSpacing(.compact)
                         }
-                    } header: {
-                        if eventsByDay.count > 1 {
+                    }
+                case .byDay:
+                    ForEach(eventsByDay, id: \.startOfDay) { sectionedEvents in
+                        Section {
+                            ForEach(data: sectionedEvents.events) { (event: Event) in
+                                tile(for: event)
+                            }
+                        } header: {
                             Text(sectionedEvents.startOfDay.formatted(date: .long, time: .omitted))
                         }
                     }
                 }
-                .injectingCustomTaskCategoryAppearances()
             } else {
                 Section {
                     ContentUnavailableView(
@@ -446,6 +437,8 @@ extension TasksList {
                         description: Text(noTasksMessageLabels.subtitle)
                     )
                 }
+            }
+            if showFallbackTasks || events.isEmpty {
                 UpcomingTasksTab.sectionHeader(
                     title: "Other Tasks",
                     subtitle: "Always Available"
@@ -463,19 +456,56 @@ extension TasksList {
         }
         
         @ViewBuilder private var fallbackSections: some View {
-            let tasks: [UnscheduledTask] = [
-                .timedWalkingTest(.sixMinuteWalkTest),
-                .timedWalkingTest(.twelveMinuteRunTest)
-            ]
-            ForEach(tasks, id: \.self) { task in
+//            // All tasks we want to offer as "always available"
+//            let allTasks: [UnscheduledTask] = [
+//                .ecg,
+//                .timedWalkingTest(.sixMinuteWalkTest),
+//                .timedWalkingTest(.twelveMinuteRunTest)
+//            ]
+//            // filter out anything that's already prompted above
+//            let tasks = allTasks.filter { task in
+//                switch task {
+//                case .ecg:
+//                    !events.contains { $0.task.category == .customActiveTask(.ecg) }
+//                case .timedWalkingTest(let testConfig):
+//                    !events.contains { (event: Event) -> Bool in
+//                        guard event.task.category == .timedWalkingTest else {
+//                            return false
+//                        }
+//                        return switch event.task.studyScheduledTaskAction {
+//                        case .promptTimedWalkingTest(let component):
+//                            component.test == testConfig
+//                        default:
+//                            false
+//                        }
+//                    }
+//                }
+//            }
+//            ForEach(tasks, id: \) { task in
+//                Section {
+//                    FakeEventTile(
+//                        symbol: task.symbol,
+//                        title: task.displayTitle,
+//                        subtitle: task.subtitle,
+//                        instructions: task.instructions,
+//                        actionLabel: task.actionLabel
+//                    ) {
+//                        selectionHandler(.unscheduled(task))
+//                    }
+//                }
+//                .listSectionSpacing(.compact)
+//            }
+            let actions = alwaysAvailableTaskActions.taskActions(excludingBasedOn: events).flatMap(\.self)
+            ForEach(actions, id: \.self) { action in
                 Section {
                     FakeEventTile(
-                        symbol: task.symbol,
-                        title: task.displayTitle,
-                        instructions: task.instructions,
-                        actionLabel: task.actionLabel
+                        symbol: action.symbol,
+                        title: action.title,
+                        subtitle: action.subtitle,
+                        instructions: action.instructions,
+                        actionLabel: action.actionLabel
                     ) {
-                        selectionHandler(.unscheduled(task))
+                        selectionHandler(.unscheduled(action))
                     }
                 }
                 .listSectionSpacing(.compact)
@@ -486,11 +516,13 @@ extension TasksList {
         init(
             events: [Event],
             showFallbackTasks: Bool,
+            eventGroupingConfig: TasksList.EventGroupingConfig,
             noTasksMessageLabels: NoTasksMessageLabels,
             selectionHandler: @escaping SelectionHandler
         ) {
             self.events = events
             self.showFallbackTasks = showFallbackTasks
+            self.eventGroupingConfig = eventGroupingConfig
             self.noTasksMessageLabels = noTasksMessageLabels
             self.selectionHandler = selectionHandler
         }
@@ -540,6 +572,8 @@ extension TasksList {
                 "Take Test"
             case (.timedWalkingTest, .enabled(wouldBeFirstCompletion: false)), (.timedRunningTest, .enabled(wouldBeFirstCompletion: false)):
                 "Take Test Again"
+            case (.customActiveTask(.ecg), _):
+                "Take ECG"
             default:
                 nil
             }
@@ -643,5 +677,16 @@ extension SwiftUI.ForEach {
         @ViewBuilder content: @escaping (Data.Element) -> Content
     ) where Data: RandomAccessCollection, ID == Data.Element.ID, Data.Element: Identifiable, Content: View {
         self.init(data) { content($0) }
+    }
+}
+
+
+extension EventActionButton {
+    init(event: Event, label: LocalizedStringResource?, action: @escaping @MainActor () -> Void) {
+        if let label {
+            self.init(event: event, label, action: action)
+        } else {
+            self.init(event: event, action: action)
+        }
     }
 }

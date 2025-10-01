@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order all
+// swiftlint:disable file_types_order
 
 import Charts
 import Foundation
@@ -154,6 +154,7 @@ private struct GridCellImpl: View {
                 )
                 let dataSet = HealthStatsChartDataSet(
                     name: sampleType.displayTitle,
+                    sampleType: sampleType,
                     drawingConfig: drawingConfig,
                     data: samples,
                     id: \.id

@@ -70,10 +70,10 @@ struct StudyInfoView: View { // swiftlint:disable:this file_types_order
                 VStack(alignment: .leading) {
                     Text("This study will request read-access to collect the following Health samples:")
                     let allSampleTypes = collectedSampleTypes
-                        .sorted(by: { $0.displayTitle < $1.displayTitle })
+                        .sorted(by: { $0.mhcDisplayTitle < $1.mhcDisplayTitle })
                     ForEach(0..<allSampleTypes.endIndex, id: \.self) { (sampleTypeIdx: Int) in
                         let sampleType = allSampleTypes[sampleTypeIdx]
-                        Text("– \(sampleType.displayTitle)")
+                        Text("– \(sampleType.mhcDisplayTitle)")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                     }

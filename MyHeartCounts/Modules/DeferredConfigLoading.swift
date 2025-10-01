@@ -217,7 +217,7 @@ enum DeferredConfigLoading {
                 ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
                 LoadFirebaseTracking()
                 AccountConfiguration(
-                    service: FirebaseAccountService(providers: [.emailAndPassword, .signInWithApple], emulatorSettings: accountEmulator),
+                    service: FirebaseAccountService(providers: [.emailAndPassword], emulatorSettings: accountEmulator),
                     storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.usersCollection),
                     configuration: [
                         .requires(\.userId),
@@ -245,7 +245,10 @@ enum DeferredConfigLoading {
                         .manual(\.comorbidities),
                         .manual(\.nhsNumber),
                         .manual(\.lastSignedConsentDate),
-                        .manual(\.lastSignedConsentVersion)
+                        .manual(\.lastSignedConsentVersion),
+                        .manual(\.futureStudies),
+                        .manual(\.mostRecentOnboardingStep),
+                        .manual(\.dateOfEnrollment)
                     ]
                 )
                 firestore

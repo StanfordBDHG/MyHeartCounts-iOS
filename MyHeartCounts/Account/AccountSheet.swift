@@ -10,7 +10,6 @@ import SFSafeSymbols
 import SpeziAccount
 import SpeziHealthKitBulkExport
 import SpeziLicense
-import SpeziSensorKit
 import SpeziStudy
 import SpeziViews
 import SwiftUI
@@ -21,15 +20,14 @@ struct AccountSheet: View {
     // swiftlint:disable attributes
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.openURL) private var openUrl
     @Environment(\.openSettingsApp) private var openSettingsApp
     @Environment(Account.self) private var account
     @Environment(\.accountRequired) private var accountRequired
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
-    @Environment(SensorKit.self) private var sensorKit
     // swiftlint:enable attributes
     
-    @State private var viewState: ViewState = .idle
     @State private var isInSetup = false
     @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
@@ -102,17 +100,20 @@ struct AccountSheet: View {
         
         if let enrollment = enrollments.first {
             Section("Study Participation") {
-                NavigationLink {
-                    if let studyBundle = enrollment.studyBundle {
-                        StudyInfoView(studyBundle: studyBundle)
-                    } else {
-                        Text("Study not available")
-                            .foregroundStyle(.secondary)
-                    }
+                Button {
+                    openUrl(MyHeartCounts.website)
                 } label: {
-                    makeEnrolledStudyRow(for: enrollment)
+                    HStack {
+                        makeEnrolledStudyRow(for: enrollment)
+                        Spacer()
+                        DisclosureIndicator()
+                    }
+                    .contentShape(Rectangle())
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
                 }
-                .disabled(enrollment.studyBundle == nil)
+                NavigationLink("Review Consent Forms") {
+                    SignedConsentForms()
+                }
                 if historicalDataExportMgr.session.map({ $0.state == .running || $0.state == .paused }) ?? false
                     || historicalDataExportMgr.fileUploader.uploadProgress != nil {
                     HStack {
@@ -121,16 +122,6 @@ struct AccountSheet: View {
                         ProgressView()
                     }
                 }
-            }
-        }
-        Section {
-            if let enrollment = enrollments.first, let studyBundle = enrollment.studyBundle {
-                NavigationLink("Study Information") {
-                    StudyInfoView(studyBundle: studyBundle)
-                }
-            }
-            NavigationLink("Review Consent Forms") {
-                SignedConsentForms()
             }
         }
         Section {

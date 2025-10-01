@@ -32,7 +32,7 @@ extension SensorKitOnWristEventSample: HealthObservation {
     
     func resource(
         withMapping mapping: HKSampleMapping,
-        issuedDate _: FHIRPrimitive<Instant>?,
+        issuedDate: FHIRPrimitive<Instant>?,
         extensions: [any FHIRExtensionBuilderProtocol]
     ) throws -> ResourceProxy {
         let observation = Observation(
@@ -52,7 +52,12 @@ extension SensorKitOnWristEventSample: HealthObservation {
                 start: .init(DateTime(date: min(onWristDate, offWristDate)))
             ))
         }
-        try observation.setIssued(on: self.timestamp)
+        if let issuedDate {
+            observation.issued = issuedDate
+        } else {
+            try observation.setIssued(on: .now)
+        }
+        observation.effective = .dateTime(FHIRPrimitive(try DateTime(date: timestamp)))
         observation.value = .boolean(.init(.init(onWrist)))
         observation.appendComponent(ObservationComponent(
             code: SpeziCodingSystem.watchWristLocation,

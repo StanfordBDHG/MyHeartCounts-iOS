@@ -270,7 +270,7 @@ extension XCUIApplication {
                 XCTAssert(element.waitForNonExistence(timeout: 2))
             }
         }
-        buttons["Complete"].tap()
+        buttons["Start"].tap()
         XCTAssert(staticTexts["Today's Tasks"].waitForExistence(timeout: 10))
     }
 }
