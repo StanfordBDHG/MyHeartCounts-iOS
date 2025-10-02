@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - currently unused but supported (we keep it in case we want to go down this route in the future)
+
 import Foundation
 import HealthKit
 

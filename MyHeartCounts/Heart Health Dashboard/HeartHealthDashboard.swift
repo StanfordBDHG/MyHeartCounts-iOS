@@ -57,9 +57,7 @@ struct HeartHealthDashboard: View {
                 .padding([.top, .horizontal])
                 .listRowBackground(Color.clear)
                 .sheet(item: $addNewSampleDescriptor) { descriptor in
-                    NavigationStack {
-                        Self.addSampleView(for: descriptor.keyPath, locale: Locale.current)
-                    }
+                    Self.addSampleSheet(for: descriptor.keyPath)
                 }
                 .sheet(item: $presentedArticle) { article in
                     ArticleSheet(article: article)
@@ -186,7 +184,11 @@ struct HeartHealthDashboard: View {
                     .foregroundStyle(.secondary)
             }
         } onTap: {
-            scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
+            if true {
+                addNewSample(for: scoreKeyPath)
+            } else {
+                scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
+            }
         }
     }
     
@@ -212,23 +214,25 @@ extension HeartHealthDashboard {
         cvhKeyPathsWithDataEntryEnabled.contains(keyPath)
     }
     
-    @ViewBuilder
-    static func addSampleView(for keyPath: KeyPath<CVHScore, ScoreResult>, locale: Locale) -> some View {
-        switch keyPath {
-        case \.nicotineExposureScore:
-            HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
-        case \.dietScore:
-            HealthDashboardQuestionnaireView(questionnaireName: "Diet")
-        case \.bodyMassIndexScore:
-            SaveBMISampleView()
-        case \.bloodLipidsScore:
-            SaveQuantitySampleView(sampleType: MHCQuantitySampleType.custom(.bloodLipids))
-        case \.bloodGlucoseScore:
-            SaveQuantitySampleView(sampleType: MHCQuantitySampleType.healthKit(.bloodGlucose))
-        case \.bloodPressureScore:
-            SaveBloodPressureSampleView()
-        default:
-            EmptyView()
+    
+    static func addSampleSheet(for keyPath: KeyPath<CVHScore, ScoreResult>) -> some View {
+        NavigationStack {
+            switch keyPath {
+            case \.nicotineExposureScore:
+                HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
+            case \.dietScore:
+                HealthDashboardQuestionnaireView(questionnaireName: "Diet")
+            case \.bodyMassIndexScore:
+                SaveBMISampleView()
+            case \.bloodLipidsScore:
+                SaveQuantitySampleView(sampleType: MHCQuantitySampleType.custom(.bloodLipids))
+            case \.bloodGlucoseScore:
+                SaveQuantitySampleView(sampleType: MHCQuantitySampleType.healthKit(.bloodGlucose))
+            case \.bloodPressureScore:
+                SaveBloodPressureSampleView()
+            default:
+                EmptyView()
+            }
         }
     }
 }

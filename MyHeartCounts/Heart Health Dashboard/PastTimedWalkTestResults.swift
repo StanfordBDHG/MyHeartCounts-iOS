@@ -85,6 +85,7 @@ struct PastTimedWalkTestResults: View {
 
 
 extension MHCFirestoreQuery {
+    // periphery:ignore - we're using this init (the property wrapper in the view above...) but periphery doesn't seem to be able to see that use.
     init(
         fetching _: TimedWalkingTestResult.Type,
         timeRange: HealthKitQueryTimeRange,

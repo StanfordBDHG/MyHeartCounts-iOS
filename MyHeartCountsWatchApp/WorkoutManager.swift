@@ -26,10 +26,7 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         case active(startDate: Date)
     }
     
-    // swiftlint:disable attributes
-    @ObservationIgnored @Application(\.logger) private var logger
-    @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
-    // swiftlint:enable attributes
+    @ObservationIgnored @Dependency(HealthKit.self) private var healthKit // swiftlint:disable:this attributes
     
     private var workoutSession: HKWorkoutSession?
     
@@ -130,28 +127,6 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         Task { @MainActor in
             updateState()
             self.workoutSession = nil
-        }
-    }
-}
-
-
-extension HKWorkoutSessionState {
-    var displayTitle: String {
-        switch self {
-        case .notStarted:
-            "not started"
-        case .running:
-            "running"
-        case .ended:
-            "ended"
-        case .paused:
-            "paused"
-        case .prepared:
-            "prepared"
-        case .stopped:
-            "stopped"
-        @unknown default:
-            "unknown<\(rawValue)>"
         }
     }
 }

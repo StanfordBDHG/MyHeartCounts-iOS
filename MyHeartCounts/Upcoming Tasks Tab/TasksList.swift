@@ -35,10 +35,15 @@ struct TasksList: View {
         /// The time range encompassing all of today.
         static let today = Self.days(1)
         
+        // periphery:ignore - unused but we want to keep it around
         /// The time range starting today, and going a week into the future.
         static let nextWeek = Self.weeks(1)
+        
+        // periphery:ignore - unused but we want to keep it around
         /// The time range starting today, and going 14 days into the future.
         static let fortnight = Self.weeks(2)
+        
+        // periphery:ignore - unused but we want to keep it around
         /// The time range starting today, and going a month into the future.
         static let month = Self.months(1)
     }
@@ -77,7 +82,6 @@ struct TasksList: View {
     
     
     @Environment(\.calendar) private var cal
-    @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(StudyManager.self) private var studyManager
     @PerformTask private var performTask
     
@@ -267,6 +271,7 @@ extension TasksList {
 
 
 extension StudyDefinition.CustomActiveTaskComponent.ActiveTask {
+    // periphery:ignore - implicitly called
     static func ~= (pattern: Self, value: Self) -> Bool {
         pattern.identifier == value.identifier
     }
@@ -340,17 +345,6 @@ extension TasksList {
 
 
 extension TasksList {
-    /// Defines how the ``TasksList`` should treat an Event, w.r.t. to its completion status, for the purposes of completing the event, and possibly re-triggering it.
-    private struct AllowedEventInteractions: OptionSet {
-        static let perform = Self(rawValue: 1 << 0)
-        static let complete = Self(rawValue: 1 << 1)
-        
-        let rawValue: UInt8
-        init(rawValue: UInt8) {
-            self.rawValue = rawValue
-        }
-    }
-    
     private enum EventInteractionConfig: Hashable {
         /// We don't allow the user to perform the event's associated action.
         case disabled
@@ -396,8 +390,6 @@ extension TasksList {
         }
         
         @Environment(\.calendar) private var cal
-        @Environment(Scheduler.self) private var scheduler
-        @Environment(StudyManager.self) private var studyManager
         @AlwaysAvailableTaskActions private var alwaysAvailableTaskActions
         private let events: [Event]
         private let showFallbackTasks: Bool

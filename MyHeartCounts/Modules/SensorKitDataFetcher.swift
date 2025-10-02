@@ -62,11 +62,14 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         }
     }
     
+    // periphery:ignore
     /// Fetches all SensorKit samples for the specified sensor, and uploads them all into the Firestore.
     ///
     /// Primarily intended for testing purposes.
     @concurrent
-    private func fetchAndUploadAll<Sample>(for sensor: Sensor<Sample>) async throws where Sample.SafeRepresentation: HealthObservation {
+    private func fetchAndUploadAll<Sample>(
+        for sensor: Sensor<Sample>
+    ) async throws where Sample.SafeRepresentation: HealthObservation {
         let devices = try await sensor.fetchDevices()
         for device in devices {
             let newestSampleDate = Date.now.addingTimeInterval(-sensor.dataQuarantineDuration.timeInterval)
@@ -89,11 +92,14 @@ extension Sensor: MHCUploadableSensor where Sample.SafeRepresentation: HealthObs
 
 
 extension SensorKit {
+    /// All sensors we want to enable continuous data collection for.
     static let mhcSensors: [any MHCUploadableSensor] = [
         Sensor.onWrist,
         Sensor.ecg
     ]
     
+    // periphery:ignore
+    /// All sensors we officially support.
     static let mhcSensorsExtended: [any AnySensor] = [
         Sensor.onWrist,
         Sensor.heartRate,

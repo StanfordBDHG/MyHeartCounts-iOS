@@ -11,7 +11,6 @@
 import Charts
 import Foundation
 import SFSafeSymbols
-import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
@@ -34,7 +33,6 @@ struct DetailedHealthStatsView: View {
     
     // swiftlint:disable attributes
     @Environment(\.calendar) private var cal
-    @Environment(Account.self) private var account: Account?
     @Environment(StudyManager.self) private var studyManager
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     // swiftlint:enable attributes
@@ -95,9 +93,7 @@ struct DetailedHealthStatsView: View {
             switch input {
             case .scoreResult(result: _, let keyPath):
                 view.sheet(isPresented: $isPresentingAddSampleSheet) {
-                    NavigationStack {
-                        HeartHealthDashboard.addSampleView(for: keyPath, locale: Locale.current)
-                    }
+                    HeartHealthDashboard.addSampleSheet(for: keyPath)
                 }
             }
         }

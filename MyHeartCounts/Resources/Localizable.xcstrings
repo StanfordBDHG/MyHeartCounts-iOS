@@ -5,6 +5,7 @@
 
     },
     "– %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -627,6 +628,7 @@
       }
     },
     "Are you able to perform physical activities?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -647,6 +649,7 @@
       }
     },
     "Are you sure you want to leave the '%@' study?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1447,6 +1450,7 @@
       }
     },
     "End Study Participation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1460,6 +1464,7 @@
 
     },
     "Enroll in Study" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1985,6 +1990,7 @@
       }
     },
     "Health Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2136,6 +2142,7 @@
       }
     },
     "I have never smoked" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2146,6 +2153,7 @@
       }
     },
     "I last smoked between 1 and 5 years ago" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2156,6 +2164,7 @@
       }
     },
     "I last smoked more than 5 years ago" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2166,6 +2175,7 @@
       }
     },
     "I last smoked within the last year, or am using NDS" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2176,6 +2186,7 @@
       }
     },
     "I'm actively smoking" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3315,6 +3326,7 @@
       }
     },
     "Participation Criteria" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3462,6 +3474,7 @@
       }
     },
     "Percentage in Phase" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3475,6 +3488,7 @@
 
     },
     "Physical Activity" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4195,6 +4209,7 @@
       }
     },
     "Sleep Phase" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4371,6 +4386,7 @@
       }
     },
     "This study will request read-access to collect the following Health samples:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4510,12 +4526,6 @@
 
     },
     "Today's Tasks" : {
-
-    },
-    "TODO: make this look pretty!" : {
-
-    },
-    "TODO: rough information about (at least some) key study components here?" : {
 
     },
     "Total Household Income" : {

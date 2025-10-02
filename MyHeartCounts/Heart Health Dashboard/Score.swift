@@ -43,6 +43,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
                 self.trailingText = trailingText
                 self.background = background
             }
+            // periphery:ignore - API
             @_disfavoredOverload
             init(
                 leadingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
@@ -123,6 +124,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     let variant: Variant
     
     
+    // periphery:ignore:parameters `default` - false positive
     init(
         `default`: Double,
         scoringBands: [ScoringBand],
@@ -135,6 +137,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
         )
     }
     
+    // periphery:ignore:parameters `default` - false positive
     /// Creates a ``ScoreDefinition`` that uses a custom closure to calculate score values.
     ///
     /// - parameter default: the score value that should be used for inputs that aren't compatible with the closure's input type.
@@ -197,6 +200,7 @@ struct ScoreResult: Hashable, Sendable {
         self.timeRange = timeRange
     }
     
+    // periphery:ignore - API
     init(
         _ title: LocalizedStringResource,
         sampleType: MHCSampleType,

@@ -54,7 +54,6 @@ struct LargeSleepAnalysisView: View {
     
     private let timeRange: HealthKitQueryTimeRange
     @HealthKitQuery<HKCategorySample> private var sleepAnalysis: Slice<OrderedArray<HKCategorySample>>
-    @SleepPhaseColors private var sleepPhaseColors
     
     @State private var sleepData: Result<SleepData, any Error>?
     @State private var xSelection: Date?
@@ -156,24 +155,6 @@ struct LargeSleepAnalysisView: View {
         let hours = Int(duration / TimeConstants.hour)
         let minutes = Int(duration.truncatingRemainder(dividingBy: TimeConstants.hour) / TimeConstants.minute)
         return "\(hours) hr \(minutes) min"
-    }
-}
-
-
-extension HKObject {
-    var timeZone: TimeZone? {
-        if let name = metadata?[HKMetadataKeyTimeZone] as? String {
-            TimeZone(identifier: name)
-        } else {
-            nil
-        }
-    }
-}
-
-
-extension SleepSession.SleepPhase {
-    var isAsleep: Bool {
-        Self.allAsleepValues.contains(self)
     }
 }
 

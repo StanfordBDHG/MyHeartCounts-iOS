@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - implicitly called
+
 import Foundation
 import SwiftUI
 

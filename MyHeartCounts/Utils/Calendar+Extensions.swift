@@ -24,12 +24,6 @@ extension Calendar {
 
 
 extension Date.FormatStyle {
-    func timeZone(_ timeZone: TimeZone) -> Self {
-        var copy = self
-        copy.timeZone = timeZone
-        return copy
-    }
-    
     /// Updates the `DateFormat`'s calendar and time zone, based on the input.
     func calendar(_ calendar: Calendar) -> Self {
         var copy = self
@@ -43,25 +37,5 @@ extension Date.FormatStyle {
             .minute(.omitted)
             .second(.omitted)
             .secondFraction(.omitted)
-    }
-    
-    func omittingDate() -> Self {
-        self.era(.omitted)
-            .year(.omitted)
-            .quarter(.omitted)
-            .month(.omitted)
-            .week(.omitted)
-            .day(.omitted)
-            .dayOfYear(.omitted)
-            .weekday(.omitted)
-    }
-}
-
-
-extension Date.ISO8601FormatStyle {
-    func timeZone(_ timeZone: TimeZone) -> Self {
-        var copy = self
-        copy.timeZone = timeZone
-        return copy
     }
 }

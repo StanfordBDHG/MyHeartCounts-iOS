@@ -412,20 +412,6 @@ extension ScoreDefinition {
 
 
 extension HealthKitQueryTimeRange {
-    /// A time range that fetches all data over the last 2 weeks, excluding today.
-    /// We use this range for metrics where the score is derived from the daily total, as opposed to the most recent value,
-    /// in order to prevent displaying scores derived from incomplete data (eg: if you open the app at noon and only have a small number of
-    /// steps / exercise minutes tracked for the day so far).
-    static var queryTimeRangeLastFullDayInLast2Weeks: HealthKitQueryTimeRange {
-        let cal = Calendar.current
-        let today = cal.startOfDay(for: .now)
-        guard let twoWeeksAgo = cal.date(byAdding: .weekOfYear, value: -2, to: today) else {
-            preconditionFailure("Unable to determine start date")
-        }
-        return .init(twoWeeksAgo..<today)
-    }
-    
-    
     func offset(by components: DateComponents, in cal: Calendar = .current) -> Self {
         guard let start = cal.date(byAdding: components, to: range.lowerBound),
               let end = cal.date(byAdding: components, to: range.upperBound) else {

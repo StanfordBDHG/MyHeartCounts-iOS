@@ -25,7 +25,6 @@ struct DebugOptions: View {
     // swiftlint:enable attributes
     
     @State private var isTimedWalkingTestSheetShown = false
-    @State private var viewState: ViewState = .idle
     
     var body: some View {
         Form {
@@ -87,6 +86,7 @@ struct DebugOptions: View {
 
 
 extension DebugOptions {
+    // periphery:ignore - occasionally useful
     struct EnrollmentTestingView: View {
         @Environment(Account.self)
         private var account: Account

@@ -31,9 +31,6 @@ final class LocalPreferenceTests {
     
     @Test
     func simpleTypes() throws {
-        let suite = try #require(UserDefaults(suiteName: "edu.stanford.MHC.unitTests"))
-        let store = LocalPreferencesStore(defaults: suite)
-        
         #expect(store[.string] == "")
         #expect(store[.stringOpt] == nil)
         #expect(suite.string(forKey: "edu_stanford_MyHeartCounts_string") == nil)

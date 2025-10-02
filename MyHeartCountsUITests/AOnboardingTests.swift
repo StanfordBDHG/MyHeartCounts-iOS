@@ -197,7 +197,7 @@ extension XCUIApplication {
         scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true, expectedDirection: .down)
         scrollToDropdownAndSelect(
             identifier: "ConsentForm:short-term-physical-activity-trial",
-            option: "Yes",
+            option: signUpForExtraTrial ? "Yes" : "No",
             expectedDirection: .down
         )
         swipeUp()

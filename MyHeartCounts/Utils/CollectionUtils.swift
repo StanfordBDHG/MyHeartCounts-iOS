@@ -10,6 +10,7 @@ import Foundation
 
 
 extension Collection {
+    // periphery:ignore - API
     /// Returns the elements of the sequence, sorted using the given array of
     /// `SortComparator`s to compare elements.
     ///

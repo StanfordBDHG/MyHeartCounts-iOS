@@ -17,8 +17,6 @@ import SwiftUI
 @propertyWrapper
 @MainActor
 struct AlwaysAvailableTaskActions: DynamicProperty {
-    @Environment(\.calendar) private var cal
-    @Environment(Scheduler.self) private var scheduler
     @Environment(StudyManager.self) private var studyManager
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     

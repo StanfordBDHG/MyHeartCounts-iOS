@@ -8,7 +8,6 @@
 
 import Foundation
 import SFSafeSymbols
-import SpeziAccount
 import SwiftUI
 
 
@@ -16,9 +15,6 @@ import SwiftUI
 struct HomeTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "My Heart Counts" }
     static var tabSymbol: SFSymbol { .cubeTransparent }
-    
-    @Environment(Account.self)
-    private var account
     
     @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
     private var missedEvents

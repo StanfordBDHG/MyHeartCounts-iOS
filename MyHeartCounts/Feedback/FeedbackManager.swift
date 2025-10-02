@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - some of the properties in the `Feedback` struct are set-only from the app's POV.
+
 @preconcurrency import FirebaseFirestore
 import Foundation
 import OSLog

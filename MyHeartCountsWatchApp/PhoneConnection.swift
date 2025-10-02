@@ -17,10 +17,7 @@ import WatchConnectivity
 @Observable
 @MainActor
 final class PhoneConnection: NSObject, Module, WCSessionDelegate {
-    // swiftlint:disable attributes
-    @ObservationIgnored @Application(\.logger) private var logger
-    @ObservationIgnored @Dependency(WorkoutManager.self) private var workoutManager
-    // swiftlint:enable attributes
+    @ObservationIgnored @Dependency(WorkoutManager.self) private var workoutManager // swiftlint:disable:this attributes
     
     @ObservationIgnored private let wcSession: WCSession = .default
     private(set) var userInfo: [InterDeviceUserInfoKey: Any] = [:]

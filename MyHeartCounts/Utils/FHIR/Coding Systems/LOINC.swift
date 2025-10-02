@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all
+
 import Foundation
 import struct ModelsR4.FHIRPrimitive
 

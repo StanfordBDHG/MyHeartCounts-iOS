@@ -323,6 +323,7 @@ extension Spezi {
 
 
 extension FirebaseOptions {
+    // periphery:ignore - unused but important
     convenience init(plistInBundle filename: String) {
         guard let path = Bundle.main.path(forResource: filename, ofType: "plist") else {
             preconditionFailure("Unable to find '\(filename).plist' in bundle")

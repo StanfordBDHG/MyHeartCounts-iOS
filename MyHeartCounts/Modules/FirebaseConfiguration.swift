@@ -18,12 +18,9 @@ final class FirebaseConfiguration: Module, EnvironmentAccessible, @unchecked Sen
     enum ConfigurationError: Error {
         case userNotAuthenticatedYet
     }
-
-    // swiftlint:disable attributes
-    @Application(\.logger) private var logger
-    @Dependency(Account.self) private var account: Account? // optional, as Firebase might be disabled
-    @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
-    // swiftlint:enable attributes
+    
+    @Dependency(Account.self)
+    private var account: Account? // optional, as Firebase might be disabled
     
     init() {}
 }
@@ -37,12 +34,6 @@ extension FirebaseConfiguration {
     @MainActor var userDocumentReference: DocumentReference {
         get throws {
             Self.usersCollection.document(try accountId)
-        }
-    }
-
-    @MainActor var userBucketReference: StorageReference {
-        get throws {
-            Storage.storage().reference().child("users/\(try accountId)")
         }
     }
     

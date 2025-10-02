@@ -37,19 +37,8 @@ extension CodingProtocol {
 
 extension ModelsR4.Resource: @retroactive Identifiable {}
 
-extension ModelsR4.ResourceProxy {
-    var observation: Observation? {
-        switch self {
-        case .observation(let observation):
-            observation
-        default:
-            nil
-        }
-    }
-}
-
-
 extension Coding {
+    // periphery:ignore:parameters system
     convenience init<C: CodingProtocol>(system: C.Type = C.self, code: C) {
         self.init(
             code: code.rawValue.asFHIRStringPrimitive(),
@@ -62,7 +51,7 @@ extension Coding {
 
 extension CodeableConcept {
     convenience init<C: CodingProtocol>(system: C.Type = C.self, code: C) {
-        self.init(coding: [Coding(code: code)])
+        self.init(coding: [Coding(system: system, code: code)])
     }
 }
 
@@ -74,7 +63,7 @@ extension ObservationComponent {
         value: ObservationComponent.ValueX?
     ) {
         self.init(
-            code: CodeableConcept(code: code),
+            code: CodeableConcept(system: system, code: code),
             value: value
         )
     }
@@ -88,6 +77,7 @@ extension ObservationComponent {
         self.init(
             code: code,
             value: .quantity(.init(
+                system: system,
                 code: code,
                 unit: quantityUnit,
                 value: quantityValue
@@ -98,6 +88,7 @@ extension ObservationComponent {
 
 
 extension Quantity {
+    // periphery:ignore:parameters system
     convenience init<C: CodingProtocol>(system: C.Type = C.self, code: C, unit: String, value: Double) {
         self.init(
             code: code.rawValue.asFHIRStringPrimitive(),

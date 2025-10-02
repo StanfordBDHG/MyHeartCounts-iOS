@@ -20,9 +20,6 @@ struct NotificationsManagerControlView: View {
     @Environment(\.notificationSettings)
     private var _getNotificationSettings
     
-    @Environment(\.colorScheme)
-    private var colorScheme
-    
     @State private var notificationSettings: UNNotificationSettings?
     
     var body: some View {
@@ -80,7 +77,6 @@ struct NotificationsManagerControlView: View {
             } label: {
                 label
             }
-//            .tint(colorScheme == .dark ? .white : .black)
         } else {
             label
         }

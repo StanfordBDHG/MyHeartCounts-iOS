@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - false positive
+
 import Foundation
 import struct SwiftUI.Color
 import struct SwiftUI.EnvironmentValues

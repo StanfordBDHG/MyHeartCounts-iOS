@@ -18,7 +18,6 @@ import SwiftUI
 @Observable
 final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
     // swiftlint:disable attributes
-    @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager
@@ -84,6 +83,7 @@ extension Version {
         case patch
     }
     
+    // periphery:ignore - API
     /// Determines if the version is equal to another version, up to the specified component.
     @inlinable
     public func isEqual(to other: Version, downTo component: Component) -> Bool {

@@ -16,9 +16,6 @@ import SwiftUI
 
 
 struct ComprehensionScreening: View {
-    @Environment(ManagedNavigationStack.Path.self)
-    private var path
-    
     var body: some View {
         SinglePageScreening(
             title: "COMPREHENSION_STEP_TITLE",

@@ -16,7 +16,6 @@ import SwiftUI
 
 
 extension Gradient {
-    static let greenToRed = Gradient(colors: [.green, .yellow, .orange, .red])
     static let redToGreen = Gradient(colors: [.red, .orange, .yellow, .green])
 }
 
@@ -180,9 +179,6 @@ struct HealthDashboard: View {
     }
 }
 
-
-@available(*, deprecated, renamed: "StatisticsAggregationOption")
-typealias StatisticsQueryAggregationKind = SpeziHealthKitUI.StatisticsAggregationOption
 
 extension SpeziHealthKitUI.StatisticsAggregationOption {
     init(_ other: HKQuantityAggregationStyle) {
