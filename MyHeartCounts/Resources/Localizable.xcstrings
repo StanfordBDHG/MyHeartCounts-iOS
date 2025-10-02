@@ -4,17 +4,6 @@
     "" : {
 
     },
-    "– %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "- %@"
-          }
-        }
-      }
-    },
     "—" : {
       "localizations" : {
         "es" : {
@@ -627,34 +616,12 @@
         }
       }
     },
-    "Are you able to perform physical activities?" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Eres capaz de realizar actividades físicas?"
-          }
-        }
-      }
-    },
     "Are you Hispanic/Latino?" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Eres hispano/latino?"
-          }
-        }
-      }
-    },
-    "Are you sure you want to leave the '%@' study?" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Estás seguro de que deseas abandonar el estudio de '%@'?"
           }
         }
       }
@@ -951,17 +918,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplicación de Reloj Complementario No Instalada"
-          }
-        }
-      }
-    },
-    "Complete" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completo"
           }
         }
       }
@@ -1324,29 +1280,6 @@
         }
       }
     },
-    "ECG_INSTRUCTIONS_TITLE" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Taking an ECG with Your Apple Watch"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Taking an ECG with Your Apple Watch"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Realizar un ECG con su Apple Watch"
-          }
-        }
-      }
-    },
     "Educational Level" : {
       "localizations" : {
         "es" : {
@@ -1449,30 +1382,8 @@
         }
       }
     },
-    "End Study Participation" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar Participación en el Estudio"
-          }
-        }
-      }
-    },
     "Enroll" : {
 
-    },
-    "Enroll in Study" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inscribirse en el Estudio"
-          }
-        }
-      }
     },
     "Enrolled since: %@" : {
       "localizations" : {
@@ -1989,17 +1900,6 @@
         }
       }
     },
-    "Health Data" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datos de salud"
-          }
-        }
-      }
-    },
     "Health Data Bulk Upload" : {
       "localizations" : {
         "es" : {
@@ -2137,61 +2037,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ingreso Familiar"
-          }
-        }
-      }
-    },
-    "I have never smoked" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nunca he fumado"
-          }
-        }
-      }
-    },
-    "I last smoked between 1 and 5 years ago" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fumé por última vez entre 1 y 5 años atrás"
-          }
-        }
-      }
-    },
-    "I last smoked more than 5 years ago" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fumé por última vez hace más de 5 años"
-          }
-        }
-      }
-    },
-    "I last smoked within the last year, or am using NDS" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fumé por última vez en el último año, o estoy usando NDS"
-          }
-        }
-      }
-    },
-    "I'm actively smoking" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estoy fumando activamente"
           }
         }
       }
@@ -2446,17 +2291,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Información de Licencia"
-          }
-        }
-      }
-    },
-    "Link Arrow Symbol" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Símbolo de Flecha de Enlace"
           }
         }
       }
@@ -3325,17 +3159,6 @@
         }
       }
     },
-    "Participation Criteria" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criterios de participación"
-          }
-        }
-      }
-    },
     "Past %lld days" : {
       "localizations" : {
         "en" : {
@@ -3373,29 +3196,6 @@
                 "stringUnit" : {
                   "state" : "new",
                   "value" : "Past %lld months"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "Past %lld weeks" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Past week"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Past %lld weeks"
                 }
               }
             }
@@ -3473,30 +3273,8 @@
         }
       }
     },
-    "Percentage in Phase" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Porcentaje en fase"
-          }
-        }
-      }
-    },
     "Perform Active Task" : {
 
-    },
-    "Physical Activity" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Actividad Física"
-          }
-        }
-      }
     },
     "Processing Health Data…" : {
       "localizations" : {
@@ -3894,17 +3672,6 @@
         }
       }
     },
-    "Recent Sleep Data" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datos recientes de sueño"
-          }
-        }
-      }
-    },
     "Region" : {
       "localizations" : {
         "es" : {
@@ -4208,17 +3975,6 @@
         }
       }
     },
-    "Sleep Phase" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fase del Sueño"
-          }
-        }
-      }
-    },
     "South Carolina" : {
       "localizations" : {
         "es" : {
@@ -4274,17 +4030,6 @@
     },
     "Stop Recording Data" : {
 
-    },
-    "Study Information" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Información del Estudio"
-          }
-        }
-      }
     },
     "Study not available" : {
       "localizations" : {
@@ -4381,17 +4126,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Prueba de Caminata cronometrada requiere acceso de lectura a los Datos de Movimiento y Fitness."
-          }
-        }
-      }
-    },
-    "This study will request read-access to collect the following Health samples:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este estudio solicitará acceso de lectura para recopilar las siguientes muestras de Salud:"
           }
         }
       }
