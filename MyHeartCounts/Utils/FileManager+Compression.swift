@@ -13,9 +13,17 @@ import System
 
 
 extension FileManager {
-    struct ArchiveOperationError: Error {
+    struct ArchiveOperationError: LocalizedError {
         let message: String
         let underlyingError: (any Error)?
+        
+        var errorDescription: String? {
+            if let underlyingError {
+                "\(message): \(underlyingError)"
+            } else {
+                message
+            }
+        }
         
         init(_ message: String, underlyingError: (any Error)? = nil) {
             self.message = message
@@ -23,6 +31,7 @@ extension FileManager {
         }
     }
     
+    // periphery:ignore - API
     func archiveDirectory(at srcUrl: URL, to dstUrl: URL) throws(ArchiveOperationError) {
         let sourcePath = FilePath(srcUrl.path)
         let destinationPath = FilePath(dstUrl.path)
@@ -91,8 +100,6 @@ extension FileManager {
         } catch {
             throw ArchiveOperationError("Failed to prepare destination directory", underlyingError: error)
         }
-        
-//        let dstFilename = String(archiveUrl.lastPathComponent.dropLast(".aar".count))
         
         guard let archiveFilePath = FilePath(archiveUrl) else {
             throw ArchiveOperationError("Unable to create FilePath for archive file")

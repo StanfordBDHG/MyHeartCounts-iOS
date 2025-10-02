@@ -23,17 +23,6 @@ struct DefaultHealthDashboardComponentGridCell: View {
     enum QueryInput {
         case healthKit(SampleType<HKQuantitySample>)
         case firestore(CustomQuantitySampleType)
-        
-        init?(_ dataSource: HealthDashboardLayout.DataSource) {
-            switch dataSource {
-            case .healthKit(.quantity(let sampleType)):
-                self = .healthKit(sampleType)
-            case .healthKit:
-                return nil
-            case .firebase(let sampleType):
-                self = .firestore(sampleType)
-            }
-        }
     }
     
     @Environment(\.calendar)
@@ -374,10 +363,6 @@ extension SamplesProviderView {
         @HealthKitQuery<HKQuantitySample> var samples: Slice<OrderedArray<HKQuantitySample>>
         let aggregationMode: QuantitySamplesQueryingViewAggregationMode
         let content: @MainActor ([QuantitySample]) -> Content
-        
-        private var sampleType: SampleType<HKQuantitySample> {
-            $samples.sampleType
-        }
         
         var body: some View {
             switch aggregationMode {

@@ -7,6 +7,7 @@
 //
 
 // swiftlint:disable file_types_order
+// periphery:ignore:all
 
 import Foundation
 import SpeziFoundation

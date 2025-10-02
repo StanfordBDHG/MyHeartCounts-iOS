@@ -48,6 +48,7 @@ struct HealthStatsChartDataPoint: Hashable, Sendable {
         self.value = value
     }
     
+    // periphery:ignore - API
     init(date: Date, value: Double) {
         self.init(
             timeRange: date..<date,

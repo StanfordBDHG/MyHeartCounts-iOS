@@ -43,6 +43,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
                 self.trailingText = trailingText
                 self.background = background
             }
+            // periphery:ignore - API
             @_disfavoredOverload
             init(
                 leadingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
@@ -123,6 +124,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     let variant: Variant
     
     
+    // periphery:ignore:parameters `default` - false positive
     init(
         `default`: Double,
         scoringBands: [ScoringBand],
@@ -135,6 +137,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
         )
     }
     
+    // periphery:ignore:parameters `default` - false positive
     /// Creates a ``ScoreDefinition`` that uses a custom closure to calculate score values.
     ///
     /// - parameter default: the score value that should be used for inputs that aren't compatible with the closure's input type.
@@ -173,6 +176,8 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
 
 
 struct ScoreResult: Hashable, Sendable {
+    /// a user-visible title that explains the kind of this score result, e.g. "Most Recent Sample" or "Daily Average"
+    let title: LocalizedStringResource
     let definition: ScoreDefinition
     let sampleType: MHCSampleType
     @MakeHashable var inputValue: (any Hashable & Sendable)?
@@ -181,21 +186,30 @@ struct ScoreResult: Hashable, Sendable {
     /// The time range represented by this score result
     let timeRange: Range<Date>?
     
-    init(sampleType: MHCSampleType, definition: ScoreDefinition) {
+    init(
+        _ title: LocalizedStringResource,
+        sampleType: MHCSampleType,
+        definition: ScoreDefinition,
+        timeRange: Range<Date>? = nil
+    ) {
+        self.title = title
         self.definition = definition
         self.sampleType = sampleType
         self._inputValue = .init(wrappedValue: nil)
         self.score = nil
-        self.timeRange = nil
+        self.timeRange = timeRange
     }
     
+    // periphery:ignore - API
     init(
+        _ title: LocalizedStringResource,
         sampleType: MHCSampleType,
         definition: ScoreDefinition,
         value: (any Hashable & Sendable)? = nil, // swiftlint:disable:this function_default_parameter_at_end
         score: Double,
         timeRange: Range<Date>
     ) {
+        self.title = title
         self.sampleType = sampleType
         self.definition = definition
         self._inputValue = .init(wrappedValue: nil)
@@ -203,7 +217,14 @@ struct ScoreResult: Hashable, Sendable {
         self.timeRange = timeRange
     }
     
-    init(sampleType: MHCSampleType, value: some Hashable & Sendable, timeRange: Range<Date>, definition: ScoreDefinition) {
+    init(
+        _ title: LocalizedStringResource,
+        sampleType: MHCSampleType,
+        value: some Hashable & Sendable,
+        timeRange: Range<Date>,
+        definition: ScoreDefinition
+    ) {
+        self.title = title
         self.definition = definition
         self.sampleType = sampleType
         self._inputValue = .init(wrappedValue: value)
@@ -212,15 +233,79 @@ struct ScoreResult: Hashable, Sendable {
     }
     
     init<Sample: CVHScore.ComponentSampleProtocol>(
+        _ title: LocalizedStringResource,
         sampleType: MHCSampleType,
         sample: Sample?,
         value: (Sample) -> (some Hashable & Sendable)?,
         definition: ScoreDefinition
     ) {
         if let sample, let value = value(sample) {
-            self.init(sampleType: sampleType, value: value, timeRange: sample.timeRange, definition: definition)
+            self.init(title, sampleType: sampleType, value: value, timeRange: sample.timeRange, definition: definition)
         } else {
-            self.init(sampleType: sampleType, definition: definition)
+            self.init(title, sampleType: sampleType, definition: definition, timeRange: sample?.timeRange)
+        }
+    }
+    
+    init<Sample>(
+        _ title: LocalizedStringResource,
+        sampleType: MHCSampleType,
+        timeRange: Range<Date>,
+        input: Sample?,
+        value: (Sample) -> (some Hashable & Sendable)?,
+        definition: ScoreDefinition
+    ) {
+        if let input, let value = value(input) {
+            self.init(title, sampleType: sampleType, value: value, timeRange: timeRange, definition: definition)
+        } else {
+            self.init(title, sampleType: sampleType, definition: definition, timeRange: timeRange)
+        }
+    }
+    
+    
+//    func hash(into hasher: inout Hasher) {
+//    }
+}
+
+
+extension LocalizedStringResource: @retroactive Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.key)
+        hasher.combine(self.table)
+        hasher.combine(self.bundle)
+        hasher.combine(self.locale)
+    }
+}
+
+
+extension LocalizedStringResource.BundleDescription: @retroactive Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.main, .main):
+            true
+        case let (.forClass(lhs), .forClass(rhs)):
+            ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+        case let (.atURL(lhs), .atURL(rhs)):
+            lhs.absoluteURL.resolvingSymlinksInPath() == rhs.absoluteURL.resolvingSymlinksInPath()
+        case (.main, .forClass), (.main, .atURL), (.forClass, .main), (.forClass, .atURL), (.atURL, .main), (.atURL, .forClass):
+            false
+        @unknown default:
+            String(reflecting: lhs) == String(reflecting: rhs)
+        }
+    }
+    public func hash(into hasher: inout Hasher) {
+        switch self {
+        case .main:
+            hasher.combine(0)
+            hasher.combine(Bundle.main)
+        case .forClass(let cls):
+            hasher.combine(1)
+            hasher.combine(ObjectIdentifier(cls))
+        case .atURL(let url):
+            hasher.combine(2)
+            hasher.combine(url.absoluteURL.resolvingSymlinksInPath())
+        @unknown default:
+            hasher.combine(3)
+            hasher.combine(String(reflecting: self))
         }
     }
 }

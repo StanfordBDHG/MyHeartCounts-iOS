@@ -13,9 +13,6 @@ import class UIKit.UIApplication
 
 
 final class TimeZoneTracking: Module, @unchecked Sendable {
-    @Application(\.logger)
-    private var logger
-    
     @Dependency(Account.self)
     private var account: Account?
     
@@ -28,7 +25,6 @@ final class TimeZoneTracking: Module, @unchecked Sendable {
             }
         }
     }
-    
     
     func updateTimeZoneInfo() async throws {
         guard let account else {

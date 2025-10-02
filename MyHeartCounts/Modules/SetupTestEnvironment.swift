@@ -20,7 +20,6 @@ import SpeziStudy
 final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
     @Application(\.logger) private var logger
-    @Dependency(Account.self) private var account: Account? // optional, as Firebase might be disabled
     @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
     @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @Dependency(HealthKit.self) private var healthKit

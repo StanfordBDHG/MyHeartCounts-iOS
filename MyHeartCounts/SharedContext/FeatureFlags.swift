@@ -44,7 +44,7 @@ enum FeatureFlags {
     
     /// Disables the automatic bulk export and upload of historical Health data
     static var disableAutomaticBulkHealthExport: Bool {
-        true // LaunchOptions.launchOptions[.disableAutomaticBulkHealthExport]
+        LaunchOptions.launchOptions[.disableAutomaticBulkHealthExport]
     }
     
     /// Whether the should load a special, different Firebase config instead of the one that would regularly get loaded.

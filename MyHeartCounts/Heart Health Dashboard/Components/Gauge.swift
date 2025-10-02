@@ -19,16 +19,15 @@ struct Gauge: View {
         fileprivate let value: Double
         
         /// Creates a `LineWidth` my multiplying a fraction onto the default line width.
-        static func relative(_ multiplier: Double) -> Self {
+        static func relative(_ multiplier: Double) -> Self { // periphery:ignore - API
             Self(value: Self.default.value * multiplier)
         }
         
-        static func absolute(_ width: Double) -> Self {
+        static func absolute(_ width: Double) -> Self { // periphery:ignore - API
             Self(value: width)
         }
     }
     
-    private static let openSegment: Double = 0.2
     /// The gauge's current value, with `0` representing an "empty" gauge, and `1` representing a "full" gauge
     private let progress: Double?
     
@@ -82,7 +81,6 @@ struct Gauge: View {
                 if let minimumValueText {
                     minimumValueText
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 if let maximumValueText {
                     maximumValueText
@@ -110,6 +108,7 @@ struct Gauge: View {
         self.maximumValueText = maximumValueText
     }
     
+    // periphery:ignore - API
     init(
         lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
         gradient: Gradient,

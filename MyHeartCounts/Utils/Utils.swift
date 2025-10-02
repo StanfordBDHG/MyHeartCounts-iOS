@@ -70,10 +70,6 @@ extension StringProtocol {
 
 
 extension Sequence {
-    func min<T: Comparable>(by keyPath: KeyPath<Element, T>) -> Element? {
-        self.min { $0[keyPath: keyPath] < $1[keyPath: keyPath] }
-    }
-    
     func max<T: Comparable>(by keyPath: KeyPath<Element, T>) -> Element? {
         self.max { $0[keyPath: keyPath] < $1[keyPath: keyPath] }
     }
@@ -85,40 +81,13 @@ extension Sequence {
     func max<T: Comparable>(of keyPath: KeyPath<Element, T>) -> T? {
         self.max { $0[keyPath: keyPath] < $1[keyPath: keyPath] }?[keyPath: keyPath]
     }
-    
-    func minAndMax<T: Comparable>(of keyPath: KeyPath<Element, T>) -> (min: T, max: T)? {
-        var iterator = self.makeIterator()
-        guard let first = iterator.next() else {
-            return nil
-        }
-        var min = first[keyPath: keyPath]
-        var max = min
-        while let next = iterator.next() {
-            let val = next[keyPath: keyPath]
-            min = Swift.min(min, val)
-            max = Swift.max(max, val)
-        }
-        return (min, max)
-    }
 }
 
 
 extension Sequence {
-    /// Returns a new sequence that chains the `other` sequence onto the end of the sequence.
-    func chaining<Other: Sequence<Element>>(before other: Other) -> Chain2Sequence<Self, Other> {
-        chain(self, other)
-    }
-    
     /// Returns a new sequence that chains the sequence onto the end of the `other` sequence.
     func chaining<Other: Sequence<Element>>(after other: Other) -> Chain2Sequence<Other, Self> {
         chain(other, self)
-    }
-}
-
-
-extension Collection where Index == Int {
-    func elements(at indices: IndexSet) -> [Element] {
-        indices.map { self[$0] }
     }
 }
 
@@ -180,5 +149,20 @@ extension Sequence {
             results.append(try await transform(element))
         }
         return results
+    }
+    
+    
+    func average() -> Element? where Element: BinaryFloatingPoint {
+        var iterator = self.makeIterator()
+        guard let first = iterator.next() else {
+            return nil
+        }
+        var count = 1
+        var avg: Element = first
+        while let element = iterator.next() {
+            count += 1
+            avg += element
+        }
+        return avg / Element(count)
     }
 }

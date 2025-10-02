@@ -10,7 +10,6 @@
 import Foundation
 import OSLog
 import Spezi
-import SpeziAccount
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziStudy
@@ -22,9 +21,6 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger)
     private var logger
-    
-    @ObservationIgnored @Dependency(Account.self)
-    private var account: Account?
     
     @ObservationIgnored @Dependency(StudyManager.self)
     private var studyManager: StudyManager?
@@ -38,6 +34,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     
     private(set) var session: (any BulkExportSession<HealthKitSamplesToFHIRJSONProcessor>)?
     
+    // periphery:ignore
     /// A `Progress` instance representing the current health data export progress,
     /// i.e. the progress of fetching historical samples, converting them into FHIR observations, and compressing them.
     var exportProgress: Progress? {

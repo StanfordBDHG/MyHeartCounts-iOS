@@ -302,13 +302,6 @@ extension TimedWalkingTestView {
 
 
 extension TimedWalkingTestConfiguration.Kind {
-    var displayTitle: String {
-        switch self {
-        case .walking: "Walking"
-        case .running: "Running"
-        }
-    }
-    
     var symbol: SFSymbol {
         switch self {
         case .walking: .figureWalk

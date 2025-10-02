@@ -22,7 +22,6 @@ struct MHCTodaysEventsQuery: DynamicProperty {
     /// Note that this is **not** the full time range being queried for, but rather the time range for which we want all events.
     private let primaryTimeRange: Range<Date>
     @EventQuery private var impl: [Event]
-    @Environment(StudyManager.self) private var studyManager // swiftlint:disable:this attributes
     
     var wrappedValue: [Event] {
         impl.filter { event in

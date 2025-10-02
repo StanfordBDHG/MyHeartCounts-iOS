@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-@testable import MyHeartCounts
 import Testing
 
 

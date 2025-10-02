@@ -72,12 +72,14 @@ extension Article.Tag {
         case color
     }
     
+    // periphery:ignore - implicitly called
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
         color = Color(try container.decode(CodableColor.self, forKey: .color))
     }
     
+    // periphery:ignore - implicitly called
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(title, forKey: .title)

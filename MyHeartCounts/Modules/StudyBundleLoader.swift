@@ -127,9 +127,10 @@ final class StudyBundleLoader: Module, Sendable {
     }
     
     
+    // periphery:ignore - unused but we want to keep it should we want/need to download additional resources in the future.
     /// Downloads the file with the specified `filename` from the Firebase Storage bucket `bucketName`
     @discardableResult
-    private func download(fileName: String, inBucket bucketName: String) async throws -> URL {
+    func download(fileName: String, inBucket bucketName: String) async throws -> URL {
         try await download(Self.url(ofFile: fileName, inBucket: bucketName))
     }
     

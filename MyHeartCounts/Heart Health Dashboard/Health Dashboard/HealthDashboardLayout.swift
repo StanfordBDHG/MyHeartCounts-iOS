@@ -7,6 +7,7 @@
 //
 
 // swiftlint:disable type_contents_order function_default_parameter_at_end
+// periphery:ignore:all - parts of the API simply are unused, but we want to keep them around for the future.
 
 import Foundation
 import SpeziFoundation

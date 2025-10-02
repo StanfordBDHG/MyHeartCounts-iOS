@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Algorithms
 import Foundation
 import HealthKit
 import SpeziAccount
@@ -27,19 +28,6 @@ struct CVHScore: DynamicProperty {
         case stepCount
     }
     
-    /// A time range that fetches all data over the last 2 weeks, excluding today.
-    /// We use this range for metrics where the score is derived from the daily total, as opposed to the most recent value,
-    /// in order to prevent displaying scores derived from incomplete data (eg: if you open the app at noon and only have a small number of
-    /// steps / exercise minutes tracked for the day so far).
-    private static let queryTimeRangeLastFullDayInLast2Weeks: HealthKitQueryTimeRange = {
-        let cal = Calendar.current
-        let today = cal.startOfDay(for: .now)
-        guard let twoWeeksAgo = cal.date(byAdding: .weekOfYear, value: -2, to: today) else {
-            preconditionFailure("Unable to determine start date")
-        }
-        return .init(twoWeeksAgo..<today)
-    }()
-    
     var preferredExerciseMetric: PreferredExerciseMetric {
         switch (weeklyExerciseTime.isEmpty, dailyStepCount.isEmpty) {
         case (false, _), (true, true):
@@ -58,10 +46,20 @@ struct CVHScore: DynamicProperty {
     @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2))
     private var nicotineExposure
     
-    @HealthKitStatisticsQuery(.appleExerciseTime, aggregatedBy: [.sum], over: .week, timeRange: .last(days: 7))
+    @HealthKitStatisticsQuery(
+        .appleExerciseTime,
+        aggregatedBy: [.sum],
+        over: .init(.init(day: 7)),
+        timeRange: .last(days: 7).offset(by: .init(day: -1))
+    )
     private var weeklyExerciseTime
     
-    @HealthKitStatisticsQuery(.stepCount, aggregatedBy: [.sum], over: .day, timeRange: Self.queryTimeRangeLastFullDayInLast2Weeks)
+    @HealthKitStatisticsQuery(
+        .stepCount,
+        aggregatedBy: [.sum],
+        over: .day,
+        timeRange: .last(days: 7).offset(by: .init(day: -1))
+    )
     private var dailyStepCount
     
     @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 14), source: .appleHealthSystem)
@@ -83,7 +81,11 @@ struct CVHScore: DynamicProperty {
     private var bloodPressure
     
     @State private var lastSeenSleepSamples: [HKCategorySample] = []
-    @State private(set) var sleepHealthScore = ScoreResult(sampleType: .healthKit(.category(.sleepAnalysis)), definition: .cvhSleep)
+    @State private(set) var sleepHealthScore = ScoreResult(
+        "Last Night",
+        sampleType: .healthKit(.category(.sleepAnalysis)),
+        definition: .cvhSleep
+    )
     
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
     var wrappedValue: Double? {
@@ -138,6 +140,7 @@ struct CVHScore: DynamicProperty {
         dispatchPrecondition(condition: .notOnQueue(.main))
         let sleepSessions = (try? sleepSamples.splitIntoSleepSessions()) ?? []
         let score = ScoreResult(
+            "Most Recent Night",
             sampleType: .healthKit(.category(.sleepAnalysis)),
             sample: sleepSessions.last,
             value: { $0.totalTimeSpentAsleep / 60 / 60 },
@@ -153,6 +156,7 @@ struct CVHScore: DynamicProperty {
 extension CVHScore {
     var dietScore: ScoreResult {
         ScoreResult(
+            "Most Recent Score",
             sampleType: .custom(.dietMEPAScore),
             sample: dietScores.first,
             value: \.value,
@@ -162,6 +166,7 @@ extension CVHScore {
     
     var physicalExerciseScore: ScoreResult {
         ScoreResult(
+            "Last 7 Days",
             sampleType: .healthKit(.quantity(.appleExerciseTime)),
             sample: weeklyExerciseTime.last,
             value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
@@ -171,15 +176,18 @@ extension CVHScore {
     
     var stepCountScore: ScoreResult {
         ScoreResult(
+            "Last 7 Days",
             sampleType: .healthKit(.quantity(.stepCount)),
-            sample: dailyStepCount.last,
-            value: { $0.sumQuantity()?.doubleValue(for: .count()) ?? 0 },
+            timeRange: $dailyStepCount.timeRange.range,
+            input: dailyStepCount,
+            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.average() },
             definition: .cvhStepCount
         )
     }
     
     var nicotineExposureScore: ScoreResult {
         ScoreResult(
+            "Most Recent Score",
             sampleType: .custom(.nicotineExposure),
             sample: nicotineExposure.first,
             value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
@@ -188,6 +196,7 @@ extension CVHScore {
     }
     
     var bodyMassIndexScore: ScoreResult {
+        let title: LocalizedStringResource = "Most Recent Sample"
         let sampleType = MHCSampleType.healthKit(.quantity(.bodyMassIndex))
         let bmiSample = bodyMassIndex.last
         let weightSample = bodyWeight.last
@@ -197,6 +206,7 @@ extension CVHScore {
         }
         func makeScore(bmiSample: HKQuantitySample) -> ScoreResult {
             ScoreResult(
+                title,
                 sampleType: sampleType,
                 sample: bmiSample,
                 value: { $0.quantity.doubleValue(for: SampleType.bodyMassIndex.displayUnit) },
@@ -218,7 +228,7 @@ extension CVHScore {
         switch (bmiSample, weightSample, heightSample) {
         case (nil, nil, nil), (nil, .some, nil), (nil, nil, .some):
             // if there are no samples, return nil
-            return .init(sampleType: sampleType, definition: .cvhBMI)
+            return .init(title, sampleType: sampleType, definition: .cvhBMI)
         case (.some(let sample), nil, nil), (.some(let sample), .some, nil), (.some(let sample), nil, .some):
             // if we have a BMI sample, but not also a weight AND height sample, return the BMI sample
             return makeScore(bmiSample: sample)
@@ -227,7 +237,7 @@ extension CVHScore {
             guard weight.endDate.timeIntervalSinceNow < TimeConstants.year / 2 else {
                 // if the weight is from too long ago, we don't use it.
                 // we don't have the same check for height, since that doesn't flucuate as much as weight, for adults.
-                return .init(sampleType: sampleType, definition: .cvhBMI)
+                return .init(title, sampleType: sampleType, definition: .cvhBMI)
             }
             return makeScore(fromWeight: weight, height: height)
         case let (.some(bmi), .some(weight), .some(height)):
@@ -242,6 +252,7 @@ extension CVHScore {
     
     var bloodLipidsScore: ScoreResult {
         ScoreResult(
+            "Most Recent Sample",
             sampleType: .custom(.bloodLipids),
             sample: bloodLipids.first,
             value: \.value,
@@ -251,6 +262,7 @@ extension CVHScore {
     
     var bloodGlucoseScore: ScoreResult {
         ScoreResult(
+            "Most Recent Sample",
             sampleType: .healthKit(.quantity(.bloodGlucose)),
             sample: bloodGlucose.last,
             value: { $0.quantity.doubleValue(for: SampleType.bloodGlucose.displayUnit) },
@@ -260,6 +272,7 @@ extension CVHScore {
     
     var bloodPressureScore: ScoreResult {
         ScoreResult(
+            "Most Recent Sample",
             sampleType: .healthKit(.correlation(.bloodPressure)),
             sample: bloodPressure.last,
             value: { correlation in
@@ -394,6 +407,17 @@ extension ScoreDefinition {
         default: 0 // unreachable
         }
         return systolicScore + diastolicScore
+    }
+}
+
+
+extension HealthKitQueryTimeRange {
+    func offset(by components: DateComponents, in cal: Calendar = .current) -> Self {
+        guard let start = cal.date(byAdding: components, to: range.lowerBound),
+              let end = cal.date(byAdding: components, to: range.upperBound) else {
+            fatalError("Unable to compute date range")
+        }
+        return .init(start..<end)
     }
 }
 

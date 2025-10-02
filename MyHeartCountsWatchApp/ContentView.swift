@@ -15,8 +15,6 @@ struct ContentView: View {
     @Environment(WorkoutManager.self)
     private var workoutManager
     
-    @State private var viewState: ViewState = .idle
-    
     var body: some View {
         switch workoutManager.state {
         case .idle:
