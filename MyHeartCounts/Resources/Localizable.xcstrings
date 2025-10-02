@@ -2361,6 +2361,12 @@
         }
       }
     },
+    "Last 7 Days" : {
+
+    },
+    "Last Night" : {
+
+    },
     "Latino / Hispanic?" : {
       "localizations" : {
         "es" : {
@@ -2613,7 +2619,13 @@
         }
       }
     },
+    "Most Recent Night" : {
+
+    },
     "Most Recent Sample" : {
+
+    },
+    "Most Recent Score" : {
 
     },
     "My Heart Counts" : {

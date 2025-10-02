@@ -181,4 +181,19 @@ extension Sequence {
         }
         return results
     }
+    
+    
+    func average() -> Element? where Element: BinaryFloatingPoint {
+        var iterator = self.makeIterator()
+        guard let first = iterator.next() else {
+            return nil
+        }
+        var count = 1
+        var avg: Element = first
+        while let element = iterator.next() {
+            count += 1
+            avg += element
+        }
+        return avg / Element(count)
+    }
 }

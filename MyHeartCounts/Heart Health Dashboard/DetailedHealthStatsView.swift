@@ -185,7 +185,7 @@ struct DetailedHealthStatsView: View {
             let leftPartWidth = geometry.size.width - spacing - gaugePartWidth
             HStack(spacing: spacing / 2 - 1) {
                 VStack(alignment: .leading) {
-                    Text("Most Recent Sample")
+                    Text(scoreResult.title)
                         .foregroundStyle(.secondary)
                     Group {
                         if let value = scoreResult.inputValue {
