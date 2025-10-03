@@ -184,11 +184,7 @@ struct HeartHealthDashboard: View {
                     .foregroundStyle(.secondary)
             }
         } onTap: {
-            if true {
-                addNewSample(for: scoreKeyPath)
-            } else {
-                scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
-            }
+            scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
         }
     }
     
