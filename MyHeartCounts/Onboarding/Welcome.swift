@@ -17,10 +17,30 @@ struct Welcome: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
+    
     var body: some View {
-        OnboardingView(
-            title: "My Heart Counts",
-            subtitle: "WELCOME_SUBTITLE",
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("WELCOME_SUBTITLE")
+                        .font(.title3)
+                        .padding(.vertical, 16)
+                        .padding(.bottom, 8)
+                    onboardingInformationView
+                }
+                    .padding(.horizontal)
+            }
+                .scrollBounceBehavior(.basedOnSize)
+                .navigationTitle("My Heart Counts")
+            OnboardingActionsView("Continue") {
+                onboardingPath.nextStep()
+            }
+                .padding(.horizontal)
+        }
+    }
+    
+    private var onboardingInformationView: some View {
+        OnboardingInformationView(
             areas: [
                 OnboardingInformationView.Area(
                     icon: {
@@ -46,11 +66,14 @@ struct Welcome: View {
                     title: "WELCOME_AREA3_TITLE",
                     description: "WELCOME_AREA3_DESCRIPTION"
                 )
-            ],
-            actionText: "Continue",
-            action: {
-                onboardingPath.nextStep()
-            }
+            ]
         )
+    }
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        Welcome()
     }
 }

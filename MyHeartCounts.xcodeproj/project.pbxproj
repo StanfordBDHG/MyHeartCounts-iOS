@@ -1041,10 +1041,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = CQRZ4E7K9U;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = CQRZ4E7K9U;
 				ENABLE_PREVIEWS = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1077,6 +1079,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "My Heart Counts - Biodesign Digital Health";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "My Heart Counts - Biodesign Digital Health";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1181,9 +1184,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCountsWatchApp/Supporting Files/MyHeartCountsWatchApp.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CQRZ4E7K9U;
+				"DEVELOPMENT_TEAM[sdk=watchos*]" = CQRZ4E7K9U;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1202,6 +1207,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "My Heart Counts - Biodesign Digital Health - Watch";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=watchos*]" = "My Heart Counts - Biodesign Digital Health - Watch";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -1219,9 +1225,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCountsWatchApp/Supporting Files/MyHeartCountsWatchApp.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CQRZ4E7K9U;
+				"DEVELOPMENT_TEAM[sdk=watchos*]" = CQRZ4E7K9U;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1240,6 +1248,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "My Heart Counts - Biodesign Digital Health - Watch";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=watchos*]" = "My Heart Counts - Biodesign Digital Health - Watch";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1411,8 +1420,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.9.2;
+				branch = moduleNesting;
+				kind = branch;
 			};
 		};
 		2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {

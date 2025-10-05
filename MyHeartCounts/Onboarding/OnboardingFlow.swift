@@ -6,8 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
-
+import SFSafeSymbols
 import Spezi
 @_spi(TestingSupport)
 import SpeziAccount
@@ -61,33 +60,37 @@ private struct AppOnboardingFlow: View {
                     .onboardingStep(.login)
             }
             OnboardingDisclaimerStep(
+                icon: .heartTextClipboard,
                 title: "ONBOARDING_DISCLAIMER_1_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_1_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT"
             )
-            .onboardingStep(.disclaimer1)
-            .injectingSpezi()
+                .onboardingStep(.disclaimer1)
+                .injectingSpezi()
             OnboardingDisclaimerStep(
+                icon: .rectangleAndTextMagnifyingglass,
                 title: "ONBOARDING_DISCLAIMER_2_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_2_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_2_LEARN_MORE_TEXT"
             )
-            .onboardingStep(.disclaimer2)
-            .injectingSpezi()
+                .onboardingStep(.disclaimer2)
+                .injectingSpezi()
             OnboardingDisclaimerStep(
+                icon: .lockSquareStack,
                 title: "ONBOARDING_DISCLAIMER_3_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_3_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_3_LEARN_MORE_TEXT"
             )
-            .onboardingStep(.disclaimer3)
-            .injectingSpezi()
+                .onboardingStep(.disclaimer3)
+                .injectingSpezi()
             OnboardingDisclaimerStep(
+                icon: .documentOnClipboard,
                 title: "ONBOARDING_DISCLAIMER_4_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_4_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_4_LEARN_MORE_TEXT"
             )
-            .onboardingStep(.disclaimer4)
-            .injectingSpezi()
+                .onboardingStep(.disclaimer4)
+                .injectingSpezi()
             ComprehensionScreening()
                 .onboardingStep(.comprehension)
                 .injectingSpezi()
@@ -125,21 +128,6 @@ private struct AppOnboardingFlow: View {
             Task {
                 localNotificationAuthorization = await notificationSettings().authorizationStatus == .authorized
             }
-        }
-    }
-}
-
-
-private struct DemographicsStep: View {
-    @Environment(ManagedNavigationStack.Path.self)
-    private var path
-    
-    var body: some View {
-        DemographicsForm {
-            OnboardingActionsView("Continue") {
-                path.nextStep()
-            }
-            .listRowInsets(.zero)
         }
     }
 }

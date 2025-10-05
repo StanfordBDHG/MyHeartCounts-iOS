@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SFSafeSymbols
 import Spezi
 import SpeziOnboarding
 import SpeziViews
@@ -20,39 +21,48 @@ struct NotificationPermissions: View {
 
     @State private var notificationProcessing = false
     
+    
     var body: some View {
-        OnboardingView {
-            VStack {
-                OnboardingTitleView(title: "Notifications")
-                Spacer()
-                Image(systemName: "bell.square.fill")
-                    .font(.system(size: 150))
-                    .foregroundColor(.accentColor)
-                    .accessibilityHidden(true)
-                Text("NOTIFICATION_PERMISSIONS_DESCRIPTION")
-                    .multilineTextAlignment(.leading)
-                    .padding(.vertical, 16)
-                Spacer()
-            }
-        } footer: {
+        VStack {
+            OnboardingDisclaimerInfoView(
+                icon: .bellBadge,
+                title: "Notifications",
+                description: "NOTIFICATION_PERMISSIONS_DESCRIPTION"
+            )
             OnboardingActionsView("Allow Notifications") {
-                do {
-                    notificationProcessing = true
-                    // Notification Authorization is not available in the preview simulator.
-                    if ProcessInfo.processInfo.isPreviewSimulator {
-                        try await _Concurrency.Task.sleep(for: .seconds(0.75))
-                    } else {
-                        try await notificationsManager.requestNotificationPermissions()
-                    }
-                } catch {
-                    print("Could not request notification permissions.")
-                }
-                notificationProcessing = false
-                onboardingPath.nextStep()
+                await allowNotifications()
             }
+                .padding(.horizontal)
         }
-        .navigationBarBackButtonHidden(notificationProcessing)
-        // Small fix as otherwise "Login" or "Sign up" is still shown in the nav bar
-        .navigationTitle(Text(verbatim: ""))
+            .navigationBarBackButtonHidden(notificationProcessing)
     }
+    
+    
+    private func allowNotifications() async {
+        do {
+            notificationProcessing = true
+            // Notification Authorization is not available in the preview simulator.
+            if ProcessInfo.processInfo.isPreviewSimulator {
+                try await _Concurrency.Task.sleep(for: .seconds(0.75))
+            } else {
+                try await notificationsManager.requestNotificationPermissions()
+            }
+        } catch {
+            print("Could not request notification permissions.")
+        }
+        notificationProcessing = false
+        onboardingPath.nextStep()
+    }
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        NotificationPermissions()
+    }
+        .environment(StudyBundleLoader.shared)
+        .previewWith(standard: MyHeartCountsStandard()) {
+            NotificationsManager()
+            MyHeartCountsStandard.previewModels
+        }
 }

@@ -1015,19 +1015,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprehension of Consent Questionnaire"
+            "value" : "Consent Survey"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprehension of Consent Questionnaire"
+            "value" : "Consent Survey"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuestionario de Comprensión del Consentimiento"
+            "value" : "Cuestionario de Consentimiento"
           }
         }
       }
@@ -1563,24 +1563,32 @@
         }
       }
     },
-    "FINAL_ENROLLMENT_STEP_MESSAGE" : {
+    "FINAL_ENROLLMENT_STEP_MESSAGE_BASELINE" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What happens next:\n- Baseline Monitoring Week: Over the next 7 days, you’ll be guided through several short activities:\n    - Completing surveys about your health, lifestyle, and well-being\n    - Recording your baseline physical activity through the app\n    - Performing optimal fitness assessments if appropriate for your health status\n- Daily Tasks: Each day, you’ll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete.\n- Data Collection: The app will begin collecting activity data from your phone and any connected wearable devices you’ve authorized."
+            "value" : "After your baseline week, you'll begin the 2-week trial comparing different types of physical activity coaching. You'll receive notifications when this phase begins."
           }
-        },
-        "en-GB" : {
+        }
+      }
+    },
+    "FINAL_ENROLLMENT_STEP_MESSAGE_DATA_COLLECTION" : {
+      "localizations" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What happens next:\n- Baseline Monitoring Week: Over the next 7 days, you’ll be guided through several short activities:\n    - Completing surveys about your health, lifestyle, and well-being\n    - Recording your baseline physical activity through the app\n    - Performing optimal fitness assessments if appropriate for your health status\n- Daily Tasks: Each day, you’ll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete.\n- Data Collection: The app will begin collecting activity data from your phone and any connected wearable devices you’ve authorized."
+            "value" : "The app will begin collecting activity data from your phone and any connected wearable devices you’ve authorized."
           }
-        },
-        "es" : {
+        }
+      }
+    },
+    "FINAL_ENROLLMENT_STEP_MESSAGE_EVERY_DAY" : {
+      "localizations" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué sucede a continuación?:\n- Semana de Monitoreo Inicial: Durante los próximos 7 días, serás guiado/a a través de varias actividades cortas:\n    - Completar encuestas sobre tu salud, estilo de vida y bienestar\n    - Registrar tu actividad física inicial a través de la aplicación\n    - Realizar evaluaciones de condición física óptima si es adecuada para su estado de salud\n- Tareas Diarias: Cada día, verá una lista personalizada de tareas en su tablero. Normalmente toman solo 5-10 minutos en completarse.\n- Recolección de Datos: La aplicación comenzará a recopilar datos de actividad de tu teléfono y cualquier dispositivo portátil conectado que hayas autorizado."
+            "value" : "Each day, you’ll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete."
           }
         }
       }
@@ -1607,24 +1615,12 @@
         }
       }
     },
-    "FINAL_ENROLLMENT_STEP_MESSAGE_TRIAL_SECTION" : {
+    "FINAL_ENROLLMENT_STEP_MESSAGE_SEVEN_DAYS" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "After your baseline week, you'll begin the 2-week trial comparing different types of physical activity coaching. You'll receive notifications when this phase begins."
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "After your baseline week, you'll begin the 2-week trial comparing different types of physical activity coaching. You'll receive notifications when this phase begins."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después de tu semana basal, comenzarás el ensayo de 2 semanas comparando diferentes tipos de entrenamiento de actividad física. Recibirás notificaciones cuando esta fase comience."
+            "value" : "Over the next 7 days, you’ll be guided through several short activities:\n- Completing surveys about your health, lifestyle, and well-being\n- Recording your baseline physical activity through the app\n- Performing optimal fitness "
           }
         }
       }
@@ -4720,6 +4716,9 @@
           }
         }
       }
+    },
+    "What happens next:" : {
+
     },
     "Wisconsin" : {
       "localizations" : {

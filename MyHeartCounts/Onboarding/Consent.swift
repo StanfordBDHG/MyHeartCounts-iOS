@@ -7,6 +7,7 @@
 //
 
 import OSLog
+import Spezi
 import SpeziAccount
 import SpeziConsent
 import SpeziFoundation
@@ -103,4 +104,17 @@ extension Locale {
         default: .dinA4
         }
     }
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        Consent()
+    }
+        .environment(StudyBundleLoader.shared)
+        .environment(OnboardingDataCollection())
+        .previewWith(standard: MyHeartCountsStandard()) {
+            ConsentManager()
+            MyHeartCountsStandard.previewModels
+        }
 }

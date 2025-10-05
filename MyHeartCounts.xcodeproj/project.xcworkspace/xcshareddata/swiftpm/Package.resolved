@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/Spezi.git",
       "state" : {
-        "revision" : "aea262c1bba638494c3ce9a749e834aafd10ba63",
-        "version" : "1.9.2"
+        "branch" : "moduleNesting",
+        "revision" : "473a20a679179cef3a2891bbb253c632da326110"
       }
     },
     {

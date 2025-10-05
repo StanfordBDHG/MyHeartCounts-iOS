@@ -71,3 +71,11 @@ private struct Question: ScreeningComponent {
         data.comprehension[keyPath: storage] == true
     }
 }
+
+
+#Preview {
+    ManagedNavigationStack {
+        ComprehensionScreening()
+    }
+        .environment(OnboardingDataCollection())
+}
