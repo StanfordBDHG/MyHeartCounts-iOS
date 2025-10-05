@@ -10,6 +10,8 @@ import Spezi
 import SpeziFirebaseConfiguration
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
+import SpeziLLM
+import SpeziLLMLocal
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziScheduler
@@ -40,6 +42,9 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             FeedbackManager()
             SensorKit()
             SensorKitDataFetcher()
+            LLMRunner {
+                LLMLocalPlatform()
+            }
         }
     }
 }
