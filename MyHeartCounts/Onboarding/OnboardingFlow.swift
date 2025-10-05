@@ -12,6 +12,7 @@ import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziHealthKit
+import SpeziLLMLocalDownload
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziStudy
@@ -117,6 +118,9 @@ private struct AppOnboardingFlow: View {
             DemographicsStep()
                 .onboardingStep(.demographics)
                 .injectingSpezi()
+            LLMLocalDownloadStep()
+                .onboardingStep(.LLMDownload)
+                .injectingSpezi()
             FinalEnrollmentStep()
                 .onboardingStep(.finalStep)
                 .injectingSpezi()
@@ -136,6 +140,22 @@ private struct AppOnboardingFlow: View {
 }
 
 
+private struct LLMLocalDownloadStep: View {
+    @Environment(ManagedNavigationStack.Path.self)
+    private var path
+    
+    var body: some View {
+        LLMLocalDownloadView(
+            model: .llama3_2_1B_4bit,
+            downloadDescription: "The Llama3.3 1B model will be downloaded to enable on-device AI features."
+        ) {
+            // This closure runs after the download is complete and the user taps the 'Next' button
+            path.nextStep()
+        }
+    }
+}
+
+
 extension OnboardingStep {
     static let welcome = Self(rawValue: "welcome")
     static let eligibility = Self(rawValue: "eligibility")
@@ -150,5 +170,6 @@ extension OnboardingStep {
     static let workoutPreference = Self(rawValue: "workoutPreference")
     static let notifications = Self(rawValue: "notifications")
     static let demographics = Self(rawValue: "demographics")
+    static let LLMDownload = Self(rawValue: "LLMDownload") 
     static let finalStep = Self(rawValue: "finalStep")
 }
