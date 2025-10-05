@@ -24,17 +24,25 @@ struct NotificationPermissions: View {
     
     var body: some View {
         VStack {
-            OnboardingDisclaimerInfoView(
-                icon: .bellBadge,
-                title: "Notifications",
-                description: "NOTIFICATION_PERMISSIONS_DESCRIPTION"
-            )
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    OnboardingHeader(
+                        systemSymbol: .bellBadge,
+                        title: "Notifications",
+                        description: "NOTIFICATION_PERMISSIONS_DESCRIPTION"
+                    )
+                }
+                .padding(.horizontal)
+            }
+            Spacer(minLength: 8)
+                .border(Color.blue, width: 1)
             OnboardingActionsView("Allow Notifications") {
                 await allowNotifications()
             }
-                .padding(.horizontal)
+            .padding(.horizontal)
         }
-            .navigationBarBackButtonHidden(notificationProcessing)
+        .scrollBounceBehavior(.basedOnSize)
+        .navigationBarBackButtonHidden(notificationProcessing)
     }
     
     

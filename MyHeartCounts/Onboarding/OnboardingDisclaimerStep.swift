@@ -27,17 +27,25 @@ struct OnboardingDisclaimerStep: View {
     
     var body: some View {
         VStack {
-            OnboardingDisclaimerInfoView(
-                icon: icon,
-                title: title,
-                description: primaryText
-            )
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    OnboardingHeader(
+                        systemSymbol: icon,
+                        title: title,
+                        description: primaryText
+                    )
+                }
+                .padding(.horizontal)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            Spacer(minLength: 8)
+                .border(Color.blue, width: 1)
             actionButtons
                 .padding(.horizontal)
         }
-            .sheet(isPresented: $isShowingLearnMoreText) {
-                OnboardingDisclaimerLearnMore(title: title, learnMoreText: learnMoreText)
-            }
+        .sheet(isPresented: $isShowingLearnMoreText) {
+            OnboardingLearnMore(title: title, learnMoreText: learnMoreText)
+        }
     }
     
     private var actionButtons: some View {

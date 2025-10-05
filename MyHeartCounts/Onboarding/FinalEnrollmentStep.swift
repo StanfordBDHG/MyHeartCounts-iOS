@@ -20,33 +20,6 @@ import SpeziViews
 import SwiftUI
 
 
-private struct FinalEnrollmentGridRow: View {
-    let icon: SFSymbol
-    let text: LocalizedStringResource
-    
-    var body: some View {
-        GridRow {
-            Image(systemSymbol: icon)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .symbolRenderingMode(.hierarchical)
-                .accessibilityHidden(true)
-                .foregroundStyle(.tint)
-                .gridCellAnchor(.topLeading)
-                .frame(width: 42, alignment: .topLeading)
-            HStack {
-                Text(text)
-                    .font(.title3)
-                    .lineLimit(32)
-                    .multilineTextAlignment(.leading)
-                    .foregroundStyle(.secondary)
-                    .padding(.bottom)
-                Spacer()
-            }
-        }
-    }
-}
-
 struct FinalEnrollmentStep: View {
     // swiftlint:disable attributes
     @Environment(ManagedNavigationStack.Path.self) private var path
@@ -65,49 +38,50 @@ struct FinalEnrollmentStep: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Welcome to My Heart Counts")
-                    .font(.title2.bold())
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(12)
-                content
-                OnboardingActionsView("Start") {
-                    await completeStudyEnrollment()
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    OnboardingHeader(
+                        title: "Welcome to My Heart Counts",
+                        description: "What happens next:"
+                    )
+                        .padding(.top, 64)
+                    content
                 }
-                    .disabled(viewState != .idle)
+                .padding(.horizontal)
             }
+            .scrollBounceBehavior(.basedOnSize)
+            Spacer(minLength: 8)
+                .border(Color.blue, width: 1)
+            OnboardingActionsView("Start") {
+                await completeStudyEnrollment()
+            }
+            .disabled(viewState != .idle)
             .padding(.horizontal)
         }
-            .scrollBounceBehavior(.basedOnSize)
     }
     
     @ViewBuilder private var content: some View {
-        Text("What happens next:")
-            .font(.title3)
-            .multilineTextAlignment(.leading)
-            .foregroundStyle(.secondary)
-            .padding(.bottom)
         Grid(horizontalSpacing: 16, verticalSpacing: 16) {
-            FinalEnrollmentGridRow(
+            OnboardingIconGridRow(
                 icon: SFSymbol(rawValue: "7.calendar"),
                 text: "FINAL_ENROLLMENT_STEP_MESSAGE_SEVEN_DAYS"
             )
-            FinalEnrollmentGridRow(
+            OnboardingIconGridRow(
                 icon: .deskclock,
                 text: "FINAL_ENROLLMENT_STEP_MESSAGE_EVERY_DAY"
             )
-            FinalEnrollmentGridRow(
+            OnboardingIconGridRow(
                 icon: .chartLineTextClipboard,
                 text: "FINAL_ENROLLMENT_STEP_MESSAGE_DATA_COLLECTION"
             )
             if showTrialSection {
-                FinalEnrollmentGridRow(
+                OnboardingIconGridRow(
                     icon: .calendarBadgeClock,
                     text: "FINAL_ENROLLMENT_STEP_MESSAGE_BASELINE"
                 )
             }
-            FinalEnrollmentGridRow(
+            OnboardingIconGridRow(
                 icon: SFSymbol(rawValue: "arrow.up.heart"),
                 text: "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER"
             )

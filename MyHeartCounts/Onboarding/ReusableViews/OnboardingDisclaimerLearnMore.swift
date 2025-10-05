@@ -10,7 +10,7 @@ import SpeziViews
 import SwiftUI
 
 
-struct OnboardingDisclaimerLearnMore: View {
+struct OnboardingLearnMore: View {
     let title: LocalizedStringResource
     let learnMoreText: LocalizedStringResource
     
@@ -36,7 +36,7 @@ struct OnboardingDisclaimerLearnMore: View {
 
 #Preview {
     ManagedNavigationStack {
-        OnboardingDisclaimerLearnMore(
+        OnboardingLearnMore(
             title: "ONBOARDING_DISCLAIMER_1_TITLE",
             learnMoreText: "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT"
         )

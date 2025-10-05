@@ -35,11 +35,19 @@ struct HealthKitPermissions: View {
     
     var body: some View {
         VStack {
-            OnboardingDisclaimerInfoView(
-                icon: .heartTextSquare,
-                title: title,
-                description: "HEALTHKIT_PERMISSIONS_SUBTITLE"
-            )
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    OnboardingHeader(
+                        systemSymbol: .heartTextSquare,
+                        title: title,
+                        description: "HEALTHKIT_PERMISSIONS_SUBTITLE"
+                    )
+                }
+                .padding(.horizontal)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            Spacer(minLength: 8)
+                .border(Color.blue, width: 1)
             OnboardingActionsView(
                 primaryTitle: "Grant Access",
                 primaryAction: {
@@ -53,7 +61,7 @@ struct HealthKitPermissions: View {
                 .padding(.horizontal)
         }
             .sheet(isPresented: $isShowingLearnMoreText) {
-                OnboardingDisclaimerLearnMore(
+                OnboardingLearnMore(
                     title: title,
                     learnMoreText: "HEALTHKIT_PERMISSIONS_DESCRIPTION"
                 )
