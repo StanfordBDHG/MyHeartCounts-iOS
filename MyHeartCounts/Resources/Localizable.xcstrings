@@ -1620,7 +1620,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Over the next 7 days, you’ll be guided through several short activities:\n- Completing surveys about your health, lifestyle, and well-being\n- Recording your baseline physical activity through the app\n- Performing optimal fitness "
+            "value" : "Over the next 7 days, you’ll be guided through several short activities:\n- Completing surveys about your health, lifestyle, and well-being.\n- Recording your baseline physical activity through the app.\n- Performing optimal fitness assessments if appropriate for your health status."
           }
         }
       }
