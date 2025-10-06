@@ -2027,6 +2027,9 @@
         }
       }
     },
+    "Home" : {
+
+    },
     "Household Income" : {
       "localizations" : {
         "es" : {
@@ -4063,6 +4066,9 @@
         }
       }
     },
+    "Tasks" : {
+
+    },
     "Tennessee" : {
       "localizations" : {
         "es" : {
@@ -4410,16 +4416,6 @@
         }
       }
     },
-    "Upcoming Tasks" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tareas Próximas"
-          }
-        }
-      }
-    },
     "Uploading Health Data" : {
       "localizations" : {
         "es" : {
@@ -4565,29 +4561,6 @@
         }
       }
     },
-    "WELCOME_AREA1_TITLE" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contribute to Research"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contribute to Research"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Contribuya a la Investigación de la Salud del Corazón"
-          }
-        }
-      }
-    },
     "WELCOME_AREA2_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -4610,29 +4583,6 @@
         }
       }
     },
-    "WELCOME_AREA2_TITLE" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A Redesigned App to Support You"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A Redesigned App to Support You"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una Aplicación Rediseñada para Apoyarlo"
-          }
-        }
-      }
-    },
     "WELCOME_AREA3_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -4651,29 +4601,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Participe completamente en línea, compartiendo de manera segura sus datos de actividad directamente desde su iPhone y Apple Watch."
-          }
-        }
-      }
-    },
-    "WELCOME_AREA3_TITLE" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Easy and Secure Participation"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Easy and Secure Participation"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Participación Fácil y Segura"
           }
         }
       }
