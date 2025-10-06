@@ -67,8 +67,8 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
 
 extension MHCTestCase {
     enum RootLevelTab: String, CaseIterable {
-        case home = "My Heart Counts"
-        case upcoming = "Upcoming Tasks"
+        case home = "Home"
+        case upcoming = "Tasks"
         case heartHealth = "Heart Health"
         case news = "News"
     }
