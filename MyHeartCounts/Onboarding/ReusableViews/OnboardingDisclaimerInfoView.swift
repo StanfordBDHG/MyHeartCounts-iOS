@@ -23,7 +23,7 @@ struct OnboardingHeader: View {
                 content
             }
         }
-            .scrollBounceBehavior(.basedOnSize)
+        .scrollBounceBehavior(.basedOnSize)
     }
     
     @ViewBuilder private var content: some View {

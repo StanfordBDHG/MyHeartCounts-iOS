@@ -18,7 +18,7 @@ struct NotificationPermissions: View {
     private var onboardingPath
     @Environment(NotificationsManager.self)
     private var notificationsManager
-
+    
     @State private var notificationProcessing = false
     
     
@@ -68,9 +68,9 @@ struct NotificationPermissions: View {
     ManagedNavigationStack {
         NotificationPermissions()
     }
-        .environment(StudyBundleLoader.shared)
-        .previewWith(standard: MyHeartCountsStandard()) {
-            NotificationsManager()
-            MyHeartCountsStandard.previewModels
-        }
+    .environment(StudyBundleLoader.shared)
+    .previewWith(standard: MyHeartCountsStandard()) {
+        NotificationsManager()
+        MyHeartCounts.previewModels
+    }
 }

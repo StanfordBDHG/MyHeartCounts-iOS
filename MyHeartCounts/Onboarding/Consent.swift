@@ -111,10 +111,10 @@ extension Locale {
     ManagedNavigationStack {
         Consent()
     }
-        .environment(StudyBundleLoader.shared)
-        .environment(OnboardingDataCollection())
-        .previewWith(standard: MyHeartCountsStandard()) {
-            ConsentManager()
-            MyHeartCountsStandard.previewModels
-        }
+    .environment(StudyBundleLoader.shared)
+    .environment(OnboardingDataCollection())
+    .previewWith(standard: MyHeartCountsStandard()) {
+        ConsentManager()
+        MyHeartCounts.previewModels
+    }
 }

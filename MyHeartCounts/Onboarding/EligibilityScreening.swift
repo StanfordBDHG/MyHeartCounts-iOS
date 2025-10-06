@@ -68,6 +68,6 @@ struct EligibilityScreening: View {
     ManagedNavigationStack {
         EligibilityScreening()
     }
-        .environment(StudyBundleLoader.shared)
-        .environment(OnboardingDataCollection())
+    .environment(StudyBundleLoader.shared)
+    .environment(OnboardingDataCollection())
 }

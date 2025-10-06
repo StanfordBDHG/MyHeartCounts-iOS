@@ -12,10 +12,10 @@ import SpeziAccount
 import SpeziStudy
 
 
-extension MyHeartCountsStandard {
+extension MyHeartCounts {
     @MainActor @ModuleBuilder static var previewModels: ModuleCollection {
+        DeferredConfigLoading.baseModules(preferredLocale: .autoupdatingCurrent)
         FirebaseConfiguration()
-        StudyManager()
         AccountConfiguration(service: InMemoryAccountService(), configuration: .default)
         StudyBundleLoader.shared
         TimeZoneTracking()

@@ -1420,8 +1420,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
 			requirement = {
-				branch = moduleNesting;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.3;
 			};
 		};
 		2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {

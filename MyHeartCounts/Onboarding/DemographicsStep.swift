@@ -33,8 +33,8 @@ struct DemographicsStep: View {
     ManagedNavigationStack {
         DemographicsStep()
     }
-        .previewWith(standard: MyHeartCountsStandard()) {
-            HealthKit()
-            MyHeartCountsStandard.previewModels
-        }
+    .previewWith(standard: MyHeartCountsStandard()) {
+        HealthKit()
+        MyHeartCounts.previewModels
+    }
 }

@@ -77,5 +77,5 @@ private struct Question: ScreeningComponent {
     ManagedNavigationStack {
         ComprehensionScreening()
     }
-        .environment(OnboardingDataCollection())
+    .environment(OnboardingDataCollection())
 }

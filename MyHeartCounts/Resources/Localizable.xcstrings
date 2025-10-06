@@ -4566,6 +4566,7 @@
       }
     },
     "WELCOME_AREA1_TITLE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4610,6 +4611,7 @@
       }
     },
     "WELCOME_AREA2_TITLE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4654,6 +4656,7 @@
       }
     },
     "WELCOME_AREA3_TITLE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

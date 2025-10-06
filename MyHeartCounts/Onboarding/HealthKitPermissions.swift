@@ -58,16 +58,16 @@ struct HealthKitPermissions: View {
                     isShowingLearnMoreText.toggle()
                 }
             )
-                .padding(.horizontal)
+            .padding(.horizontal)
         }
-            .sheet(isPresented: $isShowingLearnMoreText) {
-                OnboardingLearnMore(
-                    title: title,
-                    learnMoreText: "HEALTHKIT_PERMISSIONS_DESCRIPTION"
-                )
-            }
-            .navigationTitle(Text(verbatim: ""))
-            .navigationBarBackButtonHidden(healthKitProcessing)
+        .sheet(isPresented: $isShowingLearnMoreText) {
+            OnboardingLearnMore(
+                title: title,
+                learnMoreText: "HEALTHKIT_PERMISSIONS_DESCRIPTION"
+            )
+        }
+        .navigationTitle(Text(verbatim: ""))
+        .navigationBarBackButtonHidden(healthKitProcessing)
     }
     
     
@@ -118,9 +118,9 @@ extension MyHeartCountsStandard {
     ManagedNavigationStack {
         HealthKitPermissions()
     }
-        .environment(StudyBundleLoader.shared)
-        .previewWith(standard: MyHeartCountsStandard()) {
-            HealthKit()
-            MyHeartCountsStandard.previewModels
-        }
+    .environment(StudyBundleLoader.shared)
+    .previewWith(standard: MyHeartCountsStandard()) {
+        HealthKit()
+        MyHeartCounts.previewModels
+    }
 }

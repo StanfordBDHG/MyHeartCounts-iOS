@@ -183,7 +183,7 @@ enum DeferredConfigLoading {
     /// The set of modules which we always want to load, regardless of whether Firebase is enabled or disabled.
     @MainActor
     @ArrayBuilder<any Module>
-    private static func baseModules(preferredLocale: Locale) -> [any Module] {
+    static func baseModules(preferredLocale: Locale) -> [any Module] {
         StudyManager(preferredLocale: preferredLocale)
         NotificationsManager()
         ConsentManager()

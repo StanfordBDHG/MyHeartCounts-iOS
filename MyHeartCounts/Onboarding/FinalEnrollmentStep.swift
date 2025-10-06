@@ -45,7 +45,7 @@ struct FinalEnrollmentStep: View {
                         title: "Welcome to My Heart Counts",
                         description: "What happens next:"
                     )
-                        .padding(.top, 64)
+                    .padding(.top, 64)
                     content
                 }
                 .padding(.horizontal)
@@ -127,11 +127,11 @@ struct FinalEnrollmentStep: View {
     ManagedNavigationStack {
         FinalEnrollmentStep()
     }
-        .environment(OnboardingDataCollection())
-        .environment(StudyBundleLoader.shared)
-        .previewWith(standard: MyHeartCountsStandard()) {
-            MyHeartCountsStandard.previewModels
-            HistoricalHealthSamplesExportManager()
-            BulkHealthExporter()
-        }
+    .environment(OnboardingDataCollection())
+    .environment(StudyBundleLoader.shared)
+    .previewWith(standard: MyHeartCountsStandard()) {
+        MyHeartCounts.previewModels
+        HistoricalHealthSamplesExportManager()
+        BulkHealthExporter()
+    }
 }
