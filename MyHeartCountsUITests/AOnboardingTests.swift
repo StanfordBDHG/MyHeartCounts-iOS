@@ -218,7 +218,7 @@ extension XCUIApplication {
         if continueButton.exists {
             XCTAssertFalse(continueButton.isEnabled)
         }
-        XCTAssert(staticTexts["Comprehension of Consent Questionnaire"].waitForExistence(timeout: 2))
+        XCTAssert(staticTexts["Consent Survey"].waitForExistence(timeout: 2))
         otherElements["Screening Section, 0"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         if continueButton.exists {
             XCTAssertFalse(continueButton.isEnabled)
