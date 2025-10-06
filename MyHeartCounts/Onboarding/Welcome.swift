@@ -26,7 +26,7 @@ struct Welcome: View {
                         title: "My Heart Counts",
                         description: "WELCOME_SUBTITLE"
                     )
-                    .padding(.top, 64)
+                    .padding(.top, 128)
                     onboardingInformationView
                 }
                 .padding(.horizontal)

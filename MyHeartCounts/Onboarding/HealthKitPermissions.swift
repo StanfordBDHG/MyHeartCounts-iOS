@@ -67,6 +67,7 @@ struct HealthKitPermissions: View {
             )
         }
         .navigationTitle(Text(verbatim: ""))
+        .toolbar(.visible)
         .navigationBarBackButtonHidden(healthKitProcessing)
     }
     

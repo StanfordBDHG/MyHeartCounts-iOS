@@ -42,6 +42,7 @@ struct NotificationPermissions: View {
             .padding(.horizontal)
         }
         .scrollBounceBehavior(.basedOnSize)
+        .toolbar(.visible)
         .navigationBarBackButtonHidden(notificationProcessing)
     }
     
