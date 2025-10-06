@@ -115,9 +115,11 @@ private struct AppOnboardingFlow: View {
             DemographicsStep()
                 .onboardingStep(.demographics)
                 .injectingSpezi()
-            LLMLocalDownloadStep()
-                .onboardingStep(.LLMDownload)
-                .injectingSpezi()
+            if FeatureFlags.downloadLLM {
+                LLMLocalDownloadStep()
+                    .onboardingStep(.LLMDownload)
+                    .injectingSpezi()
+            }
             FinalEnrollmentStep()
                 .onboardingStep(.finalStep)
                 .injectingSpezi()
