@@ -26,6 +26,7 @@ struct Welcome: View {
                         title: "My Heart Counts",
                         description: "WELCOME_SUBTITLE"
                     )
+                    .padding(.top, 64)
                     onboardingInformationView
                 }
                 .padding(.horizontal)
@@ -36,6 +37,7 @@ struct Welcome: View {
             OnboardingActionsView("Continue") {
                 onboardingPath.nextStep()
             }
+            .padding(.horizontal)
         }
     }
     

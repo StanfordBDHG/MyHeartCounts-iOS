@@ -60,7 +60,7 @@ private struct AppOnboardingFlow: View {
                     .onboardingStep(.login)
             }
             OnboardingDisclaimerStep(
-                icon: .heartTextClipboard,
+                icon: .textPageBadgeMagnifyingglass,
                 title: "ONBOARDING_DISCLAIMER_1_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_1_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT"
@@ -68,7 +68,7 @@ private struct AppOnboardingFlow: View {
                 .onboardingStep(.disclaimer1)
                 .injectingSpezi()
             OnboardingDisclaimerStep(
-                icon: .rectangleAndTextMagnifyingglass,
+                icon: .figureWalkMotion,
                 title: "ONBOARDING_DISCLAIMER_2_TITLE",
                 primaryText: "ONBOARDING_DISCLAIMER_2_PRIMARY_TEXT",
                 learnMoreText: "ONBOARDING_DISCLAIMER_2_LEARN_MORE_TEXT"

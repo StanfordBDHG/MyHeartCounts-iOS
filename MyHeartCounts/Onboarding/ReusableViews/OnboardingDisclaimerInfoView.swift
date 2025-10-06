@@ -28,7 +28,7 @@ struct OnboardingHeader: View {
     
     @ViewBuilder private var content: some View {
         if let icon {
-            HStack {
+            HStack(alignment: .bottom) {
                 Spacer()
                 icon
                     .resizable()
@@ -40,6 +40,7 @@ struct OnboardingHeader: View {
                     .padding(.vertical, 32)
                 Spacer()
             }
+            .frame(height: 180)
         }
         Text(title)
             .font(.title2.bold())
@@ -87,6 +88,9 @@ struct OnboardingHeader: View {
             description: "ONBOARDING_DISCLAIMER_1_PRIMARY_TEXT",
         )
     }
+}
+
+#Preview {
     ManagedNavigationStack {
         OnboardingHeader(
             title: "ONBOARDING_DISCLAIMER_1_TITLE",
