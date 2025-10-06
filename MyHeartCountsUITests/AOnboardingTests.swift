@@ -46,7 +46,7 @@ extension XCUIApplication {
         navigateWelcome()
         try navigateEligibility(region: region)
         try navigateSignup(name: name, email: email, password: password)
-        sleep(for: .seconds(1))
+        sleep(for: .seconds(5))
         navigateOnboardingDisclaimers()
         navigateConsentComprehension()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
@@ -218,7 +218,7 @@ extension XCUIApplication {
         if continueButton.exists {
             XCTAssertFalse(continueButton.isEnabled)
         }
-        XCTAssert(staticTexts["Comprehension of Consent Questionnaire"].waitForExistence(timeout: 2))
+        XCTAssert(staticTexts["Consent Survey"].waitForExistence(timeout: 2))
         otherElements["Screening Section, 0"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         if continueButton.exists {
             XCTAssertFalse(continueButton.isEnabled)

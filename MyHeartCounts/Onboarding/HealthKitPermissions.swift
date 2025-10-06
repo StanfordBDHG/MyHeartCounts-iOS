@@ -6,15 +6,20 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SFSafeSymbols
 import Spezi
+import SpeziAccount
 import SpeziHealthKit
 import SpeziOnboarding
+import SpeziStudy
 import SpeziStudyDefinition
 import SpeziViews
 import SwiftUI
 
 
 struct HealthKitPermissions: View {
+    private var title = LocalizedStringResource("HealthKit Access")
+    
     @Environment(HealthKit.self)
     private var healthKit
     
@@ -25,50 +30,68 @@ struct HealthKitPermissions: View {
     private var studyLoader
     
     @State private var healthKitProcessing = false
+    @State private var isShowingLearnMoreText = false
+    
     
     var body: some View {
-        OnboardingView {
-            VStack {
-                OnboardingTitleView(
-                    title: "HealthKit Access",
-                    subtitle: "HEALTHKIT_PERMISSIONS_SUBTITLE"
-                )
-                Spacer()
-                Image(systemName: "heart.text.square.fill")
-                    .font(.system(size: 150))
-                    .foregroundColor(.accentColor)
-                    .accessibilityHidden(true)
-                Text("HEALTHKIT_PERMISSIONS_DESCRIPTION")
-                    .multilineTextAlignment(.leading)
-                    .padding(.vertical, 16)
-                Spacer()
-            }
-        } footer: {
-            OnboardingActionsView("Grant Access") {
-                guard let studyBundle = try? studyLoader.studyBundle?.get() else {
-                    // guaranteed to be non-nil if we end up in this view
-                    return
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    OnboardingHeader(
+                        systemSymbol: .heartTextSquare,
+                        title: title,
+                        description: "HEALTHKIT_PERMISSIONS_SUBTITLE"
+                    )
                 }
-                do {
-                    healthKitProcessing = true
-                    // HealthKit is not available in the preview simulator.
-                    if ProcessInfo.processInfo.isPreviewSimulator {
-                        try await _Concurrency.Task.sleep(for: .seconds(5))
-                    } else {
-                        let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
-                            .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
-                        try await healthKit.askForAuthorization(for: accessReqs)
-                    }
-                } catch {
-                    print("Could not request HealthKit permissions.")
-                }
-                healthKitProcessing = false
-                onboardingPath.nextStep()
+                .padding(.horizontal)
             }
+            .scrollBounceBehavior(.basedOnSize)
+            Spacer(minLength: 8)
+                .border(Color.blue, width: 1)
+            OnboardingActionsView(
+                primaryTitle: "Grant Access",
+                primaryAction: {
+                    await grantAccess()
+                },
+                secondaryTitle: "Learn More",
+                secondaryAction: {
+                    isShowingLearnMoreText.toggle()
+                }
+            )
+            .padding(.horizontal)
         }
-        .navigationBarBackButtonHidden(healthKitProcessing)
-        // Small fix as otherwise "Login" or "Sign up" is still shown in the nav bar
+        .sheet(isPresented: $isShowingLearnMoreText) {
+            OnboardingLearnMore(
+                title: title,
+                learnMoreText: "HEALTHKIT_PERMISSIONS_DESCRIPTION"
+            )
+        }
         .navigationTitle(Text(verbatim: ""))
+        .toolbar(.visible)
+        .navigationBarBackButtonHidden(healthKitProcessing)
+    }
+    
+    
+    private func grantAccess() async {
+        guard let studyBundle = try? studyLoader.studyBundle?.get() else {
+            // guaranteed to be non-nil if we end up in this view
+            return
+        }
+        do {
+            healthKitProcessing = true
+            // HealthKit is not available in the preview simulator.
+            if ProcessInfo.processInfo.isPreviewSimulator {
+                try await _Concurrency.Task.sleep(for: .seconds(5))
+            } else {
+                let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
+                    .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
+                try await healthKit.askForAuthorization(for: accessReqs)
+            }
+        } catch {
+            print("Could not request HealthKit permissions.")
+        }
+        healthKitProcessing = false
+        onboardingPath.nextStep()
     }
 }
 
@@ -89,4 +112,16 @@ extension MyHeartCountsStandard {
             SampleType.bloodGlucose, SampleType.bloodPressure
         ] as [any AnySampleType]).map { $0.hkSampleType }
     )
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        HealthKitPermissions()
+    }
+    .environment(StudyBundleLoader.shared)
+    .previewWith(standard: MyHeartCountsStandard()) {
+        HealthKit()
+        MyHeartCounts.previewModels
+    }
 }

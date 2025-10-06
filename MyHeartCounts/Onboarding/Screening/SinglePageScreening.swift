@@ -46,42 +46,37 @@ struct SinglePageScreening: View {
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        OnboardingView(wrapInScrollView: false) {
-            OnboardingTitleView(title: title, subtitle: subtitle)
-                .padding(.horizontal)
-        } content: {
-            Form {
-                ForEach(0..<components.endIndex, id: \.self) { idx in
-                    let component = components[idx]
-                    let title = String(localized: component.title)
-                    Section {
-                        component.intoAnyView()
-                    } header: {
-                        if !title.isEmpty {
-                            Text(title)
-                        }
-                    }
-                    .accessibilityElement(children: .contain)
-                    .accessibilityIdentifier("Screening Section, \(title.isEmpty ? String(idx) : title)")
-                }
-                Section {
-                    AsyncButton(state: $viewState) {
-                        await evaluateEligibilityAndProceed()
-                    } label: {
-                        Text("Continue")
-                            .frame(maxWidth: .infinity, minHeight: 38)
-                            .bold()
-                    }
-                    .buttonStyleGlassProminent()
-                    .disabled(!canAdvanceToNextStep)
-                    .listRowInsets(.zero)
-                }
+        Form {
+            Section {
+                Text(subtitle)
             }
-        } footer: {
-            EmptyView()
+            ForEach(0..<components.endIndex, id: \.self) { idx in
+                let component = components[idx]
+                let title = String(localized: component.title)
+                Section {
+                    component.intoAnyView()
+                } header: {
+                    if !title.isEmpty {
+                        Text(title)
+                    }
+                }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("Screening Section, \(title.isEmpty ? String(idx) : title)")
+            }
+            Section {
+                AsyncButton(state: $viewState) {
+                    await evaluateEligibilityAndProceed()
+                } label: {
+                    Text("Continue")
+                        .frame(maxWidth: .infinity, minHeight: 38)
+                        .bold()
+                }
+                .buttonStyleGlassProminent()
+                .disabled(!canAdvanceToNextStep)
+                .listRowInsets(.zero)
+            }
         }
-        .disablePadding([.horizontal, .bottom])
-        .makeBackgroundMatchFormBackground()
+            .navigationTitle(title)
     }
     
     private var canAdvanceToNextStep: Bool {

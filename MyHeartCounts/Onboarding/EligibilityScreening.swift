@@ -23,6 +23,7 @@ struct EligibilityScreening: View {
         SpeaksLanguage(allowedLanguage: .init(identifier: "en_US"))
     ]
     
+    
     var body: some View {
         SinglePageScreening(
             title: "ELIGIBILITY_STEP_TITLE",
@@ -60,4 +61,13 @@ struct EligibilityScreening: View {
             }
         }
     }
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        EligibilityScreening()
+    }
+    .environment(StudyBundleLoader.shared)
+    .environment(OnboardingDataCollection())
 }

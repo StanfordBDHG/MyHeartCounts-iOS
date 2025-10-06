@@ -19,7 +19,7 @@ struct HeartHealthDashboardTab: RootViewTab {
         "Heart Health"
     }
     static var tabSymbol: SFSymbol {
-        .heartTextSquare
+        .stethoscope
     }
     
     var body: some View {

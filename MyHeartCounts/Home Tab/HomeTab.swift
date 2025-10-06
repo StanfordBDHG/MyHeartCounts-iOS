@@ -13,8 +13,8 @@ import SwiftUI
 
 /// The View for the "Home" tab in the root tab view.
 struct HomeTab: RootViewTab {
-    static var tabTitle: LocalizedStringResource { "My Heart Counts" }
-    static var tabSymbol: SFSymbol { .cubeTransparent }
+    static var tabTitle: LocalizedStringResource { "Home" }
+    static var tabSymbol: SFSymbol { .heart }
     
     @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
     private var missedEvents
@@ -35,7 +35,7 @@ struct HomeTab: RootViewTab {
                 )
                 missedEventsSection
             }
-            .navigationTitle(String(localized: Self.tabTitle))
+            .navigationTitle("My Heart Counts")
             .toolbar {
                 accountToolbarItem
             }

@@ -20,7 +20,7 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     func testRootLevelNavigation() throws {
         try launchAppAndEnrollIntoStudy()
         goToTab(.upcoming)
-        XCTAssert(app.navigationBars.staticTexts["Upcoming Tasks"].waitForExistence(timeout: 2))
+        XCTAssert(app.navigationBars.staticTexts["Tasks"].waitForExistence(timeout: 2))
         goToTab(.heartHealth)
         XCTAssert(app.navigationBars.staticTexts["Heart Health"].waitForExistence(timeout: 2))
         goToTab(.news)

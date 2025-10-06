@@ -7,10 +7,12 @@
 //
 
 import Foundation
+import SFSafeSymbols
 import Spezi
 import SpeziAccount
 import SpeziConsent
 import SpeziFoundation
+import SpeziHealthKitBulkExport
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziStudy
@@ -30,33 +32,62 @@ struct FinalEnrollmentStep: View {
     
     @State private var viewState: ViewState = .idle
     
+    
+    private var showTrialSection: Bool {
+        onboardingData.consentResponses?.selects["short-term-physical-activity-trial"] == "short-term-physical-activity-trial-yes"
+    }
+    
     var body: some View {
-        OnboardingView {
-            OnboardingTitleView(title: "Welcome to My Heart Counts")
-        } content: {
-            let doc = MarkdownDocument(
-                metadata: [:],
-                blocks: [.markdown(id: nil, rawContents: loadText())]
-            )
-            MarkdownView(markdownDocument: doc)
-        } footer: {
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    OnboardingHeader(
+                        title: "Welcome to My Heart Counts",
+                        description: "What happens next:"
+                    )
+                    .padding(.top, 64)
+                    content
+                }
+                .padding(.horizontal)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            Spacer(minLength: 8)
+                .border(Color.blue, width: 1)
             OnboardingActionsView("Start") {
                 await completeStudyEnrollment()
             }
             .disabled(viewState != .idle)
+            .padding(.horizontal)
         }
     }
     
-    private func loadText() -> String {
-        var text = String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE")
-        if onboardingData.consentResponses?.selects["short-term-physical-activity-trial"] == "short-term-physical-activity-trial-yes" {
-            text.append("\n\n")
-            text.append(String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE_TRIAL_SECTION"))
+    @ViewBuilder private var content: some View {
+        Grid(horizontalSpacing: 16, verticalSpacing: 16) {
+            OnboardingIconGridRow(
+                icon: SFSymbol(rawValue: "7.calendar"),
+                text: "FINAL_ENROLLMENT_STEP_MESSAGE_SEVEN_DAYS"
+            )
+            OnboardingIconGridRow(
+                icon: .deskclock,
+                text: "FINAL_ENROLLMENT_STEP_MESSAGE_EVERY_DAY"
+            )
+            OnboardingIconGridRow(
+                icon: .chartLineTextClipboard,
+                text: "FINAL_ENROLLMENT_STEP_MESSAGE_DATA_COLLECTION"
+            )
+            if showTrialSection {
+                OnboardingIconGridRow(
+                    icon: .calendarBadgeClock,
+                    text: "FINAL_ENROLLMENT_STEP_MESSAGE_BASELINE"
+                )
+            }
+            OnboardingIconGridRow(
+                icon: SFSymbol(rawValue: "arrow.up.heart"),
+                text: "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER"
+            )
         }
-        text.append("\n\n")
-        text.append(String(localized: "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER"))
-        return text
     }
+    
     
     private func completeStudyEnrollment() async {
         guard let study = try? studyLoader.studyBundle?.get() else {
@@ -88,5 +119,19 @@ struct FinalEnrollmentStep: View {
             viewState = .error(error)
         }
         path.nextStep()
+    }
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        FinalEnrollmentStep()
+    }
+    .environment(OnboardingDataCollection())
+    .environment(StudyBundleLoader.shared)
+    .previewWith(standard: MyHeartCountsStandard()) {
+        MyHeartCounts.previewModels
+        HistoricalHealthSamplesExportManager()
+        BulkHealthExporter()
     }
 }

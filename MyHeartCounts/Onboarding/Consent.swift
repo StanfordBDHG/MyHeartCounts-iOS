@@ -7,6 +7,7 @@
 //
 
 import OSLog
+import Spezi
 import SpeziAccount
 import SpeziConsent
 import SpeziFoundation
@@ -102,5 +103,18 @@ extension Locale {
         case .unitedStates: .usLetter
         default: .dinA4
         }
+    }
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        Consent()
+    }
+    .environment(StudyBundleLoader.shared)
+    .environment(OnboardingDataCollection())
+    .previewWith(standard: MyHeartCountsStandard()) {
+        ConsentManager()
+        MyHeartCounts.previewModels
     }
 }

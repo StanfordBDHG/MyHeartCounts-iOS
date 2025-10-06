@@ -17,40 +17,51 @@ struct Welcome: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
+    
     var body: some View {
-        OnboardingView(
-            title: "My Heart Counts",
-            subtitle: "WELCOME_SUBTITLE",
-            areas: [
-                OnboardingInformationView.Area(
-                    icon: {
-                        Image(systemSymbol: .appsIphone)
-                            .accessibilityHidden(true)
-                    },
-                    title: "WELCOME_AREA1_TITLE",
-                    description: "WELCOME_AREA1_DESCRIPTION"
-                ),
-                OnboardingInformationView.Area(
-                    icon: {
-                        Image(systemSymbol: .shippingboxFill)
-                            .accessibilityHidden(true)
-                    },
-                    title: "WELCOME_AREA2_TITLE",
-                    description: "WELCOME_AREA2_DESCRIPTION"
-                ),
-                OnboardingInformationView.Area(
-                    icon: {
-                        Image(systemSymbol: .listBulletClipboardFill)
-                            .accessibilityHidden(true)
-                    },
-                    title: "WELCOME_AREA3_TITLE",
-                    description: "WELCOME_AREA3_DESCRIPTION"
-                )
-            ],
-            actionText: "Continue",
-            action: {
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    OnboardingHeader(
+                        title: "My Heart Counts",
+                        description: "WELCOME_SUBTITLE"
+                    )
+                    .padding(.top, 128)
+                    onboardingInformationView
+                }
+                .padding(.horizontal)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            Spacer(minLength: 8)
+                .border(Color.blue, width: 1)
+            OnboardingActionsView("Continue") {
                 onboardingPath.nextStep()
             }
-        )
+            .padding(.horizontal)
+        }
+    }
+    
+    private var onboardingInformationView: some View {
+        Grid(horizontalSpacing: 16, verticalSpacing: 16) {
+            OnboardingIconGridRow(
+                icon: .appBadge,
+                text: "WELCOME_AREA1_DESCRIPTION"
+            )
+            OnboardingIconGridRow(
+                icon: .wandAndSparklesInverse,
+                text: "WELCOME_AREA2_DESCRIPTION"
+            )
+            OnboardingIconGridRow(
+                icon: .watchfaceApplewatchCase,
+                text: "WELCOME_AREA3_DESCRIPTION"
+            )
+        }
+    }
+}
+
+
+#Preview {
+    ManagedNavigationStack {
+        Welcome()
     }
 }

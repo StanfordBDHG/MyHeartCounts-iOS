@@ -16,7 +16,7 @@ import SwiftUI
 
 
 struct UpcomingTasksTab: RootViewTab {
-    static var tabTitle: LocalizedStringResource { "Upcoming Tasks" }
+    static var tabTitle: LocalizedStringResource { "Tasks" }
     static var tabSymbol: SFSymbol { .calendar }
     
     var body: some View {
