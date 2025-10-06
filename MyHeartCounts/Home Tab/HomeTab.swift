@@ -35,7 +35,7 @@ struct HomeTab: RootViewTab {
                 )
                 missedEventsSection
             }
-            .navigationTitle(String(localized: Self.tabTitle))
+            .navigationTitle("My Heart Counts")
             .toolbar {
                 accountToolbarItem
             }
