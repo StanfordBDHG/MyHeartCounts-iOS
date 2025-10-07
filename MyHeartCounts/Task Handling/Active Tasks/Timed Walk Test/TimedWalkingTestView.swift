@@ -225,7 +225,7 @@ struct TimedWalkingTestView: View {
             Section {
                 AsyncButton(state: $viewState) {
                     do {
-                        try await watchManager.launchWatchApp()
+                        try? await watchManager.launchWatchApp()
                         let result = try await timedWalkingTest.start(test)
                         self.mostRecentResult = result
                         if !didCompleteAtLeastOneTest && result != nil {
