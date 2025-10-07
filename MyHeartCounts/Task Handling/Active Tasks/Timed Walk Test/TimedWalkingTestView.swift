@@ -127,12 +127,7 @@ struct TimedWalkingTestView: View {
                     .font(.system(size: 87))
                     .symbolRenderingMode(.multicolor)
                     .foregroundStyle(.accent)
-                    .accessibilityLabel({ () -> String in
-                        switch test.kind {
-                        case .walking: "Symbol of person walking"
-                        case .running: "Symbol of person running"
-                        }
-                    }())
+                    .accessibilityHidden(true)
             }
         }
         PlainSection {
@@ -294,7 +289,6 @@ extension TimedWalkingTestView {
                 let remaining = max(0, Int(end.timeIntervalSince(context.date)))
                 let minutes = remaining / 60
                 let seconds = remaining % 60
-
                 Text(String(format: "%d:%02d", minutes, seconds))
                     .font(.system(size: 70, design: .rounded).bold())
                     .monospacedDigit()

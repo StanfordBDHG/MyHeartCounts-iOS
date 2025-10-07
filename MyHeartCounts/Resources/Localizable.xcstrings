@@ -4103,9 +4103,6 @@
         }
       }
     },
-    "The %@ is in progress." : {
-
-    },
     "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
       "localizations" : {
         "es" : {
@@ -4794,6 +4791,9 @@
           }
         }
       }
+    },
+    "Your %@ is in progress." : {
+
     },
     "Your Account" : {
       "localizations" : {

@@ -9,6 +9,7 @@
 import Foundation
 import MyHeartCountsShared
 import Spezi
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziStudyDefinition
 import WatchConnectivity
@@ -45,7 +46,7 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
         try await healthKit.healthStore.startWatchApp(toHandle: workoutConfig)
     }
     
-    func startWorkoutOnWatch(for activityKind: TimedWalkingTestConfiguration.Kind) async throws {
+    func startWorkoutOnWatch(for test: TimedWalkingTestConfiguration) async throws {
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .walking
         configuration.locationType = .outdoor
@@ -53,7 +54,9 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
         try await Task.sleep(for: .seconds(2)) // give it some time to boot up
         wcSession.send(userInfo: [
             .watchShouldEnableWorkout: true,
-            .watchWorkoutActivityKind: activityKind.rawValue
+            .watchWorkoutActivityKind: test.kind.rawValue,
+            .watchWorkoutDuration: test.duration.timeInterval,
+            .watchWorkoutStartDate: Date.now
         ])
     }
     
