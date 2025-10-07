@@ -1113,6 +1113,7 @@
       }
     },
     "Current Test" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4102,6 +4103,9 @@
         }
       }
     },
+    "The %@ is in progress." : {
+
+    },
     "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
       "localizations" : {
         "es" : {
@@ -4143,6 +4147,7 @@
       }
     },
     "Time Elapsed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4153,6 +4158,7 @@
       }
     },
     "Time Remaining" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
