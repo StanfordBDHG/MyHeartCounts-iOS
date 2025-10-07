@@ -1113,6 +1113,7 @@
       }
     },
     "Current Test" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4143,6 +4144,7 @@
       }
     },
     "Time Elapsed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4153,6 +4155,7 @@
       }
     },
     "Time Remaining" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4788,6 +4791,9 @@
           }
         }
       }
+    },
+    "Your %@ is in progress." : {
+
     },
     "Your Account" : {
       "localizations" : {

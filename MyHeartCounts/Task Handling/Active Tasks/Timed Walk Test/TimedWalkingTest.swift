@@ -113,7 +113,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             throw .unableToStart(.missingSensorPermissions)
         }
         do {
-            try await watchManager.startWorkoutOnWatch(for: test.kind)
+            try await watchManager.startWorkoutOnWatch(for: test)
             logger.notice("Successfully launched watch app")
         } catch {
             // we still continue if the watch workout failed.

@@ -25,10 +25,17 @@ public struct InterDeviceUserInfoKey: RawRepresentable, Hashable, Sendable {
 extension InterDeviceUserInfoKey {
     /// `Bool` flag indicating that the watch should start a workout
     public static let watchShouldEnableWorkout = Self(rawValue: "edu.stanford.MyHeartCounts.enableWatchWorkout")
+    
     /// `UInt8` value specifying which type of workout the watch should track.
     ///
     /// The value here corresponds to a `SpeziStudyDefinition/TimedWalkingTestConfiguration/Kind` raw value.
     public static let watchWorkoutActivityKind = Self(rawValue: "edu.stanford.MyHeartCounts.watchWorkoutActivityKind")
+    
+    /// `TimeInterval` value specifying the duration of the to-be-tracked workout, in seconds.
+    public static let watchWorkoutDuration = Self(rawValue: "edu.stanford.MyHeartCounts.watchWorkoutDuration")
+    
+    /// `Date` value specifying the start date of the to-be-tracked workout.
+    public static let watchWorkoutStartDate = Self(rawValue: "edu.stanford.MyHeartCounts.watchWorkoutStartDate")
 }
 
 

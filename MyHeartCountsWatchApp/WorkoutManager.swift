@@ -23,13 +23,14 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
     
     enum State: Hashable, Sendable {
         case idle
-        case active(startDate: Date)
+        case active(timeRange: Range<Date>)
     }
     
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit // swiftlint:disable:this attributes
     
     private var workoutSession: HKWorkoutSession?
     
+    private var currentSessionExpectedTimeRange: Range<Date>?
     private(set) var state: State = .idle
     
     
@@ -42,16 +43,16 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         case .notStarted, .prepared:
             state = .idle
         case .running, .paused:
-            if let startDate = workoutSession.startDate {
-                state = .active(startDate: startDate)
+            if let currentSessionExpectedTimeRange {
+                state = .active(timeRange: currentSessionExpectedTimeRange)
             }
         case .ended:
             state = .idle
         case .stopped:
             state = .idle
         @unknown default:
-            if let startDate = workoutSession.startDate {
-                state = .active(startDate: startDate)
+            if let currentSessionExpectedTimeRange {
+                state = .active(timeRange: currentSessionExpectedTimeRange)
             } else {
                 state = .idle
             }
@@ -59,13 +60,13 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
     }
     
     
-    func startWorkout(for activityType: TimedWalkingTestConfiguration.Kind) async throws {
+    func startWorkout(for test: TimedWalkingTestConfiguration, timeRange: Range<Date>) async throws {
         guard workoutSession == nil else {
             throw WorkoutSessionError.alreadyAWorkoutOngoing
         }
         try await healthKit.askForAuthorization()
         let configuration = HKWorkoutConfiguration()
-        switch activityType {
+        switch test.kind {
         case .walking:
             configuration.activityType = .walking
         case .running:
@@ -82,6 +83,7 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         )
         workoutSession.delegate = self
         self.workoutSession = workoutSession
+        self.currentSessionExpectedTimeRange = timeRange
         
         let builder = workoutSession.associatedWorkoutBuilder()
         builder.dataSource = HKLiveWorkoutDataSource(healthStore: healthKit.healthStore, workoutConfiguration: configuration)
@@ -100,6 +102,7 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         try await builder.endCollection(at: .now)
         try await builder.finishWorkout()
         workoutSession.stopActivity(with: .now)
+        self.currentSessionExpectedTimeRange = nil
         // NOTE: we're intentionally not setting self.workoutSession to nil in here, but instead do it in the delegate below.
     }
     

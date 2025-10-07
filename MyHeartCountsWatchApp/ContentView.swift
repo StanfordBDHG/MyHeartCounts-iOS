@@ -19,13 +19,13 @@ struct ContentView: View {
         switch workoutManager.state {
         case .idle:
             inactiveContent
-        case .active:
-            activeContent
+        case .active(let timeRange):
+            activeContent(expectedTimeRange: timeRange)
         }
     }
     
     @ViewBuilder private var inactiveContent: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text("My Heart Counts")
                 .font(.system(size: 21, weight: .semibold))
             Color.clear
@@ -36,22 +36,26 @@ struct ContentView: View {
         }
     }
     
-    @ViewBuilder private var activeContent: some View {
-        Form {
-            Section {
-                HStack {
-                    Text("Test ongoing")
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .frame(width: 40)
-                }
+    @ViewBuilder
+    private func activeContent(expectedTimeRange: Range<Date>) -> some View {
+        VStack(alignment: .leading) {
+            Text("Test Ongoing")
+                .font(.system(size: 21, weight: .semibold))
+            Spacer()
+            TimelineView(.periodic(from: expectedTimeRange.lowerBound, by: 1)) { context in
+                let remaining = max(0, Int(expectedTimeRange.upperBound.timeIntervalSince(context.date)))
+                let minutes = remaining / 60
+                let seconds = remaining % 60
+                Text(String(format: "%d:%02d", minutes, seconds))
+                    .font(.system(size: 60, design: .rounded).bold())
+                    .monospacedDigit()
+                    .contentTransition(.numericText(countsDown: true))
+                    .animation(.easeInOut(duration: 0.2), value: remaining)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
-            Section {
-                Text("See your iPhone for more information.")
-            }
+            Spacer()
+            Text("See your iPhone for more information.")
+                .font(.footnote)
         }
-        .navigationTitle("My Heart Counts")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
