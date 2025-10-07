@@ -25,7 +25,7 @@ struct ContentView: View {
     }
     
     @ViewBuilder private var inactiveContent: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text("My Heart Counts")
                 .font(.system(size: 21, weight: .semibold))
             Color.clear
@@ -47,7 +47,7 @@ struct ContentView: View {
                 let minutes = remaining / 60
                 let seconds = remaining % 60
                 Text(String(format: "%d:%02d", minutes, seconds))
-                    .font(.system(size: 70, design: .rounded).bold())
+                    .font(.system(size: 60, design: .rounded).bold())
                     .monospacedDigit()
                     .contentTransition(.numericText(countsDown: true))
                     .animation(.easeInOut(duration: 0.2), value: remaining)
@@ -57,8 +57,5 @@ struct ContentView: View {
             Text("See your iPhone for more information.")
                 .font(.footnote)
         }
-        .padding([.top, .horizontal])
-        .navigationTitle("My Heart Counts")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
