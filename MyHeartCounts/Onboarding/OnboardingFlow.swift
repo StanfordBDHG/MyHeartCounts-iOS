@@ -12,6 +12,7 @@ import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziHealthKit
+import SpeziLLMLocal
 import SpeziLLMLocalDownload
 import SpeziNotifications
 import SpeziOnboarding
