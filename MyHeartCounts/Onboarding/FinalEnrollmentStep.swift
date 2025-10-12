@@ -86,6 +86,7 @@ struct FinalEnrollmentStep: View {
                 text: "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER"
             )
         }
+        .padding(.leading)
     }
     
     

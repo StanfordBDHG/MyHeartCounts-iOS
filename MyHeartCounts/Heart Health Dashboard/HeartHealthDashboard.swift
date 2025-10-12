@@ -109,7 +109,7 @@ struct HeartHealthDashboard: View {
     
     @ViewBuilder private var topSection: some View {
         let valueAvailabe = !(cvhScore?.isNaN ?? true)
-        VStack {
+        VStack { // swiftlint:disable:this closure_body_length
             HStack {
                 Spacer()
                 Gauge(
@@ -140,13 +140,18 @@ struct HeartHealthDashboard: View {
                 .frame(width: 140, height: 140)
                 Spacer()
             }
-            .padding(.top, 32)
-            Text("HEART_HEALTH_DASHBOARD_HEADER")
-                .multilineTextAlignment(.leading)
-                .foregroundStyle(.secondary)
-                .padding()
+            .padding(.vertical, 16)
+            .background(.background)
+            .clipShape(RoundedRectangle(cornerRadius: HealthDashboardConstants.gridComponentCornerRadius))
+            HStack {
+                Text("HEART_HEALTH_DASHBOARD_HEADER")
+                    .font(.caption)
+                    .multilineTextAlignment(.leading)
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+                .padding(.horizontal)
         }
-        .background(.background)
     }
     
     @ViewBuilder private var learnMoreSection: some View {
