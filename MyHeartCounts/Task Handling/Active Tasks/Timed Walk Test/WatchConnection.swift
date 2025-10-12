@@ -19,6 +19,10 @@ import WatchConnectivity
 @Observable
 @MainActor
 final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
+    enum LaunchWatchAppError: Error {
+        case unableToFindWatch
+    }
+    
     // swiftlint:disable attributes
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     // swiftlint:enable attributes
@@ -39,19 +43,14 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
         wcSession.activate()
     }
     
-    func launchWatchApp() async throws {
-        let workoutConfig = HKWorkoutConfiguration()
-        workoutConfig.activityType = .walking
-        workoutConfig.locationType = .unknown
-        try await healthKit.healthStore.startWatchApp(toHandle: workoutConfig)
-    }
-    
     func startWorkoutOnWatch(for test: TimedWalkingTestConfiguration) async throws {
+        guard userHasWatch && isWatchAppInstalled && isWatchAppReachable else {
+            throw LaunchWatchAppError.unableToFindWatch
+        }
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .walking
         configuration.locationType = .outdoor
         try await healthKit.healthStore.startWatchApp(toHandle: configuration)
-        try await Task.sleep(for: .seconds(2)) // give it some time to boot up
         wcSession.send(userInfo: [
             .watchShouldEnableWorkout: true,
             .watchWorkoutActivityKind: test.kind.rawValue,

@@ -2062,6 +2062,7 @@
       }
     },
     "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2234,6 +2235,7 @@
       }
     },
     "Launch Watch App" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

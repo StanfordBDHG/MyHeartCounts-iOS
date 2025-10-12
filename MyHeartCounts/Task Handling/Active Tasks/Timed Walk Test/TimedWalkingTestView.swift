@@ -181,20 +181,6 @@ struct TimedWalkingTestView: View {
                     LabeledContent("Distance", value: results.distanceCovered, format: .number)
                 }
             }
-            if watchManager.userHasWatch && !watchManager.isWatchAppReachable && watchManager.isWatchAppInstalled {
-                ErrorSection(
-                    icon: .exclamationmarkApplewatch,
-                    title: "Launch Watch App",
-                    explanation: "If you have an Apple Watch, please ensure that the My Heart Counts app is running",
-                    actionText: "Launch Watch App",
-                    action: {
-                        async let _ = withTimeout(of: .seconds(4)) {
-                            print("timed out?")
-                        }
-                        try? await watchManager.launchWatchApp()
-                    }
-                )
-            }
             if showPermissionsErrorSection {
                 ErrorSection(
                     title: "Missing Required Motion Data Access Permission",
@@ -220,7 +206,6 @@ struct TimedWalkingTestView: View {
             Section {
                 AsyncButton(state: $viewState) {
                     do {
-                        try? await watchManager.launchWatchApp()
                         let result = try await timedWalkingTest.start(test)
                         self.mostRecentResult = result
                         if !didCompleteAtLeastOneTest && result != nil {

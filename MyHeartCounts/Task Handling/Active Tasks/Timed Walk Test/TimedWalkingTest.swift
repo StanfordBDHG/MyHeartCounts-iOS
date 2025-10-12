@@ -116,8 +116,8 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             try await watchManager.startWorkoutOnWatch(for: test)
             logger.notice("Successfully launched watch app")
         } catch {
-            // we still continue if the watch workout failed.
-            logger.notice("Failed to start watch workout: \(error)")
+            // we still continue if the watch app failed to launch.
+            logger.notice("Failed to launch watch app: \(error)")
         }
         let startInstant = ContinuousClock.Instant.now
         let session = ActiveSession(test: test, startDate: .now)
