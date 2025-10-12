@@ -316,12 +316,12 @@ extension ScoreDefinition {
     )
     
     static let cvhStepCount = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(10_000..., score: 1, explainer: "\(10000)+"),
-        .inRange(120..<150, score: 0.9),
-        .inRange(90..<120, score: 0.8),
-        .inRange(60..<90, score: 0.6),
-        .inRange(30..<60, score: 0.4),
-        .inRange(1..<2000, score: 0.2)
+        .inRange(10_000..., score: 1, explainer: "10000+"),
+        .inRange(8_000..<10_000, score: 0.9),
+        .inRange(6_000..<8_000, score: 0.8),
+        .inRange(4_000..<6_000, score: 0.6),
+        .inRange(2_000..<4_000, score: 0.4),
+        .inRange(0..<2_000, score: 0.2, explainer: "< 2000")
     ])
     
     static let cvhNicotine: ScoreDefinition = {
