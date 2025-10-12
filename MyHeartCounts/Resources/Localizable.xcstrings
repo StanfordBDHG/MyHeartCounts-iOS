@@ -1120,6 +1120,7 @@
       }
     },
     "Current Test" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2068,6 +2069,7 @@
       }
     },
     "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2240,6 +2242,7 @@
       }
     },
     "Launch Watch App" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4153,6 +4156,7 @@
       }
     },
     "Time Elapsed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4163,6 +4167,7 @@
       }
     },
     "Time Remaining" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4801,6 +4806,9 @@
           }
         }
       }
+    },
+    "Your %@ is in progress." : {
+
     },
     "Your Account" : {
       "localizations" : {

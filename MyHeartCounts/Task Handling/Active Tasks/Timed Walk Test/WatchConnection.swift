@@ -9,8 +9,10 @@
 import Foundation
 import MyHeartCountsShared
 import Spezi
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziStudyDefinition
+import Synchronization
 import WatchConnectivity
 
 
@@ -38,22 +40,17 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
         wcSession.activate()
     }
     
-    func launchWatchApp() async throws {
-        let workoutConfig = HKWorkoutConfiguration()
-        workoutConfig.activityType = .walking
-        workoutConfig.locationType = .unknown
-        try await healthKit.healthStore.startWatchApp(toHandle: workoutConfig)
-    }
-    
-    func startWorkoutOnWatch(for activityKind: TimedWalkingTestConfiguration.Kind) async throws {
+    func startWorkoutOnWatch(for test: TimedWalkingTestConfiguration) async throws {
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .walking
         configuration.locationType = .outdoor
-        try await healthKit.healthStore.startWatchApp(toHandle: configuration)
-        try await Task.sleep(for: .seconds(2)) // give it some time to boot up
+        
+        try await healthKit.startWatchApp(toHandle: configuration, timeout: .seconds(2.5))
         wcSession.send(userInfo: [
             .watchShouldEnableWorkout: true,
-            .watchWorkoutActivityKind: activityKind.rawValue
+            .watchWorkoutActivityKind: test.kind.rawValue,
+            .watchWorkoutDuration: test.duration.timeInterval,
+            .watchWorkoutStartDate: Date.now
         ])
     }
     
@@ -99,7 +96,48 @@ extension WatchConnection: WCSessionDelegate {
     
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
-            self.isWatchAppReachable = self.wcSession.isReachable
+            updateStateRelatedProperties()
+        }
+    }
+}
+
+
+extension HealthKit {
+    /// Attempts to launch the companion watchOS app, to handle a workout configuration.
+    ///
+    /// - parameter configuration: The workout configuration the companion app should handle
+    /// - parameter timeout: How long the function should wait for the companion app to launch.
+    func startWatchApp(toHandle configuration: HKWorkoutConfiguration, timeout: Duration) async throws {
+        actor DidResolve {
+            private var didResolve = false
+            func resolve() -> Bool {
+                guard !didResolve else {
+                    return false
+                }
+                didResolve = true
+                return true
+            }
+        }
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            let didResolve = DidResolve()
+            healthStore.startWatchApp(with: configuration) { @Sendable _, error in
+                Task {
+                    guard await didResolve.resolve() else {
+                        return
+                    }
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+            Task {
+                try await Task.sleep(for: timeout)
+                if await didResolve.resolve() {
+                    continuation.resume(throwing: CancellationError())
+                }
+            }
         }
     }
 }

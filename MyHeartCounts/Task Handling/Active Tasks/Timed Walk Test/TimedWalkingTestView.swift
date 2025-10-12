@@ -16,7 +16,7 @@ import SpeziViews
 import SwiftUI
 
 
-struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
+struct TimedWalkingTestView: View {
     typealias ResultHandler = @Sendable @MainActor (TimedWalkingTestResult?) async -> Void
     
     @Environment(\.openSettingsApp)
@@ -47,6 +47,20 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
         timedWalkingTest.state.isActive
     }
     
+    private var textName: LocalizedStringResource {
+        let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
+        return switch test.kind {
+        case .walking:
+            LocalizedStringResource("\(durationInMinutes)-Minute Walk Test")
+        case .running:
+            if test == .twelveMinuteRunTest {
+                LocalizedStringResource("12-Minute Run Test (Cooper Test)")
+            } else {
+                LocalizedStringResource("\(durationInMinutes)-Minute Run Test")
+            }
+        }
+    }
+    
     var body: some View {
         Form {
             sections
@@ -69,6 +83,11 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                 Task {
                     await resultHandler(nil)
                 }
+            }
+        }
+        .toolbar {
+            if !testIsRunning {
+                DismissButton()
             }
         }
         .alert(
@@ -102,69 +121,58 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
     }
     
     @ViewBuilder private var sections: some View {
-        let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
-        PlainSection {
-            CenterH {
-                switch test.kind {
-                case .walking:
-                    Text("\(durationInMinutes)-Minute Walk Test")
-                case .running:
-                    if test == .twelveMinuteRunTest {
-                        Text("12-Minute Run Test (Cooper Test)")
-                    } else {
-                        Text("\(durationInMinutes)-Minute Run Test")
-                    }
-                }
-            }
-            .font(.title.bold())
-            .multilineTextAlignment(.center)
-        }
         PlainSection {
             CenterH {
                 Image(systemSymbol: test.kind.symbol)
                     .font(.system(size: 87))
-                    .accessibilityLabel({ () -> String in
-                        switch test.kind {
-                        case .walking: "Symbol of person walking"
-                        case .running: "Symbol of person running"
-                        }
-                    }())
+                    .symbolRenderingMode(.multicolor)
+                    .foregroundStyle(.accent)
+                    .accessibilityHidden(true)
             }
         }
         PlainSection {
-            let kindText: LocalizedStringResource = switch test.kind {
-            case .walking: "walk"
-            case .running: "run"
+            VStack(alignment: .leading) {
+                Text(textName)
             }
-            switch test {
-            case .sixMinuteWalkTest:
-                Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
-            case .twelveMinuteRunTest:
-                Text("TIMED_WALK_TEST_EXPLAINER_12_MIN_RUN")
-            default:
-                // ???
-                Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
-            }
-            if watchParticipatesInTest {
-                Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until your Watch vibrates to indicate that the test has ended.")
-            } else {
-                Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
-            }
-            Text("TIMED_WALK_TEST_EXPLAINER_FOOTER")
+            .font(.title.bold())
+            .multilineTextAlignment(.center)
         }
-        if !testIsRunning {
-            if watchManager.userHasWatch && !watchManager.isWatchAppReachable {
-                PlainSection {
-                    Text("If you have an Apple Watch, please ensure that the My Heart Counts app is running")
-                    AsyncButton(state: $viewState) {
-                        async let _ = withTimeout(of: .seconds(4)) {
-                            print("timed out?")
-                        }
-                        try await watchManager.launchWatchApp()
-                    } label: {
-                        Text("Launch Watch App")
+        if case let .testActive(session) = timedWalkingTest.state {
+            PlainSection {
+                Spacer()
+                CenterH {
+                    VStack(alignment: .center, spacing: 16) {
+                        CountdownView(start: session.inProgressResult.startDate, end: session.inProgressResult.endDate)
+                        Text("Your \(textName) is in progress.")
+                            .multilineTextAlignment(.center)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
+                Spacer()
+            }
+        }
+        if !testIsRunning {
+            PlainSection {
+                let kindText: LocalizedStringResource = switch test.kind {
+                case .walking: "walk"
+                case .running: "run"
+                }
+                switch test {
+                case .sixMinuteWalkTest:
+                    Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
+                case .twelveMinuteRunTest:
+                    Text("TIMED_WALK_TEST_EXPLAINER_12_MIN_RUN")
+                default:
+                    // ???
+                    Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
+                }
+                if watchParticipatesInTest {
+                    Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until your Watch vibrates to indicate that the test has ended.")
+                } else {
+                    Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
+                }
+                Text("TIMED_WALK_TEST_EXPLAINER_FOOTER")
             }
             if let results = timedWalkingTest.mostRecentResult {
                 Section("Results") {
@@ -179,7 +187,7 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                     explanation: "The Timed Walking Test requires read access to Motion and Fitness Data.",
                     actionText: "Open Settings",
                     action: {
-                        openSettingsApp()
+                        await openSettingsApp()
                     }
                 )
             }
@@ -189,13 +197,12 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                     explanation: "Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data.",
                     actionText: "Install on Apple Watch",
                     action: {
-                        openUrl("itms-watchs://")
+                        await openUrl("itms-watchs://")
                     }
                 )
             }
         }
-        switch timedWalkingTest.state {
-        case .idle:
+        if timedWalkingTest.state == .idle && timedWalkingTest.mostRecentResult == nil {
             Section {
                 AsyncButton(state: $viewState) {
                     do {
@@ -217,18 +224,6 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
                 .disabled(testIsRunning)
                 .listRowInsets(.zero)
             }
-        case .testActive(let session):
-            Section("Current Test") {
-                let timerInterval = session.inProgressResult.startDate...session.inProgressResult.endDate
-                HStack {
-                    Text("Time Elapsed")
-                    Spacer()
-                    Text(timerInterval: timerInterval, countsDown: false)
-                }
-                LabeledContent("Time Remaining") {
-                    Text(timerInterval: timerInterval)
-                }
-            }
         }
     }
     
@@ -240,45 +235,66 @@ struct TimedWalkingTestView: View { // swiftlint:disable:this file_types_order
 }
 
 
-private struct CenterH<Content: View>: View {
-    @ViewBuilder let content: @MainActor () -> Content
-    
-    var body: some View {
-        HStack(spacing: 0) {
-            Spacer()
-            content()
-            Spacer()
+extension TimedWalkingTestView {
+    private struct CenterH<Content: View>: View {
+        @ViewBuilder let content: @MainActor () -> Content
+        
+        var body: some View {
+            HStack(spacing: 0) {
+                Spacer()
+                content()
+                Spacer()
+            }
         }
     }
-}
 
 
-private struct PlainSection<Content: View>: View {
-    private let content: Content
-    
-    var body: some View {
-        content
-            .multilineTextAlignment(.leading)
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
+    private struct PlainSection<Content: View>: View {
+        private let content: Content
+        
+        var body: some View {
+            content
+                .multilineTextAlignment(.leading)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+        }
+        
+        init(@ViewBuilder _ content: () -> Content) {
+            self.content = content()
+        }
+    }
+
+
+    private struct CountdownView: View {
+        let start: Date
+        let end: Date
+
+        var body: some View {
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                let remaining = max(0, Int(end.timeIntervalSince(context.date)))
+                let minutes = remaining / 60
+                let seconds = remaining % 60
+                Text(String(format: "%d:%02d", minutes, seconds))
+                    .font(.system(size: 70, design: .rounded).bold())
+                    .monospacedDigit()
+                    .contentTransition(.numericText(countsDown: true))
+                    .animation(.easeInOut(duration: 0.2), value: remaining)
+            }
+        }
     }
     
-    init(@ViewBuilder _ content: () -> Content) {
-        self.content = content()
-    }
-}
-
-
-extension TimedWalkingTestView {
+    
     private struct ErrorSection: View {
+        let icon: SFSymbol
         let title: LocalizedStringResource
         let explanation: LocalizedStringResource
         let actionText: LocalizedStringResource
-        let action: @MainActor () -> Void
+        let action: @MainActor @Sendable () async -> Void
+        
         
         var body: some View {
             Section {
-                HStack {
+                HStack(alignment: .top) {
                     Image(systemSymbol: .exclamationmarkTriangle)
                         .accessibilityLabel("Warning Sign")
                         .foregroundStyle(.red)
@@ -289,13 +305,28 @@ extension TimedWalkingTestView {
                             .font(.subheadline)
                     }
                 }
-                Button {
-                    action()
+                AsyncButton {
+                    await action()
                 } label: {
                     Text(actionText)
                         .padding(.leading, 29)
                 }
             }
+        }
+        
+        
+        init( // swiftlint:disable:next function_default_parameter_at_end
+            icon: SFSymbol = .exclamationmarkTriangle,
+            title: LocalizedStringResource,
+            explanation: LocalizedStringResource,
+            actionText: LocalizedStringResource,
+            action: @Sendable @escaping () async -> Void
+        ) {
+            self.icon = icon
+            self.title = title
+            self.explanation = explanation
+            self.actionText = actionText
+            self.action = action
         }
     }
 }
