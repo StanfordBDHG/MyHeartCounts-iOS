@@ -173,7 +173,7 @@ struct HeartHealthDashboard: View {
         let score = $cvhScore[keyPath: scoreKeyPath]
         return .custom(
             title: score.sampleType.displayTitle,
-            headerInsert: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
+            headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
         ) {
             if let scoreValue = score.score {
                 VStack(spacing: 0) {
