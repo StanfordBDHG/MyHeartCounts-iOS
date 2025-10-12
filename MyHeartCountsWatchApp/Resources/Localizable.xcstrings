@@ -31,15 +31,8 @@
         }
       }
     },
-    "Test ongoing" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prueba en curso"
-          }
-        }
-      }
+    "Test Ongoing" : {
+
     }
   },
   "version" : "1.0"

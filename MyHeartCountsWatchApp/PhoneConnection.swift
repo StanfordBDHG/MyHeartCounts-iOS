@@ -41,9 +41,14 @@ final class PhoneConnection: NSObject, Module, WCSessionDelegate {
         // userInfo isn't Sendable (it is, but the compiler doesn't know this), so we end up with two separate branches with a Task each...
         if userInfo[.watchShouldEnableWorkout] as? Bool == true,
            let kindRawValue = userInfo[.watchWorkoutActivityKind] as? TimedWalkingTestConfiguration.Kind.RawValue,
+           let duration = userInfo[.watchWorkoutDuration] as? TimeInterval,
+           let startDate = userInfo[.watchWorkoutStartDate] as? Date,
            let kind = TimedWalkingTestConfiguration.Kind(rawValue: kindRawValue) {
             Task {
-                try? await workoutManager.startWorkout(for: kind)
+                try? await workoutManager.startWorkout(
+                    for: .init(duration: .seconds(duration), kind: kind),
+                    timeRange: startDate..<startDate.addingTimeInterval(duration)
+                )
             }
         } else {
             Task {
