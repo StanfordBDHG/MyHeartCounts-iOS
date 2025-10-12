@@ -51,7 +51,6 @@ func healthDashboardComponentView(
         SmallBloodPressureTile()
     case (.large, .healthKit(.correlation(.bloodPressure))):
         LargeBloodPressureTile(timeRange: config.timeRange, accessory: .init(accessory))
-        // TODO add option for time range & selector!
     case (_, .healthKit):
         // we shouldn't end up in here, since the GridComponent factory methods limit which HealthKit sample types are allowed here...
         EmptyView()

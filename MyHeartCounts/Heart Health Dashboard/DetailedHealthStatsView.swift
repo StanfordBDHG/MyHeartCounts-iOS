@@ -119,7 +119,7 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View { // swiftlint:disable:this function_body_length
+    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View {
         switch config {
         case .disabled:
             EmptyView()
