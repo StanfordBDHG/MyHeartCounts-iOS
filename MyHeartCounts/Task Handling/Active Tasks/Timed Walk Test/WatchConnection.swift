@@ -12,6 +12,7 @@ import Spezi
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziStudyDefinition
+import Synchronization
 import WatchConnectivity
 
 
@@ -19,10 +20,6 @@ import WatchConnectivity
 @Observable
 @MainActor
 final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
-    enum LaunchWatchAppError: Error {
-        case unableToFindWatch
-    }
-    
     // swiftlint:disable attributes
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     // swiftlint:enable attributes
@@ -44,13 +41,11 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
     }
     
     func startWorkoutOnWatch(for test: TimedWalkingTestConfiguration) async throws {
-        guard userHasWatch && isWatchAppInstalled && isWatchAppReachable else {
-            throw LaunchWatchAppError.unableToFindWatch
-        }
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .walking
         configuration.locationType = .outdoor
-        try await healthKit.healthStore.startWatchApp(toHandle: configuration)
+        
+        try await healthKit.startWatchApp(toHandle: configuration, timeout: .seconds(2.5))
         wcSession.send(userInfo: [
             .watchShouldEnableWorkout: true,
             .watchWorkoutActivityKind: test.kind.rawValue,
@@ -101,7 +96,48 @@ extension WatchConnection: WCSessionDelegate {
     
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
-            self.isWatchAppReachable = self.wcSession.isReachable
+            updateStateRelatedProperties()
+        }
+    }
+}
+
+
+extension HealthKit {
+    /// Attempts to launch the companion watchOS app, to handle a workout configuration.
+    ///
+    /// - parameter configuration: The workout configuration the companion app should handle
+    /// - parameter timeout: How long the function should wait for the companion app to launch.
+    func startWatchApp(toHandle configuration: HKWorkoutConfiguration, timeout: Duration) async throws {
+        actor DidResolve {
+            private var didResolve = false
+            func resolve() -> Bool {
+                guard !didResolve else {
+                    return false
+                }
+                didResolve = true
+                return true
+            }
+        }
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            let didResolve = DidResolve()
+            healthStore.startWatchApp(with: configuration) { @Sendable _, error in
+                Task {
+                    guard await didResolve.resolve() else {
+                        return
+                    }
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+            Task {
+                try await Task.sleep(for: timeout)
+                if await didResolve.resolve() {
+                    continuation.resume(throwing: CancellationError())
+                }
+            }
         }
     }
 }
