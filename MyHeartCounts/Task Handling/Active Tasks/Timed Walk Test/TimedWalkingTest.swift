@@ -149,7 +149,6 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             session.completeSessionTask?.cancel()
             stopPhoneSensorDataCollection()
             try? vibrate()
-            try? await watchManager.stopWorkoutOnWatch()
             var result = session.inProgressResult
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
                 pedometer.queryPedometerData(from: result.startDate, to: result.endDate) { @Sendable data, error in
