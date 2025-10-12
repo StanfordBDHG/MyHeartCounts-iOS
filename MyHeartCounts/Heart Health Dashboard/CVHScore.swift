@@ -312,7 +312,7 @@ extension ScoreDefinition {
             .inRange(30..<60, score: 0.4, explainer: "30 – 59"),
             .inRange(1..<30, score: 0.2, explainer: "1 – 29")
         ],
-        explainerHeaderText: "EXERCISE_MINUTES_SCORE_EXPLAINER"
+        explainerFooterText: "EXERCISE_MINUTES_SCORE_EXPLAINER"
     )
     
     static let cvhStepCount = ScoreDefinition(default: 0, scoringBands: [
@@ -384,7 +384,7 @@ extension ScoreDefinition {
         default: 0,
         // ideally we'd simply put the explanation directly into the ScoreDefinition, and have it work in a way that
         // the UI gets created based on that; but for the time being we simply have this ScoreDefinition hardcoded.
-        explainer: .init(headerText: nil, bands: [
+        explainer: .init(footerText: nil, bands: [
             .init(leadingText: "<120 / <80", background: .color(Gradient.redToGreen.color(at: 1))),
             .init(leadingText: "120–129 / 80–89", background: .color(Gradient.redToGreen.color(at: 0.8))),
             .init(leadingText: "130–139 / 90–99", background: .color(Gradient.redToGreen.color(at: 0.5))),

@@ -7,6 +7,9 @@
     "  0" : {
 
     },
+    "-" : {
+
+    },
     "—" : {
       "localizations" : {
         "es" : {
@@ -742,6 +745,7 @@
       }
     },
     "Cancel" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2755,9 +2759,6 @@
         }
       }
     },
-    "No Data…" : {
-
-    },
     "No Internet" : {
       "localizations" : {
         "es" : {
@@ -4111,6 +4112,9 @@
         }
       }
     },
+    "Tap to lear more…" : {
+
+    },
     "Tasks" : {
 
     },
@@ -4441,6 +4445,9 @@
       }
     },
     "Unable to save" : {
+
+    },
+    "Understanding Your Heart Health Score" : {
 
     },
     "Unenroll" : {

@@ -99,8 +99,7 @@ struct HealthDashboard: View {
                 } footer: {
                     if let footer = block.footer {
                         Text(footer)
-                            .padding(.horizontal)
-                            .padding(.top, 6)
+                            .padding()
                     }
                 }
                 .listRowInsets(.zero)

@@ -296,7 +296,7 @@ private struct TileImpl: View {
         if let input = singleValueInput(for: samples) {
             HealthDashboardQuantityLabel(input: input)
         } else {
-            Text("n/a") // ???
+            Text("n/a")
         }
     }
 }

@@ -108,12 +108,13 @@ struct HeartHealthDashboard: View {
     
     
     @ViewBuilder private var topSection: some View {
+        let valueAvailabe = !(cvhScore?.isNaN ?? true)
         VStack {
             HStack {
                 Spacer()
                 Gauge(
                     lineWidth: .relative(2),
-                    gradient: .redToGreen,
+                    gradient: valueAvailabe ? .redToGreen : Gradient(colors: [.gray]),
                     progress: cvhScore
                 ) {
                     if let cvhScore, !cvhScore.isNaN {
@@ -125,19 +126,23 @@ struct HeartHealthDashboard: View {
                                 .font(.largeTitle.bold())
                         }
                     } else {
-                        Text("")
+                        Text("-")
+                            .font(.largeTitle.bold())
+                            .foregroundStyle(.secondary)
                     }
                 } minimumValueText: {
                     Text("  0")
+                        .foregroundStyle(valueAvailabe ? .primary : .secondary)
                 } maximumValueText: {
                     Text("100 ")
+                        .foregroundStyle(valueAvailabe ? .primary : .secondary)
                 }
                 .frame(width: 140, height: 140)
                 Spacer()
             }
-                .padding(.top)
+            .padding(.top, 32)
             Text("HEART_HEALTH_DASHBOARD_HEADER")
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(.leading)
                 .foregroundStyle(.secondary)
                 .padding()
         }
@@ -146,7 +151,7 @@ struct HeartHealthDashboard: View {
     
     @ViewBuilder private var learnMoreSection: some View {
         if let learnMoreText = studyManager.localizedMarkdown(for: "LearnMore", in: .hhdExplainer) {
-            Section("Learn More") {
+            Section("Understanding Your Heart Health Score") {
                 MarkdownView(markdownDocument: .init(metadata: [:], blocks: [.markdown(id: nil, rawContents: learnMoreText)]))
             }
         }
@@ -175,24 +180,20 @@ struct HeartHealthDashboard: View {
             title: score.sampleType.displayTitle,
             headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
         ) {
-            if let scoreValue = score.score {
-                VStack(spacing: 0) {
-                    Gauge(lineWidth: .relative(1.5), gradient: .redToGreen, progress: scoreValue) {
-                        Text(Int(scoreValue * 100), format: .number)
-                            .font(.headline)
-                    }
-                    .frame(width: 80, height: 80)
-                    .padding(.top, 4)
-                    .padding(.bottom, -8)
-                    if let timeRange = score.timeRange {
-                        Text(timeRange.displayText(using: cal))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
+            VStack(spacing: 0) {
+                ScoreResultGauge(scoreResult: score)
+                .frame(width: 80, height: 80)
+                .padding(.top, 4)
+                .padding(.bottom, -8)
+                if let timeRange = score.timeRange, score.scoreAvailable {
+                    Text(timeRange.displayText(using: cal))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Tap to lear more…")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
-            } else {
-                Text("No Data…")
-                    .foregroundStyle(.secondary)
             }
         } onTap: {
             scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
