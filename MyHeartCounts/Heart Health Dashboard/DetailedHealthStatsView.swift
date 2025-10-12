@@ -323,6 +323,7 @@ private struct ScoreExplanationView: View {
                 .listRowInsets(.zero)
         case .custom(_, let explainer):
             makeViews(for: explainer)
+                .listRowInsets(.zero)
         }
     }
     
