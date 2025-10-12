@@ -45,7 +45,7 @@ struct FinalEnrollmentStep: View {
                         title: "Welcome to My Heart Counts",
                         description: "What happens next:"
                     )
-                    .padding(.top, 64)
+                    .padding(.top, 32)
                     content
                 }
                 .padding(.horizontal)

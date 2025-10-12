@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "  0" : {
+
+    },
     "—" : {
       "localizations" : {
         "es" : {
@@ -379,6 +382,7 @@
 
     },
     "100" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -387,6 +391,9 @@
           }
         }
       }
+    },
+    "100 " : {
+
     },
     "120 – 149" : {
 
@@ -3783,6 +3790,9 @@
         }
       }
     },
+    "Score Components" : {
+
+    },
     "Score Result" : {
       "localizations" : {
         "es" : {
@@ -4394,6 +4404,9 @@
       }
     },
     "Unable to save" : {
+
+    },
+    "Understanding Your My Heart Counts Health Score" : {
 
     },
     "Unenroll" : {

@@ -26,19 +26,20 @@ struct Welcome: View {
                         title: "My Heart Counts",
                         description: "WELCOME_SUBTITLE"
                     )
-                    .padding(.top, 128)
+                    .padding(.top, 32)
                     onboardingInformationView
                 }
                 .padding(.horizontal)
             }
             .scrollBounceBehavior(.basedOnSize)
             Spacer(minLength: 8)
-                .border(Color.blue, width: 1)
             OnboardingActionsView("Continue") {
                 onboardingPath.nextStep()
             }
             .padding(.horizontal)
         }
+        .navigationTitle(Text(verbatim: ""))
+        .toolbar(.visible)
     }
     
     private var onboardingInformationView: some View {
@@ -56,6 +57,7 @@ struct Welcome: View {
                 text: "WELCOME_AREA3_DESCRIPTION"
             )
         }
+        .padding(.leading)
     }
 }
 

@@ -27,7 +27,7 @@ struct OnboardingIconGridRow: View {
                 .frame(width: 42, alignment: .topLeading)
             HStack {
                 Text(text)
-                    .font(.title3)
+                    .font(.headline)
                     .lineLimit(32)
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.secondary)

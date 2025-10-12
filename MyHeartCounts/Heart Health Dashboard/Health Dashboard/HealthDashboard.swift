@@ -142,7 +142,7 @@ struct HealthDashboard: View {
             case .quantityDisplay(let config):
                 healthDashboardComponentView(for: config, withSize: .small)
             case .custom(let config):
-                HealthDashboardSmallGridCell(title: config.title) {
+                HealthDashboardSmallGridCell(title: config.title, headerInsert: config.headerInsert) {
                     config.content()
                 }
             }

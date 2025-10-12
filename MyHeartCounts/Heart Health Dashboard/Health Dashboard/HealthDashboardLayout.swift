@@ -266,15 +266,18 @@ extension HealthDashboardLayout {
         /// The config of a component that displays a custom view.
         struct CustomComponentConfig: Sendable {
             let title: String
+            let headerInsert: EdgeInsets
             let content: @MainActor () -> AnyView
             let tapAction: (@MainActor () -> Void)?
             
             fileprivate init(
                 title: String,
+                headerInsert: EdgeInsets = .zero,
                 content: @MainActor @escaping () -> AnyView,
                 tapAction: (@MainActor () -> Void)?
             ) {
                 self.title = title
+                self.headerInsert = headerInsert
                 self.content = content
                 self.tapAction = tapAction
             }
@@ -314,13 +317,14 @@ extension HealthDashboardLayout {
         }
         
         static func custom(
-            title: String
-            /*, dataSource: DataSource?*/,
+            title: String,
+            headerInsert: EdgeInsets = .zero,
             @ViewBuilder _ content: @MainActor @escaping () -> some View,
             onTap tapAction: (@MainActor () -> Void)? = nil
         ) -> Self {
             .custom(.init(
                 title: title,
+                headerInsert: headerInsert,
                 content: { content().intoAnyView() },
                 tapAction: tapAction
             ))

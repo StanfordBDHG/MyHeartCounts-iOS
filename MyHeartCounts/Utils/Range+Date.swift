@@ -57,7 +57,7 @@ extension Range where Bound == Date {
             }
         }
         // fallback, if nothing above returned
-        let fmt = { ($0 as Date).formatted(date: .abbreviated, time: .omitted) }
+        let fmt = { ($0 as Date).formatted(date: .numeric, time: .omitted) }
         return "\(fmt(self.lowerBound)) – \(fmt(self.upperBound.addingTimeInterval(-1)))"
     }
 }

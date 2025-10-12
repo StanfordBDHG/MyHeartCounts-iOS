@@ -48,46 +48,41 @@ struct HeartHealthDashboard: View {
         Form {
             healthDashboard
         }
+        .sheet(item: $addNewSampleDescriptor) { descriptor in
+            Self.addSampleSheet(for: descriptor.keyPath)
+        }
+        .sheet(item: $presentedArticle) { article in
+            ArticleSheet(article: article)
+        }
+        .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
+            NavigationStack {
+                DetailedHealthStatsView(
+                    scoreResult: input.result,
+                    cvhKeyPath: input.keyPath
+                )
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        DismissButton()
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $isPresentingPastTimedWalkTestResults) {
+            NavigationStack {
+                PastTimedWalkTestResults()
+                    .taskPerformingAnchor()
+            }
+        }
     }
     
     @ViewBuilder var healthDashboard: some View {
-        Section {
-            Text("HEART_HEALTH_DASHBOARD_HEADER")
-                .listRowInsets(.zero)
-                .padding([.top, .horizontal])
-                .listRowBackground(Color.clear)
-                .sheet(item: $addNewSampleDescriptor) { descriptor in
-                    Self.addSampleSheet(for: descriptor.keyPath)
-                }
-                .sheet(item: $presentedArticle) { article in
-                    ArticleSheet(article: article)
-                }
-                .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
-                    NavigationStack {
-                        DetailedHealthStatsView(
-                            scoreResult: input.result,
-                            cvhKeyPath: input.keyPath
-                        )
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                DismissButton()
-                            }
-                        }
-                    }
-                }
-                .sheet(isPresented: $isPresentingPastTimedWalkTestResults) {
-                    NavigationStack {
-                        PastTimedWalkTestResults()
-                            .taskPerformingAnchor()
-                    }
-                }
-        }
         HealthDashboard(
             layout: [
                 .large {
                     topSection
                 },
                 .grid(
+                    sectionTitle: "Score Components",
                     footer: "HHD_APPLE_WATCH_REQUIRED_FOOTER"
                 ) {
                     makeGridComponent(for: \.dietScore)
@@ -113,29 +108,40 @@ struct HeartHealthDashboard: View {
     
     
     @ViewBuilder private var topSection: some View {
-        HStack {
-            Spacer()
-            Gauge(
-                lineWidth: .relative(1.5),
-                gradient: .redToGreen,
-                progress: cvhScore
-            ) {
-                if let cvhScore, !cvhScore.isNaN {
-                    Text(Int(cvhScore * 100), format: .number)
-                        .font(.system(size: 27, weight: .medium))
-                } else {
-                    Text("")
+        VStack {
+            HStack {
+                Spacer()
+                Gauge(
+                    lineWidth: .relative(2),
+                    gradient: .redToGreen,
+                    progress: cvhScore
+                ) {
+                    if let cvhScore, !cvhScore.isNaN {
+                        if #available(iOS 26.0, *) {
+                            Text(Int(cvhScore * 100), format: .number)
+                                .font(.largeTitle.scaled(by: 1.2).bold())
+                        } else {
+                            Text(Int(cvhScore * 100), format: .number)
+                                .font(.largeTitle.bold())
+                        }
+                    } else {
+                        Text("")
+                    }
+                } minimumValueText: {
+                    Text("  0")
+                } maximumValueText: {
+                    Text("100 ")
                 }
-            } minimumValueText: {
-                Text("0")
-                    .font(.callout)
-            } maximumValueText: {
-                Text("100")
-                    .font(.callout)
+                .frame(width: 140, height: 140)
+                Spacer()
             }
-            .frame(width: 100, height: 100)
-            Spacer()
+                .padding(.top)
+            Text("HEART_HEALTH_DASHBOARD_HEADER")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding()
         }
+        .background(.background)
     }
     
     @ViewBuilder private var learnMoreSection: some View {
@@ -165,14 +171,19 @@ struct HeartHealthDashboard: View {
         for scoreKeyPath: KeyPath<CVHScore, ScoreResult>
     ) -> HealthDashboardLayout.GridComponent {
         let score = $cvhScore[keyPath: scoreKeyPath]
-        return .custom(title: score.sampleType.displayTitle) {
+        return .custom(
+            title: score.sampleType.displayTitle,
+            headerInsert: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
+        ) {
             if let scoreValue = score.score {
-                VStack {
-                    Gauge(lineWidth: .default, gradient: .redToGreen, progress: scoreValue) {
+                VStack(spacing: 0) {
+                    Gauge(lineWidth: .relative(1.5), gradient: .redToGreen, progress: scoreValue) {
                         Text(Int(scoreValue * 100), format: .number)
-                            .font(.caption2)
+                            .font(.headline)
                     }
-                    .frame(width: 50, height: 50)
+                    .frame(width: 80, height: 80)
+                    .padding(.top, 4)
+                    .padding(.bottom, -8)
                     if let timeRange = score.timeRange {
                         Text(timeRange.displayText(using: cal))
                             .font(.footnote)

@@ -31,5 +31,7 @@ struct AccountOnboarding: View {
                 path.nextStep()
             }
         }
+        .navigationTitle(Text(verbatim: ""))
+        .toolbar(.visible)
     }
 }
