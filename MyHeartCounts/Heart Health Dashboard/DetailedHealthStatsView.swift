@@ -408,7 +408,7 @@ private struct FurtherReadingSection: View {
                     .padding(.vertical, 5)
             }
             ForEach(Array(links.indices), id: \.self) { idx in
-                makeLinkButton(idx == links.startIndex ? "Learn More" : nil, for: links[idx])
+                makeLinkButton("Learn More", for: links[idx])
             }
         }
     }

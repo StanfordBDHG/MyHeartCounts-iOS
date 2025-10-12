@@ -43,6 +43,7 @@ struct TimedWalkingTestView: View {
     @State private var didCompleteAtLeastOneTest = false
     @State private var mostRecentResult: TimedWalkingTestResult?
     
+    
     private var testIsRunning: Bool {
         timedWalkingTest.state.isActive
     }
@@ -64,8 +65,10 @@ struct TimedWalkingTestView: View {
     var body: some View {
         Form {
             sections
+                .animation(.default, value: testIsRunning)
         }
         .viewStateAlert(state: $viewState)
+        .toolbar(.visible)
         .interactiveDismissDisabled(testIsRunning || viewState == .processing)
         .task {
             switch CMMotionManager.authorizationStatus() {
@@ -90,34 +93,23 @@ struct TimedWalkingTestView: View {
                 DismissButton()
             }
         }
-        .alert(
-            "Test Completed",
-            isPresented: Binding<Bool> {
-                self.mostRecentResult != nil
-            } set: { newValue in
-                // Note that we intentionally ignore `newValue == true` in here!
-                if !newValue {
-                    self.mostRecentResult = nil
-                }
-            },
-            presenting: mostRecentResult
-        ) { _ in
-            Button(role: .cancel) {
-                dismiss()
-            } label: {
-                Text("OK")
-            }
-            .keyboardShortcut(.defaultAction)
-            Button("Repeat") {}
-        } message: { result in
-            let meters = Measurement<UnitLength>(value: result.distanceCovered, unit: .meters)
-            Text("You covered \(meters, format: .measurement(width: .wide, usage: .road)), and took \(result.numberOfSteps) steps.")
-        }
     }
     
     private var watchParticipatesInTest: Bool {
         // intentionally not checking whether the watch app is reachable, since it might not have been launched yet.
         watchManager.userHasWatch && watchManager.isWatchAppInstalled
+    }
+    
+    @ViewBuilder private var testInstructions: some View {
+        let kindText: LocalizedStringResource = switch test.kind {
+        case .walking: "walk"
+        case .running: "run"
+        }
+        if watchParticipatesInTest {
+            Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until your Watch vibrates to indicate that the test has ended.")
+        } else {
+            Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
+        }
     }
     
     @ViewBuilder private var sections: some View {
@@ -128,6 +120,21 @@ struct TimedWalkingTestView: View {
                     .symbolRenderingMode(.multicolor)
                     .foregroundStyle(.accent)
                     .accessibilityHidden(true)
+                    .overlay(alignment: .bottomTrailing) {
+                        if !testIsRunning, let result = mostRecentResult {
+                            ZStack {
+                                Image(systemSymbol: .circleFill)
+                                    .font(.system(size: 45))
+                                    .foregroundStyle(Color(.systemGroupedBackground))
+                                    .accessibilityHidden(true)
+                                Image(systemSymbol: .checkmarkCircleFill)
+                                    .font(.system(size: 40))
+                                    .foregroundStyle(.green)
+                                    .accessibilityHidden(true)
+                            }
+                            .offset(x: 10, y: 10)
+                        }
+                    }
             }
         }
         PlainSection {
@@ -137,13 +144,23 @@ struct TimedWalkingTestView: View {
             .font(.title.bold())
             .multilineTextAlignment(.center)
         }
+        testActive
+        resultsSection
+        description
+        startButton
+    }
+    
+    @ViewBuilder private var testActive: some View {
         if case let .testActive(session) = timedWalkingTest.state {
             PlainSection {
                 Spacer()
                 CenterH {
                     VStack(alignment: .center, spacing: 16) {
                         CountdownView(start: session.inProgressResult.startDate, end: session.inProgressResult.endDate)
-                        Text("Your \(textName) is in progress.")
+                        Group {
+                            Text("Your \(textName) is in progress.")
+                            testInstructions
+                        }
                             .multilineTextAlignment(.center)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
@@ -152,34 +169,31 @@ struct TimedWalkingTestView: View {
                 Spacer()
             }
         }
+    }
+    
+    @ViewBuilder private var resultsSection: some View {
+        if !testIsRunning, let result = mostRecentResult {
+            Section("Test Complete") {
+                LabeledContent("Date", value: result.startDate, format: .dateTime)
+                LabeledContent("Steps", value: result.numberOfSteps, format: .number)
+                LabeledContent("Distance (m)", value: result.distanceCovered, format: .number)
+            }
+        }
+    }
+    
+    @ViewBuilder private var description: some View {
         if !testIsRunning {
             PlainSection {
-                let kindText: LocalizedStringResource = switch test.kind {
-                case .walking: "walk"
-                case .running: "run"
-                }
                 switch test {
                 case .sixMinuteWalkTest:
                     Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
                 case .twelveMinuteRunTest:
                     Text("TIMED_WALK_TEST_EXPLAINER_12_MIN_RUN")
                 default:
-                    // ???
-                    Text("TIMED_WALK_TEST_EXPLAINER_6_MIN_WALK")
+                    EmptyView()
                 }
-                if watchParticipatesInTest {
-                    Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until your Watch vibrates to indicate that the test has ended.")
-                } else {
-                    Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
-                }
+                testInstructions
                 Text("TIMED_WALK_TEST_EXPLAINER_FOOTER")
-            }
-            if let results = timedWalkingTest.mostRecentResult {
-                Section("Results") {
-                    LabeledContent("Date", value: results.startDate, format: .dateTime)
-                    LabeledContent("#Steps", value: results.numberOfSteps, format: .number)
-                    LabeledContent("Distance", value: results.distanceCovered, format: .number)
-                }
             }
             if showPermissionsErrorSection {
                 ErrorSection(
@@ -202,7 +216,10 @@ struct TimedWalkingTestView: View {
                 )
             }
         }
-        if timedWalkingTest.state == .idle && timedWalkingTest.mostRecentResult == nil {
+    }
+    
+    @ViewBuilder private var startButton: some View {
+        if timedWalkingTest.state == .idle {
             Section {
                 AsyncButton(state: $viewState) {
                     do {
@@ -216,7 +233,7 @@ struct TimedWalkingTestView: View {
                         showPermissionsErrorSection = true
                     }
                 } label: {
-                    Text("Start Test")
+                    Text(mostRecentResult == nil ? "Start Test" : "Restart Test")
                         .bold()
                         .frame(maxWidth: .infinity, minHeight: 38)
                 }
@@ -226,7 +243,6 @@ struct TimedWalkingTestView: View {
             }
         }
     }
-    
     
     init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler = { _ in }) {
         self.test = test

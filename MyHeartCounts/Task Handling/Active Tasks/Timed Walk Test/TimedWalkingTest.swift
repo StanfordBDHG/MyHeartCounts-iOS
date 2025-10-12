@@ -124,9 +124,24 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         state = .testActive(session)
         startPhoneSensorDataCollection(for: session)
         let sessionTask = Task {
+            #if targetEnvironment(simulator)
+            // Enable a simple testing of the UI on the simulator.
+            try await Task.sleep(until: startInstant.advanced(by: Duration.seconds(5)))
+            #else
             try await Task.sleep(until: startInstant.advanced(by: test.duration))
+            #endif
             return try await stop()
         }
+        #if targetEnvironment(simulator)
+        return TimedWalkingTestResult(
+            id: UUID(),
+            test: .sixMinuteWalkTest,
+            startDate: .now.addingTimeInterval(-360),
+            endDate: .now,
+            numberOfSteps: 624,
+            distanceCovered: 842
+        )
+        #else
         session.completeSessionTask = sessionTask
         let result = await sessionTask.result
         switch result {
@@ -135,6 +150,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         case .failure(let error):
             throw .other(error)
         }
+        #endif
     }
     
     

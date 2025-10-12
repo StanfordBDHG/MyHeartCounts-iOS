@@ -394,17 +394,6 @@
     "90 – 119" : {
 
     },
-    "100" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "100"
-          }
-        }
-      }
-    },
     "100 " : {
 
     },
@@ -740,17 +729,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Puede leer y entender %@ para proporcionar su consentimiento informado y seguir las instrucciones?"
-          }
-        }
-      }
-    },
-    "Cancel" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar"
           }
         }
       }
@@ -1129,17 +1107,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Condado"
-          }
-        }
-      }
-    },
-    "Current Test" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prueba Actual"
           }
         }
       }
@@ -2082,17 +2049,6 @@
         }
       }
     },
-    "If you have an Apple Watch, please ensure that the My Heart Counts app is running" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si tienes un Apple Watch, asegúrate de que la aplicación Mi Corazón Cuenta esté en funcionamiento"
-          }
-        }
-      }
-    },
     "Illinois" : {
       "localizations" : {
         "es" : {
@@ -2339,17 +2295,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Latino / Hispano?"
-          }
-        }
-      }
-    },
-    "Launch Watch App" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iniciar la Aplicación del Reloj"
           }
         }
       }
@@ -3088,8 +3033,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "El estudio recopila datos a través de los sensores de tu teléfono, incluidos los datos del acelerómetro para el movimiento, el GPS para la ubicación durante pruebas de fitness específicas y la frecuencia cardíaca si está disponible a través de dispositivos conectados. Toda la transmisión de datos utiliza tecnología de cifrado para proteger tu información. Separamos tu información identificativa de tus datos de salud en nuestras bases de datos seguras. Tendrás opciones dentro de la aplicación para controlar qué información se comparte. Seguimos protocolos estrictos aprobados por la Junta de Revisión Institucional de Stanford para mantener tu privacidad."
+            "state" : "translated",
+            "value" : "El estudio recopila datos a través de los sensores de tu teléfono, incluidos los datos del acelerómetro para el movimiento, el GPS para la ubicación durante pruebas de condición física específicas y la frecuencia cardíaca si está disponible mediante dispositivos conectados. Toda la transmisión de datos utiliza tecnología de cifrado para proteger tu información. Separamos tu información identificativa de tus datos de salud en nuestras bases de datos seguras. Tendrás opciones dentro de la aplicación para controlar qué información se comparte. Seguimos protocolos estrictos aprobados por la Junta de Revisión Institucional de Stanford para mantener tu privacidad."
           }
         }
       }
@@ -3734,9 +3679,6 @@
         }
       }
     },
-    "Repeat" : {
-
-    },
     "Replace Root View Controller" : {
       "localizations" : {
         "es" : {
@@ -3750,7 +3692,11 @@
     "Reset Query Anchors" : {
 
     },
+    "Restart Test" : {
+
+    },
     "Results" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4128,7 +4074,7 @@
         }
       }
     },
-    "Test Completed" : {
+    "Test Complete" : {
 
     },
     "Testing Support" : {
@@ -4191,28 +4137,6 @@
         }
       }
     },
-    "Time Elapsed" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiempo Transcurrido"
-          }
-        }
-      }
-    },
-    "Time Remaining" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiempo Restante"
-          }
-        }
-      }
-    },
     "Time Zone" : {
       "localizations" : {
         "es" : {
@@ -4248,7 +4172,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance. Keep your phone in your hand until it vibrates."
+            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance."
           }
         },
         "en-GB" : {
@@ -4259,8 +4183,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "La Prueba de esfuerzo de 6 Minutos mide tu capacidad de ejercicio funcional al registrar qué tan lejos puedes caminar en 6 minutos en una superficie plana. Es una forma sencilla de evaluar tu condición física y se usa comúnmente para monitorear condiciones que afectan el corazón y los pulmones.\n\nPara realizar la prueba, encuentra una superficie plana donde puedas caminar sin obstáculos. Usa zapatos cómodos. Presiona \"Iniciar\" y camina a un ritmo constante que sea cómodo pero extenuante. Tu objetivo es recorrer la mayor distancia posible en 6 minutos."
+            "state" : "translated",
+            "value" : "Esta prueba mide tu capacidad funcional de ejercicio al registrar qué tan lejos caminas en 6 minutos sobre una superficie plana.\n\nBusca un camino plano y sin obstáculos. Usa zapatos cómodos. Toca “Iniciar” y camina a un ritmo constante y moderadamente desafiante para cubrir la mayor distancia posible."
           }
         }
       }
@@ -4819,16 +4743,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Puedes seleccionar múltiples opciones"
-          }
-        }
-      }
-    },
-    "You covered %@, and took %lld steps." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You covered %1$@, and took %2$lld steps."
           }
         }
       }
