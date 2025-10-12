@@ -35,6 +35,7 @@ struct DetailedHealthStatsView: View {
     @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    @LocalPreference(.detailedHealthMetricChartTimeRange) private var chartTimeRange
     // swiftlint:enable attributes
     
     private let sampleType: MHCSampleType
@@ -102,10 +103,11 @@ struct DetailedHealthStatsView: View {
     
     private var recentValuesChartConfig: RecentValuesChartConfig {
         switch input {
-        case .scoreResult(result: _, keyPath: \.nicotineExposureScore):
+        case .scoreResult(result: _, keyPath: \.nicotineExposureScore),
+                .scoreResult(result: _, keyPath: \.dietScore):
             .disabled
         default:
-            .enabled(timeRange: .last(days: 14))
+            .enabled(timeRange: .init(chartTimeRange))
         }
     }
     
@@ -117,7 +119,7 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View {
+    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View { // swiftlint:disable:this function_body_length
         switch config {
         case .disabled:
             EmptyView()
@@ -153,11 +155,11 @@ struct DetailedHealthStatsView: View {
                             style: .chart(chartConfig),
                             enableSelection: false
                         ),
-                        withSize: .large
+                        withSize: .large,
+                        accessory: .timeRangeSelector($chartTimeRange)
                     )
                     .padding(.horizontal)
                     .healthStatsChartHoverHighlightEnabled()
-                    .environment(\.showTimeRangeAsGridCellSubtitle, true)
                     .environment(\.isRecentValuesViewInDetailedStatsSheet, true)
                 } else {
                     HStack {

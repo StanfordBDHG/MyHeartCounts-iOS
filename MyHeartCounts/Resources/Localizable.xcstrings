@@ -72,6 +72,16 @@
     "%lld ft" : {
 
     },
+    "%lld hr %lld min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld hr %2$lld min"
+          }
+        }
+      }
+    },
     "%lld in" : {
 
     },
@@ -2225,6 +2235,94 @@
         }
       }
     },
+    "Last %lld days" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Last %lld day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld days"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Last %lld months" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Last %lld month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld months"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Last %lld weeks" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Last %lld week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld weeks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Last %lld years" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Last %lld year"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld years"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Last 7 Days" : {
 
     },
@@ -3164,72 +3262,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anular región"
-          }
-        }
-      }
-    },
-    "Past %lld days" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Past day"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Past %lld days"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "Past %lld months" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Past month"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Past %lld months"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "Past %lld years" : {
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Past year"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Past %lld years"
-                }
-              }
-            }
           }
         }
       }
@@ -4480,6 +4512,9 @@
           }
         }
       }
+    },
+    "Value" : {
+
     },
     "Vermont" : {
       "localizations" : {

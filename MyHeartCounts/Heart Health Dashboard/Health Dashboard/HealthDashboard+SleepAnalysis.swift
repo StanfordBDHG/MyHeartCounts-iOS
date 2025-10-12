@@ -15,14 +15,14 @@ import SpeziHealthKitUI
 import SwiftUI
 
 
-struct SmallSleepAnalysisGridCell: View {
+struct SmallSleepAnalysisTile: View {
     @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 4), source: .appleHealthSystem)
     private var sleepAnalysis
     
     var body: some View {
         let sleepSessions = (try? sleepAnalysis.splitIntoSleepSessions()) ?? []
         
-        HealthDashboardSmallGridCell(title: $sleepAnalysis.sampleType.mhcDisplayTitle) {
+        HealthDashboardTile(title: $sleepAnalysis.sampleType.mhcDisplayTitle) {
             EmptyView() // ?
         } content: {
             if let session = sleepSessions.last {
@@ -39,7 +39,7 @@ struct SmallSleepAnalysisGridCell: View {
 }
 
 
-struct LargeSleepAnalysisView: View {
+struct LargeSleepAnalysisTile: View {
     private struct SleepData {
         let sessions: [SleepSession]
         /// key: noon
@@ -47,11 +47,24 @@ struct LargeSleepAnalysisView: View {
         let timeAsleepByDay: [Date: TimeInterval]
     }
     
+    enum Accessory {
+        case none
+        case timeRangeSelector(Binding<DetailedHealthStatsView.ChartTimeRange>)
+        
+        init(_ other: DefaultHealthDashboardTile.Accessory) {
+            switch other {
+            case .none, .progress:
+                self = .none
+            case .timeRangeSelector(let binding):
+                self = .timeRangeSelector(binding)
+            }
+        }
+    }
+    
     @Environment(\.calendar)
     private var cal
-    @Environment(\.showTimeRangeAsGridCellSubtitle)
-    private var showTimeRangeAsSubtitle
     
+    private let accessory: Accessory
     private let timeRange: HealthKitQueryTimeRange
     @HealthKitQuery<HKCategorySample> private var sleepAnalysis: Slice<OrderedArray<HKCategorySample>>
     
@@ -59,10 +72,14 @@ struct LargeSleepAnalysisView: View {
     @State private var xSelection: Date?
     
     var body: some View {
-        HealthDashboardSmallGridCell(
-            title: SampleType.sleepAnalysis.mhcDisplayTitle,
-            subtitle: showTimeRangeAsSubtitle ? timeRange.range.displayText(using: cal) : nil
-        ) {
+        HealthDashboardTile(title: SampleType.sleepAnalysis.mhcDisplayTitle) {
+            switch accessory {
+            case .none:
+                EmptyView()
+            case .timeRangeSelector(let binding):
+                ChartTimeRangePicker(timeRange: binding)
+            }
+        } content: {
             cellContent
         }
     }
@@ -94,10 +111,10 @@ struct LargeSleepAnalysisView: View {
             cal.startOfDay(for: timeRange.range.lowerBound),
             cal.startOfNextDay(for: timeRange.range.upperBound).addingTimeInterval(-1)
         ])
-        .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
+        .configureChartXAxis(for: timeRange.range)
         .chartXSelection(value: $xSelection)
         // we need to place this modifier within the grid cell, rather than directly on the
-        // HealthDashboardSmallGridCell, for reasons (https://github.com/swiftlang/swift/issues/84587)
+        // HealthDashboardTile, for reasons (https://github.com/swiftlang/swift/issues/84587)
         .onChange(of: Array(sleepAnalysis)) { _, samples in
             // the sleep session computation isn't exactly super slow,
             // but it might take a little bit (~0.1 sec),
@@ -125,7 +142,8 @@ struct LargeSleepAnalysisView: View {
         }
     }
     
-    init(timeRange: HealthKitQueryTimeRange) {
+    init(timeRange: HealthKitQueryTimeRange, accessory: Accessory) {
+        self.accessory = accessory
         self.timeRange = timeRange
         self._sleepAnalysis = .init(.sleepAnalysis, timeRange: timeRange, source: .appleHealthSystem)
     }
@@ -145,16 +163,18 @@ struct LargeSleepAnalysisView: View {
            case let timeAsleepInDay = sleepData.timeAsleepByDay[cal.makeNoon(xSelection)] ?? 0 {
             ChartHighlightRuleMark(
                 x: .value("Selected", xSelection, unit: .day, calendar: cal),
-                primaryText: formatDuration(timeAsleepInDay),
-                secondaryText: xSelection.formatted(.dateTime.calendar(cal).omittingTime())
+                config: .init(
+                    primary: formatDuration(timeAsleepInDay),
+                    secondary: Text(xSelection.formatted(.dateTime.calendar(cal).omittingTime()))
+                )
             )
         }
     }
     
-    private func formatDuration(_ duration: TimeInterval) -> String {
+    private func formatDuration(_ duration: TimeInterval) -> Text {
         let hours = Int(duration / TimeConstants.hour)
         let minutes = Int(duration.truncatingRemainder(dividingBy: TimeConstants.hour) / TimeConstants.minute)
-        return "\(hours) hr \(minutes) min"
+        return Text("\(hours) hr \(minutes) min")
     }
 }
 
