@@ -8,6 +8,7 @@
 
 import Foundation
 import HealthKit
+import SFSafeSymbols
 import SpeziHealthKit
 import SpeziViews
 import SwiftUI
@@ -57,11 +58,18 @@ struct SaveQuantitySampleView: View {
                 DismissButton()
             }
             ToolbarItem(placement: .confirmationAction) {
-                AsyncButton("Save", state: $viewState) {
-                    try await save()
-                    dismiss()
-                }
+                AsyncButton(
+                    state: $viewState,
+                    action: {
+                        try await save()
+                        dismiss()
+                    },
+                    label: {
+                        Label("Save", systemSymbol: .checkmark)
+                    }
+                )
                 .disabled(value == nil)
+                .buttonStyleGlassProminent()
             }
         }
         .onAppear {

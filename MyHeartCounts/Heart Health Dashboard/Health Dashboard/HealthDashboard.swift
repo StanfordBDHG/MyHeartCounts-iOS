@@ -35,19 +35,22 @@ extension EnvironmentValues {
 @MainActor
 func healthDashboardComponentView(
     for config: HealthDashboardLayout.GridComponent.ComponentDisplayConfig,
-    withSize size: HealthDashboardLayout.ComponentSize
+    withSize size: HealthDashboardLayout.ComponentSize,
+    accessory: DefaultHealthDashboardTile.Accessory = .none
 ) -> some View {
     switch (size, config.dataSource) {
     case (_, .healthKit(.quantity(let sampleType))):
-        DefaultHealthDashboardComponentGridCell(queryInput: .healthKit(sampleType), config: config)
+        DefaultHealthDashboardTile(queryInput: .healthKit(sampleType), config: config, accessory: accessory)
     case (_, .firebase(let sampleType)):
-        DefaultHealthDashboardComponentGridCell(queryInput: .firestore(sampleType), config: config)
+        DefaultHealthDashboardTile(queryInput: .firestore(sampleType), config: config, accessory: accessory)
     case (.small, .healthKit(.category(.sleepAnalysis))):
-        SmallSleepAnalysisGridCell()
+        SmallSleepAnalysisTile()
     case (.large, .healthKit(.category(.sleepAnalysis))):
-        LargeSleepAnalysisView(timeRange: config.timeRange)
-    case (_, .healthKit(.correlation(.bloodPressure))):
-        BloodPressureGridCell() // maybe have a dedicated large cell for this?
+        LargeSleepAnalysisTile(timeRange: config.timeRange, accessory: .init(accessory))
+    case (.small, .healthKit(.correlation(.bloodPressure))):
+        SmallBloodPressureTile()
+    case (.large, .healthKit(.correlation(.bloodPressure))):
+        LargeBloodPressureTile(timeRange: config.timeRange, accessory: .init(accessory))
     case (_, .healthKit):
         // we shouldn't end up in here, since the GridComponent factory methods limit which HealthKit sample types are allowed here...
         EmptyView()
@@ -96,8 +99,7 @@ struct HealthDashboard: View {
                 } footer: {
                     if let footer = block.footer {
                         Text(footer)
-                            .padding(.horizontal)
-                            .padding(.top, 6)
+                            .padding()
                     }
                 }
                 .listRowInsets(.zero)
@@ -142,7 +144,7 @@ struct HealthDashboard: View {
             case .quantityDisplay(let config):
                 healthDashboardComponentView(for: config, withSize: .small)
             case .custom(let config):
-                HealthDashboardSmallGridCell(title: config.title) {
+                HealthDashboardTile(title: config.title, headerInsets: config.headerInsets) {
                     config.content()
                 }
             }

@@ -56,7 +56,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
             }
         }
         
-        let headerText: LocalizedStringResource?
+        let footerText: LocalizedStringResource?
         let bands: [Band]
     }
     
@@ -128,12 +128,12 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     init(
         `default`: Double,
         scoringBands: [ScoringBand],
-        explainerHeaderText: LocalizedStringResource? = nil
+        explainerFooterText: LocalizedStringResource? = nil
     ) {
         self.variant = .distinctMapping(
             default: `default`,
             scoringBands: scoringBands,
-            explainer: .init(headerText: explainerHeaderText, bands: scoringBands.map(\.explainerBand))
+            explainer: .init(footerText: explainerFooterText, bands: scoringBands.map(\.explainerBand))
         )
     }
     
@@ -185,6 +185,12 @@ struct ScoreResult: Hashable, Sendable {
     let score: Double?
     /// The time range represented by this score result
     let timeRange: Range<Date>?
+    
+    
+    var scoreAvailable: Bool {
+        !(score?.isNaN ?? true)
+    }
+    
     
     init(
         _ title: LocalizedStringResource,
@@ -260,10 +266,6 @@ struct ScoreResult: Hashable, Sendable {
             self.init(title, sampleType: sampleType, definition: definition, timeRange: timeRange)
         }
     }
-    
-    
-//    func hash(into hasher: inout Hasher) {
-//    }
 }
 
 
@@ -292,6 +294,7 @@ extension LocalizedStringResource.BundleDescription: @retroactive Hashable {
             String(reflecting: lhs) == String(reflecting: rhs)
         }
     }
+    
     public func hash(into hasher: inout Hasher) {
         switch self {
         case .main:

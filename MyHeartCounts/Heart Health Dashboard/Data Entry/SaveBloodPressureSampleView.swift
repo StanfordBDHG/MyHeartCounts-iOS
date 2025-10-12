@@ -74,17 +74,21 @@ struct SaveBloodPressureSampleView: View {
     
     @ToolbarContentBuilder private var navigationToobarItems: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
-            Button("Cancel") {
-                dismiss()
-            }
+            DismissButton()
         }
         ToolbarItem(placement: .confirmationAction) {
-            AsyncButton("Save", state: $viewState) {
-                try await save()
-                dismiss()
-            }
-            .bold()
+            AsyncButton(
+                state: $viewState,
+                action: {
+                    try await save()
+                    dismiss()
+                },
+                label: {
+                    Label("Save", systemSymbol: .checkmark)
+                }
+            )
             .disabled(systolic == nil || diastolic == nil)
+            .buttonStyleGlassProminent()
         }
     }
     

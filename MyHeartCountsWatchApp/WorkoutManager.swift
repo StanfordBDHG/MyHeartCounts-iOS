@@ -91,6 +91,11 @@ final class WorkoutManager: NSObject, Module, EnvironmentAccessible, HKWorkoutSe
         
         workoutSession.startActivity(with: .now)
         try await builder.beginCollection(at: .now)
+        
+        Task {
+            try await Task.sleep(for: .seconds(timeRange.upperBound.timeIntervalSince(timeRange.lowerBound)))
+            try? await stopWorkout()
+        }
     }
     
     

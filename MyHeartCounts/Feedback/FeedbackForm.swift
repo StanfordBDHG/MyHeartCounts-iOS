@@ -22,6 +22,7 @@ struct FeedbackForm: View {
     @State private var viewState: ViewState = .idle
     @FocusState private var isEditing
     
+    
     var body: some View {
         Form {
             Section {
@@ -42,10 +43,8 @@ struct FeedbackForm: View {
         .viewStateAlert(state: $viewState)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    dismiss()
-                }
-                .disabled(viewState != .idle)
+                DismissButton()
+                    .disabled(viewState != .idle)
             }
             ToolbarItem(placement: .primaryAction) {
                 AsyncButton("Send", state: $viewState) {

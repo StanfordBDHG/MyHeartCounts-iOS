@@ -36,11 +36,10 @@ struct OnboardingHeader: View {
                     .symbolRenderingMode(.hierarchical)
                     .foregroundStyle(.accent)
                     .accessibilityHidden(true)
-                    .frame(maxWidth: 70)
                     .padding(.vertical, 32)
                 Spacer()
             }
-            .frame(height: 180)
+            .frame(height: 160)
         }
         Text(title)
             .font(.title2.bold())
@@ -86,6 +85,26 @@ struct OnboardingHeader: View {
             systemSymbol: .heartTextClipboard,
             title: "ONBOARDING_DISCLAIMER_1_TITLE",
             description: "ONBOARDING_DISCLAIMER_1_PRIMARY_TEXT",
+        )
+    }
+}
+
+#Preview {
+    ManagedNavigationStack {
+        OnboardingHeader(
+            systemSymbol: .figureWalkMotion,
+            title: "ONBOARDING_DISCLAIMER_2_TITLE",
+            description: "ONBOARDING_DISCLAIMER_2_PRIMARY_TEXT",
+        )
+    }
+}
+
+#Preview {
+    ManagedNavigationStack {
+        OnboardingHeader(
+            systemSymbol: .lockSquareStack,
+            title: "ONBOARDING_DISCLAIMER_3_TITLE",
+            description: "ONBOARDING_DISCLAIMER_3_PRIMARY_TEXT",
         )
     }
 }

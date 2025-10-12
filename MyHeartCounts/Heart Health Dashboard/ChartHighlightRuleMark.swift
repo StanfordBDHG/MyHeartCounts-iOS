@@ -38,27 +38,25 @@ struct ChartHighlightRuleMark<Value: Plottable, Content: View>: ChartContent {
     
     init(
         x xValue: PlottableValue<Value>,
-        primaryText: @autoclosure @MainActor @escaping () -> String,
-        secondaryText: @autoclosure @MainActor @escaping () -> String?
+        config: @autoclosure @escaping () -> HealthStatsChartDataPoint.HighlightConfiguration
     ) where Content == ChartHighlightRuleMarkDefaultContentView {
         self.init(x: xValue) {
-            ChartHighlightRuleMarkDefaultContentView(primaryText: primaryText(), secondaryText: secondaryText())
+            ChartHighlightRuleMarkDefaultContentView(config: config())
         }
     }
 }
 
 
 struct ChartHighlightRuleMarkDefaultContentView: View {
-    let primaryText: String
-    let secondaryText: String?
+    let config: HealthStatsChartDataPoint.HighlightConfiguration
     
     var body: some View {
         VStack(alignment: .leading) {
-            if let secondaryText {
-                Text(secondaryText)
+            if let secondary = config.secondary {
+                secondary
                     .font(.subheadline)
             }
-            Text(primaryText)
+            config.primary
                 .font(.headline)
         }
         .padding(4)

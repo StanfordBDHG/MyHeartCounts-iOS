@@ -989,10 +989,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = CQRZ4E7K9U;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = CQRZ4E7K9U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MyHeartCounts/Supporting Files/Info.plist";
@@ -1022,6 +1024,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "My Heart Counts - Biodesign Digital Health";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "My Heart Counts - Biodesign Digital Health";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

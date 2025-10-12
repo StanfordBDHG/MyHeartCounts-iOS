@@ -44,7 +44,7 @@ struct SingleChoiceScreeningComponentImpl<Option: Hashable>: View {
                 if selection == option {
                     Spacer()
                     Image(systemSymbol: .checkmark)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.accent)
                         .fontWeight(.medium)
                         .accessibilityLabel("Selection Checkmark")
                 }

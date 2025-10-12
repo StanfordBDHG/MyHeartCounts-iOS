@@ -40,6 +40,44 @@ struct ChartDataSetDrawingConfig: Sendable {
 
 
 struct HealthStatsChartDataPoint: Hashable, Sendable {
+    struct HighlightConfiguration {
+        let primary: Text
+        let secondary: Text?
+        
+        static func `default`(
+            for dataPoint: HealthStatsChartDataPoint,
+            in dataSet: some HealthStatsChartDataSetProtocol
+        ) -> Self {
+            Self(
+                primary: { () -> Text in
+                    let labelInput = HealthDashboardQuantityLabel.Input(
+                        value: dataPoint.value,
+                        sampleType: dataSet.sampleType,
+                        timeRange: dataPoint.timeRange
+                    )
+                    return if labelInput.unitString.isEmpty {
+                        Text(labelInput.valueString)
+                    } else {
+                        Text(verbatim: "\(labelInput.valueString) \(labelInput.unitString)")
+                    }
+                }(),
+                // Issue here is that, depending on the specific chart context, we sometimes don't actually want the time
+                // (bc the chart entry is representing eg an entire day worth of data reduced into a single value...)
+                // challenge ist that we can't easily pass around this context :/
+                secondary: { () -> Text in
+                    let cal = Calendar.current
+                    let range = dataPoint.timeRange
+                    return if cal.isDate(range.lowerBound, inSameDayAs: range.upperBound)
+                        || range.upperBound.timeIntervalSince(range.lowerBound) < TimeConstants.hour * 12 {
+                        Text(range.middle.formatted(Date.FormatStyle(date: .numeric, time: .omitted)))
+                    } else {
+                        Text(range.displayText(using: cal))
+                    }
+                }()
+            )
+        }
+    }
+    
     let timeRange: Range<Date>
     let value: Double
     
@@ -62,12 +100,18 @@ protocol HealthStatsChartDataSetProtocol<Data> {
     associatedtype Data: RandomAccessCollection
     associatedtype ID: Hashable
     
+    typealias MakeHighlightConfig = @Sendable (
+        _ dataSet: any HealthStatsChartDataSetProtocol,
+        _ dataPoint: HealthStatsChartDataPoint
+    ) -> HealthStatsChartDataPoint.HighlightConfiguration
+    
     var name: String { get }
     var sampleType: MHCQuantitySampleType { get }
     var drawingConfig: ChartDataSetDrawingConfig { get }
     var data: Data { get }
     var id: KeyPath<Data.Element, ID> { get }
     var makeDataPoint: (Data.Element) -> HealthStatsChartDataPoint? { get }
+    var makeHighlightConfig: MakeHighlightConfig { get }
 }
 
 
@@ -78,6 +122,7 @@ struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: Heal
     let data: Data
     let id: KeyPath<Data.Element, ID>
     let makeDataPoint: (Data.Element) -> HealthStatsChartDataPoint?
+    let makeHighlightConfig: MakeHighlightConfig
     
     init(
         name: String,
@@ -85,7 +130,8 @@ struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: Heal
         drawingConfig: ChartDataSetDrawingConfig,
         data: Data,
         id: KeyPath<Data.Element, ID>,
-        makeDataPoint: @escaping (Data.Element) -> HealthStatsChartDataPoint?
+        makeDataPoint: @escaping (Data.Element) -> HealthStatsChartDataPoint?,
+        makeHighlightConfig: @escaping MakeHighlightConfig
     ) {
         self.name = name
         self.sampleType = sampleType
@@ -93,13 +139,15 @@ struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: Heal
         self.data = data
         self.id = id
         self.makeDataPoint = makeDataPoint
+        self.makeHighlightConfig = makeHighlightConfig
     }
     
     init(
         name: String,
         sampleType: MHCQuantitySampleType,
         drawingConfig: ChartDataSetDrawingConfig,
-        dataPoints: Data
+        dataPoints: Data,
+        makeHighlightConfig: @escaping MakeHighlightConfig
     ) where Data.Element == HealthStatsChartDataPoint, ID == HealthStatsChartDataPoint {
         self.init(
             name: name,
@@ -107,7 +155,8 @@ struct HealthStatsChartDataSet<Data: RandomAccessCollection, ID: Hashable>: Heal
             drawingConfig: drawingConfig,
             data: dataPoints,
             id: \.self,
-            makeDataPoint: { $0 }
+            makeDataPoint: { $0 },
+            makeHighlightConfig: makeHighlightConfig
         )
     }
 }
@@ -164,22 +213,7 @@ struct HealthStatsChart<each DataSet: HealthStatsChartDataSetProtocol>: View {
            let (dataSet, dataPoint) = dataPoints.last {
             ChartHighlightRuleMark(
                 x: .value("Selection", xSelection, unit: .day, calendar: calendar),
-                primaryText: { () -> String in
-                    let labelInput = HealthDashboardQuantityLabel.Input(
-                        value: dataPoint.value,
-                        sampleType: dataSet.sampleType,
-                        timeRange: dataPoint.timeRange
-                    )
-                    return if labelInput.unitString.isEmpty {
-                        labelInput.valueString
-                    } else {
-                        "\(labelInput.valueString) \(labelInput.unitString)"
-                    }
-                }(),
-                // Issue here is that, depending on the specific chart context, we sometimes don't actually want the time
-                // (bc the chart entry is representing eg an entire day worth of data reduced into a single value...)
-                // challenge ist that we can't easily pass around this context :/
-                secondaryText: dataPoint.timeRange.middle.formatted(.dateTime)
+                config: dataSet.makeHighlightConfig(dataSet, dataPoint)
             )
         }
     }
@@ -249,6 +283,44 @@ extension View {
 
 
 private struct ChartXAxisModifier: ViewModifier {
+    private enum MarksStride {
+        case day
+        case week
+        case fortnight
+        case month
+        case quarter
+        
+        var dateCalc: (count: Int, component: Calendar.Component) {
+            switch self {
+            case .day:
+                (1, .day)
+            case .week:
+                (1, .weekOfYear)
+            case .fortnight:
+                (2, .weekOfYear)
+            case .month:
+                (1, .month)
+            case .quarter:
+                (3, .month)
+            }
+        }
+        
+        func format(for date: Date, prev: Date, using cal: Calendar) -> Date.FormatStyle {
+            let baseStyleNoTime: Date.FormatStyle = .dateTime.calendar(cal).omittingTime()
+            return switch self {
+            case .day, .week, .fortnight:
+                baseStyleNoTime
+                    .month(cal.isDate(date, equalTo: prev, toGranularity: .month) ? .omitted : .abbreviated)
+                    .year(cal.isDate(date, equalTo: prev, toGranularity: .year) ? .omitted : .defaultDigits)
+            case .month, .quarter:
+                baseStyleNoTime
+                    .day(.omitted)
+                    .month(.abbreviated)
+                    .year(cal.isDate(date, equalTo: prev, toGranularity: .year) ? .omitted : .defaultDigits)
+            }
+        }
+    }
+    
     @Environment(\.calendar)
     private var cal
     
@@ -257,21 +329,22 @@ private struct ChartXAxisModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.chartXAxis {
             let duration = timeRange.timeInterval
-            let daysStride = if duration <= TimeConstants.week * 2 {
-                1
+            let stride: MarksStride = if duration <= TimeConstants.week * 2 {
+                .day
             } else if duration <= TimeConstants.month {
-                7
+                .week
+            } else if duration <= TimeConstants.month * 3 {
+                .fortnight
+            } else if duration <= TimeConstants.month * 6 {
+                .month
             } else {
-                14
+                .quarter
             }
-            AxisMarks(values: .stride(by: .day, count: daysStride)) { value in
+            let strideCalc = stride.dateCalc
+            AxisMarks(values: .stride(by: strideCalc.component, count: strideCalc.count, calendar: cal)) { value in
                 if let date = value.as(Date.self) {
-                    if let prevDate = cal.date(byAdding: .day, value: -daysStride, to: date) {
-                        let format: Date.FormatStyle = .dateTime
-                            .omittingTime()
-                            .year(cal.isDate(prevDate, equalTo: date, toGranularity: .year) ? .omitted : .defaultDigits)
-                            .month(cal.isDate(prevDate, equalTo: date, toGranularity: .month) ? .omitted : .defaultDigits)
-                        AxisValueLabel(format: format)
+                    if let prevDate = cal.date(byAdding: strideCalc.component, value: -strideCalc.count, to: date) {
+                        AxisValueLabel(format: stride.format(for: date, prev: prevDate, using: cal))
                     } else {
                         AxisValueLabel(format: .dateTime.omittingTime())
                     }
@@ -283,8 +356,9 @@ private struct ChartXAxisModifier: ViewModifier {
     }
 }
 
+
 extension View {
-    func configureChartXAxisWithDailyMarks(forTimeRange timeRange: Range<Date>) -> some View {
+    func configureChartXAxis(for timeRange: Range<Date>) -> some View {
         self.modifier(ChartXAxisModifier(timeRange: timeRange))
     }
 }

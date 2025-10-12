@@ -45,19 +45,19 @@ extension Range where Bound == Date {
             let weeks = distance.weekOfYear! // swiftlint:disable:this force_unwrapping
             let days = distance.day! // swiftlint:disable:this force_unwrapping
             if years > 0, months == 0, weeks == 0, days == 0 {
-                return String(localized: "Past \(years) years")
+                return String(localized: "Last \(years) years")
             } else if months > 0, years == 0, weeks == 0, days == 0 {
-                return String(localized: "Past \(months) months")
+                return String(localized: "Last \(months) months")
             } else if weeks > 0, years == 0, months == 0, days == 0 {
                 // doing "Past N days" here instead of "Past N weeks", bc this is anchored to the end of the current day (checked above),
                 // and this makes that clear (instead of the time range being the past N full weeks)
-                return String(localized: "Past \(weeks * 7) days")
+                return String(localized: "Last \(weeks * 7) days")
             } else if days > 0, years == 0, months == 0, weeks == 0 {
-                return String(localized: "Past \(days) days")
+                return String(localized: "Last \(days) days")
             }
         }
         // fallback, if nothing above returned
-        let fmt = { ($0 as Date).formatted(date: .abbreviated, time: .omitted) }
+        let fmt = { ($0 as Date).formatted(date: .numeric, time: .omitted) }
         return "\(fmt(self.lowerBound)) – \(fmt(self.upperBound.addingTimeInterval(-1)))"
     }
 }

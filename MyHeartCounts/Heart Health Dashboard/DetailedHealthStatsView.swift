@@ -35,6 +35,7 @@ struct DetailedHealthStatsView: View {
     @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
     @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    @LocalPreference(.detailedHealthMetricChartTimeRange) private var chartTimeRange
     // swiftlint:enable attributes
     
     private let sampleType: MHCSampleType
@@ -54,19 +55,15 @@ struct DetailedHealthStatsView: View {
             recentValuesChart(recentValuesChartConfig)
             switch input {
             case .scoreResult(let result, keyPath: _):
-                Section("Score Result") {
-                    scoreResultExplainer(for: result)
-                }
+                scoreResultExplainer(for: result)
             }
             if let explainer = explainerText(for: sampleType) {
                 let document = (try? MarkdownDocument(processing: explainer))
                     ?? MarkdownDocument(metadata: [:], blocks: [.markdown(id: nil, rawContents: explainer)])
-                Section {
-                    FurtherReadingSection(
-                        title: "About \(sampleType.displayTitle)",
-                        document: document
-                    )
-                }
+                FurtherReadingSection(
+                    title: "About \(sampleType.displayTitle)",
+                    document: document
+                )
             }
             if accountFeatureFlags.isDebugModeEnabled, case let .custom(sampleType) = sampleType {
                 Section("Debug") {
@@ -82,7 +79,7 @@ struct DetailedHealthStatsView: View {
             case .scoreResult(result: _, let keyPath):
                 if HeartHealthDashboard.canAddSample(for: keyPath) {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Add Data") {
+                        Button("Add Data", systemSymbol: .plus) {
                             isPresentingAddSampleSheet = true
                         }
                     }
@@ -102,10 +99,11 @@ struct DetailedHealthStatsView: View {
     
     private var recentValuesChartConfig: RecentValuesChartConfig {
         switch input {
-        case .scoreResult(result: _, keyPath: \.nicotineExposureScore):
+        case .scoreResult(result: _, keyPath: \.nicotineExposureScore),
+                .scoreResult(result: _, keyPath: \.dietScore):
             .disabled
         default:
-            .enabled(timeRange: .last(days: 14))
+            .enabled(timeRange: .init(chartTimeRange))
         }
     }
     
@@ -153,11 +151,11 @@ struct DetailedHealthStatsView: View {
                             style: .chart(chartConfig),
                             enableSelection: false
                         ),
-                        withSize: .large
+                        withSize: .large,
+                        accessory: .timeRangeSelector($chartTimeRange)
                     )
                     .padding(.horizontal)
                     .healthStatsChartHoverHighlightEnabled()
-                    .environment(\.showTimeRangeAsGridCellSubtitle, true)
                     .environment(\.isRecentValuesViewInDetailedStatsSheet, true)
                 } else {
                     HStack {
@@ -176,7 +174,7 @@ struct DetailedHealthStatsView: View {
     @ViewBuilder
     private func scoreResultBasedTopSection(for scoreResult: ScoreResult) -> some View {
         let spacing: Double = 24
-        GeometryReader { geometry in // swiftlint:disable:this closure_body_length
+        GeometryReader { geometry in
             let gaugePartWidth = (geometry.size.width - spacing) * 0.37
             let leftPartWidth = geometry.size.width - spacing - gaugePartWidth
             HStack(spacing: spacing / 2 - 1) {
@@ -201,20 +199,9 @@ struct DetailedHealthStatsView: View {
                 .frame(width: leftPartWidth, alignment: .leading)
                 Divider()
                     .frame(width: 1)
-                Gauge(
-                    lineWidth: .relative(1.75),
-                    gradient: .redToGreen,
-                    progress: scoreResult.score
-                ) {
-                    if let score = scoreResult.score {
-                        Text(Int(score * 100), format: .number)
-                            .bold()
-                    } else {
-                        Text("n/a")
-                    }
-                }
-                .frame(width: 90, height: 90)
-                .frame(width: gaugePartWidth, alignment: .center)
+                ScoreResultGauge(scoreResult: scoreResult)
+                    .frame(width: 90, height: 90)
+                    .frame(width: gaugePartWidth, alignment: .center)
             }
         }
         .frame(height: 120)
@@ -336,31 +323,46 @@ private struct ScoreExplanationView: View {
                 .listRowInsets(.zero)
         case .custom(_, let explainer):
             makeViews(for: explainer)
+                .listRowInsets(.zero)
         }
     }
     
     @ViewBuilder
     private func makeViews(for explainer: ScoreDefinition.TextualExplainer, matchingBandIdx: Int? = nil) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            if let headerText = explainer.headerText {
-                Text(headerText)
-                    .padding(.horizontal)
-            }
-            ForEach(Array(explainer.bands.indices), id: \.self) { idx in
-                let band = explainer.bands[idx]
-                makeColorBar(didMatch: idx == matchingBandIdx, background: band.background) {
-                    HStack {
-                        if let leadingText = band.leadingText {
-                            Text(leadingText)
-                        }
-                        Spacer()
-                        if let trailingText = band.trailingText {
-                            Text(trailingText)
+        Section(
+            content: {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(explainer.bands.indices), id: \.self) { idx in
+                        let band = explainer.bands[idx]
+                        makeColorBar(didMatch: idx == matchingBandIdx, background: band.background) {
+                            HStack {
+                                if let leadingText = band.leadingText {
+                                    Text(leadingText)
+                                }
+                                Spacer()
+                                if let trailingText = band.trailingText {
+                                    Text(trailingText)
+                                }
+                            }
+                            .padding(.vertical, 2)
+                            .padding(.top, idx == 0 ? 4 : 0)
+                            .padding(.bottom, idx == explainer.bands.count - 1 ? 4 : 0)
                         }
                     }
                 }
+            },
+            header: {
+                Text("Score Result")
+                    .padding(.leading, 16)
+                    .padding(.vertical, 8)
+            },
+            footer: {
+                if let footerText = explainer.footerText {
+                    Text(footerText)
+                        .padding()
+                }
             }
-        }
+        )
     }
     
     @ViewBuilder
@@ -400,14 +402,14 @@ private struct FurtherReadingSection: View {
     private let links: [URL]
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(title)
-                .font(.title2.weight(.semibold))
-            MarkdownView(markdownDocument: document)
-                .padding(.vertical, 5)
-        }
-        ForEach(Array(links.indices), id: \.self) { idx in
-            makeLinkButton(idx == links.startIndex ? "Learn More" : nil, for: links[idx])
+        Section(title) {
+            VStack(alignment: .leading) {
+                MarkdownView(markdownDocument: document)
+                    .padding(.vertical, 5)
+            }
+            ForEach(Array(links.indices), id: \.self) { idx in
+                makeLinkButton("Learn More", for: links[idx])
+            }
         }
     }
     

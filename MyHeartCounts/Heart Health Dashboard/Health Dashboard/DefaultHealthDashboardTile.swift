@@ -19,10 +19,16 @@ import SwiftUI
 
 
 /// Grid Cell intended for usage in the ``HealthDashboard``, with support for most (quantity-based) sample types.
-struct DefaultHealthDashboardComponentGridCell: View {
+struct DefaultHealthDashboardTile: View {
     enum QueryInput {
         case healthKit(SampleType<HKQuantitySample>)
         case firestore(CustomQuantitySampleType)
+    }
+    
+    enum Accessory {
+        case none
+        case progress
+        case timeRangeSelector(Binding<DetailedHealthStatsView.ChartTimeRange>)
     }
     
     @Environment(\.calendar)
@@ -33,6 +39,7 @@ struct DefaultHealthDashboardComponentGridCell: View {
     
     let queryInput: QueryInput
     let config: HealthDashboardLayout.GridComponent.ComponentDisplayConfig
+    let accessory: Accessory
     
     var body: some View {
         switch queryInput {
@@ -100,40 +107,39 @@ struct DefaultHealthDashboardComponentGridCell: View {
                 samples.aggregated(using: config._variant, overallTimeRange: self.config.timeRange.range, calendar: calendar)
             }
         }()
-        GridCellImpl(
+        TileImpl(
             sampleType: sampleType,
             samples: samples,
             timeRange: self.config.timeRange,
             style: config.style,
+            accessory: accessory,
             goal: goalProvider?(sampleType)
         )
     }
 }
 
 
-extension EnvironmentValues {
-    @Entry var showTimeRangeAsGridCellSubtitle: Bool = false // not ideal but it works
-}
-
-
-private struct GridCellImpl: View {
+private struct TileImpl: View {
     @Environment(\.calendar)
     private var cal
-    @Environment(\.showTimeRangeAsGridCellSubtitle)
-    private var showTimeRangeAsSubtitle
     
     private let sampleType: QuantitySample.SampleType
     private let samples: [QuantitySample]
     private let timeRange: HealthKitQueryTimeRange
     private let style: HealthDashboardLayout.Style
+    private let accessory: DefaultHealthDashboardTile.Accessory
     private let goal: Achievement.ResolvedGoal?
     
     var body: some View {
-        HealthDashboardSmallGridCell(
-            title: sampleType.displayTitle,
-            subtitle: showTimeRangeAsSubtitle ? timeRange.range.displayText(using: cal) : nil
-        ) {
-            progressDecoration
+        HealthDashboardTile(title: sampleType.displayTitle) {
+            switch accessory {
+            case .none:
+                EmptyView()
+            case .progress:
+                progressDecoration
+            case .timeRangeSelector(let binding):
+                ChartTimeRangePicker(timeRange: binding)
+            }
         } content: {
             switch style {
             case .chart(let chartConfig):
@@ -149,10 +155,12 @@ private struct GridCellImpl: View {
                     id: \.id
                 ) { (sample: QuantitySample) in
                     HealthStatsChartDataPoint(timeRange: sample.startDate..<sample.endDate, value: sample.value)
+                } makeHighlightConfig: { dataSet, dataPoint in
+                    .default(for: dataPoint, in: dataSet)
                 }
                 HealthStatsChart(dataSet)
                     .chartXScale(domain: [timeRange.range.lowerBound, timeRange.range.upperBound])
-                    .configureChartXAxisWithDailyMarks(forTimeRange: timeRange.range)
+                    .configureChartXAxis(for: timeRange.range)
             case .singleValue:
                 singleValueContent(for: samples)
             case let .gauge(_, score):
@@ -178,12 +186,14 @@ private struct GridCellImpl: View {
         samples: [QuantitySample],
         timeRange: HealthKitQueryTimeRange,
         style: HealthDashboardLayout.Style,
+        accessory: DefaultHealthDashboardTile.Accessory,
         goal: Achievement.ResolvedGoal?
     ) {
         self.sampleType = sampleType
         self.samples = samples
         self.timeRange = timeRange
         self.style = style
+        self.accessory = accessory
         self.goal = goal
     }
     
@@ -286,7 +296,7 @@ private struct GridCellImpl: View {
         if let input = singleValueInput(for: samples) {
             HealthDashboardQuantityLabel(input: input)
         } else {
-            Text("n/a") // ???
+            Text("n/a")
         }
     }
 }
@@ -297,7 +307,7 @@ private struct GridCellImpl: View {
 private struct SamplesProviderView<Content: View>: View {
     @Environment(\.calendar)
     private var calendar
-    private let input: DefaultHealthDashboardComponentGridCell.QueryInput
+    private let input: DefaultHealthDashboardTile.QueryInput
     private let aggregationMode: QuantitySamplesQueryingViewAggregationMode
     private let timeRange: HealthKitQueryTimeRange
     private let content: @MainActor ([QuantitySample]) -> Content
@@ -345,7 +355,7 @@ private struct SamplesProviderView<Content: View>: View {
     }
     
     init(
-        input: DefaultHealthDashboardComponentGridCell.QueryInput,
+        input: DefaultHealthDashboardTile.QueryInput,
         aggregationMode: QuantitySamplesQueryingViewAggregationMode,
         timeRange: HealthKitQueryTimeRange,
         @ViewBuilder content: @escaping @MainActor ([QuantitySample]) -> Content

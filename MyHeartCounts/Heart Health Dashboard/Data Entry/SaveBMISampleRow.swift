@@ -8,6 +8,7 @@
 
 import Foundation
 import HealthKit
+import SFSafeSymbols
 import SpeziHealthKit
 import SpeziViews
 import SwiftUI
@@ -78,17 +79,21 @@ struct SaveBMISampleView: View {
         .viewStateAlert(state: $viewState)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    dismiss()
-                }
+                DismissButton()
             }
             ToolbarItem(placement: .confirmationAction) {
-                AsyncButton("Save", state: $viewState) {
-                    try await save()
-                    dismiss()
-                }
-                .bold()
+                AsyncButton(
+                    state: $viewState,
+                    action: {
+                        try await save()
+                        dismiss()
+                    },
+                    label: {
+                        Label("Save", systemSymbol: .checkmark)
+                    }
+                )
                 .disabled(bmi == nil)
+                .buttonStyleGlassProminent()
             }
         }
         .onChange(of: weight, updateBMI)

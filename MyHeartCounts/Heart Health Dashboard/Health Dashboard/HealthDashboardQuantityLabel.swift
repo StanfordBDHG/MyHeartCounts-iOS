@@ -15,76 +15,7 @@ import SwiftUI
 
 
 extension HealthDashboardConstants {
-    static let gridComponentCornerRadius: Double = 12
-}
-
-
-struct HealthDashboardSmallGridCell<Accessory: View, Content: View>: View {
-    private static var insets: EdgeInsets { EdgeInsets(horizontal: 9, vertical: 5) }
-    
-    @Environment(\.isRecentValuesViewInDetailedStatsSheet)
-    private var isRecentValuesViewInDetailedStatsSheet
-    
-    private let title: Text
-    private let subtitle: Text?
-    private let accessory: Accessory
-    private let content: Content
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 0) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        title
-                            .font(.headline)
-                        if let subtitle {
-                            subtitle
-                                .font(.subheadline)
-                        }
-                    }
-                    Spacer()
-                    accessory
-                }
-                .padding(EdgeInsets(top: Self.insets.top, leading: 0, bottom: Self.insets.top, trailing: 0))
-                .frame(height: 57)
-                Divider()
-            }
-            Spacer()
-            content
-            Spacer()
-        }
-        .if(!isRecentValuesViewInDetailedStatsSheet) {
-            $0
-                .padding(EdgeInsets(top: 0, leading: Self.insets.leading, bottom: Self.insets.bottom, trailing: Self.insets.trailing))
-                .background(.background)
-        }
-        .frame(minHeight: 129)
-    }
-    
-    init(
-        title: LocalizedStringResource,
-        subtitle: LocalizedStringResource? = nil,
-        @ViewBuilder accessory: () -> Accessory = { EmptyView() },
-        @ViewBuilder content: () -> Content
-    ) {
-        self.title = Text(title)
-        self.subtitle = subtitle.map(Text.init)
-        self.accessory = accessory()
-        self.content = content()
-    }
-    
-    @_disfavoredOverload
-    init(
-        title: some StringProtocol,
-        subtitle: (some StringProtocol & SendableMetatype)? = String?.none,
-        @ViewBuilder accessory: () -> Accessory = { EmptyView() },
-        @ViewBuilder content: () -> Content
-    ) {
-        self.title = Text(title)
-        self.subtitle = subtitle.map(Text.init)
-        self.accessory = accessory()
-        self.content = content()
-    }
+    static let gridComponentCornerRadius: Double = 28
 }
 
 
