@@ -78,6 +78,7 @@ extension QuestionnaireDataExtractor {
 
 
 extension QuestionnaireDataExtractor.Rule {
+    /// A rule that extracts a quanity answer, turns it into an `HKQuantitySample`, and saves that to HealthKit.
     static func quantitySample(
         _ sampleType: SampleType<HKQuantitySample>,
         linkId: String
@@ -105,6 +106,7 @@ extension QuestionnaireDataExtractor.Rule {
         }
     }
     
+    /// A rule that extracts quanity answers for systolic and diastolic blood pressure, turns these into an `HKCorrelation`, and saves that to HealthKit.
     static func bloodPressure(
         systolicLinkId: String,
         diastolicLinkId: String

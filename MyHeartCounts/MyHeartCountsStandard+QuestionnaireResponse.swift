@@ -48,7 +48,9 @@ extension MyHeartCountsStandard {
                 Rule.bloodPressure(
                     systolicLinkId: "7cec349c-495c-4ef6-834e-cc9708625736",
                     diastolicLinkId: "b25ac0aa-4528-47dc-951f-97f411ec5cc2"
-                )
+                ),
+                Rule.quantitySample(.bloodPressureSystolic, linkId: "78edc19f-e409-49f0-8e42-a0adf5e777b0"),
+                Rule.quantitySample(.bloodGlucose, linkId: "7309938e-ea24-4e31-8427-82f3a1a44f83")
             ])
         default:
             break
