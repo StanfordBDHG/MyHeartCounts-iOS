@@ -7,8 +7,7 @@
 //
 
 @preconcurrency import FirebaseFirestore
-import Foundation
-import ModelsR4
+import class ModelsR4.QuestionnaireResponse
 import OSLog
 import Spezi
 import SpeziHealthKit
