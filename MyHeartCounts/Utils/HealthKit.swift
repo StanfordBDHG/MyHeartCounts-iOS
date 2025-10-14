@@ -1,0 +1,50 @@
+//
+// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+//
+// SPDX-FileCopyrightText: 2025 Stanford University
+//
+// SPDX-License-Identifier: MIT
+//
+
+import Foundation
+import HealthKit
+import HealthKitOnFHIR
+import SpeziFoundation
+
+
+extension HKUnit {
+    /// Attempts to create a `HKUnit` from a unit string.
+    static func parse(_ unitString: String) -> HKUnit? {
+        // ideally this would be a failing convenience init, but the language isn't able to express that.
+        // (we could define it as a category in ObjC, but this is good enough...)
+        (try? catchingNSException {
+            HKUnit(from: unitString)
+        }) ?? .parseFromFHIRUnit(unitString)
+    }
+}
+
+
+// MARK: FHIR
+extension HKUnit {
+    private static let defaultFHIRUnitsMapping: [String: Set<HKUnit>] = {
+        HKSampleMapping.default.quantitySampleMapping.reduce(into: [:]) { acc, entry in
+            let mappedUnit = entry.value.unit
+            if let code = mappedUnit.code {
+                acc[code, default: []].insert(mappedUnit.hkunit)
+            }
+        }
+    }()
+    
+    static func parseFromFHIRUnit(_ unitString: String, mapping: HKSampleMapping = .default) -> HKUnit? {
+        guard let units = defaultFHIRUnitsMapping[unitString] else {
+            print("NO UNIT FOR FHIR UNIT STRING '\(unitString)'")
+            return nil
+        }
+        if units.count <= 1 {
+            return units.first
+        } else {
+            print("MULTIPLE UNITS FOR FHIR UNIT STRING '\(unitString)': \(units)")
+            return nil
+        }
+    }
+}
