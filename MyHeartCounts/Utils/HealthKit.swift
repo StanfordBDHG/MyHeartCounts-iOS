@@ -36,15 +36,14 @@ extension HKUnit {
     }()
     
     static func parseFromFHIRUnit(_ unitString: String, mapping: HKSampleMapping = .default) -> HKUnit? {
-        guard let units = defaultFHIRUnitsMapping[unitString] else {
-            print("NO UNIT FOR FHIR UNIT STRING '\(unitString)'")
+        guard let units = defaultFHIRUnitsMapping[unitString], !units.isEmpty else {
             return nil
         }
-        if units.count <= 1 {
-            return units.first
-        } else {
-            print("MULTIPLE UNITS FOR FHIR UNIT STRING '\(unitString)': \(units)")
+        if units.count > 1 {
+            print("Error: found multiple units for unitString '\(unitString)'. returning nil.")
             return nil
+        } else {
+            return units.first
         }
     }
 }
