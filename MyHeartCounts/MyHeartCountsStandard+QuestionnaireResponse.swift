@@ -32,11 +32,7 @@ extension MyHeartCountsStandard {
         } catch {
             logger.error("Could not store questionnaire response: \(error)")
         }
-        do {
-            try await parseIfApplicable(response)
-        } catch {
-            logger.error("Error parsing & processing questionnaire response: \(error)")
-        }
+        await parseIfApplicable(response)
     }
     
     
@@ -44,93 +40,34 @@ extension MyHeartCountsStandard {
     private func parseIfApplicable(
         isolation: isolated (any Actor)? = #isolation,
         _ response: ModelsR4.QuestionnaireResponse
-    ) async throws {
+    ) async {
+        typealias Rule = QuestionnaireDataExtractor.Rule
         switch response.questionnaire?.value?.url {
         case "https://myheartcounts.stanford.edu/fhir/survey/heartRisk":
-            try await processHeartRiskSurvey(response)
+            await processSurvey(response: response, rules: [
+                Rule.bloodPressure(
+                    systolicLinkId: "7cec349c-495c-4ef6-834e-cc9708625736",
+                    diastolicLinkId: "b25ac0aa-4528-47dc-951f-97f411ec5cc2"
+                )
+            ])
         default:
             break
         }
     }
     
     
-    private func processHeartRiskSurvey( // swiftlint:disable:this function_body_length
+    private func processSurvey(
         isolation: isolated (any Actor)? = #isolation,
-        _ response: QuestionnaireResponse
-    ) async throws {
-        let logger = await logger
-        let allResponses = response.allResponses
-        func answer(to questionLinkId: String) -> QuestionnaireResponseItemAnswer? {
-            let responses = allResponses.filter { $0.linkId.value?.string == questionLinkId }
-            guard responses.count <= 1 else {
-                logger.error("Found multiple responses for question \(questionLinkId)")
-                return nil
-            }
-            guard let answers = responses.first?.answer else {
-                return nil
-            }
-            guard answers.count <= 1 else {
-                logger.error("Found multiple answers in response for question \(questionLinkId)")
-                return nil
-            }
-            return answers.first
-        }
-        
-        do {
-            let sys = "7cec349c-495c-4ef6-834e-cc9708625736"
-            let dia = "b25ac0aa-4528-47dc-951f-97f411ec5cc2"
-            let makeAndSaveSample = { (questionId: String, sampleType: SampleType<HKQuantitySample>) async throws -> HKQuantitySample? in
-                switch answer(to: questionId)?.value {
-                case .quantity(let quantity):
-                    guard let value = quantity.value?.value?.decimal.doubleValue,
-                          let unit = quantity.unit?.value?.string,
-                          let unit = HKUnit.parse(unit) else {
-                        return nil
-                    }
-                    let date = (try? response.authored?.value?.asNSDate()) ?? .now
-                    let sample = HKQuantitySample(
-                        type: sampleType.hkSampleType,
-                        quantity: HKQuantity(unit: unit, doubleValue: value),
-                        start: date,
-                        end: date
-                    )
-                    try await self.healthKit.save(sample)
-                    return sample
-                default:
-                    return nil
-                }
-            }
-            // Note: intentionally not a single `if let sys = .., let dia = ...` bc that'd give us short-circuiting behaviour.
-            let sysSample = try? await makeAndSaveSample(sys, .bloodPressureSystolic)
-            let diaSample = try? await makeAndSaveSample(dia, .bloodPressureDiastolic)
-            if let sysSample, let diaSample {
-                let correlation = HKCorrelation(
-                    type: SampleType.bloodPressure.hkSampleType,
-                    start: min(sysSample.startDate, diaSample.startDate),
-                    end: max(sysSample.endDate, diaSample.endDate),
-                    objects: [sysSample, diaSample]
-                )
-                try await healthKit.save(correlation)
+        response: QuestionnaireResponse,
+        rules: [any QuestionnaireDataExtractor.AnyRule<HealthKit>]
+    ) async {
+        let extractor = QuestionnaireDataExtractor(response: response)
+        for rule in rules {
+            do {
+                _ = try await rule(isolation: isolation, extractor: extractor, context: healthKit)
+            } catch {
+                await logger.error("Error parsing & processing questionnaire response: \(error)")
             }
         }
-    }
-}
-
-
-private protocol QuestionnaireResponseItemContainer {
-    var item: [QuestionnaireResponseItem]? { get } // swiftlint:disable:this discouraged_optional_collection
-}
-
-extension QuestionnaireResponse: QuestionnaireResponseItemContainer {}
-extension QuestionnaireResponseItem: QuestionnaireResponseItemContainer {}
-extension QuestionnaireResponseItemAnswer: QuestionnaireResponseItemContainer {}
-
-extension QuestionnaireResponseItemContainer {
-    var allResponses: Set<QuestionnaireResponseItem> {
-        var responses = Set(self.item ?? [])
-        for response in responses {
-            responses.formUnion(response.allResponses)
-        }
-        return responses
     }
 }
