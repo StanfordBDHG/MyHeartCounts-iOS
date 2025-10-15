@@ -1021,6 +1021,7 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "My Heart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSensorKitPrivacyPolicyURL = "https://myheartcounts.su.domains/privacy-policy/";
+				INFOPLIST_KEY_NSSensorKitUsageDescription = "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1074,6 +1075,7 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "My Heart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSensorKitPrivacyPolicyURL = "https://myheartcounts.su.domains/privacy-policy/";
+				INFOPLIST_KEY_NSSensorKitUsageDescription = "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
