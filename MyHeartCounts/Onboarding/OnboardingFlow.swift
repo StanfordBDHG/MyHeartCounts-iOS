@@ -173,6 +173,6 @@ extension OnboardingStep {
     static let workoutPreference = Self(rawValue: "workoutPreference")
     static let notifications = Self(rawValue: "notifications")
     static let demographics = Self(rawValue: "demographics")
-    static let LLMDownload = Self(rawValue: "LLMDownload") 
+    static let LLMDownload = Self(rawValue: "LLMDownload")
     static let finalStep = Self(rawValue: "finalStep")
 }
