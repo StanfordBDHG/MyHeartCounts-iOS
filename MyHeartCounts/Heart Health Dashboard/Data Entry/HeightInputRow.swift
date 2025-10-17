@@ -8,6 +8,7 @@
 
 import Foundation
 import HealthKit
+import SpeziHealthKit
 import SwiftUI
 
 
@@ -17,7 +18,7 @@ struct HeightInputRow: View {
         case feetAndInches
     }
     
-    private let title: String
+    private let title: LocalizedStringResource
     @Binding private var quantity: HKQuantity?
     private let inputUnit: InputUnit
     @State private var showPicker = false
@@ -35,8 +36,14 @@ struct HeightInputRow: View {
                     quantity = nil
                 }
             }
-            QuantityInputRow(title: title, value: binding, unit: cmUnit)
+            QuantityInputRow(
+                title: title,
+                value: binding,
+                limits: MHCQuantitySampleType.healthKit(.height).inputLimits(in: cmUnit),
+                unit: cmUnit
+            )
         case .feetAndInches:
+            // no need to perform input validation here; that's handled via the wheel-styled picker
             HStack {
                 Text(title)
                 Spacer()
@@ -53,13 +60,13 @@ struct HeightInputRow: View {
                 showPicker.toggle()
             }
             if showPicker {
-                FootPicker(quantity: $quantity)
+                FootPicker(quantity: $quantity, limits: .init(feet: 3..<9, inches: 0..<12))
             }
         }
     }
     
     
-    init(title: String, quantity: Binding<HKQuantity?>, preferredUnit: HKUnit) {
+    init(title: LocalizedStringResource, quantity: Binding<HKQuantity?>, preferredUnit: HKUnit) {
         self.title = title
         self._quantity = quantity
         self.inputUnit = preferredUnit == .foot() ? .feetAndInches : .centimeters
@@ -69,6 +76,12 @@ struct HeightInputRow: View {
 
 extension HeightInputRow {
     private struct FootPicker: View {
+        struct Limits {
+            let feet: Range<Int>
+            let inches: Range<Int>
+        }
+        
+        private let limits: Limits
         @State private var feet: Int
         @State private var inches: Int
         @Binding var quantity: HKQuantity?
@@ -76,22 +89,24 @@ extension HeightInputRow {
         var body: some View {
             HStack(spacing: 0) {
                 Picker("", selection: $feet) {
-                    ForEach(0..<10) { value in
+                    ForEach(Array(limits.feet), id: \.self) { value in
                         Text("\(value) ft")
                     }
-                }.pickerStyle(.wheel)
+                }
                 Picker("", selection: $inches) {
-                    ForEach(0..<12) { value in
+                    ForEach(Array(limits.inches), id: \.self) { value in
                         Text("\(value) in")
                     }
-                }.pickerStyle(.wheel)
+                }
             }
+            .pickerStyle(.wheel)
             .onChange(of: feet, updateQuantity)
             .onChange(of: inches, updateQuantity)
             .onAppear { updateQuantity() }
         }
         
-        init(quantity: Binding<HKQuantity?>) {
+        init(quantity: Binding<HKQuantity?>, limits: Limits) {
+            self.limits = limits
             _quantity = quantity
             if let (feet, inches) = quantity.wrappedValue?.valuesForFeetAndInches() {
                 _feet = .init(initialValue: feet)

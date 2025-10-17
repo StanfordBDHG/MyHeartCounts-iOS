@@ -29,6 +29,7 @@ struct SaveQuantitySampleView: View {
     private let completionHandler: (@MainActor (QuantitySample) -> Void)?
     @State private var date: Date = .now
     @State private var value: Double?
+    @State private var containsInvalidInput = true
     @State private var viewState: ViewState = .idle
     @FocusState private var valueFieldIsFocused: Bool
     
@@ -46,10 +47,16 @@ struct SaveQuantitySampleView: View {
                     HeightInputRow(title: "Value", quantity: binding, preferredUnit: sampleType.displayUnit)
                         .focused($valueFieldIsFocused)
                 } else {
-                    QuantityInputRow(title: "Value", value: $value, unit: sampleType.displayUnit)
-                        .focused($valueFieldIsFocused)
+                    QuantityInputRow(
+                        title: "Value",
+                        value: $value,
+                        limits: sampleType.inputLimits(in: sampleType.displayUnit),
+                        unit: sampleType.displayUnit
+                    )
+                    .focused($valueFieldIsFocused)
                 }
             }
+            .storeQuantityRowInputsAllValid(in: $containsInvalidInput)
         }
         .navigationTitle(title)
         .viewStateAlert(state: $viewState)
@@ -68,7 +75,7 @@ struct SaveQuantitySampleView: View {
                         Label("Save", systemSymbol: .checkmark)
                     }
                 )
-                .disabled(value == nil)
+                .disabled(value == nil || containsInvalidInput)
                 .buttonStyleGlassProminent()
             }
         }
@@ -89,7 +96,7 @@ struct SaveQuantitySampleView: View {
     
     
     private func save() async throws {
-        guard let value = self.value else {
+        guard let value = self.value, !containsInvalidInput else {
             return
         }
         switch sampleType {
@@ -130,5 +137,29 @@ extension HKQuantity {
         let inches = totalInches.remainder(dividingBy: Double(feet) * oneFeetInInches).rounded()
         precondition(inches != -1)
         return (feet, inches)
+    }
+}
+
+
+extension MHCQuantitySampleType {
+    func inputLimits(in unit: HKUnit) -> Range<Double>? {
+        switch self {
+        case .healthKit(.bloodPressureSystolic):
+            60..<250
+        case .healthKit(.bloodPressureDiastolic):
+            30..<150
+        case .healthKit(.bloodGlucose):
+            40..<400
+        case .healthKit(.height) where unit == .meter():
+            0.9..<2.5
+        case .healthKit(.height) where unit == .meterUnit(with: .centi):
+            90..<250
+        case .healthKit(.bodyMass) where unit == .gramUnit(with: .kilo):
+                25..<450
+        case .healthKit(.bodyMass) where unit == .pound():
+            55..<1000
+        default:
+            nil
+        }
     }
 }
