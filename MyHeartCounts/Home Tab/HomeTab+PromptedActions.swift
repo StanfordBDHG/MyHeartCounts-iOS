@@ -9,10 +9,15 @@
 import Foundation
 import SFSafeSymbols
 import SpeziFoundation
+import SpeziLocalStorage
 import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
 
+
+extension HomeTab.PromptedAction.ID {
+    static let sensorKit = Self("edu.stanford.MyHeartCounts.HomeTabAction.EnableSensorKit")
+}
 
 extension HomeTab {
     @MainActor
@@ -23,45 +28,62 @@ extension HomeTab {
         @Environment(StudyManager.self) private var studyManager
         @Environment(SensorKit.self) private var sensorKit
         @TriggerUpdate private var triggerUpdate
+        @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedActionIds
         // swiftlint:enable attributes
         
-        
-        var wrappedValue: [ActionCard] {
+        var wrappedValue: [HomeTab.PromptedAction] {
             let _ = triggerUpdate // swiftlint:disable:this redundant_discardable_let
-            return if let enrollment = studyManager.studyEnrollments.first,
-                      let daysSinceEnrollment = cal.dateComponents([.day], from: enrollment.enrollmentDate, to: .now).day {
+            let actions: [HomeTab.PromptedAction] = if let enrollment = studyManager.studyEnrollments.first,
+                                         let daysSinceEnrollment = cal.dateComponents([.day], from: enrollment.enrollmentDate, to: .now).day {
                 actions(daysSinceEnrollment: daysSinceEnrollment)
             } else {
                 []
             }
+            return actions.filter { (action: HomeTab.PromptedAction) in
+                !(rejectedActionIds ?? []).contains(action.id)
+            }
         }
         
-        @ArrayBuilder<ActionCard>
-        private func actions(daysSinceEnrollment: Int) -> [ActionCard] {
+        var projectedValue: Self {
+            self
+        }
+        
+        @ArrayBuilder<HomeTab.PromptedAction>
+        private func actions(daysSinceEnrollment: Int) -> [HomeTab.PromptedAction] {
             // the big issue here is that we don't just want to show some of these after the enrollment (initial) but we also went to re-prompt it when the user deletes an re-downloads rhe app!!!!!!!!1
             let shouldOfferSensorKit = SensorKit.mhcSensors.contains(where: { $0.authorizationStatus == .notDetermined })
             if daysSinceEnrollment < 21 && shouldOfferSensorKit {
-                ActionCard(content: .init(
-                    id: "edu.stanford.MyHeartCounts.ActionCard.SensorKit",
-                    symbol: .waveformPathEcgRectangle,
-                    title: "Enable SensorKit",
-                    message: "ENABLE_SENSORKIT_SUBTITLE"
-                )) {
-                    do {
-                        defer {
-                            Task { @MainActor in
-                                $triggerUpdate()
-                            }
+                HomeTab.PromptedAction(
+                    id: .sensorKit,
+                    content: .init(
+                        symbol: .waveformPathEcgRectangle,
+                        title: "Enable SensorKit",
+                        message: "ENABLE_SENSORKIT_SUBTITLE"
+                    )
+                ) {
+                    defer {
+                        Task { @MainActor in
+                            $triggerUpdate()
                         }
-                        let result = try await sensorKit.requestAccess(to: SensorKit.mhcSensors)
-                        for sensor in result.authorized {
-                            try? await sensor.startRecording()
-                        }
-                    } catch {
-                        print("Error enabling SensorKit: \(error)")
+                    }
+                    let result = try await sensorKit.requestAccess(to: SensorKit.mhcSensors)
+                    for sensor in result.authorized {
+                        try? await sensor.startRecording()
                     }
                 }
             }
         }
+        
+        func reject(_ actionId: PromptedAction.ID) {
+            rejectedActionIds = (rejectedActionIds ?? []).union(CollectionOfOne(actionId))
+        }
     }
+}
+
+
+extension LocalStorageKeys {
+    static let rejectedHomeTabPromptedActions = LocalStorageKey<Set<HomeTab.PromptedAction.ID>>(
+        "edu.stanford.MyHeartCounts.rejectedHomeTabPromptedActions",
+        setting: .unencrypted(excludeFromBackup: true) // we explicitly want these to get reset when the device is restored
+    )
 }

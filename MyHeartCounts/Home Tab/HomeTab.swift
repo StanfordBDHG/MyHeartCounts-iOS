@@ -6,8 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable all
+
 import Foundation
 import SFSafeSymbols
+import SpeziViews
 import SwiftUI
 
 
@@ -21,6 +24,7 @@ struct HomeTab: RootViewTab {
     
     @DailyNudge private var dailyNudge
     @PromptedActions private var promptedActions
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
         NavigationStack {
@@ -53,14 +57,9 @@ struct HomeTab: RootViewTab {
                 }
             }
         }
-        ForEach(promptedActions) { card in
+        ForEach(promptedActions) { action in
             Section {
-                ActionCardView(card: card) { action in
-                    switch action {
-                    case .custom(let action):
-                        await action()
-                    }
-                }
+                PromptedActionButton(action: action, viewState: $viewState)
             }
         }
     }

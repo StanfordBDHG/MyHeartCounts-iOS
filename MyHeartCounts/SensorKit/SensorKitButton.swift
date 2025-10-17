@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable:this file_types_order
+// swiftlint:disable file_types_order
 
 import Foundation
 import SensorKit

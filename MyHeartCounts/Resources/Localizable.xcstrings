@@ -3750,6 +3750,9 @@
     "Reset Query Anchors" : {
 
     },
+    "Reset rejeted HomeTab actions" : {
+
+    },
     "Restart Test" : {
 
     },
@@ -4081,6 +4084,9 @@
       }
     },
     "Stop Recording Data" : {
+
+    },
+    "Stop suggesting this" : {
 
     },
     "Study not available" : {
