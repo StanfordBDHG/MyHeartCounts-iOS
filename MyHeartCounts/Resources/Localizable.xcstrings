@@ -2071,6 +2071,9 @@
         }
       }
     },
+    "How to Manage SensorKit" : {
+
+    },
     "id" : {
       "localizations" : {
         "es" : {
@@ -2193,16 +2196,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Instalar Mi Corazón Cuenta en tu Apple Watch nos permitirá aumentar considerablemente la calidad de los datos registrados."
-          }
-        }
-      }
-    },
-    "Invalid: only values from %@ to %@ are allowed" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Invalid: only values from %1$@ to %2$@ are allowed"
           }
         }
       }
@@ -3200,6 +3193,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Riesgos, Beneficios y Sus Derechos"
+          }
+        }
+      }
+    },
+    "Only values from %@ to %@ are allowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Only values from %1$@ to %2$@ are allowed"
           }
         }
       }

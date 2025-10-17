@@ -163,7 +163,7 @@ private final class Impl<Element: Sendable>: Sendable {
     
     func setup(input: QueryInput, logger: Logger) {
         guard listener == nil else {
-            logger.error("[impl] skipping setup request bc listener is non-nil.")
+//            logger.error("[impl] skipping setup request bc listener is non-nil.")
             return
         }
         listener?.remove()

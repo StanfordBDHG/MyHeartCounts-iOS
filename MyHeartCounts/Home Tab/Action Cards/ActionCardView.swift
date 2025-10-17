@@ -7,6 +7,7 @@
 //
 
 
+import SFSafeSymbols
 import SpeziScheduler
 import SpeziSchedulerUI
 import SpeziViews
@@ -54,7 +55,7 @@ struct ActionCardView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         if let symbol = content.symbol {
-                            Image(symbol)
+                            Image(systemSymbol: symbol)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .bold()

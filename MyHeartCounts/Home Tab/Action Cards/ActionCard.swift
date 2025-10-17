@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SFSafeSymbols
 import SpeziScheduler
 import SpeziStudy
 
@@ -29,9 +30,9 @@ struct ActionCard: Identifiable {
     
     struct SimpleContent: Identifiable, Hashable {
         let id: String
-        let symbol: String?
-        let title: String
-        let message: String
+        let symbol: SFSymbol?
+        let title: LocalizedStringResource
+        let message: LocalizedStringResource
     }
     
     let content: Content
@@ -39,5 +40,14 @@ struct ActionCard: Identifiable {
     
     var id: AnyHashable {
         content.id
+    }
+    
+    init(content: Content, action: Action) {
+        self.content = content
+        self.action = action
+    }
+    
+    init(content: SimpleContent, action: @escaping @Sendable () async -> Void) {
+        self.init(content: .custom(content), action: .custom(action))
     }
 }

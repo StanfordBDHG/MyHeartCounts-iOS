@@ -20,7 +20,7 @@ struct HomeTab: RootViewTab {
     private var missedEvents
     
     @DailyNudge private var dailyNudge
-    @State private var actionCards: [ActionCard] = []
+    @PromptedActions private var promptedActions
     
     var body: some View {
         NavigationStack {
@@ -43,16 +43,6 @@ struct HomeTab: RootViewTab {
     }
     
     @ViewBuilder private var topActionsFormContent: some View {
-        ForEach(actionCards) { card in
-            Section {
-                ActionCardView(card: card) { action in
-                    switch action {
-                    case .custom(let action):
-                        await action()
-                    }
-                }
-            }
-        }
         if let dailyNudge {
             Section {
                 VStack(alignment: .leading) {
@@ -60,6 +50,16 @@ struct HomeTab: RootViewTab {
                         .font(.headline)
                     Text(dailyNudge.message)
                         .font(.subheadline)
+                }
+            }
+        }
+        ForEach(promptedActions) { card in
+            Section {
+                ActionCardView(card: card) { action in
+                    switch action {
+                    case .custom(let action):
+                        await action()
+                    }
                 }
             }
         }

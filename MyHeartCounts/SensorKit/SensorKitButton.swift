@@ -6,11 +6,14 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable:this file_types_order
+
 import Foundation
 import SensorKit
 import SFSafeSymbols
 import SpeziFoundation
 import SpeziSensorKit
+import SpeziStudy
 import SpeziViews
 import SwiftUI
 
@@ -91,48 +94,8 @@ struct SensorKitButton: View {
     }
     
     @ViewBuilder private var manageSensorKitSheet: some View {
-        NavigationStack { // swiftlint:disable:this closure_body_length
-            Form {
-                Section {
-                    Text("ENABLE_SENSORKIT_SUBTITLE")
-                }
-                Section {
-                    ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
-                        HStack {
-                            Text(sensor.displayName)
-                            Spacer()
-                            switch sensor.authorizationStatus {
-                            case .authorized:
-                                Image(systemSymbol: .checkmark)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.green)
-                                    .accessibilityLabel("Active")
-                            case .notDetermined:
-                                AsyncButton("Enable", state: $viewState) {
-                                    try await enable([sensor])
-                                }
-                            case .denied:
-                                Image(systemSymbol: .xmark)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.red)
-                                    .accessibilityLabel("Disabled")
-                            @unknown default:
-                                EmptyView()
-                            }
-                        }
-                    }
-                } header: {
-                    Text("Sensors")
-                } footer: {
-                    Text("You can enable or disable individual sensors in the iOS Settings app.")
-                }
-            }
-            .navigationTitle("Manage SensorKit")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    DismissButton()
-                }
-            }
+        NavigationStack {
+            SensorKitSheet(viewState: $viewState, enable: self.enable)
         }
     }
     
@@ -151,6 +114,74 @@ struct SensorKitButton: View {
         let result = try await sensorKit.requestAccess(to: SensorKit.mhcSensors)
         for sensor in result.authorized {
             try await sensor.startRecording()
+        }
+    }
+}
+
+
+private struct SensorKitSheet: View {
+    @Environment(StudyManager.self)
+    private var studyManager
+    
+    @State private var presentedArticle: Article?
+    
+    @Binding var viewState: ViewState
+    let enable: @Sendable ([any AnySensor]) async throws -> Void
+    
+    var body: some View {
+        Form { // swiftlint:disable:this closure_body_length
+            Section {
+                Text("ENABLE_SENSORKIT_SUBTITLE")
+            }
+            Section {
+                ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
+                    HStack {
+                        Text(sensor.displayName)
+                        Spacer()
+                        switch sensor.authorizationStatus {
+                        case .authorized:
+                            Image(systemSymbol: .checkmark)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.green)
+                                .accessibilityLabel("Active")
+                        case .notDetermined:
+                            AsyncButton("Enable", state: $viewState) {
+                                try await enable([sensor])
+                            }
+                        case .denied:
+                            Image(systemSymbol: .xmark)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.red)
+                                .accessibilityLabel("Disabled")
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                }
+            } header: {
+                Text("Sensors")
+            } footer: {
+                Text("You can enable or disable individual sensors in the iOS Settings app.")
+            }
+            Section {
+                Button {
+                    let fileRef = StudyBundle.FileReference(category: .informationalArticle, filename: "SensorKit", fileExtension: "md")
+                    presentedArticle = studyManager.studyEnrollments.first?.studyBundle?
+                        .resolve(fileRef, in: studyManager.preferredLocale)
+                        .flatMap { Article(contentsOf: $0) }
+                } label: {
+                    Label("How to Manage SensorKit", systemSymbol: .textPage)
+                }
+            }
+        }
+        .navigationTitle("Manage SensorKit")
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                DismissButton()
+            }
+        }
+        .sheet(item: $presentedArticle) { article in
+            ArticleSheet(article: article)
         }
     }
 }
