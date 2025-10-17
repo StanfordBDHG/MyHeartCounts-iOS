@@ -68,7 +68,7 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
                     DismissButton()
                 }
             }
-            .searchable(text: $searchTerm, placement: .navigationBarDrawer(displayMode: .always))
+            .searchable(text: $searchTerm, placement: searchFieldPlacement)
             .onChange(of: searchTerm) { _, newValue in
                 guard !newValue.isEmpty else {
                     displayedItems = Array(items)
@@ -79,6 +79,14 @@ struct ListSelectionSheet<Items: RandomAccessCollection>: View where Items.Eleme
                     makeTitle(item).localizedCaseInsensitiveContains(newValue)
                 }
             }
+        }
+    }
+    
+    private var searchFieldPlacement: SearchFieldPlacement {
+        if #available(iOS 26, *) {
+            .automatic
+        } else {
+            .navigationBarDrawer(displayMode: .always)
         }
     }
     
