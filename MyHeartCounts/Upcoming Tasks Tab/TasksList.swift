@@ -10,6 +10,7 @@
 
 import Algorithms
 import Foundation
+import MHCStudyDefinition
 import OSLog
 import ResearchKitSwiftUI
 import SFSafeSymbols

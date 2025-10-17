@@ -8,6 +8,7 @@
 
 // swiftlint:disable attributes function_body_length closure_body_length cyclomatic_complexity
 
+import MHCStudyDefinition
 import SpeziFoundation
 import SpeziScheduler
 import SpeziStudy

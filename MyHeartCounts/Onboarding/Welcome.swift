@@ -17,7 +17,6 @@ struct Welcome: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var onboardingPath
     
-    
     var body: some View {
         VStack {
             ScrollView {
