@@ -496,6 +496,9 @@
         }
       }
     },
+    "Active" : {
+
+    },
     "Actively smoking" : {
       "localizations" : {
         "es" : {
@@ -705,6 +708,9 @@
           }
         }
       }
+    },
+    "Body Mass Index" : {
+
     },
     "Bulk Export Manager" : {
       "localizations" : {
@@ -1117,6 +1123,9 @@
         }
       }
     },
+    "Data collection enabled for %lld sensors" : {
+
+    },
     "Date" : {
       "localizations" : {
         "es" : {
@@ -1219,6 +1228,9 @@
           }
         }
       }
+    },
+    "Disabled" : {
+
     },
     "Disclosure Indicator" : {
       "localizations" : {
@@ -1342,6 +1354,9 @@
         }
       }
     },
+    "Enable" : {
+
+    },
     "Enable App Debug Mode" : {
       "localizations" : {
         "es" : {
@@ -1360,18 +1375,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research"
+            "value" : "Enabling SensorKit provides more accurate and in-depth data for things like ECG to help advance cardiovascular research"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research"
+            "value" : "Enabling SensorKit provides more accurate and in-depth data for things like ECG to help advance cardiovascular research"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Al habilitar SensorKit, se obtienen datos más precisos y detallados para mediciones como el electrocardiograma (ECG), lo que contribuye al avance de la investigación cardiovascular"
           }
         }
@@ -1565,6 +1580,12 @@
             "state" : "translated",
             "value" : "After your baseline week, you'll begin the 2-week trial comparing different types of physical activity coaching. You'll receive notifications when this phase begins."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After your baseline week, you'll begin the 2-week trial comparing different types of physical activity coaching. You'll receive notifications when this phase begins."
+          }
         }
       }
     },
@@ -1575,12 +1596,24 @@
             "state" : "translated",
             "value" : "The app will begin collecting activity data from your phone and any connected wearable devices you’ve authorized."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app will begin collecting activity data from your phone and any connected wearable devices you’ve authorized."
+          }
         }
       }
     },
     "FINAL_ENROLLMENT_STEP_MESSAGE_EVERY_DAY" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each day, you’ll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Each day, you’ll see a personalized list of tasks in your dashboard. These typically take just 5-10 minutes to complete."
@@ -1613,6 +1646,12 @@
     "FINAL_ENROLLMENT_STEP_MESSAGE_SEVEN_DAYS" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Over the next 7 days, you’ll be guided through several short activities:\n- Completing surveys about your health, lifestyle, and well-being.\n- Recording your baseline physical activity through the app.\n- Performing optimal fitness assessments if appropriate for your health status."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Over the next 7 days, you’ll be guided through several short activities:\n- Completing surveys about your health, lifestyle, and well-being.\n- Recording your baseline physical activity through the app.\n- Performing optimal fitness assessments if appropriate for your health status."
@@ -2034,6 +2073,9 @@
           }
         }
       }
+    },
+    "How to Manage SensorKit" : {
+
     },
     "id" : {
       "localizations" : {
@@ -2710,6 +2752,9 @@
         }
       }
     },
+    "No data collection active" : {
+
+    },
     "No Internet" : {
       "localizations" : {
         "es" : {
@@ -3151,6 +3196,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Riesgos, Beneficios y Sus Derechos"
+          }
+        }
+      }
+    },
+    "Only values from %@ to %@ are allowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Only values from %1$@ to %2$@ are allowed"
           }
         }
       }
@@ -3701,6 +3756,9 @@
     "Reset Query Anchors" : {
 
     },
+    "Reset rejeted HomeTab actions" : {
+
+    },
     "Restart Test" : {
 
     },
@@ -3877,6 +3935,9 @@
     "SensorKit" : {
 
     },
+    "Sensors" : {
+
+    },
     "Series" : {
       "localizations" : {
         "es" : {
@@ -4029,6 +4090,9 @@
       }
     },
     "Stop Recording Data" : {
+
+    },
+    "Stop suggesting this" : {
 
     },
     "Study not available" : {
@@ -4744,6 +4808,9 @@
 
     },
     "You can change this in the iOS Settings app, under Privacy & Security → Health → My Heart Counts" : {
+
+    },
+    "You can enable or disable individual sensors in the iOS Settings app." : {
 
     },
     "You can select multiple options" : {

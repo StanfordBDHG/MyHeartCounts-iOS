@@ -42,9 +42,10 @@ struct SaveBMISampleView: View {
     @State private var bmi: Double?
     @State private var weight: Double?
     @State private var height: Double?
+    @State private var containsInvalidInput = false
     
     var body: some View {
-        Form {
+        Form { // swiftlint:disable:this closure_body_length
             Section {
                 Picker("", selection: $inputMode) {
                     ForEach(InputMode.allCases, id: \.self) { mode in
@@ -60,9 +61,19 @@ struct SaveBMISampleView: View {
                 DatePicker("Date", selection: $date)
                 switch inputMode {
                 case .bmiDirect:
-                    QuantityInputRow(title: "Body Mass Index", value: $bmi, sampleType: bmiSampleType)
+                    QuantityInputRow(
+                        title: "Body Mass Index",
+                        value: $bmi,
+                        limits: MHCQuantitySampleType.healthKit(bmiSampleType).inputLimits(in: bmiSampleType.displayUnit),
+                        sampleType: bmiSampleType
+                    )
                 case .weightAndHeight:
-                    QuantityInputRow(title: "Weight", value: $weight, sampleType: weightSampleType)
+                    QuantityInputRow(
+                        title: "Weight",
+                        value: $weight,
+                        limits: MHCQuantitySampleType.healthKit(weightSampleType).inputLimits(in: weightSampleType.displayUnit),
+                        sampleType: weightSampleType
+                    )
                     HeightInputRow(
                         title: "Height",
                         quantity: Binding<HKQuantity?> {
@@ -77,31 +88,36 @@ struct SaveBMISampleView: View {
         }
         .navigationTitle("Enter BMI")
         .viewStateAlert(state: $viewState)
+        .storeQuantityRowInputsAllValid(in: $containsInvalidInput)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                DismissButton()
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                AsyncButton(
-                    state: $viewState,
-                    action: {
-                        try await save()
-                        dismiss()
-                    },
-                    label: {
-                        Label("Save", systemSymbol: .checkmark)
-                    }
-                )
-                .disabled(bmi == nil)
-                .buttonStyleGlassProminent()
-            }
+            toolbarContent
         }
         .onChange(of: weight, updateBMI)
         .onChange(of: height, updateBMI)
     }
     
+    @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            DismissButton()
+        }
+        ToolbarItem(placement: .confirmationAction) {
+            AsyncButton(
+                state: $viewState,
+                action: {
+                    try await save()
+                    dismiss()
+                },
+                label: {
+                    Label("Save", systemSymbol: .checkmark)
+                }
+            )
+            .disabled(bmi == nil || containsInvalidInput)
+            .buttonStyleGlassProminent()
+        }
+    }
+    
     private func updateBMI() {
-        guard let weight, let height else {
+        guard let weight, let height, !containsInvalidInput else {
             return
         }
         // we need to go the extra round through HKQuantity in case weight and height are non-metric

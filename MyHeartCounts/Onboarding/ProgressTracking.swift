@@ -47,23 +47,6 @@ private struct OnboardingStepModifier: ViewModifier {
 }
 
 
-extension AccountDetails {
-    @AccountKey(
-        id: "mostRecentOnboardingStep",
-        name: "",
-        category: .other,
-        options: .mutable,
-        as: OnboardingStep.self,
-        initial: .default(.init(rawValue: ""))
-    )
-    var mostRecentOnboardingStep: OnboardingStep?
-}
-
-
-@KeyEntry(\.mostRecentOnboardingStep)
-extension AccountKeys {}
-
-
 extension EnvironmentValues {
     @Entry var isInOnboardingFlow: Bool = false
 }

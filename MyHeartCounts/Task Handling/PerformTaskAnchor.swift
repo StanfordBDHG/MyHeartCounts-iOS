@@ -9,6 +9,7 @@
 // swiftlint:disable file_types_order
 
 import Foundation
+import MHCStudyDefinition
 import class ModelsR4.Questionnaire
 import ResearchKitSwiftUI
 import SFSafeSymbols

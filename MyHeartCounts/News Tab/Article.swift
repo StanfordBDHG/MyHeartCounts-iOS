@@ -131,7 +131,7 @@ extension Article.ImageReference: RawRepresentable, Codable {
 extension Article {
     init?(_ other: StudyDefinition.InformationalComponent, in studyBundle: StudyBundle, locale: Locale) {
         guard let url = studyBundle.resolve(other.fileRef, in: locale),
-              let markdownDoc = try? MarkdownDocument(processingContentsOf: url) else {
+              let markdownDoc = try? MarkdownDocument(contentsOf: url) else {
             return nil
         }
         self.init(id: other.id, markdownDoc)
@@ -159,6 +159,14 @@ extension Article {
             headerImage: metadata["headerImage"].flatMap(ImageReference.init(rawValue:)) ?? fallbackHeaderImage,
             body: doc
         )
+    }
+    
+    init?(contentsOf url: URL) {
+        guard let document = try? MarkdownDocument(contentsOf: url),
+              let id = document.metadata["id"].flatMap({ UUID(uuidString: $0) }) else {
+            return nil
+        }
+        self.init(id: id, document)
     }
 }
 

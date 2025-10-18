@@ -1,5 +1,5 @@
 {
-  "originHash" : "547598ef1cde02264492b89ac29efda2d9d3e01efc9d52e6740c29b8e77eaac5",
+  "originHash" : "29a15e77c7113584148fadc294c8e2ac59c567db659bffd15d03aa82534887bf",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -128,6 +128,15 @@
       }
     },
     {
+      "identity" : "myheartcounts-studydefinitions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
+      "state" : {
+        "revision" : "d2bf6dc2e229be531773ac4708fbb2552b63375e",
+        "version" : "0.1.1"
+      }
+    },
+    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",
@@ -240,8 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "eaf89f70c255f21cafabdca5c731fa15f618432b",
-        "version" : "2.4.1"
+        "revision" : "eb57ae72fce36801269ab5e34e4bed218d1b23e8",
+        "version" : "2.4.3"
       }
     },
     {
@@ -303,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "8da3b41eaa5e0e76a55c093b59fb9d038a296d87",
-        "version" : "0.3.0"
+        "revision" : "f5c1ab1aea36736d110aa0b406f8a66921d545d1",
+        "version" : "0.4.0"
       }
     },
     {
@@ -312,8 +321,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
       "state" : {
-        "revision" : "eda8a13d2a9c3570f1b8767a338fa720c2e37c75",
-        "version" : "2.1.1"
+        "revision" : "dfba9f0690a1ddfadd761f4f634254bf4406bd12",
+        "version" : "2.1.2"
       }
     },
     {
@@ -321,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "6c69c4e6ffb6ae5144d1831f7720cf3dd8c75da5",
-        "version" : "0.1.12"
+        "revision" : "426807c758acc39a6e8f1c1d776169ce83db6274",
+        "version" : "0.1.15"
       }
     },
     {
@@ -330,8 +339,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "e4f08b7200f38eec605ab4eb2fb4a0437e8eb36b",
-        "version" : "1.12.5"
+        "revision" : "59009e727de0125c505d8f924a09710f37b67aeb",
+        "version" : "1.12.6"
       }
     },
     {
@@ -357,8 +366,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "309a47b2b1d9b5e991f36961c983ecec72275be3",
-        "version" : "1.6.1"
+        "revision" : "cdd0ef3755280949551dc26dee5de9ddeda89f54",
+        "version" : "1.6.2"
       }
     },
     {

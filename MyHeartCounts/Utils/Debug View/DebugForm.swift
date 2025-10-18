@@ -12,6 +12,7 @@ import Foundation
 import SFSafeSymbols
 import SpeziAccount
 import SpeziFoundation
+import SpeziLocalStorage
 import SpeziStudy
 import SpeziStudyDefinition
 import SpeziViews
@@ -33,11 +34,12 @@ private struct DebugFormImpl: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(StudyManager.self) private var studyManager
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
+    @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
     @PerformTask private var performTask
     // swiftlint:enable attributes
     
     var body: some View {
-        Form {
+        Form { // swiftlint:disable:this closure_body_length
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
                     Label("Live Health Upload Notifications", systemSymbol: .arrowUpHeart)
@@ -51,11 +53,14 @@ private struct DebugFormImpl: View {
                 }
             }
             Section("Other") {
+                NavigationLink(symbol: .calendar, "Health Data Bulk Upload") {
+                    HealthImporterControlView()
+                }
                 NavigationLink("SensorKit") {
                     SensorKitControlView()
                 }
-                NavigationLink(symbol: .calendar, "Health Data Bulk Upload") {
-                    HealthImporterControlView()
+                Button("Reset rejeted HomeTab actions") {
+                    rejectedHomeTabActions = []
                 }
                 Button {
                     performTask(.timedWalkTest(.sixMinuteWalkTest), context: nil)
