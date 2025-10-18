@@ -28,14 +28,16 @@ extension HomeTab {
         @Environment(StudyManager.self) private var studyManager
         @Environment(SensorKit.self) private var sensorKit
         @TriggerUpdate private var triggerUpdate
+        @LocalStorageEntry(.studyActivationDate) private var studyActivationDate
         @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedActionIds
         // swiftlint:enable attributes
         
         var wrappedValue: [HomeTab.PromptedAction] {
             let _ = triggerUpdate // swiftlint:disable:this redundant_discardable_let
-            let actions: [HomeTab.PromptedAction] = if let enrollment = studyManager.studyEnrollments.first,
-                                         let daysSinceEnrollment = cal.dateComponents([.day], from: enrollment.enrollmentDate, to: .now).day {
-                actions(daysSinceEnrollment: daysSinceEnrollment)
+            let actions: [HomeTab.PromptedAction]
+            actions = if let studyActivationDate,
+                         let daysSinceEnrollment = cal.dateComponents([.day], from: studyActivationDate, to: .now).day {
+                self.actions(daysSinceEnrollment: daysSinceEnrollment)
             } else {
                 []
             }
@@ -50,7 +52,6 @@ extension HomeTab {
         
         @ArrayBuilder<HomeTab.PromptedAction>
         private func actions(daysSinceEnrollment: Int) -> [HomeTab.PromptedAction] {
-            // the big issue here is that we don't just want to show some of these after the enrollment (initial) but we also went to re-prompt it when the user deletes an re-downloads rhe app!!!!!!!!1
             let shouldOfferSensorKit = SensorKit.mhcSensors.contains(where: { $0.authorizationStatus == .notDetermined })
             if daysSinceEnrollment < 21 && shouldOfferSensorKit {
                 HomeTab.PromptedAction(

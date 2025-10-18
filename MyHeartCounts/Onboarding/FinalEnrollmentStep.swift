@@ -13,6 +13,7 @@ import SpeziAccount
 import SpeziConsent
 import SpeziFoundation
 import SpeziHealthKitBulkExport
+import SpeziLocalStorage
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziStudy
@@ -28,6 +29,7 @@ struct FinalEnrollmentStep: View {
     @Environment(Account.self) private var account
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
     @Environment(StudyBundleLoader.self) private var studyLoader
+    @LocalStorageEntry(.studyActivationDate) private var studyActivationDate
     // swiftlint:enable attributes
     
     @State private var viewState: ViewState = .idle
@@ -111,6 +113,7 @@ struct FinalEnrollmentStep: View {
                     try await account.accountService.updateAccountDetails(modifications)
                 }
             }
+            studyActivationDate = .now
             Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
             }

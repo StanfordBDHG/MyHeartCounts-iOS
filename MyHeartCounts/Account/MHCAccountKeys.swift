@@ -9,10 +9,14 @@
 @preconcurrency import FirebaseStorage
 import Foundation
 import SpeziAccount
+import SpeziLocalStorage
+import SwiftUI
 
+
+// MARK: Study & Enrollment
 
 extension AccountDetails {
-    // MARK: Study & Enrollment
+    /// The date the user first enrolled in the study.
     @AccountKey(
         id: "dateOfEnrollment",
         name: "Date of Enrollment",
@@ -23,7 +27,23 @@ extension AccountDetails {
     )
     var dateOfEnrollment: Date?
     
-    @AccountKey(id: "lastSignedConsentVersion", name: "Consent Version", as: String.self)
+    // NOTE: this is, for the time being, stored using SpeziLocalStorage.
+//    /// The date the current study actication, i.e. when the user logged in to the app and started/resumed their study participation.
+//    @AccountKey(
+//        id: "currentStudyActivationDate",
+//        name: "Date of Enrollment",
+//        category: .other,
+//        options: .mutable,
+//        as: Date.self,
+//        initial: .empty(.distantPast)
+//    )
+//    var currentStudyActivationDate: Date?
+    
+    @AccountKey(
+        id: "lastSignedConsentVersion",
+        name: "Consent Version",
+        as: String.self
+    )
     var lastSignedConsentVersion: String?
     
     @AccountKey(
@@ -35,10 +55,12 @@ extension AccountDetails {
         initial: .empty(Date(timeIntervalSince1970: 0))
     )
     var lastSignedConsentDate: Date?
-    
-    
-    // MARK: App-Specific Stuff
-    
+}
+
+
+// MARK: App-Specific Stuff
+
+extension AccountDetails {
     @AccountKey(
         id: "fcmToken",
         name: "FCM Token",
@@ -69,3 +91,13 @@ extension AccountDetails {
     \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep
 )
 extension AccountKeys {}
+
+
+// MARK: Other
+
+extension LocalStorageKeys {
+    static let studyActivationDate = LocalStorageKey<Date>(
+        "edu.stanford.MyHeartCounts.studyActivationDate",
+        setting: .unencrypted(excludeFromBackup: true)
+    )
+}
