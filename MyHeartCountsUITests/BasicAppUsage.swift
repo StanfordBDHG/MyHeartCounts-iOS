@@ -7,12 +7,9 @@
 //
 
 import HealthKit
-import SpeziHealthKit
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
-import XCTSpeziAccount
-import XCTSpeziNotifications
 
 
 final class BasicAppUsage: MHCTestCase, @unchecked Sendable {

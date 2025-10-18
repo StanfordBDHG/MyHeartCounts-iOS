@@ -46,6 +46,7 @@ extension RootViewTab {
 private struct AccountToolbarButton: View {
     @Environment(Account.self)
     private var account: Account?
+    
     @State private var isPresentingAccount = false
     
     var body: some View {

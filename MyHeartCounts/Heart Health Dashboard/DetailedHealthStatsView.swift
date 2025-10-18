@@ -233,6 +233,7 @@ private struct ValueDisplay: View {
     }
     
     private let components: [Component]
+    private let accessibilityRepresentation: LocalizedStringResource
     
     var body: some View {
         if components.isEmpty {
@@ -254,11 +255,14 @@ private struct ValueDisplay: View {
                     }
                 }
             }
+            .accessibilityElement()
+            .accessibilityLabel(accessibilityRepresentation)
         }
     }
     
-    private init(components: [Component]) {
+    private init(components: [Component], accessibilityRepresentation: LocalizedStringResource) {
         self.components = components
+        self.accessibilityRepresentation = accessibilityRepresentation
     }
     
     init(_ value: Any, sampleType: MHCSampleType) {
@@ -268,9 +272,16 @@ private struct ValueDisplay: View {
         case let value as BloodPressureMeasurement:
             self.init(value)
         default:
-            self.init(components: [
-                .init(value: String(describing: value), unit: sampleType.displayUnit)
-            ])
+            self.init(
+                components: [.init(value: String(describing: value), unit: sampleType.displayUnit)],
+                accessibilityRepresentation: { () -> LocalizedStringResource in
+                    if let unit = sampleType.displayUnit {
+                        "\(String(describing: value)) \(unit.unitString)"
+                    } else {
+                        "\(String(describing: value))"
+                    }
+                }()
+            )
         }
     }
     
@@ -286,11 +297,17 @@ private struct ValueDisplay: View {
                     Component(value: String(minutes), unit: .minute())
                 }
             }
+            accessibilityRepresentation = "\(hours) hours and \(minutes) minutes"
         default:
             let value = value.formatted(FloatingPointFormatStyle<V>().precision(.fractionLength(...2)))
             components = [
                 Component(value: value, unit: sampleType.displayUnit)
             ]
+            if let unit = sampleType.displayUnit {
+                accessibilityRepresentation = "\(value) \(unit.unitString)"
+            } else {
+                accessibilityRepresentation = "\(value)"
+            }
         }
     }
     
@@ -301,6 +318,7 @@ private struct ValueDisplay: View {
                 unit: .millimeterOfMercury()
             )
         ]
+        accessibilityRepresentation = "\(bloodPressure.systolic) over \(bloodPressure.diastolic)"
     }
 }
 

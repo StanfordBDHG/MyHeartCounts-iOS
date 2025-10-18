@@ -56,3 +56,10 @@ extension XCUIElement {
         }
     }
 }
+
+
+extension XCUIElementQuery {
+    func element(matching predicateFormat: String, _ args: (any CVarArg)...) -> XCUIElement {
+        self.element(matching: NSPredicate(format: predicateFormat, argumentArray: args))
+    }
+}

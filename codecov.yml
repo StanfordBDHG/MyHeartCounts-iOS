@@ -31,7 +31,6 @@ coverage:
 ignore:
 - ^MyHeartCountsUITests.*
 - ^MyHeartCountsTests.*
-- ^MyHeartCounts/SensorKit/.*
 parsers:
   gcov:
     branch_detection:

@@ -43,6 +43,16 @@
         }
       }
     },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
     "%@-Minute Run Test" : {
       "localizations" : {
         "es" : {
@@ -74,6 +84,16 @@
     },
     "%lld ft" : {
 
+    },
+    "%lld hours and %lld minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld hours and %2$lld minutes"
+          }
+        }
+      }
     },
     "%lld hr %lld min" : {
       "localizations" : {
@@ -124,6 +144,16 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%lld over %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld over %2$lld"
           }
         }
       }
@@ -617,9 +647,6 @@
           }
         }
       }
-    },
-    "Answer HeartRisk Questionnaire" : {
-
     },
     "Answer Questionnaire" : {
 
