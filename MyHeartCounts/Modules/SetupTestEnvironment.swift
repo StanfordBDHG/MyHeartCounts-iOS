@@ -53,7 +53,6 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             details.password = "StanfordRocks!"
             details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
             details.genderIdentity = .male
-            details.enableDebugMode = true
             do {
                 try await accountService.signUp(with: details)
             } catch {

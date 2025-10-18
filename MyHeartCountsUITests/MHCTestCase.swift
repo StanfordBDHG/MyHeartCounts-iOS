@@ -40,13 +40,16 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     }
     
     @MainActor
-    func launchAppAndEnrollIntoStudy() throws {
+    func launchAppAndEnrollIntoStudy(
+        enableDebugMode: Bool = false
+    ) throws {
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--skipOnboarding",
             "--setupTestAccount",
             "--overrideStudyBundleLocation", try studyBundleUrl.path,
-            "--disableAutomaticBulkHealthExport"
+            "--disableAutomaticBulkHealthExport",
+            "--forceEnableDebugMode", enableDebugMode ? "true" : "false"
         ]
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))

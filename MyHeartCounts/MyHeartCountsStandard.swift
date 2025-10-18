@@ -53,6 +53,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     // MARK: Account Stuff
     
     private func propagateDebugModeValue(_ isEnabled: Bool) async {
+        let isEnabled = isEnabled || LaunchOptions.launchOptions[.forceEnableDebugMode]
         LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey] = isEnabled
         await accountFeatureFlags._updateIsDebugModeEnabled(isEnabled)
     }
@@ -99,7 +100,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 }
             }
         case .associatedAccount(let details):
-            logger.notice("account was associated")
+            logger.notice("account was associated (account id: \(details.accountId))")
             await propagateDebugModeValue(details)
             try? await timeZoneTracking?.updateTimeZoneInfo()
         case .detailsChanged(_, let newDetails):
