@@ -85,6 +85,6 @@ extension HomeTab {
 extension LocalStorageKeys {
     static let rejectedHomeTabPromptedActions = LocalStorageKey<Set<HomeTab.PromptedAction.ID>>(
         "edu.stanford.MyHeartCounts.rejectedHomeTabPromptedActions",
-        setting: .unencrypted(excludeFromBackup: true) // we explicitly want these to get reset when the device is restored
+        setting: .unencrypted(excludeFromBackup: false)
     )
 }
