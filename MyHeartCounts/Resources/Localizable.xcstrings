@@ -615,6 +615,9 @@
         }
       }
     },
+    "Answer HeartRisk Questionnaire" : {
+
+    },
     "Answer Questionnaire" : {
 
     },
@@ -3182,6 +3185,9 @@
         }
       }
     },
+    "Other" : {
+
+    },
     "Other Tasks" : {
 
     },
@@ -3869,9 +3875,6 @@
       }
     },
     "SensorKit" : {
-
-    },
-    "SensorKit Article" : {
 
     },
     "Series" : {
