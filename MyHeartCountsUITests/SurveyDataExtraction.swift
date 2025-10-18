@@ -16,7 +16,6 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testSurveyHealthDataExtraction() throws {
         try launchAppAndEnrollIntoStudy()
-        
         app.navigationBars.buttons["Your Account"].tap()
         XCTAssert(app.navigationBars["Account Overview"].waitForExistence(timeout: 2))
         app.swipeUp()
@@ -110,9 +109,6 @@ extension XCUIApplication {
             case enterValue(_ value: String, into: String)
             case scrollDown
         }
-        struct Section {
-            let title: String
-        }
         let actions: [Action]
     }
     
@@ -124,15 +120,11 @@ extension XCUIApplication {
             matching: NSPredicate(format: "identifier = %@ AND label = %@", "ORKStepContentView_titleLabel", title)
         ).waitForExistence(timeout: 2))
         
-        // ORKContinueButton.Next
-        
         buttons["Get Started"].tap()
         sleep(for: .seconds(1))
         
         for step in steps {
             for action in step.actions {
-                print("APP BEFORE PERFORMING ACTION \(action):")
-                print(self.debugDescription)
                 switch action {
                 case .selectOption(let title):
                     XCTAssert(cells[title].exists)

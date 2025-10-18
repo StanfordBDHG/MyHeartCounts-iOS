@@ -118,7 +118,7 @@ private struct DebugFormImpl: View {
 extension DebugForm {
     // periphery:ignore - occasionally useful
     struct EnrollmentTestingView: View {
-        @TrackedEnvironmentObject(Account.self)
+        @Environment(Account.self)
         private var account
         @Environment(StudyManager.self)
         private var studyManager
