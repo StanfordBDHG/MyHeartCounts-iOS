@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Foundation
 import SFSafeSymbols
 import SpeziAccount
@@ -19,18 +21,26 @@ import UIKit
 import XCTSpeziNotificationsUI
 
 
-struct DebugOptions: View {
+struct DebugForm: View {
+    var body: some View {
+        DebugFormImpl()
+            .taskPerformingAnchor()
+    }
+}
+
+
+private struct DebugFormImpl: View {
     // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(StudyManager.self) private var studyManager
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
     @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
+    @PerformTask private var performTask
     // swiftlint:enable attributes
     
-    @State private var isTimedWalkingTestSheetShown = false
-    
     var body: some View {
-        Form { // swiftlint:disable:this closure_body_length
-            Section {
+        Form {
+            Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
                     Label("Live Health Upload Notifications", systemSymbol: .arrowUpHeart)
                         .foregroundStyle(colorScheme.textLabelForegroundStyle)
@@ -42,27 +52,27 @@ struct DebugOptions: View {
                     PendingNotificationsList()
                 }
             }
-            NavigationLink(symbol: .calendar, "Health Data Bulk Upload") {
-                HealthImporterControlView()
-            }
-            Section {
-                Button {
-                    isTimedWalkingTestSheetShown = true
-                } label: {
-                    Label("Timed Walking Test", systemSymbol: .figureWalk)
+            Section("Other") {
+                NavigationLink(symbol: .calendar, "Health Data Bulk Upload") {
+                    HealthImporterControlView()
                 }
-            }
-            Section {
                 NavigationLink("SensorKit") {
                     SensorKitControlView()
                 }
-            }
-            Section {
                 Button("Reset rejeted HomeTab actions") {
                     rejectedHomeTabActions = []
                 }
-            }
-            Section {
+                Button {
+                    performTask(.timedWalkTest(.sixMinuteWalkTest), context: nil)
+                } label: {
+                    Label("Timed Walking Test", systemSymbol: .figureWalk)
+                }
+                Button("Answer HeartRisk Questionnaire") {
+                    let fileRef = StudyBundle.FileReference(category: .questionnaire, filename: "HeartRisk", fileExtension: "json")
+                    if let questionnaire = studyManager.studyEnrollments.first?.studyBundle?.questionnaire(for: fileRef, in: .enUS) {
+                        performTask(.answerQuestionnaire(questionnaire), context: nil)
+                    }
+                }
                 Button("Replace Root View Controller", role: .destructive) {
                     // The idea here is that discarding the root view controller should deallocate all our resources.
                     // We can then launch Xcode's memory graph debugger, and anything that's still in the left sidebar is leaked.
@@ -72,11 +82,6 @@ struct DebugOptions: View {
         }
         .navigationTitle("Debug Options")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $isTimedWalkingTestSheetShown) {
-            NavigationStack {
-                TimedWalkingTestView(.init(duration: .minutes(6), kind: .walking))
-            }
-        }
     }
     
     private func replaceRootVC() {
@@ -92,7 +97,7 @@ struct DebugOptions: View {
 }
 
 
-extension DebugOptions {
+extension DebugForm {
     // periphery:ignore - occasionally useful
     struct EnrollmentTestingView: View {
         @Environment(Account.self)
@@ -124,4 +129,9 @@ extension DebugOptions {
             .viewStateAlert(state: $viewState)
         }
     }
+}
+
+
+extension Locale {
+    static let enUS = Locale(identifier: "en-US")
 }

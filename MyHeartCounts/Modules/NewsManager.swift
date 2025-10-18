@@ -9,11 +9,11 @@
 @preconcurrency import FirebaseStorage
 import Foundation
 import OSLog
+import func QuartzCore.CACurrentMediaTime
 import Spezi
 import SpeziFoundation
 import SpeziLocalization
 import SpeziStudy
-import func QuartzCore.CACurrentMediaTime
 import UniformTypeIdentifiers
 
 
