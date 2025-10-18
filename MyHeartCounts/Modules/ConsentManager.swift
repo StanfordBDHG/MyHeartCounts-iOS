@@ -110,22 +110,3 @@ extension Version {
         }
     }
 }
-
-
-extension AccountDetails {
-    @AccountKey(id: "lastSignedConsentVersion", name: "Consent Version", as: String.self)
-    var lastSignedConsentVersion: String?
-    
-    @AccountKey(
-        id: "lastSignedConsentDate",
-        name: "Consent Date",
-        category: .other,
-        options: .mutable,
-        as: Date.self,
-        initial: .empty(Date(timeIntervalSince1970: 0))
-    )
-    var lastSignedConsentDate: Date?
-}
-
-@KeyEntry(\.lastSignedConsentVersion, \.lastSignedConsentDate)
-extension AccountKeys {}

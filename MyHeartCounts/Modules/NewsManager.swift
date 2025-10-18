@@ -9,11 +9,11 @@
 @preconcurrency import FirebaseStorage
 import Foundation
 import OSLog
+import func QuartzCore.CACurrentMediaTime
 import Spezi
 import SpeziFoundation
 import SpeziLocalization
 import SpeziStudy
-import func QuartzCore.CACurrentMediaTime
 import UniformTypeIdentifiers
 
 
@@ -91,7 +91,7 @@ final class NewsManager: Module, EnvironmentAccessible {
                             _ = try await storageRef.writeAsync(toFile: tmpUrl)
                             let endTS = CACurrentMediaTime()
                             logger.trace("DOWNLOAD DURATION: \(endTS - startTS)")
-                            let doc = try MarkdownDocument(processingContentsOf: tmpUrl)
+                            let doc = try MarkdownDocument(contentsOf: tmpUrl)
                             try? FileManager.default.removeItem(at: tmpUrl)
                             let article = Article(id: doc.metadata["id"].flatMap(UUID.init(uuidString:)) ?? UUID(), doc)
                             return article.status == .published ? article : nil

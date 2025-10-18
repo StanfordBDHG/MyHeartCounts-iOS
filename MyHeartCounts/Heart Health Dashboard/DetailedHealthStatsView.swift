@@ -10,6 +10,7 @@
 
 import Charts
 import Foundation
+import MHCStudyDefinition
 import SFSafeSymbols
 import SpeziFoundation
 import SpeziHealthKit
@@ -480,10 +481,6 @@ extension DetailedHealthStatsView {
     }
 }
 
-
-extension StudyBundle.FileReference.Category {
-    static let hhdExplainer = Self(rawValue: "hhdExplainer")
-}
 
 extension StudyManager {
     func localizedMarkdown(for filename: String, in category: StudyBundle.FileReference.Category) -> String? {

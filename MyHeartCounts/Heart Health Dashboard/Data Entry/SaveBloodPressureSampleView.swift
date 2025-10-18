@@ -42,6 +42,7 @@ struct SaveBloodPressureSampleView: View {
     @State private var date: Date = .now
     @State private var systolic: Int?
     @State private var diastolic: Int?
+    @State private var containsInvalidInput = true
     
     var body: some View {
         Form {
@@ -55,6 +56,7 @@ struct SaveBloodPressureSampleView: View {
         }
         .navigationTitle("Enter Blood Pressure")
         .viewStateAlert(state: $viewState)
+        .storeQuantityRowInputsAllValid(in: $containsInvalidInput)
         .toolbar {
             navigationToobarItems
             focusToolbarItems
@@ -87,7 +89,7 @@ struct SaveBloodPressureSampleView: View {
                     Label("Save", systemSymbol: .checkmark)
                 }
             )
-            .disabled(systolic == nil || diastolic == nil)
+            .disabled(systolic == nil || diastolic == nil || containsInvalidInput)
             .buttonStyleGlassProminent()
         }
     }
@@ -115,11 +117,16 @@ struct SaveBloodPressureSampleView: View {
     }
     
     private func makeRow(for value: Binding<Int?>, sampleType: SampleType<HKQuantitySample>) -> some View {
-        QuantityInputRow(title: sampleType.mhcDisplayTitle, value: value, sampleType: sampleType)
+        QuantityInputRow(
+            title: "\(sampleType.mhcDisplayTitle)",
+            value: value,
+            limits: MHCQuantitySampleType.healthKit(sampleType).inputLimits(in: sampleType.displayUnit),
+            sampleType: sampleType
+        )
     }
     
     private func save() async throws {
-        guard let systolic, let diastolic else {
+        guard let systolic, let diastolic, !containsInvalidInput else {
             return
         }
         let correlation = HKCorrelation(

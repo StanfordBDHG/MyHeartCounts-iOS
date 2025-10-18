@@ -121,7 +121,7 @@ struct TimedWalkingTestView: View {
                     .foregroundStyle(.accent)
                     .accessibilityHidden(true)
                     .overlay(alignment: .bottomTrailing) {
-                        if !testIsRunning, let result = mostRecentResult {
+                        if !testIsRunning, mostRecentResult != nil {
                             ZStack {
                                 Image(systemSymbol: .circleFill)
                                     .font(.system(size: 45))

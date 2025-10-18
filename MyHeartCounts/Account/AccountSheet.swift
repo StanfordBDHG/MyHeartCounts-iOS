@@ -152,7 +152,7 @@ struct AccountSheet: View {
             }
             if accountFeatureFlags.isDebugModeEnabled {
                 NavigationLink {
-                    DebugOptions()
+                    DebugForm()
                 } label: {
                     Label("Debug", systemSymbol: .wrenchAdjustable)
                         .foregroundStyle(colorScheme.textLabelForegroundStyle)
