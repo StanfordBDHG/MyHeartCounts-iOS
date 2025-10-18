@@ -35,14 +35,3 @@ final class TimeZoneTracking: Module, @unchecked Sendable {
         try await account.accountService.updateAccountDetails(.init(modifiedDetails: newDetails))
     }
 }
-
-
-// MARK: Account Key
-
-extension AccountDetails {
-    @AccountKey(id: "timeZone", name: "Time Zone", as: String.self)
-    var timeZone: String?
-}
-
-@KeyEntry(\.timeZone)
-extension AccountKeys {}
