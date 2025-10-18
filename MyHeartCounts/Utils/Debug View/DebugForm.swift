@@ -39,7 +39,7 @@ private struct DebugFormImpl: View {
     // swiftlint:enable attributes
     
     var body: some View {
-        Form {
+        Form { // swiftlint:disable:this closure_body_length
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
                     Label("Live Health Upload Notifications", systemSymbol: .arrowUpHeart)
