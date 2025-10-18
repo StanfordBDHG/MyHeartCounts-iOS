@@ -1597,8 +1597,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStorage.git";
 			requirement = {
-				kind = revision;
-				revision = fbce0280bfaeda9dc1a59f1ecca0c6f1d345f219;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.2;
 			};
 		};
 		80A3A4812E1EB270002A8515 /* XCRemoteSwiftPackageReference "ResearchKit" */ = {

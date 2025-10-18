@@ -1,5 +1,5 @@
 {
-  "originHash" : "219f84b1cdfc969fdb3af72f7b4b5e55f00cf85fc2e07b2c9cc8c852d0b3e024",
+  "originHash" : "29a15e77c7113584148fadc294c8e2ac59c567db659bffd15d03aa82534887bf",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -321,7 +321,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
       "state" : {
-        "revision" : "fbce0280bfaeda9dc1a59f1ecca0c6f1d345f219"
+        "revision" : "dfba9f0690a1ddfadd761f4f634254bf4406bd12",
+        "version" : "2.1.2"
       }
     },
     {
