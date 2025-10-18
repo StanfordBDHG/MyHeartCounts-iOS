@@ -3879,6 +3879,9 @@
         }
       }
     },
+    "Score Result: %lld percent" : {
+
+    },
     "Select a Region" : {
       "localizations" : {
         "es" : {
