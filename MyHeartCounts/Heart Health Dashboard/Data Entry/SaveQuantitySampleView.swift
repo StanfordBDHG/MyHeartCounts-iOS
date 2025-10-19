@@ -26,6 +26,7 @@ struct SaveQuantitySampleView: View {
     
     private let title: LocalizedStringKey
     private let sampleType: MHCQuantitySampleType
+    private let unit: HKUnit
     private let completionHandler: (@MainActor (QuantitySample) -> Void)?
     @State private var date: Date = .now
     @State private var value: Double?
@@ -40,19 +41,19 @@ struct SaveQuantitySampleView: View {
                 DatePicker("Date", selection: $date)
                 if sampleType == .healthKit(.height) {
                     let binding = Binding<HKQuantity?> {
-                        value.map { HKQuantity(unit: sampleType.displayUnit, doubleValue: $0) }
+                        value.map { HKQuantity(unit: unit, doubleValue: $0) }
                     } set: { newValue in
-                        value = newValue?.doubleValue(for: sampleType.displayUnit)
+                        value = newValue?.doubleValue(for: unit)
                     }
-                    HeightInputRow(title: "Value", quantity: binding, preferredUnit: sampleType.displayUnit)
+                    HeightInputRow(title: "Value", quantity: binding, preferredUnit: unit)
                         .focused($valueFieldIsFocused)
                 } else {
                     QuantityInputRow(
                         title: "Value",
                         value: $value,
-                        limits: sampleType.inputLimits(in: sampleType.displayUnit),
+                        limits: sampleType.inputLimits(in: unit),
                         sampleType: sampleType,
-                        unit: sampleType.displayUnit
+                        unit: unit
                     )
                     .focused($valueFieldIsFocused)
                 }
@@ -93,6 +94,19 @@ struct SaveQuantitySampleView: View {
         self.title = title ?? "Enter \(sampleType.displayTitle)"
         self.sampleType = sampleType
         self.completionHandler = completionHandler
+        self.unit = switch sampleType {
+        case .healthKit(.height):
+            switch LaunchOptions.launchOptions[.preferredHeightInputUnitOverride] {
+            case .none:
+                sampleType.displayUnit
+            case .cm:
+                .meterUnit(with: .centi)
+            case .feet:
+                .foot()
+            }
+        default:
+            sampleType.displayUnit
+        }
     }
     
     
@@ -104,7 +118,7 @@ struct SaveQuantitySampleView: View {
         case .healthKit(let sampleType):
             let sample = HKQuantitySample(
                 type: sampleType.hkSampleType,
-                quantity: HKQuantity(unit: sampleType.displayUnit, doubleValue: value),
+                quantity: HKQuantity(unit: unit, doubleValue: value),
                 start: self.date,
                 end: self.date
             )
@@ -114,7 +128,7 @@ struct SaveQuantitySampleView: View {
             let sample = QuantitySample(
                 id: UUID(),
                 sampleType: .custom(sampleType),
-                unit: sampleType.displayUnit,
+                unit: unit,
                 value: value,
                 startDate: self.date,
                 endDate: self.date

@@ -36,6 +36,8 @@ struct SaveBMISampleView: View {
     private let weightSampleType = SampleType.bodyMass
     private let heightSampleType = SampleType.height
     
+    private let heightUnit: HKUnit
+    
     @State private var viewState: ViewState = .idle
     @State private var inputMode: InputMode = .weightAndHeight
     @State private var date: Date = .now
@@ -77,11 +79,11 @@ struct SaveBMISampleView: View {
                     HeightInputRow(
                         title: "Height",
                         quantity: Binding<HKQuantity?> {
-                            height.map { HKQuantity(unit: heightSampleType.displayUnit, doubleValue: $0) }
+                            height.map { HKQuantity(unit: heightUnit, doubleValue: $0) }
                         } set: { newValue in
-                            height = newValue?.doubleValue(for: heightSampleType.displayUnit)
+                            height = newValue?.doubleValue(for: heightUnit)
                         },
-                        preferredUnit: heightSampleType.displayUnit
+                        preferredUnit: heightUnit
                     )
                 }
             }
@@ -116,13 +118,24 @@ struct SaveBMISampleView: View {
         }
     }
     
+    init() {
+        heightUnit = switch LaunchOptions.launchOptions[.preferredHeightInputUnitOverride] {
+        case .none:
+            heightSampleType.displayUnit
+        case .cm:
+            .meterUnit(with: .centi)
+        case .feet:
+            .foot()
+        }
+    }
+    
     private func updateBMI() {
         guard let weight, let height, !containsInvalidInput else {
             return
         }
         // we need to go the extra round through HKQuantity in case weight and height are non-metric
         let weightQuantity = HKQuantity(unit: weightSampleType.displayUnit, doubleValue: weight)
-        let heightQuantity = HKQuantity(unit: heightSampleType.displayUnit, doubleValue: height)
+        let heightQuantity = HKQuantity(unit: heightUnit, doubleValue: height)
         bmi = weightQuantity.doubleValue(for: .gramUnit(with: .kilo)) / pow(heightQuantity.doubleValue(for: .meter()), 2)
     }
     
@@ -141,7 +154,7 @@ struct SaveBMISampleView: View {
         if let height {
             samples.append(HKQuantitySample(
                 type: SampleType.height.hkSampleType,
-                quantity: HKQuantity(unit: SampleType.height.displayUnit, doubleValue: height),
+                quantity: HKQuantity(unit: heightUnit, doubleValue: height),
                 start: date,
                 end: date
             ))

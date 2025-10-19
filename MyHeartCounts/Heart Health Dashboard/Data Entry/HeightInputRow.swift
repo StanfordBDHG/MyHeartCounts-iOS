@@ -70,14 +70,7 @@ struct HeightInputRow: View {
     init(title: LocalizedStringResource, quantity: Binding<HKQuantity?>, preferredUnit: HKUnit) {
         self.title = title
         self._quantity = quantity
-        self.inputUnit = switch LaunchOptions.launchOptions[.preferredHeightInputUnitOverride] {
-        case .none:
-            preferredUnit == .foot() ? .feetAndInches : .centimeters
-        case .cm:
-            .centimeters
-        case .feet:
-            .feetAndInches
-        }
+        self.inputUnit = preferredUnit == .foot() ? .feetAndInches : .centimeters
     }
 }
 
