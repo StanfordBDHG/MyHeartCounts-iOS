@@ -54,7 +54,7 @@ protocol LaunchOptionsContainerProtocol: Sendable {
 
 extension LaunchOptionsContainerProtocol {
     /// Returns the specified `option`'s decoded launch option argument, falling back to its default value if no argument was specified.
-    subscript<V>( option: LaunchOption<V>) -> V {
+    subscript<V>(option: LaunchOption<V>) -> V {
         _value(for: option) ?? option.makeDefault()
     }
 }
@@ -164,6 +164,11 @@ extension LaunchOptions {
             }
         }
         return commandLineOptionsContainer(for: arguments)
+    }
+    
+    /// Returns the specified `option`'s decoded launch option argument, falling back to its default value if no argument was specified.
+    static subscript<V>(option: LaunchOption<V>) -> V {
+        Self.launchOptions[option]
     }
 }
 

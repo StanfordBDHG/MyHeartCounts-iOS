@@ -79,6 +79,16 @@
         }
       }
     },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
     "%lld" : {
 
     },
@@ -2437,6 +2447,7 @@
       }
     },
     "Loading Firebase Test Setup" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3352,6 +3363,12 @@
       }
     },
     "Perform Active Task" : {
+
+    },
+    "Perform Task: %@" : {
+
+    },
+    "Preparing Test Environment" : {
 
     },
     "Processing Health Data…" : {

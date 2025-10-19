@@ -32,6 +32,30 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             signUpForExtraTrial: true
         )
     }
+    
+    @MainActor
+    func testReviewConsentForms() throws {
+        try launchAppAndEnrollIntoStudy(keepExistingData: true)
+        // check that the consent we just signed is showing up in the Account Sheet
+        XCTAssert(app.navigationBars.buttons["Your Account"].waitForExistence(timeout: 2))
+        app.navigationBars.buttons["Your Account"].tap()
+        XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
+        app.staticTexts["Review Consent Forms"].tap()
+        XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
+        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).tap()
+        sleep(for: .seconds(2))
+        print(app.debugDescription)
+        let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
+        XCTAssert(consentPdf.exists)
+        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].exists)
+        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].exists)
+        XCTAssert(
+            consentPdf.staticTexts.element(
+                matching: NSPredicate(format: "label BEGINSWITH 'You are invited to participate in a research study, \"My Heart Counts,\"'")
+            )
+            .waitForExistence(timeout: 2)
+        )
+    }
 }
 
 
@@ -99,6 +123,15 @@ extension XCUIApplication {
             .element
             .waitForExistence(timeout: 2)
         if !isLoggedIn {
+            try login(email: email, password: password)
+            let alert = alerts["Invalid Credentials"]
+            if alert.waitForNonExistence(timeout: 3) {
+                // no "invalid credentials" alert showed up, meaning that we did not try to log in to a non-existant user.
+                return
+            }
+            // we need to sign up instead of logging in
+            alert.buttons["OK"].tap()
+            
             buttons["Signup"].tap()
             sleep(for: .seconds(0.5))
             XCTAssertFalse(collectionViews.firstMatch.buttons["Signup"].isEnabled) // this ia a different button from the one we just tapped.

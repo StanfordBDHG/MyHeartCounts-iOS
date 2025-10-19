@@ -40,20 +40,20 @@ struct RootView: View {
                     EmptyView()
                 }
             case .processing:
-                ProgressView("Loading Firebase Test Setup")
+                ProgressView("Preparing Test Environment")
             case .error(let error):
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(verbatim: "\(error)"))
             }
         }
         .task {
-            if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && FeatureFlags.setupTestAccount {
+            if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && setupTestEnvironment.isEnabled {
                 viewState = .processing
                 if !Spezi.didLoadFirebase {
                     Spezi.loadFirebase(for: .unitedStates)
                     try? await _Concurrency.Task.sleep(for: .seconds(4))
                 }
                 do {
-                    try await setupTestEnvironment.setup()
+                    try await setupTestEnvironment.setUp()
                     logger.notice("Successfully set up test environment")
                     viewState = .idle
                 } catch {

@@ -26,7 +26,7 @@ extension MyHeartCountsStandard {
     nonisolated static let consentDateFormat = Date.ISO8601FormatStyle(dateSeparator: .dash, dateTimeSeparator: .standard, timeZone: .gmt)
     
     /// Uploads a consent document to Firebase.
-    public func uploadConsentDocument(_ exportResult: sending ConsentDocument.ExportResult) async throws {
+    func uploadConsentDocument(_ exportResult: sending ConsentDocument.ExportResult) async throws {
         guard let accountId = await account?.details?.accountId else {
             logger.error("Unable to get account id. not uploading consent form.")
             throw ConsentUploadError.noAccount

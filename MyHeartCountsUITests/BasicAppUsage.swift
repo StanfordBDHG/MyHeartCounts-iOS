@@ -69,4 +69,24 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.navigationBars["Race / Ethnicity"].buttons["Demographics"].tap()
         XCTAssert(app.buttons["Race / Ethnicity, White, Japanese"].waitForExistence(timeout: 1))
     }
+    
+    
+    @MainActor
+    func testInformativeContent() throws {
+        try launchAppAndEnrollIntoStudy()
+        let articleTaskCompletedLabel = app.staticTexts["Welcome to My Heart Counts, Completed"]
+        XCTAssert(articleTaskCompletedLabel.waitForNonExistence(timeout: 2))
+        do {
+            let button = app.buttons["Read Article: Welcome to My Heart Counts"]
+            XCTAssert(button.waitForExistence(timeout: 2))
+            button.tap()
+        }
+        XCTAssert(app.images["stanford"].waitForExistence(timeout: 2))
+        do {
+            let pred = NSPredicate(format: "label BEGINSWITH 'We’re thrilled to have you on board.'")
+            XCTAssert(app.staticTexts.element(matching: pred).waitForExistence(timeout: 1))
+        }
+        app.navigationBars.buttons["Close"].tap()
+        XCTAssert(articleTaskCompletedLabel.waitForExistence(timeout: 2))
+    }
 }

@@ -41,16 +41,17 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     
     @MainActor
     func launchAppAndEnrollIntoStudy(
-        enableDebugMode: Bool = false
+        enableDebugMode: Bool = false,
+        keepExistingData: Bool = false
     ) throws {
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--skipOnboarding",
-            "--setupTestAccount",
+            "--setupTestAccount", keepExistingData ? "keepExistingData" : nil,
             "--overrideStudyBundleLocation", try studyBundleUrl.path,
             "--disableAutomaticBulkHealthExport",
             "--forceEnableDebugMode", enableDebugMode ? "true" : "false"
-        ]
+        ].compactMap { $0 as String? }
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         app.handleHealthKitAuthorization(timeout: 10)
