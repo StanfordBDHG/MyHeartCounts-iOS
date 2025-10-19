@@ -350,6 +350,7 @@
 
     },
     "1 to 5 years ago" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2597,6 +2598,7 @@
 
     },
     "More than 5 years ago" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2607,6 +2609,9 @@
       }
     },
     "Most Recent Night" : {
+
+    },
+    "Most Recent Response" : {
 
     },
     "Most Recent Sample" : {
@@ -2672,6 +2677,7 @@
       }
     },
     "Never" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2680,6 +2686,9 @@
           }
         }
       }
+    },
+    "Never Smoked" : {
+
     },
     "New Hampshire" : {
       "localizations" : {
@@ -3405,6 +3414,15 @@
       }
     },
     "Questionnaire" : {
+
+    },
+    "Quit 1 to 5 years ago" : {
+
+    },
+    "Quit more than 5 years ago" : {
+
+    },
+    "Quit within last year, or am using NDS" : {
 
     },
     "Race / Ethnicity" : {
@@ -4765,6 +4783,7 @@
       }
     },
     "Within last year, or am using NDS" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

@@ -187,7 +187,7 @@ extension CVHScore {
     
     var nicotineExposureScore: ScoreResult {
         ScoreResult(
-            "Most Recent Score",
+            "Most Recent Response",
             sampleType: .custom(.nicotineExposure),
             sample: nicotineExposure.first,
             value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
@@ -330,7 +330,7 @@ extension ScoreDefinition {
                 to: value,
                 score: score,
                 explainerBand: .init(
-                    leadingText: value.shortDisplayTitle,
+                    leadingText: value.localizedStringResource,
                     trailingText: "\(Int(score * 100))",
                     background: .color(Gradient.redToGreen.color(at: score))
                 )

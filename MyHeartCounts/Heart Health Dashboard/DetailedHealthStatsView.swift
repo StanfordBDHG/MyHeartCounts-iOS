@@ -271,22 +271,26 @@ private struct MostRecentValue: View {
                 ],
                 valueAccessibilityDesc: "\(value.systolic) over \(value.diastolic)"
             )
-        default:
-            if let value = scoreResult.inputValue {
-                self.init(
-                    scoreResult: scoreResult,
-                    components: [.init(value: String(describing: value), unit: scoreResult.sampleType.displayUnit)],
-                    valueAccessibilityDesc: { () -> LocalizedStringResource in
-                        if let unit = scoreResult.sampleType.displayUnit, unit != .count() {
-                            "\(String(describing: value)) \(unit.unitString)"
-                        } else {
-                            "\(String(describing: value))"
-                        }
-                    }()
-                )
-            } else {
-                self.init(scoreResult: scoreResult, components: [], valueAccessibilityDesc: "No recent data")
+        case .some(let value):
+            let valueDesc = switch value {
+            case let value as any CustomLocalizedStringResourceConvertible:
+                String(localized: value.localizedStringResource)
+            default:
+                String(describing: value)
             }
+            self.init(
+                scoreResult: scoreResult,
+                components: [.init(value: valueDesc, unit: scoreResult.sampleType.displayUnit)],
+                valueAccessibilityDesc: { () -> LocalizedStringResource in
+                    if let unit = scoreResult.sampleType.displayUnit, unit != .count() {
+                        "\(valueDesc) \(unit.unitString)"
+                    } else {
+                        "\(valueDesc)"
+                    }
+                }()
+            )
+        case .none:
+            self.init(scoreResult: scoreResult, components: [], valueAccessibilityDesc: "No recent data")
         }
     }
     
@@ -508,6 +512,7 @@ extension StudyManager {
 
 
 private struct BrowseFirestoreSamplesView: View {
+    private let sampleType: CustomQuantitySampleType
     @MHCFirestoreQuery<QuantitySample> private var samples: [QuantitySample]
     
     var body: some View {
@@ -532,9 +537,11 @@ private struct BrowseFirestoreSamplesView: View {
                 }
             }
         }
+        .navigationTitle(sampleType.displayTitle)
     }
     
     init(sampleType: CustomQuantitySampleType) {
+        self.sampleType = sampleType
         _samples = .init(sampleType: sampleType, timeRange: .ever)
     }
 }

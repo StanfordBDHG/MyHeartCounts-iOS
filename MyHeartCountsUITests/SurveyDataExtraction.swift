@@ -27,6 +27,8 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
         app.buttons["HeartRisk"].tap()
         
         try app.navigateResearchKitQuestionnaire(title: "Heart Risk", steps: [
+            // initial page
+            .init(actions: [.continue]),
             // Smoking Question
             .init(actions: [
                 .selectOption(title: "Never smoked/vaped")
@@ -85,7 +87,9 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
             // total cholesterol
             .init(actions: [
                 .enterValue("100", into: "Tap to answer,  mg/dL")
-            ])
+            ]),
+            // final step.
+            .init(actions: [.continue])
         ])
         app.navigationBars["Debug Options"].buttons["BackButton"].tap()
         app.navigationBars["Account Overview"].buttons["Close"].tap()
@@ -105,12 +109,14 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
 extension XCUIApplication {
     struct ResearchKitQuestionnaireStep {
         enum Action {
+            case `continue`
             case selectOption(title: String)
             case enterValue(_ value: String, into: String)
             case scrollDown
         }
         let actions: [Action]
     }
+    
     
     func navigateResearchKitQuestionnaire(
         title: String,
@@ -120,12 +126,13 @@ extension XCUIApplication {
             matching: NSPredicate(format: "identifier = %@ AND label = %@", "ORKStepContentView_titleLabel", title)
         ).waitForExistence(timeout: 2))
         
-        buttons["Get Started"].tap()
-        sleep(for: .seconds(1))
-        
         for step in steps {
             for action in step.actions {
                 switch action {
+                case .continue:
+                    let button = buttons.matching(identifier: "ORKContinueButton.Next").element
+                    XCTAssert(button.waitForExistence(timeout: 1))
+                    button.tap()
                 case .selectOption(let title):
                     XCTAssert(cells[title].exists)
                     cells[title].tap()
@@ -141,8 +148,5 @@ extension XCUIApplication {
             }
             buttons.matching(identifier: "ORKContinueButton.Next").element.tap()
         }
-        
-        XCTAssert(buttons["Done"].waitForExistence(timeout: 1))
-        buttons["Done"].tap()
     }
 }

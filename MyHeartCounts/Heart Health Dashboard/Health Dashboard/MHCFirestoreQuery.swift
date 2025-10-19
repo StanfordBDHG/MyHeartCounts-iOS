@@ -278,7 +278,14 @@ extension MHCFirestoreQuery where Element == QuantitySample {
             sorted: [sortDescriptor],
             limit: limit
         ) { resourceProxy in
-            QuantitySample(resourceProxy, sampleTypeHint: .custom(sampleType))
+            if sampleType == .nicotineExposure {
+                print("INPUT: \(resourceProxy)")
+            }
+            let sample = QuantitySample(resourceProxy, sampleTypeHint: .custom(sampleType))
+            if sampleType == .nicotineExposure {
+                print("OUTPUT: \(sample)")
+            }
+            return sample
         }
     }
 }
