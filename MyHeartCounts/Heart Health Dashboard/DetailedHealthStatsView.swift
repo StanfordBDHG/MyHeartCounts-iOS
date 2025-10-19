@@ -295,7 +295,7 @@ private struct MostRecentValue: View {
     }
     
     
-    init<V: BinaryFloatingPoint>(_ value: V, scoreResult: ScoreResult) {
+    private init<V: BinaryFloatingPoint>(_ value: V, scoreResult: ScoreResult) {
         self.scoreResult = scoreResult
         let sampleType = scoreResult.sampleType
         switch sampleType {
