@@ -22,6 +22,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
     }
     
     
+    // also tests the Timed Walk Test UI
     @MainActor
     func testCompleteScheduledTaskViaAlwaysAvailableMenu() throws {
         try launchAppAndEnrollIntoStudy()
