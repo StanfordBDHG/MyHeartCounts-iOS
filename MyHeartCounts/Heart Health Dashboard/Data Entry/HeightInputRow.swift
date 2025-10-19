@@ -70,7 +70,14 @@ struct HeightInputRow: View {
     init(title: LocalizedStringResource, quantity: Binding<HKQuantity?>, preferredUnit: HKUnit) {
         self.title = title
         self._quantity = quantity
-        self.inputUnit = preferredUnit == .foot() ? .feetAndInches : .centimeters
+        self.inputUnit = switch LaunchOptions.launchOptions[.preferredHeightInputUnitOverride] {
+        case .none:
+            preferredUnit == .foot() ? .feetAndInches : .centimeters
+        case .cm:
+            .centimeters
+        case .feet:
+            .feetAndInches
+        }
     }
 }
 
@@ -94,11 +101,13 @@ extension HeightInputRow {
                         Text("\(value) ft")
                     }
                 }
+                .accessibilityIdentifier("FeetPicker")
                 Picker("", selection: $inches) {
                     ForEach(Array(limits.inches), id: \.self) { value in
                         Text("\(value) in")
                     }
                 }
+                .accessibilityIdentifier("InchesPicker")
             }
             .pickerStyle(.wheel)
             .onChange(of: feet, updateQuantity)

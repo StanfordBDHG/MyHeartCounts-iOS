@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziFoundation
 
 
 /// A collection of feature flags for the My Heart Counts.
@@ -73,4 +74,29 @@ extension LaunchOptions {
     static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)
     
     static let overrideStudyBundleLocation = LaunchOption<URL?>("--overrideStudyBundleLocation", default: nil)
+}
+
+
+extension LaunchOptions {
+    enum HeightInputUnitOverride: LaunchOptionDecodable {
+        case none
+        case cm // swiftlint:disable:this identifier_name
+        case feet
+        
+        init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+            try context.assertNumRawArgs(.atMost(1))
+            switch context.rawArgs[safe: 0] {
+            case nil, "none":
+                self = .none
+            case "cm":
+                self = .cm
+            case "feet":
+                self = .feet
+            case .some(let value):
+                throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: value)
+            }
+        }
+    }
+    
+    static let preferredHeightInputUnitOverride = LaunchOption<HeightInputUnitOverride>("--heightInputUnitOverride", default: .none)
 }
