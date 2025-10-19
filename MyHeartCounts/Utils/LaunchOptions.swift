@@ -179,6 +179,10 @@ private struct CommandLineLaunchOptionsContainer: LaunchOptionsContainerProtocol
     /// Creates a new `CommandLineLaunchOptions` instance for the specified arguments array.
     /// - Note: The first element in `arguments` will be assumed to be the executable name, and will always be skipped.
     init(arguments: [String] = CommandLine.arguments) {
+        guard !arguments.isEmpty else {
+            self.parsedArguments = .init()
+            return
+        }
         var remainingArgs = arguments[...]
         var parsedArguments = ParsedLaunchOptionArguments()
          
