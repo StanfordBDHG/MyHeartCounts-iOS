@@ -14,11 +14,11 @@ import XCTHealthKit
 
 
 final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
-    @MainActor
-    func testUpcomingTasksTabGeneral() throws {
-        throw XCTSkip()
-        try launchAppAndEnrollIntoStudy()
-        goToTab(.upcoming)
+    private let timedWalkTestDistance = switch Locale.current.measurementSystem {
+    case .us:
+        "2,762 ft"
+    default:
+        "842 m"
     }
     
     
@@ -41,7 +41,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         handleMotionAndFitnessAccessPrompt(timeout: .seconds(2))
         XCTAssert(app.staticTexts["Test Complete"].waitForExistence(timeout: 10))
         XCTAssert(app.staticTexts["Steps, 624"].exists)
-        XCTAssert(app.staticTexts["Distance (m), 842"].exists)
+        XCTAssert(app.staticTexts["Distance, \(timedWalkTestDistance)"].exists)
         app.navigationBars.buttons["Close"].tap()
         XCTAssert(completionMessage.exists)
     }
@@ -87,19 +87,12 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         }
         let numTestsBefore = numTests
         
-        let expectedDistanceText = switch Locale.current.measurementSystem {
-        case .us:
-            "2,762 ft"
-        default:
-            "842 m"
-        }
-        
         if case let button = app.buttons.element(matching: testCellPred),
            button.waitForExistence(timeout: 2) {
             button.firstMatch.tap()
             XCTAssert(app.navigationBars["0.1-Minute Walk Test"].waitForExistence(timeout: 2))
             XCTAssert(app.staticTexts["Number of Steps, 624"].waitForExistence(timeout: 2))
-            XCTAssert(app.staticTexts["Distance, \(expectedDistanceText)"].waitForExistence(timeout: 2))
+            XCTAssert(app.staticTexts["Distance, \(timedWalkTestDistance)"].waitForExistence(timeout: 2))
             app.navigationBars["0.1-Minute Walk Test"].buttons["BackButton"].tap()
         }
         
@@ -109,7 +102,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         handleMotionAndFitnessAccessPrompt(timeout: .seconds(2))
         XCTAssert(app.staticTexts["Test Complete"].waitForExistence(timeout: 10))
         XCTAssert(app.staticTexts["Steps, 624"].exists)
-        XCTAssert(app.staticTexts["Distance, \(expectedDistanceText)"].exists)
+        XCTAssert(app.staticTexts["Distance, \(timedWalkTestDistance)"].exists)
         print(app.debugDescription)
         app.otherElements["MHC.TimedWalkTestView"].navigationBars.buttons["Close"].tap()
         let numTestsAfter = numTests

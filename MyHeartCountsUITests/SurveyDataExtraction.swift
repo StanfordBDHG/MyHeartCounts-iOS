@@ -126,13 +126,14 @@ extension XCUIApplication {
             matching: NSPredicate(format: "identifier = %@ AND label = %@", "ORKStepContentView_titleLabel", title)
         ).waitForExistence(timeout: 2))
         
-        for step in steps {
+        steps: for step in steps {
             for action in step.actions {
                 switch action {
                 case .continue:
                     let button = buttons.matching(identifier: "ORKContinueButton.Next").element
                     XCTAssert(button.waitForExistence(timeout: 1))
                     button.tap()
+                    continue steps
                 case .selectOption(let title):
                     XCTAssert(cells[title].exists)
                     cells[title].tap()

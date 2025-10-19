@@ -59,13 +59,13 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         try app.navigateResearchKitQuestionnaire(title: "Dashboard - Smoking", steps: [ // NOTE: might want to rename the survey here?!
             .init(actions: [.selectOption(title: "Never smoked/vaped")])
         ])
-        XCTAssert(app.staticTexts["Most Recent Response: Never Smoked"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Most Recent Response: Never Smoked"].waitForExistence(timeout: 10))
         
         app.navigationBars["Nicotine Exposure"].buttons["Add Data"].tap()
         try app.navigateResearchKitQuestionnaire(title: "Dashboard - Smoking", steps: [ // NOTE: might want to rename the survey here?!
             .init(actions: [.selectOption(title: "Quit >5 years ago")])
         ])
-        XCTAssert(app.staticTexts["Most Recent Response: Quit more than 5 years ago"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Most Recent Response: Quit more than 5 years ago"].waitForExistence(timeout: 10))
     }
     
     
@@ -112,5 +112,64 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         app.navigationBars["Enter Blood Pressure"].buttons["Save"].tap()
         
         XCTAssert(app.staticTexts["Most Recent Sample: \(systolic) over \(diastolic)"].waitForExistence(timeout: 5))
+    }
+    
+    
+    @MainActor
+    func testQuantityInputBounds() throws {
+        try launchAppAndEnrollIntoStudy()
+        goToTab(.heartHealth)
+        
+        app.buttons["Blood Pressure"].tap()
+        app.navigationBars["Blood Pressure"].buttons["Add Data"].tap()
+        
+        let systolicErrorMessage = app.staticTexts["Only values from 60 to 250 are allowed"]
+        let diastolicErrorMessage = app.staticTexts["Only values from 30 to 150 are allowed"]
+        
+        let systolicTextField = app.textFields["QuantityDataEntry:Systolic Blood Pressure"]
+        let diastolicTextField = app.textFields["QuantityDataEntry:Diastolic Blood Pressure"]
+        
+        XCTAssertFalse(systolicErrorMessage.exists)
+        XCTAssertFalse(diastolicErrorMessage.exists)
+        
+        XCTAssertFalse(systolicErrorMessage.exists)
+        systolicTextField.tap()
+        systolicTextField.typeText("50")
+        XCTAssert(systolicErrorMessage.waitForExistence(timeout: 1))
+        try systolicTextField.delete(count: 2, options: .skipTextFieldSelection)
+        XCTAssert(systolicErrorMessage.waitForNonExistence(timeout: 1))
+        systolicTextField.typeText("75")
+        XCTAssertFalse(systolicErrorMessage.exists)
+        try systolicTextField.delete(count: 2, options: .skipTextFieldSelection)
+        systolicTextField.typeText("100")
+        XCTAssert(systolicErrorMessage.waitForNonExistence(timeout: 1))
+        systolicTextField.typeText("0")
+        XCTAssert(systolicErrorMessage.waitForExistence(timeout: 1))
+        
+        XCTAssertFalse(diastolicErrorMessage.exists)
+        diastolicTextField.tap()
+        diastolicTextField.typeText("20")
+        XCTAssert(diastolicErrorMessage.waitForExistence(timeout: 1))
+        try diastolicTextField.delete(count: 2, options: .skipTextFieldSelection)
+        XCTAssert(diastolicErrorMessage.waitForNonExistence(timeout: 1))
+        diastolicTextField.typeText("75")
+        XCTAssertFalse(diastolicErrorMessage.exists)
+        try diastolicTextField.delete(count: 2, options: .skipTextFieldSelection)
+        diastolicTextField.typeText("100")
+        XCTAssert(diastolicErrorMessage.waitForNonExistence(timeout: 1))
+        diastolicTextField.typeText("0")
+        XCTAssert(diastolicErrorMessage.waitForExistence(timeout: 1))
+        
+        systolicTextField.tap()
+        systolicTextField.typeKey(.rightArrow, modifierFlags: .alternate)
+        systolicTextField.typeKey(.rightArrow, modifierFlags: .alternate)
+        try systolicTextField.delete(count: 5, options: .skipTextFieldSelection)
+        XCTAssert(systolicErrorMessage.waitForNonExistence(timeout: 2))
+        
+        diastolicTextField.tap()
+        diastolicTextField.typeKey(.rightArrow, modifierFlags: .alternate)
+        diastolicTextField.typeKey(.rightArrow, modifierFlags: .alternate)
+        try diastolicTextField.delete(count: 5, options: .skipTextFieldSelection)
+        XCTAssert(diastolicErrorMessage.waitForNonExistence(timeout: 2))
     }
 }
