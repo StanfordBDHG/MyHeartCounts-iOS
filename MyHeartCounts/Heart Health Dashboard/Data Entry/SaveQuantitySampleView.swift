@@ -86,11 +86,11 @@ struct SaveQuantitySampleView: View {
     }
     
     init(
-        _ title: LocalizedStringKey = "Add Sample", // swiftlint:disable:this function_default_parameter_at_end
+        _ title: LocalizedStringKey? = nil, // swiftlint:disable:this function_default_parameter_at_end
         sampleType: MHCQuantitySampleType,
         completionHandler: (@MainActor (QuantitySample) -> Void)? = nil
     ) {
-        self.title = title
+        self.title = title ?? "Enter \(sampleType.displayTitle)"
         self.sampleType = sampleType
         self.completionHandler = completionHandler
     }
@@ -145,6 +145,8 @@ extension HKQuantity {
 extension MHCQuantitySampleType {
     func inputLimits(in unit: HKUnit) -> Range<Double>? {
         switch self {
+        case .custom(.bloodLipids):
+            30..<400
         case .healthKit(.bloodPressureSystolic):
             60..<250
         case .healthKit(.bloodPressureDiastolic):
@@ -156,7 +158,7 @@ extension MHCQuantitySampleType {
         case .healthKit(.height) where unit == .meterUnit(with: .centi):
             90..<250
         case .healthKit(.bodyMass) where unit == .gramUnit(with: .kilo):
-                25..<450
+            25..<450
         case .healthKit(.bodyMass) where unit == .pound():
             55..<1000
         default:

@@ -571,6 +571,7 @@
       }
     },
     "Add Sample" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1442,6 +1443,9 @@
           }
         }
       }
+    },
+    "Enter %@" : {
+
     },
     "Enter Blood Pressure" : {
       "localizations" : {

@@ -36,17 +36,15 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     override func tearDown() {
         super.tearDown()
         MainActor.assumeIsolated {
-            // After each test, we want the app to get fully reset.
             app.terminate()
-//            app.delete(app: "My Heart Counts")
-//            app = nil
         }
     }
     
     @MainActor
     func launchAppAndEnrollIntoStudy(
         enableDebugMode: Bool = false,
-        keepExistingData: Bool = false
+        keepExistingData: Bool = false,
+        heightEntryUnitOverride: String? = nil
     ) throws {
         app.launchArguments = [
             "--useFirebaseEmulator",
@@ -54,7 +52,8 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
             "--setupTestAccount", keepExistingData ? "keepExistingData" : nil,
             "--overrideStudyBundleLocation", try studyBundleUrl.path,
             "--disableAutomaticBulkHealthExport",
-            "--forceEnableDebugMode", enableDebugMode ? "true" : "false"
+            "--forceEnableDebugMode", enableDebugMode ? "true" : "false",
+            "--heightInputUnitOverride", heightEntryUnitOverride ?? "none"
         ].compactMap { $0 as String? }
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))

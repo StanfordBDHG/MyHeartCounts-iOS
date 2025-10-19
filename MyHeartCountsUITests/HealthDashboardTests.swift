@@ -19,7 +19,6 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         goToTab(.heartHealth)
         XCTAssert(app.buttons["Body Mass Index"].waitForExistence(timeout: 2))
         app.buttons["Body Mass Index"].tap()
-        sleep(for: .seconds(2))
         XCTAssert(app.navigationBars["Body Mass Index"].buttons["Add Data"].waitForExistence(timeout: 2))
         app.navigationBars["Body Mass Index"].buttons["Add Data"].tap()
         
@@ -40,8 +39,64 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
     
     
     @MainActor
-    func testHealthDashboardDataEntryBMIIndirect() throws {
-        throw XCTSkip("TODO: 67kb + 186cm -> 19.37 BMI")
+    func testHealthDashboardDataEntryBMIIndirectViaCM() throws {
+        try launchAppAndEnrollIntoStudy(heightEntryUnitOverride: "cm")
+        goToTab(.heartHealth)
+        app.buttons["Body Mass Index"].tap()
+        app.navigationBars["Body Mass Index"].buttons["Add Data"].tap()
+        
+        let weightTextField = app.textFields["QuantityDataEntry:Weight"]
+        weightTextField.tap()
+        weightTextField.typeText("67")
+        
+        let heightTextField = app.textFields["QuantityDataEntry:Height"]
+        heightTextField.tap()
+        heightTextField.typeText("186")
+        
+        app.navigationBars["Enter BMI"].buttons["Save"].tap()
+        XCTAssert(app.staticTexts.element(matching: NSPredicate(format: "label MATCHES 'Most Recent Sample: 19.37'")).waitForExistence(timeout: 5))
+    }
+    
+    
+    @MainActor
+    func testHealthDashboardDataEntryBMIIndirectViaFtIn() throws {
+        try launchAppAndEnrollIntoStudy(heightEntryUnitOverride: "feet")
+        goToTab(.heartHealth)
+        app.buttons["Body Mass Index"].tap()
+        app.navigationBars["Body Mass Index"].buttons["Add Data"].tap()
+        
+        let weightTextField = app.textFields["QuantityDataEntry:Weight"]
+        weightTextField.tap()
+        weightTextField.typeText("67")
+        
+        app.staticTexts["Height"].tap()
+        let feetPicker = app.pickers["FeetPicker"].pickerWheels.element
+        let inchesPicker = app.pickers["InchesPicker"].pickerWheels.element
+        XCTAssert(feetPicker.waitForExistence(timeout: 2))
+        XCTAssert(inchesPicker.waitForExistence(timeout: 2))
+        feetPicker.adjust(toPickerWheelValue: "6 ft")
+        inchesPicker.adjust(toPickerWheelValue: "1 in")
+        
+        app.navigationBars["Enter BMI"].buttons["Save"].tap()
+        XCTAssert(app.staticTexts.element(matching: NSPredicate(format: "label MATCHES 'Most Recent Sample: 19.49'")).waitForExistence(timeout: 5))
+    }
+    
+    
+    @MainActor
+    func testBloodLipidsEntry() throws {
+        let value = Int.random(in: 30..<400)
+        
+        try launchAppAndEnrollIntoStudy()
+        goToTab(.heartHealth)
+        app.buttons["LDL Cholesterol"].tap()
+        app.navigationBars["LDL Cholesterol"].buttons["Add Data"].tap()
+        
+        let textField = app.textFields["QuantityDataEntry:LDL Cholesterol"]
+        XCTAssert(textField.waitForExistence(timeout: 2))
+        textField.typeText("\(value)")
+        
+        app.navigationBars["Enter LDL Cholesterol"].buttons["Save"].tap()
+        XCTAssert(app.staticTexts["Most Recent Sample: \(value) mg/dL"].waitForExistence(timeout: 4))
     }
     
     
