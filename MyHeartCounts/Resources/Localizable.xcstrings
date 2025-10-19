@@ -2823,6 +2823,9 @@
         }
       }
     },
+    "No recent data" : {
+
+    },
     "No Upcoming Tasks" : {
       "localizations" : {
         "es" : {
@@ -4178,7 +4181,7 @@
         }
       }
     },
-    "Tap to lear more…" : {
+    "Tap to learn more…" : {
 
     },
     "Tasks" : {
