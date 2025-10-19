@@ -160,10 +160,8 @@ private struct UserTaskPerforming: ViewModifier {
                             task.completionHandler(true)
                         }
                 case .timedWalkTest(let test):
-                    NavigationStack {
-                        TimedWalkingTestView(test) { result in
-                            task.completionHandler(result != nil)
-                        }
+                    TimedWalkingTestSheet(test) { result in
+                        task.completionHandler(result != nil)
                     }
                 case .ecg:
                     NavigationStack {

@@ -16,7 +16,7 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testSurveyHealthDataExtraction() throws {
         try launchAppAndEnrollIntoStudy(enableDebugMode: true)
-        app.navigationBars.buttons["Your Account"].tap()
+        openAccountSheet()
         XCTAssert(app.navigationBars["Account Overview"].waitForExistence(timeout: 2))
         app.swipeUp()
         

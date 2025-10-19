@@ -16,8 +16,28 @@ import SpeziViews
 import SwiftUI
 
 
-struct TimedWalkingTestView: View {
+struct TimedWalkingTestSheet: View {
     typealias ResultHandler = @Sendable @MainActor (TimedWalkingTestResult?) async -> Void
+    
+    private let test: TimedWalkingTestConfiguration
+    private let resultHandler: ResultHandler
+    
+    var body: some View {
+        NavigationStack {
+            TimedWalkingTestView(test, resultHandler: resultHandler)
+        }
+        .accessibilityIdentifier("MHC.TimedWalkTestView")
+    }
+    
+    init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler = { _ in }) {
+        self.test = test
+        self.resultHandler = resultHandler
+    }
+}
+
+
+private struct TimedWalkingTestView: View {
+    typealias ResultHandler = TimedWalkingTestSheet.ResultHandler
     
     @Environment(\.openSettingsApp)
     private var openSettingsApp
@@ -243,7 +263,7 @@ struct TimedWalkingTestView: View {
         }
     }
     
-    init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler = { _ in }) {
+    init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler) {
         self.test = test
         self.resultHandler = resultHandler
     }

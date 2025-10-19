@@ -37,8 +37,7 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
     func testReviewConsentForms() throws {
         try launchAppAndEnrollIntoStudy(keepExistingData: true)
         // check that the consent we just signed is showing up in the Account Sheet
-        XCTAssert(app.navigationBars.buttons["Your Account"].waitForExistence(timeout: 2))
-        app.navigationBars.buttons["Your Account"].tap()
+        openAccountSheet()
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
         app.staticTexts["Review Consent Forms"].tap()
         XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))

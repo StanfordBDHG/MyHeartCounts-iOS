@@ -93,7 +93,7 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testFeedback() throws {
         try launchAppAndEnrollIntoStudy()
-        app.navigationBars.buttons["Your Account"].tap()
+        openAccountSheet()
         app.swipeUp()
         app.staticTexts["Send Feedback"].tap()
         XCTAssert(app.navigationBars["Feedback"].waitForExistence(timeout: 2))
