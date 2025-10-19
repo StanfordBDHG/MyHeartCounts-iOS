@@ -195,7 +195,11 @@ private struct TimedWalkingTestView: View {
             Section("Test Complete") {
                 LabeledContent("Date", value: result.startDate, format: .dateTime)
                 LabeledContent("Steps", value: result.numberOfSteps, format: .number)
-                LabeledContent("Distance (m)", value: result.distanceCovered, format: .number)
+                LabeledContent(
+                    "Distance",
+                    value: Measurement<UnitLength>(value: result.distanceCovered, unit: .meters),
+                    format: .measurement(width: .abbreviated)
+                )
             }
         }
     }
