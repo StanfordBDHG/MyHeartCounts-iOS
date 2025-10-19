@@ -40,6 +40,7 @@ struct HeightInputRow: View {
                 title: title,
                 value: binding,
                 limits: MHCQuantitySampleType.healthKit(.height).inputLimits(in: cmUnit),
+                sampleType: .healthKit(.height),
                 unit: cmUnit
             )
         case .feetAndInches:

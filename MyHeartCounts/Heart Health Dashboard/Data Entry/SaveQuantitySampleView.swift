@@ -51,6 +51,7 @@ struct SaveQuantitySampleView: View {
                         title: "Value",
                         value: $value,
                         limits: sampleType.inputLimits(in: sampleType.displayUnit),
+                        sampleType: sampleType,
                         unit: sampleType.displayUnit
                     )
                     .focused($valueFieldIsFocused)

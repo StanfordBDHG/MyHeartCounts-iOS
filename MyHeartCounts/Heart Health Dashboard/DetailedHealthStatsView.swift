@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order file_length
+// swiftlint:disable file_types_order file_length attributes
 
 import Charts
 import Foundation
@@ -21,10 +21,6 @@ import SwiftUI
 
 
 struct DetailedHealthStatsView: View {
-    private enum Input {
-        case scoreResult(result: ScoreResult, keyPath: KeyPath<CVHScore, ScoreResult>)
-    }
-    
     private enum RecentValuesChartConfig {
         /// no chart
         case disabled
@@ -32,33 +28,31 @@ struct DetailedHealthStatsView: View {
         case enabled(timeRange: HealthKitQueryTimeRange)
     }
     
-    // swiftlint:disable attributes
     @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
     @LocalPreference(.detailedHealthMetricChartTimeRange) private var chartTimeRange
-    // swiftlint:enable attributes
     
+    @CVHScore private var cvhScore
     @DebugModeEnabled private var debugModeEnabled
-    
-    private let sampleType: MHCSampleType
-    private let input: Input
     @State private var isPresentingAddSampleSheet = false
+    
+    private let keyPath: KeyPath<CVHScore, ScoreResult>
+    private var sampleType: MHCSampleType {
+        scoreResult.sampleType
+    }
+    private var scoreResult: ScoreResult {
+        _cvhScore[keyPath: keyPath]
+    }
     
     var body: some View {
         Form {
-            switch input {
-            case .scoreResult(let result, keyPath: _):
-                Section {
-                    scoreResultBasedTopSection(for: result)
-                }
-                .listRowInsets(.zero)
-                .listRowBackground(Color.clear)
+            Section {
+                scoreResultBasedTopSection(for: scoreResult)
             }
+            .listRowInsets(.zero)
+            .listRowBackground(Color.clear)
             recentValuesChart(recentValuesChartConfig)
-            switch input {
-            case .scoreResult(let result, keyPath: _):
-                scoreResultExplainer(for: result)
-            }
+            scoreResultExplainer(for: scoreResult)
             if let explainer = explainerText(for: sampleType) {
                 let document = (try? MarkdownDocument(processing: explainer))
                     ?? MarkdownDocument(metadata: [:], blocks: [.markdown(id: nil, rawContents: explainer)])
@@ -77,32 +71,23 @@ struct DetailedHealthStatsView: View {
         }
         .navigationTitle(sampleType.displayTitle)
         .toolbar {
-            switch input {
-            case .scoreResult(result: _, let keyPath):
-                if HeartHealthDashboard.canAddSample(for: keyPath) {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Add Data", systemSymbol: .plus) {
-                            isPresentingAddSampleSheet = true
-                        }
+            if HeartHealthDashboard.canAddSample(for: keyPath) {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Add Data", systemSymbol: .plus) {
+                        isPresentingAddSampleSheet = true
                     }
                 }
             }
         }
-        .transforming { view in
-            switch input {
-            case .scoreResult(result: _, let keyPath):
-                view.sheet(isPresented: $isPresentingAddSampleSheet) {
-                    HeartHealthDashboard.addSampleSheet(for: keyPath)
-                }
-            }
+        .sheet(isPresented: $isPresentingAddSampleSheet) {
+            HeartHealthDashboard.addSampleSheet(for: keyPath)
         }
     }
     
     
     private var recentValuesChartConfig: RecentValuesChartConfig {
-        switch input {
-        case .scoreResult(result: _, keyPath: \.nicotineExposureScore),
-                .scoreResult(result: _, keyPath: \.dietScore):
+        switch keyPath {
+        case \.nicotineExposureScore, \.dietScore:
             .disabled
         default:
             .enabled(timeRange: .init(chartTimeRange))
@@ -110,9 +95,8 @@ struct DetailedHealthStatsView: View {
     }
     
     
-    init(scoreResult: ScoreResult, cvhKeyPath: KeyPath<CVHScore, ScoreResult>) {
-        self.sampleType = scoreResult.sampleType
-        self.input = .scoreResult(result: scoreResult, keyPath: cvhKeyPath)
+    init(_ keyPath: KeyPath<CVHScore, ScoreResult>) {
+        self.keyPath = keyPath
     }
     
     
@@ -180,25 +164,8 @@ struct DetailedHealthStatsView: View {
             let gaugePartWidth = (geometry.size.width - spacing) * 0.37
             let leftPartWidth = geometry.size.width - spacing - gaugePartWidth
             HStack(spacing: spacing / 2 - 1) {
-                VStack(alignment: .leading) {
-                    Text(scoreResult.title)
-                        .foregroundStyle(.secondary)
-                    Group {
-                        if let value = scoreResult.inputValue {
-                            ValueDisplay(value, sampleType: sampleType)
-                        } else {
-                            Text("No Data")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .font(.headline)
-                    if let timeRange = scoreResult.timeRange {
-                        Text(timeRange.displayText(using: cal))
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .frame(width: leftPartWidth, alignment: .leading)
+                MostRecentValue(scoreResult)
+                    .frame(width: leftPartWidth, alignment: .leading)
                 Divider()
                     .frame(width: 1)
                 ScoreResultGauge(scoreResult: scoreResult)
@@ -218,7 +185,7 @@ struct DetailedHealthStatsView: View {
 }
 
 
-private struct ValueDisplay: View {
+private struct MostRecentValue: View {
     private struct Component {
         let value: String
         let unit: String?
@@ -233,10 +200,34 @@ private struct ValueDisplay: View {
         }
     }
     
+    @Environment(\.calendar) private var cal
+    
+    private let scoreResult: ScoreResult
     private let components: [Component]
-    private let accessibilityRepresentation: LocalizedStringResource
+    private let valueAccessibilityDesc: LocalizedStringResource
     
     var body: some View {
+        VStack(alignment: .leading) {
+            Text(scoreResult.title)
+                .foregroundStyle(.secondary)
+            valueDisplay
+                .font(.headline)
+            if let timeRange = scoreResult.timeRange {
+                Text(timeRange.displayText(using: cal))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .accessibilityRepresentation {
+            if components.isEmpty {
+                Text(valueAccessibilityDesc) // will be "No Recent Data" in this case.
+            } else {
+                Text("\(scoreResult.title): \(valueAccessibilityDesc)")
+            }
+        }
+    }
+    
+    @ViewBuilder private var valueDisplay: some View {
         if components.isEmpty {
             Text("No Data")
                 .foregroundStyle(.secondary)
@@ -256,37 +247,53 @@ private struct ValueDisplay: View {
                     }
                 }
             }
-            .accessibilityElement()
-            .accessibilityLabel(accessibilityRepresentation)
         }
     }
     
-    private init(components: [Component], accessibilityRepresentation: LocalizedStringResource) {
+    private init(scoreResult: ScoreResult, components: [Component], valueAccessibilityDesc: LocalizedStringResource) {
+        self.scoreResult = scoreResult
         self.components = components
-        self.accessibilityRepresentation = accessibilityRepresentation
+        self.valueAccessibilityDesc = valueAccessibilityDesc
     }
     
-    init(_ value: Any, sampleType: MHCSampleType) {
-        switch value {
+    init(_ scoreResult: ScoreResult) {
+        switch scoreResult.inputValue {
         case let value as any BinaryFloatingPoint:
-            self.init(value, sampleType: sampleType)
+            self.init(value, scoreResult: scoreResult)
         case let value as BloodPressureMeasurement:
-            self.init(value)
-        default:
             self.init(
-                components: [.init(value: String(describing: value), unit: sampleType.displayUnit)],
-                accessibilityRepresentation: { () -> LocalizedStringResource in
-                    if let unit = sampleType.displayUnit {
-                        "\(String(describing: value)) \(unit.unitString)"
-                    } else {
-                        "\(String(describing: value))"
-                    }
-                }()
+                scoreResult: scoreResult,
+                components: [
+                    .init(
+                        value: "\(value.systolic)/\(value.diastolic)",
+                        unit: .millimeterOfMercury()
+                    )
+                ],
+                valueAccessibilityDesc: "\(value.systolic) over \(value.diastolic)"
             )
+        default:
+            if let value = scoreResult.inputValue {
+                self.init(
+                    scoreResult: scoreResult,
+                    components: [.init(value: String(describing: value), unit: scoreResult.sampleType.displayUnit)],
+                    valueAccessibilityDesc: { () -> LocalizedStringResource in
+                        if let unit = scoreResult.sampleType.displayUnit, unit != .count() {
+                            "\(String(describing: value)) \(unit.unitString)"
+                        } else {
+                            "\(String(describing: value))"
+                        }
+                    }()
+                )
+            } else {
+                self.init(scoreResult: scoreResult, components: [], valueAccessibilityDesc: "No recent data")
+            }
         }
     }
     
-    init<V: BinaryFloatingPoint>(_ value: V, sampleType: MHCSampleType) {
+    
+    init<V: BinaryFloatingPoint>(_ value: V, scoreResult: ScoreResult) {
+        self.scoreResult = scoreResult
+        let sampleType = scoreResult.sampleType
         switch sampleType {
         case .healthKit(.category(.sleepAnalysis)):
             let (hours, minutes) = Int(value * 60).quotientAndRemainder(dividingBy: 60)
@@ -298,28 +305,18 @@ private struct ValueDisplay: View {
                     Component(value: String(minutes), unit: .minute())
                 }
             }
-            accessibilityRepresentation = "\(hours) hours and \(minutes) minutes"
+            valueAccessibilityDesc = "\(hours) hours and \(minutes) minutes"
         default:
             let value = value.formatted(FloatingPointFormatStyle<V>().precision(.fractionLength(...2)))
             components = [
                 Component(value: value, unit: sampleType.displayUnit)
             ]
-            if let unit = sampleType.displayUnit {
-                accessibilityRepresentation = "\(value) \(unit.unitString)"
+            valueAccessibilityDesc = if let unit = sampleType.displayUnit, unit != .count() {
+                 "\(value) \(unit.unitString)"
             } else {
-                accessibilityRepresentation = "\(value)"
+                "\(value)"
             }
         }
-    }
-    
-    init(_ bloodPressure: BloodPressureMeasurement) {
-        components = [
-            .init(
-                value: "\(bloodPressure.systolic)/\(bloodPressure.diastolic)",
-                unit: .millimeterOfMercury()
-            )
-        ]
-        accessibilityRepresentation = "\(bloodPressure.systolic) over \(bloodPressure.diastolic)"
     }
 }
 
@@ -412,10 +409,8 @@ private struct ScoreExplanationView: View {
 
 
 private struct FurtherReadingSection: View {
-    // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.openURL) private var openURL
-    // swiftlint:enable attributes
     
     private let title: LocalizedStringResource
     private let document: MarkdownDocument

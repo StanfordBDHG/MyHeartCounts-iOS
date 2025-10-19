@@ -65,14 +65,14 @@ struct SaveBMISampleView: View {
                         title: "Body Mass Index",
                         value: $bmi,
                         limits: MHCQuantitySampleType.healthKit(bmiSampleType).inputLimits(in: bmiSampleType.displayUnit),
-                        sampleType: bmiSampleType
+                        sampleType: .healthKit(bmiSampleType)
                     )
                 case .weightAndHeight:
                     QuantityInputRow(
                         title: "Weight",
                         value: $weight,
                         limits: MHCQuantitySampleType.healthKit(weightSampleType).inputLimits(in: weightSampleType.displayUnit),
-                        sampleType: weightSampleType
+                        sampleType: .healthKit(weightSampleType)
                     )
                     HeightInputRow(
                         title: "Height",

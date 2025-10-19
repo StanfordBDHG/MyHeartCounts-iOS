@@ -15,6 +15,7 @@ import SwiftUI
 struct QuantityInputRow: View {
     private let title: LocalizedStringResource
     private let limits: Range<Double>?
+    private let sampleType: MHCQuantitySampleType
     @Binding private var value: Double?
     private let unit: HKUnit?
     // Note: using a NumberFormatter() instead of the new `FloatingPointFormatStyle<Double>.number` API,
@@ -28,6 +29,7 @@ struct QuantityInputRow: View {
                 TextField(value: $value, formatter: formatter, prompt: Text("0")) {
                     Text(title)
                 }
+                .accessibilityIdentifier("QuantityDataEntry:\(sampleType.displayTitle)")
                 .multilineTextAlignment(.trailing)
                 .keyboardType(.decimalPad)
                 .preference(key: ContainsInvalidInputPreferenceKey.self, value: inputIsOutOfLimits)
@@ -60,15 +62,18 @@ struct QuantityInputRow: View {
     
     // MARK: Double
     
-    init(title: LocalizedStringResource, value: Binding<Double?>, limits: Range<Double>?, sampleType: SampleType<HKQuantitySample>?) {
-        self.init(title: title, value: value, limits: limits, unit: sampleType?.displayUnit)
-    }
-    
-    init(title: LocalizedStringResource, value: Binding<Double?>, limits: Range<Double>?, unit: HKUnit?) {
+    init(
+        title: LocalizedStringResource,
+        value: Binding<Double?>,
+        limits: Range<Double>?,
+        sampleType: MHCQuantitySampleType,
+        unit: HKUnit? = nil
+    ) {
         self.title = title
         self.limits = limits
         self._value = value
-        self.unit = unit
+        self.sampleType = sampleType
+        self.unit = unit ?? sampleType.displayUnit
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2 // make this dependent on the context?!
     }
@@ -76,11 +81,13 @@ struct QuantityInputRow: View {
     
     // MARK: Int
     
-    init(title: LocalizedStringResource, value: Binding<Int?>, limits: Range<Double>?, sampleType: SampleType<HKQuantitySample>?) {
-        self.init(title: title, value: value, limits: limits, unit: sampleType?.displayUnit)
-    }
-    
-    init(title: LocalizedStringResource, value: Binding<Int?>, limits: Range<Double>?, unit: HKUnit?) {
+    init(
+        title: LocalizedStringResource,
+        value: Binding<Int?>,
+        limits: Range<Double>?,
+        sampleType: MHCQuantitySampleType,
+        unit: HKUnit? = nil
+    ) {
         self.title = title
         self.limits = limits
         self._value = Binding<Double?> {
@@ -88,7 +95,8 @@ struct QuantityInputRow: View {
         } set: { newValue in
             value.wrappedValue = newValue.flatMap { $0.isNaN ? nil : Int($0) }
         }
-        self.unit = unit
+        self.sampleType = sampleType
+        self.unit = unit ?? sampleType.displayUnit
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 0
     }
