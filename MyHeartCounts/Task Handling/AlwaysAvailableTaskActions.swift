@@ -19,7 +19,7 @@ import SwiftUI
 @MainActor
 struct AlwaysAvailableTaskActions: DynamicProperty {
     @Environment(StudyManager.self) private var studyManager
-    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    @DebugModeEnabled private var debugModeEnabled
     
     var wrappedValue: Self {
         self
@@ -31,7 +31,7 @@ struct AlwaysAvailableTaskActions: DynamicProperty {
         let allActions: [[PerformTask.Task.Action]] = Array {
             [.ecg]
             [.timedWalkTest(.sixMinuteWalkTest), .timedWalkTest(.twelveMinuteRunTest)]
-            if accountFeatureFlags.isDebugModeEnabled {
+            if debugModeEnabled {
                 // we offer this as a debug option, to be able to test the 6MWT, without having to wait for 6 minutes.
                 [.timedWalkTest(.init(duration: .seconds(30), kind: .walking))]
             }

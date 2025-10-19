@@ -50,7 +50,7 @@ private struct Impl<Footer: View>: View {
     @Environment(\.calendar) private var calendar
     @Environment(HealthKit.self) private var healthKit
     @Environment(StudyManager.self) private var studyManager
-    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
+    @DebugModeEnabled private var debugModeEnabled
     
     @HealthKitCharacteristicQuery(.bloodType) private var healthKitBloodType
     @HealthKitCharacteristicQuery(.dateOfBirth) private var healthKitDateOfBirth
@@ -94,7 +94,7 @@ private struct Impl<Footer: View>: View {
     
     var body: some View {
         Form {
-            if accountFeatureFlags.isDebugModeEnabled {
+            if debugModeEnabled {
                 Section {
                     Picker("Override Region", selection: $regionOverride) {
                         ForEach([Locale.Region?.none, .unitedStates, .unitedKingdom, .germany], id: \.self) { region in

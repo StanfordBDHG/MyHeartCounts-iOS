@@ -40,6 +40,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @MainActor
     func configure() {
         Task {
+            await propagateDebugModeValue(LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey])
             guard let studyManager = await self.studyManager else {
                 return
             }

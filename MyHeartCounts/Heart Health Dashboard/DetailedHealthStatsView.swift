@@ -35,9 +35,10 @@ struct DetailedHealthStatsView: View {
     // swiftlint:disable attributes
     @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
-    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     @LocalPreference(.detailedHealthMetricChartTimeRange) private var chartTimeRange
     // swiftlint:enable attributes
+    
+    @DebugModeEnabled private var debugModeEnabled
     
     private let sampleType: MHCSampleType
     private let input: Input
@@ -66,7 +67,7 @@ struct DetailedHealthStatsView: View {
                     document: document
                 )
             }
-            if accountFeatureFlags.isDebugModeEnabled, case let .custom(sampleType) = sampleType {
+            if debugModeEnabled, case let .custom(sampleType) = sampleType {
                 Section("Debug") {
                     NavigationLink("All Samples") {
                         BrowseFirestoreSamplesView(sampleType: sampleType)

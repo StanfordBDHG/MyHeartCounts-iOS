@@ -89,4 +89,20 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.navigationBars.buttons["Close"].tap()
         XCTAssert(articleTaskCompletedLabel.waitForExistence(timeout: 2))
     }
+    
+    @MainActor
+    func testFeedback() throws {
+        try launchAppAndEnrollIntoStudy()
+        app.navigationBars.buttons["Your Account"].tap()
+        app.swipeUp()
+        app.staticTexts["Send Feedback"].tap()
+        XCTAssert(app.navigationBars["Feedback"].waitForExistence(timeout: 2))
+        let sendButton = app.navigationBars["Feedback"].buttons["Send"]
+        XCTAssert(sendButton.exists)
+        XCTAssertFalse(sendButton.isEnabled)
+        app.textViews["MHC.FeedbackTextField"].typeText("Heyyyy ;)")
+        XCTAssert(sendButton.isEnabled)
+        sendButton.tap()
+        XCTAssert(app.navigationBars["Feedback"].waitForNonExistence(timeout: 2))
+    }
 }

@@ -43,7 +43,6 @@ struct TimedWalkingTestView: View {
     @State private var didCompleteAtLeastOneTest = false
     @State private var mostRecentResult: TimedWalkingTestResult?
     
-    
     private var testIsRunning: Bool {
         timedWalkingTest.state.isActive
     }
@@ -353,6 +352,24 @@ extension TimedWalkingTestConfiguration.Kind {
         switch self {
         case .walking: .figureWalk
         case .running: .figureRun
+        }
+    }
+}
+
+
+extension CMAuthorizationStatus: @retroactive CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .notDetermined:
+            "notDetermined"
+        case .restricted:
+            "restricted"
+        case .denied:
+            "denied"
+        case .authorized:
+            "authorized"
+        @unknown default:
+            "unknown<\(rawValue)>"
         }
     }
 }

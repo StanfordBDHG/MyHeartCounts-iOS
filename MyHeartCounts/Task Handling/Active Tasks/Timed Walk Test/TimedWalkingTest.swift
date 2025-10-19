@@ -303,7 +303,7 @@ extension CMMotionManager {
                 nonisolated(unsafe) var pedometer: CMPedometer? = CMPedometer()
                 pedometer!.queryPedometerData(from: .now, to: .now) { @Sendable _, error in // swiftlint:disable:this force_unwrapping
                     // we simply assume that the absence of an error implies that the authorization was successfully granted
-                    continuation.resume(returning: error == nil)
+                    continuation.resume(returning: error == nil || CMMotionManager.authorizationStatus() == .authorized)
                     pedometer = nil
                 }
             }

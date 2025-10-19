@@ -16,6 +16,8 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     
     private(set) var app: XCUIApplication! // swiftlint:disable:this implicitly_unwrapped_optional
     
+    private var interruptionMonitorTokens: [any NSObjectProtocol] = []
+    
     var studyBundleUrl: URL {
         get throws {
             try XCTUnwrap(Bundle(for: MHCTestCase.self).url(forResource: "mhcStudyBundle", withExtension: "spezistudybundle.aar"))
@@ -36,8 +38,8 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         MainActor.assumeIsolated {
             // After each test, we want the app to get fully reset.
             app.terminate()
-            app.delete(app: "My Heart Counts")
-            app = nil
+//            app.delete(app: "My Heart Counts")
+//            app = nil
         }
     }
     
@@ -56,11 +58,11 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         ].compactMap { $0 as String? }
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
-        app.handleHealthKitAuthorization(timeout: 10)
-        sleep(for: .seconds(2))
+        app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
+        XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
         goToTab(.home)
-        XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 5))
-        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 1))
+        XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
         XCTAssertGreaterThanOrEqual(
             ["Diet", "Par-Q+", "Six-Minute Walk Test", "Heart Risk"].count {
                 app.staticTexts[$0].exists
@@ -82,7 +84,7 @@ extension MHCTestCase {
     @MainActor
     func goToTab(_ tab: RootLevelTab) {
         let button = app.tabBars.buttons[tab.rawValue]
-        XCTAssert(button.waitForExistence(timeout: 2))
+        XCTAssert(button.exists)
         XCTAssert(button.isEnabled)
         XCTAssert(button.isHittable)
         button.tap()

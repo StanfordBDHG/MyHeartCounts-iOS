@@ -18,6 +18,10 @@ import SwiftUI
 struct ECGInstructionsSheet: View {
     @Environment(\.dismiss)
     private var dismiss
+    @Environment(\.calendar)
+    private var calendar
+    
+    @DebugModeEnabled private var debugModeEnabled
     
     @HealthKitQuery(.electrocardiogram, timeRange: .today)
     private var ecgSamples
@@ -37,7 +41,7 @@ struct ECGInstructionsSheet: View {
                     ToolbarItem(placement: .cancellationAction) {
                         DismissButton()
                     }
-                    if shouldOfferManualCompletion {
+                    if debugModeEnabled || shouldOfferManualCompletion {
                         ToolbarItem(placement: .confirmationAction) {
                             Menu {
                                 Button {
@@ -55,7 +59,7 @@ struct ECGInstructionsSheet: View {
                 }
             }
             .onChange(of: ecgSamples.last) { (_, sample: HKElectrocardiogram?) in
-                if !didRecordECG, let sample, sample.startDate >= viewTimestamp {
+                if !didRecordECG, let sample, calendar.compare(viewTimestamp, to: sample.startDate, toGranularity: .minute) != .orderedDescending {
                     didRecordECG = true
                     resultHandler(true)
                 }

@@ -3362,7 +3362,7 @@
         }
       }
     },
-    "Perform Active Task" : {
+    "Perform Always Available Task" : {
 
     },
     "Perform Task: %@" : {

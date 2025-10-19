@@ -500,9 +500,14 @@ extension TasksList {
                     }
                     .accessibilityLabel({ () -> LocalizedStringResource in
                         if let buttonLabel {
-                            // The buttonLabel is a prompt for an action (eg "Answer Questionnaire" or "Read Article),
-                            // and we then add as context the thing this action would relate to.
-                            "\(buttonLabel): \(String(localized: event.task.title))"
+                            switch event.task.category {
+                            case .customActiveTask(.ecg):
+                                buttonLabel
+                            default:
+                                // The buttonLabel is a prompt for an action (eg "Answer Questionnaire" or "Read Article),
+                                // and we then add as context the thing this action would relate to.
+                                "\(buttonLabel): \(String(localized: event.task.title))"
+                            }
                         } else {
                             "Perform Task: \(String(localized: event.task.title))"
                         }
