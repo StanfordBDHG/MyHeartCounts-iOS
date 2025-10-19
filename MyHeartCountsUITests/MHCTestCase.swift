@@ -12,6 +12,8 @@ import XCTHealthKit
 
 
 class MHCTestCase: XCTestCase, @unchecked Sendable {
+    static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
+    
     private(set) var app: XCUIApplication! // swiftlint:disable:this implicitly_unwrapped_optional
     
     var studyBundleUrl: URL {
