@@ -70,7 +70,7 @@ struct LaunchOptionsTests {
     @Test
     func invalidInput() {
         let intOption1 = LaunchOption<Int?>("--intOption1", default: nil)
-        let intOption2 = LaunchOption<Int?>("--intOption2", default: nil)
+        let intOption2 = LaunchOption<Int?>("--intOption2", default: 123)
         let options1 = LaunchOptions.commandLineOptionsContainer(for: ["", "--intOption1"])
         #expect(options1[intOption1] == nil)
         
