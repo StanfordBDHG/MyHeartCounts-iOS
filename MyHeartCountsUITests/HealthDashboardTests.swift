@@ -39,8 +39,11 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
     
     
     @MainActor
-    func testHealthDashboardDataEntryBMIIndirectViaCM() throws {
-        try launchAppAndEnrollIntoStudy(heightEntryUnitOverride: "cm")
+    func testHealthDashboardDataEntryBMIIndirectMetric() throws {
+        try launchAppAndEnrollIntoStudy(
+            heightEntryUnitOverride: "cm",
+            weightEntryUnitOverride: "kg"
+        )
         goToTab(.heartHealth)
         app.buttons["Body Mass Index"].tap()
         app.navigationBars["Body Mass Index"].buttons["Add Data"].tap()
@@ -59,15 +62,18 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
     
     
     @MainActor
-    func testHealthDashboardDataEntryBMIIndirectViaFtIn() throws {
-        try launchAppAndEnrollIntoStudy(heightEntryUnitOverride: "feet")
+    func testHealthDashboardDataEntryBMIIndirectUSUnits() throws {
+        try launchAppAndEnrollIntoStudy(
+            heightEntryUnitOverride: "feet",
+            weightEntryUnitOverride: "lbs"
+        )
         goToTab(.heartHealth)
         app.buttons["Body Mass Index"].tap()
         app.navigationBars["Body Mass Index"].buttons["Add Data"].tap()
         
         let weightTextField = app.textFields["QuantityDataEntry:Weight"]
         weightTextField.tap()
-        weightTextField.typeText("67")
+        weightTextField.typeText("147.7")
         
         app.staticTexts["Height"].tap()
         let feetPicker = app.pickers["FeetPicker"].pickerWheels.element

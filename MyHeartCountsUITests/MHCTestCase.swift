@@ -44,7 +44,8 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     func launchAppAndEnrollIntoStudy(
         enableDebugMode: Bool = false,
         keepExistingData: Bool = false,
-        heightEntryUnitOverride: String? = nil
+        heightEntryUnitOverride: String? = nil,
+        weightEntryUnitOverride: String? = nil
     ) throws {
         app.launchArguments = [
             "--useFirebaseEmulator",
@@ -53,7 +54,8 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
             "--overrideStudyBundleLocation", try studyBundleUrl.path,
             "--disableAutomaticBulkHealthExport",
             "--forceEnableDebugMode", enableDebugMode ? "true" : "false",
-            "--heightInputUnitOverride", heightEntryUnitOverride ?? "none"
+            "--heightInputUnitOverride", heightEntryUnitOverride ?? "none",
+            "--weightInputUnitOverride", weightEntryUnitOverride ?? "none"
         ].compactMap { $0 as String? }
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))

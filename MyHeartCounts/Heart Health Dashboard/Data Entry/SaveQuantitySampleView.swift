@@ -96,13 +96,16 @@ struct SaveQuantitySampleView: View {
         self.completionHandler = completionHandler
         self.unit = switch sampleType {
         case .healthKit(.height):
-            switch LaunchOptions.launchOptions[.preferredHeightInputUnitOverride] {
-            case .none:
-                sampleType.displayUnit
-            case .cm:
-                .meterUnit(with: .centi)
-            case .feet:
-                .foot()
+            switch LaunchOptions.launchOptions[.heightInputUnitOverride] {
+            case .none: sampleType.displayUnit
+            case .cm: .meterUnit(with: .centi)
+            case .feet: .foot()
+            }
+        case .healthKit(.bodyMass):
+            switch LaunchOptions.launchOptions[.weightInputUnitOverride] {
+            case .none: sampleType.displayUnit
+            case .kg: .gramUnit(with: .kilo)
+            case .lbs: .pound()
             }
         default:
             sampleType.displayUnit
