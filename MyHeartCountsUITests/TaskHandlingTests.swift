@@ -30,6 +30,9 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         
         let completionMessage = app.collectionViews.staticTexts["Six-Minute Walk Test, Completed"]
         
+        if !app.collectionViews.buttons["Take Test: Six-Minute Walk Test"].waitForExistence(timeout: 2) {
+            app.swipeUp()
+        }
         XCTAssert(app.collectionViews.buttons["Take Test: Six-Minute Walk Test"].waitForExistence(timeout: 2))
         XCTAssertFalse(completionMessage.exists)
         
