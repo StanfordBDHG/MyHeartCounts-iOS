@@ -113,7 +113,7 @@ extension MyHeartCountsStandard {
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
             )
-            let resources = try await observations.map(turnIntoFHIRResource)
+            let resources = try await observations.mapAsync(turnIntoFHIRResource)
             _ = consume observations
             let encoded = try JSONEncoder().encode(resources)
             let compressed = try encoded.compressed(using: Zlib.self)

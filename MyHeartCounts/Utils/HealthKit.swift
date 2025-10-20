@@ -32,6 +32,7 @@ extension HKUnit {
             if let code = mappedUnit.code {
                 acc[code, default: []].insert(mappedUnit.hkunit)
             }
+            acc[mappedUnit.unit, default: []].insert(mappedUnit.hkunit)
         }
     }()
     
