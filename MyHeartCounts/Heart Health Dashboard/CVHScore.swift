@@ -62,7 +62,7 @@ struct CVHScore: DynamicProperty {
     )
     private var dailyStepCount
     
-    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 14), source: .appleHealthSystem)
+    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 14), source: Self.sleepDataSourceFilter)
     private var sleepSamples
     
     @HealthKitQuery(.bodyMassIndex, timeRange: .last(days: 14))
@@ -80,7 +80,7 @@ struct CVHScore: DynamicProperty {
     @HealthKitQuery(.bloodPressure, timeRange: .last(months: 3))
     private var bloodPressure
     
-    @State private var lastSeenSleepSamples: [HKCategorySample] = []
+    @State private var sleepDataProcessor = SleepDataProcessor()
     @State private(set) var sleepHealthScore = ScoreResult(
         "Last Night",
         sampleType: .healthKit(.category(.sleepAnalysis)),
@@ -89,10 +89,6 @@ struct CVHScore: DynamicProperty {
     
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
     var wrappedValue: Double? {
-        _ = sleepSamples
-        Task {
-            await updateSleepScore()
-        }
         let scores: [ScoreResult] = Array {
             dietScore
             switch preferredExerciseMetric {
@@ -117,37 +113,51 @@ struct CVHScore: DynamicProperty {
     }
     
     nonisolated func update() {
-        Task {
-            await updateSleepScore()
+        Task { @MainActor in
+            updateSleepScore()
         }
     }
     
-    @concurrent
-    private func updateSleepScore() async {
-        let sleepSamples = await MainActor.run { () -> [HKCategorySample] in
-            guard !lastSeenSleepSamples.elementsEqual(self.sleepSamples) else {
-                // if we don't need an update, we return an empty array here, which will cause the code below to return early.
-                return []
+    private func updateSleepScore() {
+        let samples = withObservationTracking {
+            Array(self.sleepSamples)
+        } onChange: {
+            Task { @MainActor in
+                updateSleepScore()
             }
-            // this ensures that any subsequent calls (including while the computation below is running) will return early, unless data actually changed.
-            let sleepSamples = Array(self.sleepSamples)
+        }
+        Task { @concurrent in
+            let result = await self.sleepDataProcessor.process(samples)
+            await MainActor.run {
+                self.sleepHealthScore = result
+            }
+        }
+    }
+}
+
+
+extension CVHScore {
+    // We use an actor here to simplify things, bc we don't want multiple calls with the same input to perform the sessions calc multiple times.
+    private actor SleepDataProcessor {
+        private var lastSeenSleepSamples: [HKCategorySample] = []
+        private var lastResult: ScoreResult?
+        
+        func process(_ sleepSamples: some Collection<HKCategorySample>) -> ScoreResult {
+            if let lastResult, sleepSamples.elementsEqual(lastSeenSleepSamples) {
+                return lastResult
+            }
+            let sleepSamples = Array(sleepSamples)
             self.lastSeenSleepSamples = sleepSamples
-            return sleepSamples
-        }
-        guard !sleepSamples.isEmpty else {
-            return
-        }
-        dispatchPrecondition(condition: .notOnQueue(.main))
-        let sleepSessions = (try? sleepSamples.splitIntoSleepSessions()) ?? []
-        let score = ScoreResult(
-            "Most Recent Night",
-            sampleType: .healthKit(.category(.sleepAnalysis)),
-            sample: sleepSessions.last,
-            value: { $0.totalTimeSpentAsleep / 60 / 60 },
-            definition: .cvhSleep
-        )
-        await MainActor.run {
-            self.sleepHealthScore = score
+            let sleepSessions = (try? sleepSamples.splitIntoSleepSessions()) ?? []
+            let score = ScoreResult(
+                "Most Recent Night",
+                sampleType: .healthKit(.category(.sleepAnalysis)),
+                sample: sleepSessions.last,
+                value: { $0.totalTimeSpentAsleep / 60 / 60 },
+                definition: .cvhSleep
+            )
+            self.lastResult = score
+            return score
         }
     }
 }
@@ -438,4 +448,13 @@ extension HKStatistics: CVHScore.ComponentSampleProtocol {
 
 extension HealthKit.SourceFilter {
     static let appleHealthSystem = Self.bundleId(beginsWith: "com.apple.health")
+}
+
+
+extension CVHScore {
+    static var sleepDataSourceFilter: HealthKit.SourceFilter {
+        LaunchOptions.launchOptions[Self.considerAllSleepDataLaunchOption] ? .any : .appleHealthSystem
+    }
+    
+    private static let considerAllSleepDataLaunchOption = LaunchOption<Bool>("--dashboardConsiderAllSleepData", default: false)
 }
