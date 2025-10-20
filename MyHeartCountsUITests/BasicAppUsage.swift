@@ -90,6 +90,7 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         XCTAssert(articleTaskCompletedLabel.waitForExistence(timeout: 2))
     }
     
+    
     @MainActor
     func testFeedback() throws {
         try launchAppAndEnrollIntoStudy()
@@ -105,5 +106,21 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         sendButton.tap()
         XCTExpectFailure("Firestore rules are currently incorrectly configured")
         XCTAssert(app.navigationBars["Feedback"].waitForNonExistence(timeout: 2))
+    }
+    
+    
+    @MainActor
+    func testSensorKitNudgeDismissal() throws {
+        try launchAppAndEnrollIntoStudy()
+        goToTab(.home)
+        XCTAssert(app.staticTexts["Enable SensorKit"].waitForExistence(timeout: 2))
+        app.staticTexts["Enable SensorKit"].press(forDuration: 2)
+        print(app.debugDescription)
+        XCTAssert(app.buttons["Stop Suggesting This"].waitForExistence(timeout: 2))
+        app.buttons["Stop Suggesting This"].tap()
+        XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 2))
+        app.terminate()
+        try launchAppAndEnrollIntoStudy(keepExistingData: true)
+        XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 5))
     }
 }

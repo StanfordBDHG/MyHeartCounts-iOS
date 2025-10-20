@@ -18,20 +18,24 @@ struct LaunchOptionsTests {
     @Test
     func simpleTypes() {
         let options = LaunchOptions.commandLineOptionsContainer(for: [
-            "", "--boolOption1", "true"
+            "", "--boolOption", "true"
         ])
-        #expect(options[.boolOption1] == true)
+        let option = LaunchOption<Bool>("--boolOption", default: false)
+        #expect(options[option] == true)
     }
     
     
     @Test
     func boolCanOmitValue() {
+        let option1 = LaunchOption<Bool>("--boolOption1", default: false)
+        let option2 = LaunchOption<Bool>("--boolOption2", default: false)
+        
         let options1A = LaunchOptions.commandLineOptionsContainer(for: ["", "--boolOption1", "true"])
         let options1B = LaunchOptions.commandLineOptionsContainer(for: ["", "--boolOption1"])
-        #expect(options1A[.boolOption1] == options1B[.boolOption1])
+        #expect(options1A[option1] == options1B[option1])
         let options2A = LaunchOptions.commandLineOptionsContainer(for: ["", "--boolOption2", "true"])
         let options2B = LaunchOptions.commandLineOptionsContainer(for: ["", "--boolOption2"])
-        #expect(options2A[.boolOption2] == options2B[.boolOption2])
+        #expect(options2A[option2] == options2B[option2])
     }
     
     
@@ -54,21 +58,24 @@ struct LaunchOptionsTests {
     
     @Test
     func idiosyncraticBehaviours() {
+        let intOption = LaunchOption<Int?>("--intOption", default: nil)
         let options1 = LaunchOptions.commandLineOptionsContainer(for: ["", "--intOption", "52"])
         let options2 = LaunchOptions.commandLineOptionsContainer(for: [])
-        #expect(options1[.intOption] == 52)
+        #expect(options1[intOption] == 52)
         // the LaunchOption caches its parsed value. might wanna change that at some point, or have it cache by the container / on a per-container basis?
-        #expect(options2[.intOption] == 52)
+        #expect(options2[intOption] == 52)
     }
     
     
     @Test
     func invalidInput() {
-        let options1 = LaunchOptions.commandLineOptionsContainer(for: ["", "--intOption"])
-        #expect(options1[.intOption] == nil)
+        let intOption1 = LaunchOption<Int?>("--intOption1", default: nil)
+        let intOption2 = LaunchOption<Int?>("--intOption2", default: nil)
+        let options1 = LaunchOptions.commandLineOptionsContainer(for: ["", "--intOption1"])
+        #expect(options1[intOption1] == nil)
         
         let options2 = LaunchOptions.commandLineOptionsContainer(for: ["", "--intOption2"])
-        #expect(options2[.intOption2] == 123)
+        #expect(options2[intOption2] == 123)
     }
     
     
@@ -97,12 +104,4 @@ struct LaunchOptionsTests {
             }
         }
     }
-}
-
-
-extension LaunchOptions {
-    static let boolOption1 = LaunchOption<Bool>("--boolOption1", default: false)
-    static let boolOption2 = LaunchOption<Bool>("--boolOption2", default: true)
-    static let intOption = LaunchOption<Int?>("--intOption", default: nil)
-    static let intOption2 = LaunchOption<Int?>("--intOption2", default: 123)
 }

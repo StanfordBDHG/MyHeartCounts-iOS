@@ -13,6 +13,7 @@ import XCTHealthKit
 /*
  Ideas for additional tests:
  - [dashboard] exercise mins vs step count (+ auto switch based on what's available!)
+ - an onboarding test where we enter invalid values and get to the "you're not eligible" step
  */
 
 class MHCTestCase: XCTestCase, @unchecked Sendable {

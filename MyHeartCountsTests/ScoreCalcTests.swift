@@ -34,5 +34,6 @@ struct ScoreCalcTests {
     @Test
     func scoreCalcB() {
         let score = ScoreDefinition.cvhBloodPressure
+        #expect(score(BloodPressureMeasurement(systolic: 110, diastolic: 75)) == 1)
     }
 }

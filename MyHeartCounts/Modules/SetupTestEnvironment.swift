@@ -12,6 +12,7 @@ import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziHealthKit
+import SpeziLocalStorage
 import SpeziStudy
 import struct SpeziViews.AnyLocalizedError
 
@@ -59,6 +60,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
+    @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     // swiftlint:enable attributes
     
@@ -165,5 +167,6 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
         try await healthKit.askForAuthorization(for: accessReqs)
         try await studyManager.enroll(in: studyBundle)
+        try localStorage.store(.now, for: .studyActivationDate)
     }
 }
