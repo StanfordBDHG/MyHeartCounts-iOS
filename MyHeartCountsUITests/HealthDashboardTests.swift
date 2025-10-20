@@ -81,7 +81,11 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(feetPicker.waitForExistence(timeout: 2))
         XCTAssert(inchesPicker.waitForExistence(timeout: 2))
         feetPicker.adjust(toPickerWheelValue: "6 ft")
+        sleep(for: .seconds(0.5))
+        XCTAssertEqual(try XCTUnwrap(feetPicker.value as? String), "6 ft")
         inchesPicker.adjust(toPickerWheelValue: "1 in")
+        sleep(for: .seconds(0.5))
+        XCTAssertEqual(try XCTUnwrap(inchesPicker.value as? String), "1 in")
         
         app.navigationBars["Enter BMI"].buttons["Save"].tap()
         XCTAssert(app.staticTexts.element(matching: NSPredicate(format: "label MATCHES 'Most Recent Sample: 19.49'")).waitForExistence(timeout: 5))

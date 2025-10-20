@@ -122,7 +122,7 @@ extension HeightInputRow {
         
         private func updateQuantity() {
             let total = Measurement(value: Double(feet), unit: UnitLength.feet) + Measurement(value: Double(inches), unit: .inches)
-            quantity = HKQuantity(unit: .meter(), doubleValue: total.converted(to: .meters).value)
+            quantity = HKQuantity(unit: .meterUnit(with: .centi), doubleValue: total.converted(to: .centimeters).value)
         }
     }
 }
