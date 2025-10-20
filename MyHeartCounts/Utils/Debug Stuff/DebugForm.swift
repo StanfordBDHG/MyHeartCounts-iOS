@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order attributes
 
 import Foundation
 import SFSafeSymbols
@@ -30,13 +30,12 @@ struct DebugForm: View {
 
 
 private struct DebugFormImpl: View {
-    // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
     @Environment(StudyManager.self) private var studyManager
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
     @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
     @PerformTask private var performTask
-    // swiftlint:enable attributes
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
         Form {
@@ -67,6 +66,8 @@ private struct DebugFormImpl: View {
                 } label: {
                     Label("Timed Walking Test", systemSymbol: .figureWalk)
                 }
+                // intended for the UI tests to have some data here...
+                AddSleepSessionsButton(viewState: $viewState)
                 answerQuestionnaireRow
                 Button("Replace Root View Controller", role: .destructive) {
                     // The idea here is that discarding the root view controller should deallocate all our resources.

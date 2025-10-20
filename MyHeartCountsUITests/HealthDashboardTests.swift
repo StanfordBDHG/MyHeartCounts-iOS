@@ -235,4 +235,25 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         try diastolicTextField.delete(count: 5, options: .skipTextFieldSelection)
         XCTAssert(diastolicErrorMessage.waitForNonExistence(timeout: 2))
     }
+    
+    
+    @MainActor
+    func testSleepSessionsSheet() throws {
+        try launchAppAndEnrollIntoStudy(enableDebugMode: true, extraLaunchArgs: [
+            "--dashboardConsiderAllSleepData"
+        ])
+        openAccountSheet()
+        app.swipeUp()
+        app.swipeUp()
+        app.buttons["Debug"].tap()
+        app.buttons["Add Sleep Sessions"].tap()
+        app.handleHealthKitAuthorization()
+        sleep(for: .seconds(2))
+        app.navigationBars.buttons["BackButton"].tap()
+        app.navigationBars.buttons["Close"].tap()
+        goToTab(.heartHealth)
+        app.swipeUp()
+        app.buttons["Sleep"].tap()
+        XCTAssert(app.staticTexts["Most Recent Night: 7 hours and 16 minutes"].waitForExistence(timeout: 2))
+    }
 }

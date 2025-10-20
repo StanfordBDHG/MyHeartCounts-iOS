@@ -10,6 +10,10 @@ import XCTest
 import XCTestExtensions
 import XCTHealthKit
 
+/*
+ Ideas for additional tests:
+ - [dashboard] exercise mins vs step count (+ auto switch based on what's available!)
+ */
 
 class MHCTestCase: XCTestCase, @unchecked Sendable {
     static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
@@ -40,12 +44,22 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         }
     }
     
+    /// Launches the app and puts it in a state where the participant is logged in and enrolled into the study.
+    ///
+    /// - parameter enableDebugMode: Whether the app should force-enable its debug mode for this launch. Defaults to `false`.
+    /// - parameter keepExistingData: Whether the app should keep the previous launch's state, w.r.t. stuff like e.g. the completed tasks. Defaults to `false`.
+    /// - parameter heightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a height quantity.
+    ///     Allowed values are `cm`, `feet`, or `nil` (the default).
+    /// - parameter weightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a weight quantity.
+    ///     Allowed values are `kg`, `lbs`, or `nil` (the default).
+    /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     @MainActor
     func launchAppAndEnrollIntoStudy(
         enableDebugMode: Bool = false,
         keepExistingData: Bool = false,
         heightEntryUnitOverride: String? = nil,
-        weightEntryUnitOverride: String? = nil
+        weightEntryUnitOverride: String? = nil,
+        extraLaunchArgs: [String?] = []
     ) throws {
         app.launchArguments = [
             "--useFirebaseEmulator",
@@ -57,6 +71,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
             "--heightInputUnitOverride", heightEntryUnitOverride ?? "none",
             "--weightInputUnitOverride", weightEntryUnitOverride ?? "none"
         ].compactMap { $0 as String? }
+        app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
