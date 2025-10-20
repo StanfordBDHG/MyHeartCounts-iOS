@@ -24,7 +24,7 @@ struct ScoreResultGauge: View {
                     .font(.headline)
                     .accessibilityLabel("Score Result: \(Int(score * 100)) percent")
             } else {
-                Text("-")
+                Text("—")
                     .font(.headline)
                     .foregroundStyle(.secondary)
             }

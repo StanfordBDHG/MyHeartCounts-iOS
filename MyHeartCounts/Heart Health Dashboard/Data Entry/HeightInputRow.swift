@@ -45,16 +45,21 @@ struct HeightInputRow: View {
             )
         case .feetAndInches:
             // no need to perform input validation here; that's handled via the wheel-styled picker
+            let valueDesc: LocalizedStringResource = if let (feet, inches) = quantity?.valuesForFeetAndInches() {
+                "\(feet)‘ \(Int(inches))“"
+            } else {
+                "—"
+            }
             HStack {
                 Text(title)
                 Spacer()
                 // maybe give it a rounded-rect background, like what the Health app does?
-                if let (feet, inches) = quantity?.valuesForFeetAndInches() {
-                    Text("\(feet)‘ \(Int(inches))“")
-                } else {
-                    Text("—")
-                }
+                Text(valueDesc)
             }
+            .accessibilityRepresentation {
+                Text(verbatim: "\(String(localized: title)), \(String(localized: valueDesc))")
+            }
+            .accessibilityIdentifier("MHC:HeightRow")
             .contentShape(Rectangle())
             .onTapGesture {
                 // animate this (not easy, apparently...)

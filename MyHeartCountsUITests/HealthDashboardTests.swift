@@ -75,17 +75,23 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         weightTextField.tap()
         weightTextField.typeText("147.7")
         
-        app.staticTexts["Height"].tap()
+        app.staticTexts["MHC:HeightRow"].tap()
         let feetPicker = app.pickers["FeetPicker"].pickerWheels.element
         let inchesPicker = app.pickers["InchesPicker"].pickerWheels.element
         XCTAssert(feetPicker.waitForExistence(timeout: 2))
         XCTAssert(inchesPicker.waitForExistence(timeout: 2))
-        feetPicker.adjust(toPickerWheelValue: "6 ft")
-        sleep(for: .seconds(0.5))
-        XCTAssertEqual(try XCTUnwrap(feetPicker.value as? String), "6 ft")
-        inchesPicker.adjust(toPickerWheelValue: "1 in")
-        sleep(for: .seconds(0.5))
-        XCTAssertEqual(try XCTUnwrap(inchesPicker.value as? String), "1 in")
+        func setPicker(_ picker: XCUIElement, to value: String) {
+            for _ in 0..<7 {
+                picker.adjust(toPickerWheelValue: value)
+                sleep(for: .seconds(0.5))
+                if picker.value as? String == value {
+                    return
+                }
+            }
+        }
+        setPicker(feetPicker, to: "6 ft")
+        setPicker(inchesPicker, to: "1 in")
+        XCTAssert(app.staticTexts["Height, 6‘ 1“"].waitForExistence(timeout: 2))
         
         app.navigationBars["Enter BMI"].buttons["Save"].tap()
         XCTAssert(app.staticTexts.element(matching: NSPredicate(format: "label MATCHES 'Most Recent Sample: 19.49'")).waitForExistence(timeout: 5))

@@ -118,7 +118,7 @@ struct HeartHealthDashboard: View {
                                 .font(.largeTitle.bold())
                         }
                     } else {
-                        Text("-")
+                        Text("—")
                             .font(.largeTitle.bold())
                             .foregroundStyle(.secondary)
                     }
