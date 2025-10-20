@@ -232,7 +232,7 @@ private struct CommandLineLaunchOptionsContainer: LaunchOptionsContainerProtocol
                 return value
             } catch {
                 logger.error("Unable to parse value for option '\(option.key)': \(error)")
-                fatalError("Unable to decode CLI option '\(option.key)': \(error)")
+                return nil
             }
         }
     }
