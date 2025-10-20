@@ -13,6 +13,7 @@ import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziHealthKit
 import SpeziStudy
+import struct SpeziViews.AnyLocalizedError
 
 
 /// Sets up a test environment, by logging into a test account and enrolling in the current study definition.
@@ -40,6 +41,19 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
     }
     
+    enum State {
+        /// The test environment hasn't been set up, and will not be set up.
+        case disabled
+        /// The test environment will soon be set up.
+        case pending
+        /// The test environment is currently being set up
+        case settingUp
+        /// The test environment has been set up
+        case done
+        /// There was an error setting up the test environment
+        case failure(any Error)
+    }
+    
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
@@ -59,9 +73,40 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         config != .no
     }
     
-    nonisolated init() {}
+    private(set) var state: State
     
-    func setUp() async throws {
+    init() {
+        state = if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && config != .no {
+            .pending
+        } else {
+            .disabled
+        }
+    }
+    
+    func configure() {
+        switch state {
+        case .pending:
+            Task { @MainActor in
+                self.state = .settingUp
+                if !Spezi.didLoadFirebase {
+                    Spezi.loadFirebase(for: .unitedStates)
+                    try? await _Concurrency.Task.sleep(for: .seconds(4))
+                }
+                do {
+                    try await setUp()
+                    logger.notice("Successfully set up test environment")
+                    self.state = .done
+                } catch {
+                    logger.error("ERROR SETTING UP TEST ENVIRONMENT: \(error)")
+                    self.state = .failure(AnyLocalizedError(error: error, defaultErrorDescription: "\(error)"))
+                }
+            }
+        default:
+            break
+        }
+    }
+    
+    private func setUp() async throws {
         isInSetup = true
         defer {
             isInSetup = false
