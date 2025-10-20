@@ -21,14 +21,8 @@ import SwiftUI
 
 
 struct HeartHealthDashboard: View {
-    struct AddNewSampleDescriptor: Identifiable {
+    private struct MetricDescriptor: Identifiable {
         let keyPath: KeyPath<CVHScore, ScoreResult>
-        var id: ObjectIdentifier { .init(keyPath) }
-    }
-    
-    private struct ScoreResultToExplain: Identifiable {
-        let keyPath: KeyPath<CVHScore, ScoreResult>
-        let result: ScoreResult
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
@@ -40,9 +34,9 @@ struct HeartHealthDashboard: View {
     
     @CVHScore private var cvhScore
     
-    @State private var addNewSampleDescriptor: AddNewSampleDescriptor?
+    @State private var addNewSampleDescriptor: MetricDescriptor?
     @State private var presentedArticle: Article?
-    @State private var scoreResultToExplain: ScoreResultToExplain?
+    @State private var scoreResultToExplain: MetricDescriptor?
     @State private var isPresentingPastTimedWalkTestResults = false
     
     var body: some View {
@@ -55,17 +49,14 @@ struct HeartHealthDashboard: View {
         .sheet(item: $presentedArticle) { article in
             ArticleSheet(article: article)
         }
-        .sheet(item: $scoreResultToExplain) { (input: ScoreResultToExplain) in
+        .sheet(item: $scoreResultToExplain) { descriptor in
             NavigationStack {
-                DetailedHealthStatsView(
-                    scoreResult: input.result,
-                    cvhKeyPath: input.keyPath
-                )
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        DismissButton()
+                DetailedHealthStatsView(descriptor.keyPath)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            DismissButton()
+                        }
                     }
-                }
             }
         }
         .sheet(isPresented: $isPresentingPastTimedWalkTestResults) {
@@ -127,7 +118,7 @@ struct HeartHealthDashboard: View {
                                 .font(.largeTitle.bold())
                         }
                     } else {
-                        Text("-")
+                        Text("—")
                             .font(.largeTitle.bold())
                             .foregroundStyle(.secondary)
                     }
@@ -196,13 +187,13 @@ struct HeartHealthDashboard: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("Tap to lear more…")
+                    Text("Tap to learn more…")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
         } onTap: {
-            scoreResultToExplain = .init(keyPath: scoreKeyPath, result: score)
+            scoreResultToExplain = .init(keyPath: scoreKeyPath)
         }
     }
     

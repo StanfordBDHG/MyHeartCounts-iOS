@@ -28,7 +28,7 @@ struct AlwaysAvailableTaskActionsMenu: View {
                 Divider()
             }
         } label: {
-            Label("Perform Active Task", systemSymbol: .plus)
+            Label("Perform Always Available Task", systemSymbol: .plus)
         }
     }
 }

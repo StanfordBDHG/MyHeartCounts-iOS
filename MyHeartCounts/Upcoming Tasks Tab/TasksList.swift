@@ -449,45 +449,6 @@ extension TasksList {
         }
         
         @ViewBuilder private var fallbackSections: some View {
-//            // All tasks we want to offer as "always available"
-//            let allTasks: [UnscheduledTask] = [
-//                .ecg,
-//                .timedWalkingTest(.sixMinuteWalkTest),
-//                .timedWalkingTest(.twelveMinuteRunTest)
-//            ]
-//            // filter out anything that's already prompted above
-//            let tasks = allTasks.filter { task in
-//                switch task {
-//                case .ecg:
-//                    !events.contains { $0.task.category == .customActiveTask(.ecg) }
-//                case .timedWalkingTest(let testConfig):
-//                    !events.contains { (event: Event) -> Bool in
-//                        guard event.task.category == .timedWalkingTest else {
-//                            return false
-//                        }
-//                        return switch event.task.studyScheduledTaskAction {
-//                        case .promptTimedWalkingTest(let component):
-//                            component.test == testConfig
-//                        default:
-//                            false
-//                        }
-//                    }
-//                }
-//            }
-//            ForEach(tasks, id: \) { task in
-//                Section {
-//                    FakeEventTile(
-//                        symbol: task.symbol,
-//                        title: task.displayTitle,
-//                        subtitle: task.subtitle,
-//                        instructions: task.instructions,
-//                        actionLabel: task.actionLabel
-//                    ) {
-//                        selectionHandler(.unscheduled(task))
-//                    }
-//                }
-//                .listSectionSpacing(.compact)
-//            }
             let actions = alwaysAvailableTaskActions.taskActions(excludingBasedOn: events).flatMap(\.self)
             ForEach(actions, id: \.self) { action in
                 Section {
@@ -528,7 +489,8 @@ extension TasksList {
                 InstructionsTile(event, footerVisibility: !event.isCompleted || interactions.canPerform ? .showAlways : .hideIfCompleted) {
                     DefaultTileHeader(event)
                 } footer: {
-                    EventActionButton(event: event, label: eventButtonTitle(for: event)) {
+                    let buttonLabel = eventButtonTitle(for: event)
+                    EventActionButton(event: event, label: buttonLabel) {
                         selectionHandler(.regular(
                             action: action,
                             event: event,
@@ -536,6 +498,20 @@ extension TasksList {
                             shouldCompleteEvent: !event.isCompleted || interactions.shouldComplete
                         ))
                     }
+                    .accessibilityLabel({ () -> LocalizedStringResource in
+                        if let buttonLabel {
+                            switch event.task.category {
+                            case .customActiveTask(.ecg):
+                                buttonLabel
+                            default:
+                                // The buttonLabel is a prompt for an action (eg "Answer Questionnaire" or "Read Article),
+                                // and we then add as context the thing this action would relate to.
+                                "\(buttonLabel): \(String(localized: event.task.title))"
+                            }
+                        } else {
+                            "Perform Task: \(String(localized: event.task.title))"
+                        }
+                    }())
                 }
             } else {
                 InstructionsTile(event)

@@ -121,7 +121,7 @@ struct SaveBloodPressureSampleView: View {
             title: "\(sampleType.mhcDisplayTitle)",
             value: value,
             limits: MHCQuantitySampleType.healthKit(sampleType).inputLimits(in: sampleType.displayUnit),
-            sampleType: sampleType
+            sampleType: .healthKit(sampleType)
         )
     }
     

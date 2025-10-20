@@ -7,12 +7,9 @@
 //
 
 import HealthKit
-import SpeziHealthKit
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
-import XCTSpeziAccount
-import XCTSpeziNotifications
 
 
 final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
@@ -71,5 +68,59 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.buttons["Japanese"].tap()
         app.navigationBars["Race / Ethnicity"].buttons["Demographics"].tap()
         XCTAssert(app.buttons["Race / Ethnicity, White, Japanese"].waitForExistence(timeout: 1))
+    }
+    
+    
+    @MainActor
+    func testInformativeContent() throws {
+        try launchAppAndEnrollIntoStudy()
+        let articleTaskCompletedLabel = app.staticTexts["Welcome to My Heart Counts, Completed"]
+        XCTAssert(articleTaskCompletedLabel.waitForNonExistence(timeout: 2))
+        do {
+            let button = app.buttons["Read Article: Welcome to My Heart Counts"]
+            XCTAssert(button.waitForExistence(timeout: 2))
+            button.tap()
+        }
+        XCTAssert(app.images["stanford"].waitForExistence(timeout: 2))
+        do {
+            let pred = NSPredicate(format: "label BEGINSWITH 'We’re thrilled to have you on board.'")
+            XCTAssert(app.staticTexts.element(matching: pred).waitForExistence(timeout: 1))
+        }
+        app.navigationBars.buttons["Close"].tap()
+        XCTAssert(articleTaskCompletedLabel.waitForExistence(timeout: 2))
+    }
+    
+    
+    @MainActor
+    func testFeedback() throws {
+        try launchAppAndEnrollIntoStudy()
+        openAccountSheet()
+        app.swipeUp()
+        app.staticTexts["Send Feedback"].tap()
+        XCTAssert(app.navigationBars["Feedback"].waitForExistence(timeout: 2))
+        let sendButton = app.navigationBars["Feedback"].buttons["Send"]
+        XCTAssert(sendButton.exists)
+        XCTAssertFalse(sendButton.isEnabled)
+        app.textViews["MHC.FeedbackTextField"].typeText("Heyyyy ;)")
+        XCTAssert(sendButton.isEnabled)
+        sendButton.tap()
+        XCTExpectFailure("Firestore rules are currently incorrectly configured")
+        XCTAssert(app.navigationBars["Feedback"].waitForNonExistence(timeout: 2))
+    }
+    
+    
+    @MainActor
+    func testSensorKitNudgeDismissal() throws {
+        try launchAppAndEnrollIntoStudy()
+        goToTab(.home)
+        XCTAssert(app.staticTexts["Enable SensorKit"].waitForExistence(timeout: 2))
+        app.staticTexts["Enable SensorKit"].press(forDuration: 2)
+        print(app.debugDescription)
+        XCTAssert(app.buttons["Stop Suggesting This"].waitForExistence(timeout: 2))
+        app.buttons["Stop Suggesting This"].tap()
+        XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 2))
+        app.terminate()
+        try launchAppAndEnrollIntoStudy(keepExistingData: true)
+        XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 5))
     }
 }

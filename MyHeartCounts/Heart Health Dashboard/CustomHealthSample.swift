@@ -18,17 +18,17 @@ enum NicotineExposureCategoryValues: Int, Hashable, Sendable, CaseIterable {
 }
 
 
-extension NicotineExposureCategoryValues {
-    var shortDisplayTitle: LocalizedStringResource {
+extension NicotineExposureCategoryValues: CustomLocalizedStringResourceConvertible {
+    var localizedStringResource: LocalizedStringResource {
         switch self {
         case .neverSmoked:
-            "Never"
+            "Never Smoked"
         case .quitMoreThan5YearsAgo:
-            "More than 5 years ago"
+            "Quit more than 5 years ago"
         case .quitWithin1To5Years:
-            "1 to 5 years ago"
+            "Quit 1 to 5 years ago"
         case .quitWithinLastYearOrIsUsingNDS:
-            "Within last year, or am using NDS"
+            "Quit within last year, or am using NDS"
         case .activelySmoking:
             "Actively smoking"
         }

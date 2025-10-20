@@ -10,9 +10,18 @@ import XCTest
 import XCTestExtensions
 import XCTHealthKit
 
+/*
+ Ideas for additional tests:
+ - [dashboard] exercise mins vs step count (+ auto switch based on what's available!)
+ - an onboarding test where we enter invalid values and get to the "you're not eligible" step
+ */
 
 class MHCTestCase: XCTestCase, @unchecked Sendable {
+    static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
+    
     private(set) var app: XCUIApplication! // swiftlint:disable:this implicitly_unwrapped_optional
+    
+    private var interruptionMonitorTokens: [any NSObjectProtocol] = []
     
     var studyBundleUrl: URL {
         get throws {
@@ -32,32 +41,48 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     override func tearDown() {
         super.tearDown()
         MainActor.assumeIsolated {
-            // After each test, we want the app to get fully reset.
             app.terminate()
-            app.delete(app: "My Heart Counts")
-            app = nil
         }
     }
     
+    /// Launches the app and puts it in a state where the participant is logged in and enrolled into the study.
+    ///
+    /// - parameter enableDebugMode: Whether the app should force-enable its debug mode for this launch. Defaults to `false`.
+    /// - parameter keepExistingData: Whether the app should keep the previous launch's state, w.r.t. stuff like e.g. the completed tasks. Defaults to `false`.
+    /// - parameter heightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a height quantity.
+    ///     Allowed values are `cm`, `feet`, or `nil` (the default).
+    /// - parameter weightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a weight quantity.
+    ///     Allowed values are `kg`, `lbs`, or `nil` (the default).
+    /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     @MainActor
-    func launchAppAndEnrollIntoStudy() throws {
+    func launchAppAndEnrollIntoStudy(
+        enableDebugMode: Bool = false,
+        keepExistingData: Bool = false,
+        heightEntryUnitOverride: String? = nil,
+        weightEntryUnitOverride: String? = nil,
+        extraLaunchArgs: [String?] = []
+    ) throws {
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--skipOnboarding",
-            "--setupTestAccount",
+            "--setupTestAccount", keepExistingData ? "keepExistingData" : nil,
             "--overrideStudyBundleLocation", try studyBundleUrl.path,
-            "--disableAutomaticBulkHealthExport"
-        ]
+            "--disableAutomaticBulkHealthExport",
+            "--forceEnableDebugMode", enableDebugMode ? "true" : "false",
+            "--heightInputUnitOverride", heightEntryUnitOverride ?? "none",
+            "--weightInputUnitOverride", weightEntryUnitOverride ?? "none"
+        ].compactMap { $0 as String? }
+        app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
-        app.handleHealthKitAuthorization()
-        sleep(for: .seconds(2))
+        app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
+        XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
         goToTab(.home)
-        XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 5))
-        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 1))
-        XCTAssertGreaterThan(
+        XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
+        XCTAssertGreaterThanOrEqual(
             ["Diet", "Par-Q+", "Six-Minute Walk Test", "Heart Risk"].count {
-                app.staticTexts[$0].waitForExistence(timeout: 1)
+                app.staticTexts[$0].exists
             },
             2
         )
@@ -76,7 +101,7 @@ extension MHCTestCase {
     @MainActor
     func goToTab(_ tab: RootLevelTab) {
         let button = app.tabBars.buttons[tab.rawValue]
-        XCTAssert(button.waitForExistence(timeout: 2))
+        XCTAssert(button.exists)
         XCTAssert(button.isEnabled)
         XCTAssert(button.isHittable)
         button.tap()

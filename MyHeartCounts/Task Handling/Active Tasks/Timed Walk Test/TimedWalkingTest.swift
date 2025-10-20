@@ -132,16 +132,6 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             #endif
             return try await stop()
         }
-        #if targetEnvironment(simulator)
-        return TimedWalkingTestResult(
-            id: UUID(),
-            test: .sixMinuteWalkTest,
-            startDate: .now.addingTimeInterval(-360),
-            endDate: .now,
-            numberOfSteps: 624,
-            distanceCovered: 842
-        )
-        #else
         session.completeSessionTask = sessionTask
         let result = await sessionTask.result
         switch result {
@@ -150,7 +140,6 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         case .failure(let error):
             throw .other(error)
         }
-        #endif
     }
     
     
@@ -166,6 +155,16 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             stopPhoneSensorDataCollection()
             try? vibrate()
             var result = session.inProgressResult
+            #if targetEnvironment(simulator)
+            result = TimedWalkingTestResult(
+                id: UUID(),
+                test: .sixMinuteWalkTest,
+                startDate: .now.addingTimeInterval(-360),
+                endDate: .now,
+                numberOfSteps: 624,
+                distanceCovered: 842
+            )
+            #else
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
                 pedometer.queryPedometerData(from: result.startDate, to: result.endDate) { @Sendable data, error in
                     guard let data else {
@@ -185,6 +184,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
                     continuation.resume()
                 }
             }
+            #endif
             try? await standard.uploadHealthObservation(result)
             return result
         }
@@ -303,7 +303,7 @@ extension CMMotionManager {
                 nonisolated(unsafe) var pedometer: CMPedometer? = CMPedometer()
                 pedometer!.queryPedometerData(from: .now, to: .now) { @Sendable _, error in // swiftlint:disable:this force_unwrapping
                     // we simply assume that the absence of an error implies that the authorization was successfully granted
-                    continuation.resume(returning: error == nil)
+                    continuation.resume(returning: error == nil || CMMotionManager.authorizationStatus() == .authorized)
                     pedometer = nil
                 }
             }

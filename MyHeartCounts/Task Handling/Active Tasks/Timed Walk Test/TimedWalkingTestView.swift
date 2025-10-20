@@ -16,8 +16,28 @@ import SpeziViews
 import SwiftUI
 
 
-struct TimedWalkingTestView: View {
+struct TimedWalkingTestSheet: View {
     typealias ResultHandler = @Sendable @MainActor (TimedWalkingTestResult?) async -> Void
+    
+    private let test: TimedWalkingTestConfiguration
+    private let resultHandler: ResultHandler
+    
+    var body: some View {
+        NavigationStack {
+            TimedWalkingTestView(test, resultHandler: resultHandler)
+        }
+        .accessibilityIdentifier("MHC.TimedWalkTestView")
+    }
+    
+    init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler = { _ in }) {
+        self.test = test
+        self.resultHandler = resultHandler
+    }
+}
+
+
+private struct TimedWalkingTestView: View {
+    typealias ResultHandler = TimedWalkingTestSheet.ResultHandler
     
     @Environment(\.openSettingsApp)
     private var openSettingsApp
@@ -42,7 +62,6 @@ struct TimedWalkingTestView: View {
     
     @State private var didCompleteAtLeastOneTest = false
     @State private var mostRecentResult: TimedWalkingTestResult?
-    
     
     private var testIsRunning: Bool {
         timedWalkingTest.state.isActive
@@ -176,7 +195,11 @@ struct TimedWalkingTestView: View {
             Section("Test Complete") {
                 LabeledContent("Date", value: result.startDate, format: .dateTime)
                 LabeledContent("Steps", value: result.numberOfSteps, format: .number)
-                LabeledContent("Distance (m)", value: result.distanceCovered, format: .number)
+                LabeledContent(
+                    "Distance",
+                    value: Measurement<UnitLength>(value: result.distanceCovered, unit: .meters),
+                    format: .measurement(width: .abbreviated)
+                )
             }
         }
     }
@@ -244,7 +267,7 @@ struct TimedWalkingTestView: View {
         }
     }
     
-    init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler = { _ in }) {
+    init(_ test: TimedWalkingTestConfiguration, resultHandler: @escaping ResultHandler) {
         self.test = test
         self.resultHandler = resultHandler
     }
@@ -353,6 +376,24 @@ extension TimedWalkingTestConfiguration.Kind {
         switch self {
         case .walking: .figureWalk
         case .running: .figureRun
+        }
+    }
+}
+
+
+extension CMAuthorizationStatus: @retroactive CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .notDetermined:
+            "notDetermined"
+        case .restricted:
+            "restricted"
+        case .denied:
+            "denied"
+        case .authorized:
+            "authorized"
+        @unknown default:
+            "unknown<\(rawValue)>"
         }
     }
 }

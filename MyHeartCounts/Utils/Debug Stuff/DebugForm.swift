@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order attributes
 
 import Foundation
 import SFSafeSymbols
@@ -30,16 +30,15 @@ struct DebugForm: View {
 
 
 private struct DebugFormImpl: View {
-    // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
     @Environment(StudyManager.self) private var studyManager
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
     @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
     @PerformTask private var performTask
-    // swiftlint:enable attributes
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
-        Form { // swiftlint:disable:this closure_body_length
+        Form {
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
                     Label("Live Health Upload Notifications", systemSymbol: .arrowUpHeart)
@@ -67,12 +66,9 @@ private struct DebugFormImpl: View {
                 } label: {
                     Label("Timed Walking Test", systemSymbol: .figureWalk)
                 }
-                Button("Answer HeartRisk Questionnaire") {
-                    let fileRef = StudyBundle.FileReference(category: .questionnaire, filename: "HeartRisk", fileExtension: "json")
-                    if let questionnaire = studyManager.studyEnrollments.first?.studyBundle?.questionnaire(for: fileRef, in: .enUS) {
-                        performTask(.answerQuestionnaire(questionnaire), context: nil)
-                    }
-                }
+                // intended for the UI tests to have some data here...
+                AddSleepSessionsButton(viewState: $viewState)
+                answerQuestionnaireRow
                 Button("Replace Root View Controller", role: .destructive) {
                     // The idea here is that discarding the root view controller should deallocate all our resources.
                     // We can then launch Xcode's memory graph debugger, and anything that's still in the left sidebar is leaked.
@@ -82,6 +78,29 @@ private struct DebugFormImpl: View {
         }
         .navigationTitle("Debug Options")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private var answerQuestionnaireRow: some View {
+        Menu {
+            let options = ["HeartRisk", "Diet"]
+            ForEach(options, id: \.self) { option in
+                Button(option) {
+                    let fileRef = StudyBundle.FileReference(category: .questionnaire, filename: option, fileExtension: "json")
+                    if let questionnaire = studyManager.studyEnrollments.first?.studyBundle?.questionnaire(for: fileRef, in: .enUS) {
+                        performTask(.answerQuestionnaire(questionnaire), context: nil)
+                    }
+                }
+            }
+        } label: {
+            HStack {
+                Text("Answer Questionnaire")
+                Spacer()
+                Image(systemSymbol: .chevronUpChevronDown)
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+            }
+            .contentShape(Rectangle())
+        }
     }
     
     private func replaceRootVC() {
@@ -101,7 +120,7 @@ extension DebugForm {
     // periphery:ignore - occasionally useful
     struct EnrollmentTestingView: View {
         @Environment(Account.self)
-        private var account: Account
+        private var account
         @Environment(StudyManager.self)
         private var studyManager
         @State private var viewState: ViewState = .idle
@@ -109,22 +128,24 @@ extension DebugForm {
         let refresh: @MainActor () -> Void
         
         var body: some View {
-            AsyncButton("Enroll", state: $viewState) {
-                guard let enrollmentDate = account.details?.dateOfEnrollment else {
-                    throw NSError(domain: "edu.stanford.MHC", code: -1, userInfo: [
-                        NSLocalizedDescriptionKey: "No Enrollment Date"
-                    ])
+            VStack {
+                AsyncButton("Enroll", state: $viewState) {
+                    guard let enrollmentDate = account.details?.dateOfEnrollment else {
+                        throw NSError(domain: "edu.stanford.MHC", code: -1, userInfo: [
+                            NSLocalizedDescriptionKey: "No Enrollment Date"
+                        ])
+                    }
+                    let studyBundle = try await StudyBundleLoader.shared.update()
+                    try await studyManager.enroll(in: studyBundle, enrollmentDate: enrollmentDate - Duration.days(5).timeInterval)
+                    refresh()
                 }
-                let studyBundle = try await StudyBundleLoader.shared.update()
-                try await studyManager.enroll(in: studyBundle, enrollmentDate: enrollmentDate - Duration.days(5).timeInterval)
-                refresh()
-            }
-            AsyncButton("Unenroll", state: $viewState) {
-                guard let enrollment = studyManager.studyEnrollments.first else {
-                    return
+                AsyncButton("Unenroll", state: $viewState) {
+                    guard let enrollment = studyManager.studyEnrollments.first else {
+                        return
+                    }
+                    try studyManager.unenroll(from: enrollment)
+                    refresh()
                 }
-                try studyManager.unenroll(from: enrollment)
-                refresh()
             }
             .viewStateAlert(state: $viewState)
         }

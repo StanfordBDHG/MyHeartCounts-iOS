@@ -13,7 +13,6 @@ struct ScoreResultGauge: View {
     let scoreResult: ScoreResult
     let lineWidth: Gauge.LineWidth
     
-    
     var body: some View {
         Gauge(
             lineWidth: .relative(1.5),
@@ -23,14 +22,14 @@ struct ScoreResultGauge: View {
             if let score = scoreResult.score, !score.isNaN {
                 Text(Int(score * 100), format: .number)
                     .font(.headline)
+                    .accessibilityLabel("Score Result: \(Int(score * 100)) percent")
             } else {
-                Text("-")
+                Text("—")
                     .font(.headline)
                     .foregroundStyle(.secondary)
             }
         }
     }
-    
     
     init(
         scoreResult: ScoreResult,

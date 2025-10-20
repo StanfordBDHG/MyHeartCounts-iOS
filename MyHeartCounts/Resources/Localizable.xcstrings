@@ -7,9 +7,6 @@
     "  0" : {
 
     },
-    "-" : {
-
-    },
     "—" : {
       "localizations" : {
         "es" : {
@@ -43,6 +40,16 @@
         }
       }
     },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
     "%@-Minute Run Test" : {
       "localizations" : {
         "es" : {
@@ -69,11 +76,31 @@
         }
       }
     },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
     "%lld" : {
 
     },
     "%lld ft" : {
 
+    },
+    "%lld hours and %lld minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld hours and %2$lld minutes"
+          }
+        }
+      }
     },
     "%lld hr %lld min" : {
       "localizations" : {
@@ -124,6 +151,16 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%lld over %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld over %2$lld"
           }
         }
       }
@@ -310,6 +347,7 @@
 
     },
     "1 to 5 years ago" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -530,6 +568,7 @@
       }
     },
     "Add Sample" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -538,6 +577,9 @@
           }
         }
       }
+    },
+    "Add Sleep Sessions" : {
+
     },
     "Age" : {
       "localizations" : {
@@ -617,9 +659,6 @@
           }
         }
       }
-    },
-    "Answer HeartRisk Questionnaire" : {
-
     },
     "Answer Questionnaire" : {
 
@@ -1404,6 +1443,9 @@
           }
         }
       }
+    },
+    "Enter %@" : {
+
     },
     "Enter Blood Pressure" : {
       "localizations" : {
@@ -2410,6 +2452,7 @@
       }
     },
     "Loading Firebase Test Setup" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2559,6 +2602,7 @@
 
     },
     "More than 5 years ago" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2569,6 +2613,9 @@
       }
     },
     "Most Recent Night" : {
+
+    },
+    "Most Recent Response" : {
 
     },
     "Most Recent Sample" : {
@@ -2634,6 +2681,7 @@
       }
     },
     "Never" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2642,6 +2690,9 @@
           }
         }
       }
+    },
+    "Never Smoked" : {
+
     },
     "New Hampshire" : {
       "localizations" : {
@@ -2784,6 +2835,9 @@
           }
         }
       }
+    },
+    "No recent data" : {
+
     },
     "No Upcoming Tasks" : {
       "localizations" : {
@@ -3324,7 +3378,13 @@
         }
       }
     },
-    "Perform Active Task" : {
+    "Perform Always Available Task" : {
+
+    },
+    "Perform Task: %@" : {
+
+    },
+    "Preparing Test Environment" : {
 
     },
     "Processing Health Data…" : {
@@ -3358,6 +3418,15 @@
       }
     },
     "Questionnaire" : {
+
+    },
+    "Quit 1 to 5 years ago" : {
+
+    },
+    "Quit more than 5 years ago" : {
+
+    },
+    "Quit within last year, or am using NDS" : {
 
     },
     "Race / Ethnicity" : {
@@ -3852,6 +3921,9 @@
         }
       }
     },
+    "Score Result: %lld percent" : {
+
+    },
     "Select a Region" : {
       "localizations" : {
         "es" : {
@@ -4092,7 +4164,7 @@
     "Stop Recording Data" : {
 
     },
-    "Stop suggesting this" : {
+    "Stop Suggesting This" : {
 
     },
     "Study not available" : {
@@ -4131,7 +4203,7 @@
         }
       }
     },
-    "Tap to lear more…" : {
+    "Tap to learn more…" : {
 
     },
     "Tasks" : {
@@ -4715,6 +4787,7 @@
       }
     },
     "Within last year, or am using NDS" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

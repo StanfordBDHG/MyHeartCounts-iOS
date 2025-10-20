@@ -105,7 +105,7 @@ extension MyHeartCountsStandard {
             HealthKitCharacteristic.dateOfBirth.hkType,
             HealthKitCharacteristic.fitzpatrickSkinType.hkType,
             HealthKitCharacteristic.wheelchairUse.hkType
-        ],
+        ] + HKElectrocardiogram.correlatedSymptomTypes.map(\.hkSampleType),
         write: ([
             SampleType.workout,
             SampleType.height, SampleType.bodyMass, SampleType.bodyMassIndex,

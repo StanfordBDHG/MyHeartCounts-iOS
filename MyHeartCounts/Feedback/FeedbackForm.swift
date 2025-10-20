@@ -27,6 +27,7 @@ struct FeedbackForm: View {
         Form {
             Section {
                 TextEditor(text: $text)
+                    .accessibilityIdentifier("MHC.FeedbackTextField")
                     .focused($isEditing)
                     .onAppear {
                         if text.isEmpty {

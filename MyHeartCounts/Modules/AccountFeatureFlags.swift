@@ -6,9 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order attributes
+
 import Foundation
 import Spezi
 import SpeziAccount
+import SwiftUI
 
 
 @Observable
@@ -20,5 +23,16 @@ final class AccountFeatureFlags: Module, EnvironmentAccessible, DefaultInitializ
     
     func _updateIsDebugModeEnabled(_ newValue: Bool) { // swiftlint:disable:this identifier_name
         isDebugModeEnabled = newValue
+    }
+}
+
+
+@MainActor
+@propertyWrapper
+struct DebugModeEnabled: DynamicProperty {
+    @Environment(AccountFeatureFlags.self) private var flags
+    
+    var wrappedValue: Bool {
+        flags.isDebugModeEnabled
     }
 }

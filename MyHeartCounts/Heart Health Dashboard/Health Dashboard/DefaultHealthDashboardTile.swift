@@ -201,7 +201,7 @@ private struct TileImpl: View {
     private func gaugeContent(for samples: [QuantitySample], score: ScoreDefinition) -> some View {
         VStack {
             let input = singleValueInput(for: samples)
-            let progress = input?.value.map { score.apply(to: $0) }
+            let progress = input?.value.map { score($0) }
             let currentValueText: Text? = input.map { input in
                 Text(input.valueString + (input.unitString.isEmpty ? "" : " \(input.unitString)")) // maybe have the unit someplace else?
                     .font(.caption2)
