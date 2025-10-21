@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable discouraged_optional_boolean
+
 @preconcurrency import FirebaseStorage
 import Foundation
 import SpeziAccount
@@ -55,6 +57,15 @@ extension AccountDetails {
         initial: .empty(Date(timeIntervalSince1970: 0))
     )
     var lastSignedConsentDate: Date?
+    
+    @AccountKey(
+        id: "didOptInToTrial",
+        name: "Did Opt In to Trial",
+        category: .other,
+        options: .mutable,
+        as: Bool.self
+    )
+    var didOptInToTrial: Bool?
 }
 
 
@@ -69,7 +80,7 @@ extension AccountDetails {
     var fcmToken: String?
     
     @AccountKey(id: "enableAppDebugMode", name: "Enable App Debug Mode", as: Bool.self)
-    var enableDebugMode: Bool? // swiftlint:disable:this discouraged_optional_boolean
+    var enableDebugMode: Bool?
     
     @AccountKey(id: "timeZone", name: "Time Zone", as: String.self)
     var timeZone: String?
@@ -87,7 +98,7 @@ extension AccountDetails {
 
 
 @KeyEntry(
-    \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate,
+    \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
     \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep
 )
 extension AccountKeys {}
