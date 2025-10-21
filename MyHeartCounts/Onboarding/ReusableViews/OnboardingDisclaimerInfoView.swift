@@ -66,6 +66,7 @@ struct OnboardingHeader: View {
         self.description = description
     }
     
+    // periphery:ignore - API
     @_disfavoredOverload
     init(
         icon: Image? = nil, // swiftlint:disable:this function_default_parameter_at_end

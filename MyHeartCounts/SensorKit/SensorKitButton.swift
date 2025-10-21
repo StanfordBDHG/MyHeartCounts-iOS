@@ -47,7 +47,6 @@ struct SensorKitButton: View {
     // swiftlint:disable attributes
     @Environment(\.scenePhase) private var scenePhase
     @Environment(SensorKit.self) private var sensorKit
-    @Environment(\.openSettingsApp) private var openSettings
     // swiftlint:enable attributes
     
     @State private var viewState: ViewState = .idle
@@ -103,15 +102,11 @@ struct SensorKitButton: View {
         sensorAuthStatuses.authorized.isEmpty && sensorAuthStatuses.denied.isEmpty
     }
     
-    private var isFullyAuthorized: Bool {
-        sensorAuthStatuses.denied.isEmpty && sensorAuthStatuses.notDetermined.isEmpty
-    }
-    
     private func enable(_ sensors: [any AnySensor]) async throws {
         defer {
             sensorAuthStatuses.update()
         }
-        let result = try await sensorKit.requestAccess(to: SensorKit.mhcSensors)
+        let result = try await sensorKit.requestAccess(to: sensors)
         for sensor in result.authorized {
             try await sensor.startRecording()
         }
