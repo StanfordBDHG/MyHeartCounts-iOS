@@ -98,7 +98,6 @@ private struct Impl<Footer: View>: View {
                 DemographicsComponent(\.dateOfBirth) { date in
                     cal.isDateInToday(date)
                 } content: { binding, isEmpty in
-                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     let binding = binding.withDefault(.now)
                     DatePicker(
                         "Date of Birth",
@@ -114,15 +113,12 @@ private struct Impl<Footer: View>: View {
                     .tint(isEmpty ? .red : nil)
                 }
                 DemographicsComponent(\.genderIdentity, noSelectionValue: nil) { binding, _ in
-                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     DemographicsPicker("Gender Identity", selection: binding, optionTitle: \.displayTitle)
                 }
                 DemographicsComponent(\.sexAtBirth, noSelectionValue: nil) { binding, _ in
-                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     DemographicsPicker("Biological Sex at Birth", selection: binding, optionTitle: \.displayTitle)
                 }
                 DemographicsComponent(\.bloodType, noSelectionValue: nil) { binding, _ in
-                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     DemographicsPicker("Blood Type", selection: binding, allOptions: HKBloodType.allKnownValues, optionTitle: \.displayTitle)
                 }
             }
@@ -132,11 +128,8 @@ private struct Impl<Footer: View>: View {
             }
             Section {
                 DemographicsComponent(\.raceEthnicity, noSelectionValue: nil, []) { binding, isEmpty in
-                    LabeledContent("Race" as String, value: binding.wrappedValue?.localizedDisplayTitle ?? "n/a")
-                    LabeledContent("IsEmpty" as String, value: isEmpty.description)
                     let binding = binding.withDefault([])
                     NavigationLink {
-                        Text(verbatim: binding.wrappedValue.localizedDisplayTitle)
                         RaceEthnicityPicker(selection: binding)
                     } label: {
                         HStack {
