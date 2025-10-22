@@ -1510,7 +1510,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFoundation.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.4.1;
+				minimumVersion = 2.4.4;
 			};
 		};
 		8043E0092DC2348600E0DF01 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
