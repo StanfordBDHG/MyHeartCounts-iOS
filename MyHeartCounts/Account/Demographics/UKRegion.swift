@@ -231,7 +231,6 @@ extension UKRegion.County {
         Self(name: "Worcestershire")
     ]
     
-    // TODO!
     static let scottishCounties: [Self] = []
     
     static let welshCounties: [Self] = [

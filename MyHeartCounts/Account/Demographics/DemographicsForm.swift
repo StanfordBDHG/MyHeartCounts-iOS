@@ -6,8 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// _swfiftlint:disable file_types_order type_body_length closure_body_length file_length all
-// swiftlint:disable file_types_order attributes file_length discouraged_optional_boolean
+// swiftlint:disable file_types_order attributes file_length
 
 import Foundation
 import OSLog
@@ -27,31 +26,22 @@ struct DemographicsForm<Footer: View>: View {
     @Environment(Account.self)
     private var account
     
-    @State private var data = DemographicsData(details: .init())
+    @State private var data = DemographicsData()
+    @State private var didPopulateData = false
     @Binding private var isComplete: Bool
     
     private let footer: @MainActor () -> Footer
     
     var body: some View {
-        Group {
-            if let details = account.details {
-                Impl(account: account, details: details, isComplete: $isComplete, footer: footer)
-                    .environment(data)
-            } else {
-                ContentUnavailableView("Not logged in", systemSymbol: nil)
+        Impl(isComplete: $isComplete, footer: footer)
+            .environment(data)
+            .navigationTitle("Demographics")
+            .onAppear {
+                if !didPopulateData {
+                    didPopulateData = true
+                    data.populate(from: account)
+                }
             }
-        }
-        .navigationTitle("Demographics")
-        .onAppear {
-            if let details = account.details {
-                data = .init(details: details)
-            }
-        }
-        .onDisappear {
-            Task {
-                try await data.write(to: account)
-            }
-        }
     }
     
     init(
@@ -60,125 +50,6 @@ struct DemographicsForm<Footer: View>: View {
     ) {
         self._isComplete = isComplete
         self.footer = footer
-    }
-}
-
-
-// MARK: DemographicsData
-
-@Observable
-@MainActor
-private final class DemographicsData {
-    private let initialDetails: AccountDetails
-    var dateOfBirth: Date?
-    var genderIdentity: GenderIdentity? {
-        didSet {
-            guard let newGender = genderIdentity, sexAtBirth == nil else {
-                return
-            }
-            switch newGender {
-            case .male, .transFemale:
-                sexAtBirth = .male
-            case .female, .transMale:
-                sexAtBirth = .female
-            case .other, .preferNotToState:
-                break
-            }
-        }
-    }
-    var sexAtBirth: BiologicalSex? {
-        didSet {
-            guard let newSex = sexAtBirth, genderIdentity == nil else {
-                return
-            }
-            switch newSex {
-            case .male:
-                genderIdentity = .male
-            case .female:
-                genderIdentity = .female
-            case .preferNotToState, .intersex:
-                break
-            }
-        }
-    }
-    var height: HKQuantity?
-    var weight: HKQuantity?
-    var raceEthnicity: RaceEthnicity?
-    var latinoStatus: LatinoStatusOption?
-    var bloodType: HKBloodType?
-    var comorbidities: Comorbidities?
-    var usRegion: USRegion?
-    var ukRegion: UKRegion?
-    var usHouseholdIncome: HouseholdIncomeUS?
-    var ukHouseholdIncome: HouseholdIncomeUK?
-    var nhsNumber: NHSNumber?
-    var futureStudiesOptIn: Bool?
-    
-    init(details: AccountDetails) {
-        initialDetails = details
-        dateOfBirth = details.dateOfBirth
-        genderIdentity = details.mhcGenderIdentity
-        sexAtBirth = details.biologicalSexAtBirth
-        height = details.heightInCM.map { HKQuantity(unit: .meterUnit(with: .centi), doubleValue: $0) }
-        weight = details.weightInKG.map { HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: $0) }
-        raceEthnicity = details.raceEthnicity
-        latinoStatus = details.latinoStatus
-        bloodType = details.bloodType
-        comorbidities = details.comorbidities
-        usRegion = details.usRegion
-        ukRegion = details.ukRegion
-        usHouseholdIncome = details.householdIncomeUS
-        ukHouseholdIncome = details.householdIncomeUK
-        nhsNumber = details.nhsNumber
-        futureStudiesOptIn = details.futureStudies
-    }
-    
-    func write(to account: Account) async throws {
-        var updated = AccountDetails()
-        var removed = AccountDetails()
-        func write<T: Equatable>(_ newValue: T?, to detailsKeyPath: WritableKeyPath<AccountDetails, T?>) {
-            let oldValue = initialDetails[keyPath: detailsKeyPath]
-            switch (oldValue, newValue) {
-            case (.none, .none):
-                break
-            case (.some(let oldValue), .none):
-                removed[keyPath: detailsKeyPath] = oldValue
-            case let (.some(oldValue), .some(newValue)):
-                if oldValue != newValue {
-                    fallthrough
-                }
-            case (_, .some(let newValue)):
-                updated[keyPath: detailsKeyPath] = newValue
-            }
-        }
-        func write<T, U: Equatable>(
-            _ newValue: T?,
-            to detailsKeyPath: WritableKeyPath<AccountDetails, U?>,
-            transform: (T) -> U
-        ) {
-            write(newValue.map(transform), to: detailsKeyPath)
-        }
-        write(dateOfBirth, to: \.dateOfBirth)
-        write(genderIdentity, to: \.mhcGenderIdentity)
-        write(sexAtBirth, to: \.biologicalSexAtBirth)
-        write(height, to: \.heightInCM) {
-            $0.doubleValue(for: .meterUnit(with: .centi))
-        }
-        write(weight, to: \.weightInKG) {
-            $0.doubleValue(for: .gramUnit(with: .kilo))
-        }
-        write(raceEthnicity, to: \.raceEthnicity)
-        write(latinoStatus, to: \.latinoStatus)
-        write(bloodType, to: \.bloodType)
-        write(comorbidities, to: \.comorbidities)
-        write(usRegion, to: \.usRegion)
-        write(ukRegion, to: \.ukRegion)
-        write(usHouseholdIncome, to: \.householdIncomeUS)
-        write(ukHouseholdIncome, to: \.householdIncomeUK)
-        write(nhsNumber, to: \.nhsNumber)
-        write(futureStudiesOptIn, to: \.futureStudies)
-        let modifications = try AccountModifications(modifiedDetails: updated, removedAccountDetails: removed)
-        try await account.accountService.updateAccountDetails(modifications)
     }
 }
 
@@ -192,8 +63,6 @@ private struct Impl<Footer: View>: View {
     @Environment(HealthKit.self) private var healthKit
     @Environment(StudyManager.self) private var studyManager
     
-    var account: Account
-    let details: AccountDetails
     @Binding var isComplete: Bool
     let footer: @MainActor () -> Footer
     
@@ -229,6 +98,7 @@ private struct Impl<Footer: View>: View {
                 DemographicsComponent(\.dateOfBirth) { date in
                     cal.isDateInToday(date)
                 } content: { binding, isEmpty in
+                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     let binding = binding.withDefault(.now)
                     DatePicker(
                         "Date of Birth",
@@ -244,12 +114,15 @@ private struct Impl<Footer: View>: View {
                     .tint(isEmpty ? .red : nil)
                 }
                 DemographicsComponent(\.genderIdentity, noSelectionValue: nil) { binding, _ in
+                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     DemographicsPicker("Gender Identity", selection: binding, optionTitle: \.displayTitle)
                 }
                 DemographicsComponent(\.sexAtBirth, noSelectionValue: nil) { binding, _ in
+                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     DemographicsPicker("Biological Sex at Birth", selection: binding, optionTitle: \.displayTitle)
                 }
                 DemographicsComponent(\.bloodType, noSelectionValue: nil) { binding, _ in
+                    LabeledContent("id" as String, value: Int.random(in: 0..<100).description)
                     DemographicsPicker("Blood Type", selection: binding, allOptions: HKBloodType.allKnownValues, optionTitle: \.displayTitle)
                 }
             }
@@ -259,8 +132,11 @@ private struct Impl<Footer: View>: View {
             }
             Section {
                 DemographicsComponent(\.raceEthnicity, noSelectionValue: nil, []) { binding, isEmpty in
+                    LabeledContent("Race" as String, value: binding.wrappedValue?.localizedDisplayTitle ?? "n/a")
+                    LabeledContent("IsEmpty" as String, value: isEmpty.description)
                     let binding = binding.withDefault([])
                     NavigationLink {
+                        Text(verbatim: binding.wrappedValue.localizedDisplayTitle)
                         RaceEthnicityPicker(selection: binding)
                     } label: {
                         HStack {
