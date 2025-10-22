@@ -62,6 +62,8 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
             XCTAssert(app.buttons["Weight, 70 kg"].waitForExistence(timeout: 2))
         }
         
+        app.swipeUp()
+        
         app.staticTexts["Race / Ethnicity"].tap()
         app.buttons["Prefer not to Answer"].tap()
         app.buttons["White"].tap()
