@@ -233,6 +233,24 @@ extension UKRegion.County {
     
     // TODO!
     static let scottishCounties: [Self] = []
-    static let welshCounties: [Self] = []
-    static let northernIrishCounties: [Self] = []
+    
+    static let welshCounties: [Self] = [
+        Self(name: "Clwyd"),
+        Self(name: "Dyfed"),
+        Self(name: "Gwent"),
+        Self(name: "Gwynedd"),
+        Self(name: "Mid Glamorgan"),
+        Self(name: "Powys"),
+        Self(name: "South Glamorgan"),
+        Self(name: "West Glamorgan")
+    ]
+    
+    static let northernIrishCounties: [Self] = [
+        Self(name: "Antrim"),
+        Self(name: "Armagh"),
+        Self(name: "Down"),
+        Self(name: "Fermanagh"),
+        Self(name: "Londonderry"),
+        Self(name: "Tyrone")
+    ]
 }
