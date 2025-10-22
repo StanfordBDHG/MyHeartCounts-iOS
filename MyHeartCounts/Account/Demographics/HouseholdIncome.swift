@@ -10,11 +10,21 @@
 
 import Foundation
 
+protocol HouseholdIncome: RawRepresentableAccountKey, DemographicsSelectableSimpleValue {}
 
-protocol HouseholdIncome: CaseIterable, RawRepresentableAccountKey where AllCases: RandomAccessCollection {
-    static var notSet: Self { get }
+extension HouseholdIncome {
+    var id: RawValue {
+        rawValue
+    }
     
-    var displayTitle: LocalizedStringResource { get }
+    init?(rawValue: RawValue) {
+        let allOptions = Self.options + [.notSet, .preferNotToState]
+        if let option = allOptions.first(where: { $0.rawValue == rawValue }) {
+            self = option
+        } else {
+            return nil
+        }
+    }
 }
 
 
@@ -27,9 +37,9 @@ struct HouseholdIncomeUS: HouseholdIncome {
 
 extension HouseholdIncomeUS {
     static let notSet = Self(rawValue: 0, displayTitle: "Not Set")
+    static let preferNotToState = Self(rawValue: .max, displayTitle: "Prefer not to state")
     
-    static let allCases: [Self] = [
-        .notSet,
+    static let options: [Self] = [
         Self(rawValue: 1, displayTitle: "Less than $15,000"),
         Self(rawValue: 2, displayTitle: "$15,000 – $24,999"),
         Self(rawValue: 3, displayTitle: "$25,000 – $34,999"),
@@ -51,9 +61,9 @@ struct HouseholdIncomeUK: HouseholdIncome {
 
 extension HouseholdIncomeUK {
     static let notSet = Self(rawValue: 0, displayTitle: "Not Set")
+    static let preferNotToState = Self(rawValue: .max, displayTitle: "Prefer not to state")
     
-    static let allCases: [Self] = [
-        .notSet,
+    static let options: [Self] = [
         Self(rawValue: 1, displayTitle: "Less than £15,000"),
         Self(rawValue: 2, displayTitle: "£15,000 – £24,999"),
         Self(rawValue: 3, displayTitle: "£25,000 – £34,999"),

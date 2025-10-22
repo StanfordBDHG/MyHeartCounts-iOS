@@ -165,6 +165,9 @@
         }
       }
     },
+    "%lld selected" : {
+
+    },
     "%lld‘ %lld“" : {
       "localizations" : {
         "en" : {
@@ -465,6 +468,9 @@
     "10000+" : {
 
     },
+    "Abdominal Aortic Aneurysm" : {
+
+    },
     "About %@" : {
 
     },
@@ -581,6 +587,9 @@
     "Add Sleep Sessions" : {
 
     },
+    "Adult Congenital Heart Disease" : {
+
+    },
     "Age" : {
       "localizations" : {
         "es" : {
@@ -660,6 +669,9 @@
         }
       }
     },
+    "Angina (heart chest pains)" : {
+
+    },
     "Answer Questionnaire" : {
 
     },
@@ -703,6 +715,9 @@
         }
       }
     },
+    "Atrial fibrillation (Afib)" : {
+
+    },
     "AuthorizationStatus" : {
 
     },
@@ -715,6 +730,9 @@
           }
         }
       }
+    },
+    "Blockage/Stenosis, Surgery, or Stent" : {
+
     },
     "Blood Lipids" : {
       "localizations" : {
@@ -784,6 +802,12 @@
         }
       }
     },
+    "Carotid Artery Blockage/Stenosis" : {
+
+    },
+    "Carotid Artery Surgery or Stent" : {
+
+    },
     "Change Language" : {
       "localizations" : {
         "es" : {
@@ -793,6 +817,9 @@
           }
         }
       }
+    },
+    "Chronic kidney disease" : {
+
     },
     "Close" : {
       "localizations" : {
@@ -831,6 +858,7 @@
       }
     },
     "COMORBIDITY_ACHD" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -853,6 +881,7 @@
       }
     },
     "COMORBIDITY_CAD" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -875,6 +904,7 @@
       }
     },
     "COMORBIDITY_DIABETES" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -897,6 +927,7 @@
       }
     },
     "COMORBIDITY_HEART_FAILURE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -919,6 +950,7 @@
       }
     },
     "COMORBIDITY_NONE" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -941,6 +973,7 @@
       }
     },
     "COMORBIDITY_PAH" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1082,6 +1115,9 @@
         }
       }
     },
+    "Congenital Heart Defect" : {
+
+    },
     "Connecticut" : {
       "localizations" : {
         "es" : {
@@ -1152,7 +1188,17 @@
         }
       }
     },
+    "Coronary Artery Disease" : {
+
+    },
+    "Coronary Blockage/Stenosis" : {
+
+    },
+    "Coronary Stent/Angioplasty" : {
+
+    },
     "County" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1184,6 +1230,9 @@
           }
         }
       }
+    },
+    "Date of Diagnosis" : {
+
     },
     "Date of Enrollment" : {
 
@@ -1248,6 +1297,9 @@
         }
       }
     },
+    "Diabetes" : {
+
+    },
     "Did Opt In to Trial" : {
 
     },
@@ -1293,6 +1345,9 @@
           }
         }
       }
+    },
+    "Don't Know" : {
+
     },
     "Done" : {
       "localizations" : {
@@ -1434,6 +1489,9 @@
         }
       }
     },
+    "England (%@)" : {
+
+    },
     "Enroll" : {
 
     },
@@ -1471,6 +1529,7 @@
       }
     },
     "Enter Height" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1481,6 +1540,7 @@
       }
     },
     "Enter Weight" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1489,6 +1549,9 @@
           }
         }
       }
+    },
+    "Erectile dysfunction" : {
+
     },
     "Error" : {
       "localizations" : {
@@ -2045,6 +2108,18 @@
         }
       }
     },
+    "Heart Attack/Myocardial Infarction" : {
+
+    },
+    "Heart Bypass Surgery" : {
+
+    },
+    "Heart Failure" : {
+
+    },
+    "Heart Failure or CHF" : {
+
+    },
     "Heart Health" : {
       "localizations" : {
         "es" : {
@@ -2106,6 +2181,9 @@
         }
       }
     },
+    "High Coronary Calcium Score" : {
+
+    },
     "Home" : {
 
     },
@@ -2120,6 +2198,12 @@
       }
     },
     "How to Manage SensorKit" : {
+
+    },
+    "I don't have this comorbidity" : {
+
+    },
+    "I have this comorbidity" : {
 
     },
     "id" : {
@@ -2541,6 +2625,9 @@
         }
       }
     },
+    "Migraines" : {
+
+    },
     "Minnesota" : {
       "localizations" : {
         "es" : {
@@ -2842,6 +2929,9 @@
     "No recent data" : {
 
     },
+    "No Selection" : {
+
+    },
     "No Upcoming Tasks" : {
       "localizations" : {
         "es" : {
@@ -2881,6 +2971,9 @@
           }
         }
       }
+    },
+    "Northern Ireland (%@)" : {
+
     },
     "Northern Mariana Islands" : {
       "localizations" : {
@@ -3300,6 +3393,9 @@
     "Other" : {
 
     },
+    "Other auto-immune disease" : {
+
+    },
     "Other Tasks" : {
 
     },
@@ -3387,6 +3483,12 @@
     "Perform Task: %@" : {
 
     },
+    "Peripheral Vascular Disease" : {
+
+    },
+    "Prefer not to state" : {
+
+    },
     "Preparing Test Environment" : {
 
     },
@@ -3419,6 +3521,12 @@
           }
         }
       }
+    },
+    "Pulmonary Arterial Hypertension" : {
+
+    },
+    "Pulmonary Hypertension" : {
+
     },
     "Questionnaire" : {
 
@@ -3772,6 +3880,9 @@
         }
       }
     },
+    "Raynaud's Phenomenon" : {
+
+    },
     "Read" : {
 
     },
@@ -3865,6 +3976,9 @@
         }
       }
     },
+    "Rheumatoid arthritis" : {
+
+    },
     "Rhode Island" : {
       "localizations" : {
         "es" : {
@@ -3927,6 +4041,9 @@
     "Score Result: %lld percent" : {
 
     },
+    "Scotland (%@)" : {
+
+    },
     "Select a Region" : {
       "localizations" : {
         "es" : {
@@ -3937,7 +4054,11 @@
         }
       }
     },
+    "Select Comorbidities" : {
+
+    },
     "Select County" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3946,6 +4067,9 @@
           }
         }
       }
+    },
+    "Select Date" : {
+
     },
     "Select your State or Territory" : {
       "localizations" : {
@@ -4022,6 +4146,9 @@
           }
         }
       }
+    },
+    "Severe mental illness" : {
+
     },
     "SEX_FEMALE" : {
       "localizations" : {
@@ -4131,6 +4258,9 @@
         }
       }
     },
+    "stage 3, 4 or 5" : {
+
+    },
     "Start" : {
       "localizations" : {
         "es" : {
@@ -4170,6 +4300,9 @@
     "Stop Suggesting This" : {
 
     },
+    "Stroke" : {
+
+    },
     "Study not available" : {
       "localizations" : {
         "es" : {
@@ -4191,6 +4324,12 @@
       }
     },
     "Success" : {
+
+    },
+    "Systemic lupus erythematosus (SLE)" : {
+
+    },
+    "Systemic Sclerosis or Scleroderma" : {
 
     },
     "Take ECG" : {
@@ -4274,6 +4413,9 @@
           }
         }
       }
+    },
+    "this includes schizophrenia, bipolar disorder and moderate/severe depression" : {
+
     },
     "Time Asleep" : {
       "localizations" : {
@@ -4397,6 +4539,9 @@
         }
       }
     },
+    "Transient Ischemic Attack (TIA)" : {
+
+    },
     "True" : {
       "localizations" : {
         "es" : {
@@ -4410,13 +4555,11 @@
     "Trust Territories" : {
 
     },
-    "UK Country" : {
-
-    },
-    "UK County" : {
+    "UK Region" : {
 
     },
     "UK_REGION_ENGLAND" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4433,6 +4576,7 @@
       }
     },
     "UK_REGION_NORTHERN_IRELAND" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4449,6 +4593,7 @@
       }
     },
     "UK_REGION_NOT_SET" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4465,6 +4610,7 @@
       }
     },
     "UK_REGION_SCOTLAND" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4481,6 +4627,7 @@
       }
     },
     "UK_REGION_WALES" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4624,6 +4771,9 @@
           }
         }
       }
+    },
+    "Wales (%@)" : {
+
     },
     "walk" : {
 
@@ -4890,6 +5040,7 @@
 
     },
     "You can select multiple options" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

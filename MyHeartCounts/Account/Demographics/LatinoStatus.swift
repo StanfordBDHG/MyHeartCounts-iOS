@@ -9,17 +9,22 @@
 import Foundation
 
 
-struct LatinoStatusOption: RawRepresentableAccountKey {
+struct LatinoStatusOption: RawRepresentableAccountKey, DemographicsSelectableSimpleValue {
     let rawValue: UInt8
-    let displayTitle: String
+    let displayTitle: LocalizedStringResource
+    
+    var id: some Hashable {
+        rawValue
+    }
     
     init(rawValue: UInt8, displayTitle: LocalizedStringResource) {
         self.rawValue = rawValue
-        self.displayTitle = String(localized: displayTitle)
+        self.displayTitle = displayTitle
     }
     
     init?(rawValue: UInt8) {
-        guard let option = Self.allOptions.first(where: { $0.rawValue == rawValue }) else {
+        let allOptions = Self.options + [.notSet, .preferNotToState]
+        guard let option = allOptions.first(where: { $0.rawValue == rawValue }) else {
             return nil
         }
         self = option
@@ -28,9 +33,9 @@ struct LatinoStatusOption: RawRepresentableAccountKey {
 
 extension LatinoStatusOption {
     static let notSet = Self(rawValue: 0, displayTitle: "Not Set")
+    static let preferNotToState = Self(rawValue: .max, displayTitle: "Prefer not to state")
     
-    static let allOptions: [Self] = [
-        .notSet,
+    static let options: [Self] = [
         Self(rawValue: 1, displayTitle: "No, not Spanish/Hispanic/Latino"),
         Self(rawValue: 2, displayTitle: "Yes, Mexican, Mexican American, or Chicano"),
         Self(rawValue: 3, displayTitle: "Yes, Caribbean Hispanic, including Cuban and Puerto Rican"),
