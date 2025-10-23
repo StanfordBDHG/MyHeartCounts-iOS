@@ -57,7 +57,6 @@ extension SensorKitOnWristEventSample: HealthObservation {
         } else {
             try observation.setIssued(on: .now)
         }
-        observation.effective = .dateTime(FHIRPrimitive(try DateTime(date: timestamp)))
         observation.value = .boolean(.init(.init(onWrist)))
         observation.appendComponent(ObservationComponent(
             code: SpeziCodingSystem.watchWristLocation,

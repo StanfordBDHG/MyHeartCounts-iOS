@@ -1,5 +1,5 @@
 {
-  "originHash" : "29a15e77c7113584148fadc294c8e2ac59c567db659bffd15d03aa82534887bf",
+  "originHash" : "d2cd20a370d81b7ffdeb0d2923764762a3aaf1c09636f31f9de39aa511ec5d23",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -312,8 +312,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "f5c1ab1aea36736d110aa0b406f8a66921d545d1",
-        "version" : "0.4.0"
+        "revision" : "946fd75987ecc2f48f48f7cf212d61cf0e9919ed"
       }
     },
     {

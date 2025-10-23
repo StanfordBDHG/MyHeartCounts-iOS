@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order all
 
 import Foundation
 import SensorKit
@@ -63,7 +63,7 @@ struct SensorKitButton: View {
                     subtitle: "ENABLE_SENSORKIT_SUBTITLE",
                     state: $viewState
                 ) {
-                    try await enable(SensorKit.mhcSensors)
+                    try await enable(SensorKit.mhcSensorsExtended)
                 }
             } else {
                 let subtitle: LocalizedStringResource = if sensorAuthStatuses.authorized.isEmpty {
@@ -124,34 +124,13 @@ private struct SensorKitSheet: View {
     let enable: @Sendable ([any AnySensor]) async throws -> Void
     
     var body: some View {
-        Form { // swiftlint:disable:this closure_body_length
+        Form {
             Section {
                 Text("ENABLE_SENSORKIT_SUBTITLE")
             }
             Section {
-                ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
-                    HStack {
-                        Text(sensor.displayName)
-                        Spacer()
-                        switch sensor.authorizationStatus {
-                        case .authorized:
-                            Image(systemSymbol: .checkmark)
-                                .fontWeight(.medium)
-                                .foregroundStyle(.green)
-                                .accessibilityLabel("Active")
-                        case .notDetermined:
-                            AsyncButton("Enable", state: $viewState) {
-                                try await enable([sensor])
-                            }
-                        case .denied:
-                            Image(systemSymbol: .xmark)
-                                .fontWeight(.medium)
-                                .foregroundStyle(.red)
-                                .accessibilityLabel("Disabled")
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
+                ForEach(SensorKit.mhcSensorsExtended.sorted(using: KeyPathComparator(\.displayName)), id: \.id) { sensor in
+                    makeRow(for: sensor)
                 }
             } header: {
                 Text("Sensors")
@@ -161,9 +140,10 @@ private struct SensorKitSheet: View {
             Section {
                 Button {
                     let fileRef = StudyBundle.FileReference(category: .informationalArticle, filename: "SensorKit", fileExtension: "md")
-                    presentedArticle = studyManager.studyEnrollments.first?.studyBundle?
-                        .resolve(fileRef, in: studyManager.preferredLocale)
-                        .flatMap { Article(contentsOf: $0) }
+//                    presentedArticle = studyManager.studyEnrollments.first?.studyBundle?
+//                        .resolve(fileRef, in: studyManager.preferredLocale)
+//                        .flatMap { Article(contentsOf: $0) }
+                    presentedArticle = Article(contentsOf: studyManager.studyEnrollments.first!.studyBundle!.resolve(fileRef, in: studyManager.preferredLocale)!)!
                 } label: {
                     Label("How to Manage SensorKit", systemSymbol: .textPage)
                 }
@@ -177,6 +157,36 @@ private struct SensorKitSheet: View {
         }
         .sheet(item: $presentedArticle) { article in
             ArticleSheet(article: article)
+        }
+    }
+    
+    @ViewBuilder
+    private func makeRow(for sensor: any AnySensor) -> some View {
+        let authStatus = sensor.authorizationStatus
+        let shouldDisplay = authStatus == .authorized || SensorKit.mhcSensors.contains { $0.srSensor == sensor.srSensor }
+        if shouldDisplay {
+            HStack {
+                Text(sensor.displayName)
+                Spacer()
+                switch authStatus {
+                case .authorized:
+                    Image(systemSymbol: .checkmark)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.green)
+                        .accessibilityLabel("Active")
+                case .notDetermined:
+                    AsyncButton("Enable", state: $viewState) {
+                        try await enable([sensor])
+                    }
+                case .denied:
+                    Image(systemSymbol: .xmark)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.red)
+                        .accessibilityLabel("Disabled")
+                @unknown default:
+                    EmptyView()
+                }
+            }
         }
     }
 }

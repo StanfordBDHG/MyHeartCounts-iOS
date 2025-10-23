@@ -23,6 +23,7 @@ struct HomeTab: RootViewTab {
     @DailyNudge private var dailyNudge
     @PromptedActions private var promptedActions
     @State private var viewState: ViewState = .idle
+    @State private var tmpShowUploadSheet = false
     
     var body: some View {
         NavigationStack {
@@ -39,7 +40,22 @@ struct HomeTab: RootViewTab {
             }
             .navigationTitle("My Heart Counts")
             .toolbar {
+                #if DEBUG
+                ToolbarItem(placement: .topBarLeading) {
+                    SensorKitDataFetcher.TriggerBackgroundTaskMenu()
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("U") {
+                        tmpShowUploadSheet = true
+                    }
+                }
+                #endif
                 accountToolbarItem
+            }
+        }
+        .sheet(isPresented: $tmpShowUploadSheet) {
+            NavigationStack {
+                FileUploadInsights()
             }
         }
     }

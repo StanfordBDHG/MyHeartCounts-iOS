@@ -25,6 +25,7 @@ struct AccountSheet: View {
     @Environment(Account.self) private var account
     @Environment(\.accountRequired) private var accountRequired
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
+    @Environment(ManagedFileUpload.self) private var managedFileUpload
     // swiftlint:enable attributes
     
     @State private var isInSetup = false
@@ -114,10 +115,20 @@ struct AccountSheet: View {
                 NavigationLink("Review Consent Forms") {
                     SignedConsentForms()
                 }
-                if historicalDataExportMgr.session.map({ $0.state == .running || $0.state == .paused }) ?? false
-                    || historicalDataExportMgr.fileUploader.uploadProgress != nil {
+                if let text = { () -> LocalizedStringResource? in
+                    switch (isProcessingHealthData, isProcessingSensorKitData) {
+                    case (true, true):
+                        "Processing Health and SensorKit Data…"
+                    case (true, false):
+                        "Processing Health Data…"
+                    case (false, true):
+                        "Processing SensorKit Data…"
+                    case (false, false):
+                        nil
+                    }
+                }() {
                     HStack {
-                        Text("Processing Health Data…")
+                        Text(text)
                         Spacer()
                         ProgressView()
                     }
@@ -159,6 +170,17 @@ struct AccountSheet: View {
                 }
             }
         }
+    }
+    
+    private var isProcessingHealthData: Bool {
+        let uploadCategories = [ManagedFileUpload.Category.liveHealthUpload, .historicalHealthUpload]
+        return historicalDataExportMgr.session.map { $0.state == .running || $0.state == .paused } ?? false
+            || uploadCategories.contains(where: { managedFileUpload.isActive($0) })
+    }
+    
+    private var isProcessingSensorKitData: Bool {
+        // ISSUE we need to add a flag or smth to the SensorKitDataFetcher to signal that it's currently active!!!
+        managedFileUpload.progressByCategory.keys.contains { $0.id.lowercased().contains("sensorkit") }
     }
     
     init(dismissAfterSignIn: Bool = true) {

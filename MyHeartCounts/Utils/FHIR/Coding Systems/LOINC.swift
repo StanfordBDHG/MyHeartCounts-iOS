@@ -32,6 +32,8 @@ extension LOINC {
     static let pedometerNumStepsInUnspecifiedTime = LOINC("55423-8")
     static let pedometerWalkingDistanceInUnspecifiedTime = LOINC("55430-3") // swiftlint:disable:this identifier_name
     static let exerciseDuration = LOINC("55411-3")
+    
+    static let numberOfFlightsClimbedInReportingPeriod = LOINC("100304-5")
 }
 
 

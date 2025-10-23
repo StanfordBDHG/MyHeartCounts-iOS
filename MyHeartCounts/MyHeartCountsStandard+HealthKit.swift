@@ -122,7 +122,7 @@ extension MyHeartCountsStandard {
             try compressed.write(to: url)
             _ = consume compressed
             _Concurrency.Task {
-                try await healthDataUploader.upload(url, category: .liveData)
+                try await managedFileUpload.upload(url, category: .liveHealthUpload)
                 await triggerDidUploadNotification()
             }
         } else {

@@ -19,7 +19,6 @@ extension MyHeartCounts {
         AccountConfiguration(service: InMemoryAccountService(), configuration: .default)
         StudyBundleLoader.shared
         TimeZoneTracking()
-        HealthDataFileUploadManager()
         AccountFeatureFlags()
         SetupTestEnvironment()
     }

@@ -27,7 +27,6 @@ struct HealthImporterControlView: View {
     
     var body: some View {
         Form {
-            actionsSection
             AsyncButton("Delete&Reset Session", state: $viewState) {
                 try await exportManager.fullyResetSession()
             }
@@ -38,20 +37,6 @@ struct HealthImporterControlView: View {
         .navigationTitle("Bulk Export Manager")
         .navigationBarTitleDisplayMode(.inline)
         .viewStateAlert(state: $viewState)
-    }
-    
-    @ViewBuilder private var actionsSection: some View {
-        Section {
-            ForEach([URL.scheduledLiveHealthKitUploads, .scheduledHistoricalHealthKitUploads], id: \.self) { url in
-                let documentsPath = URL.documentsDirectory.resolvingSymlinksInPath().absoluteURL.path
-                let relativePath = String(url.resolvingSymlinksInPath().absoluteURL.path.dropFirst(documentsPath.count))
-                AsyncButton("Delete ~/\(relativePath)/*", state: $viewState) {
-                    for url in (try? fileManager.contents(of: url)) ?? [] {
-                        try fileManager.removeItem(at: url)
-                    }
-                }
-            }
-        }
     }
     
     @ViewBuilder

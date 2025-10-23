@@ -16,6 +16,9 @@ struct SensorKitControlView: View {
     @Environment(SensorKit.self)
     private var sensorKit
     
+    @Environment(SensorKitDataFetcher.self)
+    private var dataFetcher
+    
     @State private var viewState: ViewState = .idle
     
     var body: some View {
@@ -44,8 +47,21 @@ struct SensorKitControlView: View {
                     }
                 }
             }
+            Section {
+                let definitions = SensorKit.mhcSensorUploadDefinitions
+                ForEach(Array(definitions.indices), id: \.self) { idx in
+                    makeRunFullUploadButton(for: definitions[idx])
+                }
+            }
         }
         .navigationTitle("SensorKit")
         .viewStateAlert(state: $viewState)
+    }
+    
+    
+    private func makeRunFullUploadButton(for uploadDefinition: any AnyMHCSensorUploadDefinition) -> some View {
+        AsyncButton("Perform Full \(uploadDefinition.typeErasedSensor.displayName) Upload", state: $viewState) {
+            try await dataFetcher.fetchAndUploadAllSamples(for: uploadDefinition)
+        }
     }
 }

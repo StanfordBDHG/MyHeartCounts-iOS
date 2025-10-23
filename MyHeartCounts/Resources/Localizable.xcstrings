@@ -1998,6 +1998,12 @@
         }
       }
     },
+    "HealthKit Upload (Historical)" : {
+
+    },
+    "HealthKit Upload (Live)" : {
+
+    },
     "HEALTHKIT_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -2793,6 +2799,9 @@
         }
       }
     },
+    "No active uploads" : {
+
+    },
     "No Data" : {
       "localizations" : {
         "es" : {
@@ -3381,13 +3390,20 @@
     "Perform Always Available Task" : {
 
     },
+    "Perform Full %@ Upload" : {
+
+    },
     "Perform Task: %@" : {
 
     },
     "Preparing Test Environment" : {
 
     },
+    "Processing Health and SensorKit Data…" : {
+
+    },
     "Processing Health Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4007,6 +4023,9 @@
     "SensorKit" : {
 
     },
+    "SensorKit %@" : {
+
+    },
     "Sensors" : {
 
     },
@@ -4394,6 +4413,9 @@
         }
       }
     },
+    "Trigger Background Task" : {
+
+    },
     "True" : {
       "localizations" : {
         "es" : {
@@ -4405,6 +4427,9 @@
       }
     },
     "Trust Territories" : {
+
+    },
+    "U" : {
 
     },
     "UK Country" : {

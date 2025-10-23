@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-@preconcurrency import FirebaseStorage
+import FirebaseStorage
 import Foundation
 import OSLog
 import Spezi
@@ -16,41 +16,46 @@ import SpeziFoundation
 
 @Observable
 @MainActor
-final class HealthDataFileUploadManager: Module, DefaultInitializable, Sendable {
+final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
+    static let directory = URL.documentsDirectory.appending(component: "ManagedFileUploading", directoryHint: .isDirectory)
+    
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     // swiftlint:enable attributes
     
+    let categories: [Category]
     private let fileManager = FileManager()
     
-    /// A `Progress` instance representing the current health upload progress,
-    /// i.e. the progress uploading collected historical health samples into the Firebase Storage.
-    @MainActor private(set) var uploadProgress: Progress?
+    /// A `Progress` instance representing each category's upload progress,
+    /// i.e. the progress of uploading the category's submitted files into the Firebase Storage.
+    @MainActor private(set) var progressByCategory: [Category: Progress] = [:]
     
-    nonisolated init() {}
+    init(@ArrayBuilder<Category> categories: () -> [Category]) {
+        self.categories = categories()
+    }
     
     func configure() {
-        for category in Category.allCases {
+        for category in categories {
             let url = category.stagingDirUrl
             if !fileManager.isDirectory(at: url) {
                 do {
                     try fileManager.createDirectory(at: url, withIntermediateDirectories: true)
                 } catch {
-                    logger.error("Unable to create health uploads staging directory at \(url)")
+                    logger.error("Unable to create staging directory at \(url)")
                 }
             }
         }
         scheduleOrphanedExportsForUpload()
     }
     
-    /// Schedules all files in the bulkExports folder to be uploaded, unless they have already been scheduled.
+    /// Schedules all files in the different categories' folders to be uploaded, unless they have already been scheduled.
     ///
     /// The purpose of this function is to allow us to retry any unsucessful uploads, which failed bc the app was quit, or for some other reason.
     private func scheduleOrphanedExportsForUpload() {
         Task(priority: .utility) {
             await withDiscardingTaskGroup { taskGroup in
-                for category in Category.allCases {
+                for category in categories {
                     let files = (try? fileManager.contents(of: category.stagingDirUrl)) ?? []
                     for url in files {
                         taskGroup.addTask(priority: .utility) {
@@ -61,35 +66,48 @@ final class HealthDataFileUploadManager: Module, DefaultInitializable, Sendable 
             }
         }
     }
+    
+    func isActive(_ category: Category) -> Bool {
+        progressByCategory[category] != nil
+    }
 }
 
 
-extension HealthDataFileUploadManager {
+extension ManagedFileUpload {
+    struct Category: Identifiable, Hashable, Sendable {
+        let id: String
+        fileprivate let firebasePath: String
+        fileprivate let title: LocalizedStringResource?
+        fileprivate let stagingDirUrl: URL
+        
+        /// Creates a new Category
+        ///
+        /// - parameter id: Unique identifier for this category.
+        /// - parameter title: Optional, potentially user-visible title to be used with uploads in this category
+        /// - parameter firebasePath: The folder, relative to the user's directory in the storage bucket, where files uploaded for this category should be stored.
+        init(id: String, title: LocalizedStringResource? = nil, firebasePath: String) { // swiftlint:disable:this function_default_parameter_at_end
+            self.id = id
+            self.title = title
+            self.firebasePath = firebasePath
+            self.stagingDirUrl = ManagedFileUpload.directory.appending(component: id, directoryHint: .isDirectory)
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.id == rhs.id
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+    }
+}
+
+
+extension ManagedFileUpload {
     private enum UploadError: Error {
         case noAccount
         case uploadFailed(any Error)
         case deletionFailed(any Error)
-    }
-    
-    enum Category: CaseIterable {
-        /// The data being uploaded was collected as part of the app's live running data collection
-        case liveData
-        /// The data being uploaded was collected as part of the app's historical health import
-        case historicalData
-        
-        fileprivate var stagingDirUrl: URL {
-            switch self {
-            case .liveData: .scheduledLiveHealthKitUploads
-            case .historicalData: .scheduledHistoricalHealthKitUploads
-            }
-        }
-        
-        fileprivate var firebaseFolderName: String {
-            switch self {
-            case .liveData: "liveHealthSamples"
-            case .historicalData: "historicalHealthSamples"
-            }
-        }
     }
     
     nonisolated func scheduleForUpload<S: AsyncSequence<URL, Never>>(
@@ -104,6 +122,9 @@ extension HealthDataFileUploadManager {
     }
     
     nonisolated func scheduleForUpload(_ url: URL, category: Category) {
+        Task { @MainActor in
+            logger.notice("Scheduling for upload≥ in category \(category.id): \(url)")
+        }
         Task {
             try await upload(url, category: category)
         }
@@ -118,21 +139,23 @@ extension HealthDataFileUploadManager {
     }
     
     @MainActor
-    private func incrementTotalNumUploads() {
-        if let uploadProgress = self.uploadProgress {
+    private func incrementTotalNumUploads(for category: Category) {
+        if let uploadProgress = progressByCategory[category] {
             uploadProgress.totalUnitCount += 1
         } else {
             let progress = Progress(totalUnitCount: 1)
-            progress.localizedDescription = String(localized: "Uploading Health Data")
-            self.uploadProgress = progress
+            if let title = category.title {
+                progress.localizedDescription = String(localized: title)
+            }
+            progressByCategory[category] = progress
         }
     }
     
     @MainActor
-    private func incrementNumCompletedUploads() {
-        uploadProgress?.completedUnitCount += 1
-        if uploadProgress?.isFinished == true {
-            uploadProgress = nil
+    private func incrementNumCompletedUploads(for category: Category) {
+        progressByCategory[category]?.completedUnitCount += 1
+        if progressByCategory[category]?.isFinished == true {
+            progressByCategory[category] = nil
         }
     }
     
@@ -140,18 +163,18 @@ extension HealthDataFileUploadManager {
     @concurrent
     private func uploadAndDelete(_ url: URL, category: Category) async throws(UploadError) {
         await MainActor.run {
-            incrementTotalNumUploads()
+            incrementTotalNumUploads(for: category)
         }
         guard let accountId = await account?.details?.accountId else {
             throw .noAccount
         }
-        let storageRef = Storage.storage().reference(withPath: "users/\(accountId)/\(category.firebaseFolderName)/\(url.lastPathComponent)")
+        let storageRef = Storage.storage().reference(withPath: "users/\(accountId)/\(category.firebasePath)/\(url.lastPathComponent)")
         let metadata = StorageMetadata()
         metadata.contentType = "application/octet-stream"
         do {
             await logger.notice("Uploading \(url) to \(storageRef.fullPath)")
             _ = try await storageRef.putFileAsync(from: url, metadata: metadata)
-            await incrementNumCompletedUploads()
+            await incrementNumCompletedUploads(for: category)
         } catch {
             throw .uploadFailed(error)
         }
@@ -160,16 +183,5 @@ extension HealthDataFileUploadManager {
         } catch {
             throw .deletionFailed(error)
         }
-    }
-}
-
-
-extension URL {
-    static var scheduledHistoricalHealthKitUploads: URL {
-        URL.documentsDirectory.appending(components: "HealthKitUpload", "historical", directoryHint: .isDirectory)
-    }
-    
-    static var scheduledLiveHealthKitUploads: URL {
-        URL.documentsDirectory.appending(components: "HealthKitUpload", "live", directoryHint: .isDirectory)
     }
 }

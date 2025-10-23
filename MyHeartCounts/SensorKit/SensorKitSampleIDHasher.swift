@@ -55,6 +55,26 @@ struct SensorKitSampleIDHasher: ~Copyable {
         }
     }
     
+    mutating func combine(_ value: Double?) {
+        switch value {
+        case .none:
+            self.combine(0 as UInt8)
+        case .some(let value):
+            self.combine(1 as UInt8)
+            self.combine(value)
+        }
+    }
+    
+    mutating func combine(_ value: (some FixedWidthInteger)?) {
+        switch value {
+        case .none:
+            self.combine(0 as UInt8)
+        case .some(let value):
+            self.combine(1 as UInt8)
+            self.combine(value)
+        }
+    }
+    
     consuming func finalize() -> UUID {
         let uuid = UUID(uuid: unsafeBitCast(state, to: uuid_t.self)).makeValidV4()
         assert(uuid.isValidV4)

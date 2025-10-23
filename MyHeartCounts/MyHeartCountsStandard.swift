@@ -17,6 +17,7 @@ import SpeziFirebaseAccount
 import SpeziFirestore
 import SpeziHealthKit
 import SpeziQuestionnaire
+import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
 
@@ -30,7 +31,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Account.self) var account: Account?
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
-    @Dependency(HealthDataFileUploadManager.self) var healthDataUploader
+    @Dependency(ManagedFileUpload.self) var managedFileUpload
     @Dependency(AccountFeatureFlags.self) private var accountFeatureFlags
     @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
     // swiftlint:disable attributes
@@ -108,5 +109,20 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             logger.notice("account details changed")
             await propagateDebugModeValue(newDetails)
         }
+    }
+}
+
+
+extension MyHeartCountsStandard: NotificationHandler {
+    nonisolated func receiveIncomingNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions? {
+        // we want notifications to always display, even when the app is running.
+        [.badge, .banner, .list, .sound]
+    }
+}
+
+
+extension MyHeartCountsStandard {
+    func uploadSensorKitCSV(at url: URL, for sensor: Sensor<some Any>) {
+        managedFileUpload.scheduleForUpload(url, category: .init(sensor))
     }
 }

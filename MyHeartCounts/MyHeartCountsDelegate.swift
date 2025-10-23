@@ -6,8 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable discouraged_optional_collection
+
+import OSLog
 import Spezi
 import SpeziFirebaseConfiguration
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziNotifications
@@ -40,7 +44,28 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             FeedbackManager()
             SensorKit()
             SensorKitDataFetcher()
+            LocalNotifications()
+            Lifecycle()
+            AppRefresh()
+            MHCBackgroundTasks()
+            MotionDataFetcher()
         }
+    }
+    
+    override func application(
+        _ application: UIApplication,
+        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        logger.notice("\(#function)")
+        return super.application(application, willFinishLaunchingWithOptions: launchOptions)
+    }
+    
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        logger.notice("\(#function)")
+        return true
     }
 }
 
