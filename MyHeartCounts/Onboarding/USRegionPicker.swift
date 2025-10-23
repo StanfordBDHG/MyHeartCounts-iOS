@@ -49,6 +49,7 @@ struct USRegionPicker: View {
                         Image(systemSymbol: .checkmark)
                             .fontWeight(.medium)
                             .accessibilityLabel("Selection Checkmark")
+                            .foregroundStyle(.blue)
                     }
                     Text(region.abbreviation)
                         .foregroundStyle(.secondary)

@@ -150,6 +150,15 @@ private struct Impl<Footer: View>: View {
                 DemographicsComponent(\.comorbidities, noSelectionValue: nil) { binding, _ in
                     NavigationLink {
                         ComorbiditiesPicker(selection: binding.withDefault(Comorbidities()))
+                            .onAppear {
+                                if binding.wrappedValue == nil {
+                                    // If the value initially is nil, we set it to an empty selection when the picker is presented
+                                    // (ie, when the user taps the "Comorbidities" row in the form),
+                                    // this way we treat the user having looked at the list but not having selected anything
+                                    // as the user telling us they don't have any comorbidities
+                                    binding.wrappedValue = Comorbidities()
+                                }
+                            }
                     } label: {
                         if let comorbidities = binding.wrappedValue {
                             NavigationLinkLabel("Comorbidities", isEmpty: false, value: "\(comorbidities.count) selected")
