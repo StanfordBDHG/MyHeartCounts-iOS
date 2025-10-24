@@ -51,7 +51,7 @@ struct Article: Hashable, Identifiable, Sendable {
         date: Date? = nil,
         tags: [Tag] = [],
         lede: String? = nil,
-        headerImage: ImageReference? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        headerImage: ImageReference? = nil,
         body: MarkdownDocument
     ) {
         self.id = id

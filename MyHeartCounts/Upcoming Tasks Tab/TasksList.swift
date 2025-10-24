@@ -183,7 +183,7 @@ struct TasksList: View {
     init(
         mode: Mode,
         timeRange: TimeRange,
-        headerConfig: HeaderConfig = .timeRange, // swiftlint:disable:this function_default_parameter_at_end
+        headerConfig: HeaderConfig = .timeRange,
         eventGroupingConfig: EventGroupingConfig,
         noTasksMessageLabels: NoTasksMessageLabels
     ) {
@@ -622,8 +622,8 @@ extension TasksList {
         init(
             symbol: SFSymbol,
             title: LocalizedStringResource,
-            subtitle: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
-            instructions: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+            subtitle: LocalizedStringResource? = nil,
+            instructions: LocalizedStringResource? = nil,
             actionLabel: LocalizedStringResource,
             action: @escaping @MainActor () -> Void
         ) {
