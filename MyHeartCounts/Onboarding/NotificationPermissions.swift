@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziOnboarding
@@ -19,37 +20,23 @@ struct NotificationPermissions: View {
     @Environment(NotificationsManager.self)
     private var notificationsManager
     
-    @State private var notificationProcessing = false
+    @State private var viewState: ViewState = .idle
     
     
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    OnboardingHeader(
-                        systemSymbol: .bellBadge,
-                        title: "Notifications",
-                        description: "NOTIFICATION_PERMISSIONS_DESCRIPTION"
-                    )
-                }
-                .padding(.horizontal)
-            }
-            Spacer(minLength: 8)
-                .border(Color.blue, width: 1)
-            OnboardingActionsView("Allow Notifications") {
+        OnboardingPage(symbol: .bellBadge, title: "Notifications", description: "NOTIFICATION_PERMISSIONS_DESCRIPTION") {
+            EmptyView()
+        } footer: {
+            OnboardingActionsView("Allow Notifications", viewState: $viewState) {
                 await allowNotifications()
             }
-            .padding(.horizontal)
         }
-        .scrollBounceBehavior(.basedOnSize)
-        .toolbar(.visible)
-        .navigationBarBackButtonHidden(notificationProcessing)
+        .navigationBarBackButtonHidden(viewState != .idle)
     }
     
     
     private func allowNotifications() async {
         do {
-            notificationProcessing = true
             // Notification Authorization is not available in the preview simulator.
             if ProcessInfo.processInfo.isPreviewSimulator {
                 try await _Concurrency.Task.sleep(for: .seconds(0.75))
@@ -57,9 +44,8 @@ struct NotificationPermissions: View {
                 try await notificationsManager.requestNotificationPermissions()
             }
         } catch {
-            print("Could not request notification permissions.")
+            logger.error("Could not request notification permissions: \(error)")
         }
-        notificationProcessing = false
         onboardingPath.nextStep()
     }
 }

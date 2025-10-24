@@ -57,6 +57,7 @@ struct Consent: View {
             }
         }
         .navigationTitle("Consent")
+        .navigationBarBackButtonHidden(viewState != .idle)
         .scrollIndicators(.visible)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

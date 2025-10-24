@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziAccount
@@ -29,27 +30,16 @@ struct HealthKitPermissions: View {
     @Environment(StudyBundleLoader.self)
     private var studyLoader
     
-    @State private var healthKitProcessing = false
+    @State private var viewState: ViewState = .idle
     @State private var isShowingLearnMoreText = false
     
-    
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    OnboardingHeader(
-                        systemSymbol: .heartTextSquare,
-                        title: title,
-                        description: "HEALTHKIT_PERMISSIONS_SUBTITLE"
-                    )
-                }
-                .padding(.horizontal)
-            }
-            .scrollBounceBehavior(.basedOnSize)
-            Spacer(minLength: 8)
-                .border(Color.blue, width: 1)
+        OnboardingPage(symbol: .heartTextSquare, title: title, description: "HEALTHKIT_PERMISSIONS_SUBTITLE") {
+            EmptyView()
+        } footer: {
             OnboardingActionsView(
                 primaryTitle: "Grant Access",
+                primaryViewState: $viewState,
                 primaryAction: {
                     await grantAccess()
                 },
@@ -58,7 +48,6 @@ struct HealthKitPermissions: View {
                     isShowingLearnMoreText.toggle()
                 }
             )
-            .padding(.horizontal)
         }
         .sheet(isPresented: $isShowingLearnMoreText) {
             OnboardingLearnMore(
@@ -66,9 +55,7 @@ struct HealthKitPermissions: View {
                 learnMoreText: "HEALTHKIT_PERMISSIONS_DESCRIPTION"
             )
         }
-        .navigationTitle(Text(verbatim: ""))
-        .toolbar(.visible)
-        .navigationBarBackButtonHidden(healthKitProcessing)
+        .navigationBarBackButtonHidden(viewState != .idle)
     }
     
     
@@ -78,7 +65,6 @@ struct HealthKitPermissions: View {
             return
         }
         do {
-            healthKitProcessing = true
             // HealthKit is not available in the preview simulator.
             if ProcessInfo.processInfo.isPreviewSimulator {
                 try await _Concurrency.Task.sleep(for: .seconds(5))
@@ -88,9 +74,8 @@ struct HealthKitPermissions: View {
                 try await healthKit.askForAuthorization(for: accessReqs)
             }
         } catch {
-            print("Could not request HealthKit permissions.")
+            logger.error("Could not request HealthKit permissions: \(error)")
         }
-        healthKitProcessing = false
         onboardingPath.nextStep()
     }
 }
