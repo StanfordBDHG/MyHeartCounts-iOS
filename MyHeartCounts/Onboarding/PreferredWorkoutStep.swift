@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import OSLog
 import SFSafeSymbols
 import SpeziAccount
 import SpeziOnboarding
@@ -51,7 +52,7 @@ struct PreferredWorkoutStep: View {
                 var newDetails = AccountDetails()
                 newDetails.preferredWorkoutType = workoutType?.id
                 newDetails.preferredNudgeNotificationTime = notificationTime
-                let modifications = AccountModifications(modifiedDetails: newDetails)
+                let modifications = try AccountModifications(modifiedDetails: newDetails)
                 do {
                     try await account.accountService.updateAccountDetails(modifications)
                 } catch {
