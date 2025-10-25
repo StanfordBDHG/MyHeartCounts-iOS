@@ -92,6 +92,7 @@ struct WorkoutPreferenceSetting: View {
                 }
             }
             .pickerStyle(.menu)
+            .accessibilityIdentifier("MHC:PrefWorkoutTypePicker")
         }
         Divider()
         DatePicker(

@@ -73,6 +73,7 @@ extension XCUIApplication {
         navigateConsentComprehension()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         try navigateHealthKitAccess()
+        navigateWorkoutPreferences()
         navigateNotifications()
         navigateDemographics()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
@@ -276,6 +277,16 @@ extension XCUIApplication {
         XCTAssert(staticTexts["Notifications"].waitForExistence(timeout: 2))
         buttons["Allow Notifications"].tap()
         confirmNotificationAuthorization()
+    }
+    
+    
+    private func navigateWorkoutPreferences() {
+        XCTAssert(staticTexts["Workout Preference"].waitForExistence(timeout: 2))
+        buttons["MHC:PrefWorkoutTypePicker"].tap()
+        sleep(for: .seconds(1))
+        XCTAssert(buttons["Cycling"].waitForExistence(timeout: 2))
+        buttons["Cycling"].tap()
+        buttons["Continue"].tap()
     }
     
     
