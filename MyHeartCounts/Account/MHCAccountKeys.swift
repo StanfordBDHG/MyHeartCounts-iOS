@@ -66,6 +66,27 @@ extension AccountDetails {
         as: Bool.self
     )
     var didOptInToTrial: Bool?
+    
+    
+    @AccountKey(
+        id: "preferredWorkoutType",
+        name: "Preferred Workout Type",
+        category: .other,
+        options: .mutable,
+        as: PreferredWorkoutStep.WorkoutType.ID.self,
+        initial: .empty("")
+    )
+    var preferredWorkoutType: PreferredWorkoutStep.WorkoutType.ID?
+    
+    @AccountKey(
+        id: "preferredNotificationTime",
+        name: "Preferred Notification Time",
+        category: .other,
+        options: .mutable,
+        as: PreferredWorkoutStep.NotificationTime.self,
+        initial: .empty(.init(hour: 0))
+    )
+    var preferredNudgeNotificationTime: PreferredWorkoutStep.NotificationTime?
 }
 
 
@@ -99,7 +120,8 @@ extension AccountDetails {
 
 @KeyEntry(
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
-    \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep
+    \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep,
+    \.preferredWorkoutType, \.preferredNudgeNotificationTime
 )
 extension AccountKeys {}
 

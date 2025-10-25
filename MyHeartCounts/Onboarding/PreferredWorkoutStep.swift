@@ -8,21 +8,18 @@
 
 import Foundation
 import SFSafeSymbols
+import SpeziAccount
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
 
 struct PreferredWorkoutStep: View {
-    struct NotificationTime: Hashable, Codable, Sendable {
-        var hour: Int
-        var minute: Int = 0
-    }
-    
-    @Environment(\.calendar)
-    private var calendar
-    @Environment(ManagedNavigationStack.Path.self)
-    private var path
+    // swiftlint:disable attributes
+    @Environment(\.calendar) private var calendar
+    @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(Account.self) private var account
+    // swiftlint:enable attributes
     
     @State private var viewState: ViewState = .idle
     @State private var workoutType: WorkoutType?
@@ -51,7 +48,15 @@ struct PreferredWorkoutStep: View {
             )
         } footer: {
             OnboardingActionsView("Continue", viewState: $viewState) {
-                // TODO: save the response somewhere!
+                var newDetails = AccountDetails()
+                newDetails.preferredWorkoutType = workoutType?.id
+                newDetails.preferredNudgeNotificationTime = notificationTime
+                let modifications = AccountModifications(modifiedDetails: newDetails)
+                do {
+                    try await account.accountService.updateAccountDetails(modifications)
+                } catch {
+                    logger.error("Error updating workout preference account details: \(error)")
+                }
                 path.nextStep()
             }
         }
@@ -97,6 +102,49 @@ extension PreferredWorkoutStep {
         let title: String
         let symbol: SFSymbol
     }
+    
+    
+    struct NotificationTime: Hashable, LosslessStringConvertible, Codable, Sendable {
+        var hour: Int
+        var minute: Int
+        
+        var description: String {
+            String(format: "%.02ld:%02ld", hour, minute)
+        }
+        
+        init(hour: Int, minute: Int = 0) {
+            self.hour = hour
+            self.minute = minute
+        }
+        
+        init?(_ description: String) {
+            let components = description.split(separator: ":")
+            guard components.count == 2,
+                  let hour = Int(components[0]),
+                  let minute = Int(components[1]),
+                  (0..<24).contains(hour),
+                  (0..<60).contains(minute) else {
+                return nil
+            }
+            self.hour = hour
+            self.minute = minute
+        }
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let description = try container.decode(String.self)
+            if let time = Self(description) {
+                self = time
+            } else {
+                throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Unable to parse '\(description)' into a \(Self.self)"))
+            }
+        }
+        
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(description)
+        }
+    }
 }
 
 
@@ -111,4 +159,12 @@ extension PreferredWorkoutStep.WorkoutType {
         Self(id: "yoga/pilates", title: "Yoga / Pilates", symbol: .figureYoga),
         Self(id: "sport", title: "Sport", symbol: .figureIndoorSoccer)
     ]
+    
+    init?(id: ID) {
+        if let value = Self.options.first(where: { $0.id == id }) {
+            self = value
+        } else {
+            return nil
+        }
+    }
 }

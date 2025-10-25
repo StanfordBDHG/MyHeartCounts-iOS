@@ -346,9 +346,6 @@
         }
       }
     },
-    "00" : {
-
-    },
     "1 – 29" : {
 
     },
@@ -3493,6 +3490,12 @@
 
     },
     "Prefer not to state" : {
+
+    },
+    "Preferred Notification Time" : {
+
+    },
+    "Preferred Workout Type" : {
 
     },
     "Preparing Test Environment" : {

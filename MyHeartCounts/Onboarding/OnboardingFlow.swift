@@ -108,6 +108,7 @@ private struct AppOnboardingFlow: View {
             }
             PreferredWorkoutStep()
                 .onboardingStep(.workoutPreference)
+                .injectingSpezi()
             if !localNotificationAuthorization {
                 NotificationPermissions()
                     .onboardingStep(.notifications)

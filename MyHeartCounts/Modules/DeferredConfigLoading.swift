@@ -248,7 +248,9 @@ enum DeferredConfigLoading {
                         .manual(\.lastSignedConsentVersion),
                         .manual(\.futureStudies),
                         .manual(\.mostRecentOnboardingStep),
-                        .manual(\.dateOfEnrollment)
+                        .manual(\.dateOfEnrollment),
+                        .manual(\.preferredWorkoutType),
+                        .manual(\.preferredNudgeNotificationTime)
                     ]
                 )
                 firestore
