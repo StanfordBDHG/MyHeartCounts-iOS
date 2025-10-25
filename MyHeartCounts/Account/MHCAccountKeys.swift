@@ -73,20 +73,20 @@ extension AccountDetails {
         name: "Preferred Workout Type",
         category: .other,
         options: .mutable,
-        as: PreferredWorkoutStep.WorkoutType.ID.self,
+        as: WorkoutPreferenceSetting.WorkoutType.ID.self,
         initial: .empty("")
     )
-    var preferredWorkoutType: PreferredWorkoutStep.WorkoutType.ID?
+    var preferredWorkoutType: WorkoutPreferenceSetting.WorkoutType.ID?
     
     @AccountKey(
         id: "preferredNotificationTime",
         name: "Preferred Notification Time",
         category: .other,
         options: .mutable,
-        as: PreferredWorkoutStep.NotificationTime.self,
+        as: WorkoutPreferenceSetting.NotificationTime.self,
         initial: .empty(.init(hour: 0))
     )
-    var preferredNudgeNotificationTime: PreferredWorkoutStep.NotificationTime?
+    var preferredNudgeNotificationTime: WorkoutPreferenceSetting.NotificationTime?
 }
 
 

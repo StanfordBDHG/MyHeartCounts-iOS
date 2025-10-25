@@ -40,7 +40,6 @@ struct OnboardingHeader: View {
                 Spacer()
             }
             .frame(height: 160)
-            .background(Color.green)
         }
         Text(title)
             .font(.title2.bold())

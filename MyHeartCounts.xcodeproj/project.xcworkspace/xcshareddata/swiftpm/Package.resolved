@@ -239,8 +239,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFirebase.git",
       "state" : {
-        "revision" : "b2a7b23dfeb66fa27230c4364e761cd49c9eeb41",
-        "version" : "2.0.7"
+        "revision" : "3a00b391f39104444465da3b9105a4c75dc1c748"
       }
     },
     {

@@ -4963,6 +4963,16 @@
 
     },
     "WORKOUT_PREFERENCE_TEXT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select your preferred workout type.\nWe’ll use this to tailor [TODO ANDERS WE NEED TEXT HERE]"
+          }
+        }
+      }
+    },
+    "WORKOUT_TYPE_PREFERENCE_FOOTER" : {
 
     },
     "World" : {
