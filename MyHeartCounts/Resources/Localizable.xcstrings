@@ -349,17 +349,6 @@
     "1 – 29" : {
 
     },
-    "1 to 5 years ago" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 a 5 años atrás"
-          }
-        }
-      }
-    },
     "4 to 5 hours" : {
 
     },
@@ -569,17 +558,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Agregar Muestras de Altura y Peso"
-          }
-        }
-      }
-    },
-    "Add Sample" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar Muestra"
           }
         }
       }
@@ -857,144 +835,6 @@
         }
       }
     },
-    "COMORBIDITY_ACHD" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adult Congenital Heart Disease"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adult Congenital Heart Disease"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enfermedad Cardíaca Congénita en Adultos"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_CAD" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coronary Artery Disease"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coronary Artery Disease"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enfermedad Arterial Coronaria"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_DIABETES" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diabetes"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diabetes"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diabetes"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_HEART_FAILURE" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heart Failure"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heart Failure"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insuficiencia Cardíaca"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_NONE" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "None"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "None"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguno"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_PAH" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pulmonary Arterial Hypertension"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pulmonary Arterial Hypertension"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hipertensión Arterial Pulmonar"
-          }
-        }
-      }
-    },
     "Companion Watch App Not Installed" : {
       "localizations" : {
         "es" : {
@@ -1196,17 +1036,6 @@
     },
     "Coronary Stent/Angioplasty" : {
 
-    },
-    "County" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Condado"
-          }
-        }
-      }
     },
     "Data collection enabled for %lld sensors" : {
 
@@ -1524,28 +1353,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ingresar IMC (Índice de Masa Corporal)"
-          }
-        }
-      }
-    },
-    "Enter Height" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresar Altura"
-          }
-        }
-      }
-    },
-    "Enter Weight" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresar Peso"
           }
         }
       }
@@ -2538,17 +2345,6 @@
         }
       }
     },
-    "Loading Firebase Test Setup" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cargando Configuración de Prueba de Firebase"
-          }
-        }
-      }
-    },
     "Local Notifications Status" : {
       "localizations" : {
         "es" : {
@@ -2691,17 +2487,6 @@
     "More" : {
 
     },
-    "More than 5 years ago" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hace más de 5 años"
-          }
-        }
-      }
-    },
     "Most Recent Night" : {
 
     },
@@ -2766,17 +2551,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nevada"
-          }
-        }
-      }
-    },
-    "Never" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nunca"
           }
         }
       }
@@ -2943,6 +2717,7 @@
       }
     },
     "No, not Spanish/Hispanic/Latino" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3954,17 +3729,6 @@
     "Restart Test" : {
 
     },
-    "Results" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultados"
-          }
-        }
-      }
-    },
     "Retry" : {
       "localizations" : {
         "es" : {
@@ -4065,17 +3829,6 @@
     },
     "Select Comorbidities" : {
 
-    },
-    "Select County" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecciona un Condado"
-          }
-        }
-      }
     },
     "Select Date" : {
 
@@ -4567,91 +4320,6 @@
     "UK Region" : {
 
     },
-    "UK_REGION_ENGLAND" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "England"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "England"
-          }
-        }
-      }
-    },
-    "UK_REGION_NORTHERN_IRELAND" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Northern Ireland"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Northern Ireland"
-          }
-        }
-      }
-    },
-    "UK_REGION_NOT_SET" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Set"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Set"
-          }
-        }
-      }
-    },
-    "UK_REGION_SCOTLAND" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scotland"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scotland"
-          }
-        }
-      }
-    },
-    "UK_REGION_WALES" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wales"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wales"
-          }
-        }
-      }
-    },
     "Unable to find Questionnaire" : {
       "localizations" : {
         "es" : {
@@ -4948,17 +4616,6 @@
         }
       }
     },
-    "Within last year, or am using NDS" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En el último año, o estoy usando NDS"
-          }
-        }
-      }
-    },
     "Workout Preference" : {
 
     },
@@ -4967,7 +4624,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Select your preferred workout type.\nWe’ll use this to tailor [TODO ANDERS WE NEED TEXT HERE]"
+            "value" : "The MyHeart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The MyHeart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         }
       }
@@ -5063,17 +4726,6 @@
     },
     "You can enable or disable individual sensors in the iOS Settings app." : {
 
-    },
-    "You can select multiple options" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes seleccionar múltiples opciones"
-          }
-        }
-      }
     },
     "You haven't granted My Heart Counts permission to add data to HealthKit for the following data types:\n%@" : {
 

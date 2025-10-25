@@ -36,7 +36,7 @@ extension LatinoStatusOption {
     static let preferNotToState = Self(rawValue: .max, displayTitle: "Prefer not to state")
     
     static let options: [Self] = [
-        Self(rawValue: 1, displayTitle: "No, not Spanish/Hispanic/Latino"),
+        Self(rawValue: 1, displayTitle: "No"),
         Self(rawValue: 2, displayTitle: "Yes, Mexican, Mexican American, or Chicano"),
         Self(rawValue: 3, displayTitle: "Yes, Caribbean Hispanic, including Cuban and Puerto Rican"),
         Self(rawValue: 4, displayTitle: "Yes, South American Hispanic"),
