@@ -24,7 +24,6 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             skinType: .II,
             wheelchairUse: .no
         ))
-        
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--overrideStudyBundleLocation",
@@ -83,7 +82,9 @@ extension XCUIApplication {
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         try navigateHealthKitAccess()
         navigateWorkoutPreferences()
-        navigateNotifications()
+        if staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
+            navigateNotifications()
+        }
         navigateDemographics()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
@@ -291,10 +292,9 @@ extension XCUIApplication {
     
     private func navigateWorkoutPreferences() {
         XCTAssert(staticTexts["Workout Preference"].waitForExistence(timeout: 2))
-        buttons["MHC:PrefWorkoutTypePicker"].tap()
-        sleep(for: .seconds(1))
         XCTAssert(buttons["Cycling"].waitForExistence(timeout: 2))
         buttons["Cycling"].tap()
+        swipeUp()
         buttons["Continue"].tap()
     }
     
