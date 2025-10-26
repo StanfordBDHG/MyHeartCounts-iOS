@@ -21,34 +21,30 @@ struct WorkoutPreferenceSetting: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.calendar) private var calendar
     @Environment(ManagedNavigationStack.Path.self) private var path: ManagedNavigationStack.Path?
-    @Environment(Account.self) private var account
+    @Environment(Account.self) private var account: Account?
     // swiftlint:enable attributes
     
     @State private var viewState: ViewState = .idle
-    @State private var workoutType: WorkoutType?
+    @State private var workoutTypes: WorkoutTypes = .init()
     @State private var notificationTime = NotificationTime(hour: 9)
     
-    private var canContinue: Bool {
-        workoutType != nil
-    }
-    
     var body: some View {
-        OnboardingPage(title: "Workout Preference", description: "WORKOUT_PREFERENCE_TEXT") {
-            content
-        } footer: {
+        Form {
+            formSections
             if let path {
-                OnboardingActionsView("Continue", viewState: $viewState) {
-                    await saveToAccountDetails()
-                    path.nextStep()
+                Section {
+                    OnboardingActionsView("Continue", viewState: $viewState) {
+                        await saveToAccountDetails()
+                        path.nextStep()
+                    }
+                    .listRowInsets(.zero)
                 }
-                .disabled(!canContinue)
-            } else {
-                EmptyView()
             }
         }
+        .navigationTitle("Workout Preference")
         .interactiveDismissDisabled()
         .toolbar {
-            if path == nil {
+            if path == nil { // we're presented outside of the onboarding, i.e. as a sheet
                 ToolbarItem(placement: .confirmationAction) {
                     if #available(iOS 26, *) {
                         AsyncButton(role: .confirm, state: $viewState) {
@@ -57,47 +53,55 @@ struct WorkoutPreferenceSetting: View {
                         } label: {
                             Text("Done")
                         }
-                        .disabled(!canContinue)
                     } else {
                         AsyncButton("Done", state: $viewState) {
                             await saveToAccountDetails()
                             dismiss()
                         }
-                        .disabled(!canContinue)
                     }
                 }
             }
         }
         .onAppear {
-            if let details = account.details {
-                workoutType = details.preferredWorkoutType.flatMap { .init(id: $0) }
+            if let details = account?.details {
+                workoutTypes = details.preferredWorkoutTypes ?? .init()
                 notificationTime = details.preferredNudgeNotificationTime ?? .init(hour: 9)
             }
         }
     }
     
-    @ViewBuilder private var content: some View {
-        Divider()
-        HStack {
-            Text("Preferred Workout Type")
-            Spacer()
-            Picker("", selection: $workoutType) {
-                Text("No Selection")
-                    .tag(WorkoutType?.none)
-                    .selectionDisabled()
-                Divider()
-                ForEach(WorkoutType.options) { option in
-                    Label(option.title, systemSymbol: option.symbol)
-                        .tag(option)
+    @ViewBuilder private var formSections: some View {
+        Section {
+            Text("WORKOUT_PREFERENCE_TEXT")
+        }
+        Section("Preferred Workout Types") {
+            ForEach(WorkoutType.options) { option in
+                Button {
+                    if workoutTypes.contains(option) {
+                        workoutTypes.remove(option)
+                    } else {
+                        workoutTypes.insert(option)
+                    }
+                } label: {
+                    Label {
+                        HStack {
+                            Text(option.title)
+                            Spacer()
+                            if workoutTypes.contains(option) {
+                                Image(systemSymbol: .checkmark)
+                                    .fontWeight(.medium)
+                                    .accessibilityLabel("Selection Checkmark")
+                            }
+                        }
+                    } icon: {
+                        Image(systemSymbol: option.symbol)
+                            .accessibilityHidden(true)
+                    }
                 }
             }
-            .pickerStyle(.menu)
-            .accessibilityIdentifier("MHC:PrefWorkoutTypePicker")
         }
-        Divider()
-        DatePicker(
-            "Notification Time",
-            selection: Binding<Date> {
+        Section {
+            let dateBinding = Binding<Date> {
                 calendar.date(
                     bySettingHour: notificationTime.hour,
                     minute: notificationTime.minute,
@@ -110,19 +114,31 @@ struct WorkoutPreferenceSetting: View {
                     hour: components.hour ?? 9,
                     minute: components.minute ?? 0
                 )
-            },
-            displayedComponents: [.hourAndMinute]
-        )
-        Divider()
-        Text("WORKOUT_TYPE_PREFERENCE_FOOTER")
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+            }
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("Notification Time")
+                    Text("NOTIFICATION_TIME_SUBTITLE")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                CustomDatePicker(selection: dateBinding, minuteInterval: 15)
+                    .frame(maxWidth: 100)
+            }
+            .frame(minHeight: 51 + (2 / 3))
+        }
     }
     
+    
     private func saveToAccountDetails() async {
+        guard let account else {
+            logger.notice("Unable to store workout preference: no account")
+            return
+        }
         do {
             var newDetails = AccountDetails()
-            newDetails.preferredWorkoutType = workoutType?.id
+            newDetails.preferredWorkoutTypes = workoutTypes
             newDetails.preferredNudgeNotificationTime = notificationTime
             let modifications = try AccountModifications(modifiedDetails: newDetails)
             try await account.accountService.updateAccountDetails(modifications)
@@ -134,95 +150,46 @@ struct WorkoutPreferenceSetting: View {
 
 
 extension WorkoutPreferenceSetting {
-    private struct Section<Header: View, Content: View>: View {
-        private let header: Header
-        private let content: Content
+    private struct CustomDatePicker: UIViewRepresentable {
+        typealias UIViewType = UIDatePicker
         
-        var body: some View {
-            VStack {
-                header
-                    .font(.title3.bold()/*.scaled(by: 0.9)*/)
-                    .foregroundStyle(.secondary)
-                content
-            }
+        @Binding private var selection: Date
+        private let minuteInterval: Int
+        
+        init(selection: Binding<Date>, minuteInterval: Int = 1) {
+            self._selection = selection
+            self.minuteInterval = minuteInterval
         }
         
-        init(_ title: LocalizedStringResource, @ViewBuilder content: () -> Content) where Header == Text {
-            self.header = Text(title)
-            self.content = content()
+        func makeUIView(context: Context) -> UIDatePicker {
+            let view = UIDatePicker()
+            view.datePickerMode = .time
+            view.preferredDatePickerStyle = .compact
+            view.addAction(UIAction { action in
+                guard let view = action.sender as? UIDatePicker else {
+                    return
+                }
+                selection = view.date
+            }, for: .valueChanged)
+            return view
+        }
+        
+        func updateUIView(_ view: UIDatePicker, context: Context) {
+            view.date = selection
+            view.locale = context.environment.locale
+            view.calendar = context.environment.calendar
+            view.minuteInterval = minuteInterval
         }
     }
 }
 
 
-extension WorkoutPreferenceSetting {
-    struct WorkoutType: Hashable, Identifiable, Sendable {
-        let id: String
-        let title: String
-        let symbol: SFSymbol
-    }
-    
-    
-    struct NotificationTime: Hashable, LosslessStringConvertible, Codable, Sendable {
-        var hour: Int
-        var minute: Int
-        
-        var description: String {
-            String(format: "%.02ld:%02ld", hour, minute)
-        }
-        
-        init(hour: Int, minute: Int = 0) {
-            self.hour = hour.clamped(to: 0...23)
-            self.minute = minute.clamped(to: 0...59)
-        }
-        
-        init?(_ description: String) {
-            let components = description.split(separator: ":")
-            guard components.count == 2,
-                  let hour = Int(components[0]),
-                  let minute = Int(components[1]),
-                  (0..<24).contains(hour),
-                  (0..<60).contains(minute) else {
-                return nil
-            }
-            self.init(hour: hour, minute: minute)
-        }
-        
-        init(from decoder: any Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            let description = try container.decode(String.self)
-            if let time = Self(description) {
-                self = time
-            } else {
-                throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Unable to parse '\(description)' into a \(Self.self)"))
-            }
-        }
-        
-        func encode(to encoder: any Encoder) throws {
-            var container = encoder.singleValueContainer()
-            try container.encode(description)
-        }
+#if DEBUG
+#Preview {
+    ManagedNavigationStack {
+        WorkoutPreferenceSetting()
+            .navigationBarTitleDisplayMode(.inline)
+        Text("Next View")
     }
 }
-
-
-extension WorkoutPreferenceSetting.WorkoutType {
-    static let options: [Self] = [
-        Self(id: "walk", title: "Walking", symbol: .figureWalk),
-        Self(id: "run", title: "Running", symbol: .figureRun),
-        Self(id: "bicycle", title: "Cycling", symbol: .figureOutdoorCycle),
-        Self(id: "swim", title: "Swimmimg", symbol: .figurePoolSwim),
-        Self(id: "strength", title: "Strength", symbol: .figureStrengthtrainingFunctional),
-        Self(id: "HIIT", title: "High-intensity Training", symbol: .figureHighintensityIntervaltraining),
-        Self(id: "yoga/pilates", title: "Yoga / Pilates", symbol: .figureYoga),
-        Self(id: "sport", title: "Sport", symbol: .figureIndoorSoccer)
-    ]
-    
-    init?(id: ID) {
-        if let value = Self.options.first(where: { $0.id == id }) {
-            self = value
-        } else {
-            return nil
-        }
-    }
-}
+#endif

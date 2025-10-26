@@ -32,6 +32,7 @@ struct NotificationPermissions: View {
             }
         }
         .navigationBarBackButtonHidden(viewState != .idle)
+        .accessibilityIdentifier("MHC:OnboardingStepNotifications")
     }
     
     

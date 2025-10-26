@@ -249,7 +249,7 @@ enum DeferredConfigLoading {
                         .manual(\.futureStudies),
                         .manual(\.mostRecentOnboardingStep),
                         .manual(\.dateOfEnrollment),
-                        .manual(\.preferredWorkoutType),
+                        .manual(\.preferredWorkoutTypes),
                         .manual(\.preferredNudgeNotificationTime)
                     ]
                 )

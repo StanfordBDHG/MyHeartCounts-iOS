@@ -69,14 +69,14 @@ extension AccountDetails {
     
     
     @AccountKey(
-        id: "preferredWorkoutType",
-        name: "Preferred Workout Type",
+        id: "preferredWorkoutTypes",
+        name: "Preferred Workout Types",
         category: .other,
         options: .mutable,
-        as: WorkoutPreferenceSetting.WorkoutType.ID.self,
-        initial: .empty("")
+        as: WorkoutPreferenceSetting.WorkoutTypes.self,
+        initial: .default(.init())
     )
-    var preferredWorkoutType: WorkoutPreferenceSetting.WorkoutType.ID?
+    var preferredWorkoutTypes: WorkoutPreferenceSetting.WorkoutTypes?
     
     @AccountKey(
         id: "preferredNotificationTime",
@@ -121,7 +121,7 @@ extension AccountDetails {
 @KeyEntry(
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
     \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep,
-    \.preferredWorkoutType, \.preferredNudgeNotificationTime
+    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
 )
 extension AccountKeys {}
 

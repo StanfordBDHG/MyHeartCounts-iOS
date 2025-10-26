@@ -2808,6 +2808,16 @@
         }
       }
     },
+    "NOTIFICATION_TIME_SUBTITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The preferred time for activity-related notifications. You can change this later."
+          }
+        }
+      }
+    },
     "Notifications" : {
       "localizations" : {
         "en" : {
@@ -3270,7 +3280,7 @@
     "Preferred Notification Time" : {
 
     },
-    "Preferred Workout Type" : {
+    "Preferred Workout Types" : {
 
     },
     "Preparing Test Environment" : {
@@ -4624,19 +4634,16 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The MyHeart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The MyHeart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         }
       }
-    },
-    "WORKOUT_TYPE_PREFERENCE_FOOTER" : {
-
     },
     "World" : {
       "localizations" : {
