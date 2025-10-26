@@ -21,7 +21,7 @@ struct WorkoutPreferenceSetting: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.calendar) private var calendar
     @Environment(ManagedNavigationStack.Path.self) private var path: ManagedNavigationStack.Path?
-    @Environment(Account.self) private var account: Account?
+    @Environment(Account.self) private var account: Account? // optional to easily make it work with the Preview
     // swiftlint:enable attributes
     
     @State private var viewState: ViewState = .idle

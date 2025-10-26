@@ -439,7 +439,7 @@ extension Impl {
                 Divider()
                 ForEach(allOptions, id: \.self) { option in
                     Text(optionTitle(option))
-                        .tag(Value?.some(option))
+                        .tag(option)
                 }
             }
             .pickerStyle(.menu)
