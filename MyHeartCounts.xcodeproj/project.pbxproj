@@ -1453,8 +1453,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
-				kind = revision;
-				revision = a8d8ad67375ad9a21b2a38c3890b23a029ea9a1e;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.5;
 			};
 		};
 		2FE5DC6529EDD894004B9AB4 /* XCRemoteSwiftPackageReference "SpeziContact" */ = {
@@ -1517,8 +1517,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFirebase.git";
 			requirement = {
-				kind = revision;
-				revision = 3a00b391f39104444465da3b9105a4c75dc1c748;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.8;
 			};
 		};
 		8043E0092DC2348600E0DF01 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
