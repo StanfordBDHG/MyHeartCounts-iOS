@@ -20,20 +20,20 @@ enum GenderIdentity: Int, Hashable, Codable, CaseIterable {
 
 
 extension GenderIdentity {
-    var displayTitle: String {
+    var displayTitle: LocalizedStringResource {
         switch self {
         case .preferNotToState:
-            String(localized: "GENDER_PREFER_NOT_TO_STATE")
+            "GENDER_PREFER_NOT_TO_STATE"
         case .male:
-            String(localized: "GENDER_MALE")
+            "GENDER_MALE"
         case .female:
-            String(localized: "GENDER_FEMALE")
+            "GENDER_FEMALE"
         case .transFemale:
-            String(localized: "GENDER_TRANS_FEMALE")
+            "GENDER_TRANS_FEMALE"
         case .transMale:
-            String(localized: "GENDER_TRANS_MALE")
+            "GENDER_TRANS_MALE"
         case .other:
-            String(localized: "GENDER_OTHER")
+            "GENDER_OTHER"
         }
     }
 }

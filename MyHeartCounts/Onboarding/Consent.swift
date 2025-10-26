@@ -47,6 +47,8 @@ struct Consent: View {
                 accountDetailUpdates.lastSignedConsentDate = .now
                 accountDetailUpdates.lastSignedConsentVersion = consentDocument.metadata.version?.description
                 accountDetailUpdates.futureStudies = consentDocument.userResponses.toggles["future-studies"] == true
+                // swiftlint:disable:next line_length
+                accountDetailUpdates.didOptInToTrial = consentDocument.userResponses.selects["short-term-physical-activity-trial"] == "short-term-physical-activity-trial-yes"
                 let modifications = try AccountModifications(modifiedDetails: accountDetailUpdates)
                 try await account.accountService.updateAccountDetails(modifications)
             }
@@ -55,6 +57,7 @@ struct Consent: View {
             }
         }
         .navigationTitle("Consent")
+        .navigationBarBackButtonHidden(viewState != .idle)
         .scrollIndicators(.visible)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

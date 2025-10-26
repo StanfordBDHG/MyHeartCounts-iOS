@@ -15,16 +15,16 @@ enum BiologicalSex: Int, CaseIterable, RawRepresentableAccountKey {
     case female = 2
     case intersex = 3
     
-    var displayTitle: String {
+    var displayTitle: LocalizedStringResource {
         switch self {
         case .preferNotToState:
-            String(localized: "SEX_PREFER_NOT_TO_STATE")
+            "SEX_PREFER_NOT_TO_STATE"
         case .male:
-            String(localized: "SEX_MALE")
+            "SEX_MALE"
         case .female:
-            String(localized: "SEX_FEMALE")
+            "SEX_FEMALE"
         case .intersex:
-            String(localized: "SEX_INTERSEX")
+            "SEX_INTERSEX"
         }
     }
 }

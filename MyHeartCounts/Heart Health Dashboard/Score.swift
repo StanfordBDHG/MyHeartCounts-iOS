@@ -36,7 +36,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
             let background: Background
             init(
                 leadingText: LocalizedStringResource,
-                trailingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+                trailingText: LocalizedStringResource? = nil,
                 background: Background
             ) {
                 self.leadingText = leadingText
@@ -46,7 +46,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
             // periphery:ignore - API
             @_disfavoredOverload
             init(
-                leadingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+                leadingText: LocalizedStringResource? = nil,
                 trailingText: LocalizedStringResource,
                 background: Background
             ) {
@@ -211,7 +211,7 @@ struct ScoreResult: Hashable, Sendable {
         _ title: LocalizedStringResource,
         sampleType: MHCSampleType,
         definition: ScoreDefinition,
-        value: (any Hashable & Sendable)? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        value: (any Hashable & Sendable)? = nil,
         score: Double,
         timeRange: Range<Date>
     ) {

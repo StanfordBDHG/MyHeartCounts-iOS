@@ -18,27 +18,13 @@ struct Welcome: View {
     private var onboardingPath
     
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    OnboardingHeader(
-                        title: "My Heart Counts",
-                        description: "WELCOME_SUBTITLE"
-                    )
-                    .padding(.top, 32)
-                    onboardingInformationView
-                }
-                .padding(.horizontal)
-            }
-            .scrollBounceBehavior(.basedOnSize)
-            Spacer(minLength: 8)
+        OnboardingPage(title: "My Heart Counts", description: "WELCOME_SUBTITLE") {
+            onboardingInformationView
+        } footer: {
             OnboardingActionsView("Continue") {
                 onboardingPath.nextStep()
             }
-            .padding(.horizontal)
         }
-        .navigationTitle(Text(verbatim: ""))
-        .toolbar(.visible)
     }
     
     private var onboardingInformationView: some View {

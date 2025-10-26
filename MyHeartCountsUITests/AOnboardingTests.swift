@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import HealthKit
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
@@ -16,6 +17,13 @@ import XCTSpeziNotifications
 final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testAOnboardingFlow() throws {
+        try launchHealthAppAndEnterCharacteristics(.init(
+            bloodType: .aPositive,
+            dateOfBirth: .init(year: 1998, month: 6, day: 2),
+            biologicalSex: .male,
+            skinType: .II,
+            wheelchairUse: .no
+        ))
         app.launchArguments = [
             "--useFirebaseEmulator",
             "--overrideStudyBundleLocation",
@@ -73,7 +81,10 @@ extension XCUIApplication {
         navigateConsentComprehension()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         try navigateHealthKitAccess()
-        navigateNotifications()
+        navigateWorkoutPreferences()
+        if staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
+            navigateNotifications()
+        }
         navigateDemographics()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
@@ -279,9 +290,71 @@ extension XCUIApplication {
     }
     
     
-    private func navigateDemographics() {
+    private func navigateWorkoutPreferences() {
+        XCTAssert(staticTexts["Workout Preference"].waitForExistence(timeout: 2))
+        XCTAssert(buttons["Cycling"].waitForExistence(timeout: 2))
+        buttons["Cycling"].tap()
+        swipeUp()
+        buttons["Continue"].tap()
+    }
+    
+    
+    private func navigateDemographics() { // swiftlint:disable:this function_body_length
         XCTAssert(staticTexts["Demographics"].waitForExistence(timeout: 2))
-        // not doing anything here bc we have a dedicated demographics test case.
+        
+        XCTAssert(navigationBars["Demographics"].waitForExistence(timeout: 1))
+        XCTAssert(navigationBars.staticTexts["Demographics"].waitForExistence(timeout: 1))
+        do {
+            let button = navigationBars["Demographics"].buttons["Testing Support"]
+            XCTAssert(button.waitForExistence(timeout: 1))
+            button.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
+            let optionTitle = "Add Height & Weight Samples"
+            XCTAssert(buttons[optionTitle].waitForExistence(timeout: 1))
+            buttons[optionTitle].tap()
+            handleHealthKitAuthorization()
+        }
+        buttons["Read from Health App"].tap()
+        XCTAssert(
+            datePickers.matching(NSPredicate(format: "label = 'Date of Birth' AND value = '1998-06-02'")).element.waitForExistence(timeout: 2)
+        )
+        switch Locale.current.measurementSystem {
+        case .us:
+            XCTAssert(buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
+            XCTAssert(buttons["Weight, 154.32 lb"].waitForExistence(timeout: 2))
+        default:
+            XCTAssert(buttons["Height, 186 cm"].waitForExistence(timeout: 2))
+            XCTAssert(buttons["Weight, 70 kg"].waitForExistence(timeout: 2))
+        }
+        
+        swipeUp()
+        
+        staticTexts["Race / Ethnicity"].tap()
+        buttons["Prefer not to Answer"].tap()
+        buttons["White"].tap()
+        buttons["Japanese"].tap()
+        navigationBars.buttons["BackButton"].tap()
+        XCTAssert(buttons["Race / Ethnicity, White, Japanese"].waitForExistence(timeout: 1))
+        
+        staticTexts["Are you Hispanic/Latino?"].tap()
+        buttons["No"].tap()
+        navigationBars.buttons["BackButton"].tap()
+        XCTAssert(buttons["Are you Hispanic/Latino?, No"].waitForExistence(timeout: 1))
+        
+        staticTexts["Comorbidities"].tap()
+        buttons["Heart Failure"].tap()
+        navigationBars.buttons["Done"].tap()
+        navigationBars.buttons["BackButton"].tap()
+        XCTAssert(buttons["Comorbidities, 1 selected"].waitForExistence(timeout: 1))
+        
+        staticTexts["US State / Territory"].tap()
+        buttons["District of Columbia, DC"].tap()
+        navigationBars.buttons["BackButton"].tap()
+        XCTAssert(buttons["US State / Territory, DC"].waitForExistence(timeout: 1))
+        
+        staticTexts["Total Household Income"].tap()
+        buttons["Prefer not to state"].tap()
+        navigationBars.buttons["BackButton"].tap()
+        
         let continueButton = buttons["Continue"]
         while !continueButton.exists {
             swipeUp()

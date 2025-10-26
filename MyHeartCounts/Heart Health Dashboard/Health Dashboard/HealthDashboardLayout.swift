@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable type_contents_order function_default_parameter_at_end
+// swiftlint:disable type_contents_order
 // periphery:ignore:all - parts of the API simply are unused, but we want to keep them around for the future.
 
 import Foundation
@@ -296,7 +296,7 @@ extension HealthDashboardLayout {
         /// - parameter chartConfig: Whether the component should use a chart to visualize its data, and what the chart should look like.
         init(
             _ sampleType: SampleType<HKQuantitySample>,
-            timeRange: HealthKitQueryTimeRange = .today, // swiftlint:disable:this function_default_parameter_at_end
+            timeRange: HealthKitQueryTimeRange = .today,
             style: Style,
             enableSelection: Bool = true
         ) {
