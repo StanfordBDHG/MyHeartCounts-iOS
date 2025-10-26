@@ -354,7 +354,7 @@ extension TimedWalkingTestView {
         }
         
         
-        init( // swiftlint:disable:next function_default_parameter_at_end
+        init(
             icon: SFSymbol = .exclamationmarkTriangle,
             title: LocalizedStringResource,
             explanation: LocalizedStringResource,

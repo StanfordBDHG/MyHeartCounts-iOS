@@ -49,18 +49,15 @@ extension AccountDetails {
     var householdIncomeUS: HouseholdIncomeUS?
     
     
-    @AccountKey(id: "ukRegion", name: "UK Country", category: .demographics, options: .mutable, as: UKRegion.self, initial: .empty(.notSet))
-    var ukRegion: UKRegion?
-    
     @AccountKey(
-        id: "ukCounty",
-        name: "UK County",
+        id: "ukRegion",
+        name: "UK Region",
         category: .demographics,
         options: .mutable,
-        as: UKCounty.self,
+        as: UKRegion.self,
         initial: .empty(.notSet)
     )
-    var ukCounty: UKCounty?
+    var ukRegion: UKRegion?
     
     @AccountKey(id: "ukPostcodePrefix", name: "First half of Postcode", category: .demographics, options: .mutable, as: String.self)
     var ukPostcodePrefix: String?
@@ -141,7 +138,7 @@ extension AccountDetails {
         category: .demographics,
         options: .mutable,
         as: Comorbidities.self,
-        initial: .empty([])
+        initial: .empty(.init())
     )
     var comorbidities: Comorbidities?
     
@@ -162,7 +159,7 @@ extension AccountDetails {
 
 @KeyEntry(
     \.usRegion, \.usZipCodePrefix, \.householdIncomeUS, \.educationUS,
-    \.ukRegion, \.ukCounty, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
+    \.ukRegion, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,
     \.raceEthnicity, \.latinoStatus,
     \.biologicalSexAtBirth, \.comorbidities, \.futureStudies

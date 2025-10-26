@@ -9,49 +9,247 @@
 import Foundation
 
 
-enum UKRegion: Int, Hashable, Sendable, CaseIterable, RawRepresentableAccountKey {
-    case notSet = 0
-    case england = 1
-    case scotland = 2
-    case wales = 3
-    case northernIreland = 4
+enum UKRegion: Hashable, Codable, Sendable {
+    case notSet
+    case england(County)
+    case scotland(County)
+    case wales(County)
+    case northernIreland(County)
     
-    var displayTitle: String {
+    var displayTitle: LocalizedStringResource {
         switch self {
         case .notSet:
-            String(localized: "UK_REGION_NOT_SET")
-        case .england:
-            String(localized: "UK_REGION_ENGLAND")
-        case .scotland:
-            String(localized: "UK_REGION_SCOTLAND")
-        case .wales:
-            String(localized: "UK_REGION_WALES")
-        case .northernIreland:
-            String(localized: "UK_REGION_NORTHERN_IRELAND")
+            "Not Set"
+        case .england(let county):
+            "England (\(county.name))"
+        case .scotland(let county):
+            "Scotland (\(county.name))"
+        case .wales(let county):
+            "Wales (\(county.name))"
+        case .northernIreland(let county):
+            "Northern Ireland (\(county.name))"
+        }
+    }
+    
+    var county: County? {
+        switch self {
+        case .notSet:
+            nil
+        case .england(let county), .scotland(let county), .wales(let county), .northernIreland(let county):
+            county
+        }
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let stringValue = try container.decode(String.self)
+        if stringValue == "notSet" {
+            self = .notSet
+            return
+        }
+        guard let separatorIdx = stringValue.firstIndex(of: ":"), separatorIdx < stringValue.endIndex else {
+            throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Unable to parse '\(stringValue)'"))
+        }
+        let regionName = stringValue[stringValue.startIndex..<separatorIdx]
+        let countyName = stringValue[stringValue.index(after: separatorIdx)...]
+        let county = County(name: String(countyName))
+        switch regionName {
+        case "england":
+            self = .england(county)
+        case "scotland":
+            self = .scotland(county)
+        case "wales":
+            self = .wales(county)
+        case "northernIreland":
+            self = .northernIreland(county)
+        default:
+            throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Unknown region '\(regionName)'"))
+        }
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        let stringValue = switch self {
+        case .notSet:
+            "notSet"
+        case .england(let county):
+            "england:\(county.name)"
+        case .scotland(let county):
+            "scotland:\(county.name)"
+        case .wales(let county):
+            "wales:\(county.name)"
+        case .northernIreland(let county):
+            "northernIreland:\(county.name)"
+        }
+        var container = encoder.singleValueContainer()
+        try container.encode(stringValue)
+    }
+}
+
+
+extension UKRegion {
+    struct County: Hashable, Codable, Identifiable, Sendable {
+        let name: String // Intentionally not localizing these...
+        
+        var id: Self { self }
+        
+        init(name: String) {
+            self.name = name
+        }
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            name = try container.decode(String.self)
+        }
+        
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(name)
         }
     }
 }
 
 
-// MARK: County
-
-extension UKRegion {
-    struct County: Hashable, RawRepresentable, Sendable, CaseIterable, RawRepresentableAccountKey {
-        let rawValue: String
-        let displayTitle: LocalizedStringResource
-    }
-}
-
-
 extension UKRegion.County {
-    static let notSet = Self(rawValue: "notSet", displayTitle: "Not Set")
+    static let preferNotToSay = Self(name: "Prefer Not to State")
     
-    static let allCases: [UKRegion.County] = [
-        .notSet
+    static let englishCounties: [Self] = [
+        Self(name: "Aberdeenshire"),
+        Self(name: "Angus"),
+        Self(name: "Argyll"),
+        Self(name: "Avon"),
+        Self(name: "Ayrshire"),
+        Self(name: "Banffshire"),
+        Self(name: "Bedfordshire"),
+        Self(name: "Berkshire"),
+        Self(name: "Berwickshire"),
+        Self(name: "Buckinghamshire"),
+        Self(name: "Caithness"),
+        Self(name: "Cambridgeshire"),
+        Self(name: "Cheshire"),
+        Self(name: "Clackmannanshire"),
+        Self(name: "Cleveland"),
+        Self(name: "Clwyd"),
+        Self(name: "Cornwall"),
+        Self(name: "County Antrim"),
+        Self(name: "County Armagh"),
+        Self(name: "County Down"),
+        Self(name: "County Durham"),
+        Self(name: "County Fermanagh"),
+        Self(name: "County Londonderry"),
+        Self(name: "County Tyrone"),
+        Self(name: "Cumbria"),
+        Self(name: "Derbyshire"),
+        Self(name: "Devon"),
+        Self(name: "Dorset"),
+        Self(name: "Dumfriesshire"),
+        Self(name: "Dunbartonshire"),
+        Self(name: "Dyfed"),
+        Self(name: "East Lothian"),
+        Self(name: "East Sussex"),
+        Self(name: "Essex"),
+        Self(name: "Fife"),
+        Self(name: "Gloucestershire"),
+        Self(name: "Gwent"),
+        Self(name: "Gwynedd"),
+        Self(name: "Hampshire"),
+        Self(name: "Herefordshire"),
+        Self(name: "Hertfordshire"),
+        Self(name: "Inverness-shire"),
+        Self(name: "Isle of Arran"),
+        Self(name: "Isle of Barra"),
+        Self(name: "Isle of Benbecula"),
+        Self(name: "Isle of Bute"),
+        Self(name: "Isle of Canna"),
+        Self(name: "Isle of Coll"),
+        Self(name: "Isle of Colonsay"),
+        Self(name: "Isle of Cumbrae"),
+        Self(name: "Isle of Eigg"),
+        Self(name: "Isle of Gigha"),
+        Self(name: "Isle of Harris"),
+        Self(name: "Isle of Iona"),
+        Self(name: "Isle of Islay"),
+        Self(name: "Isle of Jura"),
+        Self(name: "Isle of Lewis"),
+        Self(name: "Isle of Mull"),
+        Self(name: "Isle of North Uist"),
+        Self(name: "Isle of Rhum"),
+        Self(name: "Isle of Scalpay"),
+        Self(name: "Isle of Skye"),
+        Self(name: "Isle of South Uist"),
+        Self(name: "Isle of Tiree"),
+        Self(name: "Isle of Wight"),
+        Self(name: "Kent"),
+        Self(name: "Kincardineshire"),
+        Self(name: "Kinross-shire"),
+        Self(name: "Kirkcudbrightshire"),
+        Self(name: "Lanarkshire"),
+        Self(name: "Lancashire"),
+        Self(name: "Leicestershire"),
+        Self(name: "Lincolnshire"),
+        Self(name: "London"),
+        Self(name: "Merseyside"),
+        Self(name: "Mid Glamorgan"),
+        Self(name: "Middlesex"),
+        Self(name: "Midlothian"),
+        Self(name: "Morayshire"),
+        Self(name: "Nairnshire"),
+        Self(name: "Norfolk"),
+        Self(name: "North Humberside"),
+        Self(name: "North Yorkshire"),
+        Self(name: "Northamptonshire"),
+        Self(name: "Northumberland"),
+        Self(name: "Nottinghamshire"),
+        Self(name: "Orkney"),
+        Self(name: "Oxfordshire"),
+        Self(name: "Peeblesshire"),
+        Self(name: "Perthshire"),
+        Self(name: "Powys"),
+        Self(name: "Renfrewshire"),
+        Self(name: "Ross-shire"),
+        Self(name: "Roxburghshire"),
+        Self(name: "Selkirkshire"),
+        Self(name: "Shetland"),
+        Self(name: "Shropshire"),
+        Self(name: "Somerset"),
+        Self(name: "South Glamorgan"),
+        Self(name: "South Humberside"),
+        Self(name: "South Yorkshire"),
+        Self(name: "Staffordshire"),
+        Self(name: "Stirlingshire"),
+        Self(name: "Suffolk"),
+        Self(name: "Surrey"),
+        Self(name: "Sutherland"),
+        Self(name: "Tyne and Wear"),
+        Self(name: "Warwickshire"),
+        Self(name: "West Glamorgan"),
+        Self(name: "West Lothian"),
+        Self(name: "West Midlands"),
+        Self(name: "West Sussex"),
+        Self(name: "West Yorkshire"),
+        Self(name: "Wigtownshire"),
+        Self(name: "Wiltshire"),
+        Self(name: "Worcestershire")
     ]
     
-    static let englishCounties: [UKRegion.County] = []
-    static let scottishCounties: [UKRegion.County] = []
-    static let welshCounties: [UKRegion.County] = []
-    static let northernIrishCounties: [UKRegion.County] = []
+    static let scottishCounties: [Self] = []
+    
+    static let welshCounties: [Self] = [
+        Self(name: "Clwyd"),
+        Self(name: "Dyfed"),
+        Self(name: "Gwent"),
+        Self(name: "Gwynedd"),
+        Self(name: "Mid Glamorgan"),
+        Self(name: "Powys"),
+        Self(name: "South Glamorgan"),
+        Self(name: "West Glamorgan")
+    ]
+    
+    static let northernIrishCounties: [Self] = [
+        Self(name: "Antrim"),
+        Self(name: "Armagh"),
+        Self(name: "Down"),
+        Self(name: "Fermanagh"),
+        Self(name: "Londonderry"),
+        Self(name: "Tyrone")
+    ]
 }

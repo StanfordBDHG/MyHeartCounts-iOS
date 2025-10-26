@@ -40,33 +40,25 @@ struct FinalEnrollmentStep: View {
     }
     
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    OnboardingHeader(
-                        title: "Welcome to My Heart Counts",
-                        description: "What happens next:"
-                    )
-                    .padding(.top, 32)
-                    content
-                }
-                .padding(.horizontal)
+        OnboardingPage(title: "Welcome to My Heart Counts", description: "What happens next:") {
+            content
+        } footer: {
+            OnboardingActionsView("Start", viewState: $viewState) {
+                try await completeStudyEnrollment()
             }
-            .scrollBounceBehavior(.basedOnSize)
-            Spacer(minLength: 8)
-                .border(Color.blue, width: 1)
-            OnboardingActionsView("Start") {
-                await completeStudyEnrollment()
-            }
-            .disabled(viewState != .idle)
-            .padding(.horizontal)
         }
+        .navigationBarBackButtonHidden(viewState != .idle)
     }
     
     @ViewBuilder private var content: some View {
         Grid(horizontalSpacing: 16, verticalSpacing: 16) {
+            let calendarSymbol = if #available(iOS 26, *) {
+                SFSymbol(rawValue: "7.calendar")
+            } else {
+                SFSymbol.calendar
+            }
             OnboardingIconGridRow(
-                icon: SFSymbol(rawValue: "7.calendar"),
+                icon: calendarSymbol,
                 text: "FINAL_ENROLLMENT_STEP_MESSAGE_SEVEN_DAYS"
             )
             OnboardingIconGridRow(
@@ -92,7 +84,7 @@ struct FinalEnrollmentStep: View {
     }
     
     
-    private func completeStudyEnrollment() async {
+    private func completeStudyEnrollment() async throws {
         guard let study = try? studyLoader.studyBundle?.get() else {
             // guaranteed to be non-nil if we end up in this view
             return
@@ -118,9 +110,9 @@ struct FinalEnrollmentStep: View {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
             }
         } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
-            // NOTE(@lukas) make this an error in non-debug versions!
+            // should be unreachable, but we'll handle this as a non-error just to be safe.
         } catch {
-            viewState = .error(error)
+            throw error
         }
         path.nextStep()
     }

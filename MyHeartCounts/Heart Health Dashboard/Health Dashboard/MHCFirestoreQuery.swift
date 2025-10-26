@@ -53,7 +53,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     }
     
     init(
-        _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
+        _: Element.Type = Element.self,
         collection: Collection,
         filter: Filter? = nil,
         sortBy sortDescriptors: [SortDescriptor] = [],
@@ -74,7 +74,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     
     @_disfavoredOverload
     init(
-        _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
+        _: Element.Type = Element.self,
         collection: Collection,
         decode: @escaping DecodeFn,
         sort: [any SortComparator<Element>] = [],
@@ -94,7 +94,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     
     
     private init(
-        _: Element.Type = Element.self, // swiftlint:disable:this function_default_parameter_at_end
+        _: Element.Type = Element.self,
         collection: Collection,
         preDecodeFilter: Filter?,
         preDecodeSort: [SortDescriptor],

@@ -9,7 +9,7 @@
 import Foundation
 
 
-protocol RawRepresentableAccountKey: Codable where Self: RawRepresentable, Self: Hashable, Self: Sendable, Self.RawValue: Codable {}
+protocol RawRepresentableAccountKey: Codable where Self: RawRepresentable, Self: Hashable, Self: Sendable, Self.RawValue: Hashable & Codable {}
 
 extension RawRepresentableAccountKey {
     public init(from decoder: any Decoder) throws { // swiftlint:disable:this missing_docs

@@ -110,7 +110,7 @@ struct Gauge: View {
     
     // periphery:ignore - API
     init(
-        lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
+        lineWidth: LineWidth = .default,
         gradient: Gradient,
         progress: Double?
     ) {
@@ -125,7 +125,7 @@ struct Gauge: View {
     }
     
     init(
-        lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
+        lineWidth: LineWidth = .default,
         gradient: Gradient,
         progress: Double?,
         currentValueText: () -> Text?,
@@ -143,7 +143,7 @@ struct Gauge: View {
     }
     
     init(
-        lineWidth: LineWidth = .default, // swiftlint:disable:this function_default_parameter_at_end
+        lineWidth: LineWidth = .default,
         gradient: Gradient,
         progress: Double?,
         currentValueText: () -> Text?

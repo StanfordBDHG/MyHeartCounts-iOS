@@ -87,6 +87,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         app.swipeUp()
         app.swipeUp()
         app.staticTexts["Past Timed Walk/Run Test Results"].tap()
+        sleep(for: .seconds(1))
         
         let testCellPred = NSPredicate(format: "label LIKE '0.1-Minute Walk Test, *'")
         var numTests: Int {
