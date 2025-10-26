@@ -23,7 +23,6 @@ struct OnboardingHeader: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     @ViewBuilder private var content: some View {

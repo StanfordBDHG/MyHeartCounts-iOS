@@ -123,11 +123,6 @@ extension Comorbidities.Comorbidity {
         Self(id: "pulmonaryHypertension", title: "Pulmonary Hypertension"),
         Self(id: "raynaudsPhenomenon", title: "Raynaud's Phenomenon"),
         Self(id: "rheumatoidArthritis", title: "Rheumatoid arthritis"),
-        Self(
-            id: "severeMentalIllness",
-            title: "Severe mental illness",
-            subtitle: "this includes schizophrenia, bipolar disorder and moderate/severe depression"
-        ),
         Self(id: "stroke", title: "Stroke"),
         Self(id: "systemicLupusErythematosus", title: "Systemic lupus erythematosus (SLE)"),
         Self(id: "systemicSclerosisOrScleroderma", title: "Systemic Sclerosis or Scleroderma"),

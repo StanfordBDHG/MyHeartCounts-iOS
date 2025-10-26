@@ -3919,9 +3919,6 @@
         }
       }
     },
-    "Severe mental illness" : {
-
-    },
     "SEX_FEMALE" : {
       "localizations" : {
         "en" : {
@@ -4185,9 +4182,6 @@
           }
         }
       }
-    },
-    "this includes schizophrenia, bipolar disorder and moderate/severe depression" : {
-
     },
     "Time Asleep" : {
       "localizations" : {
