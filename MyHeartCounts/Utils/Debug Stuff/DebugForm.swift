@@ -58,6 +58,9 @@ private struct DebugFormImpl: View {
                 NavigationLink("SensorKit") {
                     SensorKitControlView()
                 }
+                NavigationLink(symbol: .brain, "LLM Local Demo") {
+                    LLMLocalDemoView()
+                }
                 Button("Reset rejeted HomeTab actions") {
                     rejectedHomeTabActions = []
                 }
