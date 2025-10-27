@@ -51,7 +51,6 @@
 		80471E1C2E144A180049798B /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80471E1B2E144A180049798B /* SpeziStudy */; };
 		80471E1E2E144A180049798B /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80471E1D2E144A180049798B /* SpeziStudyDefinition */; };
 		804B90222D86F10F00F9F431 /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 804B90212D86F10F00F9F431 /* SpeziStudy */; };
-		805005252EAA729900DA4816 /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 805005242EAA729900DA4816 /* SpeziSensorKit */; };
 		8054D98E2DE54F8900458CD9 /* MyHeartCountsWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8055F2342D7C4E0D00CD7884 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */; };
 		805BE3CF2E060B3A001E5CA4 /* SpeziConsent in Frameworks */ = {isa = PBXBuildFile; productRef = 805BE3CE2E060B3A001E5CA4 /* SpeziConsent */; };
@@ -80,6 +79,7 @@
 		808A92CB2E47E159007046E0 /* SpeziConsent in Frameworks */ = {isa = PBXBuildFile; productRef = 808A92CA2E47E159007046E0 /* SpeziConsent */; };
 		808E10052DAD48F300DB240D /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 808E10042DAD48F300DB240D /* SpeziHealthKit */; };
 		808E10072DAD48F300DB240D /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 808E10062DAD48F300DB240D /* SpeziHealthKitUI */; };
+		808E83C92EAFD39C00A83C7D /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 808E83C82EAFD39C00A83C7D /* SpeziSensorKit */; };
 		809AEC392EA2BC8500997484 /* SpeziKeychainStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 809AEC382EA2BC8500997484 /* SpeziKeychainStorage */; };
 		809AEC3B2EA2BC8500997484 /* SpeziLocalStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 809AEC3A2EA2BC8500997484 /* SpeziLocalStorage */; };
 		80A0083F2DEFD0B300A446BA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A0083E2DEFD0B300A446BA /* Collections */; };
@@ -263,9 +263,9 @@
 				803EAC1B2D67AB5300DA6E62 /* SpeziHealthKit in Frameworks */,
 				809AEC392EA2BC8500997484 /* SpeziKeychainStorage in Frameworks */,
 				2FB099B12A875DF100B20952 /* FirebaseFirestore in Frameworks */,
-				805005252EAA729900DA4816 /* SpeziSensorKit in Frameworks */,
 				807669712D772C40001B980B /* BitCollections in Frameworks */,
 				A94DDFFD2CBD1190004930BD /* SpeziNotifications in Frameworks */,
+				808E83C92EAFD39C00A83C7D /* SpeziSensorKit in Frameworks */,
 				807669772D772C40001B980B /* HashTreeCollections in Frameworks */,
 				80471E1C2E144A180049798B /* SpeziStudy in Frameworks */,
 				809AEC3B2EA2BC8500997484 /* SpeziLocalStorage in Frameworks */,
@@ -528,6 +528,7 @@
 				802FA9A02EACF24A00624C31 /* SpeziFirebaseConfiguration */,
 				802FA9A22EACF24A00624C31 /* SpeziFirebaseStorage */,
 				802FA9A42EACF24A00624C31 /* SpeziFirestore */,
+				808E83C82EAFD39C00A83C7D /* SpeziSensorKit */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -708,6 +709,7 @@
 				809AEC372EA2BC8500997484 /* XCRemoteSwiftPackageReference "SpeziStorage" */,
 				80C6A3D02EA53110006FF575 /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
 				802FA99B2EACF24A00624C31 /* XCRemoteSwiftPackageReference "SpeziFirebase" */,
+				808E83C72EAFD39C00A83C7D /* XCRemoteSwiftPackageReference "SpeziSensorKit" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1010,7 +1012,7 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "My Heart Counts uses motion data to conduct a timed walking test";
 				INFOPLIST_KEY_NSSensorKitPrivacyPolicyURL = "https://myheartcounts.su.domains/privacy-policy/";
-				INFOPLIST_KEY_NSSensorKitUsageDescription = "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research.";
+				INFOPLIST_KEY_NSSensorKitUsageDescription = "Enabling SensorKit provides more accurate and in depth data for things like ECG to help advance cardiovascular research.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1046,8 +1048,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCounts/Supporting Files/MyHeartCounts.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -1527,14 +1529,6 @@
 				minimumVersion = 2.4.1;
 			};
 		};
-		805005232EAA729900DA4816 /* XCRemoteSwiftPackageReference "SpeziSensorKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
-			requirement = {
-				kind = revision;
-				revision = 946fd75987ecc2f48f48f7cf212d61cf0e9919ed;
-			};
-		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
@@ -1589,6 +1583,14 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 0.1.1;
+			};
+		};
+		808E83C72EAFD39C00A83C7D /* XCRemoteSwiftPackageReference "SpeziSensorKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
+			requirement = {
+				kind = revision;
+				revision = c29330ac4d0df3e8d7c2c0b122763f9ed9813d99;
 			};
 		};
 		809AEC372EA2BC8500997484 /* XCRemoteSwiftPackageReference "SpeziStorage" */ = {
@@ -1872,11 +1874,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;
 		};
-		805005242EAA729900DA4816 /* SpeziSensorKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 805005232EAA729900DA4816 /* XCRemoteSwiftPackageReference "SpeziSensorKit" */;
-			productName = SpeziSensorKit;
-		};
 		8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziOnboarding;
@@ -2002,6 +1999,11 @@
 		808E10062DAD48F300DB240D /* SpeziHealthKitUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziHealthKitUI;
+		};
+		808E83C82EAFD39C00A83C7D /* SpeziSensorKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 808E83C72EAFD39C00A83C7D /* XCRemoteSwiftPackageReference "SpeziSensorKit" */;
+			productName = SpeziSensorKit;
 		};
 		809AEC382EA2BC8500997484 /* SpeziKeychainStorage */ = {
 			isa = XCSwiftPackageProductDependency;
