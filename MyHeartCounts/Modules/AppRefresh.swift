@@ -25,6 +25,9 @@ final class AppRefresh: Module, Sendable {
             try backgroundTasks.register(.appRefresh(id: .generalAppRefresh) {
                 try await self.localNotifications.send(title: "MHC App Refresh", body: "App refresh triggered")
             })
+            try backgroundTasks.register(.processing(id: .generalBackgroundProcessing) {
+                try await self.localNotifications.send(title: "MHC Background Processing", body: "Background Processing Task triggered")
+            })
         } catch {
             self.logger.error("Error registering app refresh background task: \(error)")
             Task {
@@ -36,5 +39,6 @@ final class AppRefresh: Module, Sendable {
 
 
 extension MHCBackgroundTasks.TaskIdentifier {
-    static let generalAppRefresh = Self(rawValue: "edu.stanford.MyHeartCounts.AppRefresh")
+    static let generalAppRefresh = Self("edu.stanford.MyHeartCounts.AppRefresh")
+    static let generalBackgroundProcessing = Self("edu.stanford.MyHeartCounts.BackgroundProcessing")
 }

@@ -62,14 +62,18 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
                         }
                     }
                     do {
+                        MHCBackgroundTasks.track(.start, for: definition.id)
                         try await definition.handler()
+                        MHCBackgroundTasks.track(.stop, for: definition.id)
                         task.setTaskCompleted(success: true)
                     } catch {
+                        MHCBackgroundTasks.track(.stop, for: definition.id)
                         task.setTaskCompleted(success: false)
                     }
                 }
                 task.expirationHandler = {
                     asyncTask.cancel()
+                    MHCBackgroundTasks.track(.expiration, for: definition.id)
                     try? self.schedule(definition.id)
                 }
             }
@@ -101,9 +105,23 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
 
 
 extension MHCBackgroundTasks {
-    struct TaskIdentifier: RawRepresentable, Hashable, CustomStringConvertible, Sendable {
+    struct TaskIdentifier: Hashable, CustomStringConvertible, Codable, Sendable {
         let rawValue: String
         var description: String { rawValue }
+        
+        init(_ rawValue: String) {
+            self.rawValue = rawValue
+        }
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            rawValue = try container.decode(String.self)
+        }
+        
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(rawValue)
+        }
     }
     
     

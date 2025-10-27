@@ -17,7 +17,7 @@ import SpeziFoundation
 @Observable
 @MainActor
 final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
-    static let directory = URL.documentsDirectory.appending(component: "ManagedFileUploading", directoryHint: .isDirectory)
+    nonisolated static let directory = URL.documentsDirectory.appending(component: "ManagedFileUploading", directoryHint: .isDirectory)
     
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
@@ -76,7 +76,7 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
 extension ManagedFileUpload {
     struct Category: Identifiable, Hashable, Sendable {
         let id: String
-        fileprivate let firebasePath: String
+        let firebasePath: String
         fileprivate let title: LocalizedStringResource?
         fileprivate let stagingDirUrl: URL
         

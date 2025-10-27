@@ -38,7 +38,7 @@ private struct DebugFormImpl: View {
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        Form {
+        Form { // swiftlint:disable:this closure_body_length
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
                     Label("Live Health Upload Notifications", systemSymbol: .arrowUpHeart)
@@ -51,13 +51,18 @@ private struct DebugFormImpl: View {
                     PendingNotificationsList()
                 }
             }
-            Section("Other") {
+            Section {
                 NavigationLink(symbol: .calendar, "Health Data Bulk Upload") {
                     HealthImporterControlView()
                 }
                 NavigationLink("SensorKit") {
                     SensorKitControlView()
                 }
+                NavigationLink("Background Tasks Log") {
+                    MHCBackgroundTasks.EventsView()
+                }
+            }
+            Section("Other") {
                 Button("Reset rejeted HomeTab actions") {
                     rejectedHomeTabActions = []
                 }
@@ -69,6 +74,8 @@ private struct DebugFormImpl: View {
                 // intended for the UI tests to have some data here...
                 AddSleepSessionsButton(viewState: $viewState)
                 answerQuestionnaireRow
+            }
+            Section {
                 Button("Replace Root View Controller", role: .destructive) {
                     // The idea here is that discarding the root view controller should deallocate all our resources.
                     // We can then launch Xcode's memory graph debugger, and anything that's still in the left sidebar is leaked.
