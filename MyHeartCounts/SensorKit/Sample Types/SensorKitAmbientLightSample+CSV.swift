@@ -14,7 +14,7 @@ import SpeziSensorKit
 extension SRAmbientLightSample.SafeRepresentation: CSVAppendableSensorSample {
     static let csvColumns = ["timestamp", "lux", "placement", "chromacityX", "chromacityY"]
     
-    var csvFieldValues: [any CSVFieldValue] {
+    var csvFieldValues: [any CSVWriter.FieldValue] {
         [
             timestamp,
             lux.value,

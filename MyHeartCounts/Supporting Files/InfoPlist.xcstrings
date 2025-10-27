@@ -164,12 +164,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+            "value" : "Enabling SensorKit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Al habilitar SensorKit, se obtienen datos más precisos y detallados para mediciones como el electrocardiograma (ECG), lo que contribuye al avance de la investigación cardiovascular."
           }
         }

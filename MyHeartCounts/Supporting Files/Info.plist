@@ -6,6 +6,7 @@
 	<array>
 		<string>edu.stanford.MyHeartCounts.SensorKitProcessing</string>
 		<string>edu.stanford.MyHeartCounts.AppRefresh</string>
+		<string>edu.stanford.MyHeartCounts.BackgroundProcessing</string>
 		<string>edu.stanford.spezi.scheduler.notifications-scheduling</string>
 	</array>
 	<key>CFBundleAllowMixedLocalizations</key>

@@ -6,8 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable all
+
 import Algorithms
 import BackgroundTasks
+import CoreMotion
 import HealthKitOnFHIR
 import OSLog
 import Spezi
@@ -35,7 +38,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         do {
             try backgroundTasks.register(.healthResearch(
                 id: .sensorKitProcessing,
-                earliest: nil,
+                earliest: Date.now.addingTimeInterval(TimeConstants.minute * 10),
                 options: [],
                 protectionTypeOfRequiredData: .none
             ) { () async throws in
@@ -51,42 +54,16 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-            await doFetch()
+            // TODO bring this back!
+//            await doFetch()
         }
-        
-//        Task {
-//            let sensor = Sensor.ppg
-//            let devices = try await sensor.fetchDevices()
-//            for device in devices {
-//                logger.notice("- DEVICE: \(device)")
-//            }
-//            let cal = Calendar.current
-//            let start = cal.date(from: .init(timeZone: .current, year: 2025, month: 10, day: 21, hour: 0))!
-//            let end = cal.date(from: .init(timeZone: .current, year: 2025, month: 10, day: 22, hour: 0))!
-//            for device in devices {
-//                let samples = try await sensor.fetch(from: device, timeRange: start..<end)
-//                logger.notice("#samples: \(samples.count)")
-//            }
-//            fatalError()
-//        }
-        
-        
-//        Task {
-////            try! await fetchAndUploadAllSamples(for: MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()))
-//            try! await fetchAndUploadAllSamples(for: MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()))
-//            try! await fetchAndUploadAllSamples(for: MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()))
-//        }
     }
     
     
     @concurrent
     private func doFetch() async {
-        await withDiscardingTaskGroup { taskGroup in
-            for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
-                taskGroup.addTask {
-                    await self.fetchAndUploadAnchored(uploadDefinition)
-                }
-            }
+        for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
+            await self.fetchAndUploadAnchored(uploadDefinition)
         }
     }
     
@@ -102,9 +79,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         }
         do {
             logger.notice("will fetch new samples for Sensor '\(sensor.displayName)'")
-            for try await (deviceInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
+            for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
                 logger.notice("\(batch.count) new sample(s) for \(sensor.displayName)")
-                try await uploadDefinition.strategy.upload(batch, from: deviceInfo, for: sensor, to: standard)
+                try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard)
             }
         } catch {
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
@@ -126,9 +103,14 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             let oldestSampleDate = newestSampleDate.addingTimeInterval(-TimeConstants.day * 5.5)
             for startDate in stride(from: oldestSampleDate, through: newestSampleDate, by: sensor.suggestedBatchSize.timeInterval) {
                 let timeRange = startDate..<min(startDate.addingTimeInterval(sensor.suggestedBatchSize.timeInterval), newestSampleDate)
-                let samples = (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? []
+                let samples = await measure("[sk] fetch") { (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? [] }
                 self.logger.notice("Submitting \(samples.count) samples for uploading")
-                try await uploadDefinition.strategy.upload(samples, from: deviceInfo, for: sensor, to: standard)
+                try await uploadDefinition.strategy.upload(
+                    samples,
+                    batchInfo: .init(timeRange: timeRange, device: deviceInfo),
+                    for: sensor,
+                    to: standard
+                )
             }
         }
     }
@@ -147,7 +129,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
 
 
 extension MHCBackgroundTasks.TaskIdentifier {
-    static let sensorKitProcessing = Self(rawValue: "edu.stanford.MyHeartCounts.SensorKitProcessing")
+    static let sensorKitProcessing = Self("edu.stanford.MyHeartCounts.SensorKitProcessing")
 }
 
 

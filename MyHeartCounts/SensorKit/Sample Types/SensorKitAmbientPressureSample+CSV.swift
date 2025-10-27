@@ -14,7 +14,7 @@ import SpeziSensorKit
 extension CMRecordedPressureData.SafeRepresentation: CSVAppendableSensorSample {
     static let csvColumns = ["timestamp", "identifier", "pressure", "temperature"]
     
-    var csvFieldValues: [any CSVFieldValue] {
+    var csvFieldValues: [any CSVWriter.FieldValue] {
         [
             timestamp,
             identifier,

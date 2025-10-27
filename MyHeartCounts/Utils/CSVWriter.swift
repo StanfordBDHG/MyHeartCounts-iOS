@@ -6,36 +6,37 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
-
-import Algorithms
 import Foundation
-import System
 
-
-final class CSVWriter {
+/// A CSV Writer.
+struct CSVWriter: ~Copyable {
     private let separator: Character
-    private let fileDescriptor: FileDescriptor
+    private let output: OutputStream
     private let columnHeaders: [String]
     
-    init(
-        separator: Character = ",", // swiftlint:disable:this function_default_parameter_at_end
-        url: URL,
-        columns columnHeaders: [String]
-    ) throws {
+    /// Creates a new `CSVWriter`
+    init(separator: Character = ",", columns columnHeaders: [String]) throws {
         self.separator = separator
         self.columnHeaders = columnHeaders
-        guard let filePath = FilePath(url) else {
-            throw NSError(domain: "edu.stanford.MyHeartCounts", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "Unable to create FilePath from URL '\(url)'"
-            ])
-        }
-        fileDescriptor = try .open(filePath, .writeOnly, options: [.create, .append], permissions: .ownerReadWrite)
+        output = .toMemory()
+        output.open()
         try appendRow(fields: columnHeaders)
     }
     
+    /// Retrieves the written `Data`.
+    consuming func data() -> Data {
+        if let data = output.property(forKey: .dataWrittenToMemoryStreamKey) as? Data {
+            return data
+        } else {
+            // according to the docs, this should be unreachable, but just to be safe we still return _something_
+            return Data()
+        }
+    }
+    
     deinit {
-        try? fileDescriptor.close()
+        if output.streamStatus == .open {
+            output.close()
+        }
     }
 }
 
@@ -46,17 +47,18 @@ extension CSVWriter {
         case writeError(any Error)
     }
     
-    func appendRow(fields: [any CSVFieldValue]) throws(AppendRowError) {
+    /// Appends a new row of fields to the CSV.
+    func appendRow(fields: some RandomAccessCollection<any FieldValue>) throws(AppendRowError) {
         guard fields.count == columnHeaders.count else {
             throw .invalidNumberOfFields(expected: columnHeaders.count, supplied: fields.count)
         }
-        let fieldValues = fields.map { normalize($0.csvFieldValue) }
-        let bytes: some Sequence<UInt8> = fieldValues.lazy
-            .interspersed(with: String(separator))
-            .chained(with: CollectionOfOne("\n")).lazy // https://github.com/apple/swift-algorithms/pull/47
-            .flatMap { $0.utf8 }
         do {
-            try fileDescriptor.writeAll(bytes)
+            for field in fields.dropLast(1) {
+                try output.write(normalize(field.csvFieldValue).utf8)
+                try output.write(separator.utf8)
+            }
+            try output.write(normalize(fields.last!.csvFieldValue).utf8) // swiftlint:disable:this force_unwrapping
+            try output.write("\n".utf8)
         } catch {
             throw .writeError(error)
         }
@@ -64,32 +66,41 @@ extension CSVWriter {
     
     
     private func normalize(_ fieldValue: String) -> String {
+        let quote: Character = "\""
         let needsQuoting = fieldValue.contains {
-            $0.isNewline || $0 == "\"" || $0 == "/" || $0.isUmlaut || $0.lowercased() == "ß"
+            $0 == separator || $0 == quote || $0.isNewline
         }
-        guard needsQuoting else {
+        if _fastPath(!needsQuoting) {
             return fieldValue
-        }
-        return fieldValue
-            .reduce(into: #"""#) { normalized, char in
-                if char == "\"" {
-                    normalized.append(#""""#)
-                } else {
-                    normalized.append(char)
+        } else {
+            var result = String()
+            result.reserveCapacity(fieldValue.utf8.count + (fieldValue.utf8.count / 8)) // reserve 1.125x as much as the initial string
+            result.append(quote)
+            for char in fieldValue {
+                result.append(char)
+                if char == quote {
+                    // if the char is a quote, we need to insert a second one, to escape it.
+                    result.append(quote)
                 }
             }
-            .appending(#"""#)
+            result.append(quote)
+            return result
+        }
     }
 }
 
 
-protocol CSVFieldValue {
-    var csvFieldValue: String { get }
+extension CSVWriter {
+    protocol FieldValue {
+        /// A CSV-field-compatible representation of the value.
+        ///
+        /// - Note: The ``CSVWriter`` will take care of ensuring that the string is properly formatted for use within a CSV.
+        var csvFieldValue: String { get }
+    }
 }
 
-extension String: CSVFieldValue {
+extension String: CSVWriter.FieldValue {
     var csvFieldValue: String {
-        // Note that we're intentionally not performing normalization here; this is done by the writer.
         self
     }
 }
@@ -100,32 +111,32 @@ extension LosslessStringConvertible {
     }
 }
 
-extension Int: CSVFieldValue {}
-extension UInt: CSVFieldValue {}
-extension Int8: CSVFieldValue {}
-extension Int16: CSVFieldValue {}
-extension Int32: CSVFieldValue {}
-extension Int64: CSVFieldValue {}
-extension UInt8: CSVFieldValue {}
-extension UInt16: CSVFieldValue {}
-extension UInt32: CSVFieldValue {}
-extension UInt64: CSVFieldValue {}
-extension Double: CSVFieldValue {}
-extension Float: CSVFieldValue {}
+extension Int: CSVWriter.FieldValue {}
+extension UInt: CSVWriter.FieldValue {}
+extension Int8: CSVWriter.FieldValue {}
+extension Int16: CSVWriter.FieldValue {}
+extension Int32: CSVWriter.FieldValue {}
+extension Int64: CSVWriter.FieldValue {}
+extension UInt8: CSVWriter.FieldValue {}
+extension UInt16: CSVWriter.FieldValue {}
+extension UInt32: CSVWriter.FieldValue {}
+extension UInt64: CSVWriter.FieldValue {}
+extension Double: CSVWriter.FieldValue {}
+extension Float: CSVWriter.FieldValue {}
 
-extension UUID: CSVFieldValue {
+extension UUID: CSVWriter.FieldValue {
     var csvFieldValue: String {
         self.uuidString
     }
 }
 
-extension Date: CSVFieldValue {
+extension Date: CSVWriter.FieldValue {
     var csvFieldValue: String {
-        self.ISO8601Format()
+        self.timeIntervalSince1970.csvFieldValue
     }
 }
 
-extension Optional: CSVFieldValue where Wrapped: CSVFieldValue {
+extension Optional: CSVWriter.FieldValue where Wrapped: CSVWriter.FieldValue {
     var csvFieldValue: String {
         switch self {
         case .none:
@@ -136,7 +147,7 @@ extension Optional: CSVFieldValue where Wrapped: CSVFieldValue {
     }
 }
 
-extension Array: CSVFieldValue where Element: CSVFieldValue {
+extension Array: CSVWriter.FieldValue where Element: CSVWriter.FieldValue {
     var csvFieldValue: String {
         self.lazy.map(\.csvFieldValue).joined(separator: ",")
     }
@@ -145,15 +156,45 @@ extension Array: CSVFieldValue where Element: CSVFieldValue {
 
 // MARK: Utils
 
-extension Character {
-    var isUmlaut: Bool {
-        let lowercased = self.lowercased()
-        return lowercased == "ä" || lowercased == "ö" || lowercased == "ü"
+extension OutputStream {
+    enum WriteError: Error {
+        case reachedCapacity
+        case other((any Error)?)
     }
-}
-
-extension Sequence {
-    func chained(with nextSequence: some Sequence<Element>) -> some Sequence<Element> {
-        chain(self, nextSequence)
+    
+    func write(_ bytes: some Sequence<UInt8>) throws(WriteError) { // swiftlint:disable:this cyclomatic_complexity
+        let result: Result<Void, WriteError>? = bytes.withContiguousStorageIfAvailable { buffer in
+            if let base = buffer.baseAddress, !buffer.isEmpty {
+                switch self.write(base, maxLength: buffer.count) {
+                case 0:
+                    .failure(.reachedCapacity)
+                case -1:
+                    .failure(.other(self.streamError))
+                default:
+                    .success(())
+                }
+            } else {
+                .success(())
+            }
+        }
+        switch result {
+        case .success:
+            return
+        case .failure(let error):
+            throw error
+        case .none:
+            // if `bytes` does not provide a contiguous storage, so we need to manually write its contents to the output stream
+            for var byte in bytes {
+                switch self.write(&byte, maxLength: 1) {
+                case 0:
+                    throw .reachedCapacity
+                case -1:
+                    throw .other(self.streamError)
+                default:
+                    // ok
+                    continue
+                }
+            }
+        }
     }
 }

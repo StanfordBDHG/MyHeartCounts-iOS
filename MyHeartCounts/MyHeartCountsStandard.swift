@@ -83,11 +83,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 // ^we potentially log out and in as part of the test env setup; we want to skip this
                 LocalPreferencesStore.standard[.onboardingFlowComplete] = false
             }
-            // QUESTION deleting the userDocument will probably also delete everything nested w/in it (eg: Questionnaire Resonse
-            // NOTE: we want as many of these as possible to succeed; hence why we use try? everywhere...
-            try? FileManager.default.removeItem(at: .scheduledLiveHealthKitUploads)
-            try? FileManager.default.removeItem(at: .scheduledHistoricalHealthKitUploads)
-            try? await firebaseConfiguration.userDocumentReference.delete()
+            try? FileManager.default.removeItem(at: ManagedFileUpload.directory)
             let studyManager = studyManager
             await MainActor.run {
                 // this works bc we only ever enroll into the MHC study.
@@ -123,6 +119,6 @@ extension MyHeartCountsStandard: NotificationHandler {
 
 extension MyHeartCountsStandard {
     func uploadSensorKitCSV(at url: URL, for sensor: Sensor<some Any>) {
-        managedFileUpload.scheduleForUpload(url, category: .init(sensor))
+        managedFileUpload.scheduleForUpload(url, category: ManagedFileUpload.Category(sensor))
     }
 }

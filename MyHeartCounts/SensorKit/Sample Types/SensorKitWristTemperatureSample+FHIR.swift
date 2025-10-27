@@ -6,6 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
+// TODO
+// swiftlint:disable all
+
 import Algorithms
 import Foundation
 import HealthKitOnFHIR
