@@ -19,15 +19,14 @@ import SwiftUI
 
 struct RootView: View {
     // swiftlint:disable attributes
-    @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
-    @LocalPreference(.rootTabSelection) private var selectedTab
-    @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
     @Environment(\.scenePhase) private var scenePhase
     @Environment(Account.self) private var account: Account?
     @Environment(ConsentManager.self) private var consentManager: ConsentManager?
-    @Environment(LocalNotifications.self) private var localNotifications
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
     @Environment(Lifecycle.self) private var lifecycle
+    @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
+    @LocalPreference(.rootTabSelection) private var selectedTab
+    @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
     // swiftlint:enable attributes
     
     @State private var isShowingConsentRenewalSheet = false
@@ -55,15 +54,8 @@ struct RootView: View {
         .sheet(isPresented: $isShowingConsentRenewalSheet) {
             ConsentRenewalFlow()
         }
-        .onChange(of: scenePhase, initial: true) { oldValue, newValue in
+        .onChange(of: scenePhase, initial: true) { _, newValue in
             lifecycle._set(\.scenePhase, to: newValue)
-            _Concurrency.Task {
-                try await localNotifications.send(
-                    title: "Scene Phase Change",
-                    body: "\(oldValue.debugDescription) → \(newValue.debugDescription)",
-                    level: .timeSensitive
-                )
-            }
         }
         .taskPerformingAnchor()
     }

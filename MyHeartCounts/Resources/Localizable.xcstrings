@@ -699,6 +699,9 @@
     "AuthorizationStatus" : {
 
     },
+    "Background Tasks Log" : {
+
+    },
     "Biological Sex at Birth" : {
       "localizations" : {
         "es" : {
@@ -1097,6 +1100,7 @@
       }
     },
     "Delete ~/%@/*" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1369,6 +1373,9 @@
           }
         }
       }
+    },
+    "Event Log" : {
+
     },
     "EXERCISE_MINUTES_SCORE_EXPLAINER" : {
       "localizations" : {
@@ -1870,6 +1877,12 @@
           }
         }
       }
+    },
+    "HealthKit Upload (Historical)" : {
+
+    },
+    "HealthKit Upload (Live)" : {
+
     },
     "HEALTHKIT_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
@@ -2657,6 +2670,9 @@
         }
       }
     },
+    "No active uploads" : {
+
+    },
     "No Data" : {
       "localizations" : {
         "es" : {
@@ -3255,6 +3271,9 @@
         }
       }
     },
+    "Pending Tasks" : {
+
+    },
     "Pennsylvania" : {
       "localizations" : {
         "es" : {
@@ -3266,6 +3285,9 @@
       }
     },
     "Perform Always Available Task" : {
+
+    },
+    "Perform Full %@ Upload" : {
 
     },
     "Perform Task: %@" : {
@@ -3286,7 +3308,11 @@
     "Preparing Test Environment" : {
 
     },
+    "Processing Health and SensorKit Data…" : {
+
+    },
     "Processing Health Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3906,6 +3932,9 @@
     "SensorKit" : {
 
     },
+    "SensorKit %@" : {
+
+    },
     "Sensors" : {
 
     },
@@ -4308,6 +4337,9 @@
     "Transient Ischemic Attack (TIA)" : {
 
     },
+    "Trigger Background Task" : {
+
+    },
     "True" : {
       "localizations" : {
         "es" : {
@@ -4319,6 +4351,9 @@
       }
     },
     "Trust Territories" : {
+
+    },
+    "U" : {
 
     },
     "UK Region" : {
@@ -4371,6 +4406,7 @@
       }
     },
     "Uploading Health Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
