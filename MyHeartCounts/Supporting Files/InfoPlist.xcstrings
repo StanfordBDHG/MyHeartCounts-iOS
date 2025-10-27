@@ -171,7 +171,7 @@
     },
     "NSSensorKitUsageDescription" : {
       "comment" : "Privacy - SensorKit Usage Description",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
