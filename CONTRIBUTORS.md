@@ -14,3 +14,4 @@ My Heart Counts Contributors
 - [Lukas Kollmer](https://github.com/lukaskollmer)
 - [Paul Goldschmidt](https://github.com/PaulGoldschmidt)
 - [Paul Schmiedmayer](https://github.com/PSchmiedmayer)
+- [Andy Wang](https://github.com/awangwang)

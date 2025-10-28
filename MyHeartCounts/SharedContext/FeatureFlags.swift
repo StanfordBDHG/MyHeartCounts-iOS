@@ -47,6 +47,11 @@ enum FeatureFlags {
     static var overrideFirebaseConfig: DeferredConfigLoading.FirebaseConfigSelector? {
         LaunchOptions.launchOptions[.overrideFirebaseConfig]
     }
+
+    /// Download the LLM onto the local device using LLMLocalDownloadView during the onboarding flow.
+    static var downloadLLM: Bool {
+        LaunchOptions.launchOptions[.downloadLLM]
+    }
 }
 
 
@@ -69,4 +74,6 @@ extension LaunchOptions {
     static let overrideStudyBundleLocation = LaunchOption<URL?>("--overrideStudyBundleLocation", default: nil)
     
     static let enableHealthRecords = LaunchOption<Bool>("--enableHealthRecords", default: false)
+
+    static let downloadLLM = LaunchOption<Bool>("--downloadLLM", default: true)
 }

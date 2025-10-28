@@ -70,6 +70,9 @@ private struct DebugFormImpl: View {
                 NavigationLink("File Upload Queue") {
                     FileUploadInsights()
                 }
+                NavigationLink(symbol: .brain, "LLM Local Demo") {
+                    LLMLocalDemoView()
+                }
             }
             Section("Other") {
                 Button("Reset rejeted HomeTab actions") {

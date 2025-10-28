@@ -122,6 +122,11 @@ private struct AppOnboardingFlow: View {
             DemographicsStep()
                 .onboardingStep(.demographics)
                 .injectingSpezi()
+            if FeatureFlags.downloadLLM {
+                LLMLocalDownloadStep()
+                    .onboardingStep(.LLMDownload)
+                    .injectingSpezi()
+            }
             FinalEnrollmentStep()
                 .onboardingStep(.finalStep)
                 .injectingSpezi()
@@ -156,5 +161,6 @@ extension OnboardingStep {
     static let workoutPreference = Self(rawValue: "workoutPreference")
     static let notifications = Self(rawValue: "notifications")
     static let demographics = Self(rawValue: "demographics")
+    static let LLMDownload = Self(rawValue: "LLMDownload")
     static let finalStep = Self(rawValue: "finalStep")
 }
