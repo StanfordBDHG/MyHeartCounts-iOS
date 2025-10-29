@@ -63,11 +63,6 @@ extension SRPhotoplethysmogramSample {
 }
 
 
-extension SRPhotoplethysmogramSample: FileProcessableSensorSampleProtocol {
-    static var fileExtension: String { "json" } // likely not a good idea!
-}
-
-
 extension SRPhotoplethysmogramSample: @retroactive Identifiable {
     public var id: UUID {
         var hasher = SensorKitSampleIDHasher()

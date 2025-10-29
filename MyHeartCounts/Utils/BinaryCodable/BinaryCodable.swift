@@ -6,20 +6,15 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
-
-// BinaryCodable. loosely based on mikeash's version of this
+// swiftlint:disable file_types_order
 
 import Foundation
 import NIOCore
-import CoreGraphics
 
 
 protocol BinaryEncodable {
     func binaryEncode(to encoder: BinaryEncoder) throws
 }
-
 
 protocol BinaryDecodable {
     init(fromBinary decoder: BinaryDecoder) throws
@@ -29,10 +24,6 @@ protocol BinaryDecodable {
 typealias BinaryCodable = BinaryEncodable & BinaryDecodable
 
 
-
-
-
-//extension BinaryEncodable where Self: RawRepresentable, Self.RawValue: BinaryEncodable {
 extension RawRepresentable where RawValue: BinaryEncodable {
     func binaryEncode(to encoder: BinaryEncoder) throws {
         try encoder.encode(self.rawValue)
@@ -40,7 +31,6 @@ extension RawRepresentable where RawValue: BinaryEncodable {
 }
 
 
-//extension BinaryDecodable where Self: RawRepresentable, Self.RawValue: BinaryDecodable {
 extension RawRepresentable where RawValue: BinaryDecodable {
     init(fromBinary decoder: BinaryDecoder) throws {
         let rawValue = try decoder.decode(RawValue.self)
@@ -52,10 +42,7 @@ extension RawRepresentable where RawValue: BinaryDecodable {
 }
 
 
-
 // MARK: Primitive Types
-
-
 
 extension Bool: BinaryCodable {
     init(fromBinary decoder: BinaryDecoder) throws {
@@ -126,19 +113,6 @@ extension Double: BinaryCodable {
 }
 
 
-extension CGFloat: BinaryCodable {
-    init(fromBinary decoder: BinaryDecoder) throws {
-        self.init(try decoder.decode(Double.self))
-    }
-    
-    func binaryEncode(to encoder: BinaryEncoder) throws {
-        try encoder.encode(Double(self))
-    }
-}
-
-
-
-
 protocol BinaryEncodableCollection: Collection, BinaryEncodable where Element: BinaryEncodable {}
 
 extension BinaryEncodableCollection {
@@ -149,7 +123,6 @@ extension BinaryEncodableCollection {
         }
     }
 }
-
 
 
 // TODO model this as a typealias instead of a protocol?!
@@ -172,9 +145,8 @@ extension BinaryDecodableCollection {
 typealias BinaryCodableCollection = BinaryEncodableCollection & BinaryDecodableCollection
 
 
-
-extension Array: BinaryEncodable & BinaryEncodableCollection where Element: BinaryEncodable {}
-extension Array: BinaryDecodable & BinaryDecodableCollection where Element: BinaryDecodable {}
+extension Array: BinaryEncodable, BinaryEncodableCollection where Element: BinaryEncodable {}
+extension Array: BinaryDecodable, BinaryDecodableCollection where Element: BinaryDecodable {}
 
 
 extension String: BinaryCodable {

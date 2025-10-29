@@ -6,31 +6,20 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
-
 import Algorithms
-import CryptoKit
-@preconcurrency import FirebaseFirestore
 import Foundation
-import HealthKitOnFHIR
 import ModelsR4
-import OSLog
-import SpeziFirestore
 import SpeziFoundation
 import SpeziSensorKit
 
 
 /// A SensorKit sample that can be appended to a CSV file containing a collection of samples of this type.
-protocol CSVAppendableSensorSample: FileProcessableSensorSampleProtocol {
+protocol CSVAppendableSensorSample: Sendable {
     /// The CSV columns required to CSV-encode an instance of this type.
     static var csvColumns: [String] { get }
     
     /// This sample's values for the columns defined in ``csvColumns``
     var csvFieldValues: [any CSVWriter.FieldValue] { get }
-}
-
-extension CSVAppendableSensorSample {
-    static var fileExtension: String { "csv" }
 }
 
 

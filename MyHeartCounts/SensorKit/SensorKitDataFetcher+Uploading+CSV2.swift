@@ -6,16 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
-
-import Algorithms
-import CryptoKit
-@preconcurrency import FirebaseFirestore
 import Foundation
-import HealthKitOnFHIR
 import ModelsR4
-import OSLog
-import SpeziFirestore
 import SpeziFoundation
 import SpeziSensorKit
 
@@ -24,15 +16,11 @@ import SpeziSensorKit
 ///
 /// This protocol is intended for sample types that represent a session of several individual measurements, instead of being a measurement in their own right.
 /// (E.g., the wrist temperature samples.)
-protocol CSVConvertibleSensorSample: FileProcessableSensorSampleProtocol {
+protocol CSVConvertibleSensorSample: Sendable {
     func csvData() throws -> Data
     
     /// Gives the sample the opportunity to modify the `Observation` created from it (that points to the CSV file created from the sample).
     func finalize(_ observation: Observation) throws
-}
-
-extension CSVConvertibleSensorSample {
-    static var fileExtension: String { "csv" }
 }
 
 
@@ -69,8 +57,7 @@ where Sample.SafeRepresentation: CSVConvertibleSensorSample & Identifiable, Samp
 }
 
 
-extension DefaultSensorKitSampleSafeRepresentation: CSVConvertibleSensorSample, FileProcessableSensorSampleProtocol
-where Sample: CSVConvertibleSensorSample {
+extension DefaultSensorKitSampleSafeRepresentation: CSVConvertibleSensorSample where Sample: CSVConvertibleSensorSample {
     func csvData() throws -> Data {
         try sample.csvData()
     }

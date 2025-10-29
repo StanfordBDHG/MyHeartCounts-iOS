@@ -9,7 +9,6 @@
 import Foundation
 import HealthKitOnFHIR
 import ModelsR4
-import SensorKit
 import SpeziSensorKit
 
 

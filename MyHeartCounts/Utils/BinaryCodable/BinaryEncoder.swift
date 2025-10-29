@@ -6,15 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import NIOCore
 
 
-
-
-extension BinaryEncoder {
+extension BinaryEncoder { // swiftlint:disable:this file_types_order
     static func encode(_ value: some BinaryEncodable) throws -> ByteBuffer {
         var buffer = ByteBuffer()
         try Self.encode(value, into: &buffer)

@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Algorithms
 import Foundation
 import HealthKitOnFHIR
 import ModelsR4
@@ -33,7 +32,7 @@ extension SRWristTemperatureSession: CSVConvertibleSensorSample {
         observation.id = self.id.uuidString.asFHIRStringPrimitive()
         observation.appendExtensions([
             Extension(
-                url: FHIRExtensionUrls.sensorKitwristTempAlgorithmVersion,
+                url: FHIRExtensionUrls.sensorKitWristTempAlgorithmVersion,
                 value: .string(self.version.asFHIRStringPrimitive())
             )
         ], replaceAllExistingWithSameUrl: true)
@@ -42,5 +41,5 @@ extension SRWristTemperatureSession: CSVConvertibleSensorSample {
 
 
 extension FHIRExtensionUrls {
-    nonisolated(unsafe) static let sensorKitwristTempAlgorithmVersion = Self.sensorKitDomain.appending(component: "WristTemp/algorithmVersion")
+    nonisolated(unsafe) static let sensorKitWristTempAlgorithmVersion = Self.sensorKitDomain.appending(component: "WristTemp/algorithmVersion")
 }

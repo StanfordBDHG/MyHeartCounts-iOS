@@ -6,22 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
-import NIOCore
-import NIOFoundationCompat
-import Algorithms
-import BackgroundTasks
-import CoreMotion
-import HealthKitOnFHIR
 import OSLog
 import Spezi
 import SpeziFoundation
-import SpeziHealthKit
 import SpeziSensorKit
-import UserNotifications
-import struct ModelsR4.FHIRPrimitive
-import struct ModelsR4.Instant
 
 
 @Observable
@@ -52,7 +40,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     // swiftlint:disable attributes
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(SensorKit.self) private var sensorKit
-    @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
     @ObservationIgnored @Dependency(LocalNotifications.self) private var localNotifications
     @ObservationIgnored @Application(\.logger) private var logger
@@ -84,9 +71,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-            for sensor in SensorKit.mhcSensors {
-                try? sensorKit.resetQueryAnchor(for: sensor)
-            }
+//            for sensor in SensorKit.mhcSensors {
+//                try? sensorKit.resetQueryAnchor(for: sensor)
+//            }
             await doFetch()
         }
     }

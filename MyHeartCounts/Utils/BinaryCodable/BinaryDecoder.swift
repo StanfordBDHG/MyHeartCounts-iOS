@@ -6,12 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import NIOCore
 import NIOFoundationCompat
-
 
 
 enum BinaryDecodingError: Swift.Error {
@@ -33,24 +30,23 @@ final class BinaryDecoder {
     }
     
     
-    static func decode<T: BinaryDecodable>(_ ty: T.Type, from buffer: ByteBuffer) throws -> T {
+    static func decode<T: BinaryDecodable>(_ type: T.Type, from buffer: ByteBuffer) throws -> T {
         let decoder = BinaryDecoder(buffer: buffer)
-        return try ty.init(fromBinary: decoder)
+        return try type.init(fromBinary: decoder)
     }
     
-    static func decode<T: BinaryDecodable>(_ ty: T.Type, from data: some DataProtocol) throws -> T {
+    static func decode<T: BinaryDecodable>(_ type: T.Type, from data: some DataProtocol) throws -> T {
         let buffer = ByteBuffer(bytes: data)
-        return try decode(ty, from: buffer)
+        return try decode(type, from: buffer)
     }
     
     
-    
-    func decode<T: BinaryDecodable>(_ ty: T.Type) throws -> T {
-        try ty.init(fromBinary: self)
+    func decode<T: BinaryDecodable>(_ type: T.Type) throws -> T {
+        try type.init(fromBinary: self)
     }
     
-    func decodeLengthPrefixed<C: BinaryDecodableCollection>(_ ty: C.Type) throws -> C {
-        try ty.init(fromBinary: self)
+    func decodeLengthPrefixed<C: BinaryDecodableCollection>(_ type: C.Type) throws -> C {
+        try type.init(fromBinary: self)
     }
     
     func decodeString(length: Int, encoding: String.Encoding = .utf8) throws -> String {
@@ -62,11 +58,10 @@ final class BinaryDecoder {
     }
     
     
-    
     func decodeFullWidthInt<T: FixedWidthInteger>(_: T.Type) throws -> T {
         if let value = buffer.readInteger(endianness: .big, as: T.self) {
             return value
-        } else{
+        } else {
             throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Unable to read \(T.self)"))
         }
     }
@@ -79,9 +74,11 @@ final class BinaryDecoder {
             throw BinaryDecodingError.noData
         }
         var bytes: [UInt8] = [
-            buffer.readInteger(endianness: .little, as: UInt8.self)! // We know there's at least one byte.
+            // SAFETY: We know there's at least one byte.
+            buffer.readInteger(endianness: .little, as: UInt8.self)! // swiftlint:disable:this force_unwrapping
         ]
-        while (bytes.last! & (1 << 7)) != 0 {
+        // SAFETY: we initialize the array with a single element, and then only ever append.
+        while (bytes.last! & (1 << 7)) != 0 { // swiftlint:disable:this force_unwrapping
             // we have another byte to parse
             guard let nextByte = buffer.readInteger(endianness: .little, as: UInt8.self) else {
                 throw BinaryDecodingError.unableToDecodeVarInt(
@@ -91,7 +88,6 @@ final class BinaryDecoder {
             bytes.append(nextByte)
         }
         precondition(bytes.count <= 10) // maximum length of a var int is 10 bytes, for negative integers
-        
         var result: UInt64 = 0
         for (idx, byte) in bytes.enumerated() { // NOTE that this loop will iterate the VarInt's bytes **least-significant-byte first**!
             result |= UInt64(byte & 0b1111111) << (idx * 7)
@@ -100,8 +96,8 @@ final class BinaryDecoder {
     }
     
     
-    func decodeVarInt<T: FixedWidthInteger>(_ ty: T.Type) throws -> T {
+    func decodeVarInt<T: FixedWidthInteger>(_ type: T.Type) throws -> T {
         let u64Value = try decodeUInt64VarInt()
-        return ty.init(truncatingIfNeeded: u64Value)
+        return type.init(truncatingIfNeeded: u64Value)
     }
 }

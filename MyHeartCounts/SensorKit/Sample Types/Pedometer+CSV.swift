@@ -8,9 +8,6 @@
 
 import CoreMotion
 import Foundation
-import HealthKitOnFHIR
-import ModelsR4
-import OSLog
 import SpeziSensorKit
 
 

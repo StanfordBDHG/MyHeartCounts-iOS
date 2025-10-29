@@ -8,7 +8,6 @@
 
 import CoreMotion
 import Foundation
-import SensorKit
 import SpeziSensorKit
 
 
