@@ -188,13 +188,6 @@ enum DeferredConfigLoading {
         StudyManager(preferredLocale: preferredLocale)
         NotificationsManager()
         ConsentManager()
-        ManagedFileUpload {
-            ManagedFileUpload.Category.liveHealthUpload
-            ManagedFileUpload.Category.historicalHealthUpload
-            for sensor in SensorKit.mhcSensorsExtended {
-                ManagedFileUpload.Category(sensor)
-            }
-        }
     }
     
     /// Constructs an Array of Spezi Modules for loading Firebase and the other related modules, configured based on the specified selector.

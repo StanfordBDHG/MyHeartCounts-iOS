@@ -47,6 +47,13 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             AppRefresh()
             MHCBackgroundTasks()
             MotionDataFetcher()
+            ManagedFileUpload {
+                ManagedFileUpload.Category.liveHealthUpload
+                ManagedFileUpload.Category.historicalHealthUpload
+                for sensor in SensorKit.mhcSensorsExtended {
+                    ManagedFileUpload.Category(sensor)
+                }
+            }
         }
     }
 }
