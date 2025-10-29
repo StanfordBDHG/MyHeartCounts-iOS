@@ -39,6 +39,17 @@ extension LocalPreferenceKey {
 
 extension MHCBackgroundTasks {
     struct EventsView: View {
+        private struct ProcessedEvent: Hashable {
+            enum StopReason: String, Hashable { // swiftlint:disable:this nesting
+                case terminated
+                case expired
+            }
+            let start: Date
+            var end: Date?
+            let taskId: MHCBackgroundTasks.TaskIdentifier
+            var stopReason: StopReason?
+        }
+        
         @LocalPreference(.backgroundTaskEvents)
         private var events
         
@@ -50,30 +61,58 @@ extension MHCBackgroundTasks {
                     ForEach(pendingRequests, id: \.self) { request in
                         VStack(alignment: .leading) {
                             Text(request.earliestBeginDate?.ISO8601Format() ?? "no begin date")
+                                .font(.footnote)
                             Text(request.identifier)
-                                .monospaced()
+                                .font(.footnote.monospaced())
                         }
                     }
                 }
                 Section("Event Log") {
-                    ForEach(events.sorted(using: KeyPathComparator(\.date, order: .reverse)), id: \.self) { event in
+                    ForEach(processedEvents, id: \.self) { (event: ProcessedEvent) in
                         VStack(alignment: .leading) {
-                            HStack {
-                                Text(event.date, format: .iso8601)
-                                Spacer()
-                                Text(event.kind.rawValue)
-                            }
                             Text(event.taskId.rawValue)
+                                .font(.footnote.monospaced())
+                                .foregroundStyle(.secondary)
+                            HStack {
+                                Text(event.start, format: .dateTime)
+                                Spacer()
+                                if let stopReason = event.stopReason, let end = event.end {
+                                    let duration = end.timeIntervalSince(event.start)
+                                    Text("\(stopReason.rawValue.localizedCapitalized) after \(duration, format: .number.precision(.fractionLength(2))) sec")
+                                } else {
+                                    Text("Ongoing")
+                                }
+                            }
+                            .font(.footnote)
                         }
                     }
                 }
             }
+            .navigationTitle("Background Tasks")
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 reloadScheduledTasks()
             }
             .refreshable {
                 reloadScheduledTasks()
             }
+        }
+        
+        private var processedEvents: [ProcessedEvent] {
+            let events = events.sorted(using: KeyPathComparator(\.date))
+            var processed: [ProcessedEvent] = []
+            for event in events {
+                switch event.kind {
+                case .start:
+                    processed.append(ProcessedEvent(start: event.date, end: nil, taskId: event.taskId, stopReason: nil))
+                case .stop, .expiration:
+                    if let idx = processed.lastIndex(where: { $0.taskId == event.taskId }), processed[idx].stopReason == nil {
+                        processed[idx].end = event.date
+                        processed[idx].stopReason = event.kind == .stop ? .terminated : .expired
+                    }
+                }
+            }
+            return processed.sorted(using: KeyPathComparator(\.start, order: .reverse))
         }
         
         private func reloadScheduledTasks() {

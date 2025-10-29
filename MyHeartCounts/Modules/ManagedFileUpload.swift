@@ -122,9 +122,6 @@ extension ManagedFileUpload {
     }
     
     nonisolated func scheduleForUpload(_ url: URL, category: Category) {
-        Task { @MainActor in
-            logger.notice("Scheduling for upload≥ in category \(category.id): \(url)")
-        }
         Task {
             try await upload(url, category: category)
         }
@@ -172,10 +169,10 @@ extension ManagedFileUpload {
         let metadata = StorageMetadata()
         metadata.contentType = "application/octet-stream"
         do {
-            await logger.notice("Uploading \(url) to \(storageRef.fullPath)")
             _ = try await storageRef.putFileAsync(from: url, metadata: metadata)
             await incrementNumCompletedUploads(for: category)
         } catch {
+            await logger.error("Upload to \(storageRef.fullPath) failed: \(error)")
             throw .uploadFailed(error)
         }
         do {

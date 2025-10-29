@@ -19,7 +19,8 @@ protocol MHCSensorSampleUploadStrategy<Sample>: Sendable {
         _ samples: some Collection<Sample.SafeRepresentation> & Sendable,
         batchInfo: SensorKit.BatchInfo,
         for sensor: Sensor<Sample>,
-        to standard: MyHeartCountsStandard
+        to standard: MyHeartCountsStandard,
+        activity: SensorKitDataFetcher.InProgressActivity
     ) async throws
 }
 

@@ -65,3 +65,12 @@ extension MutableCollection where Self: RandomAccessCollection {
         }
     }
 }
+
+
+extension RangeReplaceableCollection {
+    mutating func removeFirst(where predicate: (Element) -> Bool) {
+        if let idx = firstIndex(where: predicate) {
+            remove(at: idx)
+        }
+    }
+}

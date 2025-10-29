@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import OSLog
+import HealthKitOnFHIR
 import SpeziSensorKit
 
 
@@ -17,9 +17,12 @@ where Sample.SafeRepresentation: HealthObservation {
         _ samples: some Collection<Sample.SafeRepresentation> & Sendable,
         batchInfo: SensorKit.BatchInfo,
         for sensor: Sensor<Sample>,
-        to standard: MyHeartCountsStandard
+        to standard: MyHeartCountsStandard,
+        activity: SensorKitDataFetcher.InProgressActivity
     ) async throws {
-        SensorKitDataFetcher.logger.notice("Uploading \(samples.count) \(sensor.displayName) samples as FHIR observations")
-        try await standard.uploadHealthObservations(samples)
+        activity.updateMessage("Uploading FHIR Observations")
+        try await standard.uploadHealthObservations(samples) { observation in
+            try observation.apply(.sensorKitSourceDevice, input: batchInfo.device)
+        }
     }
 }

@@ -20,6 +20,16 @@
     "%@" : {
 
     },
+    "%@ – %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@"
+          }
+        }
+      }
+    },
     "%@ – %@" : {
       "localizations" : {
         "en" : {
@@ -46,6 +56,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ after %@ sec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ after %2$@ sec"
           }
         }
       }
@@ -697,6 +717,9 @@
 
     },
     "AuthorizationStatus" : {
+
+    },
+    "Background Tasks" : {
 
     },
     "Background Tasks Log" : {
@@ -1862,6 +1885,9 @@
         }
       }
     },
+    "HealthKit" : {
+
+    },
     "HealthKit Access" : {
       "localizations" : {
         "en" : {
@@ -2002,6 +2028,9 @@
       }
     },
     "High Coronary Calcium Score" : {
+
+    },
+    "Historical Fetch" : {
 
     },
     "Home" : {
@@ -2423,6 +2452,9 @@
           }
         }
       }
+    },
+    "Memory Usage" : {
+
     },
     "Michigan" : {
       "localizations" : {
@@ -3154,6 +3186,9 @@
         }
       }
     },
+    "Ongoing" : {
+
+    },
     "Only values from %@ to %@ are allowed" : {
       "localizations" : {
         "en" : {
@@ -3346,6 +3381,9 @@
 
     },
     "Pulmonary Hypertension" : {
+
+    },
+    "Query Anchors" : {
 
     },
     "Questionnaire" : {
@@ -3756,7 +3794,7 @@
         }
       }
     },
-    "Reset Query Anchors" : {
+    "Reset All" : {
 
     },
     "Reset rejeted HomeTab actions" : {
@@ -3930,6 +3968,12 @@
       }
     },
     "SensorKit" : {
+
+    },
+    "SensorKit (Fetch)" : {
+
+    },
+    "SensorKit (Upload)" : {
 
     },
     "SensorKit %@" : {
@@ -4404,6 +4448,9 @@
           }
         }
       }
+    },
+    "Update" : {
+
     },
     "Uploading Health Data" : {
       "extractionState" : "stale",

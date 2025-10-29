@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import HealthKitOnFHIR
 import OSLog
 import Spezi
 import SpeziFoundation

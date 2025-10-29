@@ -18,7 +18,7 @@ extension SensorKitECGSession: HealthObservation {
     var id: UUID {
         var hasher = SensorKitSampleIDHasher()
         hasher.combine(sampleTypeIdentifier)
-        hasher.combine(timestamp)
+        hasher.combine(timeRange.lowerBound)
         hasher.combine(duration)
         hasher.combine(frequency.value)
         hasher.combine(batches.count)
@@ -53,7 +53,10 @@ extension SensorKitECGSession: HealthObservation {
         } else {
             try observation.setIssued(on: .now)
         }
-        observation.effective = .dateTime(FHIRPrimitive(try DateTime(date: timestamp)))
+        observation.effective = try .period(Period(
+            end: FHIRPrimitive(DateTime(date: timeRange.upperBound)),
+            start: FHIRPrimitive(DateTime(date: timeRange.lowerBound))
+        ))
         let ecgCodableConcept = CodeableConcept(
             coding: ecgMapping.codings.map { mappedCode -> Coding in
                 Coding(

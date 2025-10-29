@@ -39,6 +39,9 @@ private struct DebugFormImpl: View {
     
     var body: some View {
         Form { // swiftlint:disable:this closure_body_length
+            Section {
+                MemoryUsageIndicator()
+            }
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
                     Label("Live Health Upload Notifications", systemSymbol: .arrowUpHeart)

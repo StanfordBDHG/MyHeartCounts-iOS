@@ -9,6 +9,7 @@
 import Foundation
 import OSLog
 import Spezi
+import SpeziFoundation
 
 
 @MainActor
@@ -24,9 +25,15 @@ final class AppRefresh: Module, Sendable {
         do {
             try backgroundTasks.register(.appRefresh(id: .generalAppRefresh) {
                 try await self.localNotifications.send(title: "MHC App Refresh", body: "App refresh triggered")
+                if .random() {
+                    try await Task.sleep(for: .hours(5))
+                }
             })
             try backgroundTasks.register(.processing(id: .generalBackgroundProcessing) {
                 try await self.localNotifications.send(title: "MHC Background Processing", body: "Background Processing Task triggered")
+                if .random() {
+                    try await Task.sleep(for: .hours(5))
+                }
             })
         } catch {
             self.logger.error("Error registering app refresh background task: \(error)")

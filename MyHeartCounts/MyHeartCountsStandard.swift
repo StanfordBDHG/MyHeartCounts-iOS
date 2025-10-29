@@ -118,7 +118,7 @@ extension MyHeartCountsStandard: NotificationHandler {
 
 
 extension MyHeartCountsStandard {
-    func uploadSensorKitCSV(at url: URL, for sensor: Sensor<some Any>) {
+    func uploadSensorKitFile(at url: URL, for sensor: Sensor<some Any>) {
         managedFileUpload.scheduleForUpload(url, category: ManagedFileUpload.Category(sensor))
     }
 }

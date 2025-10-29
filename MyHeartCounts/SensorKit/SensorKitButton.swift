@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order all
+// swiftlint:disable file_types_order
 
 import Foundation
 import SensorKit
@@ -140,10 +140,9 @@ private struct SensorKitSheet: View {
             Section {
                 Button {
                     let fileRef = StudyBundle.FileReference(category: .informationalArticle, filename: "SensorKit", fileExtension: "md")
-//                    presentedArticle = studyManager.studyEnrollments.first?.studyBundle?
-//                        .resolve(fileRef, in: studyManager.preferredLocale)
-//                        .flatMap { Article(contentsOf: $0) }
-                    presentedArticle = Article(contentsOf: studyManager.studyEnrollments.first!.studyBundle!.resolve(fileRef, in: studyManager.preferredLocale)!)!
+                    presentedArticle = studyManager.studyEnrollments.first?.studyBundle?
+                        .resolve(fileRef, in: studyManager.preferredLocale)
+                        .flatMap { Article(contentsOf: $0) }
                 } label: {
                     Label("How to Manage SensorKit", systemSymbol: .textPage)
                 }

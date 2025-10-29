@@ -26,6 +26,7 @@ struct AccountSheet: View {
     @Environment(\.accountRequired) private var accountRequired
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
     @Environment(ManagedFileUpload.self) private var managedFileUpload
+    @Environment(SensorKitDataFetcher.self) private var sensorKitDataFetcher
     // swiftlint:enable attributes
     
     @State private var isInSetup = false
@@ -100,7 +101,7 @@ struct AccountSheet: View {
         }
         
         if let enrollment = enrollments.first {
-            Section("Study Participation") {
+            Section("Study Participation") { // swiftlint:disable:this closure_body_length
                 Button {
                     openUrl(MyHeartCounts.website)
                 } label: {
@@ -127,10 +128,19 @@ struct AccountSheet: View {
                         nil
                     }
                 }() {
-                    HStack {
+                    let label = HStack {
                         Text(text)
                         Spacer()
                         ProgressView()
+                    }
+                    if debugModeEnabled {
+                        NavigationLink {
+                            DataProcessingDebugView()
+                        } label: {
+                            label
+                        }
+                    } else {
+                        label
                     }
                 }
             }
@@ -179,8 +189,8 @@ struct AccountSheet: View {
     }
     
     private var isProcessingSensorKitData: Bool {
-        // ISSUE we need to add a flag or smth to the SensorKitDataFetcher to signal that it's currently active!!!
-        managedFileUpload.progressByCategory.keys.contains { $0.id.lowercased().contains("sensorkit") }
+        managedFileUpload.progressByCategory.keys.contains { $0.id.contains("SensorKit") }
+            || !sensorKitDataFetcher.activeActivities.isEmpty
     }
     
     init(dismissAfterSignIn: Bool = true) {

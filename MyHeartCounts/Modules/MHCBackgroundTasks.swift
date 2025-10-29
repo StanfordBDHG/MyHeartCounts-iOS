@@ -66,6 +66,9 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
                         try await definition.handler()
                         MHCBackgroundTasks.track(.stop, for: definition.id)
                         task.setTaskCompleted(success: true)
+                    } catch is CancellationError {
+                        // the task was cancelled by us below, in response to the background task expiring.
+                        // we ignore this; no need to do anything.
                     } catch {
                         MHCBackgroundTasks.track(.stop, for: definition.id)
                         task.setTaskCompleted(success: false)

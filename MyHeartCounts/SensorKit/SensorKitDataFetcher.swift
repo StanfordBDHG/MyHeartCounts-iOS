@@ -22,17 +22,45 @@ import struct ModelsR4.FHIRPrimitive
 import struct ModelsR4.Instant
 
 
+@Observable
 final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
-    static let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "SensorKitDataFetcher")
+    @Observable
+    final class InProgressActivity: Hashable, Identifiable, AnyObjectBasedDefaultImpls, Sendable {
+        nonisolated let sensor: any AnySensor
+        @MainActor private(set) var timeRange: Range<Date>?
+        @MainActor private(set) var message = ""
+        
+        nonisolated fileprivate init(sensor: any AnySensor) {
+            self.sensor = sensor
+        }
+        
+        nonisolated func updateMessage(_ newValue: String) {
+            Task { @MainActor in
+                self.message = newValue
+            }
+        }
+        
+        nonisolated func updateTimeRange(_ newValue: Range<Date>) {
+            Task { @MainActor in
+                self.timeRange = newValue
+            }
+        }
+    }
     
     // swiftlint:disable attributes
-    @StandardActor private var standard: MyHeartCountsStandard
-    @Dependency(SensorKit.self) private var sensorKit
-    @Dependency(HealthKit.self) private var healthKit
-    @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
-    @Dependency(LocalNotifications.self) private var localNotifications
-    private var logger: Logger { Self.logger }
+    @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
+    @ObservationIgnored @Dependency(SensorKit.self) private var sensorKit
+    @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
+    @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
+    @ObservationIgnored @Dependency(LocalNotifications.self) private var localNotifications
+    @ObservationIgnored @Application(\.logger) private var logger
     // swiftlint:enable attributes
+    
+    /// The sensors that are currently being processed.
+    @MainActor private(set) var activeActivities = Set<InProgressActivity>()
+    
+    
+    nonisolated init() {}
     
     func configure() {
         do {
@@ -54,16 +82,22 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-            // TODO bring this back!
-//            await doFetch()
+            for sensor in SensorKit.mhcSensors {
+                try? sensorKit.resetQueryAnchor(for: sensor)
+            }
+            await doFetch()
         }
     }
     
     
     @concurrent
     private func doFetch() async {
-        for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
-            await self.fetchAndUploadAnchored(uploadDefinition)
+        await withManagedTaskQueue(limit: 2) { taskQueue in
+            for uploadDefinition in SensorKit.mhcSensorUploadDefinitions where uploadDefinition.typeErasedSensor.id == Sensor.ppg.id {
+                taskQueue.submit {
+                    await self.fetchAndUploadAnchored(uploadDefinition)
+                }
+            }
         }
     }
     
@@ -77,11 +111,16 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             logger.notice("Skipping Sensor '\(sensor.displayName)' bc it's not authorized.")
             return
         }
+        let activity = InProgressActivity(sensor: sensor)
+        start(activity)
+        defer {
+            end(activity)
+        }
         do {
-            logger.notice("will fetch new samples for Sensor '\(sensor.displayName)'")
+            activity.updateMessage("Fetching Samples")
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
-                logger.notice("\(batch.count) new sample(s) for \(sensor.displayName)")
-                try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard)
+                activity.updateTimeRange(batchInfo.timeRange)
+                try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
             }
         } catch {
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
@@ -96,6 +135,11 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     func fetchAndUploadAllSamples(for uploadDefinition: some AnyMHCSensorUploadDefinition<some Any, some Any>) async throws {
         let uploadDefinition = MHCSensorUploadDefinition(uploadDefinition)
         let sensor = uploadDefinition.sensor
+        let activity = InProgressActivity(sensor: sensor)
+        start(activity)
+        defer {
+            end(activity)
+        }
         let devices = try await sensor.fetchDevices()
         for device in devices {
             let deviceInfo = SensorKit.DeviceInfo(device)
@@ -103,14 +147,11 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             let oldestSampleDate = newestSampleDate.addingTimeInterval(-TimeConstants.day * 5.5)
             for startDate in stride(from: oldestSampleDate, through: newestSampleDate, by: sensor.suggestedBatchSize.timeInterval) {
                 let timeRange = startDate..<min(startDate.addingTimeInterval(sensor.suggestedBatchSize.timeInterval), newestSampleDate)
-                let samples = await measure("[sk] fetch") { (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? [] }
-                self.logger.notice("Submitting \(samples.count) samples for uploading")
-                try await uploadDefinition.strategy.upload(
-                    samples,
-                    batchInfo: .init(timeRange: timeRange, device: deviceInfo),
-                    for: sensor,
-                    to: standard
-                )
+                activity.updateTimeRange(timeRange)
+                activity.updateMessage("Fetching Samples")
+                let samples = await (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? []
+                let batchInfo = SensorKit.BatchInfo(timeRange: timeRange, device: deviceInfo)
+                try await uploadDefinition.strategy.upload(samples, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
             }
         }
     }
@@ -123,6 +164,18 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         }
         for sensor in SensorKit.allKnownSensors {
             imp(sensor)
+        }
+    }
+    
+    nonisolated private func start(_ activity: InProgressActivity) {
+        Task { @MainActor in
+            activeActivities.insert(activity)
+        }
+    }
+    
+    nonisolated private func end(_ activity: InProgressActivity) {
+        Task { @MainActor in
+            activeActivities.remove(activity)
         }
     }
 }
@@ -140,20 +193,19 @@ extension SensorKit {
     static let mhcSensorUploadDefinitions: [any AnyMHCSensorUploadDefinition] = [
         MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
         MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
-//        MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyFHIRObservations()),
+        MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyCSVFile2()),
         
         MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
+        MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
+//        MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy())
 //        Sensor.visits,
-//        Sensor.pedometer,
-//        Sensor.ppg,
-//        Sensor.wristTemperature
     ]
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }
     
     // periphery:ignore
-    /// All sensors we officially support.
+    /// All sensors we technicall have access to.
     static let mhcSensorsExtended: [any AnySensor] = [
         Sensor.onWrist,
         Sensor.heartRate,
