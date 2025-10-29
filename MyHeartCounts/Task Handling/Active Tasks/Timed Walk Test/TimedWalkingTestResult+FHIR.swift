@@ -90,7 +90,7 @@ extension TimedWalkingTestResult {
 extension TimedWalkingTestResult {
     init?(_ observation: ModelsR4.Observation) {
         func getComponent(_ loinc: LOINC) -> ObservationComponent? {
-            observation.component?.first { ($0.code.coding ?? []).contains { $0.code?.value?.string == loinc.rawValue } }
+            observation.component?.first { ($0.code.coding ?? []).contains { $0.code?.value?.string == loinc.code } }
         }
         func getQuantityValue(_ loinc: LOINC) -> Decimal? {
             switch getComponent(loinc)?.value {

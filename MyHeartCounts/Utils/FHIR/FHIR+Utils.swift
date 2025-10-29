@@ -13,8 +13,8 @@ protocol CodingProtocol: Hashable, Sendable {
     static var system: String { get }
     static var version: String? { get }
     
-    var rawValue: String { get }
-    var displayTitle: String? { get }
+    var code: String { get }
+    var display: String? { get }
 }
 
 
@@ -39,8 +39,8 @@ extension Coding {
     // periphery:ignore:parameters system
     convenience init<C: CodingProtocol>(system: C.Type = C.self, code: C) {
         self.init(
-            code: code.rawValue.asFHIRStringPrimitive(),
-            display: code.displayTitle?.asFHIRStringPrimitive(),
+            code: code.code.asFHIRStringPrimitive(),
+            display: code.display?.asFHIRStringPrimitive(),
             system: code.system.asFHIRURIPrimitive(),
             version: code.version?.asFHIRStringPrimitive()
         )
@@ -89,7 +89,7 @@ extension Quantity {
     // periphery:ignore:parameters system
     convenience init<C: CodingProtocol>(system: C.Type = C.self, code: C, unit: String, value: Double) {
         self.init(
-            code: code.rawValue.asFHIRStringPrimitive(),
+            code: code.code.asFHIRStringPrimitive(),
             system: code.system.asFHIRURIPrimitive(),
             unit: unit.asFHIRStringPrimitive(),
             value: value.asFHIRDecimalPrimitive()

@@ -35,7 +35,9 @@ extension MHCSensorSampleUploadStrategy {
         postprocessObservation: (Observation) throws -> Void
     ) async throws {
         activity.updateMessage("Compressing Data")
+        print("\(Self.self) GOT DATA: \(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .file))")
         let data = try (consume data).compressed(using: Zlib.self)
+        print("\(Self.self) COMPRESSED TO: \(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .file))")
         let sha1 = Insecure.SHA1.hash(data: data)
         let size = data.count
         let url = URL.temporaryDirectory

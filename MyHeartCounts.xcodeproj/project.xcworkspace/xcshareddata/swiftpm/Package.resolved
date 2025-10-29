@@ -1,5 +1,5 @@
 {
-  "originHash" : "d2cd20a370d81b7ffdeb0d2923764762a3aaf1c09636f31f9de39aa511ec5d23",
+  "originHash" : "bd4f289d66033e48b9fcb76c05565d8e6ebd979d31c94b81442eeab9ab0e7bec",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -311,7 +311,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "96fd0d4417d0ad0e61b11ebc2c1a0717944ee097"
+        "revision" : "f32a29640b85def329dd101f4b4003e67c754644"
       }
     },
     {
@@ -405,6 +405,15 @@
       }
     },
     {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "4e8f4b1c9adaa59315c523540c1ff2b38adc20a9",
+        "version" : "2.87.0"
+      }
+    },
+    {
       "identity" : "swift-numerics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics.git",
@@ -438,6 +447,15 @@
       "state" : {
         "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
         "version" : "602.0.0"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system.git",
+      "state" : {
+        "revision" : "395a77f0aa927f0ff73941d7ac35f2b46d47c9db",
+        "version" : "1.6.3"
       }
     },
     {

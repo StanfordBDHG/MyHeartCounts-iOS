@@ -8,6 +8,8 @@
 
 // swiftlint:disable all
 
+import NIOCore
+import NIOFoundationCompat
 import Algorithms
 import BackgroundTasks
 import CoreMotion
@@ -93,7 +95,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     @concurrent
     private func doFetch() async {
         await withManagedTaskQueue(limit: 2) { taskQueue in
-            for uploadDefinition in SensorKit.mhcSensorUploadDefinitions where uploadDefinition.typeErasedSensor.id == Sensor.ppg.id {
+            for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
                 taskQueue.submit {
                     await self.fetchAndUploadAnchored(uploadDefinition)
                 }
@@ -149,7 +151,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
                 let timeRange = startDate..<min(startDate.addingTimeInterval(sensor.suggestedBatchSize.timeInterval), newestSampleDate)
                 activity.updateTimeRange(timeRange)
                 activity.updateMessage("Fetching Samples")
-                let samples = await (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? []
+                let samples = (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? []
                 let batchInfo = SensorKit.BatchInfo(timeRange: timeRange, device: deviceInfo)
                 try await uploadDefinition.strategy.upload(samples, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
             }
@@ -194,12 +196,15 @@ extension SensorKit {
         MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
         MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
         MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyCSVFile2()),
+        MHCSensorUploadDefinition(sensor: .heartRate, strategy: UploadStrategyCSVFile()),
+        MHCSensorUploadDefinition(sensor: .accelerometer, strategy: UploadStrategyCSVFile()),
         
         MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
-//        MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy())
-//        Sensor.visits,
+        MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy()),
+        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations())
+//        Sensor.visits, .deviceUsage
     ]
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }

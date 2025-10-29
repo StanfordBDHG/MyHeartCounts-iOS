@@ -25,6 +25,8 @@
 		800C3A1A2E6A2E5200759CDD /* SpeziFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 800C3A192E6A2E5200759CDD /* SpeziFoundation */; };
 		800C3A1C2E6A2E5200759CDD /* SpeziLocalization in Frameworks */ = {isa = PBXBuildFile; productRef = 800C3A1B2E6A2E5200759CDD /* SpeziLocalization */; };
 		8015C3412EB22D2A00CA845E /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8015C3402EB22D2A00CA845E /* SpeziSensorKit */; };
+		8015C35A2EB22EE400CA845E /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8015C3592EB22EE400CA845E /* NIOCore */; };
+		8015C35C2EB22EE400CA845E /* NIOFoundationCompat in Frameworks */ = {isa = PBXBuildFile; productRef = 8015C35B2EB22EE400CA845E /* NIOFoundationCompat */; };
 		8020A0462E3CFF6F005EF814 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8020A0452E3CFF6F005EF814 /* SpeziHealthKit */; };
 		802141592D81F14000BF5D35 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 802141582D81F14000BF5D35 /* SpeziOnboarding */; };
 		80270CFB2D67F68F0022251E /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80270CFA2D67F68F0022251E /* SpeziStudy */; };
@@ -290,6 +292,7 @@
 				80A81C692D7C89D400444A17 /* SpeziStudy in Frameworks */,
 				8076696E2D772C07001B980B /* Algorithms in Frameworks */,
 				56E708352BB06B7100B08F0A /* SpeziLicense in Frameworks */,
+				8015C35C2EB22EE400CA845E /* NIOFoundationCompat in Frameworks */,
 				803166AB2D75DE8B00E9173B /* SpeziStudy in Frameworks */,
 				805BE3CF2E060B3A001E5CA4 /* SpeziConsent in Frameworks */,
 				80E08A762DD32D9F00E80C11 /* SpeziHealthKitUI in Frameworks */,
@@ -314,6 +317,7 @@
 				803166A62D75DE7700E9173B /* SpeziScheduler in Frameworks */,
 				8087AE392E3A658100601154 /* SpeziScheduler in Frameworks */,
 				806EB9512DB5029B000D78A5 /* SpeziHealthKitUI in Frameworks */,
+				8015C35A2EB22EE400CA845E /* NIOCore in Frameworks */,
 				80BE06542DCF3A6D00171114 /* SwiftPackageList in Frameworks */,
 				804B90222D86F10F00F9F431 /* SpeziStudy in Frameworks */,
 				2FBD738C2A3BD150004228E7 /* SpeziScheduler in Frameworks */,
@@ -529,6 +533,8 @@
 				802FA9A22EACF24A00624C31 /* SpeziFirebaseStorage */,
 				802FA9A42EACF24A00624C31 /* SpeziFirestore */,
 				8015C3402EB22D2A00CA845E /* SpeziSensorKit */,
+				8015C3592EB22EE400CA845E /* NIOCore */,
+				8015C35B2EB22EE400CA845E /* NIOFoundationCompat */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -710,6 +716,7 @@
 				80C6A3D02EA53110006FF575 /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
 				802FA99B2EACF24A00624C31 /* XCRemoteSwiftPackageReference "SpeziFirebase" */,
 				8015C33F2EB22D2A00CA845E /* XCRemoteSwiftPackageReference "SpeziSensorKit" */,
+				8015C3582EB22EE400CA845E /* XCRemoteSwiftPackageReference "swift-nio" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1518,7 +1525,15 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
 				kind = revision;
-				revision = 96fd0d4417d0ad0e61b11ebc2c1a0717944ee097;
+				revision = f32a29640b85def329dd101f4b4003e67c754644;
+			};
+		};
+		8015C3582EB22EE400CA845E /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.87.0;
 			};
 		};
 		802FA99B2EACF24A00624C31 /* XCRemoteSwiftPackageReference "SpeziFirebase" */ = {
@@ -1754,6 +1769,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8015C33F2EB22D2A00CA845E /* XCRemoteSwiftPackageReference "SpeziSensorKit" */;
 			productName = SpeziSensorKit;
+		};
+		8015C3592EB22EE400CA845E /* NIOCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8015C3582EB22EE400CA845E /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOCore;
+		};
+		8015C35B2EB22EE400CA845E /* NIOFoundationCompat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8015C3582EB22EE400CA845E /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOFoundationCompat;
 		};
 		8020A0452E3CFF6F005EF814 /* SpeziHealthKit */ = {
 			isa = XCSwiftPackageProductDependency;

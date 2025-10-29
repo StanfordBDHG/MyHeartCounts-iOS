@@ -47,6 +47,7 @@ extension SensorKitECGSession: HealthObservation {
             status: FHIRPrimitive(.final)
         )
         observation.id = self.id.uuidString.asFHIRStringPrimitive()
+        observation.appendCoding(Coding(code: SensorKitCodingSystem(.ecg)))
         observation.appendIdentifier(Identifier(id: observation.id))
         if let issuedDate {
             observation.issued = issuedDate

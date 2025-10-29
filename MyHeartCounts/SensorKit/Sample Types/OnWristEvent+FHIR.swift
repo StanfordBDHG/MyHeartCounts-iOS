@@ -39,6 +39,7 @@ extension SensorKitOnWristEventSample: HealthObservation {
             code: CodeableConcept(),
             status: FHIRPrimitive(.final)
         )
+        observation.appendCoding(Coding(code: SensorKitCodingSystem(.onWrist)))
         observation.id = self.id.uuidString.asFHIRStringPrimitive()
         observation.appendIdentifier(Identifier(id: observation.id))
         switch (onWristDate, offWristDate) {

@@ -12,12 +12,12 @@ import Foundation
 struct SpeziCodingSystem: CodingProtocol {
     static var system: String { "https://spezi.stanford.edu" }
     
-    let rawValue: String
-    let displayTitle: String?
+    let code: String
+    let display: String?
     
-    init(_ code: String, displayTitle: String? = nil) {
-        self.rawValue = code
-        self.displayTitle = displayTitle
+    init(_ code: String, display: String? = nil) {
+        self.code = code
+        self.display = display
     }
 }
 

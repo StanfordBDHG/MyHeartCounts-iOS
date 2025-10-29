@@ -42,5 +42,5 @@ extension SRWristTemperatureSession: CSVConvertibleSensorSample {
 
 
 extension FHIRExtensionUrls {
-    nonisolated(unsafe) static let sensorKitwristTempAlgorithmVersion = Self.sensorKitDomain.appending(component: "wristTemp/algorithmVersion")
+    nonisolated(unsafe) static let sensorKitwristTempAlgorithmVersion = Self.sensorKitDomain.appending(component: "WristTemp/algorithmVersion")
 }
