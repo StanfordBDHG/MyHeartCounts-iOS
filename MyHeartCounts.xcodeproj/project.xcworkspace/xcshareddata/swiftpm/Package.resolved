@@ -105,7 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "c19ad94b6a3fbed3d0830d493a69a9e4ba014eca"
+        "revision" : "f866f864ac85cc8d0cdba49772d42ae077361f41",
+        "version" : "1.2.1"
       }
     },
     {
@@ -311,7 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "f32a29640b85def329dd101f4b4003e67c754644"
+        "revision" : "3d65b5f014fc52dffd88a5f56ea8b2bd9ed420b3",
+        "version" : "0.5.0"
       }
     },
     {
