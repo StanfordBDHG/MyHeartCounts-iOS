@@ -24,11 +24,11 @@ final class MotionDataFetcher: Module, Sendable {
     
     func configure() {
         Task {
-            guard await CMMotionManager.requestMotionDataAccess() else {
-                self.logger.notice("Denied motion access :/")
-                return
-            }
-            try await self.doStuff()
+//            guard await CMMotionManager.requestMotionDataAccess() else {
+//                self.logger.notice("Denied motion access :/")
+//                return
+//            }
+//            try await self.doStuff()
         }
     }
     
