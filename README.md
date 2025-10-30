@@ -23,9 +23,20 @@ This repository contains the My Heart Counts iOS application, which is implement
 
 ## Setting Up a Local Development Environment
 In order to run and develop the My Heart Counts app locally, you'll need the following:
-1. The app itself (either in the simulator or on a real device)
+1. A firebase environment
 2. A study bundle
-3. A firebase environment
+3. The app itself (either in the simulator or on a real device)
+
+### The Study Definition
+1. Go to the definitions submodule: `cd MyHeartCounts-StudyDefinitions`
+2. Run `swift run MHCStudyDefinitionExporterCLI export ..` to generate a study bundle
+    - This will place a `mhcStudyDefinition.spezistudybundle.aar` file in the root of the MyHeartCounts-iOS repo
+    - you can have it saved elsewhere by replacing the `..` with the path of the folder where you want the study definition to be placed
+
+### The Firebase Environment
+1. Go to the firebase submodule: `cd MyHeartCounts-Firebase`
+2. Run `npm run prepare`
+3. Run `npm run serve:seeded`
 
 ### The App Itself
 1. Clone this repo (https://github.com/StanfordBDHG/MyHeartCounts-iOS)
@@ -54,17 +65,6 @@ In order to run and develop the My Heart Counts app locally, you'll need the fol
 
 > [!NOTE]  
 > Please make sure not to commit and push any of the SensorKit, Code Signing, and run argument changes listed above; these changes are only required for local development.
-
-### The Firebase Environment
-1. Go to the firebase submodule: `cd MyHeartCounts-Firebase`
-2. Run `npm run prepare`
-3. Run `npm run serve:seeded`
-
-### The Study Definition
-1. Go to the definitions submodule: `cd MyHeartCounts-StudyDefinitions`
-2. Run `swift run MHCStudyDefinitionExporterCLI export ..` to generate a study bundle
-    - This will place a `mhcStudyDefinition.spezistudybundle.aar` file in the root of the MyHeartCounts-iOS repo
-    - you can have it saved elsewhere by replacing the `..` with the path of the folder where you want the study definition to be placed
 
 
 ## Contributing
