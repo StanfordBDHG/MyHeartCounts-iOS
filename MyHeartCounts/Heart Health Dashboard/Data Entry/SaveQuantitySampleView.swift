@@ -26,6 +26,7 @@ struct SaveQuantitySampleView: View {
     
     private let title: LocalizedStringKey
     private let sampleType: MHCQuantitySampleType
+    private let unit: HKUnit
     private let completionHandler: (@MainActor (QuantitySample) -> Void)?
     @State private var date: Date = .now
     @State private var value: Double?
@@ -40,18 +41,19 @@ struct SaveQuantitySampleView: View {
                 DatePicker("Date", selection: $date)
                 if sampleType == .healthKit(.height) {
                     let binding = Binding<HKQuantity?> {
-                        value.map { HKQuantity(unit: sampleType.displayUnit, doubleValue: $0) }
+                        value.map { HKQuantity(unit: unit, doubleValue: $0) }
                     } set: { newValue in
-                        value = newValue?.doubleValue(for: sampleType.displayUnit)
+                        value = newValue?.doubleValue(for: unit)
                     }
-                    HeightInputRow(title: "Value", quantity: binding, preferredUnit: sampleType.displayUnit)
+                    HeightInputRow(title: "Value", quantity: binding, preferredUnit: unit)
                         .focused($valueFieldIsFocused)
                 } else {
                     QuantityInputRow(
                         title: "Value",
                         value: $value,
-                        limits: sampleType.inputLimits(in: sampleType.displayUnit),
-                        unit: sampleType.displayUnit
+                        limits: sampleType.inputLimits(in: unit),
+                        sampleType: sampleType,
+                        unit: unit
                     )
                     .focused($valueFieldIsFocused)
                 }
@@ -85,13 +87,29 @@ struct SaveQuantitySampleView: View {
     }
     
     init(
-        _ title: LocalizedStringKey = "Add Sample", // swiftlint:disable:this function_default_parameter_at_end
+        _ title: LocalizedStringKey? = nil,
         sampleType: MHCQuantitySampleType,
         completionHandler: (@MainActor (QuantitySample) -> Void)? = nil
     ) {
-        self.title = title
+        self.title = title ?? "Enter \(sampleType.displayTitle)"
         self.sampleType = sampleType
         self.completionHandler = completionHandler
+        self.unit = switch sampleType {
+        case .healthKit(.height):
+            switch LaunchOptions.launchOptions[.heightInputUnitOverride] {
+            case .none: sampleType.displayUnit
+            case .cm: .meterUnit(with: .centi)
+            case .feet: .foot()
+            }
+        case .healthKit(.bodyMass):
+            switch LaunchOptions.launchOptions[.weightInputUnitOverride] {
+            case .none: sampleType.displayUnit
+            case .kg: .gramUnit(with: .kilo)
+            case .lbs: .pound()
+            }
+        default:
+            sampleType.displayUnit
+        }
     }
     
     
@@ -103,7 +121,7 @@ struct SaveQuantitySampleView: View {
         case .healthKit(let sampleType):
             let sample = HKQuantitySample(
                 type: sampleType.hkSampleType,
-                quantity: HKQuantity(unit: sampleType.displayUnit, doubleValue: value),
+                quantity: HKQuantity(unit: unit, doubleValue: value),
                 start: self.date,
                 end: self.date
             )
@@ -113,7 +131,7 @@ struct SaveQuantitySampleView: View {
             let sample = QuantitySample(
                 id: UUID(),
                 sampleType: .custom(sampleType),
-                unit: sampleType.displayUnit,
+                unit: unit,
                 value: value,
                 startDate: self.date,
                 endDate: self.date
@@ -144,6 +162,8 @@ extension HKQuantity {
 extension MHCQuantitySampleType {
     func inputLimits(in unit: HKUnit) -> Range<Double>? {
         switch self {
+        case .custom(.bloodLipids):
+            30..<400
         case .healthKit(.bloodPressureSystolic):
             60..<250
         case .healthKit(.bloodPressureDiastolic):
@@ -155,7 +175,7 @@ extension MHCQuantitySampleType {
         case .healthKit(.height) where unit == .meterUnit(with: .centi):
             90..<250
         case .healthKit(.bodyMass) where unit == .gramUnit(with: .kilo):
-                25..<450
+            25..<450
         case .healthKit(.bodyMass) where unit == .pound():
             55..<1000
         default:

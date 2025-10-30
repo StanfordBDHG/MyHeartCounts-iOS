@@ -40,20 +40,26 @@ struct HeightInputRow: View {
                 title: title,
                 value: binding,
                 limits: MHCQuantitySampleType.healthKit(.height).inputLimits(in: cmUnit),
+                sampleType: .healthKit(.height),
                 unit: cmUnit
             )
         case .feetAndInches:
             // no need to perform input validation here; that's handled via the wheel-styled picker
+            let valueDesc: LocalizedStringResource = if let (feet, inches) = quantity?.valuesForFeetAndInches() {
+                "\(feet)‘ \(Int(inches))“"
+            } else {
+                "—"
+            }
             HStack {
                 Text(title)
                 Spacer()
                 // maybe give it a rounded-rect background, like what the Health app does?
-                if let (feet, inches) = quantity?.valuesForFeetAndInches() {
-                    Text("\(feet)‘ \(Int(inches))“")
-                } else {
-                    Text("—")
-                }
+                Text(valueDesc)
             }
+            .accessibilityRepresentation {
+                Text(verbatim: "\(String(localized: title)), \(String(localized: valueDesc))")
+            }
+            .accessibilityIdentifier("MHC:HeightRow")
             .contentShape(Rectangle())
             .onTapGesture {
                 // animate this (not easy, apparently...)
@@ -93,11 +99,13 @@ extension HeightInputRow {
                         Text("\(value) ft")
                     }
                 }
+                .accessibilityIdentifier("FeetPicker")
                 Picker("", selection: $inches) {
                     ForEach(Array(limits.inches), id: \.self) { value in
                         Text("\(value) in")
                     }
                 }
+                .accessibilityIdentifier("InchesPicker")
             }
             .pickerStyle(.wheel)
             .onChange(of: feet, updateQuantity)
@@ -119,7 +127,7 @@ extension HeightInputRow {
         
         private func updateQuantity() {
             let total = Measurement(value: Double(feet), unit: UnitLength.feet) + Measurement(value: Double(inches), unit: .inches)
-            quantity = HKQuantity(unit: .meter(), doubleValue: total.converted(to: .meters).value)
+            quantity = HKQuantity(unit: .meterUnit(with: .centi), doubleValue: total.converted(to: .centimeters).value)
         }
     }
 }

@@ -113,7 +113,7 @@ extension MyHeartCountsStandard {
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
             )
-            let resources = try await observations.map(turnIntoFHIRResource)
+            let resources = try await observations.mapAsync(turnIntoFHIRResource)
             _ = consume observations
             let encoded = try JSONEncoder().encode(resources)
             let compressed = try encoded.compressed(using: Zlib.self)
@@ -216,7 +216,7 @@ extension FHIRExtensionUrls {
     // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
     // it also never can be mutated to contain any.
     /// Url of a FHIR Extension containing the user's time zone when uploading a FHIR `Observation`.
-    fileprivate nonisolated(unsafe) static let sampleUploadTimeZone = "https://bdh.stanford.edu/fhir/defs/sampleUploadTimeZone".asFHIRURIPrimitive()!
+    nonisolated(unsafe) static let sampleUploadTimeZone = "https://bdh.stanford.edu/fhir/defs/sampleUploadTimeZone".asFHIRURIPrimitive()!
     // swiftlint:disable:previous force_unwrapping
 }
 

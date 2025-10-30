@@ -16,13 +16,14 @@ import SwiftUI
 struct DemographicsStep: View {
     @Environment(ManagedNavigationStack.Path.self)
     private var path
-    
+    @State private var isComplete = false
     
     var body: some View {
-        DemographicsForm {
+        DemographicsForm(isComplete: $isComplete) {
             OnboardingActionsView("Continue") {
                 path.nextStep()
             }
+            .disabled(!isComplete)
             .listRowInsets(.zero)
         }
     }

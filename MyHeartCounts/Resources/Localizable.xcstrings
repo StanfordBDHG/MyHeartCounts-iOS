@@ -7,9 +7,6 @@
     "  0" : {
 
     },
-    "-" : {
-
-    },
     "—" : {
       "localizations" : {
         "es" : {
@@ -43,6 +40,16 @@
         }
       }
     },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
     "%@-Minute Run Test" : {
       "localizations" : {
         "es" : {
@@ -69,11 +76,31 @@
         }
       }
     },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
     "%lld" : {
 
     },
     "%lld ft" : {
 
+    },
+    "%lld hours and %lld minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld hours and %2$lld minutes"
+          }
+        }
+      }
     },
     "%lld hr %lld min" : {
       "localizations" : {
@@ -127,6 +154,19 @@
           }
         }
       }
+    },
+    "%lld over %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld over %2$lld"
+          }
+        }
+      }
+    },
+    "%lld selected" : {
+
     },
     "%lld‘ %lld“" : {
       "localizations" : {
@@ -309,16 +349,6 @@
     "1 – 29" : {
 
     },
-    "1 to 5 years ago" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 a 5 años atrás"
-          }
-        }
-      }
-    },
     "4 to 5 hours" : {
 
     },
@@ -427,6 +457,9 @@
     "10000+" : {
 
     },
+    "Abdominal Aortic Aneurysm" : {
+
+    },
     "About %@" : {
 
     },
@@ -529,15 +562,11 @@
         }
       }
     },
-    "Add Sample" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar Muestra"
-          }
-        }
-      }
+    "Add Sleep Sessions" : {
+
+    },
+    "Adult Congenital Heart Disease" : {
+
     },
     "Age" : {
       "localizations" : {
@@ -618,7 +647,7 @@
         }
       }
     },
-    "Answer HeartRisk Questionnaire" : {
+    "Angina (heart chest pains)" : {
 
     },
     "Answer Questionnaire" : {
@@ -664,6 +693,9 @@
         }
       }
     },
+    "Atrial fibrillation (Afib)" : {
+
+    },
     "AuthorizationStatus" : {
 
     },
@@ -676,6 +708,9 @@
           }
         }
       }
+    },
+    "Blockage/Stenosis, Surgery, or Stent" : {
+
     },
     "Blood Lipids" : {
       "localizations" : {
@@ -745,6 +780,12 @@
         }
       }
     },
+    "Carotid Artery Blockage/Stenosis" : {
+
+    },
+    "Carotid Artery Surgery or Stent" : {
+
+    },
     "Change Language" : {
       "localizations" : {
         "es" : {
@@ -754,6 +795,9 @@
           }
         }
       }
+    },
+    "Chronic kidney disease" : {
+
     },
     "Close" : {
       "localizations" : {
@@ -787,138 +831,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Comorbilidades"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_ACHD" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adult Congenital Heart Disease"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adult Congenital Heart Disease"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enfermedad Cardíaca Congénita en Adultos"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_CAD" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coronary Artery Disease"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coronary Artery Disease"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enfermedad Arterial Coronaria"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_DIABETES" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diabetes"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diabetes"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diabetes"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_HEART_FAILURE" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heart Failure"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heart Failure"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insuficiencia Cardíaca"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_NONE" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "None"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "None"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguno"
-          }
-        }
-      }
-    },
-    "COMORBIDITY_PAH" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pulmonary Arterial Hypertension"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pulmonary Arterial Hypertension"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hipertensión Arterial Pulmonar"
           }
         }
       }
@@ -1043,6 +955,9 @@
         }
       }
     },
+    "Congenital Heart Defect" : {
+
+    },
     "Connecticut" : {
       "localizations" : {
         "es" : {
@@ -1113,15 +1028,14 @@
         }
       }
     },
-    "County" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Condado"
-          }
-        }
-      }
+    "Coronary Artery Disease" : {
+
+    },
+    "Coronary Blockage/Stenosis" : {
+
+    },
+    "Coronary Stent/Angioplasty" : {
+
     },
     "Data collection enabled for %lld sensors" : {
 
@@ -1145,6 +1059,9 @@
           }
         }
       }
+    },
+    "Date of Diagnosis" : {
+
     },
     "Date of Enrollment" : {
 
@@ -1209,6 +1126,12 @@
         }
       }
     },
+    "Diabetes" : {
+
+    },
+    "Did Opt In to Trial" : {
+
+    },
     "Diet" : {
       "localizations" : {
         "es" : {
@@ -1251,6 +1174,9 @@
           }
         }
       }
+    },
+    "Don't Know" : {
+
     },
     "Done" : {
       "localizations" : {
@@ -1392,6 +1318,9 @@
         }
       }
     },
+    "England (%@)" : {
+
+    },
     "Enroll" : {
 
     },
@@ -1404,6 +1333,9 @@
           }
         }
       }
+    },
+    "Enter %@" : {
+
     },
     "Enter Blood Pressure" : {
       "localizations" : {
@@ -1425,25 +1357,8 @@
         }
       }
     },
-    "Enter Height" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresar Altura"
-          }
-        }
-      }
-    },
-    "Enter Weight" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresar Peso"
-          }
-        }
-      }
+    "Erectile dysfunction" : {
+
     },
     "Error" : {
       "localizations" : {
@@ -2000,6 +1915,18 @@
         }
       }
     },
+    "Heart Attack/Myocardial Infarction" : {
+
+    },
+    "Heart Bypass Surgery" : {
+
+    },
+    "Heart Failure" : {
+
+    },
+    "Heart Failure or CHF" : {
+
+    },
     "Heart Health" : {
       "localizations" : {
         "es" : {
@@ -2061,6 +1988,9 @@
         }
       }
     },
+    "High Coronary Calcium Score" : {
+
+    },
     "Home" : {
 
     },
@@ -2075,6 +2005,12 @@
       }
     },
     "How to Manage SensorKit" : {
+
+    },
+    "I don't have this comorbidity" : {
+
+    },
+    "I have this comorbidity" : {
 
     },
     "id" : {
@@ -2409,16 +2345,6 @@
         }
       }
     },
-    "Loading Firebase Test Setup" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cargando Configuración de Prueba de Firebase"
-          }
-        }
-      }
-    },
     "Local Notifications Status" : {
       "localizations" : {
         "es" : {
@@ -2495,6 +2421,9 @@
         }
       }
     },
+    "Migraines" : {
+
+    },
     "Minnesota" : {
       "localizations" : {
         "es" : {
@@ -2558,17 +2487,10 @@
     "More" : {
 
     },
-    "More than 5 years ago" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hace más de 5 años"
-          }
-        }
-      }
-    },
     "Most Recent Night" : {
+
+    },
+    "Most Recent Response" : {
 
     },
     "Most Recent Sample" : {
@@ -2633,15 +2555,8 @@
         }
       }
     },
-    "Never" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nunca"
-          }
-        }
-      }
+    "Never Smoked" : {
+
     },
     "New Hampshire" : {
       "localizations" : {
@@ -2785,6 +2700,12 @@
         }
       }
     },
+    "No recent data" : {
+
+    },
+    "No Selection" : {
+
+    },
     "No Upcoming Tasks" : {
       "localizations" : {
         "es" : {
@@ -2796,6 +2717,7 @@
       }
     },
     "No, not Spanish/Hispanic/Latino" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2824,6 +2746,9 @@
           }
         }
       }
+    },
+    "Northern Ireland (%@)" : {
+
     },
     "Northern Mariana Islands" : {
       "localizations" : {
@@ -2858,6 +2783,9 @@
         }
       }
     },
+    "Notification Time" : {
+
+    },
     "NOTIFICATION_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -2876,6 +2804,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Permitir las notificaciones de My Heart Counts es importante, ya que por este medio recibirá indicaciones del ensayo de promoción de la actividad física. Para cumplir los objetivos de investigación, le solicitamos que conceda este permiso.\n\nTambién le enviaremos notificaciones sobre nuevas encuestas, actividades, etc.\n\nHaremos todo lo posible por mantener las notificaciones al mínimo."
+          }
+        }
+      }
+    },
+    "NOTIFICATION_TIME_SUBTITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The preferred time for activity-related notifications. You can change this later."
           }
         }
       }
@@ -3243,6 +3181,9 @@
     "Other" : {
 
     },
+    "Other auto-immune disease" : {
+
+    },
     "Other Tasks" : {
 
     },
@@ -3324,7 +3265,25 @@
         }
       }
     },
-    "Perform Active Task" : {
+    "Perform Always Available Task" : {
+
+    },
+    "Perform Task: %@" : {
+
+    },
+    "Peripheral Vascular Disease" : {
+
+    },
+    "Prefer not to state" : {
+
+    },
+    "Preferred Notification Time" : {
+
+    },
+    "Preferred Workout Types" : {
+
+    },
+    "Preparing Test Environment" : {
 
     },
     "Processing Health Data…" : {
@@ -3357,7 +3316,22 @@
         }
       }
     },
+    "Pulmonary Arterial Hypertension" : {
+
+    },
+    "Pulmonary Hypertension" : {
+
+    },
     "Questionnaire" : {
+
+    },
+    "Quit 1 to 5 years ago" : {
+
+    },
+    "Quit more than 5 years ago" : {
+
+    },
+    "Quit within last year, or am using NDS" : {
 
     },
     "Race / Ethnicity" : {
@@ -3700,6 +3674,9 @@
         }
       }
     },
+    "Raynaud's Phenomenon" : {
+
+    },
     "Read" : {
 
     },
@@ -3762,17 +3739,6 @@
     "Restart Test" : {
 
     },
-    "Results" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resultados"
-          }
-        }
-      }
-    },
     "Retry" : {
       "localizations" : {
         "es" : {
@@ -3792,6 +3758,9 @@
           }
         }
       }
+    },
+    "Rheumatoid arthritis" : {
+
     },
     "Rhode Island" : {
       "localizations" : {
@@ -3852,6 +3821,12 @@
         }
       }
     },
+    "Score Result: %lld percent" : {
+
+    },
+    "Scotland (%@)" : {
+
+    },
     "Select a Region" : {
       "localizations" : {
         "es" : {
@@ -3862,15 +3837,11 @@
         }
       }
     },
-    "Select County" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecciona un Condado"
-          }
-        }
-      }
+    "Select Comorbidities" : {
+
+    },
+    "Select Date" : {
+
     },
     "Select your State or Territory" : {
       "localizations" : {
@@ -4056,6 +4027,9 @@
         }
       }
     },
+    "stage 3, 4 or 5" : {
+
+    },
     "Start" : {
       "localizations" : {
         "es" : {
@@ -4092,7 +4066,10 @@
     "Stop Recording Data" : {
 
     },
-    "Stop suggesting this" : {
+    "Stop Suggesting This" : {
+
+    },
+    "Stroke" : {
 
     },
     "Study not available" : {
@@ -4118,6 +4095,12 @@
     "Success" : {
 
     },
+    "Systemic lupus erythematosus (SLE)" : {
+
+    },
+    "Systemic Sclerosis or Scleroderma" : {
+
+    },
     "Take ECG" : {
 
     },
@@ -4131,7 +4114,7 @@
         }
       }
     },
-    "Tap to lear more…" : {
+    "Tap to learn more…" : {
 
     },
     "Tasks" : {
@@ -4322,6 +4305,9 @@
         }
       }
     },
+    "Transient Ischemic Attack (TIA)" : {
+
+    },
     "True" : {
       "localizations" : {
         "es" : {
@@ -4335,91 +4321,8 @@
     "Trust Territories" : {
 
     },
-    "UK Country" : {
+    "UK Region" : {
 
-    },
-    "UK County" : {
-
-    },
-    "UK_REGION_ENGLAND" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "England"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "England"
-          }
-        }
-      }
-    },
-    "UK_REGION_NORTHERN_IRELAND" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Northern Ireland"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Northern Ireland"
-          }
-        }
-      }
-    },
-    "UK_REGION_NOT_SET" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Set"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not Set"
-          }
-        }
-      }
-    },
-    "UK_REGION_SCOTLAND" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scotland"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scotland"
-          }
-        }
-      }
-    },
-    "UK_REGION_WALES" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wales"
-          }
-        },
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wales"
-          }
-        }
-      }
     },
     "Unable to find Questionnaire" : {
       "localizations" : {
@@ -4549,6 +4452,9 @@
           }
         }
       }
+    },
+    "Wales (%@)" : {
+
     },
     "walk" : {
 
@@ -4714,12 +4620,21 @@
         }
       }
     },
-    "Within last year, or am using NDS" : {
+    "Workout Preference" : {
+
+    },
+    "WORKOUT_PREFERENCE_TEXT" : {
       "localizations" : {
-        "es" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En el último año, o estoy usando NDS"
+            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         }
       }
@@ -4812,16 +4727,6 @@
     },
     "You can enable or disable individual sensors in the iOS Settings app." : {
 
-    },
-    "You can select multiple options" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes seleccionar múltiples opciones"
-          }
-        }
-      }
     },
     "You haven't granted My Heart Counts permission to add data to HealthKit for the following data types:\n%@" : {
 

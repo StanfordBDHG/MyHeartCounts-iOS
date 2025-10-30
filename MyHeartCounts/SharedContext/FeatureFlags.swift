@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziFoundation
 
 
 /// A collection of feature flags for the My Heart Counts.
@@ -32,14 +33,7 @@ enum FeatureFlags {
     ///
     /// Specifying this flag implicitly also sets the ``disableFirebase`` to `false`.
     static var useFirebaseEmulator: Bool {
-        setupTestAccount || LaunchOptions.launchOptions[.useFirebaseEmulator]
-    }
-    
-    /// Automatically sign in into a test account upon app launch.
-    ///
-    /// Specifying this flag implicitly also sets the ``useFirebaseEmulator`` flag to `true`.
-    static var setupTestAccount: Bool {
-        LaunchOptions.launchOptions[.setupTestAccount]
+        LaunchOptions.launchOptions[.setupTestAccount] != .no || LaunchOptions.launchOptions[.useFirebaseEmulator]
     }
     
     /// Disables the automatic bulk export and upload of historical Health data
@@ -64,12 +58,17 @@ extension ProcessInfo {
 
 
 extension LaunchOptions {
+    /// Whether we should force-enable the debug mode, even if the account key is set to `false`.
+    ///
+    /// - Note: Specifying `false` for this option when the account key is `true` will not force-disable the debug mode.
+    static let forceEnableDebugMode = LaunchOption<Bool>("--forceEnableDebugMode", default: false)
+    
     static let skipOnboarding = LaunchOption<Bool>("--skipOnboarding", default: false)
     static let showOnboarding = LaunchOption<Bool>("--showOnboarding", default: false)
     
     static let disableFirebase = LaunchOption<Bool>("--disableFirebase", default: false)
     static let useFirebaseEmulator = LaunchOption<Bool>("--useFirebaseEmulator", default: false)
-    static let setupTestAccount = LaunchOption<Bool>("--setupTestAccount", default: false)
+    static let setupTestAccount = LaunchOption<SetupTestEnvironment.Config>("--setupTestAccount", default: .no)
     static let overrideFirebaseConfig = LaunchOption<DeferredConfigLoading.FirebaseConfigSelector?>("--overrideFirebaseConfig", default: nil)
     
     static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)

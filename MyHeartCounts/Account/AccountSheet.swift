@@ -24,7 +24,6 @@ struct AccountSheet: View {
     @Environment(\.openSettingsApp) private var openSettingsApp
     @Environment(Account.self) private var account
     @Environment(\.accountRequired) private var accountRequired
-    @Environment(AccountFeatureFlags.self) private var accountFeatureFlags
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
     // swiftlint:enable attributes
     
@@ -32,6 +31,7 @@ struct AccountSheet: View {
     @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
     
+    @DebugModeEnabled private var debugModeEnabled
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {
@@ -150,7 +150,7 @@ struct AccountSheet: View {
                 Label("License Information", systemSymbol: .buildingColumns)
                     .foregroundStyle(colorScheme.textLabelForegroundStyle)
             }
-            if accountFeatureFlags.isDebugModeEnabled {
+            if debugModeEnabled {
                 NavigationLink {
                     DebugForm()
                 } label: {

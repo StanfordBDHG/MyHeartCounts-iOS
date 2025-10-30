@@ -28,38 +28,20 @@ struct RootView: View {
     // swiftlint:enable attributes
     
     @State private var isShowingConsentRenewalSheet = false
-    @State private var viewState: ViewState = .idle
     
     var body: some View {
         ZStack {
-            switch viewState {
-            case .idle:
+            switch setupTestEnvironment.state {
+            case .disabled, .done:
                 if didCompleteOnboarding, account != nil {
                     content
                 } else {
                     EmptyView()
                 }
-            case .processing:
-                ProgressView("Loading Firebase Test Setup")
-            case .error(let error):
+            case .pending, .settingUp:
+                ProgressView("Preparing Test Environment")
+            case .failure(let error):
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(verbatim: "\(error)"))
-            }
-        }
-        .task {
-            if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && FeatureFlags.setupTestAccount {
-                viewState = .processing
-                if !Spezi.didLoadFirebase {
-                    Spezi.loadFirebase(for: .unitedStates)
-                    try? await _Concurrency.Task.sleep(for: .seconds(4))
-                }
-                do {
-                    try await setupTestEnvironment.setup()
-                    logger.notice("Successfully set up test environment")
-                    viewState = .idle
-                } catch {
-                    logger.error("ERROR SETTING UP TEST ENVIRONMENT: \(error)")
-                    viewState = .error(AnyLocalizedError(error: error, defaultErrorDescription: "\(error)"))
-                }
             }
         }
         .onChange(of: consentManager?.needsToSignNewConsentVersion) { oldValue, newValue in

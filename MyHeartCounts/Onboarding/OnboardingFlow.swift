@@ -106,6 +106,9 @@ private struct AppOnboardingFlow: View {
                     .onboardingStep(.healthAccess)
                     .injectingSpezi()
             }
+            WorkoutPreferenceSetting()
+                .onboardingStep(.workoutPreference)
+                .injectingSpezi()
             if !localNotificationAuthorization {
                 NotificationPermissions()
                     .onboardingStep(.notifications)
@@ -144,6 +147,7 @@ extension OnboardingStep {
     static let comprehension = Self(rawValue: "comprehension")
     static let consent = Self(rawValue: "consent")
     static let healthAccess = Self(rawValue: "healthAccess")
+    static let workoutPreference = Self(rawValue: "workoutPreference")
     static let notifications = Self(rawValue: "notifications")
     static let demographics = Self(rawValue: "demographics")
     static let finalStep = Self(rawValue: "finalStep")

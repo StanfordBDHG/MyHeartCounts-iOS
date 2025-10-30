@@ -16,7 +16,6 @@ struct OnboardingHeader: View {
     let title: LocalizedStringResource
     let description: LocalizedStringResource
     
-    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
@@ -55,24 +54,13 @@ struct OnboardingHeader: View {
     
     
     init(
-        systemSymbol: SFSymbol? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        systemSymbol: SFSymbol? = nil,
         title: LocalizedStringResource,
         description: LocalizedStringResource
     ) {
         self.icon = systemSymbol.map {
             Image(systemSymbol: $0) // swiftlint:disable:this accessibility_label_for_image
         }
-        self.title = title
-        self.description = description
-    }
-    
-    @_disfavoredOverload
-    init(
-        icon: Image? = nil, // swiftlint:disable:this function_default_parameter_at_end
-        title: LocalizedStringResource,
-        description: LocalizedStringResource
-    ) {
-        self.icon = icon
         self.title = title
         self.description = description
     }

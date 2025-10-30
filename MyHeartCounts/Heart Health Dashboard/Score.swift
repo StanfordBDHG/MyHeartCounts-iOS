@@ -36,7 +36,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
             let background: Background
             init(
                 leadingText: LocalizedStringResource,
-                trailingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+                trailingText: LocalizedStringResource? = nil,
                 background: Background
             ) {
                 self.leadingText = leadingText
@@ -46,7 +46,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
             // periphery:ignore - API
             @_disfavoredOverload
             init(
-                leadingText: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+                leadingText: LocalizedStringResource? = nil,
                 trailingText: LocalizedStringResource,
                 background: Background
             ) {
@@ -153,10 +153,10 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     }
     
     
-    func apply(to value: some Any) -> Double {
+    func callAsFunction(_ input: some Any) -> Double {
         switch variant {
         case let .distinctMapping(`default`, elements, _):
-            elements.first { $0.matches(value) }?.score ?? `default`
+            elements.first { $0.matches(input) }?.score ?? `default`
         case .range(let range, _):
             // we pipe our matching code through `erasingClosureInputType` so that it can also handle `Int` inputs.
             erasingClosureInputType(floatToIntHandlingRule: .allowRounding) { (value: Double) in
@@ -167,9 +167,9 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
                 } else {
                     value.distance(to: range.lowerBound) / range.upperBound.distance(to: range.lowerBound)
                 }
-            }(value) ?? 0
+            }(input) ?? 0
         case .custom(let calcScore, _):
-            calcScore(value)
+            calcScore(input)
         }
     }
 }
@@ -211,7 +211,7 @@ struct ScoreResult: Hashable, Sendable {
         _ title: LocalizedStringResource,
         sampleType: MHCSampleType,
         definition: ScoreDefinition,
-        value: (any Hashable & Sendable)? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        value: (any Hashable & Sendable)? = nil,
         score: Double,
         timeRange: Range<Date>
     ) {
@@ -234,7 +234,7 @@ struct ScoreResult: Hashable, Sendable {
         self.definition = definition
         self.sampleType = sampleType
         self._inputValue = .init(wrappedValue: value)
-        self.score = definition.apply(to: value)
+        self.score = definition(value)
         self.timeRange = timeRange
     }
     

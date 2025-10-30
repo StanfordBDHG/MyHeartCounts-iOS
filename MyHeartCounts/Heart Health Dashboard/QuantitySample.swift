@@ -151,7 +151,9 @@ enum MHCQuantitySampleType: Hashable, Identifiable, Sendable {
         switch other {
         case .healthKit(.quantity(let sampleType)):
             self = .healthKit(sampleType)
-        case .healthKit, .custom:
+        case .custom(let sampleType):
+            self = .custom(sampleType)
+        case .healthKit:
             return nil
         }
     }

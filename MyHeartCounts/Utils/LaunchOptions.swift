@@ -54,7 +54,7 @@ protocol LaunchOptionsContainerProtocol: Sendable {
 
 extension LaunchOptionsContainerProtocol {
     /// Returns the specified `option`'s decoded launch option argument, falling back to its default value if no argument was specified.
-    subscript<V>( option: LaunchOption<V>) -> V {
+    subscript<V>(option: LaunchOption<V>) -> V {
         _value(for: option) ?? option.makeDefault()
     }
 }
@@ -165,6 +165,11 @@ extension LaunchOptions {
         }
         return commandLineOptionsContainer(for: arguments)
     }
+    
+    /// Returns the specified `option`'s decoded launch option argument, falling back to its default value if no argument was specified.
+    static subscript<V>(option: LaunchOption<V>) -> V {
+        Self.launchOptions[option]
+    }
 }
 
 
@@ -174,6 +179,10 @@ private struct CommandLineLaunchOptionsContainer: LaunchOptionsContainerProtocol
     /// Creates a new `CommandLineLaunchOptions` instance for the specified arguments array.
     /// - Note: The first element in `arguments` will be assumed to be the executable name, and will always be skipped.
     init(arguments: [String] = CommandLine.arguments) {
+        guard !arguments.isEmpty else {
+            self.parsedArguments = .init()
+            return
+        }
         var remainingArgs = arguments[...]
         var parsedArguments = ParsedLaunchOptionArguments()
          
@@ -223,7 +232,7 @@ private struct CommandLineLaunchOptionsContainer: LaunchOptionsContainerProtocol
                 return value
             } catch {
                 logger.error("Unable to parse value for option '\(option.key)': \(error)")
-                fatalError("Unable to decode CLI option '\(option.key)': \(error)")
+                return nil
             }
         }
     }

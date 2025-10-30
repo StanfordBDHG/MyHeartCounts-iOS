@@ -16,12 +16,11 @@ import SwiftUI
 
 
 struct SmallSleepAnalysisTile: View {
-    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 4), source: .appleHealthSystem)
+    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 4), source: CVHScore.sleepDataSourceFilter)
     private var sleepAnalysis
     
     var body: some View {
         let sleepSessions = (try? sleepAnalysis.splitIntoSleepSessions()) ?? []
-        
         HealthDashboardTile(title: $sleepAnalysis.sampleType.mhcDisplayTitle) {
             EmptyView() // ?
         } content: {
@@ -145,7 +144,7 @@ struct LargeSleepAnalysisTile: View {
     init(timeRange: HealthKitQueryTimeRange, accessory: Accessory) {
         self.accessory = accessory
         self.timeRange = timeRange
-        self._sleepAnalysis = .init(.sleepAnalysis, timeRange: timeRange, source: .appleHealthSystem)
+        self._sleepAnalysis = .init(.sleepAnalysis, timeRange: timeRange, source: CVHScore.sleepDataSourceFilter)
     }
     
     /// - precondition: `sleepSessions` may not be empty.

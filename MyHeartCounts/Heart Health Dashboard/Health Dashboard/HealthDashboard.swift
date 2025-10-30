@@ -172,9 +172,17 @@ struct HealthDashboard: View {
         }()
         if let tapAction {
             Button(action: tapAction) {
-                view
-                    .contentShape(Rectangle())
-            }.buttonStyle(.plain)
+                view.contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel({ () -> String in
+                switch component {
+                case .quantityDisplay(let config):
+                    config.dataSource.sampleTypeDisplayTitle
+                case .custom(let config):
+                    config.title
+                }
+            }())
         } else {
             view
         }

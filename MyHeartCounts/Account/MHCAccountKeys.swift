@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable discouraged_optional_boolean
+
 @preconcurrency import FirebaseStorage
 import Foundation
 import SpeziAccount
@@ -55,6 +57,36 @@ extension AccountDetails {
         initial: .empty(Date(timeIntervalSince1970: 0))
     )
     var lastSignedConsentDate: Date?
+    
+    @AccountKey(
+        id: "didOptInToTrial",
+        name: "Did Opt In to Trial",
+        category: .other,
+        options: .mutable,
+        as: Bool.self
+    )
+    var didOptInToTrial: Bool?
+    
+    
+    @AccountKey(
+        id: "preferredWorkoutTypes",
+        name: "Preferred Workout Types",
+        category: .other,
+        options: .mutable,
+        as: WorkoutPreferenceSetting.WorkoutTypes.self,
+        initial: .default(.init())
+    )
+    var preferredWorkoutTypes: WorkoutPreferenceSetting.WorkoutTypes?
+    
+    @AccountKey(
+        id: "preferredNotificationTime",
+        name: "Preferred Notification Time",
+        category: .other,
+        options: .mutable,
+        as: WorkoutPreferenceSetting.NotificationTime.self,
+        initial: .empty(.init(hour: 0))
+    )
+    var preferredNudgeNotificationTime: WorkoutPreferenceSetting.NotificationTime?
 }
 
 
@@ -69,7 +101,7 @@ extension AccountDetails {
     var fcmToken: String?
     
     @AccountKey(id: "enableAppDebugMode", name: "Enable App Debug Mode", as: Bool.self)
-    var enableDebugMode: Bool? // swiftlint:disable:this discouraged_optional_boolean
+    var enableDebugMode: Bool?
     
     @AccountKey(id: "timeZone", name: "Time Zone", as: String.self)
     var timeZone: String?
@@ -87,8 +119,9 @@ extension AccountDetails {
 
 
 @KeyEntry(
-    \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate,
-    \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep
+    \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
+    \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep,
+    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
 )
 extension AccountKeys {}
 

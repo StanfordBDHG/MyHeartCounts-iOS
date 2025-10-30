@@ -94,6 +94,7 @@ private struct ConsentFileRow: View {
             presentedFile = url
         } label: {
             buttonLabel
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .task {

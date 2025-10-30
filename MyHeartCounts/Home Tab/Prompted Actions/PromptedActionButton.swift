@@ -30,7 +30,7 @@ extension HomeTab {
                 Button(role: .destructive) {
                     $promptedActions.reject(action.id)
                 } label: {
-                    Label("Stop suggesting this", systemSymbol: .minusCircle)
+                    Label("Stop Suggesting This", systemSymbol: .minusCircle)
                 }
             }
         }

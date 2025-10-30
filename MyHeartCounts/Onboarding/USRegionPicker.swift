@@ -15,14 +15,16 @@ struct USRegionPicker: View {
     @Environment(\.colorScheme)
     private var colorScheme
     
-    @Binding var selection: USRegion
+    @Binding var selection: USRegion?
     
     var body: some View {
         Form {
             makeSection(title: "", regions: USRegion.allStatesAndDC)
             makeSection(title: "Other Territories", regions: USRegion.otherTerritories)
+            makeSection(title: "", regions: [.notSet])
         }
         .navigationTitle("Select your State or Territory")
+        .navigationBarTitleDisplayMode(.inline) // otherwise it won't fit
     }
     
     @ViewBuilder
@@ -37,25 +39,22 @@ struct USRegionPicker: View {
     @ViewBuilder
     private func makeRow(_ region: USRegion) -> some View {
         Button {
-            selection = region
+            selection = region == selection ? nil : region
         } label: {
             HStack {
                 Group {
                     Text(region.name)
                     Spacer()
+                    if region == selection {
+                        Image(systemSymbol: .checkmark)
+                            .fontWeight(.medium)
+                            .accessibilityLabel("Selection Checkmark")
+                            .foregroundStyle(.blue)
+                    }
                     Text(region.abbreviation)
                         .foregroundStyle(.secondary)
                 }
                 .foregroundStyle(colorScheme.textLabelForegroundStyle)
-                if selection == region {
-                    Image(systemSymbol: .checkmark)
-                        .fontWeight(.medium)
-                        .accessibilityLabel("Selection Checkmark")
-                        .frame(width: 40)
-                } else {
-                    Color.clear
-                        .frame(width: 40)
-                }
             }
         }
     }
