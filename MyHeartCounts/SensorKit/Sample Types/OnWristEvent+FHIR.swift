@@ -9,7 +9,6 @@
 import Foundation
 import HealthKitOnFHIR
 import ModelsR4
-import SensorKit
 import SpeziSensorKit
 
 
@@ -39,6 +38,7 @@ extension SensorKitOnWristEventSample: HealthObservation {
             code: CodeableConcept(),
             status: FHIRPrimitive(.final)
         )
+        observation.appendCoding(Coding(code: SensorKitCodingSystem(.onWrist)))
         observation.id = self.id.uuidString.asFHIRStringPrimitive()
         observation.appendIdentifier(Identifier(id: observation.id))
         switch (onWristDate, offWristDate) {
@@ -57,7 +57,6 @@ extension SensorKitOnWristEventSample: HealthObservation {
         } else {
             try observation.setIssued(on: .now)
         }
-        observation.effective = .dateTime(FHIRPrimitive(try DateTime(date: timestamp)))
         observation.value = .boolean(.init(.init(onWrist)))
         observation.appendComponent(ObservationComponent(
             code: SpeziCodingSystem.watchWristLocation,

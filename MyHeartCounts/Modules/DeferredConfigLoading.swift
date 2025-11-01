@@ -23,6 +23,7 @@ import SpeziFirebaseConfiguration
 import SpeziFirebaseStorage
 import SpeziFirestore
 import SpeziFoundation
+import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
 import UniformTypeIdentifiers

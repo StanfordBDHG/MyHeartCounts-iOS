@@ -78,13 +78,21 @@ extension MyHeartCountsStandard: HealthKitConstraint {
 
 
 extension MyHeartCountsStandard {
-    func uploadHealthObservation(_ observation: some HealthObservation & Sendable) async throws {
-        try await uploadHealthObservations(CollectionOfOne(observation), batchSize: 1)
+    func uploadHealthObservation(
+        _ observation: some HealthObservation & Sendable,
+        postprocessObservation: @Sendable (Observation) throws -> Void = { _ in }
+    ) async throws {
+        try await uploadHealthObservations(
+            CollectionOfOne(observation),
+            batchSize: 1,
+            postprocessObservation: postprocessObservation
+        )
     }
     
     func uploadHealthObservations( // swiftlint:disable:this function_body_length
         _ observations: consuming some Collection<some HealthObservation & Sendable> & Sendable,
-        batchSize: Int = 100
+        batchSize: Int = 100,
+        postprocessObservation: @Sendable (Observation) throws -> Void = { _ in }
     ) async throws {
         guard !observations.isEmpty, let sampleTypeIdentifier = observations.first?.sampleTypeIdentifier else {
             return
@@ -102,9 +110,14 @@ extension MyHeartCountsStandard {
                     issuedDate: issuedDate,
                     extensions: [.sampleUploadTimeZone]
                 )
+                try postprocessObservation(observation)
                 return ResourceProxy(with: observation)
             } else {
-                return try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
+                let resource = try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
+                if let observation = resource.get(if: Observation.self) {
+                    try postprocessObservation(observation)
+                }
+                return resource
             }
         }
         if observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
@@ -113,16 +126,13 @@ extension MyHeartCountsStandard {
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
             )
-            let resources = try await observations.mapAsync(turnIntoFHIRResource)
-            _ = consume observations
+            let resources = try await (consume observations).mapAsync(turnIntoFHIRResource)
             let encoded = try JSONEncoder().encode(resources)
-            let compressed = try encoded.compressed(using: Zlib.self)
-            _ = consume encoded
+            let compressed = try (consume encoded).compressed(using: Zlib.self)
             let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zlib", directoryHint: .notDirectory)
-            try compressed.write(to: url)
-            _ = consume compressed
+            try (consume compressed).write(to: url)
             _Concurrency.Task {
-                try await healthDataUploader.upload(url, category: .liveData)
+                try await managedFileUpload.upload(url, category: .liveHealthUpload)
                 await triggerDidUploadNotification()
             }
         } else {
@@ -134,8 +144,6 @@ extension MyHeartCountsStandard {
                 for observation in chunk {
                     do {
                         let document = try await healthObservationDocument(for: observation)
-                        let path = document.path
-                        logger.notice("Uploading Health Observation to \(path)")
                         let resource = try await turnIntoFHIRResource(observation)
                         try batch.setData(from: resource, forDocument: document)
                     } catch {

@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
-
 import FirebaseFirestore
 import Foundation
 import HealthKitOnFHIR
@@ -44,7 +42,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     @Environment(Account.self)
     private var account: Account?
     
-    @State private var impl = Impl<Element>()
+    @State private var impl = Impl()
     private let input: QueryInput
     private let logger = Logger(subsystem: "edu.stanford.MyHeartCounts.MHCFirestoreQuery<\(Element.self)>", category: "Firebase")
     
@@ -151,68 +149,68 @@ extension MHCFirestoreQuery {
 }
 
 
-@Observable
-@MainActor
-private final class Impl<Element: Sendable>: Sendable {
-    typealias QueryInput = MHCFirestoreQuery<Element>.QueryInput
-    
-    @ObservationIgnored private var listener: (any ListenerRegistration)?
-    private(set) var elements: [Element] = []
-    
-    init() {}
-    
-    func setup(input: QueryInput, logger: Logger) {
-        guard listener == nil else {
-            return
-        }
-        listener?.remove()
-        var query: Query
-        switch input.collection {
-        case .root(let path):
-            query = Firestore.firestore().collection(path)
-        default:
-            // unreachable
-            logger.error("[impl] skipping setup request bc input contains an unresolved path.")
-            return
-        }
-        if let filter = input.preDecodeFilter {
-            query = query.whereFilter(filter)
-        }
-        for sortDescriptor in input.preDecodeSort {
-            query = query.order(by: sortDescriptor.fieldName, descending: sortDescriptor.order == .reverse)
-        }
-        if let limit = input.preDecodeLimit, limit > 0 {
-            query = query.limit(to: limit)
-        }
-        listener = query.addSnapshotListener { @Sendable [weak self] snapshot, error in
-            guard let self else {
+extension MHCFirestoreQuery {
+    @Observable
+    @MainActor
+    fileprivate final class Impl: Sendable {
+        typealias QueryInput = MHCFirestoreQuery<Element>.QueryInput
+        
+        @ObservationIgnored private var listener: (any ListenerRegistration)?
+        private(set) var elements: [Element] = []
+        
+        func setup(input: QueryInput, logger: Logger) {
+            guard listener == nil else {
                 return
             }
-            if let snapshot {
-                Task {
-                    await self.handleSnapshot(snapshot, input: input)
+            listener?.remove()
+            var query: Query
+            switch input.collection {
+            case .root(let path):
+                query = Firestore.firestore().collection(path)
+            default:
+                // unreachable
+                logger.error("[impl] skipping setup request bc input contains an unresolved path.")
+                return
+            }
+            if let filter = input.preDecodeFilter {
+                query = query.whereFilter(filter)
+            }
+            for sortDescriptor in input.preDecodeSort {
+                query = query.order(by: sortDescriptor.fieldName, descending: sortDescriptor.order == .reverse)
+            }
+            if let limit = input.preDecodeLimit, limit > 0 {
+                query = query.limit(to: limit)
+            }
+            listener = query.addSnapshotListener { @Sendable [weak self] snapshot, error in
+                guard let self else {
+                    return
                 }
-            } else if let error {
-                logger.error("encountered error in firebase snapshot listener: \(error)")
+                if let snapshot {
+                    Task {
+                        await self.handleSnapshot(snapshot, input: input)
+                    }
+                } else if let error {
+                    logger.error("encountered error in firebase snapshot listener: \(error)")
+                }
             }
         }
-    }
-    
-    @concurrent
-    private func handleSnapshot(_ snapshot: QuerySnapshot, input: QueryInput) async {
-        var elements = await self.elements
-        elements.removeAll(keepingCapacity: true)
-        for document in snapshot.documents {
-            if let element = input.decode(document) {
-                elements.append(element)
+        
+        @concurrent
+        private func handleSnapshot(_ snapshot: QuerySnapshot, input: QueryInput) async {
+            var elements = await self.elements
+            elements.removeAll(keepingCapacity: true)
+            for document in snapshot.documents {
+                if let element = input.decode(document) {
+                    elements.append(element)
+                }
             }
-        }
-        elements.sort(using: input.postDecodeSort)
-        if let limit = input.postDecodeLimit, limit > elements.count {
-            elements.removeFirst(elements.count - limit)
-        }
-        await MainActor.run {
-            self.elements = elements
+            elements.sort(using: input.postDecodeSort)
+            if let limit = input.postDecodeLimit, limit > elements.count {
+                elements.removeFirst(elements.count - limit)
+            }
+            await MainActor.run {
+                self.elements = elements
+            }
         }
     }
 }

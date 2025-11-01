@@ -20,6 +20,16 @@
     "%@" : {
 
     },
+    "%@ – %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@"
+          }
+        }
+      }
+    },
     "%@ – %@" : {
       "localizations" : {
         "en" : {
@@ -46,6 +56,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ after %@ sec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ after %2$@ sec"
           }
         }
       }
@@ -653,6 +673,9 @@
     "Answer Questionnaire" : {
 
     },
+    "Apple ID Sharing" : {
+
+    },
     "Are you %lld years old or older?" : {
       "localizations" : {
         "es" : {
@@ -672,6 +695,9 @@
           }
         }
       }
+    },
+    "Are you using a shared Apple ID?" : {
+
     },
     "Arizona" : {
       "localizations" : {
@@ -697,6 +723,12 @@
 
     },
     "AuthorizationStatus" : {
+
+    },
+    "Background Tasks" : {
+
+    },
+    "Background Tasks Log" : {
 
     },
     "Biological Sex at Birth" : {
@@ -1097,6 +1129,7 @@
       }
     },
     "Delete ~/%@/*" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1201,7 +1234,7 @@
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "## Taking an ECG with Your Apple Watch\n\nYour Apple Watch can record an electrocardiogram (ECG) to check your heart rhythm. This feature helps you capture your heart's electrical activity in just 30 seconds.\n\nTo take an ECG, make sure your watch is snug on your wrist. Open the ECG app on your Apple Watch and rest your arms on a table or in your lap. Place your finger on the Digital Crown without pressing it, and hold still for 30 seconds while the recording completes.\n\nThe app will classify your heart rhythm as Sinus Rhythm, Atrial Fibrillation, Low/High Heart Rate, or Inconclusive. Your results are saved in the Health app on your iPhone for you to review or share with your doctor.\n\nRemember: This feature is not constantly monitoring for AFib and cannot detect heart attacks. If you experience chest pain, pressure, or other symptoms, call emergency services immediately."
           }
         },
@@ -1312,7 +1345,7 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Al habilitar SensorKit, se obtienen datos más precisos y detallados para mediciones como el electrocardiograma (ECG), lo que contribuye al avance de la investigación cardiovascular"
           }
         }
@@ -1369,6 +1402,9 @@
           }
         }
       }
+    },
+    "Event Log" : {
+
     },
     "EXERCISE_MINUTES_SCORE_EXPLAINER" : {
       "localizations" : {
@@ -1488,6 +1524,9 @@
         }
       }
     },
+    "File Upload Queue" : {
+
+    },
     "FINAL_ENROLLMENT_STEP_MESSAGE_BASELINE" : {
       "localizations" : {
         "en" : {
@@ -1606,6 +1645,9 @@
           }
         }
       }
+    },
+    "For more information and updates, visit myheartcounts.stanford.edu" : {
+
     },
     "For optimal results, please keep your Phone in your pocket, and %@ until it vibrates to indicate that the test has ended." : {
       "localizations" : {
@@ -1855,6 +1897,9 @@
         }
       }
     },
+    "HealthKit" : {
+
+    },
     "HealthKit Access" : {
       "localizations" : {
         "en" : {
@@ -1870,6 +1915,12 @@
           }
         }
       }
+    },
+    "HealthKit Upload (Historical)" : {
+
+    },
+    "HealthKit Upload (Live)" : {
+
     },
     "HEALTHKIT_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
@@ -1991,6 +2042,9 @@
     "High Coronary Calcium Score" : {
 
     },
+    "Historical Fetch" : {
+
+    },
     "Home" : {
 
     },
@@ -2042,6 +2096,9 @@
           }
         }
       }
+    },
+    "Inactive / Complete" : {
+
     },
     "Indiana" : {
       "localizations" : {
@@ -2411,6 +2468,9 @@
         }
       }
     },
+    "Memory Usage" : {
+
+    },
     "Michigan" : {
       "localizations" : {
         "es" : {
@@ -2514,6 +2574,9 @@
           }
         }
       }
+    },
+    "My Heart Counts does not access your Apple ID in any way; but using a shared account might cause inaccuracies in Health data collection." : {
+
     },
     "n/a" : {
       "localizations" : {
@@ -2811,6 +2874,12 @@
     "NOTIFICATION_TIME_SUBTITLE" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The preferred time for activity-related notifications. You can change this later."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The preferred time for activity-related notifications. You can change this later."
@@ -3138,6 +3207,9 @@
         }
       }
     },
+    "Ongoing" : {
+
+    },
     "Only values from %@ to %@ are allowed" : {
       "localizations" : {
         "en" : {
@@ -3255,6 +3327,9 @@
         }
       }
     },
+    "Pending Tasks" : {
+
+    },
     "Pennsylvania" : {
       "localizations" : {
         "es" : {
@@ -3266,6 +3341,9 @@
       }
     },
     "Perform Always Available Task" : {
+
+    },
+    "Perform Full %@ Upload" : {
 
     },
     "Perform Task: %@" : {
@@ -3286,7 +3364,11 @@
     "Preparing Test Environment" : {
 
     },
+    "Processing Health and SensorKit Data…" : {
+
+    },
     "Processing Health Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3320,6 +3402,9 @@
 
     },
     "Pulmonary Hypertension" : {
+
+    },
+    "Query Anchors" : {
 
     },
     "Questionnaire" : {
@@ -3730,7 +3815,7 @@
         }
       }
     },
-    "Reset Query Anchors" : {
+    "Reset All" : {
 
     },
     "Reset rejeted HomeTab actions" : {
@@ -3904,6 +3989,15 @@
       }
     },
     "SensorKit" : {
+
+    },
+    "SensorKit (Fetch)" : {
+
+    },
+    "SensorKit (Upload)" : {
+
+    },
+    "SensorKit %@" : {
 
     },
     "Sensors" : {
@@ -4233,8 +4327,8 @@
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "The 6-Minute Walk Test measures your functional exercise capacity by tracking how far you can walk in 6 minutes on a flat surface. It's a simple way to evaluate your physical fitness and is commonly used to monitor conditions affecting the heart and lungs.\n\nTo perform the test, find a flat path where you can walk without obstacles. Wear comfortable shoes. Tap \"Start\" and walk at a steady pace that's comfortable but challenging. Your goal is to cover as much distance as possible in 6 minutes."
+            "state" : "translated",
+            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance."
           }
         },
         "es" : {
@@ -4370,7 +4464,11 @@
         }
       }
     },
+    "Update" : {
+
+    },
     "Uploading Health Data" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

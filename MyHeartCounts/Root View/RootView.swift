@@ -19,12 +19,14 @@ import SwiftUI
 
 struct RootView: View {
     // swiftlint:disable attributes
-    @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
-    @LocalPreference(.rootTabSelection) private var selectedTab
-    @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(Account.self) private var account: Account?
     @Environment(ConsentManager.self) private var consentManager: ConsentManager?
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
+    @Environment(Lifecycle.self) private var lifecycle
+    @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
+    @LocalPreference(.rootTabSelection) private var selectedTab
+    @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
     // swiftlint:enable attributes
     
     @State private var isShowingConsentRenewalSheet = false
@@ -41,7 +43,7 @@ struct RootView: View {
             case .pending, .settingUp:
                 ProgressView("Preparing Test Environment")
             case .failure(let error):
-                ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(verbatim: "\(error)"))
+                ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
             }
         }
         .onChange(of: consentManager?.needsToSignNewConsentVersion) { oldValue, newValue in
@@ -51,6 +53,9 @@ struct RootView: View {
         }
         .sheet(isPresented: $isShowingConsentRenewalSheet) {
             ConsentRenewalFlow()
+        }
+        .onChange(of: scenePhase, initial: true) { _, newValue in
+            lifecycle._set(\.scenePhase, to: newValue)
         }
         .taskPerformingAnchor()
     }
@@ -85,5 +90,21 @@ extension LocalPreferenceKey {
     
     static var rootTabViewCustomization: LocalPreferenceKey<TabViewCustomization> {
         .make("rootTabViewCustomization", default: .init())
+    }
+}
+
+
+extension ScenePhase: @retroactive CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .background:
+            "background"
+        case .inactive:
+            "inactive"
+        case .active:
+            "active"
+        @unknown default:
+            "unknown"
+        }
     }
 }

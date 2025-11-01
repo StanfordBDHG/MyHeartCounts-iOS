@@ -38,6 +38,8 @@ struct UpcomingTasksTab: RootViewTab {
                 accountToolbarItem
             }
         }
+        // we need this here, to prevent any Task-related sheets from getting dismissed when you close and re-open the app (don't ask me why...)
+        .taskPerformingAnchor()
     }
 }
 

@@ -86,18 +86,14 @@ final class NotificationsManager: NSObject, Module, EnvironmentAccessible, Senda
 
 
 extension NotificationsManager: NotificationHandler {
-    func handleNotificationAction(_ response: UNNotificationResponse) async {
-        logger.notice("\(#function) \(response)")
-    }
+    func handleNotificationAction(_ response: UNNotificationResponse) async {}
     
     func receiveIncomingNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions? {
-        logger.notice("\(#function) \(notification)")
-        return [.badge, .badge, .list, .sound]
+        [.badge, .badge, .list, .sound]
     }
     
     func receiveRemoteNotification(_ remoteNotification: [AnyHashable: Any]) async -> BackgroundFetchResult {
-        logger.notice("\(#function) \(remoteNotification)")
-        return .noData
+        .noData
     }
 }
 

@@ -9,18 +9,18 @@
 // periphery:ignore:all
 
 import Foundation
-import struct ModelsR4.FHIRPrimitive
+import ModelsR4
 
 
-struct LOINC: CodingProtocol {
-    static var system: String { "http://loinc.org" }
+struct LOINC: CodingProtocol, @unchecked Sendable {
+    nonisolated(unsafe) static let system: FHIRPrimitive<FHIRURI> = "http://loinc.org"
     
-    let rawValue: String
-    let displayTitle: String?
+    let code: FHIRPrimitive<FHIRString>
+    let display: FHIRPrimitive<FHIRString>?
     
-    init(_ code: String, displayTitle: String? = nil) {
-        self.rawValue = code
-        self.displayTitle = displayTitle
+    init(_ code: FHIRPrimitive<FHIRString>, display: FHIRPrimitive<FHIRString>? = nil) {
+        self.code = code
+        self.display = display
     }
 }
 
@@ -32,6 +32,8 @@ extension LOINC {
     static let pedometerNumStepsInUnspecifiedTime = LOINC("55423-8")
     static let pedometerWalkingDistanceInUnspecifiedTime = LOINC("55430-3") // swiftlint:disable:this identifier_name
     static let exerciseDuration = LOINC("55411-3")
+    
+    static let numberOfFlightsClimbedInReportingPeriod = LOINC("100304-5")
 }
 
 

@@ -164,7 +164,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Enabling Sensorkit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+            "value" : "Enabling SensorKit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
           }
         },
         "es" : {
@@ -186,6 +186,42 @@
           }
         }
       }
+    },
+    "SENSORKIT_USAGE_DESC_ACCELEROMETER" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Accelerometer data helps us better interpret your timed walk test results"
+          }
+        }
+      }
+    },
+    "SENSORKIT_USAGE_DESC_AMBIENT_LIGHT" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Ambient Light data helps us better understand your [TODO]"
+          }
+        }
+      }
+    },
+    "SENSORKIT_USAGE_DESC_AMBIENT_PRESSURE" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Ambient Pressure data helps us better interpret your timed walk test results"
+          }
+        }
+      }
+    },
+    "SENSORKIT_USAGE_DESC_DEVICE_USAGE" : {
+      "extractionState" : "manual"
     },
     "SENSORKIT_USAGE_DESC_ECG" : {
       "extractionState" : "manual",
@@ -210,6 +246,17 @@
         }
       }
     },
+    "SENSORKIT_USAGE_DESC_HEART_RATE" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Heart Rate data helps us better interpret your ECGs and timed walk test results"
+          }
+        }
+      }
+    },
     "SENSORKIT_USAGE_DESC_ON_WRIST" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -227,8 +274,36 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Los datos On-Wrist de SensorKit nos ayudan a interpretar su ECG y los datos de su reloj con mayor precisión."
+          }
+        }
+      }
+    },
+    "SENSORKIT_USAGE_DESC_PEDOMETER" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Pedometer data helps us better interpret your timed walk test results"
+          }
+        }
+      }
+    },
+    "SENSORKIT_USAGE_DESC_PPG" : {
+      "extractionState" : "manual"
+    },
+    "SENSORKIT_USAGE_DESC_VISITS" : {
+      "extractionState" : "manual"
+    },
+    "SENSORKIT_USAGE_DESC_WRIST_TEMP" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Wrist Temperature data helps us better understand your [TODO]"
           }
         }
       }

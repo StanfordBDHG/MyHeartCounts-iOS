@@ -7,6 +7,7 @@
 //
 
 import Foundation
+@_spi(Internal)
 import SpeziSensorKit
 import SpeziViews
 import SwiftUI
@@ -16,7 +17,11 @@ struct SensorKitControlView: View {
     @Environment(SensorKit.self)
     private var sensorKit
     
+    @Environment(SensorKitDataFetcher.self)
+    private var dataFetcher
+    
     @State private var viewState: ViewState = .idle
+    @State private var queryAnchorDatesId = UUID()
     
     var body: some View {
         Form {
@@ -32,20 +37,49 @@ struct SensorKitControlView: View {
                     }
                 }
             }
+            queryAnchorsSection
             Section {
-                AsyncButton("Reset Query Anchors", state: $viewState) {
-                    @MainActor
-                    func imp<Sample>(_ sensor: some AnySensor<Sample>) throws {
-                        let sensor = Sensor(sensor)
-                        try sensorKit.resetQueryAnchor(for: sensor)
-                    }
-                    for sensor in SensorKit.allKnownSensors {
-                        try imp(sensor)
-                    }
+                let definitions = SensorKit.mhcSensorUploadDefinitions
+                ForEach(Array(definitions.indices), id: \.self) { idx in
+                    makeRunFullUploadButton(for: definitions[idx])
                 }
             }
         }
         .navigationTitle("SensorKit")
         .viewStateAlert(state: $viewState)
+    }
+    
+    private var queryAnchorsSection: some View {
+        Section("Query Anchors") {
+            Button("Update") {
+                queryAnchorDatesId = UUID()
+            }
+            ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
+                LabeledContent(
+                    sensor.displayName,
+                    value: sensorKit.queryAnchorValue(for: sensor)?.ISO8601Format() ?? "–"
+                )
+            }
+            .id(queryAnchorDatesId)
+            AsyncButton("Reset All", role: .destructive, state: $viewState) {
+                @MainActor
+                func imp<Sample>(_ sensor: some AnySensor<Sample>) throws {
+                    let sensor = Sensor(sensor)
+                    try sensorKit.resetQueryAnchor(for: sensor)
+                }
+                defer {
+                    queryAnchorDatesId = UUID()
+                }
+                for sensor in SensorKit.allKnownSensors {
+                    try imp(sensor)
+                }
+            }
+        }
+    }
+    
+    private func makeRunFullUploadButton(for uploadDefinition: any AnyMHCSensorUploadDefinition) -> some View {
+        AsyncButton("Perform Full \(uploadDefinition.typeErasedSensor.displayName) Upload", state: $viewState) {
+            try await dataFetcher.fetchAndUploadAllSamples(for: uploadDefinition)
+        }
     }
 }

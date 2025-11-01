@@ -1,5 +1,5 @@
 {
-  "originHash" : "29a15e77c7113584148fadc294c8e2ac59c567db659bffd15d03aa82534887bf",
+  "originHash" : "bd4f289d66033e48b9fcb76c05565d8e6ebd979d31c94b81442eeab9ab0e7bec",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/HealthKitOnFHIR.git",
       "state" : {
-        "revision" : "1c757028553b4ad282d81838046807b1112b33f2",
-        "version" : "1.2.0"
+        "revision" : "f866f864ac85cc8d0cdba49772d42ae077361f41",
+        "version" : "1.2.1"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "d2bf6dc2e229be531773ac4708fbb2552b63375e",
-        "version" : "0.1.1"
+        "revision" : "9a54d56618ea0823e697d378a594e486804bb8a4",
+        "version" : "0.1.4"
       }
     },
     {
@@ -312,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "f5c1ab1aea36736d110aa0b406f8a66921d545d1",
-        "version" : "0.4.0"
+        "revision" : "dde74b1c41739cf53b859ee30550e5336a429e1e",
+        "version" : "0.5.1"
       }
     },
     {
@@ -407,6 +407,15 @@
       }
     },
     {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "4e8f4b1c9adaa59315c523540c1ff2b38adc20a9",
+        "version" : "2.87.0"
+      }
+    },
+    {
       "identity" : "swift-numerics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics.git",
@@ -443,6 +452,15 @@
       }
     },
     {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system.git",
+      "state" : {
+        "revision" : "395a77f0aa927f0ff73941d7ac35f2b46d47c9db",
+        "version" : "1.6.3"
+      }
+    },
+    {
       "identity" : "swift-toolchain-sqlite",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-toolchain-sqlite",
@@ -456,8 +474,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SimplyDanny/SwiftLintPlugins.git",
       "state" : {
-        "revision" : "6166499ede0efe43c3809f101d2c3cd409e2b77a",
-        "version" : "0.61.0"
+        "revision" : "ecafb5b056cb7995324f0d310a61f30661d00cad",
+        "version" : "0.62.2"
       }
     },
     {

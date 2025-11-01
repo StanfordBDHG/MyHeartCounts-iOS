@@ -25,6 +25,8 @@ struct AccountSheet: View {
     @Environment(Account.self) private var account
     @Environment(\.accountRequired) private var accountRequired
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
+    @Environment(ManagedFileUpload.self) private var managedFileUpload
+    @Environment(SensorKitDataFetcher.self) private var sensorKitDataFetcher
     // swiftlint:enable attributes
     
     @State private var isInSetup = false
@@ -99,7 +101,7 @@ struct AccountSheet: View {
         }
         
         if let enrollment = enrollments.first {
-            Section("Study Participation") {
+            Section("Study Participation") { // swiftlint:disable:this closure_body_length
                 Button {
                     openUrl(MyHeartCounts.website)
                 } label: {
@@ -114,12 +116,31 @@ struct AccountSheet: View {
                 NavigationLink("Review Consent Forms") {
                     SignedConsentForms()
                 }
-                if historicalDataExportMgr.session.map({ $0.state == .running || $0.state == .paused }) ?? false
-                    || historicalDataExportMgr.fileUploader.uploadProgress != nil {
-                    HStack {
-                        Text("Processing Health Data…")
+                if let text = { () -> LocalizedStringResource? in
+                    switch (isProcessingHealthData, isProcessingSensorKitData) {
+                    case (true, true):
+                        "Processing Health and SensorKit Data…"
+                    case (true, false):
+                        "Processing Health Data…"
+                    case (false, true):
+                        "Processing SensorKit Data…"
+                    case (false, false):
+                        nil
+                    }
+                }() {
+                    let label = HStack {
+                        Text(text)
                         Spacer()
                         ProgressView()
+                    }
+                    if debugModeEnabled {
+                        NavigationLink {
+                            DataProcessingDebugView()
+                        } label: {
+                            label
+                        }
+                    } else {
+                        label
                     }
                 }
             }
@@ -159,6 +180,17 @@ struct AccountSheet: View {
                 }
             }
         }
+    }
+    
+    private var isProcessingHealthData: Bool {
+        let uploadCategories = [ManagedFileUpload.Category.liveHealthUpload, .historicalHealthUpload]
+        return historicalDataExportMgr.session.map { $0.state == .running || $0.state == .paused } ?? false
+            || uploadCategories.contains(where: { managedFileUpload.isActive($0) })
+    }
+    
+    private var isProcessingSensorKitData: Bool {
+        managedFileUpload.progressByCategory.keys.contains { $0.id.contains("SensorKit") }
+            || !sensorKitDataFetcher.activeActivities.isEmpty
     }
     
     init(dismissAfterSignIn: Bool = true) {

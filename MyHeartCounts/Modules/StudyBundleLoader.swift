@@ -46,7 +46,7 @@ final class StudyBundleLoader: Module, Sendable {
     
     /// The url where we store the `StudyBundle`s downloaded by the Loader.
     ///
-    /// Note that this is distinct from what the `StudyManager`' does, which also stores the `StudyBundle`s of the studie(s) we're enrolled into, in a special directory.
+    /// Note that this is distinct from what the `StudyManager`' does, which also stores the `StudyBundle`s of the study(/studies) we're enrolled into, in a special directory.
     private let studyBundlesUrl: URL
     
     private init() {

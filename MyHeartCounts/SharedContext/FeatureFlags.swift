@@ -50,13 +50,6 @@ enum FeatureFlags {
 }
 
 
-extension ProcessInfo {
-    static var isBeingUITested: Bool {
-        ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
-    }
-}
-
-
 extension LaunchOptions {
     /// Whether we should force-enable the debug mode, even if the account key is set to `false`.
     ///

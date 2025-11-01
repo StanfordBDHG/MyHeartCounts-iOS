@@ -19,17 +19,10 @@ import SpeziStudy
 @MainActor
 final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
-    @ObservationIgnored @Application(\.logger)
-    private var logger
-    
-    @ObservationIgnored @Dependency(StudyManager.self)
-    private var studyManager: StudyManager?
-    
-    @ObservationIgnored @Dependency(BulkHealthExporter.self)
-    private var bulkExporter
-    
-    @ObservationIgnored @Dependency(HealthDataFileUploadManager.self)
-    var fileUploader
+    @ObservationIgnored @Application(\.logger) private var logger
+    @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkExporter
+    @ObservationIgnored @Dependency(ManagedFileUpload.self) var managedFileUpload
     // swiftlint:enable attributes
     
     private(set) var session: (any BulkExportSession<HealthKitSamplesToFHIRJSONProcessor>)?
@@ -102,7 +95,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         do {
             logger.notice("Will start BulkHealthExport session")
             let results = try session.start(retryFailedBatches: true)
-            fileUploader.scheduleForUpload(results.compactMap { $0 }, category: .historicalData)
+            managedFileUpload.scheduleForUpload(results.compactMap { $0 }, category: .historicalHealthUpload)
             return true
         } catch {
             logger.error("Error starting session: \(error)")
@@ -114,4 +107,18 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
 
 extension BulkExportSessionIdentifier {
     static let mhcHistoricalDataExport = Self("mhcHistoricalDataExport")
+}
+
+
+extension ManagedFileUpload.Category {
+    static let liveHealthUpload = Self(
+        id: "HealthKitUpload/live",
+        title: "HealthKit Upload (Live)",
+        firebasePath: "liveHealthSamples"
+    )
+    static let historicalHealthUpload = Self(
+        id: "HealthKitUpload/historical",
+        title: "HealthKit Upload (Historical)",
+        firebasePath: "historicalHealthSamples"
+    )
 }

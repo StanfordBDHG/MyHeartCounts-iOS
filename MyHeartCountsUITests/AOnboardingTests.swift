@@ -99,17 +99,14 @@ extension XCUIApplication {
     
     private func navigateEligibility(region: Locale.Region) throws {
         let continueButton = collectionViews.firstMatch.buttons["Continue"]
-        XCTAssertFalse(continueButton.isEnabled)
         let ofAgeToggle = switches["Are you 18 years old or older?"].descendants(matching: .switch).firstMatch
         XCTAssert(ofAgeToggle.waitForExistence(timeout: 2))
         XCTAssertEqual(try XCTUnwrap(ofAgeToggle.value as? String), "0")
         ofAgeToggle.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         sleep(for: .seconds(0.25))
         XCTAssertEqual(try XCTUnwrap(ofAgeToggle.value as? String), "1")
-        XCTAssertFalse(continueButton.isEnabled)
         buttons["What country do you currently live in?"].tap()
         sleep(for: .seconds(0.55))
-        XCTAssertFalse(continueButton.isEnabled)
         do {
             searchFields["Search"].firstMatch.tap()
             searchFields["Search"].firstMatch.typeText(try XCTUnwrap(region.name()))
@@ -117,9 +114,12 @@ extension XCUIApplication {
             XCTAssert(countryButton.waitForExistence(timeout: 1))
             countryButton.tap()
             sleep(for: .seconds(0.25))
+            swipeUp()
             XCTAssertFalse(continueButton.isEnabled)
         }
         otherElements["Screening Section, Language"].buttons["Yes"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        XCTAssertFalse(continueButton.isEnabled)
+        otherElements["Screening Section, Apple ID Sharing"].buttons["No"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         XCTAssertTrue(continueButton.isEnabled)
         continueButton.tap()
     }

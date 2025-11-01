@@ -11,7 +11,6 @@ import SFSafeSymbols
 import SpeziFoundation
 import SpeziLocalStorage
 import SpeziSensorKit
-import SpeziStudy
 import SwiftUI
 
 
@@ -25,7 +24,6 @@ extension HomeTab {
     struct PromptedActions: DynamicProperty {
         // swiftlint:disable attributes
         @Environment(\.calendar) private var cal
-        @Environment(StudyManager.self) private var studyManager
         @Environment(SensorKit.self) private var sensorKit
         @TriggerUpdate private var triggerUpdate
         @LocalStorageEntry(.studyActivationDate) private var studyActivationDate

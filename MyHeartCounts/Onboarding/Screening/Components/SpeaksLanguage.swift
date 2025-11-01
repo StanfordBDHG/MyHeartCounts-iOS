@@ -22,7 +22,7 @@ struct SpeaksLanguage: ScreeningComponent {
     var body: some View {
         @Bindable var data = data
         SingleChoiceScreeningComponentImpl(
-            question: "Can you read and understand \(allowedLanguage.localizedName(in: locale)) in order to provide informed consent and follow instructions?",
+            "Can you read and understand \(allowedLanguage.localizedName(in: locale)) in order to provide informed consent and follow instructions?",
             options: [true, false],
             selection: $data.screening.speaksEnglish,
             optionTitle: { $0 ? "Yes" : "No" }

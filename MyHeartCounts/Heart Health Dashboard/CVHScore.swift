@@ -62,8 +62,8 @@ struct CVHScore: DynamicProperty {
     )
     private var dailyStepCount
     
-    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 14), source: Self.sleepDataSourceFilter)
-    private var sleepSamples
+    @SleepSessionsQuery(timeRange: .last(days: 14), source: Self.sleepDataSourceFilter)
+    private var sleepSessions
     
     @HealthKitQuery(.bodyMassIndex, timeRange: .last(days: 14))
     private var bodyMassIndex
@@ -80,12 +80,6 @@ struct CVHScore: DynamicProperty {
     @HealthKitQuery(.bloodPressure, timeRange: .last(months: 3))
     private var bloodPressure
     
-    @State private var sleepDataProcessor = SleepDataProcessor()
-    @State private(set) var sleepHealthScore = ScoreResult(
-        "Last Night",
-        sampleType: .healthKit(.category(.sleepAnalysis)),
-        definition: .cvhSleep
-    )
     
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
     var wrappedValue: Double? {
@@ -110,55 +104,6 @@ struct CVHScore: DynamicProperty {
     
     var projectedValue: Self {
         self
-    }
-    
-    nonisolated func update() {
-        Task { @MainActor in
-            updateSleepScore()
-        }
-    }
-    
-    private func updateSleepScore() {
-        let samples = withObservationTracking {
-            Array(self.sleepSamples)
-        } onChange: {
-            Task { @MainActor in
-                updateSleepScore()
-            }
-        }
-        Task { @concurrent in
-            let result = await self.sleepDataProcessor.process(samples)
-            await MainActor.run {
-                self.sleepHealthScore = result
-            }
-        }
-    }
-}
-
-
-extension CVHScore {
-    // We use an actor here to simplify things, bc we don't want multiple calls with the same input to perform the sessions calc multiple times.
-    private actor SleepDataProcessor {
-        private var lastSeenSleepSamples: [HKCategorySample] = []
-        private var lastResult: ScoreResult?
-        
-        func process(_ sleepSamples: some Collection<HKCategorySample>) -> ScoreResult {
-            if let lastResult, sleepSamples.elementsEqual(lastSeenSleepSamples) {
-                return lastResult
-            }
-            let sleepSamples = Array(sleepSamples)
-            self.lastSeenSleepSamples = sleepSamples
-            let sleepSessions = (try? sleepSamples.splitIntoSleepSessions()) ?? []
-            let score = ScoreResult(
-                "Most Recent Night",
-                sampleType: .healthKit(.category(.sleepAnalysis)),
-                sample: sleepSessions.last,
-                value: { $0.totalTimeSpentAsleep / 60 / 60 },
-                definition: .cvhSleep
-            )
-            self.lastResult = score
-            return score
-        }
     }
 }
 
@@ -203,6 +148,24 @@ extension CVHScore {
             value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
             definition: .cvhNicotine
         )
+    }
+    
+    var sleepHealthScore: ScoreResult {
+        if sleepSessions.isEmpty {
+            ScoreResult(
+                "Last Night",
+                sampleType: .healthKit(.category(.sleepAnalysis)),
+                definition: .cvhSleep
+            )
+        } else {
+            ScoreResult(
+                "Most Recent Night",
+                sampleType: .healthKit(.category(.sleepAnalysis)),
+                sample: sleepSessions.last,
+                value: { $0.totalTimeSpentAsleep / 60 / 60 },
+                definition: .cvhSleep
+            )
+        }
     }
     
     var bodyMassIndexScore: ScoreResult {

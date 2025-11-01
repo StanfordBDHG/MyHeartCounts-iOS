@@ -7,17 +7,18 @@
 //
 
 import Foundation
+import ModelsR4
 
 
 struct SpeziCodingSystem: CodingProtocol {
-    static var system: String { "https://spezi.stanford.edu" }
+    nonisolated(unsafe) static let system: FHIRPrimitive<FHIRURI> = "https://spezi.stanford.edu"
     
-    let rawValue: String
-    let displayTitle: String?
+    nonisolated(unsafe) let code: FHIRPrimitive<FHIRString>
+    nonisolated(unsafe) let display: FHIRPrimitive<FHIRString>?
     
-    init(_ code: String, displayTitle: String? = nil) {
-        self.rawValue = code
-        self.displayTitle = displayTitle
+    init(_ code: FHIRPrimitive<FHIRString>, display: FHIRPrimitive<FHIRString>? = nil) {
+        self.code = code
+        self.display = display
     }
 }
 

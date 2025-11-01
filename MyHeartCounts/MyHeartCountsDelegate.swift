@@ -6,8 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
+import OSLog
 import Spezi
 import SpeziFirebaseConfiguration
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziNotifications
@@ -40,6 +42,16 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             FeedbackManager()
             SensorKit()
             SensorKitDataFetcher()
+            LocalNotifications()
+            Lifecycle()
+            MHCBackgroundTasks()
+            ManagedFileUpload {
+                ManagedFileUpload.Category.liveHealthUpload
+                ManagedFileUpload.Category.historicalHealthUpload
+                for sensor in SensorKit.mhcSensorsExtended {
+                    ManagedFileUpload.Category(sensor)
+                }
+            }
         }
     }
 }
