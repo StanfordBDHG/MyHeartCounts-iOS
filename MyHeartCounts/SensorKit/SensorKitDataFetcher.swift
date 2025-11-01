@@ -52,20 +52,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     nonisolated init() {}
     
-    func configure() {
-        do {
-            try backgroundTasks.register(.healthResearch(
-                id: .sensorKitProcessing,
-                earliest: Date.now.addingTimeInterval(TimeConstants.minute * 10),
-                options: [],
-                protectionTypeOfRequiredData: .none
-            ) { () async throws in
-                try await self.localNotifications.send(title: "SensorKit", body: "Did start background task")
-            })
-        } catch {
-            logger.error("Unable to register background task: \(error)")
-        }
-    }
     
     func run() async {
         Task(priority: .background) {

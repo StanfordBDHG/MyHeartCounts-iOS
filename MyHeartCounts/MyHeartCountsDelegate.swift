@@ -44,7 +44,6 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             SensorKitDataFetcher()
             LocalNotifications()
             Lifecycle()
-            AppRefresh()
             MHCBackgroundTasks()
             ManagedFileUpload {
                 ManagedFileUpload.Category.liveHealthUpload
