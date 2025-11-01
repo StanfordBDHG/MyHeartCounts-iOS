@@ -55,7 +55,7 @@ private struct Question: ScreeningComponent {
     
     var body: some View {
         SingleChoiceScreeningComponentImpl(
-            question: question,
+            question,
             options: [true, false],
             selection: Binding<Bool?> {
                 onboardingData.comprehension[keyPath: storage]

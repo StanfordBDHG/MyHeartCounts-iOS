@@ -20,7 +20,8 @@ struct EligibilityScreening: View {
     private let components: [any ScreeningComponent] = [
         AgeAtLeast(style: .toggle, minAge: 18),
         IsFromRegion(allowedRegions: [.unitedStates, .unitedKingdom]),
-        SpeaksLanguage(allowedLanguage: .init(identifier: "en_US"))
+        SpeaksLanguage(allowedLanguage: .init(identifier: "en_US")),
+        IsUsingSharedAppleID()
     ]
     
     
@@ -35,7 +36,7 @@ struct EligibilityScreening: View {
             func nonnil(_ keyPath: KeyPath<OnboardingDataCollection.Screening, (some Any)?>) -> Bool {
                 data.screening[keyPath: keyPath] != nil
             }
-            return nonnil(\.dateOfBirth) && nonnil(\.region) && nonnil(\.speaksEnglish)
+            return nonnil(\.dateOfBirth) && nonnil(\.region) && nonnil(\.speaksEnglish) && nonnil(\.sharedAppleID)
         } continue: { data, path in
             let isEligible = components.allSatisfy { $0.evaluate(data) }
             if isEligible {

@@ -10,26 +10,27 @@ import Foundation
 import SwiftUI
 
 
-struct SpeaksLanguage: ScreeningComponent {
+struct IsUsingSharedAppleID: ScreeningComponent {
     // swiftlint:disable attributes
     @Environment(\.locale) private var locale
     @Environment(OnboardingDataCollection.self) private var data
     // swiftlint:enable attributes
     
-    let title: LocalizedStringResource = "Language"
-    let allowedLanguage: Locale.Language
+    let title: LocalizedStringResource = "Apple ID Sharing"
     
     var body: some View {
         @Bindable var data = data
         SingleChoiceScreeningComponentImpl(
-            "Can you read and understand \(allowedLanguage.localizedName(in: locale)) in order to provide informed consent and follow instructions?",
-            options: [true, false],
-            selection: $data.screening.speaksEnglish,
-            optionTitle: { $0 ? "Yes" : "No" }
+            "Are you using a shared Apple ID?",
+            explanation: """
+                My Heart Counts does not access your Apple ID in any way; but using a shared account might cause inaccuracies in Health data collection.
+                """,
+            selection: $data.screening.sharedAppleID,
+            style: .list
         )
     }
     
     func evaluate(_ data: OnboardingDataCollection) -> Bool {
-        data.screening.speaksEnglish == true
+        data.screening.sharedAppleID == false
     }
 }

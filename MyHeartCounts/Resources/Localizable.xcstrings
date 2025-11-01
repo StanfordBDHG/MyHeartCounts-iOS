@@ -673,6 +673,9 @@
     "Answer Questionnaire" : {
 
     },
+    "Apple ID Sharing" : {
+
+    },
     "Are you %lld years old or older?" : {
       "localizations" : {
         "es" : {
@@ -692,6 +695,9 @@
           }
         }
       }
+    },
+    "Are you using a shared Apple ID?" : {
+
     },
     "Arizona" : {
       "localizations" : {
@@ -2565,6 +2571,9 @@
           }
         }
       }
+    },
+    "My Heart Counts does not access your Apple ID in any way; but using a shared account might result in incorrect Health data" : {
+
     },
     "n/a" : {
       "localizations" : {

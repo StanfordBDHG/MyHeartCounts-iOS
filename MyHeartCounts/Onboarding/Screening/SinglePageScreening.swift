@@ -14,6 +14,7 @@ import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
+
 /// The ``SinglePageScreening`` view consists of components, each of which should collect one piece of information from the user, and is placed in its own `Section`.
 protocol ScreeningComponent: View {
     /// The user-displayed title of this component.
