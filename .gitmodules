@@ -1,3 +1,6 @@
 [submodule "MyHeartCounts-Firebase"]
 	path = MyHeartCounts-Firebase
 	url = https://github.com/StanfordBDHG/MyHeartCounts-Firebase.git
+[submodule "MyHeartCounts-StudyDefinitions"]
+	path = MyHeartCounts-StudyDefinitions
+	url = https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git

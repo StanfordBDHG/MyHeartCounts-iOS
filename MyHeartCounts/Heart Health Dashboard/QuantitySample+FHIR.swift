@@ -22,7 +22,7 @@ extension QuantitySample: HealthObservation {
     // SAFETY: this is in fact safe, since the FHIRPrimitive's `extension` property is empty.
     // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
     // it also never can be mutated to contain any.
-    private nonisolated(unsafe) static let speziSystem = "https://spezi.stanford.edu".asFHIRURIPrimitive()! // swiftlint:disable:this force_unwrapping
+    nonisolated(unsafe) private static let speziSystem = "https://spezi.stanford.edu".asFHIRURIPrimitive()! // swiftlint:disable:this force_unwrapping
     
     var sampleTypeIdentifier: String {
         self.sampleType.id
