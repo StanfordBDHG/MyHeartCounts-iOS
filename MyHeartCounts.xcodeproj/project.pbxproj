@@ -1551,8 +1551,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
-				kind = revision;
-				revision = 71bfcb94550b6d2e1445b381b19dc1275121d6fc;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.5.1;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {

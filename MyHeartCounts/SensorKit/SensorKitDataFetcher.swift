@@ -94,7 +94,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             activity.updateMessage("Fetching Samples")
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
                 activity.updateTimeRange(batchInfo.timeRange)
-                let batchSize = batch.count
                 try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
             }
         } catch {
