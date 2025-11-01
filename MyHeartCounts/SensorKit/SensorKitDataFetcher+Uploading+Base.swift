@@ -20,6 +20,7 @@ extension MHCSensorSampleUploadStrategy {
     func upload( // swiftlint:disable:this function_parameter_count
         data: consuming Data,
         fileExtension: String,
+        shouldCompress: Bool = true,
         for sensor: Sensor<Sample>,
         deviceInfo: SensorKit.DeviceInfo,
         to standard: MyHeartCountsStandard,
@@ -28,7 +29,7 @@ extension MHCSensorSampleUploadStrategy {
         postprocessObservation: (Observation) throws -> Void
     ) async throws {
         activity.updateMessage("Compressing Data")
-        let data = try (consume data).compressed(using: Zlib.self)
+        let data = shouldCompress ? try (consume data).compressed(using: Zlib.self) : consume data
         let sha1 = Insecure.SHA1.hash(data: data)
         let size = data.count
         let url = URL.temporaryDirectory

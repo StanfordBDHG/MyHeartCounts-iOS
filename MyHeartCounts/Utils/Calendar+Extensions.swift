@@ -10,6 +10,14 @@ import Foundation
 import SpeziFoundation
 
 
+extension Date {
+    /// Adds nanoseconds to a date.
+    func addingNanoseconds(_ nanoseconds: Int64) -> Date {
+        addingTimeInterval(TimeInterval(nanoseconds) / 1_000_000_000)
+    }
+}
+
+
 extension Calendar {
     func makeNoon(_ date: Date) -> Date {
         if let result = self.date(bySettingHour: 12, minute: 0, second: 0, of: date, direction: .forward), isDate(result, inSameDayAs: date) {

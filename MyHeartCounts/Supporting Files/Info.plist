@@ -29,12 +29,12 @@
 		<key>SRSensorUsageAmbientLightSensor</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_AMBIENT_LIGHT</string>
 		</dict>
 		<key>SRSensorUsageDeviceUsage</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_DEVICE_USAGE</string>
 		</dict>
 		<key>SRSensorUsageECG</key>
 		<dict>
@@ -44,32 +44,32 @@
 		<key>SRSensorUsageElevation</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_AMBIENT_PRESSURE</string>
 		</dict>
 		<key>SRSensorUsageHeartRate</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_HEART_RATE</string>
 		</dict>
 		<key>SRSensorUsageMotion</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_ACCELEROMETER</string>
 		</dict>
 		<key>SRSensorUsagePPG</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_PPG</string>
 		</dict>
 		<key>SRSensorUsagePedometer</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_PEDOMETER</string>
 		</dict>
 		<key>SRSensorUsageVisits</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_VISITS</string>
 		</dict>
 		<key>SRSensorUsageWristDetection</key>
 		<dict>
@@ -79,7 +79,7 @@
 		<key>SRSensorUsageWristTemperature</key>
 		<dict>
 			<key>Description</key>
-			<string>My Heart Counts uses [_] Data to TODO TODO TODO</string>
+			<string>SENSORKIT_USAGE_DESC_WRIST_TEMP</string>
 		</dict>
 	</dict>
 	<key>UIApplicationSceneManifest</key>

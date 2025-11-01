@@ -6,25 +6,29 @@
 // SPDX-License-Identifier: MIT
 //
 
+import ModelsR4
 import SpeziSensorKit
 
 
 struct SensorKitCodingSystem: CodingProtocol {
-    static var system: String { "https://developer.apple.com/documentation/sensorkit" }
+    nonisolated(unsafe) static let system: FHIRPrimitive<FHIRURI> = "https://developer.apple.com/documentation/sensorkit"
     
-    let code: String
-    let display: String?
+    nonisolated(unsafe) let code: FHIRPrimitive<FHIRString>
+    nonisolated(unsafe) let display: FHIRPrimitive<FHIRString>?
     
     init(_ code: String, display: String? = nil) {
-        self.code = code
-        self.display = display
+        self.code = code.asFHIRStringPrimitive()
+        self.display = display?.asFHIRStringPrimitive()
     }
     
     init(_ sensor: Sensor<some Any>) {
-        self.init(sensor.id, display: sensor.displayName)
+        self.init(
+            sensor.id,
+            display: sensor.displayName
+        )
     }
     
     func property(_ name: String, display: String? = nil) -> Self {
-        Self("\(code)/\(name)", display: display)
+        Self("\(code.value?.string ?? "")/\(name)", display: display)
     }
 }

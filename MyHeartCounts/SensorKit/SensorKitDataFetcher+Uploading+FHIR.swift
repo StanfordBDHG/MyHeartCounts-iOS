@@ -14,7 +14,7 @@ import SpeziSensorKit
 struct UploadStrategyFHIRObservations<Sample: SensorKitSampleProtocol>: MHCSensorSampleUploadStrategy
 where Sample.SafeRepresentation: HealthObservation {
     func upload(
-        _ samples: some Collection<Sample.SafeRepresentation> & Sendable,
+        _ samples: some RandomAccessCollection<Sample.SafeRepresentation> & Sendable,
         batchInfo: SensorKit.BatchInfo,
         for sensor: Sensor<Sample>,
         to standard: MyHeartCountsStandard,

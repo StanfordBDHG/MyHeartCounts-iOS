@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Algorithms
 import OSLog
 import Spezi
 import SpeziFoundation
@@ -71,9 +72,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-//            for sensor in SensorKit.mhcSensors {
-//                try? sensorKit.resetQueryAnchor(for: sensor)
-//            }
             await doFetch()
         }
     }
@@ -100,6 +98,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             logger.notice("Skipping Sensor '\(sensor.displayName)' bc it's not authorized.")
             return
         }
+        logger.notice("Starting anchored fetch for SensorKit sensor '\(sensor.id)'")
         let activity = InProgressActivity(sensor: sensor)
         start(activity)
         defer {
@@ -109,11 +108,13 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             activity.updateMessage("Fetching Samples")
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
                 activity.updateTimeRange(batchInfo.timeRange)
+                let batchSize = batch.count
                 try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
             }
         } catch {
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
         }
+        logger.notice("Anchored fetch for '\(sensor.id)' is complete.")
     }
     
     // periphery:ignore
@@ -178,7 +179,7 @@ extension MHCBackgroundTasks.TaskIdentifier {
 // MARK: Sensors
 
 extension SensorKit {
-    /// All sensors we want to enable continuous data collection for.
+    /// All sensors we want to enable automatic data collection for.
     static let mhcSensorUploadDefinitions: [any AnyMHCSensorUploadDefinition] = [
         MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
         MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
@@ -191,7 +192,7 @@ extension SensorKit {
         MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy()),
         MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations())
-//        Sensor.visits, .deviceUsage
+//        Sensor.visits
     ]
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }

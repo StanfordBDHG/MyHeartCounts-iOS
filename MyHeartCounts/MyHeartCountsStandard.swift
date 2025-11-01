@@ -83,7 +83,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 // ^we potentially log out and in as part of the test env setup; we want to skip this
                 LocalPreferencesStore.standard[.onboardingFlowComplete] = false
             }
-            try? FileManager.default.removeItem(at: ManagedFileUpload.directory)
+            try? ManagedFileUpload.clearPendingUploads()
             let studyManager = studyManager
             await MainActor.run {
                 // this works bc we only ever enroll into the MHC study.

@@ -22,7 +22,7 @@ extension SRWristTemperatureSession: CSVConvertibleSensorSample {
                 temp.timestamp,
                 temp.value.converted(to: .celsius).value,
                 temp.errorEstimate.converted(to: .celsius).value,
-                temp.condition.rawValue // TODO what to use here? the raw OptionSet? A string?
+                temp.condition.stringValue
             ] as [any CSVWriter.FieldValue])
         }
         return writer.data()
@@ -36,6 +36,25 @@ extension SRWristTemperatureSession: CSVConvertibleSensorSample {
                 value: .string(self.version.asFHIRStringPrimitive())
             )
         ], replaceAllExistingWithSameUrl: true)
+    }
+}
+
+
+extension SRWristTemperature.Condition {
+    var stringValue: String {
+        // NOTE: `SRWristTemperature.Condition` is an OptionSet, meaning that we can't statically enumerate all cases, e.g. via a switch.
+        // Apple could add additional cases in the future; we'd need to adjust the code below in that case.
+        var values: [String] = []
+        if self.contains(.offWrist) {
+            values.append("offWrist")
+        }
+        if self.contains(.onCharger) {
+            values.append("onCharger")
+        }
+        if self.contains(.inMotion) {
+            values.append("inMotion")
+        }
+        return values.joined(separator: ",")
     }
 }
 

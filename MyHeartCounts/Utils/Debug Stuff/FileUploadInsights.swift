@@ -6,25 +6,36 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import SwiftUI
 
 
 struct FileUploadInsights: View {
-    @Environment(ManagedFileUpload.self) private var managedFileUpload
+    @Environment(ManagedFileUpload.self)
+    private var managedFileUpload
+    
+    private var inactiveCategories: [ManagedFileUpload.Category] {
+        managedFileUpload.categories.filter { category in
+            if let progress = managedFileUpload.progressByCategory[category] {
+                progress.isFinished
+            } else {
+                true
+            }
+        }
+    }
     
     var body: some View {
         Form {
-            ForEach(managedFileUpload.categories) { category in
-                Section(category.id) {
-                    if let progress = managedFileUpload.progressByCategory[category] {
+            ForEach(Array(managedFileUpload.categories)) { category in
+                if let progress = managedFileUpload.progressByCategory[category] {
+                    Section(category.title) {
                         ProgressView(progress)
-                    } else {
-                        Text("No active uploads")
-                            .foregroundStyle(.secondary)
                     }
+                }
+            }
+            Section("Inactive / Complete") {
+                ForEach(inactiveCategories) { category in
+                    Text(category.title)
                 }
             }
         }

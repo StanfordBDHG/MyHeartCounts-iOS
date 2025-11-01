@@ -9,16 +9,16 @@
 // periphery:ignore:all
 
 import Foundation
-import struct ModelsR4.FHIRPrimitive
+import ModelsR4
 
 
-struct LOINC: CodingProtocol {
-    static var system: String { "http://loinc.org" }
+struct LOINC: CodingProtocol, @unchecked Sendable {
+    nonisolated(unsafe) static let system: FHIRPrimitive<FHIRURI> = "http://loinc.org"
     
-    let code: String
-    let display: String?
+    let code: FHIRPrimitive<FHIRString>
+    let display: FHIRPrimitive<FHIRString>?
     
-    init(_ code: String, display: String? = nil) {
+    init(_ code: FHIRPrimitive<FHIRString>, display: FHIRPrimitive<FHIRString>? = nil) {
         self.code = code
         self.display = display
     }

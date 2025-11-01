@@ -25,16 +25,12 @@ struct HealthKitSamplesToFHIRJSONProcessor: BatchProcessor {
     
     private func storeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
         let fileManager = FileManager.default
-        let resources = try samples.mapIntoResourceProxies()
-        _ = consume samples
-        let encoded = try JSONEncoder().encode(resources)
-        _ = consume resources
+        let resources = try (consume samples).mapIntoResourceProxies()
+        let encoded = try JSONEncoder().encode(consume resources)
         
-        let compressed = try encoded.compressed(using: Zlib.self)
-        _ = consume encoded
+        let compressed = try (consume encoded).compressed(using: Zlib.self)
         let compressedUrl = fileManager.temporaryDirectory.appendingPathComponent("\(sampleType.id)_\(UUID().uuidString).json.zlib")
-        try compressed.write(to: compressedUrl)
-        _ = consume compressed
+        try (consume compressed).write(to: compressedUrl)
         return compressedUrl
     }
 }

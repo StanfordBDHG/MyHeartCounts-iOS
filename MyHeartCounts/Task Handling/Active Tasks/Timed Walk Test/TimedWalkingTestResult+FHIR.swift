@@ -90,7 +90,7 @@ extension TimedWalkingTestResult {
 extension TimedWalkingTestResult {
     init?(_ observation: ModelsR4.Observation) {
         func getComponent(_ loinc: LOINC) -> ObservationComponent? {
-            observation.component?.first { ($0.code.coding ?? []).contains { $0.code?.value?.string == loinc.code } }
+            observation.component?.first { ($0.code.coding ?? []).contains { $0.code == loinc.code } }
         }
         func getQuantityValue(_ loinc: LOINC) -> Decimal? {
             switch getComponent(loinc)?.value {
@@ -113,7 +113,7 @@ extension TimedWalkingTestResult {
               let duration = getQuantityValue(.exerciseDuration)?.doubleValue,
               let numSteps = getQuantityValue(.pedometerNumStepsInUnspecifiedTime)?.intValue,
               let distance = getQuantityValue(.pedometerWalkingDistanceInUnspecifiedTime)?.doubleValue,
-              let activity = (getCodeableConceptValue(.exerciseActivity)?.coding?.first?.code?.value?.string).map({ LOINC($0) }),
+              let activity = (getCodeableConceptValue(.exerciseActivity)?.coding?.first?.code).map({ LOINC($0) }),
               let activity = TimedWalkingTestConfiguration.Kind(activity) else {
             return nil
         }

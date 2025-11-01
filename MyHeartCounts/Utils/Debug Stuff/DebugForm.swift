@@ -64,6 +64,9 @@ private struct DebugFormImpl: View {
                 NavigationLink("Background Tasks Log") {
                     MHCBackgroundTasks.EventsView()
                 }
+                NavigationLink("File Upload Queue") {
+                    FileUploadInsights()
+                }
             }
             Section("Other") {
                 Button("Reset rejeted HomeTab actions") {

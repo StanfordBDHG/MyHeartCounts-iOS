@@ -126,14 +126,11 @@ extension MyHeartCountsStandard {
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
             )
-            let resources = try await observations.mapAsync(turnIntoFHIRResource)
-            _ = consume observations
+            let resources = try await (consume observations).mapAsync(turnIntoFHIRResource)
             let encoded = try JSONEncoder().encode(resources)
-            let compressed = try encoded.compressed(using: Zlib.self)
-            _ = consume encoded
+            let compressed = try (consume encoded).compressed(using: Zlib.self)
             let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zlib", directoryHint: .notDirectory)
-            try compressed.write(to: url)
-            _ = consume compressed
+            try (consume compressed).write(to: url)
             _Concurrency.Task {
                 try await managedFileUpload.upload(url, category: .liveHealthUpload)
                 await triggerDidUploadNotification()
@@ -147,8 +144,6 @@ extension MyHeartCountsStandard {
                 for observation in chunk {
                     do {
                         let document = try await healthObservationDocument(for: observation)
-                        let path = document.path
-                        logger.notice("Uploading Health Observation to \(path)")
                         let resource = try await turnIntoFHIRResource(observation)
                         try batch.setData(from: resource, forDocument: document)
                     } catch {

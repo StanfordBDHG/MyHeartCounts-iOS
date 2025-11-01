@@ -21,42 +21,39 @@ extension SRPhotoplethysmogramSample {
         typealias Sample = SRPhotoplethysmogramSample
         
         func upload(
-            _ samples: some Collection<Sample.SafeRepresentation> & Sendable,
+            _ samples: consuming some RandomAccessCollection<Sample.SafeRepresentation> & Sendable,
             batchInfo: SensorKit.BatchInfo,
             for sensor: Sensor<SRPhotoplethysmogramSample>,
             to standard: MyHeartCountsStandard,
             activity: SensorKitDataFetcher.InProgressActivity
         ) async throws {
-            guard !samples.isEmpty else {
+            guard let firstSample = samples.first, let lastSample = samples.last else {
+                // nothing to do if samples is empty...
                 return
             }
-            print("will encode \(samples.count) into a binary format")
-            let buffer = try BinaryEncoder.encode(samples.lazy.map(\.sample))
+            let buffer = try BinaryEncoder.encode((consume samples).lazy.map(\.sample))
             guard let data = buffer.getData(at: buffer.readerIndex, length: buffer.readableBytes, byteTransferStrategy: .noCopy) else {
-                fatalError() // TODO be more graceful here!
+                // should probably be unreachable
+                assertionFailure("Failed to retrieve Data for encoded PPG samples")
                 return
             }
             try await self.upload(
                 data: data,
                 fileExtension: "mhcPPG",
+                shouldCompress: false,
                 for: sensor,
                 deviceInfo: batchInfo.device,
                 to: standard,
                 observationDocName: "\(batchInfo.timeRange.lowerBound.ISO8601Format())_\(batchInfo.timeRange.upperBound.ISO8601Format())",
                 activity: activity
             ) { observation in
-                // TODO
-//                let (minDate, maxDate) = {
-//                    var maxDate = sample.startDate
-//                    for sample in sample.opticalSamples {
-//                        maxDate = max(maxDate, maxDate.addingNanoseconds(sample.nanosecondsSinceStart))
-//                    }
-//                    return (sample.startDate, maxDate)
-//                }()
-//                observation.effective = try .period(Period(
-//                    end: FHIRPrimitive(DateTime(date: maxDate)),
-//                    start: FHIRPrimitive(DateTime(date: minDate))
-//                ))
+                // it appears that SensorKit returns PPG samples ordered by startDate
+                // there are some cases, sometimes, where samples are out of order, but the largest discrepancy we've noticed was
+                // a sample at idx N+1 having a startDate that was ~0.008 seconds earlier than the sample at idx N.
+                observation.effective = try .period(Period(
+                    end: FHIRPrimitive(DateTime(date: lastSample.startDate)),
+                    start: FHIRPrimitive(DateTime(date: firstSample.startDate))
+                ))
             }
         }
     }
@@ -73,12 +70,5 @@ extension SRPhotoplethysmogramSample: @retroactive Identifiable {
         hasher.combine(accelerometerSamples.count)
         hasher.combine(temperature?.value)
         return hasher.finalize()
-    }
-}
-
-
-extension Date {
-    func addingNanoseconds(_ nanoseconds: Int64) -> Date {
-        addingTimeInterval(TimeInterval(nanoseconds) / 1_000_000_000)
     }
 }

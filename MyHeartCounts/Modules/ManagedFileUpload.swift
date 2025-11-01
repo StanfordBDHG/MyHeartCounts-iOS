@@ -17,22 +17,29 @@ import SpeziFoundation
 @Observable
 @MainActor
 final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
-    nonisolated static let directory = URL.documentsDirectory.appending(component: "ManagedFileUploading", directoryHint: .isDirectory)
+    nonisolated private static let directory = URL.documentsDirectory.appending(component: "ManagedFileUploading", directoryHint: .isDirectory)
     
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     // swiftlint:enable attributes
     
-    let categories: [Category]
+    private(set) var categories: Set<Category>
     private let fileManager = FileManager()
     
     /// A `Progress` instance representing each category's upload progress,
     /// i.e. the progress of uploading the category's submitted files into the Firebase Storage.
     @MainActor private(set) var progressByCategory: [Category: Progress] = [:]
     
+    /// Creates a new instance of the `ManagedFileUpload` module.
+    ///
+    /// Even though it is allowed to schedule uploads for categories not specified when initially creating the module (via the `categories` parameter),
+    /// it is strongly recommended that all expected categories be specified here.
+    /// The reason for this is that the module will use this initial list of categories to resume any pending uploads that remain from previous launches of the app.
+    ///
+    /// - parameter categories: A list of well-known ``Category`` definitions.
     init(@ArrayBuilder<Category> categories: () -> [Category]) {
-        self.categories = categories()
+        self.categories = Set(categories())
     }
     
     func configure() {
@@ -74,18 +81,25 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
 
 
 extension ManagedFileUpload {
+    nonisolated static func clearPendingUploads() throws {
+        try FileManager.default.removeItem(at: Self.directory)
+    }
+}
+
+
+extension ManagedFileUpload {
     struct Category: Identifiable, Hashable, Sendable {
         let id: String
         let firebasePath: String
-        fileprivate let title: LocalizedStringResource?
-        fileprivate let stagingDirUrl: URL
+        let title: LocalizedStringResource
+        let stagingDirUrl: URL
         
         /// Creates a new Category
         ///
         /// - parameter id: Unique identifier for this category.
-        /// - parameter title: Optional, potentially user-visible title to be used with uploads in this category
+        /// - parameter title: User-visible title to be used with uploads in this category
         /// - parameter firebasePath: The folder, relative to the user's directory in the storage bucket, where files uploaded for this category should be stored.
-        init(id: String, title: LocalizedStringResource? = nil, firebasePath: String) { // swiftlint:disable:this function_default_parameter_at_end
+        init(id: String, title: LocalizedStringResource, firebasePath: String) { // swiftlint:disable:this function_default_parameter_at_end
             self.id = id
             self.title = title
             self.firebasePath = firebasePath
@@ -129,6 +143,9 @@ extension ManagedFileUpload {
     
     @concurrent
     func upload(_ url: URL, category: Category) async throws {
+        Task { @MainActor in
+            categories.insert(category)
+        }
         let stagingUrl = category.stagingDirUrl.appending(path: url.lastPathComponent)
         try FileManager.default.moveItem(at: url, to: stagingUrl)
         await Task.yield()
@@ -141,9 +158,7 @@ extension ManagedFileUpload {
             uploadProgress.totalUnitCount += 1
         } else {
             let progress = Progress(totalUnitCount: 1)
-            if let title = category.title {
-                progress.localizedDescription = String(localized: title)
-            }
+            progress.localizedDescription = String(localized: category.title)
             progressByCategory[category] = progress
         }
     }

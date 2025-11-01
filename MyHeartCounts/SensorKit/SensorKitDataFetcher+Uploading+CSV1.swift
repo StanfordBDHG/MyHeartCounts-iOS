@@ -27,7 +27,7 @@ protocol CSVAppendableSensorSample: Sendable {
 struct UploadStrategyCSVFile<Sample: SensorKitSampleProtocol>: MHCSensorSampleUploadStrategy
 where Sample.SafeRepresentation: CSVAppendableSensorSample {
     func upload(
-        _ samples: some Collection<Sample.SafeRepresentation> & Sendable,
+        _ samples: some RandomAccessCollection<Sample.SafeRepresentation> & Sendable,
         batchInfo: SensorKit.BatchInfo,
         for sensor: Sensor<Sample>,
         to standard: MyHeartCountsStandard,
