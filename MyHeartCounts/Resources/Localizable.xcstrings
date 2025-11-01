@@ -2572,7 +2572,7 @@
         }
       }
     },
-    "My Heart Counts does not access your Apple ID in any way; but using a shared account might result in incorrect Health data" : {
+    "My Heart Counts does not access your Apple ID in any way; but using a shared account might cause inaccuracies in Health data collection." : {
 
     },
     "n/a" : {
@@ -2871,6 +2871,12 @@
     "NOTIFICATION_TIME_SUBTITLE" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The preferred time for activity-related notifications. You can change this later."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The preferred time for activity-related notifications. You can change this later."
