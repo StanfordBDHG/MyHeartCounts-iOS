@@ -17,6 +17,9 @@ struct NewsTab: RootViewTab {
     static var tabTitle: LocalizedStringResource { "News" }
     static var tabSymbol: SFSymbol { .newspaper }
     
+    @Environment(\.colorScheme)
+    private var colorScheme
+    
     @Environment(NewsManager.self)
     private var newsManager
     
@@ -81,6 +84,21 @@ struct NewsTab: RootViewTab {
                     }
                     .buttonStyle(.plain)
                     .listRowInsets(.zero)
+                }
+            }
+            Section {
+                Link(destination: "https://myheartcounts.stanford.edu") {
+                    Text({ () -> AttributedString in
+                        var str = AttributedString(localized: "For more information and updates, visit myheartcounts.stanford.edu")
+                        str.setAttributes(AttributeContainer().foregroundColor(colorScheme.textLabelForegroundStyle))
+                        if let range = str.range(of: "myheartcounts.stanford.edu") {
+                            str[range].setAttributes(
+                                AttributeContainer().foregroundColor(Color.blue)
+                            )
+                        }
+                        return str
+                    }())
+                    .font(.callout)
                 }
             }
         }
