@@ -16,12 +16,11 @@ import SwiftUI
 
 
 struct SmallSleepAnalysisTile: View {
-    @HealthKitQuery(.sleepAnalysis, timeRange: .last(days: 4), source: CVHScore.sleepDataSourceFilter)
-    private var sleepAnalysis
+    @SleepSessionsQuery(timeRange: .last(days: 4), source: CVHScore.sleepDataSourceFilter)
+    private var sleepSessions
     
     var body: some View {
-        let sleepSessions = (try? sleepAnalysis.splitIntoSleepSessions()) ?? []
-        HealthDashboardTile(title: $sleepAnalysis.sampleType.mhcDisplayTitle) {
+        HealthDashboardTile(title: SampleType.sleepAnalysis.mhcDisplayTitle) {
             EmptyView() // ?
         } content: {
             if let session = sleepSessions.last {
@@ -39,13 +38,6 @@ struct SmallSleepAnalysisTile: View {
 
 
 struct LargeSleepAnalysisTile: View {
-    private struct SleepData {
-        let sessions: [SleepSession]
-        /// key: noon
-        /// value: total "asleep" duration of all sleep sessions that have their end in the `key` day.
-        let timeAsleepByDay: [Date: TimeInterval]
-    }
-    
     enum Accessory {
         case none
         case timeRangeSelector(Binding<DetailedHealthStatsView.ChartTimeRange>)
@@ -64,11 +56,12 @@ struct LargeSleepAnalysisTile: View {
     private var cal
     
     private let accessory: Accessory
-    private let timeRange: HealthKitQueryTimeRange
-    @HealthKitQuery<HKCategorySample> private var sleepAnalysis: Slice<OrderedArray<HKCategorySample>>
-    
-    @State private var sleepData: Result<SleepData, any Error>?
+    @SleepSessionsQuery private var sleepSessions: [SleepSession]
     @State private var xSelection: Date?
+    
+    private var timeRange: Range<Date> {
+        $sleepSessions.timeRange
+    }
     
     var body: some View {
         HealthDashboardTile(title: SampleType.sleepAnalysis.mhcDisplayTitle) {
@@ -85,10 +78,10 @@ struct LargeSleepAnalysisTile: View {
     
     @ViewBuilder private var cellContent: some View {
         Chart {
-            switch sleepData {
-            case nil, .failure:
+            switch $sleepSessions.processingState {
+            case .processing, .failed:
                 EmptyChartContent()
-            case .success(let data):
+            case .done(let data):
                 if !data.sessions.isEmpty {
                     chartContent(for: data)
                 } else {
@@ -97,59 +90,31 @@ struct LargeSleepAnalysisTile: View {
             }
         }
         .chartOverlay { _ in
-            switch sleepData {
-            case nil:
+            switch $sleepSessions.processingState {
+            case .processing:
                 ProgressView("Processing Sleep Data…")
-            case .success:
+            case .done:
                 EmptyView()
-            case .failure:
+            case .failed:
                 Text("Failed to process Sleep Sessions")
             }
         }
         .chartXScale(domain: [
-            cal.startOfDay(for: timeRange.range.lowerBound),
-            cal.startOfNextDay(for: timeRange.range.upperBound).addingTimeInterval(-1)
+            cal.startOfDay(for: timeRange.lowerBound),
+            cal.startOfNextDay(for: timeRange.upperBound).addingTimeInterval(-1)
         ])
-        .configureChartXAxis(for: timeRange.range)
+        .configureChartXAxis(for: timeRange)
         .chartXSelection(value: $xSelection)
-        // we need to place this modifier within the grid cell, rather than directly on the
-        // HealthDashboardTile, for reasons (https://github.com/swiftlang/swift/issues/84587)
-        .onChange(of: Array(sleepAnalysis)) { _, samples in
-            // the sleep session computation isn't exactly super slow,
-            // but it might take a little bit (~0.1 sec),
-            // so we want it to happen off the main thread.
-            Task(priority: .userInitiated) {
-                do {
-                    let sessions = try await Task { @concurrent in
-                        try samples.splitIntoSleepSessions()
-                    }.value
-                    sleepData = .success(.init(
-                        sessions: sessions,
-                        timeAsleepByDay: sessions.reduce(into: [:], { acc, session in
-                            acc[cal.makeNoon(session.endDate), default: 0] += session.totalTimeSpentAsleep
-                        })
-                    ))
-                } catch {
-                    sleepData = .failure(error)
-                }
-            }
-        }
-        .onChange(of: $sleepAnalysis.isCurrentlyPerformingInitialFetch) { oldValue, newValue in
-            if oldValue && !newValue && sleepAnalysis.isEmpty {
-                sleepData = .success(.init(sessions: [], timeAsleepByDay: [:]))
-            }
-        }
     }
     
     init(timeRange: HealthKitQueryTimeRange, accessory: Accessory) {
         self.accessory = accessory
-        self.timeRange = timeRange
-        self._sleepAnalysis = .init(.sleepAnalysis, timeRange: timeRange, source: CVHScore.sleepDataSourceFilter)
+        self._sleepSessions = .init(timeRange: timeRange, source: CVHScore.sleepDataSourceFilter)
     }
     
     /// - precondition: `sleepSessions` may not be empty.
     @ChartContentBuilder
-    private func chartContent(for sleepData: SleepData) -> some ChartContent {
+    private func chartContent(for sleepData: SleepSessionsQuery.ProcessingResult) -> some ChartContent {
         ForEach(sleepData.sessions, id: \.self) { session in
             BarMark(
                 x: .value("Date", cal.makeNoon(session.endDate)),
