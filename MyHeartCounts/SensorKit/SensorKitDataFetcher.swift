@@ -49,8 +49,28 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     /// The sensors that are currently being processed.
     @MainActor private(set) var activeActivities = Set<InProgressActivity>()
     
+    /// The task that is fetching and uploading the SensorKit data.
+    @ObservationIgnored @MainActor private var processingTask: Task<Void, Never>?
+    
     
     nonisolated init() {}
+    
+    
+    func configure() {
+        do {
+            try backgroundTasks.register(.processing(
+                id: .sensorKitProcessing,
+                options: [.requiresExternalPower, .requiresNetworkConnectivity]
+            ) {
+                // it could be that the `run()` function already ran before the background task was triggered;
+                // in this case this call won't start a second, parallel fetch, but instead will simply wait for
+                // the already-active fetch to complete.
+                await self.fetchAndUploadNewData()
+            })
+        } catch {
+            logger.error("Error registering SK background task: \(error)")
+        }
+    }
     
     
     func run() async {
@@ -58,19 +78,27 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-            await doFetch()
+            await fetchAndUploadNewData()
         }
     }
     
     
-    @concurrent
-    private func doFetch() async {
-        await withManagedTaskQueue(limit: 2) { taskQueue in
-            for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
-                taskQueue.submit {
-                    await self.fetchAndUploadAnchored(uploadDefinition)
+    @MainActor
+    private func fetchAndUploadNewData() async {
+        if let processingTask {
+            _ = await processingTask.result
+        } else {
+            let task = Task { @concurrent in
+                await withManagedTaskQueue(limit: 2) { taskQueue in
+                    for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
+                        taskQueue.submit {
+                            await self.fetchAndUploadAnchored(uploadDefinition)
+                        }
+                    }
                 }
             }
+            processingTask = task
+            _ = await task.result
         }
     }
     

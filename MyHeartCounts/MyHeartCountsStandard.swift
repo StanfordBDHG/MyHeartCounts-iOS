@@ -42,13 +42,19 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func configure() {
         Task {
             await propagateDebugModeValue(LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey])
-            guard let studyManager = await self.studyManager else {
-                return
-            }
-            if let studyBundle = try? await studyLoader.update() {
-                await logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
-                try await studyManager.informAboutStudies([studyBundle])
-            }
+            await updateStudyDefinition()
+        }
+    }
+    
+    func updateStudyDefinition() async {
+        guard let studyManager, let studyBundle = try? await studyLoader.update() else {
+            return
+        }
+        logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
+        do {
+            try await studyManager.informAboutStudies([studyBundle])
+        } catch {
+            logger.error("\(error)")
         }
     }
     

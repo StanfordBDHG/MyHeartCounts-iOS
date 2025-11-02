@@ -131,6 +131,24 @@ extension MHCBackgroundTasks {
     struct TaskDefinition: Identifiable, Sendable {
         typealias Handler = @Sendable () async throws -> Void
         
+        struct NextTriggerDate {
+            static var earliestPossible: Self {
+                Self(date: nil)
+            }
+            
+            fileprivate let date: Date?
+            
+            static func absolute(_ date: Date) -> Self {
+                Self(date: date)
+            }
+            static func next(_ components: DateComponents) -> Self {
+                Self(date: Calendar.current.nextDate(after: .now, matching: components, matchingPolicy: .nextTime))
+            }
+            static func next(_ rule: Calendar.RecurrenceRule) -> Self {
+                Self(date: rule.recurrences(of: .now).first { _ in true })
+            }
+        }
+        
         struct ProcessingTaskOptions: OptionSet {
             static let requiresExternalPower = Self(rawValue: 1 << 0)
             static let requiresNetworkConnectivity = Self(rawValue: 1 << 1)
@@ -143,29 +161,25 @@ extension MHCBackgroundTasks {
         
         static func appRefresh(
             id: TaskIdentifier,
-            earliest earliestDate: Date? = nil,
+            nextTriggerDate: NextTriggerDate = .earliestPossible,
             handler: @escaping Handler
         ) -> Self {
             Self(id: id, handler: handler) {
                 let request = BGAppRefreshTaskRequest(identifier: id.rawValue)
-                if let earliestDate {
-                    request.earliestBeginDate = earliestDate
-                }
+                request.earliestBeginDate = nextTriggerDate.date
                 return request
             }
         }
         
         static func processing(
             id: TaskIdentifier,
-            earliest earliestDate: Date? = nil,
+            nextTriggerDate: NextTriggerDate = .earliestPossible,
             options: ProcessingTaskOptions = [],
             handler: @escaping Handler
         ) -> Self {
             Self(id: id, handler: handler) {
                 let request = BGProcessingTaskRequest(identifier: id.rawValue)
-                if let earliestDate {
-                    request.earliestBeginDate = earliestDate
-                }
+                request.earliestBeginDate = nextTriggerDate.date
                 if options.contains(.requiresExternalPower) {
                     request.requiresExternalPower = true
                 }
@@ -178,16 +192,14 @@ extension MHCBackgroundTasks {
         
         static func healthResearch(
             id: TaskIdentifier,
-            earliest earliestDate: Date? = nil,
+            nextTriggerDate: NextTriggerDate = .earliestPossible,
             options: ProcessingTaskOptions = [],
             protectionTypeOfRequiredData: FileProtectionType = .completeUntilFirstUserAuthentication,
             handler: @escaping Handler
         ) -> Self {
             Self(id: id, handler: handler) {
                 let request = BGHealthResearchTaskRequest(identifier: id.rawValue)
-                if let earliestDate {
-                    request.earliestBeginDate = earliestDate
-                }
+                request.earliestBeginDate = nextTriggerDate.date
                 if options.contains(.requiresExternalPower) {
                     request.requiresExternalPower = true
                 }
