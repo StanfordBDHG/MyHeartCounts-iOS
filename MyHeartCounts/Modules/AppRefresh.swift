@@ -18,7 +18,6 @@ final class AppRefresh: Module, Sendable {
     @StandardActor private var standard: MyHeartCountsStandard
     @Application(\.logger) private var logger
     @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
-    @Dependency(LocalNotifications.self) private var localNotifications
     // swiftlint:enable attributes
     
     func configure() {

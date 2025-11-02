@@ -42,7 +42,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(SensorKit.self) private var sensorKit
     @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
-    @ObservationIgnored @Dependency(LocalNotifications.self) private var localNotifications
     @ObservationIgnored @Application(\.logger) private var logger
     // swiftlint:enable attributes
     
