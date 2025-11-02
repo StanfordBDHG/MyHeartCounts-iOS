@@ -1,5 +1,5 @@
 {
-  "originHash" : "223345236441c83aa64172263422fddd4d9e928093ff61d5981c305fe8bdb5db",
+  "originHash" : "c2536f03a411c721bc5cd6d26f4962718cc8a5a4b02e3ade6e4761af6f7ff6f5",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -224,15 +224,6 @@
       "state" : {
         "revision" : "7215f884abe4d0d22fa15f4d4811cb9103c846b1",
         "version" : "0.1.1"
-      }
-    },
-    {
-      "identity" : "spezicontact",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziContact.git",
-      "state" : {
-        "revision" : "f44b915dab50a862e7152cc77081ba9cb743fca4",
-        "version" : "1.0.3"
       }
     },
     {
