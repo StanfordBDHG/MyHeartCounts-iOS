@@ -12,7 +12,6 @@ import UserNotifications
 
 
 /// Intended primarily (exclusively) for debugging purposes.
-@MainActor
 final class LocalNotifications: Module, EnvironmentAccessible, Sendable {
     func send(
         id: String = UUID().uuidString, // swiftlint:disable:this function_default_parameter_at_end
@@ -26,5 +25,9 @@ final class LocalNotifications: Module, EnvironmentAccessible, Sendable {
         content.interruptionLevel = level
         let request = UNNotificationRequest(identifier: id, content: content, trigger: nil)
         try await UNUserNotificationCenter.current().add(request)
+    }
+    
+    func remove(withId id: String) {
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [id])
     }
 }

@@ -25,6 +25,10 @@ struct Comorbidities: Hashable, Codable {
         entries.count
     }
     
+    var isEmpty: Bool {
+        entries.isEmpty
+    }
+    
     init() {}
     
     init(from decoder: any Decoder) throws {

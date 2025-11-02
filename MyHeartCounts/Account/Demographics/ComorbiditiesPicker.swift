@@ -14,8 +14,11 @@ import SwiftUI
 struct ComorbiditiesPicker: View {
     private typealias Comorbidity = Comorbidities.Comorbidity
     
+    @Environment(\.dismiss)
+    private var dismiss
     @Environment(\.colorScheme)
     private var colorScheme
+    
     @Binding private var comorbidities: Comorbidities
     @State private var highlightedOption: Comorbidity?
     
@@ -29,6 +32,17 @@ struct ComorbiditiesPicker: View {
             Section {
                 ForEach(Comorbidity.secondaryComorbidities) { option in
                     makeRow(option)
+                }
+            }
+            if comorbidities.isEmpty {
+                // we offer a "none of these apply to me" button, but only if the user hasn't yet selected anything.
+                // the reason for this is that, were they to accidentally tap the "None" button after already having
+                // selected one/multiple options above, and having already entered start dates for these options,
+                // all of that would be lost. (which is more problematic than for the other questions we have in the
+                // demographics, since these are only boolean yes/no selections, whereas this one also has a follow-
+                // up question (the start date)).
+                Button("None") {
+                    dismiss()
                 }
             }
         }
@@ -174,7 +188,7 @@ extension ComorbiditiesPicker {
                 }
                 .accessibilityIdentifier("MonthPicker")
                 Picker("", selection: $selection.year) {
-                    ForEach(((currentYear - 100)..<currentYear).reversed(), id: \.self) { year in
+                    ForEach(((currentYear - 100)...currentYear).reversed(), id: \.self) { year in
                         Text(String(year))
                             .tag(year)
                     }

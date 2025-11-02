@@ -25,6 +25,10 @@ extension LocalPreferenceKey {
         .make("sendHealthSampleUploadNotifications", default: false)
     }
     
+    static var sendSensorKitUploadNotifications: LocalPreferenceKey<Bool> {
+        .make("sendSensorKitUploadNotifications", default: false)
+    }
+    
     /// the last-seen value of the ``SpeziAccount/AccountDetails/enableDebugMode`` account key value.
     ///
     /// we need this to be able to access the account key value immediately after launch,
@@ -36,9 +40,14 @@ extension LocalPreferenceKey {
 
 
 extension MyHeartCountsStandard: HealthKitConstraint {
-    var enableDebugNotifications: Bool {
+    var enableDebugHealthKitNotifications: Bool {
         let prefs = LocalPreferencesStore.standard
         return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendHealthSampleUploadNotifications]
+    }
+    
+    var enableDebugSensorKitNotifications: Bool {
+        let prefs = LocalPreferencesStore.standard
+        return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendSensorKitUploadNotifications]
     }
     
     func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample> & Sendable, ofType sampleType: SampleType<Sample>) async {
@@ -187,7 +196,7 @@ extension MyHeartCountsStandard {
     private func showDebugWillUploadHealthDataUploadEventNotification(
         for change: HealthDocumentChange
     ) async -> @Sendable () async -> Void {
-        guard enableDebugNotifications else {
+        guard enableDebugHealthKitNotifications else {
             return {}
         }
         @Sendable
