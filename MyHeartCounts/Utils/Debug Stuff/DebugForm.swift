@@ -156,7 +156,7 @@ extension DebugForm {
                     guard let enrollment = studyManager.studyEnrollments.first else {
                         return
                     }
-                    try studyManager.unenroll(from: enrollment)
+                    try await studyManager.unenroll(from: enrollment)
                     refresh()
                 }
             }

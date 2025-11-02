@@ -32,7 +32,7 @@ struct DetailedHealthStatsView: View {
     @LocalPreference(.detailedHealthMetricChartTimeRange) private var chartTimeRange
     
     @CVHScore private var cvhScore
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled) private var debugModeEnabled
     @State private var isPresentingAddSampleSheet = false
     
     private let keyPath: KeyPath<CVHScore, ScoreResult>

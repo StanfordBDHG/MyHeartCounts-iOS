@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable attributes
+
 import OSLog
 import SFSafeSymbols
 import Spezi
@@ -19,16 +21,12 @@ import SwiftUI
 
 
 struct HealthKitPermissions: View {
-    private var title = LocalizedStringResource("HealthKit Access")
+    private let title: LocalizedStringResource = "HealthKit Access"
     
-    @Environment(HealthKit.self)
-    private var healthKit
-    
-    @Environment(ManagedNavigationStack.Path.self)
-    private var onboardingPath
-    
-    @Environment(StudyBundleLoader.self)
-    private var studyLoader
+    @Environment(HealthKit.self) private var healthKit
+    @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(StudyBundleLoader.self) private var studyLoader
+    @AccountFeatureFlagQuery(.enableHealthRecords) private var enableHealthRecords
     
     @State private var viewState: ViewState = .idle
     @State private var isShowingLearnMoreText = false
@@ -76,7 +74,17 @@ struct HealthKitPermissions: View {
         } catch {
             logger.error("Could not request HealthKit permissions: \(error)")
         }
-        onboardingPath.nextStep()
+        // The `enableHealthRecords` condition depends on the Account being present, which is not injected into the overall `OnboardingFlow` view,
+        // meaning that we can't decide this in there. Instead, we decide in here how to proceed.
+        if enableHealthRecords {
+            path.append {
+                HealthRecords()
+                    .onboardingStep(.healthRecords)
+                    .injectingSpezi()
+            }
+        } else {
+            path.nextStep()
+        }
     }
 }
 
@@ -97,6 +105,13 @@ extension MyHeartCountsStandard {
             SampleType.bloodGlucose, SampleType.bloodPressure
         ] as [any AnySampleType]).map { $0.hkSampleType }
     )
+}
+
+
+extension ManagedNavigationStack.Path {
+    func append(@ViewBuilder view: () -> some View) {
+        self.append(customView: view())
+    }
 }
 
 

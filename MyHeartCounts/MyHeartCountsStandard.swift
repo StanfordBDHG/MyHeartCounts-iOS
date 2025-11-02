@@ -27,7 +27,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Application(\.logger) var logger
     @Dependency(HealthKit.self) var healthKit
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
-    @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @Dependency(StudyManager.self) var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
@@ -41,8 +41,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @MainActor
     func configure() {
         Task {
-            await propagateDebugModeValue(LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey])
             await updateStudyDefinition()
+            if let studyManager = await studyManager, !studyManager.studyEnrollments.isEmpty {
+                await startClinicalRecordsCollection()
+            }
         }
     }
     
@@ -60,25 +62,13 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     // MARK: Account Stuff
     
-    private func propagateDebugModeValue(_ isEnabled: Bool) async {
-        let isEnabled = isEnabled || LaunchOptions.launchOptions[.forceEnableDebugMode]
-        LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey] = isEnabled
-        await accountFeatureFlags._updateIsDebugModeEnabled(isEnabled)
-    }
-    
-    private func propagateDebugModeValue(_ details: AccountDetails) async {
-        await propagateDebugModeValue(details.enableDebugMode ?? false)
-    }
-    
     func respondToEvent(_ event: AccountNotifications.Event) async {
         let logger = logger
         switch event {
         case .deletingAccount:
             logger.notice("account is being deleted")
-            await propagateDebugModeValue(false)
         case .disassociatingAccount:
             logger.notice("account is disassociating")
-            await propagateDebugModeValue(false)
             // upon logging out, we want to throw the user back to the onboarding.
             // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
             // since the Firebase SDK and all related Spezi modules will still be loaded.
@@ -91,25 +81,46 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             }
             try? ManagedFileUpload.clearPendingUploads()
             let studyManager = studyManager
-            await MainActor.run {
+            _ = await Task { @MainActor in
                 // this works bc we only ever enroll into the MHC study.
                 guard let studyManager, let enrollment = studyManager.studyEnrollments.first else {
                     return
                 }
                 logger.notice("unenrolling from study.")
                 do {
-                    try studyManager.unenroll(from: enrollment)
+                    try await studyManager.unenroll(from: enrollment)
                 } catch {
                     logger.error("Error unenrolling from study: \(error)")
                 }
-            }
+                await stopClinicalRecordsCollection()
+            }.result
         case .associatedAccount(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
-            await propagateDebugModeValue(details)
             try? await timeZoneTracking?.updateTimeZoneInfo()
-        case .detailsChanged(_, let newDetails):
-            logger.notice("account details changed")
-            await propagateDebugModeValue(newDetails)
+        case .detailsChanged:
+            break
+        }
+    }
+}
+
+
+extension MyHeartCountsStandard {
+    func startClinicalRecordsCollection() async {
+        let startDate = Calendar.current.date(byAdding: .year, value: -10, to: .now)
+        for type in Self.allRecordTypes {
+            let collector = CollectSample(
+                type,
+                start: .automatic,
+                continueInBackground: true,
+                timeRange: startDate.map { .startingAt($0) } ?? .newSamples
+            )
+            await healthKit.addHealthDataCollector(collector)
+        }
+    }
+    
+    func stopClinicalRecordsCollection() async {
+        for type in Self.allRecordTypes {
+            await healthKit.resetSampleCollection(for: type)
         }
     }
 }

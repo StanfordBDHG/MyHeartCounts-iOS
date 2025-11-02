@@ -96,6 +96,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     @MainActor
     private func fetchAndUploadNewData() async {
+        guard await standard.shouldCollectHealthData else {
+            return
+        }
         try? await localNotifications.send(title: "\(#function)", body: "START")
         if let processingTask {
             _ = await processingTask.result
@@ -144,14 +147,18 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
                 activity.updateTimeRange(batchInfo.timeRange)
                 try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
             }
+            try? await localNotifications.send(
+                title: "[SK] \(sensor.displayName)",
+                body: "Ending anchored fetch&upload"
+            )
         } catch {
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
+            try? await localNotifications.send(
+                title: "[SK] \(sensor.displayName)",
+                body: "Ending anchored fetch&upload (error: \(error))"
+            )
         }
         logger.notice("Anchored fetch for '\(sensor.id)' is complete.")
-        try? await localNotifications.send(
-            title: "[SK] \(sensor.displayName)",
-            body: "Ending anchored fetch&upload"
-        )
     }
     
     // periphery:ignore

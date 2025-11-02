@@ -1329,6 +1329,9 @@
         }
       }
     },
+    "Enable Health Records" : {
+
+    },
     "Enable SensorKit" : {
 
     },
@@ -1899,6 +1902,15 @@
           }
         }
       }
+    },
+    "Health Records" : {
+
+    },
+    "HEALTH_RECORDS_PERMISSIONS_DESCRIPTION" : {
+
+    },
+    "HEALTH_RECORDS_PERMISSIONS_SUBTITLE" : {
+
     },
     "HealthKit" : {
 

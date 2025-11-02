@@ -33,7 +33,8 @@ struct AccountSheet: View {
     @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
     
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled)
+    private var debugModeEnabled
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {

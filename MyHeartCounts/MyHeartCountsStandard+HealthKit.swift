@@ -17,6 +17,7 @@ import OSLog
 import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziStudy
 import UserNotifications
 
 
@@ -50,8 +51,27 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         return prefs[.lastSeenIsDebugModeEnabledAccountKey] && prefs[.sendSensorKitUploadNotifications]
     }
     
+    var shouldCollectHealthData: Bool {
+        get async {
+            // we might continue receiving Health data for a bit after unenrolling; we want to ignore these.
+            guard let studyManager else {
+                return false
+            }
+            return await MainActor.run {
+                !studyManager.studyEnrollments.isEmpty
+            }
+        }
+    }
+    
     func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample> & Sendable, ofType sampleType: SampleType<Sample>) async {
+        guard await shouldCollectHealthData else {
+            return
+        }
         do {
+            logger.notice("\(#function) \(sampleType.displayTitle)")
+            for sample in addedSamples {
+                logger.notice("\(sample)")
+            }
             try await uploadHealthObservations(addedSamples, batchSize: 100)
         } catch {
             logger.error("Error uploading HealthKit samples: \(error)")
@@ -60,6 +80,9 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     
     
     func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject> & Sendable, ofType sampleType: SampleType<Sample>) async {
+        guard await shouldCollectHealthData else {
+            return
+        }
         let deletedObjects = Array(deletedObjects)
         logger.notice("\(#function) \(deletedObjects.count) deleted HKObjects for \(sampleType.mhcDisplayTitle)")
         let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(

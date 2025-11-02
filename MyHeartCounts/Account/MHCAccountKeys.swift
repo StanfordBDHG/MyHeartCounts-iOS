@@ -103,6 +103,9 @@ extension AccountDetails {
     @AccountKey(id: "enableAppDebugMode", name: "Enable App Debug Mode", as: Bool.self)
     var enableDebugMode: Bool?
     
+    @AccountKey(id: "enableHealthRecords", name: "Enable Health Records", as: Bool.self)
+    var enableHealthRecords: Bool?
+    
     @AccountKey(id: "timeZone", name: "Time Zone", as: String.self)
     var timeZone: String?
     
@@ -121,7 +124,7 @@ extension AccountDetails {
 @KeyEntry(
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
     \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep,
-    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
+    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime, \.enableHealthRecords
 )
 extension AccountKeys {}
 

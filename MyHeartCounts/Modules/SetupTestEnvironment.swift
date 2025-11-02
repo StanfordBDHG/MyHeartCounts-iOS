@@ -134,7 +134,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
         if resetExistingData {
             for enrollment in studyManager.studyEnrollments {
-                try studyManager.unenroll(from: enrollment)
+                try await studyManager.unenroll(from: enrollment)
             }
             do {
                 try await accountService.logout()

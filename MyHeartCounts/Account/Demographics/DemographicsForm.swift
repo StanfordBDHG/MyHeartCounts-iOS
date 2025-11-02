@@ -66,7 +66,7 @@ private struct Impl<Footer: View>: View {
     @Binding var isComplete: Bool
     let footer: @MainActor () -> Footer
     
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled) private var debugModeEnabled
     
     @State private var viewState: ViewState = .idle
     @State private var regionOverride: Locale.Region?

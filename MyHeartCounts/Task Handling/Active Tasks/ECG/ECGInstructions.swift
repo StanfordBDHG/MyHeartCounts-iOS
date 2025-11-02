@@ -21,7 +21,8 @@ struct ECGInstructionsSheet: View {
     @Environment(\.calendar)
     private var calendar
     
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled)
+    private var debugModeEnabled
     
     @HealthKitQuery(.electrocardiogram, timeRange: .today)
     private var ecgSamples

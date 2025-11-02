@@ -1,5 +1,5 @@
 {
-  "originHash" : "bd4f289d66033e48b9fcb76c05565d8e6ebd979d31c94b81442eeab9ab0e7bec",
+  "originHash" : "223345236441c83aa64172263422fddd4d9e928093ff61d5981c305fe8bdb5db",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -258,8 +258,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "bbd2418acbdcf4f6be502c9a865af79a0656053d",
-        "version" : "1.2.7"
+        "revision" : "4ba825cded3884c9c79536703604b2f07f5cb3ad"
       }
     },
     {
@@ -330,8 +329,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "426807c758acc39a6e8f1c1d776169ce83db6274",
-        "version" : "0.1.15"
+        "revision" : "3f1e72ca6bb1e503c7589090d56d0a13a842affe"
       }
     },
     {
