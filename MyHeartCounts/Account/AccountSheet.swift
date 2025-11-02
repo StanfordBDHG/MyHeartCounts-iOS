@@ -23,7 +23,6 @@ struct AccountSheet: View {
     @Environment(\.openURL) private var openUrl
     @Environment(\.openSettingsApp) private var openSettingsApp
     @Environment(Account.self) private var account
-    @Environment(\.accountRequired) private var accountRequired
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
     @Environment(ManagedFileUpload.self) private var managedFileUpload
     @Environment(SensorKitDataFetcher.self) private var sensorKitDataFetcher
@@ -54,11 +53,6 @@ struct AccountSheet: View {
                     }
                     .onAppear {
                         isInSetup = true
-                    }
-                    .toolbar {
-                        if !accountRequired {
-                            closeButton
-                        }
                     }
                 }
             }

@@ -204,7 +204,7 @@ private final class UserDefaultsKeyObserver: NSObject {
         let key: String
     }
     @ObservationIgnored private var context: ObservationContext?
-    private(set) var viewUpdate = false
+    private(set) var viewUpdate: UInt64 = 0
     
     func configure(for key: String, in userDefaults: UserDefaults) {
         let newContext = ObservationContext(defaults: userDefaults, key: key)
@@ -218,8 +218,8 @@ private final class UserDefaultsKeyObserver: NSObject {
     
     // swiftlint:disable:next block_based_kvo discouraged_optional_collection
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == self.context?.key {
-            viewUpdate.toggle()
+        if let keyPath, keyPath == self.context?.key {
+            viewUpdate &+= 1
         } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
@@ -267,7 +267,7 @@ struct LocalPreference<T: Codable & SendableMetatype>: DynamicProperty {
         }
     }
     
-    nonisolated init(_ key: LocalPreferenceKey<T>, store: LocalPreferencesStore = .standard) {
+    init(_ key: LocalPreferenceKey<T>, store: LocalPreferencesStore = .standard) {
         self.key = key
         self.store = store
     }

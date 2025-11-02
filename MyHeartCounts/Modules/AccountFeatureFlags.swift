@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order attributes identifier_name discouraged_optional_boolean
+// swiftlint:disable file_types_order attributes discouraged_optional_boolean
 
 import Foundation
 import Spezi

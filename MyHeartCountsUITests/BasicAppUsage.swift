@@ -77,4 +77,15 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         try launchAppAndEnrollIntoStudy(keepExistingData: true)
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 5))
     }
+    
+    
+    @MainActor
+    func testLogout() throws {
+        try launchAppAndEnrollIntoStudy()
+        openAccountSheet()
+        app.swipeUp()
+        app.buttons["Logout"].tap()
+        app.alerts["Are you sure you want to logout?"].buttons["Logout"].tap()
+        XCTAssert(app.staticTexts["Welcome to the My Heart Counts\nCardiovascular Health Study"].waitForExistence(timeout: 5))
+    }
 }

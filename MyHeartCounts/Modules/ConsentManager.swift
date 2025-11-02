@@ -21,7 +21,6 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager
-    @ObservationIgnored @LocalPreference(.onboardingFlowComplete) private var onboardingFlowComplete
     // swiftlint:enable attributes
     
     @MainActor private(set) var needsToSignNewConsentVersion = false
@@ -43,7 +42,7 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
                 await self.doUpdate()
             }
         }
-        guard onboardingFlowComplete else {
+        guard LocalPreferencesStore.standard[.onboardingFlowComplete] else {
             return
         }
         guard !needsToSignNewConsentVersion else {

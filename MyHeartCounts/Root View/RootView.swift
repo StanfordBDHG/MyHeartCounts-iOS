@@ -69,9 +69,6 @@ struct RootView: View {
         }
         .tabViewStyle(.sidebarAdaptable)
         .tabViewCustomization($tabViewCustomization)
-        .accountRequired(!FeatureFlags.disableFirebase && !FeatureFlags.skipOnboarding) {
-            AccountSheet()
-        }
     }
     
     private func makeTab(_ tab: (some RootViewTab).Type) -> some TabContent<String> {

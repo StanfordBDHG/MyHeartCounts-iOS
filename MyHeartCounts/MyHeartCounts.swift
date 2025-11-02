@@ -31,10 +31,8 @@ struct MyHeartCounts: App {
         WindowGroup {
             RootView()
                 .spezi(appDelegate)
-            OnboardingSheet(
-                didCompleteOnboarding: $didCompleteOnboarding
-            )
-            .environment(StudyBundleLoader.shared)
+            OnboardingSheet(didComplete: $didCompleteOnboarding)
+                .environment(StudyBundleLoader.shared)
         }
         .environment(appDelegate)
     }

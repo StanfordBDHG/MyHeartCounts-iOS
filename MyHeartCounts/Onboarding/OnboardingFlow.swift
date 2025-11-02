@@ -20,13 +20,13 @@ import SwiftUI
 
 
 struct OnboardingSheet: View {
-    @Binding var didCompleteOnboarding: Bool
+    @Binding var didComplete: Bool
     
     var body: some View {
-        if !didCompleteOnboarding {
+        if !didComplete {
             Color.clear.frame(height: 0)
-                .sheet(isPresented: !$didCompleteOnboarding) {
-                    AppOnboardingFlow(didCompleteOnboarding: $didCompleteOnboarding)
+                .sheet(isPresented: !$didComplete) {
+                    AppOnboardingFlow(didComplete: $didComplete)
                 }
         }
     }
@@ -41,14 +41,14 @@ private struct AppOnboardingFlow: View {
     @Environment(\.notificationSettings)
     private var notificationSettings
     
-    @Binding var didCompleteOnboarding: Bool
+    @Binding var didComplete: Bool
     
     @State private var onboardingData = OnboardingDataCollection()
     @State private var localNotificationAuthorization = false
     
     
     var body: some View {
-        ManagedNavigationStack(didComplete: $didCompleteOnboarding) { // swiftlint:disable:this closure_body_length
+        ManagedNavigationStack(didComplete: $didComplete) { // swiftlint:disable:this closure_body_length
             Welcome()
                 .onboardingStep(.welcome)
             EligibilityScreening()
@@ -123,7 +123,7 @@ private struct AppOnboardingFlow: View {
         }
         .environment(\.isInOnboardingFlow, true)
         .environment(onboardingData)
-        .interactiveDismissDisabled(!didCompleteOnboarding)
+        .interactiveDismissDisabled(!didComplete)
         .onChange(of: scenePhase, initial: true) {
             guard case .active = scenePhase else {
                 return

@@ -20,9 +20,6 @@ struct HomeTab: RootViewTab {
     @MissedEventQuery(in: TasksList.effectiveTimeRange(for: .weeks(2), cal: .current))
     private var missedEvents
     
-    @AccountFeatureFlagQuery(.isDebugModeEnabled)
-    private var debugModeEnabled
-    
     @DailyNudge private var dailyNudge
     @PromptedActions private var promptedActions
     @State private var viewState: ViewState = .idle
@@ -30,7 +27,6 @@ struct HomeTab: RootViewTab {
     var body: some View {
         NavigationStack {
             Form {
-                LabeledContent("debugModeEnabled" as String, value: debugModeEnabled.description)
                 topActionsFormContent
                 TasksList(
                     mode: .upcoming(includeIndefinitePastTasks: true, showFallbackTasks: false),
