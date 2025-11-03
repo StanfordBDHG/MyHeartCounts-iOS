@@ -14,7 +14,8 @@ import SwiftUI
 
 
 struct LLMLocalDemoView: View {
-    @Environment(LLMRunner.self) var runner
+    @Environment(LLMRunner.self)
+    private var runner
     @State var responseText = ""
     @State var viewState: ViewState = .idle
     

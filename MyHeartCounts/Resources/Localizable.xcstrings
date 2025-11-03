@@ -2641,6 +2641,17 @@
         }
       }
     },
+    "LLM_NUDGE_SYSTEM_PROMPT" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write 7 motivational messages that are proper length to go in a push notification using a calm, encouraging, and professional tone, like that of a health coach to motivate a smartphone user to increase physical activity levels. This message is sent in the morning so the user has all day to increase physical activity levels. Also create a title for each of push notifications that is a short summary/call to action of the push notification that is paired with it. Return the response as a valid JSON array with exactly 7 objects, each having \"title\" and \"body\" fields. Do not write an introduction or summary. If there is a disease context given, you can reference that disease in some of the nudges. TRY TO BE AS NEUTRAL AS POSSIBLE IN THE TONE OF THE NUDGE. NEVER USE EMOJIS OR ABBREVIATIONS FOR DISEASES IN THE NUDGE. Each nudge should be personalized to the following information: %@ Please respond only with valid JSON. Do not write an introduction or summary. Here is an example output: \n[\n  {\n    \"title\": \"Get Moving This Week!\",\n    \"body\": \"Ready for the day? Let's start with some light exercise today. Even 10 minutes makes a difference!\"\n  },\n  {\n    \"title\": \"Your Heart Loves Movement\",\n    \"body\": \"Time to get active! Try a brisk walk, dancing, or your favorite sport. Your heart will thank you.\"\n  },\n  {\n    \"title\": \"Build Your Fitness Streak\",\n    \"body\": \"Keep the momentum going! What physical activity will you choose today? Swimming, cycling, or maybe some yoga?\"\n  },\n  {\n    \"title\": \"Sports Challenge Day\",\n    \"body\": \"Challenge yourself today! Try a new sport or activity. Tennis, basketball, or even jumping rope - what sounds fun?\"\n  },\n  {\n    \"title\": \"Cardio Power Hour\",\n    \"body\": \"Your heart is a muscle - let's strengthen it! Go for a jog, hit the gym, or play your favorite active game.\"\n  },\n  {\n    \"title\": \"Team Up for Fitness\",\n    \"body\": \"Exercise is more fun with others! Invite a friend for a workout, join a sports team, or try a fitness class.\"\n  },\n  {\n    \"title\": \"Champion of this Week!\",\n    \"body\": \"Amazing work staying active this week! You're building habits that will keep your heart strong. Keep it up!\"\n  }\n]"
+          }
+        }
+      }
+    },
     "Local Notifications Status" : {
       "localizations" : {
         "es" : {
