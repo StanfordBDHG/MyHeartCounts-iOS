@@ -14,6 +14,7 @@ import MHCStudyDefinition
 import SFSafeSymbols
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitUI
 import SpeziStudy
 import SpeziViews
 import SwiftUI
