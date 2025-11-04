@@ -49,7 +49,7 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
         app.staticTexts["Review Consent Forms"].tap()
         XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
-        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).tap()
+        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).firstMatch.tap()
         sleep(for: .seconds(2))
         let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
         XCTAssert(consentPdf.exists)

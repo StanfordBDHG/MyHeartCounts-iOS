@@ -91,10 +91,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 await stopClinicalRecordsCollection()
             }.result
             Task {
-//                guard !ProcessInfo.isBeingUITested, await !setupTestEnvironment.isInSetup else {
-//                    // ^we potentially log out and in as part of the test env setup; we want to skip this
-//                    return
-//                }
+                guard /*!ProcessInfo.isBeingUITested,*/ await !setupTestEnvironment.isInSetup else {
+                    // ^we potentially log out and in as part of the test env setup; we want to skip this
+                    return
+                }
                 // it seems that the fact that the account sheet typically is still presented while logging out causes issues with us setting the
                 // `onboardingFlowComplete` UserDefaults key being set to true (likely bc the other sheet still being presented prevents SwiftUI from presenting the
                 // onboarding sheet, thereby causing it to set the UserDefaults key (which, via a Binding, is used as the onboarding sheet's `isPresented` value)
