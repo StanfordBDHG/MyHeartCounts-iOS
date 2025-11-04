@@ -168,5 +168,6 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await healthKit.askForAuthorization(for: accessReqs)
         try await studyManager.enroll(in: studyBundle)
         try localStorage.store(.now, for: .studyActivationDate)
+        LocalPreferencesStore.standard[.onboardingFlowComplete] = true
     }
 }
