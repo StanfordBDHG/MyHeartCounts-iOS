@@ -198,13 +198,13 @@
         }
       }
     },
-    "< 5.7" : {
-
-    },
     "< 7" : {
 
     },
     "< 25" : {
+
+    },
+    "< 85" : {
 
     },
     "< 130" : {
@@ -214,6 +214,9 @@
 
     },
     "<120 / <80" : {
+
+    },
+    "> 140" : {
 
     },
     "$15,000 – $24,999" : {
@@ -378,34 +381,16 @@
     "5 to 6 hours" : {
 
     },
-    "5.7 – 6.4" : {
-
-    },
     "6 to 7 hours" : {
-
-    },
-    "6.5 – 6.9" : {
-
-    },
-    "7 – 7.9" : {
 
     },
     "7 to 9 hours" : {
 
     },
-    "8 – 8.9" : {
-
-    },
     "8 – 10" : {
 
     },
-    "9 – 9.9" : {
-
-    },
     "9 to 10 hours" : {
-
-    },
-    "10+" : {
 
     },
     "10+ hours" : {
@@ -441,16 +426,28 @@
     "60 – 89" : {
 
     },
+    "85 – 99" : {
+
+    },
     "90 – 119" : {
 
     },
     "100 " : {
 
     },
+    "100 – 109" : {
+
+    },
+    "110 – 125" : {
+
+    },
     "120 – 149" : {
 
     },
     "120–129 / 80–89" : {
+
+    },
+    "126 – 140" : {
 
     },
     "130 – 159" : {
@@ -1131,17 +1128,6 @@
         }
       }
     },
-    "Delete ~/%@/*" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar ~/%@/*"
-          }
-        }
-      }
-    },
     "Delete&Reset Session" : {
       "localizations" : {
         "es" : {
@@ -1467,6 +1453,9 @@
           }
         }
       }
+    },
+    "Fasting Blood Glucose" : {
+
     },
     "FCM Token" : {
       "localizations" : {
@@ -2034,9 +2023,6 @@
           }
         }
       }
-    },
-    "Hemoglobin A1c (HbA1c)" : {
-
     },
     "HHD_APPLE_WATCH_REQUIRED_FOOTER" : {
       "localizations" : {
@@ -2794,17 +2780,6 @@
         }
       }
     },
-    "No, not Spanish/Hispanic/Latino" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No, no soy hispano/latino"
-          }
-        }
-      }
-    },
     "None" : {
 
     },
@@ -3384,17 +3359,6 @@
     },
     "Processing Health and SensorKit Data…" : {
 
-    },
-    "Processing Health Data…" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Procesando datos de salud..."
-          }
-        }
-      }
     },
     "Processing Sleep Data…" : {
       "localizations" : {
@@ -4484,17 +4448,6 @@
     },
     "Update" : {
 
-    },
-    "Uploading Health Data" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cargando Datos de Salud"
-          }
-        }
-      }
     },
     "US State / Region" : {
       "localizations" : {

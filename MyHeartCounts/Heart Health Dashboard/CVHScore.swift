@@ -344,13 +344,12 @@ extension ScoreDefinition {
     ])
     
     static let cvhBloodGlucose = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<5.7, score: 1, explainer: "< 5.7"),
-        .inRange(5.7..<6.5, score: 0.75, explainer: "5.7 – 6.4"),
-        .inRange(6.5..<7, score: 0.5, explainer: "6.5 – 6.9"),
-        .inRange(7..<8, score: 0.3, explainer: "7 – 7.9"),
-        .inRange(8..<9, score: 0.2, explainer: "8 – 8.9"),
-        .inRange(9..<10, score: 0.1, explainer: "9 – 9.9"),
-        .inRange(10..., score: 0, explainer: "10+")
+        .inRange(..<85, score: 1, explainer: "< 85"),
+        .inRange(85..<100, score: 0.9, explainer: "85 – 99"),
+        .inRange(100..<110, score: 0.75, explainer: "100 – 109"),
+        .inRange(110..<126, score: 0.5, explainer: "110 – 125"),
+        .inRange(126..<140, score: 0.25, explainer: "126 – 140"),
+        .inRange(140..., score: 0, explainer: "> 140")
     ])
     
     static let cvhBloodPressure = ScoreDefinition(

@@ -100,7 +100,7 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.collectionViews.staticTexts["Most Recent Sample: 69 over 69"].waitForExistence(timeout: 2))
         print(app.debugDescription)
         app.buttons["Close"].tap()
-        app.buttons["Hemoglobin A1c (HbA1c)"].tap() // fasting blood glucose value
+        app.buttons["Fasting Blood Glucose"].tap() // fasting blood glucose value
         XCTAssert(app.collectionViews.staticTexts["Most Recent Sample: 100 mg/dL"].waitForExistence(timeout: 2))
     }
 }

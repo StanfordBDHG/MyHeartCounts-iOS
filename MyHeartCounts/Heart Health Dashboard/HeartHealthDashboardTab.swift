@@ -40,7 +40,7 @@ extension AnySampleType {
     /// - Important: Always use this property instead of `displayTitle`!
     var mhcDisplayTitle: String {
         if self == .bloodGlucose {
-            String(localized: "Hemoglobin A1c (HbA1c)")
+            String(localized: "Fasting Blood Glucose")
         } else {
             self.displayTitle
         }
