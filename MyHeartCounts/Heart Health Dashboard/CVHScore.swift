@@ -131,11 +131,11 @@ extension CVHScore {
     
     var stepCountScore: ScoreResult {
         ScoreResult(
-            "Last 7 Days",
+            "Daily Average, Last 7 Days",
             sampleType: .healthKit(.quantity(.stepCount)),
             timeRange: $dailyStepCount.timeRange.range,
             input: dailyStepCount,
-            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.average() },
+            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.average()?.rounded() },
             definition: .cvhStepCount
         )
     }
@@ -278,7 +278,7 @@ extension ScoreDefinition {
     static let cvhPhysicalExercise = ScoreDefinition(
         default: 0,
         scoringBands: [
-            .inRange(150..., score: 1, explainer: "150+"),
+            .inRange(150..., score: 1, explainer: "150 +"),
             .inRange(120..<150, score: 0.9, explainer: "120 – 149"),
             .inRange(90..<120, score: 0.8, explainer: "90 – 119"),
             .inRange(60..<90, score: 0.6, explainer: "60 – 89"),
@@ -288,14 +288,17 @@ extension ScoreDefinition {
         explainerFooterText: "EXERCISE_MINUTES_SCORE_EXPLAINER"
     )
     
-    static let cvhStepCount = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(10_000..., score: 1, explainer: "10000+"),
-        .inRange(8_000..<10_000, score: 0.9),
-        .inRange(6_000..<8_000, score: 0.8),
-        .inRange(4_000..<6_000, score: 0.6),
-        .inRange(2_000..<4_000, score: 0.4),
-        .inRange(0..<2_000, score: 0.2, explainer: "< 2000")
-    ])
+    static let cvhStepCount: ScoreDefinition = {
+        let fmtInt = { ($0 as Int).formatted(.number) }
+        return ScoreDefinition(default: 0, scoringBands: [
+            .inRange(10_000..., score: 1, explainer: "\(fmtInt(10000)) +"),
+            .inRange(8_000..<10_000, score: 0.9, explainer: "\(fmtInt(8000)) – \(fmtInt(9999))"),
+            .inRange(6_000..<8_000, score: 0.8, explainer: "\(fmtInt(6000)) – \(fmtInt(7999))"),
+            .inRange(4_000..<6_000, score: 0.6, explainer: "\(fmtInt(4000)) – \(fmtInt(5999))"),
+            .inRange(2_000..<4_000, score: 0.4, explainer: "\(fmtInt(2000)) – \(fmtInt(3999))"),
+            .inRange(0..<2_000, score: 0.2, explainer: "< \(fmtInt(2000))")
+        ])
+    }()
     
     static let cvhNicotine: ScoreDefinition = {
         let makeEntry = { (value: NicotineExposureCategoryValues, score: Double) -> ScoreDefinition.ScoringBand in
@@ -332,7 +335,7 @@ extension ScoreDefinition {
         .inRange(25..<30, score: 0.7, explainer: "25 – 29"),
         .inRange(30..<35, score: 0.3, explainer: "30 – 34"),
         .inRange(35..<40, score: 0.15, explainer: "35 – 39"),
-        .inRange(40..., score: 0, explainer: "40+")
+        .inRange(40..., score: 0, explainer: "40 +")
     ])
     
     static let cvhBloodLipids = ScoreDefinition(default: 0, scoringBands: [
@@ -340,7 +343,7 @@ extension ScoreDefinition {
         .inRange(130..<160, score: 0.6, explainer: "130 – 159"),
         .inRange(160..<190, score: 0.4, explainer: "160 – 189"),
         .inRange(190..<220, score: 0.2, explainer: "190 – 219"),
-        .inRange(220..., score: 0, explainer: "220+")
+        .inRange(220..., score: 0, explainer: "220 +")
     ])
     
     static let cvhBloodGlucose = ScoreDefinition(default: 0, scoringBands: [

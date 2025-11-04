@@ -60,6 +60,9 @@
         }
       }
     },
+    "%@ +" : {
+
+    },
     "%@ after %@ sec" : {
       "localizations" : {
         "en" : {
@@ -198,6 +201,9 @@
         }
       }
     },
+    "< %@" : {
+
+    },
     "< 7" : {
 
     },
@@ -208,9 +214,6 @@
 
     },
     "< 130" : {
-
-    },
-    "< 2000" : {
 
     },
     "<120 / <80" : {
@@ -469,9 +472,6 @@
 
     },
     "220+" : {
-
-    },
-    "10000+" : {
 
     },
     "Abdominal Aortic Aneurysm" : {
@@ -1067,6 +1067,9 @@
 
     },
     "Coronary Stent/Angioplasty" : {
+
+    },
+    "Daily Average, Last 7 Days" : {
 
     },
     "Data collection enabled for %lld sensors" : {
@@ -2470,6 +2473,9 @@
       }
     },
     "Memory Usage" : {
+
+    },
+    "MHC Heart Health" : {
 
     },
     "Michigan" : {

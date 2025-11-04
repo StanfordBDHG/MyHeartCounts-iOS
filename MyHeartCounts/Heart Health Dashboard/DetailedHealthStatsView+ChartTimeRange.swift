@@ -46,13 +46,6 @@ extension DetailedHealthStatsView {
 }
 
 
-extension LocalPreferenceKey {
-    static var detailedHealthMetricChartTimeRange: LocalPreferenceKey<DetailedHealthStatsView.ChartTimeRange> {
-        .make("detailedHealthMetricChartTimeRange", default: .lastNumDays(14))
-    }
-}
-
-
 extension HealthKitQueryTimeRange {
     init(_ other: DetailedHealthStatsView.ChartTimeRange) {
         switch other {

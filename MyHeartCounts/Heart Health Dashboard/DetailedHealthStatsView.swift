@@ -29,7 +29,7 @@ struct DetailedHealthStatsView: View {
     
     @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
-    @LocalPreference(.detailedHealthMetricChartTimeRange) private var chartTimeRange
+    @State private var chartTimeRange: ChartTimeRange = .lastNumDays(14)
     
     @CVHScore private var cvhScore
     @AccountFeatureFlagQuery(.isDebugModeEnabled) private var debugModeEnabled
@@ -119,6 +119,8 @@ struct DetailedHealthStatsView: View {
                     // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
                     let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
                         switch sampleType {
+                        case .healthKit(.quantity(.stepCount)):
+                            return .init(chartType: .bar, aggregationInterval: .day)
                         case .healthKit(.quantity(let sampleType)):
                             return .default(for: sampleType, in: timeRange)
                         case .healthKit:
