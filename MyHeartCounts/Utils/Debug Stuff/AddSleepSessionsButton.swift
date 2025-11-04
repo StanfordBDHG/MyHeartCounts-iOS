@@ -84,7 +84,7 @@ struct AddSleepSessionsButton: View {
             from: sampleDescriptors,
             startingAt: cal.startOfPrevDay(for: cal.startOfPrevDay(for: .now))
         )
-        print("Adding \(samples.count) sleep samples to health")
+        print("[DBG] Adding \(samples.count) sleep samples to health")
         try await healthKit.save(samples)
     }
 }

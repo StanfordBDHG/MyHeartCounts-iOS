@@ -111,7 +111,6 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.staticTexts["Test Complete"].waitForExistence(timeout: 10))
         XCTAssert(app.staticTexts["Steps, 624"].exists)
         XCTAssert(app.staticTexts["Distance, \(timedWalkTestDistance)"].exists)
-        print(app.debugDescription)
         app.otherElements["MHC.TimedWalkTestView"].navigationBars.buttons["Close"].tap()
         let numTestsAfter = numTests
         XCTAssertEqual(numTestsAfter, numTestsBefore + 1)

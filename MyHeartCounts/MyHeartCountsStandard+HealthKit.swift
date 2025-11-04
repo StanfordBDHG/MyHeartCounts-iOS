@@ -68,10 +68,6 @@ extension MyHeartCountsStandard: HealthKitConstraint {
             return
         }
         do {
-            logger.notice("\(#function) \(sampleType.displayTitle)")
-            for sample in addedSamples {
-                logger.notice("\(sample)")
-            }
             try await uploadHealthObservations(addedSamples, batchSize: 100)
         } catch {
             logger.error("Error uploading HealthKit samples: \(error)")

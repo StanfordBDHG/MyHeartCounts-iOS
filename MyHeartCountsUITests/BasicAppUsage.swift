@@ -69,7 +69,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         goToTab(.home)
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForExistence(timeout: 2))
         app.staticTexts["Enable SensorKit"].press(forDuration: 2)
-        print(app.debugDescription)
         XCTAssert(app.buttons["Stop Suggesting This"].waitForExistence(timeout: 2))
         app.buttons["Stop Suggesting This"].tap()
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 2))

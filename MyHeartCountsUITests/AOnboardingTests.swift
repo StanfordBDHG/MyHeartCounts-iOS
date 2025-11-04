@@ -200,7 +200,6 @@ extension XCUIApplication {
     
     private func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
         sleep(for: .seconds(2))
-        print(debugDescription)
         XCTAssert(scrollViews.staticTexts["STANFORD UNIVERSITY"].waitForExistence(timeout: 2))
         XCTAssert(scrollViews.staticTexts["CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
         func scrollToSwitchAndEnable(
