@@ -43,7 +43,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(SensorKit.self) private var sensorKit
     @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
-    @ObservationIgnored @Dependency(LocalNotifications.self) private var localNotifications
     // swiftlint:enable attributes
     
     /// The sensors that are currently being processed.
@@ -65,18 +64,10 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
                 guard let self else {
                     return
                 }
-                let id = UUID().uuidString
-                if true /*await standard.enableDebugSensorKitNotifications*/ {
-                    try? await localNotifications.send(id: id, title: "Background SensorKit Upload", body: "Started")
-                }
                 // it could be that the `run()` function already ran before the background task was triggered;
                 // in this case this call won't start a second, parallel fetch, but instead will simply wait for
                 // the already-active fetch to complete.
                 await fetchAndUploadNewData()
-                if true /*await standard.enableDebugSensorKitNotifications*/ {
-//                    localNotifications.remove(withId: id)
-                    try? await localNotifications.send(title: "Background SensorKit Upload", body: "Ended")
-                }
             })
         } catch {
             logger.error("Error registering SK background task: \(error)")
@@ -99,7 +90,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         guard await standard.shouldCollectHealthData else {
             return
         }
-        try? await localNotifications.send(title: "\(#function)", body: "START")
         if let processingTask {
             _ = await processingTask.result
         } else {
@@ -115,7 +105,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             processingTask = task
             _ = await task.result
         }
-        try? await localNotifications.send(title: "\(#function)", body: "END")
     }
     
     
@@ -125,17 +114,10 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         let uploadDefinition = MHCSensorUploadDefinition(uploadDefinition)
         let sensor = uploadDefinition.sensor
         guard sensorKit.authorizationStatus(for: sensor) == .authorized else {
-            try? await localNotifications.send(
-                title: "[SK] \(sensor.displayName)",
-                body: "Skipping Sensor '\(sensor.displayName)' bc it's not authorized."
-            )
+            logger.notice("Skipping Sensor '\(sensor.displayName)' bc it's not authorized")
             return
         }
         logger.notice("Starting anchored fetch for SensorKit sensor '\(sensor.id)'")
-        try? await localNotifications.send(
-            title: "[SK] \(sensor.displayName)",
-            body: "Starting anchored fetch&upload"
-        )
         let activity = InProgressActivity(sensor: sensor)
         start(activity)
         defer {
@@ -147,16 +129,8 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
                 activity.updateTimeRange(batchInfo.timeRange)
                 try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
             }
-            try? await localNotifications.send(
-                title: "[SK] \(sensor.displayName)",
-                body: "Ending anchored fetch&upload"
-            )
         } catch {
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
-            try? await localNotifications.send(
-                title: "[SK] \(sensor.displayName)",
-                body: "Ending anchored fetch&upload (error: \(error))"
-            )
         }
         logger.notice("Anchored fetch for '\(sensor.id)' is complete.")
     }

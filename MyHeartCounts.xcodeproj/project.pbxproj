@@ -30,6 +30,60 @@
 		8043DD7A2DC0CBE500E0DF01 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8043DD792DC0CBE500E0DF01 /* FirebaseMessaging */; };
 		8043E00B2DC2348600E0DF01 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8043E00A2DC2348600E0DF01 /* MarkdownUI */; };
 		80471E1A2E144A180049798B /* SpeziLocalization in Frameworks */ = {isa = PBXBuildFile; productRef = 80471E192E144A180049798B /* SpeziLocalization */; };
+		8052B85B2EB9FFDF005E2D8C /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 2FBD738B2A3BD150004228E7 /* SpeziScheduler */; };
+		8052B85C2EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1A2D67AB5300DA6E62 /* SpeziHealthKit */; };
+		8052B85D2EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803EAC1C2D67AB5300DA6E62 /* SpeziHealthKitUI */; };
+		8052B85E2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */; };
+		8052B85F2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80270CFA2D67F68F0022251E /* SpeziStudy */; };
+		8052B8602EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE402D75BCAA00CC3008 /* SpeziOnboarding */; };
+		8052B8612EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8004CE432D75BCBE00CC3008 /* SpeziStudy */; };
+		8052B8622EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A22D75DE6100E9173B /* SpeziOnboarding */; };
+		8052B8632EB9FFDF005E2D8C /* SpeziSchedulerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803166A72D75DE7700E9173B /* SpeziSchedulerUI */; };
+		8052B8642EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 803166AA2D75DE8B00E9173B /* SpeziStudy */; };
+		8052B8652EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803166B62D75E22E00E9173B /* SpeziHealthKit */; };
+		8052B8662EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 803166B82D75E22E00E9173B /* SpeziHealthKitUI */; };
+		8052B8672EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */; };
+		8052B8682EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80A81C682D7C89D400444A17 /* SpeziStudy */; };
+		8052B8692EB9FFDF005E2D8C /* SpeziFirebaseAccount in Frameworks */ = {isa = PBXBuildFile; productRef = 80E7749D2D81B4B20035A0EE /* SpeziFirebaseAccount */; };
+		8052B86A2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 802141582D81F14000BF5D35 /* SpeziOnboarding */; };
+		8052B86B2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 804B90212D86F10F00F9F431 /* SpeziStudy */; };
+		8052B86C2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 803D2B412D8981EA00DAEF9B /* SpeziStudy */; };
+		8052B86D2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80E862132D8C630D0089B8E1 /* SpeziStudy */; };
+		8052B86E2EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80E862152D8C630D0089B8E1 /* SpeziStudyDefinition */; };
+		8052B86F2EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE62D93F48C00A2DB0A /* SpeziStudyDefinition */; };
+		8052B8702EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823A2D9AD89600B40482 /* SpeziStudy */; };
+		8052B8712EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8067823C2D9AD89600B40482 /* SpeziStudyDefinition */; };
+		8052B8722EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 808E10062DAD48F300DB240D /* SpeziHealthKitUI */; };
+		8052B8732EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB94C2DB5029B000D78A5 /* SpeziHealthKit */; };
+		8052B8742EB9FFDF005E2D8C /* SpeziHealthKitBulkExport in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB94E2DB5029B000D78A5 /* SpeziHealthKitBulkExport */; };
+		8052B8752EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB9502DB5029B000D78A5 /* SpeziHealthKitUI */; };
+		8052B8762EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB9532DB502A9000D78A5 /* SpeziStudy */; };
+		8052B8772EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 806EB9552DB502A9000D78A5 /* SpeziStudyDefinition */; };
+		8052B8782EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80E08A712DD32D9F00E80C11 /* SpeziHealthKit */; };
+		8052B8792EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 80E08A752DD32D9F00E80C11 /* SpeziHealthKitUI */; };
+		8052B87B2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 805BE3D02E060B3A001E5CA4 /* SpeziOnboarding */; };
+		8052B87C2EB9FFDF005E2D8C /* SpeziConsent in Frameworks */ = {isa = PBXBuildFile; productRef = 80DCC0F52E060FAA008B6E01 /* SpeziConsent */; };
+		8052B87D2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 80DCC0F72E060FAA008B6E01 /* SpeziOnboarding */; };
+		8052B87E2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80471E1B2E144A180049798B /* SpeziStudy */; };
+		8052B87F2EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80471E1D2E144A180049798B /* SpeziStudyDefinition */; };
+		8052B8802EB9FFDF005E2D8C /* SpeziScheduler in Frameworks */ = {isa = PBXBuildFile; productRef = 8087AE382E3A658100601154 /* SpeziScheduler */; };
+		8052B8812EB9FFDF005E2D8C /* SpeziLocalization in Frameworks */ = {isa = PBXBuildFile; productRef = 800C3A1B2E6A2E5200759CDD /* SpeziLocalization */; };
+		8052B8822EB9FFDF005E2D8C /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 806EFDE72E87F8B200F57B0F /* SpeziStudy */; };
+		8052B8832EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 806EFDE92E87F8B200F57B0F /* SpeziStudyDefinition */; };
+		8052B8842EB9FFDF005E2D8C /* SpeziFirebaseAccountStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 802FA99E2EACF24A00624C31 /* SpeziFirebaseAccountStorage */; };
+		8052B8852EB9FFDF005E2D8C /* SpeziFirebaseConfiguration in Frameworks */ = {isa = PBXBuildFile; productRef = 802FA9A02EACF24A00624C31 /* SpeziFirebaseConfiguration */; };
+		8052B8862EB9FFDF005E2D8C /* SpeziFirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 802FA9A22EACF24A00624C31 /* SpeziFirebaseStorage */; };
+		8052B8872EB9FFDF005E2D8C /* SpeziFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 802FA9A42EACF24A00624C31 /* SpeziFirestore */; };
+		8052B8882EB9FFDF005E2D8C /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8044FD2D2EB61B340081314B /* SpeziSensorKit */; };
+		8052BB102EBA2AE0005E2D8C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8052BB0F2EBA2AE0005E2D8C /* WidgetKit.framework */; };
+		8052BB122EBA2AE0005E2D8C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8052BB112EBA2AE0005E2D8C /* SwiftUI.framework */; };
+		8052BB1F2EBA2AE1005E2D8C /* MyHeartCountsLiveActivityWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8052BB0E2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8052BB2E2EBA2CD3005E2D8C /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 8052BB2D2EBA2CD3005E2D8C /* SFSafeSymbols */; };
+		8052BB332EBA2CEB005E2D8C /* MyHeartCountsShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */; };
+		8052BB342EBA2CEB005E2D8C /* MyHeartCountsShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8052BB4C2EBA3023005E2D8C /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 8052BB4B2EBA3023005E2D8C /* OrderedCollections */; };
+		8052BB732EBA3374005E2D8C /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8052BB722EBA3374005E2D8C /* ActivityKit.framework */; platformFilter = ios; };
+		8052BB952EBA36F6005E2D8C /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 8052BB942EBA36F6005E2D8C /* SpeziStudyDefinition */; };
 		8054D98E2DE54F8900458CD9 /* MyHeartCountsWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		806EFDED2E87F8BD00F57B0F /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 806EFDEC2E87F8BD00F57B0F /* SpeziStudyDefinition */; };
 		80713BE52D93F48C00A2DB0A /* SpeziStudy in Frameworks */ = {isa = PBXBuildFile; productRef = 80713BE42D93F48C00A2DB0A /* SpeziStudy */; };
@@ -41,7 +95,6 @@
 		807669792D772C40001B980B /* HeapModule in Frameworks */ = {isa = PBXBuildFile; productRef = 807669782D772C40001B980B /* HeapModule */; };
 		8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 8086001C2D75133B0044A054 /* SFSafeSymbols */; };
 		8087AE3B2E3A658100601154 /* SpeziSchedulerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8087AE3A2E3A658100601154 /* SpeziSchedulerUI */; };
-		808A92CB2E47E159007046E0 /* SpeziConsent in Frameworks */ = {isa = PBXBuildFile; productRef = 808A92CA2E47E159007046E0 /* SpeziConsent */; };
 		808E10052DAD48F300DB240D /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 808E10042DAD48F300DB240D /* SpeziHealthKit */; };
 		809AEC392EA2BC8500997484 /* SpeziKeychainStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 809AEC382EA2BC8500997484 /* SpeziKeychainStorage */; };
 		809AEC3B2EA2BC8500997484 /* SpeziLocalStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 809AEC3A2EA2BC8500997484 /* SpeziLocalStorage */; };
@@ -84,6 +137,20 @@
 			remoteGlobalIDString = 653A254C283387FE005D4D48;
 			remoteInfo = MyHeartCounts;
 		};
+		8052BB1D2EBA2AE1005E2D8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8052BB0D2EBA2AE0005E2D8C;
+			remoteInfo = MyHeartCountsLiveActivityWidgetExtension;
+		};
+		8052BB352EBA2CEB005E2D8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 80FB16FA2DE67523000F2C8A;
+			remoteInfo = MyHeartCountsShared;
+		};
 		8054D98C2DE54F8900458CD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 653A2545283387FE005D4D48 /* Project object */;
@@ -108,6 +175,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		8052BB202EBA2AE1005E2D8C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8052BB1F2EBA2AE1005E2D8C /* MyHeartCountsLiveActivityWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8052BB372EBA2CEB005E2D8C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8052BB342EBA2CEB005E2D8C /* MyHeartCountsShared.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8054D98F2DE54F8900458CD9 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -149,6 +238,10 @@
 		653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8043E0102DC236C600E0DF01 /* MyHeartCounts Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts Unit Tests.xctestplan"; sourceTree = "<group>"; };
+		8052BB0E2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MyHeartCountsLiveActivityWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		8052BB0F2EBA2AE0005E2D8C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		8052BB112EBA2AE0005E2D8C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		8052BB722EBA3374005E2D8C /* ActivityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActivityKit.framework; path = System/Library/Frameworks/ActivityKit.framework; sourceTree = SDKROOT; };
 		8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHeartCountsWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MyHeartCountsShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -161,6 +254,13 @@
 			);
 			target = 8054D9832DE54F8800458CD9 /* MyHeartCountsWatchApp */;
 		};
+		8052BB242EBA2AE1005E2D8C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8052BB0D2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension */;
+		};
 		80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -171,6 +271,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8052BB132EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8052BB242EBA2AE1005E2D8C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsLiveActivityWidget; sourceTree = "<group>"; };
 		8054D9852DE54F8800458CD9 /* MyHeartCountsWatchApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8034CC092DE65C3000E7F9F6 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsWatchApp; sourceTree = "<group>"; };
 		80F72BA52D7E008E00150FE3 /* MyHeartCounts */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCounts; sourceTree = "<group>"; };
 		80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsTests; sourceTree = "<group>"; };
@@ -183,6 +284,51 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8052B8882EB9FFDF005E2D8C /* SpeziSensorKit in Frameworks */,
+				8052B8872EB9FFDF005E2D8C /* SpeziFirestore in Frameworks */,
+				8052B8862EB9FFDF005E2D8C /* SpeziFirebaseStorage in Frameworks */,
+				8052B8852EB9FFDF005E2D8C /* SpeziFirebaseConfiguration in Frameworks */,
+				8052B8842EB9FFDF005E2D8C /* SpeziFirebaseAccountStorage in Frameworks */,
+				8052B8832EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */,
+				8052B8822EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B8812EB9FFDF005E2D8C /* SpeziLocalization in Frameworks */,
+				8052B8802EB9FFDF005E2D8C /* SpeziScheduler in Frameworks */,
+				8052B87F2EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */,
+				8052B87E2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B87D2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */,
+				8052B87C2EB9FFDF005E2D8C /* SpeziConsent in Frameworks */,
+				8052B87B2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */,
+				8052B8792EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */,
+				8052B8782EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */,
+				8052B8772EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */,
+				8052B8762EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B8752EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */,
+				8052B8742EB9FFDF005E2D8C /* SpeziHealthKitBulkExport in Frameworks */,
+				8052B8732EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */,
+				8052B8722EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */,
+				8052B8712EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */,
+				8052B8702EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B86F2EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */,
+				8052B86E2EB9FFDF005E2D8C /* SpeziStudyDefinition in Frameworks */,
+				8052B86D2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B86C2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B86B2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B86A2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */,
+				8052B8692EB9FFDF005E2D8C /* SpeziFirebaseAccount in Frameworks */,
+				8052B8682EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B8672EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */,
+				8052B8662EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */,
+				8052B8652EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */,
+				8052B8642EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B8632EB9FFDF005E2D8C /* SpeziSchedulerUI in Frameworks */,
+				8052B8622EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */,
+				8052B8612EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B8602EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */,
+				8052B85F2EB9FFDF005E2D8C /* SpeziStudy in Frameworks */,
+				8052B85E2EB9FFDF005E2D8C /* SpeziOnboarding in Frameworks */,
+				8052B85D2EB9FFDF005E2D8C /* SpeziHealthKitUI in Frameworks */,
+				8052B85C2EB9FFDF005E2D8C /* SpeziHealthKit in Frameworks */,
+				8052B85B2EB9FFDF005E2D8C /* SpeziScheduler in Frameworks */,
 				8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */,
 				2FE5DC6429EDD883004B9AB4 /* SpeziAccount in Frameworks */,
 				80DE5E182EB7BFB500510363 /* SpeziHealthKitUI in Frameworks */,
@@ -200,7 +346,6 @@
 				803D2B442D8981EA00DAEF9B /* SpeziStudyDefinition in Frameworks */,
 				807669732D772C40001B980B /* Collections in Frameworks */,
 				80E774A62D81B4B20035A0EE /* SpeziFirestore in Frameworks */,
-				808A92CB2E47E159007046E0 /* SpeziConsent in Frameworks */,
 				80471E1A2E144A180049798B /* SpeziLocalization in Frameworks */,
 				2FE5DC8429EDD934004B9AB4 /* SpeziQuestionnaire in Frameworks */,
 				809AEC392EA2BC8500997484 /* SpeziKeychainStorage in Frameworks */,
@@ -250,6 +395,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8052BB0B2EBA2AE0005E2D8C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8052BB2E2EBA2CD3005E2D8C /* SFSafeSymbols in Frameworks */,
+				8052BB122EBA2AE0005E2D8C /* SwiftUI.framework in Frameworks */,
+				8052BB332EBA2CEB005E2D8C /* MyHeartCountsShared.framework in Frameworks */,
+				8052BB952EBA36F6005E2D8C /* SpeziStudyDefinition in Frameworks */,
+				8052BB102EBA2AE0005E2D8C /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8054D9812DE54F8800458CD9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -268,6 +425,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8052BB732EBA3374005E2D8C /* ActivityKit.framework in Frameworks */,
+				8052BB4C2EBA3023005E2D8C /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +443,7 @@
 				80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */,
 				8054D9852DE54F8800458CD9 /* MyHeartCountsWatchApp */,
 				80FB16FC2DE67523000F2C8A /* MyHeartCountsShared */,
+				8052BB132EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidget */,
 				653A254E283387FE005D4D48 /* Products */,
 				653A258B283395A7005D4D48 /* Frameworks */,
 			);
@@ -297,6 +457,7 @@
 				653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */,
 				8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */,
 				80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */,
+				8052BB0E2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -304,6 +465,9 @@
 		653A258B283395A7005D4D48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8052BB722EBA3374005E2D8C /* ActivityKit.framework */,
+				8052BB0F2EBA2AE0005E2D8C /* WidgetKit.framework */,
+				8052BB112EBA2AE0005E2D8C /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -330,6 +494,7 @@
 				653A254B283387FE005D4D48 /* Resources */,
 				8054D98F2DE54F8900458CD9 /* Embed Watch Content */,
 				80FB17072DE67523000F2C8A /* Embed Frameworks */,
+				8052BB202EBA2AE1005E2D8C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -338,6 +503,7 @@
 				805B42232DA6BDBF004C690D /* PBXTargetDependency */,
 				8054D98D2DE54F8900458CD9 /* PBXTargetDependency */,
 				80FB17002DE67523000F2C8A /* PBXTargetDependency */,
+				8052BB1E2EBA2AE1005E2D8C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
@@ -490,6 +656,32 @@
 			productReference = 653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		8052BB0D2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8052BB232EBA2AE1005E2D8C /* Build configuration list for PBXNativeTarget "MyHeartCountsLiveActivityWidgetExtension" */;
+			buildPhases = (
+				8052BB0A2EBA2AE0005E2D8C /* Sources */,
+				8052BB0B2EBA2AE0005E2D8C /* Frameworks */,
+				8052BB0C2EBA2AE0005E2D8C /* Resources */,
+				8052BB372EBA2CEB005E2D8C /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8052BB362EBA2CEB005E2D8C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8052BB132EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidget */,
+			);
+			name = MyHeartCountsLiveActivityWidgetExtension;
+			packageProductDependencies = (
+				8052BB2D2EBA2CD3005E2D8C /* SFSafeSymbols */,
+				8052BB942EBA36F6005E2D8C /* SpeziStudyDefinition */,
+			);
+			productName = MyHeartCountsLiveActivityWidgetExtension;
+			productReference = 8052BB0E2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		8054D9832DE54F8800458CD9 /* MyHeartCountsWatchApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8054D9932DE54F8900458CD9 /* Build configuration list for PBXNativeTarget "MyHeartCountsWatchApp" */;
@@ -539,6 +731,7 @@
 			);
 			name = MyHeartCountsShared;
 			packageProductDependencies = (
+				8052BB4B2EBA3023005E2D8C /* OrderedCollections */,
 			);
 			productName = MyHeartCountsShared;
 			productReference = 80FB16FB2DE67523000F2C8A /* MyHeartCountsShared.framework */;
@@ -551,7 +744,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					653A254C283387FE005D4D48 = {
@@ -565,6 +758,9 @@
 					653A256628338800005D4D48 = {
 						CreatedOnToolsVersion = 13.4;
 						TestTargetID = 653A254C283387FE005D4D48;
+					};
+					8052BB0D2EBA2AE0005E2D8C = {
+						CreatedOnToolsVersion = 26.0;
 					};
 					8054D9832DE54F8800458CD9 = {
 						CreatedOnToolsVersion = 16.3;
@@ -625,6 +821,7 @@
 				80FB16FA2DE67523000F2C8A /* MyHeartCountsShared */,
 				653A255C28338800005D4D48 /* MyHeartCountsTests */,
 				653A256628338800005D4D48 /* MyHeartCountsUITests */,
+				8052BB0D2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -645,6 +842,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		653A256528338800005D4D48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8052BB0C2EBA2AE0005E2D8C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -689,6 +893,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8052BB0A2EBA2AE0005E2D8C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8054D9802DE54F8800458CD9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -719,6 +930,16 @@
 		8035B5542DE6B36000326BB2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 8035B5532DE6B36000326BB2 /* SwiftLintBuildToolPlugin */;
+		};
+		8052BB1E2EBA2AE1005E2D8C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8052BB0D2EBA2AE0005E2D8C /* MyHeartCountsLiveActivityWidgetExtension */;
+			targetProxy = 8052BB1D2EBA2AE1005E2D8C /* PBXContainerItemProxy */;
+		};
+		8052BB362EBA2CEB005E2D8C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 80FB16FA2DE67523000F2C8A /* MyHeartCountsShared */;
+			targetProxy = 8052BB352EBA2CEB005E2D8C /* PBXContainerItemProxy */;
 		};
 		8054D98D2DE54F8900458CD9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1092,6 +1313,85 @@
 			};
 			name = Release;
 		};
+		8052BB212EBA2AE1005E2D8C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CQRZ4E7K9U;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyHeartCountsLiveActivityWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MyHeartCountsLiveActivityWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 4.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.MyHeartCountsLiveActivityWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		8052BB222EBA2AE1005E2D8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CQRZ4E7K9U;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyHeartCountsLiveActivityWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MyHeartCountsLiveActivityWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 4.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.MyHeartCounts.MyHeartCountsLiveActivityWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		8054D9902DE54F8900458CD9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1099,9 +1399,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "MyHeartCountsWatchApp/Supporting Files/MyHeartCountsWatchApp.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CQRZ4E7K9U;
 				"DEVELOPMENT_TEAM[sdk=watchos*]" = CQRZ4E7K9U;
@@ -1307,6 +1606,15 @@
 			buildConfigurations = (
 				653A257828338800005D4D48 /* Debug */,
 				653A257928338800005D4D48 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8052BB232EBA2AE1005E2D8C /* Build configuration list for PBXNativeTarget "MyHeartCountsLiveActivityWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8052BB212EBA2AE1005E2D8C /* Debug */,
+				8052BB222EBA2AE1005E2D8C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1785,6 +2093,21 @@
 		804B90212D86F10F00F9F431 /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;
+		};
+		8052BB2D2EBA2CD3005E2D8C /* SFSafeSymbols */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
+			productName = SFSafeSymbols;
+		};
+		8052BB4B2EBA3023005E2D8C /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+		8052BB942EBA36F6005E2D8C /* SpeziStudyDefinition */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 806EFDE62E87F8B200F57B0F /* XCRemoteSwiftPackageReference "SpeziStudy" */;
+			productName = SpeziStudyDefinition;
 		};
 		8055F2332D7C4E0D00CD7884 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -8,9 +8,11 @@
 
 // swiftlint:disable type_contents_order
 
+import ActivityKit
 import CoreHaptics
 import CoreMotion
 import Foundation
+import MyHeartCountsShared
 import OSLog
 import Spezi
 import SpeziFoundation
@@ -120,7 +122,8 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             logger.notice("Failed to launch watch app: \(error)")
         }
         let startInstant = ContinuousClock.Instant.now
-        let session = ActiveSession(test: test, startDate: .now)
+        let startDate = Date.now
+        let session = ActiveSession(test: test, startDate: startDate)
         state = .testActive(session)
         startPhoneSensorDataCollection(for: session)
         let sessionTask = Task {
@@ -133,6 +136,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             return try await stop()
         }
         session.completeSessionTask = sessionTask
+        try? startLiveActivity(for: test, startDate: startDate)
         let result = await sessionTask.result
         switch result {
         case .success(let result):
@@ -154,6 +158,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             session.completeSessionTask?.cancel()
             stopPhoneSensorDataCollection()
             try? vibrate()
+            await Self.endLiveActivity()
             var result = session.inProgressResult
             #if targetEnvironment(simulator)
             result = TimedWalkingTestResult(
@@ -269,6 +274,29 @@ extension TimedWalkingTest {
         altimeter.stopRelativeAltitudeUpdates()
         pedometer.stopUpdates()
         pedometer.stopEventUpdates()
+    }
+}
+
+
+extension TimedWalkingTest {
+    private func startLiveActivity(for test: TimedWalkingTestConfiguration, startDate: Date) throws {
+        let attributes = TimedWalkTestLiveActivityAttributes(
+            encodedTest: try JSONEncoder().encode(test),
+            startDate: startDate
+        )
+        let contentState = TimedWalkTestLiveActivityAttributes.ContentState()
+        let activity = try Activity<TimedWalkTestLiveActivityAttributes>.request(
+            attributes: attributes,
+            content: .init(state: contentState, staleDate: startDate + test.duration.timeInterval),
+            pushType: nil
+        )
+    }
+    
+    // this is the only live activity the app has; we don't need to
+    static func endLiveActivity() async {
+        for activity in Activity<TimedWalkTestLiveActivityAttributes>.activities {
+            await activity.end(nil)
+        }
     }
 }
 

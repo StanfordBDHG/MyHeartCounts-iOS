@@ -311,8 +311,7 @@ extension TimedWalkingTestView {
         var body: some View {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 let remaining = max(0, Int(end.timeIntervalSince(context.date)))
-                let minutes = remaining / 60
-                let seconds = remaining % 60
+                let (minutes, seconds) = remaining.quotientAndRemainder(dividingBy: 60)
                 Text(String(format: "%d:%02d", minutes, seconds))
                     .font(.system(size: 70, design: .rounded).bold())
                     .monospacedDigit()
