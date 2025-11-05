@@ -20,8 +20,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.navigationBars.staticTexts["Tasks"].waitForExistence(timeout: 2))
         goToTab(.heartHealth)
         XCTAssert(app.navigationBars.staticTexts["MHC Heart Health"].waitForExistence(timeout: 2))
-        goToTab(.news)
-        XCTAssert(app.navigationBars.staticTexts["News"].waitForExistence(timeout: 2))
     }
     
     

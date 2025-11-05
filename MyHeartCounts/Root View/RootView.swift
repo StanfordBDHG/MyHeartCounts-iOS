@@ -65,7 +65,6 @@ struct RootView: View {
             makeTab(HomeTab.self)
             makeTab(UpcomingTasksTab.self)
             makeTab(HeartHealthDashboardTab.self)
-            makeTab(NewsTab.self)
         }
         .tabViewStyle(.sidebarAdaptable)
         .tabViewCustomization($tabViewCustomization)

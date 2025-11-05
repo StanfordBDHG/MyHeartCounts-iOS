@@ -263,7 +263,6 @@ enum DeferredConfigLoading {
                     FirebaseStorageConfiguration()
                 }
                 baseModules(preferredLocale: preferredLocale)
-                NewsManager()
                 TimeZoneTracking()
             }
         } catch {

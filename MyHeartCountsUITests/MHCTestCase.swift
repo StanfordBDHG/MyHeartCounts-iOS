@@ -95,7 +95,6 @@ extension MHCTestCase {
         case home = "Home"
         case upcoming = "Tasks"
         case heartHealth = "Heart Health"
-        case news = "News"
     }
     
     @MainActor

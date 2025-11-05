@@ -53,7 +53,7 @@ struct FinalEnrollmentStep: View {
     @ViewBuilder private var content: some View {
         Grid(horizontalSpacing: 16, verticalSpacing: 16) {
             let calendarSymbol = if #available(iOS 26, *) {
-                SFSymbol(rawValue: "7.calendar")
+                SFSymbol._7Calendar
             } else {
                 SFSymbol.calendar
             }
@@ -76,7 +76,7 @@ struct FinalEnrollmentStep: View {
                 )
             }
             OnboardingIconGridRow(
-                icon: SFSymbol(rawValue: "arrow.up.heart"),
+                icon: .arrowUpHeart,
                 text: "FINAL_ENROLLMENT_STEP_MESSAGE_FOOTER"
             )
         }
