@@ -86,6 +86,11 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         }
     }
     
+    /// Whether the ``TimedWalkingTest`` module should use Live Activities.
+    ///
+    /// Currently disabled for the time being, because of difficulties dismissing the activities.
+    static let enableLiveActivities: Bool = false
+    
     // swiftlint:disable attributes
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(WatchConnection.self) private var watchManager
@@ -280,12 +285,15 @@ extension TimedWalkingTest {
 
 extension TimedWalkingTest {
     private func startLiveActivity(for test: TimedWalkingTestConfiguration, startDate: Date) throws {
+        guard Self.enableLiveActivities else {
+            return
+        }
         let attributes = TimedWalkTestLiveActivityAttributes(
             encodedTest: try JSONEncoder().encode(test),
             startDate: startDate
         )
         let contentState = TimedWalkTestLiveActivityAttributes.ContentState()
-        let activity = try Activity<TimedWalkTestLiveActivityAttributes>.request(
+        _ = try Activity<TimedWalkTestLiveActivityAttributes>.request(
             attributes: attributes,
             content: .init(state: contentState, staleDate: startDate + test.duration.timeInterval),
             pushType: nil

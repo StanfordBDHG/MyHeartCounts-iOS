@@ -89,7 +89,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         app.staticTexts["Past Timed Walk/Run Test Results"].tap()
         sleep(for: .seconds(1))
         
-        let testCellPred = NSPredicate(format: "label LIKE '0.5-Minute Walk Test, *'")
+        let testCellPred = NSPredicate(format: "label LIKE 'Six-Minute Walk Test, *'")
         var numTests: Int {
             app.buttons.matching(testCellPred).count
         }
@@ -98,7 +98,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         if case let button = app.buttons.element(matching: testCellPred),
            button.waitForExistence(timeout: 2) {
             button.firstMatch.tap()
-            XCTAssert(app.navigationBars["0.5-Minute Walk Test"].waitForExistence(timeout: 2))
+            XCTAssert(app.navigationBars["Six-Minute Walk Test"].waitForExistence(timeout: 2))
             XCTAssert(app.staticTexts["Number of Steps, 624"].waitForExistence(timeout: 2))
             XCTAssert(app.staticTexts["Distance, \(timedWalkTestDistance)"].waitForExistence(timeout: 2))
             app.navigationBars["0.5-Minute Walk Test"].buttons["BackButton"].tap()
