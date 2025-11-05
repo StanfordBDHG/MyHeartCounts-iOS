@@ -58,6 +58,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             LLMRunner {
                 LLMLocalPlatform()
             }
+            OnDeviceNudgeService()
         }
     }
 }

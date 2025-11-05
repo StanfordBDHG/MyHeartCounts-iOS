@@ -256,7 +256,7 @@ enum DeferredConfigLoading {
                 )
                 firestore
                 if FeatureFlags.useFirebaseEmulator {
-                    FirebaseStorageConfiguration(emulatorSettings: (host: "10.37.162.150", port: 9199))
+                    FirebaseStorageConfiguration(emulatorSettings: (host: "10.37.167.101", port: 9199))
                 } else {
                     FirebaseStorageConfiguration()
                 }
@@ -274,7 +274,7 @@ enum DeferredConfigLoading {
     
     private static var accountEmulator: (host: String, port: Int)? {
         if FeatureFlags.useFirebaseEmulator {
-            (host: "10.37.162.150", port: 9099)
+            (host: "10.37.167.101", port: 9099)
         } else {
             nil
         }
@@ -284,7 +284,7 @@ enum DeferredConfigLoading {
     private static var firestore: Firestore {
         let settings = FirestoreSettings()
         if FeatureFlags.useFirebaseEmulator {
-            settings.host = "10.37.162.150:8080"
+            settings.host = "10.37.167.101:8080"
             settings.cacheSettings = MemoryCacheSettings()
             settings.isSSLEnabled = false
         }

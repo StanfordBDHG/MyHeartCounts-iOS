@@ -59,7 +59,7 @@ extension LaunchOptions {
     /// Whether we should force-enable the debug mode, even if the account key is set to `false`.
     ///
     /// - Note: Specifying `false` for this option when the account key is `true` will not force-disable the debug mode.
-    static let forceEnableDebugMode = LaunchOption<Bool>("--forceEnableDebugMode", default: false)
+    static let forceEnableDebugMode = LaunchOption<Bool>("--forceEnableDebugMode", default: true)
     
     static let skipOnboarding = LaunchOption<Bool>("--skipOnboarding", default: false)
     static let showOnboarding = LaunchOption<Bool>("--showOnboarding", default: false)

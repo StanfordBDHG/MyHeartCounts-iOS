@@ -50,25 +50,16 @@ struct UserDemographics: Sendable {
 }
 
 enum NudgeServiceError: LocalizedError {
-    case llmNotAvailable
     case invalidUserData
-    case generationFailed
     case parsingFailed
-    case resourceNotFound
     case accountNotAvailable
     
     var errorDescription: String? {
         switch self {
-        case .llmNotAvailable:
-            return "Local LLM is not available"
         case .invalidUserData:
             return "Invalid user demographic data"
-        case .generationFailed:
-            return "Failed to generate nudges"
         case .parsingFailed:
             return "Failed to parse LLM response"
-        case .resourceNotFound:
-            return "Predefined nudge messages not found"
         case .accountNotAvailable:
             return "User account not available"
         }
@@ -119,11 +110,38 @@ private func loadPredefinedNudges() -> [String: [NudgeMessage]] {
     return finalNudges
 }
 
+nonisolated func parseLLMResponse(_ response: String) throws -> [NudgeMessage] {
+    guard let jsonStart = response.range(of: "["),
+          let jsonEnd = response.range(of: "]", options: .backwards) else {
+        throw NudgeServiceError.parsingFailed
+    }
+    
+    let jsonString = String(response[jsonStart.lowerBound..<jsonEnd.upperBound])
+    guard let jsonData = jsonString.data(using: .utf8) else {
+        throw NudgeServiceError.parsingFailed
+    }
+    
+    let nudges = try JSONDecoder().decode([LLMNudgeResponse].self, from: jsonData)
+    
+    guard nudges.count == 7 else {
+        throw NudgeServiceError.parsingFailed
+    }
+    
+    return nudges.map { nudge in
+        NudgeMessage(
+            title: nudge.title,
+            body: nudge.body,
+            isLLMGenerated: true,
+            generatedAt: Date()
+        )
+    }
+}
+
 
 // MARK: - Main Service Class
 
 @Observable
-class OnDeviceNudgeService: Module {
+final class OnDeviceNudgeService: Module, EnvironmentAccessible {
     // swiftlint:disable attributes
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     @ObservationIgnored @Dependency(LLMRunner.self) private var runner: LLMRunner
@@ -138,6 +156,7 @@ class OnDeviceNudgeService: Module {
     
     // MARK: Public Interface
     
+    @MainActor
     func createNudgeNotifications() async throws -> [NudgeMessage] {
         guard let account = account else {
             throw NudgeServiceError.accountNotAvailable
@@ -180,7 +199,7 @@ class OnDeviceNudgeService: Module {
     
     // MARK: Context Building Methods
     
-    func buildAgeContext(age: Int) -> String {
+    nonisolated func buildAgeContext(age: Int) -> String {
         var contexts = [String(localized: .llmNudgeContextAgeBase(Int32(age)))]
         
         if age > 34 {
@@ -198,7 +217,7 @@ class OnDeviceNudgeService: Module {
         return contexts.joined(separator: " ")
     }
     
-    func buildGenderContext(genderIdentity: GenderIdentity?) -> String {
+    nonisolated func buildGenderContext(genderIdentity: GenderIdentity?) -> String {
         switch genderIdentity {
         case .male:
             return String(localized: .llmNudgeContextMale)
@@ -209,7 +228,7 @@ class OnDeviceNudgeService: Module {
         }
     }
     
-    func buildComorbiditiesContext(comorbidities: Comorbidities?) -> String {
+    nonisolated func buildComorbiditiesContext(comorbidities: Comorbidities?) -> String {
         guard let comorbidities = comorbidities else {
             return ""
         }
@@ -250,7 +269,7 @@ class OnDeviceNudgeService: Module {
         return contexts.joined(separator: " ")
     }
     
-    func buildStageContext(stageOfChange: StageOfChange?) -> String {
+    nonisolated func buildStageContext(stageOfChange: StageOfChange?) -> String {
         guard let stage = stageOfChange else {
             return ""
         }
@@ -269,7 +288,7 @@ class OnDeviceNudgeService: Module {
         }
     }
     
-    func buildEducationContext(educationLevel: EducationLevel?) -> String {
+    nonisolated func buildEducationContext(educationLevel: EducationLevel?) -> String {
         guard let level = educationLevel else {
             return ""
         }
@@ -282,16 +301,18 @@ class OnDeviceNudgeService: Module {
         }
     }
     
-    func buildLanguageContext(userLanguage: String) -> String {
+    nonisolated func buildLanguageContext(userLanguage: String) -> String {
         userLanguage == "es" ? String(localized: .llmNudgeContextSpanish) : ""
     }
     
     // MARK: LLM-related Methods
     
+    @MainActor
     func generateLLMNudges(userData: UserDemographics) async throws -> [NudgeMessage] {
         do {
             let prompt = buildLLMPrompt(userData: userData)
-            let nudges = try await generateWithLLM(prompt: prompt, runner: runner)
+            let currentRunner = self.runner
+            let nudges = try await Self.generateWithLLM(prompt: prompt, runner: currentRunner)
             logger.info("Generated \(nudges.count) LLM nudges for user in \(userData.userLanguage)")
             return nudges
         } catch {
@@ -300,7 +321,7 @@ class OnDeviceNudgeService: Module {
         }
     }
     
-    func buildLLMPrompt(userData: UserDemographics) -> String {
+    nonisolated func buildLLMPrompt(userData: UserDemographics) -> String {
         var contexts: [String] = []
         
         contexts.append(buildLanguageContext(userLanguage: userData.userLanguage))
@@ -318,7 +339,7 @@ class OnDeviceNudgeService: Module {
         return String(localized: .llmNudgeSystemPrompt(contextString))
     }
     
-    func generateWithLLM(prompt: String, runner: LLMRunner) async throws -> [NudgeMessage] {
+    nonisolated static func generateWithLLM(prompt: String, runner: LLMRunner) async throws -> [NudgeMessage] {
         let llmSession: LLMLocalSession = runner(
             with: LLMLocalSchema(
                 model: .llama3_2_1B_4bit
@@ -345,33 +366,7 @@ class OnDeviceNudgeService: Module {
         return try parseLLMResponse(responseText)
     }
     
-    func parseLLMResponse(_ response: String) throws -> [NudgeMessage] {
-        guard let jsonStart = response.range(of: "["),
-              let jsonEnd = response.range(of: "]", range: jsonStart.upperBound..<response.endIndex) else {
-            throw NudgeServiceError.parsingFailed
-        }
-        
-        let jsonString = String(response[jsonStart.lowerBound...jsonEnd.upperBound])
-        guard let jsonData = jsonString.data(using: .utf8) else {
-            throw NudgeServiceError.parsingFailed
-        }
-        
-        let nudges = try JSONDecoder().decode([LLMNudgeResponse].self, from: jsonData)
-        
-        guard nudges.count == 7 else {
-            throw NudgeServiceError.parsingFailed
-        }
-        
-        return nudges.map { nudge in
-            NudgeMessage(
-                title: nudge.title,
-                body: nudge.body,
-                isLLMGenerated: true,
-                generatedAt: Date()
-            )
-        }
-    }
-    
+    @MainActor
     func getPredefinedNudges(language: String) -> [NudgeMessage] {
         predefinedNudges[language] ?? predefinedNudges["en"] ?? []
     }

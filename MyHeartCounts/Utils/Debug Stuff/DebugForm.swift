@@ -73,6 +73,9 @@ private struct DebugFormImpl: View {
                 NavigationLink(symbol: .brain, "LLM Local Demo") {
                     LLMLocalDemoView()
                 }
+                NavigationLink("LLM Nudges Demo") {
+                    LLMNudgesDemoView()
+                }
             }
             Section("Other") {
                 Button("Reset rejeted HomeTab actions") {

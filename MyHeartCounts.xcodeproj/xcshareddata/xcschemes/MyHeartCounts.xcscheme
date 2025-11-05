@@ -89,7 +89,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--overrideStudyBundleLocation http://10.37.162.150:9199/v0/b/myheart-counts-development.appspot.com/o/public%2FmhcStudyBundle.spezistudybundle.aar?alt=media"
+            argument = "--overrideStudyBundleLocation http://10.37.167.101:9199/v0/b/myheart-counts-development.appspot.com/o/public%2FmhcStudyBundle.spezistudybundle.aar?alt=media"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
