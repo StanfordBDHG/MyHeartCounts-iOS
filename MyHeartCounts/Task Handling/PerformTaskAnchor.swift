@@ -11,6 +11,7 @@
 import Foundation
 import MHCStudyDefinition
 import class ModelsR4.Questionnaire
+import MyHeartCountsShared
 import ResearchKitSwiftUI
 import SFSafeSymbols
 import SpeziQuestionnaire

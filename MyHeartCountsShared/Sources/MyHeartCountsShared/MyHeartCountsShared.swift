@@ -6,8 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import WatchConnectivity
+public import WatchConnectivity
 
 
 /// Key into a User Info dictionary transferred from the iPhone app to the Watch app.

@@ -8,6 +8,7 @@
 
 import CoreMotion
 import Foundation
+import MyHeartCountsShared
 import SFSafeSymbols
 import Spezi
 import SpeziFoundation
@@ -365,16 +366,6 @@ extension TimedWalkingTestView {
             self.explanation = explanation
             self.actionText = actionText
             self.action = action
-        }
-    }
-}
-
-
-extension TimedWalkingTestConfiguration.Kind {
-    var symbol: SFSymbol {
-        switch self {
-        case .walking: .figureWalk
-        case .running: .figureRun
         }
     }
 }

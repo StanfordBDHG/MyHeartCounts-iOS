@@ -6,43 +6,48 @@
 // SPDX-License-Identifier: MIT
 //
 
-import MyHeartCountsShared
 import ActivityKit
-import WidgetKit
+import MyHeartCountsShared
 import SFSafeSymbols
+import SpeziFoundation
 import SpeziStudyDefinition
 import SwiftUI
+import WidgetKit
 
 
 struct MyHeartCountsLiveActivityWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: TimedWalkTestLiveActivityAttributes.self) { (context: ActivityViewContext<TimedWalkTestLiveActivityAttributes>) in
-            let test: TimedWalkingTestConfiguration = try! JSONDecoder().decode(TimedWalkingTestConfiguration.self, from: context.attributes.encodedTest)
-            let startDate: Date = context.attributes.startDate
-            makeWidget(for: test, startDate: startDate)
-//                .activityBackgroundTint(Color.cyan)
+            makeWidget(for: context)
                 .activitySystemActionForegroundColor(Color.black)
                 .padding([.horizontal, .top, .bottom])
         } dynamicIsland: { context in
-            let test: TimedWalkingTestConfiguration = try! JSONDecoder().decode(TimedWalkingTestConfiguration.self, from: context.attributes.encodedTest)
-            let startDate: Date = context.attributes.startDate
+            let test: TimedWalkingTestConfiguration = context.attributes.test
             return DynamicIsland {
                 DynamicIslandExpandedRegion(.bottom) {
-                    makeWidget(for: test, startDate: startDate)
+                    makeWidget(for: context)
                 }
             } compactLeading: {
                 Image(systemSymbol: test.kind.symbol)
+                    .tint(.green)
             } compactTrailing: {
-                let endDate = startDate + test.duration.totalSeconds
-                Text("00:00")
-                    .hidden()
-                    .overlay(alignment: .center) {
-                        Text("\(endDate, style: .timer)")
-                    }
-                    .monospacedDigit()
-                    .multilineTextAlignment(.center)
+                switch context.state {
+                case .ongoing(let startDate):
+                    let endDate = startDate + test.duration.totalSeconds
+                    Text("00:00")
+                        .hidden()
+                        .overlay(alignment: .center) {
+                            Text("\(endDate, style: .timer)")
+                        }
+                        .monospacedDigit()
+                        .multilineTextAlignment(.center)
+                case .completed:
+                    Image(systemSymbol: .checkmark)
+                        .tint(.green)
+                }
             } minimal: {
                 Image(systemSymbol: test.kind.symbol)
+                    .tint(.green)
             }
             .keylineTint(Color.red)
         }
@@ -50,35 +55,36 @@ struct MyHeartCountsLiveActivityWidgetLiveActivity: Widget {
     
     
     @ViewBuilder
-    private func makeWidget(for test: TimedWalkingTestConfiguration, startDate: Date) -> some View {
-        let endDate = startDate + test.duration.totalSeconds
+    private func makeWidget(for context: ActivityViewContext<TimedWalkTestLiveActivityAttributes>) -> some View {
+        let test = context.attributes.test
         VStack {
             HStack {
                 Text("My Heart Counts")
                     .font(.headline)
                 Spacer()
-                Text("Six-Minute Walk Test")
+                Text(test.displayTitle)
                 Image(systemSymbol: test.kind.symbol)
             }
-            Text(verbatim: "00:00")
-                .hidden()
-                .overlay(alignment: .center) {
-                    Text("\(endDate, style: .timer)")
-                        .contentTransition(.numericText(countsDown: true))
+            switch context.state {
+            case .ongoing(let startDate):
+                let endDate = startDate + test.duration.totalSeconds
+                Text(verbatim: "00:00")
+                    .hidden()
+                    .overlay(alignment: .center) {
+                        Text("\(endDate, style: .timer)")
+                            .contentTransition(.numericText(countsDown: true))
+                    }
+                    .font(.system(size: 50, design: .rounded).bold())
+                    .monospacedDigit()
+                    .multilineTextAlignment(.center)
+            case let .completed(numSteps, distance):
+                let verb: String = switch test.kind {
+                case .walking: "walked"
+                case .running: "ran"
                 }
-                .font(.system(size: 50, design: .rounded).bold())
-                .monospacedDigit()
-                .multilineTextAlignment(.center)
-        }
-    }
-}
-
-
-extension TimedWalkingTestConfiguration.Kind {
-    var symbol: SFSymbol {
-        switch self {
-        case .walking: .figureWalk
-        case .running: .figureRun
+                let duration = Measurement<UnitDuration>(value: test.duration.timeInterval, unit: .seconds)
+                Text("You \(verb) \(numSteps) steps and covered \(distance, format: .measurement(width: .wide, usage: .road)) over the past \(duration, format: .measurement(width: .wide, usage: .general, numberFormatStyle: .number.precision(.fractionLength(0...1))))")
+            }
         }
     }
 }

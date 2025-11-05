@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
+public import SFSafeSymbols
+public import SpeziStudyDefinition
 
 
 extension Dictionary {
@@ -28,6 +29,16 @@ extension Dictionary {
         self.reserveCapacity(other.count)
         for (key, value) in other {
             self[key.rawValue] = value
+        }
+    }
+}
+
+
+extension TimedWalkingTestConfiguration.Kind {
+    public var symbol: SFSymbol {
+        switch self {
+        case .walking: .figureWalk
+        case .running: .figureRun
         }
     }
 }

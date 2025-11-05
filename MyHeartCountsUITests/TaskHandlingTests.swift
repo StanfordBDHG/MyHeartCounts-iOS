@@ -101,7 +101,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
             XCTAssert(app.navigationBars["Six-Minute Walk Test"].waitForExistence(timeout: 2))
             XCTAssert(app.staticTexts["Number of Steps, 624"].waitForExistence(timeout: 2))
             XCTAssert(app.staticTexts["Distance, \(timedWalkTestDistance)"].waitForExistence(timeout: 2))
-            app.navigationBars["0.5-Minute Walk Test"].buttons["BackButton"].tap()
+            app.navigationBars["Six-Minute Walk Test"].buttons["BackButton"].tap()
         }
         
         app.buttons["Six-Minute Walk Test"].tap()

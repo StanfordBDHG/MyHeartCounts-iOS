@@ -22,6 +22,8 @@ import SpeziStudyDefinition
 @Observable
 @MainActor
 final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
+    private typealias LiveActivity = Activity<TimedWalkTestLiveActivityAttributes>
+    
     enum State: Hashable, Sendable {
         case idle
         case testActive(ActiveSession)
@@ -89,7 +91,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     /// Whether the ``TimedWalkingTest`` module should use Live Activities.
     ///
     /// Currently disabled for the time being, because of difficulties dismissing the activities.
-    static let enableLiveActivities: Bool = false
+    static let enableLiveActivities: Bool = true
     
     // swiftlint:disable attributes
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
@@ -103,6 +105,8 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     private(set) var state: State = .idle
     /// The most recent Timed Walking Test result
     private(set) var mostRecentResult: TimedWalkingTestResult?
+    
+    @ObservationIgnored nonisolated(unsafe) private var liveActivity: LiveActivity?
     
     private(set) var absoluteAltitudeMeasurements: [AbsoluteAltitudeMeasurement] = []
     private(set) var relativeAltitudeMeasurements: [RelativeAltitudeMeasurement] = []
@@ -141,7 +145,9 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             return try await stop()
         }
         session.completeSessionTask = sessionTask
-        try? startLiveActivity(for: test, startDate: startDate)
+        Task { @MainActor in
+            liveActivity = startLiveActivity(for: test, startDate: startDate)
+        }
         let result = await sessionTask.result
         switch result {
         case .success(let result):
@@ -152,7 +158,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     }
     
     
-    func stop() async throws -> TimedWalkingTestResult? {
+    func stop() async throws -> TimedWalkingTestResult? { // swiftlint:disable:this function_body_length
         switch state {
         case .idle:
             return nil
@@ -163,7 +169,6 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             session.completeSessionTask?.cancel()
             stopPhoneSensorDataCollection()
             try? vibrate()
-            await Self.endLiveActivity()
             var result = session.inProgressResult
             #if targetEnvironment(simulator)
             result = TimedWalkingTestResult(
@@ -196,6 +201,24 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             }
             #endif
             try? await standard.uploadHealthObservation(result)
+            Task { @MainActor in
+                guard let liveActivity_ = self.liveActivity else { // swiftlint:disable:this identifier_name
+                    return
+                }
+                nonisolated(unsafe) let liveActivity = liveActivity_
+                await liveActivity.update(.init(
+                    state: .completed(
+                        numSteps: result.numberOfSteps,
+                        distance: Measurement(value: result.distanceCovered, unit: .meters)
+                    ),
+                    staleDate: .now.addingTimeInterval(30)
+                ))
+                try await Task.sleep(for: .seconds(30))
+                await liveActivity.end(nil, dismissalPolicy: .immediate)
+                if self.liveActivity === liveActivity {
+                    self.liveActivity = nil
+                }
+            }
             return result
         }
     }
@@ -284,23 +307,21 @@ extension TimedWalkingTest {
 
 
 extension TimedWalkingTest {
-    private func startLiveActivity(for test: TimedWalkingTestConfiguration, startDate: Date) throws {
+    private func startLiveActivity(for test: TimedWalkingTestConfiguration, startDate: Date) -> LiveActivity? {
         guard Self.enableLiveActivities else {
-            return
+            return nil
         }
         let attributes = TimedWalkTestLiveActivityAttributes(
-            encodedTest: try JSONEncoder().encode(test),
-            startDate: startDate
+            test: test
         )
-        let contentState = TimedWalkTestLiveActivityAttributes.ContentState()
-        _ = try Activity<TimedWalkTestLiveActivityAttributes>.request(
+        let contentState = TimedWalkTestLiveActivityAttributes.ContentState.ongoing(startDate: startDate)
+        return try? Activity<TimedWalkTestLiveActivityAttributes>.request(
             attributes: attributes,
             content: .init(state: contentState, staleDate: startDate + test.duration.timeInterval),
             pushType: nil
         )
     }
     
-    // this is the only live activity the app has; we don't need to
     static func endLiveActivity() async {
         for activity in Activity<TimedWalkTestLiveActivityAttributes>.activities {
             await activity.end(nil)
