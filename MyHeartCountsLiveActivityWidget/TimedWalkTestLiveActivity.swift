@@ -15,9 +15,9 @@ import SwiftUI
 import WidgetKit
 
 
-struct MyHeartCountsLiveActivityWidgetLiveActivity: Widget {
+struct TimedWalkTestLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: TimedWalkTestLiveActivityAttributes.self) { (context: ActivityViewContext<TimedWalkTestLiveActivityAttributes>) in
+        ActivityConfiguration(for: TimedWalkTestLiveActivityAttributes.self) { context in
             makeWidget(for: context)
                 .activitySystemActionForegroundColor(Color.black)
                 .padding([.horizontal, .top, .bottom])

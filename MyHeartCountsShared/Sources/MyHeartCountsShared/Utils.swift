@@ -35,6 +35,7 @@ extension Dictionary {
 
 
 extension TimedWalkingTestConfiguration.Kind {
+    /// A SFSymbol suitable for the test
     public var symbol: SFSymbol {
         switch self {
         case .walking: .figureWalk

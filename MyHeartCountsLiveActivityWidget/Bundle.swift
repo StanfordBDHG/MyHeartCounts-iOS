@@ -6,12 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 @main
 struct MyHeartCountsLiveActivityWidgetBundle: WidgetBundle {
     var body: some Widget {
-        MyHeartCountsLiveActivityWidgetLiveActivity()
+        TimedWalkTestLiveActivity()
     }
 }

@@ -91,7 +91,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     /// Whether the ``TimedWalkingTest`` module should use Live Activities.
     ///
     /// Currently disabled for the time being, because of difficulties dismissing the activities.
-    static let enableLiveActivities: Bool = true
+    static let enableLiveActivities: Bool = false
     
     // swiftlint:disable attributes
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
