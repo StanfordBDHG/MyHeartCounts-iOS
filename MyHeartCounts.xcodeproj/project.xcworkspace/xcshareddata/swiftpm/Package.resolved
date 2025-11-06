@@ -1,5 +1,5 @@
 {
-  "originHash" : "383efeffa17a6b4bcaa4d9f559743b58946c0001e1965925a3dcdb21b1cc34cb",
+  "originHash" : "1df80568add420ee8939dd0a8dc2d3599b3a2d29499bfe158def0e1ce93403ff",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -249,7 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "4ba825cded3884c9c79536703604b2f07f5cb3ad"
+        "revision" : "bbd2418acbdcf4f6be502c9a865af79a0656053d",
+        "version" : "1.2.7"
       }
     },
     {
