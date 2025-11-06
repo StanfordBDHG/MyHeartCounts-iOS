@@ -380,15 +380,6 @@
       }
     },
     {
-      "identity" : "spezispeech",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziSpeech",
-      "state" : {
-        "revision" : "6c51d4165d2cabb6102aa61233c480fb75c167f6",
-        "version" : "1.1.2"
-      }
-    },
-    {
       "identity" : "spezistorage",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
