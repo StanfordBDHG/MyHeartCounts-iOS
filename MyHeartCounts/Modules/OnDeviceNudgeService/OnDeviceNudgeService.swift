@@ -30,7 +30,7 @@ enum EducationLevel: String, Codable {
     case college = "college"
 }
 
-struct NudgeMessage { // add back in Identifiable and the id variable?
+struct NudgeMessage { // maybe make this struct Identifiable
     let title: String
     let body: String
     let isLLMGenerated: Bool
@@ -154,47 +154,70 @@ final class OnDeviceNudgeService: Module, EnvironmentAccessible {
         self.predefinedNudges = loadPredefinedNudges()
     }
     
-    // MARK: Public Interface
+    // MARK: LLM-related Methods
+    
+    nonisolated static func generateWithLLM(prompt: String, runner: LLMRunner) async throws -> [NudgeMessage] {
+        let llmSession: LLMLocalSession = runner(
+            with: LLMLocalSchema(
+                model: .llama3_2_1B_4bit
+            )
+        )
+        
+        let context =
+        [
+            [
+                "role": "user",
+                "content": prompt
+            ]
+        ]
+        
+        await MainActor.run {
+            llmSession.customContext = context
+        }
+        
+        var responseText = ""
+        for try await token in try await llmSession.generate() {
+            responseText.append(token)
+        }
+        
+        return try parseLLMResponse(responseText)
+    }
     
     @MainActor
-    func createNudgeNotifications() async throws -> [NudgeMessage] {
-        guard let account = account else {
-            throw NudgeServiceError.accountNotAvailable
+    func getPredefinedNudges(language: String) -> [NudgeMessage] {
+        predefinedNudges[language] ?? predefinedNudges["en"] ?? []
+    }
+    
+    nonisolated func buildLLMPrompt(userData: UserDemographics) -> String {
+        var contexts: [String] = []
+        
+        contexts.append(buildLanguageContext(userLanguage: userData.userLanguage))
+        contexts.append(buildGenderContext(genderIdentity: userData.genderIdentity))
+        if let dateOfBirth = userData.dateOfBirth {
+            let age = UserDataService.calculateAge(dateOfBirth: dateOfBirth)
+            contexts.append(buildAgeContext(age: age))
         }
+        contexts.append(buildComorbiditiesContext(comorbidities: userData.comorbidities))
+        contexts.append(buildStageContext(stageOfChange: userData.stageOfChange))
+        contexts.append(buildEducationContext(educationLevel: userData.educationLevel))
         
-        let userData = try await UserDataService.getUserDemographics(account: account)
-        let daysSinceEnrollment = UserDataService.getDaysSinceEnrollment(dateOfEnrollment: userData.dateOfEnrollment)
-        let participantGroup = userData.participantGroup ?? 1
+        let contextString = contexts.filter { !$0.isEmpty }.joined(separator: " ")
         
-        let shouldCreatePredefinedNudges: Bool
-        let shouldCreateLLMNudges: Bool
-        
-        if participantGroup == 1 && daysSinceEnrollment == 7 {
-            shouldCreatePredefinedNudges = true
-            shouldCreateLLMNudges = false
-        } else if participantGroup == 1 && daysSinceEnrollment == 14 {
-            shouldCreatePredefinedNudges = false
-            shouldCreateLLMNudges = true
-        } else if participantGroup == 2 && daysSinceEnrollment == 7 {
-            shouldCreatePredefinedNudges = false
-            shouldCreateLLMNudges = true
-        } else if participantGroup == 2 && daysSinceEnrollment == 14 {
-            shouldCreatePredefinedNudges = true
-            shouldCreateLLMNudges = false
-        } else {
-            shouldCreatePredefinedNudges = true
-            shouldCreateLLMNudges = false
-        }
-        
-        if shouldCreatePredefinedNudges {
-            logger.info("Creating predefined nudges for user, language: \(userData.userLanguage)")
+        return String(localized: .llmNudgeSystemPrompt(contextString))
+    }
+    
+    @MainActor
+    func generateLLMNudges(userData: UserDemographics) async throws -> [NudgeMessage] {
+        do {
+            let prompt = buildLLMPrompt(userData: userData)
+            let currentRunner = self.runner
+            let nudges = try await Self.generateWithLLM(prompt: prompt, runner: currentRunner)
+            logger.info("Generated \(nudges.count) LLM nudges for user in \(userData.userLanguage)")
+            return nudges
+        } catch {
+            logger.warning("LLM generation failed: \(error), falling back to predefined nudges")
             return getPredefinedNudges(language: userData.userLanguage)
-        } else if shouldCreateLLMNudges {
-            logger.info("Creating LLM-generated nudges for user, language: \(userData.userLanguage)")
-            return try await generateLLMNudges(userData: userData)
         }
-        
-        return []
     }
     
     // MARK: Context Building Methods
@@ -235,7 +258,6 @@ final class OnDeviceNudgeService: Module, EnvironmentAccessible {
             
         var contexts: [String] = []
 
-        // This helper checks if a comorbidity is selected.
         func isSelected(_ id: String) -> Bool {
             guard let comorbidity = Comorbidities.Comorbidity(id: id) else {
                 return false
@@ -305,69 +327,46 @@ final class OnDeviceNudgeService: Module, EnvironmentAccessible {
         userLanguage == "es" ? String(localized: .llmNudgeContextSpanish) : ""
     }
     
-    // MARK: LLM-related Methods
+    // MARK: Public Interface
     
     @MainActor
-    func generateLLMNudges(userData: UserDemographics) async throws -> [NudgeMessage] {
-        do {
-            let prompt = buildLLMPrompt(userData: userData)
-            let currentRunner = self.runner
-            let nudges = try await Self.generateWithLLM(prompt: prompt, runner: currentRunner)
-            logger.info("Generated \(nudges.count) LLM nudges for user in \(userData.userLanguage)")
-            return nudges
-        } catch {
-            logger.warning("LLM generation failed: \(error), falling back to predefined nudges")
+    func createNudgeNotifications() async throws -> [NudgeMessage] {
+        guard let account = account else {
+            throw NudgeServiceError.accountNotAvailable
+        }
+        
+        let userData = try await UserDataService.getUserDemographics(account: account)
+        let daysSinceEnrollment = UserDataService.getDaysSinceEnrollment(dateOfEnrollment: userData.dateOfEnrollment)
+        let participantGroup = userData.participantGroup ?? 1
+        
+        let shouldCreatePredefinedNudges: Bool
+        let shouldCreateLLMNudges: Bool
+        
+        if participantGroup == 1 && daysSinceEnrollment == 7 {
+            shouldCreatePredefinedNudges = true
+            shouldCreateLLMNudges = false
+        } else if participantGroup == 1 && daysSinceEnrollment == 14 {
+            shouldCreatePredefinedNudges = false
+            shouldCreateLLMNudges = true
+        } else if participantGroup == 2 && daysSinceEnrollment == 7 {
+            shouldCreatePredefinedNudges = false
+            shouldCreateLLMNudges = true
+        } else if participantGroup == 2 && daysSinceEnrollment == 14 {
+            shouldCreatePredefinedNudges = true
+            shouldCreateLLMNudges = false
+        } else {
+            shouldCreatePredefinedNudges = true
+            shouldCreateLLMNudges = false
+        }
+        
+        if shouldCreatePredefinedNudges {
+            logger.info("Creating predefined nudges for user, language: \(userData.userLanguage)")
             return getPredefinedNudges(language: userData.userLanguage)
-        }
-    }
-    
-    nonisolated func buildLLMPrompt(userData: UserDemographics) -> String {
-        var contexts: [String] = []
-        
-        contexts.append(buildLanguageContext(userLanguage: userData.userLanguage))
-        contexts.append(buildGenderContext(genderIdentity: userData.genderIdentity))
-        if let dateOfBirth = userData.dateOfBirth {
-            let age = UserDataService.calculateAge(dateOfBirth: dateOfBirth)
-            contexts.append(buildAgeContext(age: age))
-        }
-        contexts.append(buildComorbiditiesContext(comorbidities: userData.comorbidities))
-        contexts.append(buildStageContext(stageOfChange: userData.stageOfChange))
-        contexts.append(buildEducationContext(educationLevel: userData.educationLevel))
-        
-        let contextString = contexts.filter { !$0.isEmpty }.joined(separator: " ")
-        
-        return String(localized: .llmNudgeSystemPrompt(contextString))
-    }
-    
-    nonisolated static func generateWithLLM(prompt: String, runner: LLMRunner) async throws -> [NudgeMessage] {
-        let llmSession: LLMLocalSession = runner(
-            with: LLMLocalSchema(
-                model: .llama3_2_1B_4bit
-            )
-        )
-        
-        let context =
-        [
-            [
-                "role": "user",
-                "content": prompt
-            ]
-        ]
-        
-        await MainActor.run {
-            llmSession.customContext = context
+        } else if shouldCreateLLMNudges {
+            logger.info("Creating LLM-generated nudges for user, language: \(userData.userLanguage)")
+            return try await generateLLMNudges(userData: userData)
         }
         
-        var responseText = ""
-        for try await token in try await llmSession.generate() {
-            responseText.append(token)
-        }
-        
-        return try parseLLMResponse(responseText)
-    }
-    
-    @MainActor
-    func getPredefinedNudges(language: String) -> [NudgeMessage] {
-        predefinedNudges[language] ?? predefinedNudges["en"] ?? []
+        return []
     }
 }
