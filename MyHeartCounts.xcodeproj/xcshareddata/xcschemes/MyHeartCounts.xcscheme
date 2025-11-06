@@ -89,10 +89,6 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--overrideStudyBundleLocation http://10.37.167.101:9199/v0/b/myheart-counts-development.appspot.com/o/public%2FmhcStudyBundle.spezistudybundle.aar?alt=media"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "--overrideStudyBundleLocation /Users/lukas/Desktop/mhcStudyBundle.spezistudybundle.aar"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -114,7 +110,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--useFirebaseEmulator"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=/Users/lukas/Desktop/MHC.plist"
@@ -122,7 +118,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=GoogleService-Info-Override"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--dump-cli-options-and-exit"
