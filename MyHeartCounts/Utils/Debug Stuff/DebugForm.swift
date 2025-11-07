@@ -40,6 +40,9 @@ private struct DebugFormImpl: View {
     var body: some View {
         Form { // swiftlint:disable:this closure_body_length
             Section {
+                DemographicsButton()
+            }
+            Section {
                 MemoryUsageIndicator()
             }
             Section("Notifications") {

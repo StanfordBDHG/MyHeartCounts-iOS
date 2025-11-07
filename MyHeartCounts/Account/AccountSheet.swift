@@ -29,7 +29,6 @@ struct AccountSheet: View {
     // swiftlint:enable attributes
     
     @State private var isInSetup = false
-    @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
     
     @AccountFeatureFlagQuery(.isDebugModeEnabled)
@@ -56,19 +55,6 @@ struct AccountSheet: View {
                     }
                 }
             }
-            .sheet(isPresented: $isPresentingDemographicsSheet) {
-                NavigationStack {
-                    DemographicsForm()
-                        .toolbar {
-                            ToolbarItem(placement: .primaryAction) {
-                                Button("Done") {
-                                    isPresentingDemographicsSheet = false
-                                }
-                                .bold()
-                            }
-                        }
-                }
-            }
             .sheet(isPresented: $isPresentingFeedbackSheet) {
                 NavigationStack {
                     FeedbackForm()
@@ -87,14 +73,8 @@ struct AccountSheet: View {
     
     @ViewBuilder private var accountSheetExtraContent: some View {
         Section {
-            Button {
-                isPresentingDemographicsSheet = true
-            } label: {
-                Label("Demographics", systemSymbol: .personTextRectangle)
-            }
             SensorKitButton()
         }
-        
         if let enrollment = enrollments.first {
             Section("Study Participation") { // swiftlint:disable:this closure_body_length
                 Button {
