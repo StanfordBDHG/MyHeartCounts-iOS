@@ -291,8 +291,8 @@ extension XCUIApplication {
     
     private func navigateWorkoutPreferences() {
         XCTAssert(staticTexts["Workout Preference"].waitForExistence(timeout: 2))
-        XCTAssert(buttons["Cycling"].waitForExistence(timeout: 2))
-        buttons["Cycling"].tap()
+        XCTAssert(staticTexts["Cycling"].waitForExistence(timeout: 2))
+        staticTexts["Cycling"].tap()
         swipeUp()
         buttons["Continue"].tap()
     }

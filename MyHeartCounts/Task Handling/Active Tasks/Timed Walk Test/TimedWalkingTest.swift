@@ -192,7 +192,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             // Enable a simple testing of the UI on the simulator.
             try await Task.sleep(until: startInstant.advanced(by: Duration.seconds(10)))
             #else
-            try await Task.sleep(until: startInstant.advanced(by: inProgressTest.duration))
+            try await Task.sleep(until: startInstant.advanced(by: inProgressTest.test.duration))
             #endif
             return try await stop()
         }
