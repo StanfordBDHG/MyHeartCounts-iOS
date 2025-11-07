@@ -233,46 +233,47 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             defer {
                 state = .idle
             }
-            let result = session.inProgressResult
+            var result = session.inProgressResult
             session.completeSessionTask?.cancel()
             stopPhoneSensorDataCollection()
             try? vibrate()
-            try await stop(inProgressTest: result, isRecoveredTest: false)
+            result = try await stop(inProgressTest: result, isRecoveredTest: false)
             return result
         }
     }
     
     
-    private func stop(inProgressTest result: TimedWalkingTestResult, isRecoveredTest: Bool) async throws {
-        guard result.endDate >= .now else {
-            // asked to end test that is still ongoing.
-            return
-        }
+    /// Stops an in-progress test.
+    ///
+    /// - returns: The actual result of the test.
+    ///
+    /// - Note: this function will unconditonally stop the test, even if it us still ongoing and not supposed to end until at some future point in time.
+    private func stop(inProgressTest result: TimedWalkingTestResult, isRecoveredTest: Bool) async throws -> TimedWalkingTestResult {
         var result = result
-        #if targetEnvironment(simulator)
-        result.numberOfSteps = 624
-        result.distanceCovered = 842
-        #else
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
-            pedometer.queryPedometerData(from: result.startDate, to: result.endDate) { @Sendable data, error in
-                guard let data else {
-                    if let error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        continuation.resume() // hmmm
+        if ProcessInfo.isRunningInSimulator {
+            result.numberOfSteps = 624
+            result.distanceCovered = 842
+        } else {
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+                pedometer.queryPedometerData(from: result.startDate, to: result.endDate) { @Sendable data, error in
+                    guard let data else {
+                        if let error {
+                            continuation.resume(throwing: error)
+                        } else {
+                            continuation.resume() // hmmm
+                        }
+                        return
                     }
-                    return
+                    let numSteps = data.numberOfSteps.intValue
+                    let distance = data.distance?.doubleValue ?? 0
+                    Task { @MainActor in
+                        result.numberOfSteps = numSteps
+                        result.distanceCovered = distance
+                    }
+                    continuation.resume()
                 }
-                let numSteps = data.numberOfSteps.intValue
-                let distance = data.distance?.doubleValue ?? 0
-                Task { @MainActor in
-                    result.numberOfSteps = numSteps
-                    result.distanceCovered = distance
-                }
-                continuation.resume()
             }
         }
-        #endif
         try? await standard.uploadHealthObservation(result)
         if isRecoveredTest || lifecycle.scenePhase == .active {
             // if we're stopping/finalizing a recovered test or we're in the foreground, we want to immediately remove the live activity
@@ -291,10 +292,13 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
                     ),
                     staleDate: .now.addingTimeInterval(30)
                 ))
-                try await Task.sleep(for: .seconds(30))
-                await liveActivity.end(nil, dismissalPolicy: .immediate)
+                Task {
+                    try await Task.sleep(for: .seconds(30))
+                    await liveActivity.end(nil, dismissalPolicy: .immediate)
+                }
             }
         }
+        return result
     }
 }
 

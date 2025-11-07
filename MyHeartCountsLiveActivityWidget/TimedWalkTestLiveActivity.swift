@@ -29,7 +29,7 @@ struct TimedWalkTestLiveActivity: Widget {
                 }
             } compactLeading: {
                 Image(systemSymbol: test.kind.symbol)
-                    .tint(.green)
+                    .tint(.red)
             } compactTrailing: {
                 switch context.state {
                 case .ongoing(startDate: _, let endDate):
@@ -42,11 +42,11 @@ struct TimedWalkTestLiveActivity: Widget {
                         .multilineTextAlignment(.center)
                 case .completed:
                     Image(systemSymbol: .checkmark)
-                        .tint(.green)
+                        .tint(.red)
                 }
             } minimal: {
                 Image(systemSymbol: test.kind.symbol)
-                    .tint(.green)
+                    .tint(.red)
             }
             .keylineTint(Color.red)
         }

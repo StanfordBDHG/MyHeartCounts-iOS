@@ -21,6 +21,7 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
         app.swipeUp()
         
         app.buttons["Debug"].tap()
+        app.swipeUp()
         XCTAssert(app.buttons["Answer Questionnaire"].waitForExistence(timeout: 2))
         app.buttons["Answer Questionnaire"].tap()
         XCTAssert(app.buttons["HeartRisk"].waitForExistence(timeout: 2))
