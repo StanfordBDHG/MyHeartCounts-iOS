@@ -76,7 +76,7 @@ struct AccountSheet: View {
             SensorKitButton()
         }
         if let enrollment = enrollments.first {
-            Section("Study Participation") { // swiftlint:disable:this closure_body_length
+            Section("Study Participation") {
                 Button {
                     openUrl(MyHeartCounts.website)
                 } label: {

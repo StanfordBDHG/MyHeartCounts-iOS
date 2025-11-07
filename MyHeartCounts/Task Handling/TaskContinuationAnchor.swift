@@ -31,7 +31,7 @@ private struct TaskContinuationAnchor: ViewModifier {
                     }
                 }
             }
-            .onChange(of: timedWalkingTest.state, initial: true) { oldState, newState in
+            .onChange(of: timedWalkingTest.state, initial: true) { _, newState in
                 switch newState {
                 case .testActive(let session):
                     if session.isRecoveredTest {

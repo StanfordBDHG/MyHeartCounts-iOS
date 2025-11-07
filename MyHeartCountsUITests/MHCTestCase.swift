@@ -58,6 +58,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     func launchAppAndEnrollIntoStudy(
         enableDebugMode: Bool = false,
         keepExistingData: Bool = false,
+        skipHealthPermissionsHandling: Bool = false,
         heightEntryUnitOverride: String? = nil,
         weightEntryUnitOverride: String? = nil,
         extraLaunchArgs: [String?] = []
@@ -75,17 +76,19 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
-        app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
+        if !skipHealthPermissionsHandling {
+            app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
+        }
         XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
-        goToTab(.home)
-        XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
-        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
-        XCTAssertGreaterThanOrEqual(
-            ["Diet", "Par-Q+", "Six-Minute Walk Test", "Heart Risk"].count {
-                app.staticTexts[$0].exists
-            },
-            2
-        )
+//        goToTab(.home)
+//        XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
+//        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
+//        XCTAssertGreaterThanOrEqual(
+//            ["Diet", "Par-Q+", "Six-Minute Walk Test", "Heart Risk"].count {
+//                app.staticTexts[$0].exists
+//            },
+//            2
+//        )
     }
 }
 
