@@ -16,24 +16,29 @@ import Foundation
 struct EducationStatusUS: DemographicsSelectableSimpleValue {
     let id: String
     let displayTitle: LocalizedStringResource
+    let displaySubtitle: LocalizedStringResource?
     
     var rawValue: String { id }
+    
+    init(id: String, title: LocalizedStringResource, subtitle: LocalizedStringResource? = nil) {
+        self.id = id
+        self.displayTitle = title
+        self.displaySubtitle = subtitle
+    }
 }
 
 extension EducationStatusUS {
-    static let notSet = Self(id: "notSet", displayTitle: "Not Set")
-    static let preferNotToState = Self(id: "preferNotToState", displayTitle: "Prefer not to state")
+    static let notSet = Self(id: "notSet", title: "Not Set")
+    static let preferNotToState = Self(id: "preferNotToState", title: "Prefer not to state")
     
     static let options: [Self] = [
-        Self(id: "didNotAttendSchool", displayTitle: "Didn't attend school"),
-        Self(id: "gradeSchool", displayTitle: "Grade School"),
-        Self(id: "highSchool", displayTitle: "High School"),
-        /// Some college or vocational school or Associate Degree
-        Self(id: "someCollege", displayTitle: "Some College"),
-        /// College graduate or Baccalaureate Degree
-        Self(id: "bachelor", displayTitle: "Cachelor"),
-        Self(id: "master", displayTitle: "Master"),
-        Self(id: "doctoralDegree", displayTitle: "Doctoral Degree")
+        Self(id: "didNotAttendSchool", title: "Didn't attend school"),
+        Self(id: "gradeSchool", title: "Grade School"),
+        Self(id: "highSchool", title: "High School"),
+        Self(id: "someCollege", title: "Some College", subtitle: "Some college or vocational school or associate degree"),
+        Self(id: "bachelor", title: "Bachelor", subtitle: "College graduate or Baccalaureate Degree"),
+        Self(id: "master", title: "Master"),
+        Self(id: "doctoralDegree", title: "Doctoral Degree")
     ]
 }
 
@@ -43,23 +48,27 @@ extension EducationStatusUS {
 struct EducationStatusUK: DemographicsSelectableSimpleValue {
     let id: String
     let displayTitle: LocalizedStringResource
+    let displaySubtitle: LocalizedStringResource?
     
     var rawValue: String { id }
+    
+    init(id: String, title: LocalizedStringResource, subtitle: LocalizedStringResource? = nil) {
+        self.id = id
+        self.displayTitle = title
+        self.displaySubtitle = subtitle
+    }
 }
 
 extension EducationStatusUK {
-    static let notSet = Self(id: "notSet", displayTitle: "Not Set")
-    static let preferNotToState = Self(id: "preferNotToState", displayTitle: "Prefer not to state")
+    static let notSet = Self(id: "notSet", title: "Not Set")
+    static let preferNotToState = Self(id: "preferNotToState", title: "Prefer not to state")
     
     static let options: [Self] = [
-        Self(id: "didNotAttendSchool", displayTitle: "Didn't attend school"),
-        Self(id: "highSchool", displayTitle: "High School"),
-        /// Vocational training/apprenticeship/Diploma
-        Self(id: "vocationalTraining", displayTitle: "Vocationa lTraining"),
-        /// College/University Graduate Degree
-        Self(id: "someCollege", displayTitle: "College/University Graduate Degree"),
-        /// College graduate or Baccalaureate Degree
-        Self(id: "master", displayTitle: "Master"),
-        Self(id: "doctoralDegree", displayTitle: "Doctoral Degree")
+        Self(id: "didNotAttendSchool", title: "Didn't attend school"),
+        Self(id: "highSchool", title: "High School"),
+        Self(id: "vocationalTraining", title: "Vocational Training", subtitle: "Vocational training / apprenticeship / diploma"),
+        Self(id: "someCollege", title: "College/University Graduate Degree"),
+        Self(id: "master", title: "Master"),
+        Self(id: "doctoralDegree", title: "Doctoral Degree")
     ]
 }

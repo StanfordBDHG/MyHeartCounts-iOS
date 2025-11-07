@@ -219,7 +219,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         } else {
             // the test has already ended, but wasn't finalized at the time
             // (ie, the app was terminated while the test was still running)
-            try await stop(inProgressTest: inProgressTest, isRecoveredTest: true)
+            _ = try await stop(inProgressTest: inProgressTest, isRecoveredTest: true)
         }
     }
     

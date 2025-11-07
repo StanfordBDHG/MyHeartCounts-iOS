@@ -722,6 +722,9 @@
     "AuthorizationStatus" : {
 
     },
+    "Bachelor" : {
+
+    },
     "Background Tasks" : {
 
     },
@@ -789,9 +792,6 @@
         }
       }
     },
-    "Cachelor" : {
-
-    },
     "California" : {
       "localizations" : {
         "es" : {
@@ -849,6 +849,9 @@
           }
         }
       }
+    },
+    "College graduate or Baccalaureate Degree" : {
+
     },
     "College/University Graduate Degree" : {
 
@@ -4119,6 +4122,9 @@
     "Some College" : {
 
     },
+    "Some college or vocational school or associate degree" : {
+
+    },
     "South Carolina" : {
       "localizations" : {
         "es" : {
@@ -4561,7 +4567,10 @@
         }
       }
     },
-    "Vocationa lTraining" : {
+    "Vocational Training" : {
+
+    },
+    "Vocational training / apprenticeship / diploma" : {
 
     },
     "Wales (%@)" : {

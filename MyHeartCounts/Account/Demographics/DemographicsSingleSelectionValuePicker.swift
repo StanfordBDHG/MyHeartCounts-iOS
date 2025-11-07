@@ -21,12 +21,17 @@ protocol DemographicsSelectableSimpleValue: Identifiable, RawRepresentableAccoun
     static var options: [Self] { get }
     
     var displayTitle: LocalizedStringResource { get }
+    var displaySubtitle: LocalizedStringResource? { get }
 }
 
 
 extension DemographicsSelectableSimpleValue {
     var id: RawValue {
         rawValue
+    }
+    
+    var displaySubtitle: LocalizedStringResource? {
+        nil
     }
     
     init?(rawValue: RawValue) {
@@ -76,8 +81,14 @@ struct DemographicsSingleSelectionPicker<Value: DemographicsSelectableSimpleValu
             selection = option
         } label: {
             HStack {
-                Text(option.displayTitle)
-                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                VStack(alignment: .leading) {
+                    Text(option.displayTitle)
+                    if let subtitle = option.displaySubtitle {
+                        Text(subtitle)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .foregroundStyle(colorScheme.textLabelForegroundStyle)
                 Spacer()
                 if option == selection {
                     Image(systemSymbol: .checkmark)
