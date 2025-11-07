@@ -4,7 +4,7 @@ version = 1
 path = [
     "MyHeartCounts.xcodeproj/**",
     "MyHeartCounts/Resources/Assets.xcassets/**",
-    "MyHeartCountsWatchApp/Assets.xcassets/**",
+    "MyHeartCountsWatchApp/Resources/Assets.xcassets/**",
     "MyHeartCountsLiveActivityWidget/Assets.xcassets/**"
 ]
 SPDX-FileCopyrightText = "2025 Stanford University and the project authors (see CONTRIBUTORS.md)"
