@@ -72,6 +72,7 @@ private struct Impl<Footer: View>: View {
     @State private var regionOverride: Locale.Region?
     
     private var region: Locale.Region {
+        // NOTE: should probably use the region selected in the onboarding here?!
         regionOverride ?? studyManager.preferredLocale.region ?? .unitedStates
     }
     
