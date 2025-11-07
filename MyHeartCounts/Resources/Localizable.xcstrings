@@ -4258,6 +4258,9 @@
         }
       }
     },
+    "The test was cancelled" : {
+
+    },
     "The Timed Walking Test requires read access to Motion and Fitness Data." : {
       "localizations" : {
         "es" : {

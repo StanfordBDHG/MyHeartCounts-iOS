@@ -32,8 +32,7 @@ struct TimedWalkTestLiveActivity: Widget {
                     .tint(.green)
             } compactTrailing: {
                 switch context.state {
-                case .ongoing(let startDate):
-                    let endDate = startDate + test.duration.totalSeconds
+                case .ongoing(startDate: _, let endDate):
                     Text("00:00")
                         .hidden()
                         .overlay(alignment: .center) {
@@ -66,8 +65,7 @@ struct TimedWalkTestLiveActivity: Widget {
                 Image(systemSymbol: test.kind.symbol)
             }
             switch context.state {
-            case .ongoing(let startDate):
-                let endDate = startDate + test.duration.totalSeconds
+            case .ongoing(startDate: _, let endDate):
                 Text(verbatim: "00:00")
                     .hidden()
                     .overlay(alignment: .center) {
