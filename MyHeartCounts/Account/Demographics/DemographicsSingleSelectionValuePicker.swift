@@ -6,12 +6,14 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Foundation
 import SFSafeSymbols
 import SwiftUI
 
 
-protocol DemographicsSelectableSimpleValue: Identifiable, Hashable {
+protocol DemographicsSelectableSimpleValue: Identifiable, RawRepresentableAccountKey, Hashable {
     static var notSet: Self { get }
     static var preferNotToState: Self { get }
     
@@ -19,6 +21,33 @@ protocol DemographicsSelectableSimpleValue: Identifiable, Hashable {
     static var options: [Self] { get }
     
     var displayTitle: LocalizedStringResource { get }
+}
+
+
+extension DemographicsSelectableSimpleValue {
+    var id: RawValue {
+        rawValue
+    }
+    
+    init?(rawValue: RawValue) {
+        let allOptions = Self.options + [.notSet, .preferNotToState]
+        if let option = allOptions.first(where: { $0.rawValue == rawValue }) {
+            self = option
+        } else {
+            return nil
+        }
+    }
+}
+
+
+extension DemographicsSelectableSimpleValue {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 

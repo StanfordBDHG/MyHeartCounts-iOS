@@ -789,6 +789,9 @@
         }
       }
     },
+    "Cachelor" : {
+
+    },
     "California" : {
       "localizations" : {
         "es" : {
@@ -846,6 +849,9 @@
           }
         }
       }
+    },
+    "College/University Graduate Degree" : {
+
     },
     "Colorado" : {
       "localizations" : {
@@ -1157,6 +1163,9 @@
     "Did Opt In to Trial" : {
 
     },
+    "Didn't attend school" : {
+
+    },
     "Diet" : {
       "localizations" : {
         "es" : {
@@ -1200,6 +1209,9 @@
         }
       }
     },
+    "Doctoral Degree" : {
+
+    },
     "Don't Know" : {
 
     },
@@ -1237,6 +1249,9 @@
           }
         }
       }
+    },
+    "Education Level" : {
+
     },
     "Educational Level" : {
       "localizations" : {
@@ -1849,6 +1864,9 @@
         }
       }
     },
+    "Grade School" : {
+
+    },
     "Grant Access" : {
       "localizations" : {
         "en" : {
@@ -2044,6 +2062,9 @@
       }
     },
     "High Coronary Calcium Score" : {
+
+    },
+    "High School" : {
 
     },
     "Historical Fetch" : {
@@ -2474,6 +2495,9 @@
           }
         }
       }
+    },
+    "Master" : {
+
     },
     "Memory Usage" : {
 
@@ -4092,6 +4116,9 @@
         }
       }
     },
+    "Some College" : {
+
+    },
     "South Carolina" : {
       "localizations" : {
         "es" : {
@@ -4533,6 +4560,9 @@
           }
         }
       }
+    },
+    "Vocationa lTraining" : {
+
     },
     "Wales (%@)" : {
 

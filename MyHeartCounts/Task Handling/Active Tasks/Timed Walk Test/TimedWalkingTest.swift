@@ -87,7 +87,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             case .cancelled:
                 "The test was cancelled"
             case .other(let error):
-                "\(error)"
+                "\(String(describing: error))"
             }
         }
     }

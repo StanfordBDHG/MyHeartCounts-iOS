@@ -36,7 +36,7 @@ struct AccountSheet: View {
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {
-        NavigationStack { // swiftlint:disable:this closure_body_length
+        NavigationStack {
             ZStack {
                 if account.signedIn && !isInSetup {
                     AccountOverview(close: .showCloseButton) {
@@ -76,7 +76,7 @@ struct AccountSheet: View {
             SensorKitButton()
         }
         if let enrollment = enrollments.first {
-            Section("Study Participation") {
+            Section("Study Participation") { // swiftlint:disable:this closure_body_length
                 Button {
                     openUrl(MyHeartCounts.website)
                 } label: {

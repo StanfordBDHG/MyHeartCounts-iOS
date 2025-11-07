@@ -350,6 +350,11 @@ extension XCUIApplication {
         navigationBars.buttons["BackButton"].tap()
         XCTAssert(buttons["US State / Territory, DC"].waitForExistence(timeout: 1))
         
+        staticTexts["Education Level"].tap()
+        buttons["Master"].tap()
+        navigationBars.buttons["BackButton"].tap()
+        XCTAssert(buttons["Education Level, Master"].waitForExistence(timeout: 1))
+        
         staticTexts["Total Household Income"].tap()
         buttons["Prefer not to state"].tap()
         navigationBars.buttons["BackButton"].tap()
