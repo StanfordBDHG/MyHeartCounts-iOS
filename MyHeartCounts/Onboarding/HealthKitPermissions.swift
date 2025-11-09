@@ -26,7 +26,6 @@ struct HealthKitPermissions: View {
     @Environment(HealthKit.self) private var healthKit
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(StudyBundleLoader.self) private var studyLoader
-    @AccountFeatureFlagQuery(.enableHealthRecords) private var enableHealthRecords
     
     @State private var viewState: ViewState = .idle
     @State private var isShowingLearnMoreText = false
@@ -74,17 +73,7 @@ struct HealthKitPermissions: View {
         } catch {
             logger.error("Could not request HealthKit permissions: \(error)")
         }
-        // The `enableHealthRecords` condition depends on the Account being present, which is not injected into the overall `OnboardingFlow` view,
-        // meaning that we can't decide this in there. Instead, we decide in here how to proceed.
-        if enableHealthRecords {
-            path.append {
-                HealthRecords()
-                    .onboardingStep(.healthRecords)
-                    .injectingSpezi()
-            }
-        } else {
-            path.nextStep()
-        }
+        path.nextStep()
     }
 }
 

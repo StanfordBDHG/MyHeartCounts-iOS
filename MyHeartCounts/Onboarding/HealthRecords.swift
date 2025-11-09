@@ -22,7 +22,6 @@ struct HealthRecords: View {
     @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(HealthKit.self) private var healthKit
     @Environment(ManagedNavigationStack.Path.self) private var path
-    @AccountFeatureFlagQuery(.enableHealthRecords) private var enableHealthRecords
     
     @State private var viewState: ViewState = .idle
     @State private var isShowingLearnMoreText = false

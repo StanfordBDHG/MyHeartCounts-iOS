@@ -166,7 +166,9 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
             .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
         try await healthKit.askForAuthorization(for: accessReqs)
-        try await healthKit.askForAuthorization(for: .init(read: MyHeartCountsStandard.allRecordTypes))
+        if HKHealthStore().supportsHealthRecords() {
+            try await healthKit.askForAuthorization(for: .init(read: MyHeartCountsStandard.allRecordTypes))
+        }
         try await studyManager.enroll(in: studyBundle)
         try localStorage.store(.now, for: .studyActivationDate)
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true

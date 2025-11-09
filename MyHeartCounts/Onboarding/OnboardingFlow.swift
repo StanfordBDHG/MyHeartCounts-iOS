@@ -105,6 +105,11 @@ private struct AppOnboardingFlow: View {
                 HealthKitPermissions()
                     .onboardingStep(.healthAccess)
                     .injectingSpezi()
+                if HKHealthStore().supportsHealthRecords() {
+                    HealthRecords()
+                        .onboardingStep(.healthRecords)
+                        .injectingSpezi()
+                }
             }
             WorkoutPreferenceSetting()
                 .onboardingStep(.workoutPreference)

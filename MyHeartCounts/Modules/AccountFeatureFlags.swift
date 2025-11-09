@@ -51,11 +51,6 @@ extension AccountFeatureFlags.FeatureFlagDefinition {
         .launchOption(.forceEnableDebugMode),
         .localPreference(.lastSeenIsDebugModeEnabledAccountKey)
     ])
-    
-    static let enableHealthRecords = Self(sources: [
-        .accountDetail(\.enableHealthRecords),
-        .launchOption(.enableHealthRecords)
-    ])
 }
 
 
