@@ -195,7 +195,6 @@ enum DeferredConfigLoading {
     /// Returns nil if there was an issue resolving the selector.
     @MainActor
     static func config(for configSelector: FirebaseConfigSelector) -> [any Module] { // swiftlint:disable:this function_body_length
-        logger.notice("CLI args: \(CommandLine.arguments)")
         let preferredLocale = { () -> Locale in
             if let region = configSelector.region {
                 return .init(language: Locale.current.language, region: region)

@@ -130,7 +130,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         handleMotionAndFitnessAccessPrompt(timeout: .seconds(2))
         XCTAssert(app.staticTexts["Your 6-Minute Walk Test is in progress."].waitForExistence(timeout: 5))
         app.terminate()
-        try launchAppAndEnrollIntoStudy(skipHealthPermissionsHandling: true)
+        try launchAppAndEnrollIntoStudy(skipHealthPermissionsHandling: true, skipGoingToHomeTab: true)
         XCTAssert(app.staticTexts["Your 6-Minute Walk Test is in progress."].waitForExistence(timeout: 5))
     }
 }

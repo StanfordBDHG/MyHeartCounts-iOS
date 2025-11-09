@@ -99,8 +99,8 @@
 		809AEC3B2EA2BC8500997484 /* SpeziLocalStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 809AEC3A2EA2BC8500997484 /* SpeziLocalStorage */; };
 		80A0083F2DEFD0B300A446BA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A0083E2DEFD0B300A446BA /* Collections */; };
 		80A008462DEFD0F900A446BA /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A008452DEFD0F900A446BA /* OrderedCollections */; };
+		80B8A1DA2EC0B70600F0E453 /* XCTHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80B8A1D92EC0B70600F0E453 /* XCTHealthKit */; };
 		80BE06542DCF3A6D00171114 /* SwiftPackageList in Frameworks */ = {isa = PBXBuildFile; productRef = 80BE06532DCF3A6D00171114 /* SwiftPackageList */; };
-		80C6A3D22EA53110006FF575 /* XCTHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80C6A3D12EA53110006FF575 /* XCTHealthKit */; };
 		80D41BE92E25A9BC00D5EAAB /* ResearchKitOnFHIR in Frameworks */ = {isa = PBXBuildFile; productRef = 80D41BE82E25A9BC00D5EAAB /* ResearchKitOnFHIR */; };
 		80D4FBCF2EA275860044D848 /* MHCStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80D4FBCE2EA275860044D848 /* MHCStudyDefinition */; };
 		80DE5E182EB7BFB500510363 /* SpeziHealthKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 80DE5E172EB7BFB500510363 /* SpeziHealthKitUI */; };
@@ -363,9 +363,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FE5DC9929EDD9D9004B9AB4 /* XCTestExtensions in Frameworks */,
+				80B8A1DA2EC0B70600F0E453 /* XCTHealthKit in Frameworks */,
 				A994264E2CD25EB3002F8BD5 /* XCTSpeziAccount in Frameworks */,
 				A9947BF42CC142BD0068AA8A /* XCTSpeziNotifications in Frameworks */,
-				80C6A3D22EA53110006FF575 /* XCTHealthKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,7 +604,7 @@
 				2FE5DC9829EDD9D9004B9AB4 /* XCTestExtensions */,
 				A9947BF32CC142BD0068AA8A /* XCTSpeziNotifications */,
 				A994264D2CD25EB3002F8BD5 /* XCTSpeziAccount */,
-				80C6A3D12EA53110006FF575 /* XCTHealthKit */,
+				80B8A1D92EC0B70600F0E453 /* XCTHealthKit */,
 			);
 			productName = MyHeartCountsUITests;
 			productReference = 653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */;
@@ -733,11 +733,11 @@
 				806EFDE62E87F8B200F57B0F /* XCRemoteSwiftPackageReference "SpeziStudy" */,
 				80D4FBCD2EA275860044D848 /* XCRemoteSwiftPackageReference "MyHeartCounts-StudyDefinitions" */,
 				809AEC372EA2BC8500997484 /* XCRemoteSwiftPackageReference "SpeziStorage" */,
-				80C6A3D02EA53110006FF575 /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
 				802FA99B2EACF24A00624C31 /* XCRemoteSwiftPackageReference "SpeziFirebase" */,
 				8015C3582EB22EE400CA845E /* XCRemoteSwiftPackageReference "swift-nio" */,
 				8044FD2C2EB61B340081314B /* XCRemoteSwiftPackageReference "SpeziSensorKit" */,
 				80DE5E122EB7BFB500510363 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
+				80B8A1D82EC0B70600F0E453 /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1613,20 +1613,20 @@
 				minimumVersion = 3.1.2;
 			};
 		};
+		80B8A1D82EC0B70600F0E453 /* XCRemoteSwiftPackageReference "XCTHealthKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.2;
+			};
+		};
 		80BE064E2DCF3A2D00171114 /* XCRemoteSwiftPackageReference "swift-package-list" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/FelixHerrmann/swift-package-list.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 4.8.0;
-			};
-		};
-		80C6A3D02EA53110006FF575 /* XCRemoteSwiftPackageReference "XCTHealthKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.1;
 			};
 		};
 		80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */ = {
@@ -2055,6 +2055,11 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;
 		};
+		80B8A1D92EC0B70600F0E453 /* XCTHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80B8A1D82EC0B70600F0E453 /* XCRemoteSwiftPackageReference "XCTHealthKit" */;
+			productName = XCTHealthKit;
+		};
 		80BE06512DCF3A4600171114 /* SwiftPackageListPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 80BE064E2DCF3A2D00171114 /* XCRemoteSwiftPackageReference "swift-package-list" */;
@@ -2064,11 +2069,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 80BE064E2DCF3A2D00171114 /* XCRemoteSwiftPackageReference "swift-package-list" */;
 			productName = SwiftPackageList;
-		};
-		80C6A3D12EA53110006FF575 /* XCTHealthKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 80C6A3D02EA53110006FF575 /* XCRemoteSwiftPackageReference "XCTHealthKit" */;
-			productName = XCTHealthKit;
 		};
 		80C7B86B2D67D76B0016BCAF /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
