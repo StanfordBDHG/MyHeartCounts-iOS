@@ -209,27 +209,11 @@ extension SensorKit {
         MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy()),
-        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations())
-//        Sensor.visits
+        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
+        MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations())
     ]
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }
-    
-    // periphery:ignore
-    /// All sensors we technicall have access to.
-    static let mhcSensorsExtended: [any AnySensor] = [
-        Sensor.onWrist,
-        Sensor.heartRate,
-        Sensor.pedometer,
-        Sensor.wristTemperature,
-        Sensor.accelerometer,
-        Sensor.ppg,
-        Sensor.ecg,
-        Sensor.ambientLight,
-        Sensor.ambientPressure,
-        Sensor.visits,
-        Sensor.deviceUsage
-    ]
 }
 
 

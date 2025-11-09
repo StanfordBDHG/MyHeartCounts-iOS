@@ -63,7 +63,7 @@ struct SensorKitButton: View {
                     subtitle: "ENABLE_SENSORKIT_SUBTITLE",
                     state: $viewState
                 ) {
-                    try await enable(SensorKit.mhcSensorsExtended)
+                    try await enable(SensorKit.mhcSensors)
                 }
             } else {
                 let subtitle: LocalizedStringResource = if sensorAuthStatuses.authorized.isEmpty {
@@ -129,7 +129,7 @@ private struct SensorKitSheet: View {
                 Text("ENABLE_SENSORKIT_SUBTITLE")
             }
             Section {
-                ForEach(SensorKit.mhcSensorsExtended.sorted(using: KeyPathComparator(\.displayName)), id: \.id) { sensor in
+                ForEach(SensorKit.mhcSensors.sorted(using: KeyPathComparator(\.displayName)), id: \.id) { sensor in
                     makeRow(for: sensor)
                 }
             } header: {

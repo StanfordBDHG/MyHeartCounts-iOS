@@ -49,7 +49,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             ManagedFileUpload {
                 ManagedFileUpload.Category.liveHealthUpload
                 ManagedFileUpload.Category.historicalHealthUpload
-                for sensor in SensorKit.mhcSensorsExtended {
+                for sensor in SensorKit.mhcSensors {
                     ManagedFileUpload.Category(sensor)
                 }
             }

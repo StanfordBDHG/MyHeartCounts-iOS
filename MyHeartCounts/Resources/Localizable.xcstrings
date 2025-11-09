@@ -1202,6 +1202,9 @@
         }
       }
     },
+    "Distance" : {
+
+    },
     "District of Columbia" : {
       "localizations" : {
         "es" : {
@@ -1363,6 +1366,12 @@
           }
         }
       }
+    },
+    "End" : {
+
+    },
+    "endDate" : {
+
     },
     "England (%@)" : {
 
@@ -2942,6 +2951,9 @@
         }
       }
     },
+    "Number of Steps" : {
+
+    },
     "Ohio" : {
       "localizations" : {
         "es" : {
@@ -4171,6 +4183,9 @@
         }
       }
     },
+    "startDate" : {
+
+    },
     "State" : {
       "localizations" : {
         "es" : {
@@ -4180,6 +4195,9 @@
           }
         }
       }
+    },
+    "Steps" : {
+
     },
     "Stop Recording Data" : {
 
@@ -4533,6 +4551,9 @@
           }
         }
       }
+    },
+    "value" : {
+
     },
     "Value" : {
 

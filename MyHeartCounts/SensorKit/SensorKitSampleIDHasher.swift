@@ -55,6 +55,10 @@ struct SensorKitSampleIDHasher: ~Copyable {
         }
     }
     
+    mutating func combine(_ value: UUID) {
+        combine(unsafeBitCast(value.uuid, to: UInt128.self))
+    }
+    
     mutating func combine(_ value: Double?) {
         switch value {
         case .none:
