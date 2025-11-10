@@ -12,7 +12,7 @@ import SwiftUI
 
 
 // intentionally a global variable
-let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "")
+let logger = Logger(category: .init(""))
 
 
 @main

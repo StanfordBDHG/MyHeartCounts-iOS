@@ -129,6 +129,12 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     
     
     private func setUp(resetExistingData: Bool) async throws {
+        let signposter = OSSignposter(logger: Logger(category: .pointsOfInterest))
+        let signpostId = signposter.makeSignpostID()
+        let state = signposter.beginInterval("Setup Test Environment", id: signpostId)
+        defer {
+            signposter.endInterval("Setup Test Environment", state)
+        }
         logger.notice("Setting up Test Environment")
         guard let accountService else {
             logger.error("Unable to set up test account: no account service")
@@ -167,6 +173,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
+        signposter.emitEvent("did log in", id: signpostId)
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
         let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
@@ -175,7 +182,9 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         if HKHealthStore().supportsHealthRecords() {
             try await healthKit.askForAuthorization(for: .init(read: MyHeartCountsStandard.allRecordTypes))
         }
+        signposter.emitEvent("health reqs complete", id: signpostId)
         try await standard.enroll(in: studyBundle)
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
+        signposter.emitEvent("enrollment complete", id: signpostId)
     }
 }

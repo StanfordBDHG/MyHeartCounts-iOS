@@ -11,7 +11,7 @@ import OSLog
 import func QuartzCore.CACurrentMediaTime
 
 
-private let measureLogger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "measure")
+private let measureLogger = Logger(category: .init("measure"))
 
 
 func measure<Result, E>(_ label: String = "", _ block: () throws(E) -> Result) throws(E) -> Result {

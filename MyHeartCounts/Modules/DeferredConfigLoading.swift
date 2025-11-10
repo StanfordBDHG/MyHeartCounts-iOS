@@ -37,7 +37,7 @@ extension LocalPreferenceKey {
 
 
 enum DeferredConfigLoading {
-    fileprivate static let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "Config")
+    fileprivate static let logger = Logger(category: .init("Config"))
     
     enum LoadingError: Error {
         case unableToLoadFirebaseConfigPlist(underlying: (any Error)? = nil)
