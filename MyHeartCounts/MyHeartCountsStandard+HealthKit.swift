@@ -164,13 +164,17 @@ extension MyHeartCountsStandard {
                 return AnyEncodable(resource)
             }
         }
-        if observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
+        let supportsZlibUpload = !HKClinicalType.allKnownClinicalRecords.contains { $0.identifier == sampleTypeIdentifier }
+        if supportsZlibUpload && observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
             let numObservations = observations.count
             logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' via zlib upload")
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
             )
             let resources = try await (consume observations).compactMapAsync(turnIntoFHIRResource)
+            guard !resources.isEmpty else {
+                return
+            }
             let encoded = try JSONEncoder().encode(resources)
             let compressed = try (consume encoded).compressed(using: Zlib.self)
             let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zlib", directoryHint: .notDirectory)
@@ -190,8 +194,9 @@ extension MyHeartCountsStandard {
                         let document = try await healthObservationDocument(for: observation)
                         let path = document.path
                         logger.notice("Uploading Health Resource to \(path)")
-                        let resource = try await turnIntoFHIRResource(observation)
-                        try batch.setData(from: resource, forDocument: document)
+                        if let resource = try await turnIntoFHIRResource(observation) {
+                            try batch.setData(from: resource, forDocument: document)
+                        }
                     } catch {
                         logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")
                     }
