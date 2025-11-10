@@ -67,7 +67,9 @@ struct HealthKitPermissions: View {
                 try await _Concurrency.Task.sleep(for: .seconds(5))
             } else {
                 let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
-                    .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
+                    .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData.filter { sampleType in
+                        !(sampleType.hkSampleType is HKClinicalType)
+                    }))
                 try await healthKit.askForAuthorization(for: accessReqs)
             }
         } catch {
@@ -97,9 +99,9 @@ extension MyHeartCountsStandard {
 }
 
 
-extension ManagedNavigationStack.Path {
-    func append(@ViewBuilder view: () -> some View) {
-        self.append(customView: view())
+extension SampleTypesCollection {
+    func filter(_ isIncluded: (any AnySampleType) -> Bool) -> SampleTypesCollection {
+        SampleTypesCollection(self.lazy.filter(isIncluded))
     }
 }
 

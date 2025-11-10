@@ -6,12 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable all
+
 import Foundation
 import OSLog
 import Spezi
+import HealthKitOnFHIR
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziHealthKit
+import SpeziHealthKitBulkExport
 import SpeziLocalStorage
 import SpeziStudy
 import struct SpeziViews.AnyLocalizedError
@@ -57,9 +61,11 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
+    @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
+    @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkHealthExporter
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     // swiftlint:enable attributes
@@ -169,8 +175,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         if HKHealthStore().supportsHealthRecords() {
             try await healthKit.askForAuthorization(for: .init(read: MyHeartCountsStandard.allRecordTypes))
         }
-        try await studyManager.enroll(in: studyBundle)
-        try localStorage.store(.now, for: .studyActivationDate)
+        try await standard.enroll(in: studyBundle)
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
     }
 }

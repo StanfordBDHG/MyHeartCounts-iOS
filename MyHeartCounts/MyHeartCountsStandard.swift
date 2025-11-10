@@ -16,6 +16,7 @@ import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziFirestore
 import SpeziHealthKit
+import SpeziLocalStorage
 import SpeziQuestionnaire
 import SpeziSensorKit
 import SpeziStudy
@@ -23,17 +24,23 @@ import SwiftUI
 
 
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConstraint {
+    struct SimpleError: Error {
+        let message: String
+    }
+    
     // swiftlint:disable attributes
     @Application(\.logger) var logger
     @Dependency(HealthKit.self) var healthKit
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
     @Dependency(StudyManager.self) var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?
+    @Dependency(LocalStorage.self) private var localStorage
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
     @Dependency(ManagedFileUpload.self) var managedFileUpload
     @Dependency(AccountFeatureFlags.self) private var accountFeatureFlags
     @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
+    @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
     // swiftlint:disable attributes
     
     init() {}
@@ -42,9 +49,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func configure() {
         Task {
             await updateStudyDefinition()
-            if let studyManager = await studyManager, !studyManager.studyEnrollments.isEmpty {
-                await startClinicalRecordsCollection()
-            }
         }
     }
     
@@ -57,6 +61,37 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             try await studyManager.informAboutStudies([studyBundle])
         } catch {
             logger.error("\(error)")
+        }
+    }
+    
+    func enroll(in studyBundle: StudyBundle) async throws {
+        guard let account, let studyManager else {
+            throw SimpleError(message: "Missing Account / StudyManager")
+        }
+        do {
+            if let enrollmentDate = await account.details?.dateOfEnrollment {
+                // the user already has enrolled at some point in the past.
+                // we now explicitly specify this enrollment date, to make sure the StudyManager
+                // can schedule all study components relative to that.
+                try await studyManager.enroll(in: studyBundle, enrollmentDate: enrollmentDate)
+            } else {
+                let enrollmentDate = Date.now
+                try await studyManager.enroll(in: studyBundle, enrollmentDate: enrollmentDate)
+                do {
+                    var newDetails = AccountDetails()
+                    newDetails.dateOfEnrollment = enrollmentDate
+                    let modifications = try AccountModifications(modifiedDetails: newDetails)
+                    try await account.accountService.updateAccountDetails(modifications)
+                }
+            }
+            try localStorage.store(.now, for: .studyActivationDate)
+            _Concurrency.Task(priority: .background) {
+                historicalUploadManager.startAutomaticExportingIfNeeded()
+            }
+        } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
+            // should be unreachable, but we'll handle this as a non-error just to be safe.
+        } catch {
+            throw error
         }
     }
     
@@ -88,7 +123,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 } catch {
                     logger.error("Error unenrolling from study: \(error)")
                 }
-                await stopClinicalRecordsCollection()
             }.result
             Task {
                 guard /*!ProcessInfo.isBeingUITested,*/ await !setupTestEnvironment.isInSetup else {
@@ -109,28 +143,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             try? await timeZoneTracking?.updateTimeZoneInfo()
         case .detailsChanged:
             break
-        }
-    }
-}
-
-
-extension MyHeartCountsStandard {
-    func startClinicalRecordsCollection() async {
-        let startDate = Calendar.current.date(byAdding: .year, value: -10, to: .now)
-        for type in Self.allRecordTypes {
-            let collector = CollectSample(
-                type,
-                start: .automatic,
-                continueInBackground: true,
-                timeRange: startDate.map { .startingAt($0) } ?? .newSamples
-            )
-            await healthKit.addHealthDataCollector(collector)
-        }
-    }
-    
-    func stopClinicalRecordsCollection() async {
-        for type in Self.allRecordTypes {
-            await healthKit.resetSampleCollection(for: type)
         }
     }
 }

@@ -106,7 +106,7 @@ extension SensorKitECGSession: HealthObservation {
         for builder in extensions {
             try builder.apply(typeErasedInput: self, to: observation)
         }
-        try observation.addMHCAppAsSource()
+        observation.addMHCAppAsSource()
         return .observation(observation)
     }
 }

@@ -12,9 +12,11 @@ import FirebaseFunctions
 import Foundation
 import HealthKit
 import HealthKitOnFHIR
+@preconcurrency import ModelsDSTU2
 @preconcurrency import ModelsR4
 import OSLog
 import SpeziAccount
+import SpeziFHIR
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziStudy
@@ -108,44 +110,58 @@ extension MyHeartCountsStandard: HealthKitConstraint {
 extension MyHeartCountsStandard {
     func uploadHealthObservation(
         _ observation: some HealthObservation & Sendable,
-        postprocessObservation: @Sendable (Observation) throws -> Void = { _ in }
+        postprocessResource: @Sendable (FHIRResource) throws -> Void = { _ in }
     ) async throws {
         try await uploadHealthObservations(
             CollectionOfOne(observation),
             batchSize: 1,
-            postprocessObservation: postprocessObservation
+            postprocessResource: postprocessResource
         )
     }
     
     func uploadHealthObservations( // swiftlint:disable:this function_body_length
         _ observations: consuming some Collection<some HealthObservation & Sendable> & Sendable,
         batchSize: Int = 100,
-        postprocessObservation: @Sendable (Observation) throws -> Void = { _ in }
+        postprocessResource: @Sendable (FHIRResource) throws -> Void = { _ in }
     ) async throws {
         guard !observations.isEmpty, let sampleTypeIdentifier = observations.first?.sampleTypeIdentifier else {
             return
         }
         let issuedDate = FHIRPrimitive<ModelsR4.Instant>(try .init(date: .now))
         @Sendable
-        func turnIntoFHIRResource(_ observation: some HealthObservation) async throws -> ResourceProxy {
-            if let observation = observation as? HKElectrocardiogram {
-                let symptoms = try await observation.symptoms(from: healthKit)
-                let voltages = try await observation.voltageMeasurements(from: healthKit.healthStore)
-                let observation = try observation.observation(
+        func turnIntoFHIRResource(_ observation: some HealthObservation) async throws -> AnyEncodable? {
+            switch observation {
+            case let sample as HKElectrocardiogram:
+                let symptoms = try await sample.symptoms(from: healthKit)
+                let voltages = try await sample.voltageMeasurements(from: healthKit.healthStore)
+                let observation = try sample.observation(
                     symptoms: symptoms,
                     voltageMeasurements: voltages.map { (time: $0.timeOffset, value: $0.voltage) },
                     withMapping: .default,
                     issuedDate: issuedDate,
                     extensions: [.sampleUploadTimeZone]
                 )
-                try postprocessObservation(observation)
-                return ResourceProxy(with: observation)
-            } else {
-                let resource = try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
-                if let observation = resource.get(if: Observation.self) {
-                    try postprocessObservation(observation)
+                try postprocessResource(FHIRResource(observation))
+                return AnyEncodable(observation)
+            case let record as HKClinicalRecord:
+                guard record.fhirResource != nil else {
+                    // just fail silently...
+                    await self.logger.error("Skipping HKClinicalRecord, bc no fhirResource")
+                    return nil
                 }
-                return resource
+                let resource = try await FHIRResource(record, using: healthKit)
+                switch resource {
+                case .dstu2(let resource):
+                    (resource as? ModelsDSTU2.DomainResource)?.addSourceRevisionExtensions(for: record.sourceRevision)
+                case .r4(let resource):
+                    (resource as? ModelsR4.DomainResource)?.addSourceRevisionExtensions(for: record.sourceRevision)
+                }
+                try postprocessResource(resource)
+                return AnyEncodable(resource)
+            default:
+                let resource = try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
+                try postprocessResource(FHIRResource(resource.get()))
+                return AnyEncodable(resource)
             }
         }
         if observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
@@ -154,7 +170,7 @@ extension MyHeartCountsStandard {
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
             )
-            let resources = try await (consume observations).mapAsync(turnIntoFHIRResource)
+            let resources = try await (consume observations).compactMapAsync(turnIntoFHIRResource)
             let encoded = try JSONEncoder().encode(resources)
             let compressed = try (consume encoded).compressed(using: Zlib.self)
             let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zlib", directoryHint: .notDirectory)
@@ -172,6 +188,8 @@ extension MyHeartCountsStandard {
                 for observation in chunk {
                     do {
                         let document = try await healthObservationDocument(for: observation)
+                        let path = document.path
+                        logger.notice("Uploading Health Resource to \(path)")
                         let resource = try await turnIntoFHIRResource(observation)
                         try batch.setData(from: resource, forDocument: document)
                     } catch {
@@ -252,7 +270,7 @@ extension FHIRExtensionUrls {
     // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
     // it also never can be mutated to contain any.
     /// Url of a FHIR Extension containing the user's time zone when uploading a FHIR `Observation`.
-    nonisolated(unsafe) static let sampleUploadTimeZone = "https://bdh.stanford.edu/fhir/defs/sampleUploadTimeZone".asFHIRURIPrimitive()!
+    nonisolated(unsafe) static let sampleUploadTimeZone: ModelsR4.FHIRPrimitive<_> = "https://bdh.stanford.edu/fhir/defs/sampleUploadTimeZone".asFHIRURIPrimitive()!
     // swiftlint:disable:previous force_unwrapping
 }
 

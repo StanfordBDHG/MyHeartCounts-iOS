@@ -151,6 +151,17 @@ extension Sequence {
         return results
     }
     
+    func compactMapAsync<Result, E>(_ transform: (Element) async throws(E) -> Result?) async throws(E) -> [Result] {
+        var results: [Result] = []
+        results.reserveCapacity(underestimatedCount)
+        for element in self {
+            if let transformed = try await transform(element) {
+                results.append(transformed)
+            }
+        }
+        return results
+    }
+    
     
     func average() -> Element? where Element: BinaryFloatingPoint {
         var iterator = self.makeIterator()

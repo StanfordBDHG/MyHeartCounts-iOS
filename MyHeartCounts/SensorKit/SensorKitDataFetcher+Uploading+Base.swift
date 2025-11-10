@@ -76,7 +76,7 @@ extension MHCSensorSampleUploadStrategy {
             to: \.derivedFrom
         )
         
-        try observation.addMHCAppAsSource()
+        observation.addMHCAppAsSource()
         try observation.apply(.sensorKitSourceDevice, input: deviceInfo)
         try postprocessObservation(observation)
         

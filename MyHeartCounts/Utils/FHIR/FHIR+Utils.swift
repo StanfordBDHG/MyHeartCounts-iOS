@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import ModelsR4
+import ModelsDSTU2
 
 
-extension ModelsR4.Resource: @retroactive Identifiable {}
+extension ModelsDSTU2.Resource: @retroactive Identifiable {}

@@ -13,14 +13,21 @@ import SpeziHealthKit
 import SpeziHealthKitBulkExport
 
 
-struct HealthKitSamplesToFHIRJSONProcessor: BatchProcessor {
+struct HealthKitSamplesFHIRUploader: BatchProcessor {
     typealias Output = URL?
+    
+    let standard: MyHeartCountsStandard
     
     func process<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) async throws -> URL? {
         guard !samples.isEmpty else {
             return nil
         }
-        return try storeSamples(samples, of: sampleType)
+        if let samples = samples as? [HKClinicalRecord] {
+            try await storeSamples(samples)
+            return nil
+        } else {
+            return try storeSamples(samples, of: sampleType)
+        }
     }
     
     private func storeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
@@ -32,5 +39,11 @@ struct HealthKitSamplesToFHIRJSONProcessor: BatchProcessor {
         let compressedUrl = fileManager.temporaryDirectory.appendingPathComponent("\(sampleType.id)_\(UUID().uuidString).json.zlib")
         try (consume compressed).write(to: compressedUrl)
         return compressedUrl
+    }
+    
+    private func storeSamples(_ samples: consuming [HKClinicalRecord]) async throws {
+        for sample in samples {
+            try await standard.uploadHealthObservation(sample)
+        }
     }
 }

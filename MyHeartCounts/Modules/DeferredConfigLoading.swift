@@ -297,6 +297,7 @@ enum DeferredConfigLoading {
 
 extension Spezi {
     @MainActor static var didLoadFirebase = false
+    @MainActor private(set) static var currentlyLoadedFirebaseSelector: DeferredConfigLoading.FirebaseConfigSelector?
     
     @MainActor // IDEA maybe rename this? (here and elsewhere (it's not just firebase any more))
     static func loadFirebase(for region: Locale.Region) {

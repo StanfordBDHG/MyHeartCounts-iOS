@@ -10,6 +10,7 @@
 import Foundation
 import OSLog
 import Spezi
+import SpeziAccount
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziStudy
@@ -19,13 +20,15 @@ import SpeziStudy
 @MainActor
 final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
+    @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @ObservationIgnored @Dependency(Account.self) private var account: Account?
     @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkExporter
     @ObservationIgnored @Dependency(ManagedFileUpload.self) var managedFileUpload
     // swiftlint:enable attributes
     
-    private(set) var session: (any BulkExportSession<HealthKitSamplesToFHIRJSONProcessor>)?
+    private(set) var session: (any BulkExportSession<HealthKitSamplesFHIRUploader>)?
     
     // periphery:ignore
     /// A `Progress` instance representing the current health data export progress,
@@ -36,7 +39,11 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     
     
     func configure() {
-        startAutomaticExportingIfNeeded()
+        if let account, account.signedIn {
+            startAutomaticExportingIfNeeded()
+        } else {
+            logger.notice("Skipping initial historical upload trigger bc not logged in")
+        }
     }
     
     
@@ -76,11 +83,12 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                     continue
                 case .enabled(let startDate):
                     do {
+                        logger.notice("Starting historical health upload")
                         session = try await bulkExporter.session(
                             withId: .mhcHistoricalDataExport,
                             for: study.allCollectedHealthData,
                             startDate: startDate,
-                            using: HealthKitSamplesToFHIRJSONProcessor()
+                            using: HealthKitSamplesFHIRUploader(standard: standard)
                         )
                     } catch {
                         logger.error("Error creating bulk export session: \(error)")
