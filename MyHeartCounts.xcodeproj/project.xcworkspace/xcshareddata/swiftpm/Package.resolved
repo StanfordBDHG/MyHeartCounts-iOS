@@ -1,5 +1,5 @@
 {
-  "originHash" : "1df80568add420ee8939dd0a8dc2d3599b3a2d29499bfe158def0e1ce93403ff",
+  "originHash" : "c0496cfea703c38d733f51a4694e66f2408f32be18bcec5bcafe6e6f3fec721d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "9a54d56618ea0823e697d378a594e486804bb8a4",
-        "version" : "0.1.4"
+        "revision" : "9f1e50583a3d1ab1bcd57c8523ef54a4ead58e6e",
+        "version" : "0.1.6"
       }
     },
     {
@@ -224,6 +224,15 @@
       "state" : {
         "revision" : "7215f884abe4d0d22fa15f4d4811cb9103c846b1",
         "version" : "0.1.1"
+      }
+    },
+    {
+      "identity" : "spezifhir",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordSpezi/SpeziFHIR.git",
+      "state" : {
+        "revision" : "2b78bdf88d32a7fb00a22a68923469d9cc8974fd",
+        "version" : "0.8.1"
       }
     },
     {
@@ -321,7 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "3f1e72ca6bb1e503c7589090d56d0a13a842affe"
+        "revision" : "f446918b33f1945b1c48212c71649d854b337921",
+        "version" : "0.1.16"
       }
     },
     {
