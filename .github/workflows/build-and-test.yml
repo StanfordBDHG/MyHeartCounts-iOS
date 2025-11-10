@@ -42,14 +42,13 @@ jobs:
       customcommand: "firebase emulators:exec 'fastlane uitest'"
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
-  uploadcoveragereport:
-    name: Upload Coverage Report
-    needs: [buildandtest_unittests, buildandtest_uitests]
-    uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
-    continue-on-error: true
-    permissions:
-      contents: read
-    with:
-      coveragereports: MyHeartCounts-UnitTests.xcresult MyHeartCounts-UITests.xcresult
-    secrets:
-      token: ${{ secrets.CODECOV_TOKEN }}
+  # uploadcoveragereport:
+  #   name: Upload Coverage Report
+  #   needs: [buildandtest_unittests, buildandtest_uitests]
+  #   uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
+  #   permissions:
+  #     contents: read
+  #   with:
+  #     coveragereports: MyHeartCounts-UnitTests.xcresult MyHeartCounts-UITests.xcresult
+  #   secrets:
+  #     token: ${{ secrets.CODECOV_TOKEN }}
