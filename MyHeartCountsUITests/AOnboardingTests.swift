@@ -288,7 +288,7 @@ extension XCUIApplication {
     
     
     private func navigateHealthRecords(_ testCase: XCTestCase) {
-        XCTAssert(staticTexts["HealthKit Access"].waitForExistence(timeout: 2))
+        XCTAssert(staticTexts["Health Records"].waitForExistence(timeout: 2))
         buttons["Grant Access"].tap()
         testCase.handleHealthRecordsAuthorization()
     }
