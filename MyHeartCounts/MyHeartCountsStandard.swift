@@ -110,7 +110,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             // we could look into using the `FirebaseApp.deleteApp(_:)` API in combination with attempting to unload the related Spezi modules, but that
             // would be anything but trivial.
             // if the user wants to switch to a different region, the easiest approach currently is to just kill and relaunch the app.
-            try? ManagedFileUpload.clearPendingUploads()
+            try? await managedFileUpload.clearPendingUploads()
             let studyManager = studyManager
             _ = await Task { @MainActor in
                 // this works bc we only ever enroll into the MHC study.
