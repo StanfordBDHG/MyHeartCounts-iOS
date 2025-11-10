@@ -480,6 +480,9 @@
     "About %@" : {
 
     },
+    "About the My Heart Counts Study" : {
+
+    },
     "ACCOUNT_SETUP_DESCRIPTION" : {
       "localizations" : {
         "en" : {
@@ -2389,9 +2392,6 @@
           }
         }
       }
-    },
-    "Learn More About the My Heart Counts Study" : {
-
     },
     "Less than $15,000" : {
       "localizations" : {

@@ -98,7 +98,7 @@ struct HomeTab: RootViewTab {
         Section {
             Link(destination: MyHeartCounts.website) {
                 HStack {
-                    Text("Learn More About the My Heart Counts Study")
+                    Text("About the My Heart Counts Study")
                     Spacer()
                     Image(systemSymbol: .arrowUpRightSquare)
                 }
