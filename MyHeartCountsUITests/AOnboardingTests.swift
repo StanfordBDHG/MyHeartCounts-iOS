@@ -82,7 +82,7 @@ extension XCUIApplication {
         navigateOnboardingDisclaimers()
         navigateConsentComprehension()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
-        try navigateHealthKitAccess()
+        navigateHealthKitAccess()
         if staticTexts["Health Records"].waitForExistence(timeout: 2) { // only included if Health Records are actually available
             navigateHealthRecords(sender)
         }
