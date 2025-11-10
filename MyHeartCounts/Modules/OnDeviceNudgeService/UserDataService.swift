@@ -29,44 +29,28 @@ enum UserDataService {
     }
     
     static func determineEducationLevel(details: AccountDetails) -> EducationLevel? {
-        let hasUSCollege = details.educationUS.map {
-            switch $0 {
-            case .someCollege, .bachelor, .master, .doctoralDegree:
-                return true
-            default:
-                return false
-            }
+        let hasUSCollege = details.educationUS.map { education in
+            let collegeLevelIDs: Set<String> = ["someCollege", "bachelor", "master", "doctoralDegree"]
+            return collegeLevelIDs.contains(education.id)
         } ?? false
 
-        let hasUKCollege = details.educationUK.map {
-            switch $0 {
-            case .vocationalTraining, .someCollege, .master, .doctoralDegree:
-                return true
-            default:
-                return false
-            }
+        let hasUKCollege = details.educationUK.map { education in
+            let collegeLevelIDs: Set<String> = ["vocationalTraining", "someCollege", "master", "doctoralDegree"]
+            return collegeLevelIDs.contains(education.id)
         } ?? false
         
         if hasUSCollege || hasUKCollege {
             return .college
         }
                 
-        let hasUSHighSchool = details.educationUS.map {
-            switch $0 {
-            case .didNotAttendSchool, .gradeSchool, .highSchool:
-                return true
-            default:
-                return false
-            }
+        let hasUSHighSchool = details.educationUS.map { education in
+            let highSchoolLevelIDs: Set<String> = ["didNotAttendSchool", "gradeSchool", "highSchool"]
+            return highSchoolLevelIDs.contains(education.id)
         } ?? false
 
-        let hasUKHighSchool = details.educationUK.map {
-            switch $0 {
-            case .didNotAttendSchool, .highSchool:
-                return true
-            default:
-                return false
-            }
+        let hasUKHighSchool = details.educationUK.map { education in
+            let highSchoolLevelIDs: Set<String> = ["didNotAttendSchool", "highSchool"]
+            return highSchoolLevelIDs.contains(education.id)
         } ?? false
 
         if hasUSHighSchool || hasUKHighSchool {
