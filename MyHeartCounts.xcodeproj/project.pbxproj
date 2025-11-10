@@ -1631,8 +1631,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.2;
+				branch = lukas/hotfix;
+				kind = branch;
 			};
 		};
 		80B8A2112EC106A100F0E453 /* XCRemoteSwiftPackageReference "SpeziFHIR" */ = {
