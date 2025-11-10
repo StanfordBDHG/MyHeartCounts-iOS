@@ -16,7 +16,11 @@ import SpeziHealthKitBulkExport
 struct HealthKitSamplesFHIRUploader: BatchProcessor {
     typealias Output = URL?
     
-    let standard: MyHeartCountsStandard
+    enum ProcessingError: Error {
+        case missingStandard
+    }
+    
+    let standard: MyHeartCountsStandard?
     
     func process<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) async throws -> URL? {
         guard !samples.isEmpty else {
@@ -42,6 +46,9 @@ struct HealthKitSamplesFHIRUploader: BatchProcessor {
     }
     
     private func storeSamples(_ samples: consuming [HKClinicalRecord]) async throws {
+        guard let standard else {
+            throw ProcessingError.missingStandard
+        }
         for sample in samples {
             try await standard.uploadHealthObservation(sample)
         }
