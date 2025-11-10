@@ -19,7 +19,7 @@ import SwiftUI
 @MainActor
 struct AlwaysAvailableTaskActions: DynamicProperty {
     @Environment(StudyManager.self) private var studyManager
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled) private var debugModeEnabled
     
     var wrappedValue: Self {
         self

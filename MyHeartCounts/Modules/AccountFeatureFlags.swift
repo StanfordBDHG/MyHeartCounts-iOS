@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order attributes
+// swiftlint:disable file_types_order attributes discouraged_optional_boolean
 
 import Foundation
 import Spezi
@@ -17,22 +17,56 @@ import SwiftUI
 @Observable
 @MainActor
 final class AccountFeatureFlags: Module, EnvironmentAccessible, DefaultInitializable, Sendable {
-    private(set) var isDebugModeEnabled = false
+    struct FeatureFlagDefinition: Sendable {
+        enum Source: Sendable {
+            case accountDetail(any KeyPath<AccountDetails, Bool?> & Sendable)
+            case localPreference(LocalPreferenceKey<Bool>)
+            case launchOption(LaunchOption<Bool>)
+        }
+        let sources: [Source]
+    }
+    
+    @ObservationIgnored @Dependency(Account.self) private var account: Account?
     
     nonisolated init() {}
     
-    func _updateIsDebugModeEnabled(_ newValue: Bool) { // swiftlint:disable:this identifier_name
-        isDebugModeEnabled = newValue
+    subscript(flag: FeatureFlagDefinition) -> Bool {
+        flag.sources.contains { source in
+            switch source {
+            case .accountDetail(let keyPath):
+                account?.details?[keyPath: keyPath] == true
+            case .localPreference(let key):
+                LocalPreferencesStore.standard[key] == true
+            case .launchOption(let option):
+                LaunchOptions[option]
+            }
+        }
     }
+}
+
+
+extension AccountFeatureFlags.FeatureFlagDefinition {
+    static let isDebugModeEnabled = Self(sources: [
+        .accountDetail(\.enableDebugMode),
+        .launchOption(.forceEnableDebugMode),
+        .localPreference(.lastSeenIsDebugModeEnabledAccountKey)
+    ])
 }
 
 
 @MainActor
 @propertyWrapper
-struct DebugModeEnabled: DynamicProperty {
-    @Environment(AccountFeatureFlags.self) private var flags
+struct AccountFeatureFlagQuery: DynamicProperty {
+    @Environment(AccountFeatureFlags.self)
+    private var featureFlags
+    
+    private let flag: AccountFeatureFlags.FeatureFlagDefinition
     
     var wrappedValue: Bool {
-        flags.isDebugModeEnabled
+        featureFlags[flag]
+    }
+    
+    init(_ flag: AccountFeatureFlags.FeatureFlagDefinition) {
+        self.flag = flag
     }
 }

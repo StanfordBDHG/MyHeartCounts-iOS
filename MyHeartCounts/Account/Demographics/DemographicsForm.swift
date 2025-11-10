@@ -66,12 +66,13 @@ private struct Impl<Footer: View>: View {
     @Binding var isComplete: Bool
     let footer: @MainActor () -> Footer
     
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled) private var debugModeEnabled
     
     @State private var viewState: ViewState = .idle
     @State private var regionOverride: Locale.Region?
     
     private var region: Locale.Region {
+        // NOTE: should probably use the region selected in the onboarding here?!
         regionOverride ?? studyManager.preferredLocale.region ?? .unitedStates
     }
     
@@ -142,7 +143,7 @@ private struct Impl<Footer: View>: View {
                 }
                 if region == .unitedStates {
                     DemographicsComponent(\.latinoStatus, noSelectionValue: nil, .notSet) { binding, _ in
-                        makeLatinoStatusRow(binding.withDefault(.notSet))
+                        makeSimpleValuePickerRow("Are you Hispanic/Latino?", binding: binding.withDefault(.notSet))
                     }
                 }
             }
@@ -172,13 +173,19 @@ private struct Impl<Footer: View>: View {
                 switch region {
                 case .unitedStates:
                     usStateRow
+                    DemographicsComponent(\.usEducationLevel, noSelectionValue: nil) { binding, _ in
+                        makeSimpleValuePickerRow("Education Level", binding: binding.withDefault(.notSet))
+                    }
                     DemographicsComponent(\.usHouseholdIncome, noSelectionValue: nil) { binding, _ in
-                        makeIncomeRow(binding.withDefault(.notSet))
+                        makeSimpleValuePickerRow("Total Household Income", binding: binding.withDefault(.notSet))
                     }
                 case .unitedKingdom:
                     ukRegionRow
+                    DemographicsComponent(\.ukEducationLevel, noSelectionValue: nil) { binding, _ in
+                        makeSimpleValuePickerRow("Education Level", binding: binding.withDefault(.notSet))
+                    }
                     DemographicsComponent(\.ukHouseholdIncome, noSelectionValue: nil) { binding, _ in
-                        makeIncomeRow(binding.withDefault(.notSet))
+                        makeSimpleValuePickerRow("Total Household Income", binding: binding.withDefault(.notSet))
                     }
                 default:
                     EmptyView()
@@ -257,24 +264,9 @@ private struct Impl<Footer: View>: View {
         }
     }
     
-    @ViewBuilder
-    private func makeIncomeRow<HI: HouseholdIncome>(_ binding: Binding<HI>) -> some View {
-        let title: LocalizedStringResource = "Total Household Income"
-        NavigationLink {
-            DemographicsSingleSelectionPicker(selection: binding)
-                .navigationTitle(title)
-        } label: {
-            NavigationLinkLabel(
-                title,
-                isEmpty: binding.wrappedValue == .notSet,
-                value: binding.wrappedValue.displayTitle
-            )
-        }
-    }
     
     @ViewBuilder
-    private func makeLatinoStatusRow(_ binding: Binding<LatinoStatusOption>) -> some View {
-        let title: LocalizedStringResource = "Are you Hispanic/Latino?"
+    private func makeSimpleValuePickerRow(_ title: LocalizedStringResource, binding: Binding<some DemographicsSelectableSimpleValue>) -> some View {
         NavigationLink {
             DemographicsSingleSelectionPicker(selection: binding)
                 .navigationTitle(title)

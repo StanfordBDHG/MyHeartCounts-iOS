@@ -36,7 +36,7 @@ struct HealthSampleProcessingTests {
             makeSample(numSteps: 7, startOffset: 15, duration: 10),
             makeSample(numSteps: 9, startOffset: 27, duration: 12)
         ]
-        let processor = HealthKitSamplesToFHIRJSONProcessor()
+        let processor = HealthKitSamplesFHIRUploader(standard: nil)
         let compressedUrl = try #require(await processor.process(samples, of: .stepCount))
         let decompressed = try Data(contentsOf: compressedUrl).decompressed(using: Zlib.self)
         let observations = try JSONDecoder().decode([Observation].self, from: decompressed)

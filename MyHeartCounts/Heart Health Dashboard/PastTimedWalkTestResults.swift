@@ -8,6 +8,7 @@
 
 import Foundation
 import ModelsR4
+import MyHeartCountsShared
 import SFSafeSymbols
 import SpeziHealthKit
 import SpeziStudyDefinition

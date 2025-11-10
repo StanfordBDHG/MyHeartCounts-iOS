@@ -20,11 +20,17 @@ struct SensorKitControlView: View {
     @Environment(SensorKitDataFetcher.self)
     private var dataFetcher
     
+    @LocalPreference(.sendSensorKitUploadNotifications)
+    private var sendSensorKitNotifications
+    
     @State private var viewState: ViewState = .idle
     @State private var queryAnchorDatesId = UUID()
     
     var body: some View {
         Form {
+            Section {
+                Toggle("Background Upload Notifications", isOn: $sendSensorKitNotifications)
+            }
             Section {
                 AsyncButton("Start Recording Data", state: $viewState) {
                     for sensor in SensorKit.mhcSensors {

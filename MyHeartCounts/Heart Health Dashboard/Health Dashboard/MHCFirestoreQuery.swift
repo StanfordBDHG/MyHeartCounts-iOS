@@ -21,6 +21,8 @@ import SpeziHealthKit
 import SwiftUI
 
 
+/// Query data from Firestore.
+///
 /// An alternative to Firebase's `FirestoreQuery`, with some changes based on our specific needs in My Heart Counts:
 ///
 /// Differences to the `@FirestoreQuery` API:
@@ -44,7 +46,7 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     
     @State private var impl = Impl()
     private let input: QueryInput
-    private let logger = Logger(subsystem: "edu.stanford.MyHeartCounts.MHCFirestoreQuery<\(Element.self)>", category: "Firebase")
+    private let logger = Logger(category: .init("MHCFirestoreQuery<\(Element.self)>"))
     
     var wrappedValue: [Element] {
         impl.elements

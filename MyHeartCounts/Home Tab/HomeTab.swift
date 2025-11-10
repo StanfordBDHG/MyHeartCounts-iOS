@@ -36,6 +36,7 @@ struct HomeTab: RootViewTab {
                     noTasksMessageLabels: .init(title: "You're All Set")
                 )
                 missedEventsSection
+                learnMoreSection
             }
             .navigationTitle("My Heart Counts")
             .toolbar {
@@ -88,6 +89,18 @@ struct HomeTab: RootViewTab {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder private var learnMoreSection: some View {
+        Section {
+            Link(destination: MyHeartCounts.website) {
+                HStack {
+                    Text("About the My Heart Counts Study")
+                    Spacer()
+                    Image(systemSymbol: .arrowUpRightSquare)
                 }
             }
         }

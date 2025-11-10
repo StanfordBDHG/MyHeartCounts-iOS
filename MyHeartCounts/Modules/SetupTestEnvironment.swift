@@ -6,12 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable all
+
 import Foundation
 import OSLog
 import Spezi
+import HealthKitOnFHIR
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziHealthKit
+import SpeziHealthKitBulkExport
 import SpeziLocalStorage
 import SpeziStudy
 import struct SpeziViews.AnyLocalizedError
@@ -57,9 +61,11 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
+    @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
+    @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkHealthExporter
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     // swiftlint:enable attributes
@@ -123,6 +129,12 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     
     
     private func setUp(resetExistingData: Bool) async throws {
+        let signposter = OSSignposter(logger: Logger(category: .pointsOfInterest))
+        let signpostId = signposter.makeSignpostID()
+        let state = signposter.beginInterval("Setup Test Environment", id: signpostId)
+        defer {
+            signposter.endInterval("Setup Test Environment", state)
+        }
         logger.notice("Setting up Test Environment")
         guard let accountService else {
             logger.error("Unable to set up test account: no account service")
@@ -134,7 +146,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
         if resetExistingData {
             for enrollment in studyManager.studyEnrollments {
-                try studyManager.unenroll(from: enrollment)
+                try await studyManager.unenroll(from: enrollment)
             }
             do {
                 try await accountService.logout()
@@ -161,12 +173,18 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
+        signposter.emitEvent("did log in", id: signpostId)
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
         let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
             .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
         try await healthKit.askForAuthorization(for: accessReqs)
-        try await studyManager.enroll(in: studyBundle)
-        try localStorage.store(.now, for: .studyActivationDate)
+        if HKHealthStore().supportsHealthRecords() {
+            try await healthKit.askForAuthorization(for: .init(read: MyHeartCountsStandard.allRecordTypes))
+        }
+        signposter.emitEvent("health reqs complete", id: signpostId)
+        try await standard.enroll(in: studyBundle)
+        LocalPreferencesStore.standard[.onboardingFlowComplete] = true
+        signposter.emitEvent("enrollment complete", id: signpostId)
     }
 }

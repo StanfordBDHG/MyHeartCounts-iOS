@@ -13,11 +13,18 @@ import SwiftUI
 
 
 struct QuantityInputRow: View {
+    enum AllowsDecimalEntry {
+        case automatic
+        case yes
+        case no // swiftlint:disable:this identifier_name
+    }
+    
     private let title: LocalizedStringResource
     private let limits: Range<Double>?
     private let sampleType: MHCQuantitySampleType
     @Binding private var value: Double?
     private let unit: HKUnit?
+    private let allowsDecimalEntry: Bool
     // Note: using a NumberFormatter() instead of the new `FloatingPointFormatStyle<Double>.number` API,
     // because of https://github.com/swiftlang/swift-foundation/issues/135
     private let formatter = NumberFormatter()
@@ -31,7 +38,7 @@ struct QuantityInputRow: View {
                 }
                 .accessibilityIdentifier("QuantityDataEntry:\(sampleType.displayTitle)")
                 .multilineTextAlignment(.trailing)
-                .keyboardType(.decimalPad)
+                .keyboardType(allowsDecimalEntry ? .decimalPad : .numberPad)
                 .preference(key: ContainsInvalidInputPreferenceKey.self, value: inputIsOutOfLimits)
                 if let unit, unit != .count() {
                     Text(unit.unitString)
@@ -67,13 +74,22 @@ struct QuantityInputRow: View {
         value: Binding<Double?>,
         limits: Range<Double>?,
         sampleType: MHCQuantitySampleType,
-        unit: HKUnit? = nil
+        unit: HKUnit? = nil,
+        allowsDecimalEntry: AllowsDecimalEntry = .automatic
     ) {
         self.title = title
         self.limits = limits
         self._value = value
         self.sampleType = sampleType
         self.unit = unit ?? sampleType.displayUnit
+        self.allowsDecimalEntry = switch allowsDecimalEntry {
+        case .automatic:
+            !sampleType.prefersNonDecimalValues
+        case .yes:
+            true
+        case .no:
+            false
+        }
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2 // make this dependent on the context?!
     }
@@ -86,7 +102,8 @@ struct QuantityInputRow: View {
         value: Binding<Int?>,
         limits: Range<Double>?,
         sampleType: MHCQuantitySampleType,
-        unit: HKUnit? = nil
+        unit: HKUnit? = nil,
+        allowsDecimalEntry: AllowsDecimalEntry = .automatic
     ) {
         self.title = title
         self.limits = limits
@@ -97,6 +114,14 @@ struct QuantityInputRow: View {
         }
         self.sampleType = sampleType
         self.unit = unit ?? sampleType.displayUnit
+        self.allowsDecimalEntry = switch allowsDecimalEntry {
+        case .automatic:
+            !sampleType.prefersNonDecimalValues
+        case .yes:
+            true
+        case .no:
+            false
+        }
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 0
     }
@@ -118,6 +143,27 @@ extension View {
     func storeQuantityRowInputsAllValid(in containsInvalidInput: Binding<Bool>) -> some View {
         self.onPreferenceChange(QuantityInputRow.ContainsInvalidInputPreferenceKey.self) {
             containsInvalidInput.wrappedValue = $0
+        }
+    }
+}
+
+
+extension MHCQuantitySampleType {
+    /// whether the sample type prefers non-decimal values (i.e., natural numbers) in its data entry.
+    var prefersNonDecimalValues: Bool {
+        switch self {
+        case .healthKit(let sampleType):
+            // we only consider the ones we actually support data entry for in MHC...
+            switch sampleType {
+            case .stepCount, .bloodGlucose:
+                true
+            default:
+                false
+            }
+        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
+            true
+        default:
+            true
         }
     }
 }

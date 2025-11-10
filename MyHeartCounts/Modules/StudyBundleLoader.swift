@@ -25,7 +25,7 @@ final class StudyBundleLoader: Module, Sendable {
     
     static let shared = StudyBundleLoader()
     
-    private let logger = Logger(subsystem: "edu.stanford.MHC.studyLoader", category: "")
+    private let logger = Logger(category: .init("StudyLoader"))
     
     /// The currently active Study Bundle loading operation, if any.
     ///

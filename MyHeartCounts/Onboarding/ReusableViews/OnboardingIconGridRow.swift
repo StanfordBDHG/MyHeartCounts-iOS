@@ -47,10 +47,12 @@ struct OnboardingIconGridRow: View {
 
 #Preview {
     Grid(horizontalSpacing: 16, verticalSpacing: 16) {
-        OnboardingIconGridRow(
-            icon: SFSymbol(rawValue: "7.calendar"),
-            text: "FINAL_ENROLLMENT_STEP_MESSAGE_SEVEN_DAYS"
-        )
+        if #available(iOS 26, *) {
+            OnboardingIconGridRow(
+                icon: ._7Calendar,
+                text: "FINAL_ENROLLMENT_STEP_MESSAGE_SEVEN_DAYS"
+            )
+        }
         OnboardingIconGridRow(
             icon: .deskclock,
             text: "FINAL_ENROLLMENT_STEP_MESSAGE_EVERY_DAY"

@@ -87,7 +87,7 @@ struct NewsTab: RootViewTab {
                 }
             }
             Section {
-                Link(destination: "https://myheartcounts.stanford.edu") {
+                Link(destination: MyHeartCounts.website) {
                     Text({ () -> AttributedString in
                         var str = AttributedString(localized: "For more information and updates, visit myheartcounts.stanford.edu")
                         str.setAttributes(AttributeContainer().foregroundColor(colorScheme.textLabelForegroundStyle))

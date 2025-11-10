@@ -60,6 +60,9 @@
         }
       }
     },
+    "%@ +" : {
+
+    },
     "%@ after %@ sec" : {
       "localizations" : {
         "en" : {
@@ -198,7 +201,7 @@
         }
       }
     },
-    "< 5.7" : {
+    "< %@" : {
 
     },
     "< 7" : {
@@ -207,13 +210,16 @@
     "< 25" : {
 
     },
+    "< 85" : {
+
+    },
     "< 130" : {
 
     },
-    "< 2000" : {
+    "<120 / <80" : {
 
     },
-    "<120 / <80" : {
+    "> 140" : {
 
     },
     "$15,000 – $24,999" : {
@@ -378,34 +384,16 @@
     "5 to 6 hours" : {
 
     },
-    "5.7 – 6.4" : {
-
-    },
     "6 to 7 hours" : {
-
-    },
-    "6.5 – 6.9" : {
-
-    },
-    "7 – 7.9" : {
 
     },
     "7 to 9 hours" : {
 
     },
-    "8 – 8.9" : {
-
-    },
     "8 – 10" : {
 
     },
-    "9 – 9.9" : {
-
-    },
     "9 to 10 hours" : {
-
-    },
-    "10+" : {
 
     },
     "10+ hours" : {
@@ -435,10 +423,13 @@
     "35 – 39" : {
 
     },
-    "40+" : {
+    "40 +" : {
 
     },
     "60 – 89" : {
+
+    },
+    "85 – 99" : {
 
     },
     "90 – 119" : {
@@ -447,10 +438,19 @@
     "100 " : {
 
     },
+    "100 – 109" : {
+
+    },
+    "110 – 125" : {
+
+    },
     "120 – 149" : {
 
     },
     "120–129 / 80–89" : {
+
+    },
+    "126 – 140" : {
 
     },
     "130 – 159" : {
@@ -462,7 +462,7 @@
     "140+ / 90+" : {
 
     },
-    "150+" : {
+    "150 +" : {
 
     },
     "160 – 189" : {
@@ -471,16 +471,16 @@
     "190 – 219" : {
 
     },
-    "220+" : {
-
-    },
-    "10000+" : {
+    "220 +" : {
 
     },
     "Abdominal Aortic Aneurysm" : {
 
     },
     "About %@" : {
+
+    },
+    "About the My Heart Counts Study" : {
 
     },
     "ACCOUNT_SETUP_DESCRIPTION" : {
@@ -725,10 +725,16 @@
     "AuthorizationStatus" : {
 
     },
+    "Bachelor" : {
+
+    },
     "Background Tasks" : {
 
     },
     "Background Tasks Log" : {
+
+    },
+    "Background Upload Notifications" : {
 
     },
     "Biological Sex at Birth" : {
@@ -846,6 +852,12 @@
           }
         }
       }
+    },
+    "College graduate or Baccalaureate Degree" : {
+
+    },
+    "College/University Graduate Degree" : {
+
     },
     "Colorado" : {
       "localizations" : {
@@ -1069,6 +1081,9 @@
     "Coronary Stent/Angioplasty" : {
 
     },
+    "Daily Average, Last 7 Days" : {
+
+    },
     "Data collection enabled for %lld sensors" : {
 
     },
@@ -1128,17 +1143,6 @@
         }
       }
     },
-    "Delete ~/%@/*" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar ~/%@/*"
-          }
-        }
-      }
-    },
     "Delete&Reset Session" : {
       "localizations" : {
         "es" : {
@@ -1163,6 +1167,9 @@
 
     },
     "Did Opt In to Trial" : {
+
+    },
+    "Didn't attend school" : {
 
     },
     "Diet" : {
@@ -1198,6 +1205,9 @@
         }
       }
     },
+    "Distance" : {
+
+    },
     "District of Columbia" : {
       "localizations" : {
         "es" : {
@@ -1207,6 +1217,9 @@
           }
         }
       }
+    },
+    "Doctoral Degree" : {
+
     },
     "Don't Know" : {
 
@@ -1245,6 +1258,9 @@
           }
         }
       }
+    },
+    "Education Level" : {
+
     },
     "Educational Level" : {
       "localizations" : {
@@ -1350,6 +1366,12 @@
           }
         }
       }
+    },
+    "End" : {
+
+    },
+    "endDate" : {
+
     },
     "England (%@)" : {
 
@@ -1461,6 +1483,9 @@
           }
         }
       }
+    },
+    "Fasting Blood Glucose" : {
+
     },
     "FCM Token" : {
       "localizations" : {
@@ -1851,6 +1876,9 @@
         }
       }
     },
+    "Grade School" : {
+
+    },
     "Grant Access" : {
       "localizations" : {
         "en" : {
@@ -1896,6 +1924,15 @@
           }
         }
       }
+    },
+    "Health Records" : {
+
+    },
+    "HEALTH_RECORDS_PERMISSIONS_DESCRIPTION" : {
+
+    },
+    "HEALTH_RECORDS_PERMISSIONS_SUBTITLE" : {
+
     },
     "HealthKit" : {
 
@@ -2020,9 +2057,6 @@
         }
       }
     },
-    "Hemoglobin A1c (HbA1c)" : {
-
-    },
     "HHD_APPLE_WATCH_REQUIRED_FOOTER" : {
       "localizations" : {
         "en" : {
@@ -2040,6 +2074,9 @@
       }
     },
     "High Coronary Calcium Score" : {
+
+    },
+    "High School" : {
 
     },
     "Historical Fetch" : {
@@ -2468,7 +2505,13 @@
         }
       }
     },
+    "Master" : {
+
+    },
     "Memory Usage" : {
+
+    },
+    "MHC Heart Health" : {
 
     },
     "Michigan" : {
@@ -2779,16 +2822,8 @@
         }
       }
     },
-    "No, not Spanish/Hispanic/Latino" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No, no soy hispano/latino"
-          }
-        }
-      }
+    "None" : {
+
     },
     "North Carolina" : {
       "localizations" : {
@@ -2912,6 +2947,9 @@
           }
         }
       }
+    },
+    "Number of Steps" : {
+
     },
     "Ohio" : {
       "localizations" : {
@@ -3366,17 +3404,6 @@
     },
     "Processing Health and SensorKit Data…" : {
 
-    },
-    "Processing Health Data…" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Procesando datos de salud..."
-          }
-        }
-      }
     },
     "Processing Sleep Data…" : {
       "localizations" : {
@@ -4101,6 +4128,12 @@
         }
       }
     },
+    "Some College" : {
+
+    },
+    "Some college or vocational school or associate degree" : {
+
+    },
     "South Carolina" : {
       "localizations" : {
         "es" : {
@@ -4147,6 +4180,9 @@
         }
       }
     },
+    "startDate" : {
+
+    },
     "State" : {
       "localizations" : {
         "es" : {
@@ -4156,6 +4192,9 @@
           }
         }
       }
+    },
+    "Steps" : {
+
     },
     "Stop Recording Data" : {
 
@@ -4266,6 +4305,9 @@
           }
         }
       }
+    },
+    "The test was cancelled" : {
+
     },
     "The Timed Walking Test requires read access to Motion and Fitness Data." : {
       "localizations" : {
@@ -4467,17 +4509,6 @@
     "Update" : {
 
     },
-    "Uploading Health Data" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cargando Datos de Salud"
-          }
-        }
-      }
-    },
     "US State / Region" : {
       "localizations" : {
         "es" : {
@@ -4518,6 +4549,9 @@
         }
       }
     },
+    "value" : {
+
+    },
     "Value" : {
 
     },
@@ -4550,6 +4584,12 @@
           }
         }
       }
+    },
+    "Vocational Training" : {
+
+    },
+    "Vocational training / apprenticeship / diploma" : {
+
     },
     "Wales (%@)" : {
 

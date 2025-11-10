@@ -16,6 +16,9 @@ import SwiftUI
 
 struct HeartHealthDashboardTab: RootViewTab {
     static var tabTitle: LocalizedStringResource {
+        // intentionally keeping the title here as just "Heart Health"
+        // (instead of "MHC Heart Health", which is what we use for the navigation title),
+        // in order to make it better fit in the tab bar item...
         "Heart Health"
     }
     static var tabSymbol: SFSymbol {
@@ -25,7 +28,7 @@ struct HeartHealthDashboardTab: RootViewTab {
     var body: some View {
         NavigationStack {
             HeartHealthDashboard()
-                .navigationTitle(Self.tabTitle)
+                .navigationTitle("MHC Heart Health")
                 .toolbar {
                     accountToolbarItem
                 }
@@ -40,7 +43,7 @@ extension AnySampleType {
     /// - Important: Always use this property instead of `displayTitle`!
     var mhcDisplayTitle: String {
         if self == .bloodGlucose {
-            String(localized: "Hemoglobin A1c (HbA1c)")
+            String(localized: "Fasting Blood Glucose")
         } else {
             self.displayTitle
         }

@@ -11,6 +11,7 @@
 import Foundation
 import MHCStudyDefinition
 import class ModelsR4.Questionnaire
+import MyHeartCountsShared
 import ResearchKitSwiftUI
 import SFSafeSymbols
 import SpeziQuestionnaire
@@ -175,7 +176,7 @@ private struct UserTaskPerforming: ViewModifier {
 }
 
 extension View {
-    /// Designates the view as an anchor for initiating user-prompted tasks, within this part of the view hierarchy.
+    /// Designates the view as an anchor for initiating (and continuing) user-prompted tasks, within this part of the view hierarchy.
     ///
     /// Apply this modifier to those parts of the view hierarchy that need to be able to present sheets in response to task actions being initiated via the ``PerformTask`` API.
     /// The modifier is applied once to the root view, and additionally needs to be applied to all views presented as sheets that also need to be able to trigger tasks.

@@ -77,10 +77,10 @@ extension HealthDashboardQuantityLabel {
             case .healthKit(.bodyMassIndex):
                 String(format: "%.1f", value)
             case _ where sampleType.displayUnit == .count():
-                String(Int(value))
+                Int(value).formatted(.number)
             default:
                 if value.isWholeNumber {
-                    String(Int(value))
+                    Int(value).formatted(.number)
                 } else {
                     String(format: "%.2f", value)
                 }

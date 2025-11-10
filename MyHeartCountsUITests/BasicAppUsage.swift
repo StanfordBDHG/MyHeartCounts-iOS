@@ -19,9 +19,7 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         goToTab(.upcoming)
         XCTAssert(app.navigationBars.staticTexts["Tasks"].waitForExistence(timeout: 2))
         goToTab(.heartHealth)
-        XCTAssert(app.navigationBars.staticTexts["Heart Health"].waitForExistence(timeout: 2))
-        goToTab(.news)
-        XCTAssert(app.navigationBars.staticTexts["News"].waitForExistence(timeout: 2))
+        XCTAssert(app.navigationBars.staticTexts["MHC Heart Health"].waitForExistence(timeout: 2))
     }
     
     
@@ -69,12 +67,22 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         goToTab(.home)
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForExistence(timeout: 2))
         app.staticTexts["Enable SensorKit"].press(forDuration: 2)
-        print(app.debugDescription)
         XCTAssert(app.buttons["Stop Suggesting This"].waitForExistence(timeout: 2))
         app.buttons["Stop Suggesting This"].tap()
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 2))
         app.terminate()
         try launchAppAndEnrollIntoStudy(keepExistingData: true)
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 5))
+    }
+    
+    
+    @MainActor
+    func testLogout() throws {
+        try launchAppAndEnrollIntoStudy()
+        openAccountSheet()
+        app.swipeUp()
+        app.buttons["Logout"].tap()
+        app.alerts["Are you sure you want to logout?"].buttons["Logout"].tap()
+        XCTAssert(app.staticTexts["Welcome to the My Heart Counts\nCardiovascular Health Study"].waitForExistence(timeout: 5))
     }
 }

@@ -10,27 +10,10 @@
 
 import Foundation
 
-protocol HouseholdIncome: RawRepresentableAccountKey, DemographicsSelectableSimpleValue {}
-
-extension HouseholdIncome {
-    var id: RawValue {
-        rawValue
-    }
-    
-    init?(rawValue: RawValue) {
-        let allOptions = Self.options + [.notSet, .preferNotToState]
-        if let option = allOptions.first(where: { $0.rawValue == rawValue }) {
-            self = option
-        } else {
-            return nil
-        }
-    }
-}
-
 
 // MARK: US
 
-struct HouseholdIncomeUS: HouseholdIncome {
+struct HouseholdIncomeUS: DemographicsSelectableSimpleValue {
     let rawValue: UInt8
     let displayTitle: LocalizedStringResource
 }
@@ -54,7 +37,7 @@ extension HouseholdIncomeUS {
 
 // MARK: UK
 
-struct HouseholdIncomeUK: HouseholdIncome {
+struct HouseholdIncomeUK: DemographicsSelectableSimpleValue {
     let rawValue: UInt8
     let displayTitle: LocalizedStringResource
 }

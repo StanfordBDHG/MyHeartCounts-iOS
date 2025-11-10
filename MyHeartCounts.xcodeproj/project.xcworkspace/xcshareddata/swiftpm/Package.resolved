@@ -1,5 +1,5 @@
 {
-  "originHash" : "bd4f289d66033e48b9fcb76c05565d8e6ebd979d31c94b81442eeab9ab0e7bec",
+  "originHash" : "c0496cfea703c38d733f51a4694e66f2408f32be18bcec5bcafe6e6f3fec721d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "9a54d56618ea0823e697d378a594e486804bb8a4",
-        "version" : "0.1.4"
+        "revision" : "9f1e50583a3d1ab1bcd57c8523ef54a4ead58e6e",
+        "version" : "0.1.6"
       }
     },
     {
@@ -195,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SFSafeSymbols/SFSafeSymbols",
       "state" : {
-        "revision" : "3dd282d3269b061853a3b3bcd23a509d2aa166ce",
-        "version" : "6.2.0"
+        "revision" : "e01b3d4f861412f8dcee8d93c417d2c2b0cdfd77",
+        "version" : "7.0.0"
       }
     },
     {
@@ -227,12 +227,12 @@
       }
     },
     {
-      "identity" : "spezicontact",
+      "identity" : "spezifhir",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordSpezi/SpeziContact.git",
+      "location" : "https://github.com/StanfordSpezi/SpeziFHIR.git",
       "state" : {
-        "revision" : "f44b915dab50a862e7152cc77081ba9cb743fca4",
-        "version" : "1.0.3"
+        "revision" : "2b78bdf88d32a7fb00a22a68923469d9cc8974fd",
+        "version" : "0.8.1"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "426807c758acc39a6e8f1c1d776169ce83db6274",
-        "version" : "0.1.15"
+        "revision" : "f446918b33f1945b1c48212c71649d854b337921",
+        "version" : "0.1.16"
       }
     },
     {
@@ -501,8 +501,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTHealthKit.git",
       "state" : {
-        "revision" : "2c08b6941f425840a6bda1d6b68fd5e2764907cd",
-        "version" : "1.2.1"
+        "revision" : "27430e57277c9d5f3e589f4ebb36d7e24f664e07",
+        "version" : "1.2.3"
       }
     },
     {

@@ -6,34 +6,69 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable inclusive_language
+// swiftlint:disable file_types_order
 
 import Foundation
 
 
-enum EducationStatusUS: Int, RawRepresentableAccountKey {
-    case notSet = 0
-    case didNotAttendSchool = 1
-    case gradeSchool = 2
-    case highSchool = 3
-    /// Some college or vocational school or Associate Degree
-    case someCollege = 4
-    /// College graduate or Baccalaureate Degree
-    case bachelor = 5
-    case master = 6
-    case doctoralDegree = 7
+// MARK: US
+
+struct EducationStatusUS: DemographicsSelectableSimpleValue {
+    let id: String
+    let displayTitle: LocalizedStringResource
+    let displaySubtitle: LocalizedStringResource?
+    
+    var rawValue: String { id }
+    
+    init(id: String, title: LocalizedStringResource, subtitle: LocalizedStringResource? = nil) {
+        self.id = id
+        self.displayTitle = title
+        self.displaySubtitle = subtitle
+    }
+}
+
+extension EducationStatusUS {
+    static let notSet = Self(id: "notSet", title: "Not Set")
+    static let preferNotToState = Self(id: "preferNotToState", title: "Prefer not to state")
+    
+    static let options: [Self] = [
+        Self(id: "didNotAttendSchool", title: "Didn't attend school"),
+        Self(id: "gradeSchool", title: "Grade School"),
+        Self(id: "highSchool", title: "High School"),
+        Self(id: "someCollege", title: "Some College", subtitle: "Some college or vocational school or associate degree"),
+        Self(id: "bachelor", title: "Bachelor", subtitle: "College graduate or Baccalaureate Degree"),
+        Self(id: "master", title: "Master"),
+        Self(id: "doctoralDegree", title: "Doctoral Degree")
+    ]
 }
 
 
-enum EducationStatusUK: Int, RawRepresentableAccountKey {
-    case notSet = 0
-    case didNotAttendSchool = 1
-    case highSchool = 2
-    /// Vocational training/apprenticeship/Diploma
-    case vocationalTraining = 3
-    /// College/University Graduate Degree
-    case someCollege = 4
-    /// College graduate or Baccalaureate Degree
-    case master = 5
-    case doctoralDegree = 6
+// MARK: UK
+
+struct EducationStatusUK: DemographicsSelectableSimpleValue {
+    let id: String
+    let displayTitle: LocalizedStringResource
+    let displaySubtitle: LocalizedStringResource?
+    
+    var rawValue: String { id }
+    
+    init(id: String, title: LocalizedStringResource, subtitle: LocalizedStringResource? = nil) {
+        self.id = id
+        self.displayTitle = title
+        self.displaySubtitle = subtitle
+    }
+}
+
+extension EducationStatusUK {
+    static let notSet = Self(id: "notSet", title: "Not Set")
+    static let preferNotToState = Self(id: "preferNotToState", title: "Prefer not to state")
+    
+    static let options: [Self] = [
+        Self(id: "didNotAttendSchool", title: "Didn't attend school"),
+        Self(id: "highSchool", title: "High School"),
+        Self(id: "vocationalTraining", title: "Vocational Training", subtitle: "Vocational training / apprenticeship / diploma"),
+        Self(id: "someCollege", title: "College/University Graduate Degree"),
+        Self(id: "master", title: "Master"),
+        Self(id: "doctoralDegree", title: "Doctoral Degree")
+    ]
 }

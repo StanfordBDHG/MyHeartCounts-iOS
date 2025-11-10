@@ -16,6 +16,7 @@ import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziFirestore
 import SpeziHealthKit
+import SpeziLocalStorage
 import SpeziQuestionnaire
 import SpeziSensorKit
 import SpeziStudy
@@ -23,17 +24,23 @@ import SwiftUI
 
 
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConstraint {
+    struct SimpleError: Error {
+        let message: String
+    }
+    
     // swiftlint:disable attributes
     @Application(\.logger) var logger
     @Dependency(HealthKit.self) var healthKit
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
-    @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @Dependency(StudyManager.self) var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?
+    @Dependency(LocalStorage.self) private var localStorage
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
     @Dependency(ManagedFileUpload.self) var managedFileUpload
     @Dependency(AccountFeatureFlags.self) private var accountFeatureFlags
     @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
+    @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
     // swiftlint:disable attributes
     
     init() {}
@@ -41,69 +48,101 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @MainActor
     func configure() {
         Task {
-            await propagateDebugModeValue(LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey])
-            guard let studyManager = await self.studyManager else {
-                return
+            await updateStudyDefinition()
+        }
+    }
+    
+    func updateStudyDefinition() async {
+        guard let studyManager, let studyBundle = try? await studyLoader.update() else {
+            return
+        }
+        logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
+        do {
+            try await studyManager.informAboutStudies([studyBundle])
+        } catch {
+            logger.error("\(error)")
+        }
+    }
+    
+    func enroll(in studyBundle: StudyBundle) async throws {
+        guard let account, let studyManager else {
+            throw SimpleError(message: "Missing Account / StudyManager")
+        }
+        do {
+            if let enrollmentDate = await account.details?.dateOfEnrollment {
+                // the user already has enrolled at some point in the past.
+                // we now explicitly specify this enrollment date, to make sure the StudyManager
+                // can schedule all study components relative to that.
+                try await studyManager.enroll(in: studyBundle, enrollmentDate: enrollmentDate)
+            } else {
+                let enrollmentDate = Date.now
+                try await studyManager.enroll(in: studyBundle, enrollmentDate: enrollmentDate)
+                do {
+                    var newDetails = AccountDetails()
+                    newDetails.dateOfEnrollment = enrollmentDate
+                    let modifications = try AccountModifications(modifiedDetails: newDetails)
+                    try await account.accountService.updateAccountDetails(modifications)
+                }
             }
-            if let studyBundle = try? await studyLoader.update() {
-                await logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
-                try await studyManager.informAboutStudies([studyBundle])
+            try localStorage.store(.now, for: .studyActivationDate)
+            _Concurrency.Task(priority: .background) {
+                historicalUploadManager.startAutomaticExportingIfNeeded()
             }
+        } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
+            // should be unreachable, but we'll handle this as a non-error just to be safe.
+        } catch {
+            throw error
         }
     }
     
     // MARK: Account Stuff
-    
-    private func propagateDebugModeValue(_ isEnabled: Bool) async {
-        let isEnabled = isEnabled || LaunchOptions.launchOptions[.forceEnableDebugMode]
-        LocalPreferencesStore.standard[.lastSeenIsDebugModeEnabledAccountKey] = isEnabled
-        await accountFeatureFlags._updateIsDebugModeEnabled(isEnabled)
-    }
-    
-    private func propagateDebugModeValue(_ details: AccountDetails) async {
-        await propagateDebugModeValue(details.enableDebugMode ?? false)
-    }
     
     func respondToEvent(_ event: AccountNotifications.Event) async {
         let logger = logger
         switch event {
         case .deletingAccount:
             logger.notice("account is being deleted")
-            await propagateDebugModeValue(false)
         case .disassociatingAccount:
             logger.notice("account is disassociating")
-            await propagateDebugModeValue(false)
             // upon logging out, we want to throw the user back to the onboarding.
             // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
             // since the Firebase SDK and all related Spezi modules will still be loaded.
             // we could look into using the `FirebaseApp.deleteApp(_:)` API in combination with attempting to unload the related Spezi modules, but that
             // would be anything but trivial.
             // if the user wants to switch to a different region, the easiest approach currently is to just kill and relaunch the app.
-            if !ProcessInfo.isBeingUITested, await !setupTestEnvironment.isInSetup {
-                // ^we potentially log out and in as part of the test env setup; we want to skip this
-                LocalPreferencesStore.standard[.onboardingFlowComplete] = false
-            }
-            try? ManagedFileUpload.clearPendingUploads()
+            try? await managedFileUpload.clearPendingUploads()
             let studyManager = studyManager
-            await MainActor.run {
+            _ = await Task { @MainActor in
                 // this works bc we only ever enroll into the MHC study.
                 guard let studyManager, let enrollment = studyManager.studyEnrollments.first else {
                     return
                 }
                 logger.notice("unenrolling from study.")
                 do {
-                    try studyManager.unenroll(from: enrollment)
+                    try await studyManager.unenroll(from: enrollment)
                 } catch {
                     logger.error("Error unenrolling from study: \(error)")
                 }
+            }.result
+            Task {
+                guard /*!ProcessInfo.isBeingUITested,*/ await !setupTestEnvironment.isInSetup else {
+                    // ^we potentially log out and in as part of the test env setup; we want to skip this
+                    return
+                }
+                // it seems that the fact that the account sheet typically is still presented while logging out causes issues with us setting the
+                // `onboardingFlowComplete` UserDefaults key being set to true (likely bc the other sheet still being presented prevents SwiftUI from presenting the
+                // onboarding sheet, thereby causing it to set the UserDefaults key (which, via a Binding, is used as the onboarding sheet's `isPresented` value)
+                // back to false.
+                // We try to work around this by waiting a bit, to give the account sheet a chance to dismiss itself.
+                try await Task.sleep(for: .seconds(2))
+                logger.notice("Triggering Onboarding Flow")
+                LocalPreferencesStore.standard[.onboardingFlowComplete] = false
             }
         case .associatedAccount(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
-            await propagateDebugModeValue(details)
             try? await timeZoneTracking?.updateTimeZoneInfo()
-        case .detailsChanged(_, let newDetails):
-            logger.notice("account details changed")
-            await propagateDebugModeValue(newDetails)
+        case .detailsChanged:
+            break
         }
     }
 }

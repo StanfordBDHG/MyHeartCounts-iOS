@@ -37,7 +37,8 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             name: .init(givenName: "Leland", familyName: "Stanford"),
             email: Self.loginCredentials.email,
             password: Self.loginCredentials.password,
-            signUpForExtraTrial: true
+            signUpForExtraTrial: true,
+            sender: self
         )
     }
     
@@ -49,7 +50,7 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
         app.staticTexts["Review Consent Forms"].tap()
         XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
-        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).tap()
+        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).firstMatch.tap()
         sleep(for: .seconds(2))
         let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
         XCTAssert(consentPdf.exists)
@@ -66,12 +67,13 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
 
 
 extension XCUIApplication {
-    func navigateOnboardingFlow(
+    func navigateOnboardingFlow( // swiftlint:disable:this function_parameter_count
         region: Locale.Region,
         name: PersonNameComponents,
         email: String,
         password: String,
-        signUpForExtraTrial: Bool
+        signUpForExtraTrial: Bool,
+        sender: XCTestCase
     ) throws {
         navigateWelcome()
         try navigateEligibility(region: region)
@@ -80,7 +82,10 @@ extension XCUIApplication {
         navigateOnboardingDisclaimers()
         navigateConsentComprehension()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
-        try navigateHealthKitAccess()
+        navigateHealthKitAccess()
+        if staticTexts["Health Records"].waitForExistence(timeout: 2) { // only included if Health Records are actually available
+            navigateHealthRecords(sender)
+        }
         navigateWorkoutPreferences()
         if staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
             navigateNotifications()
@@ -200,7 +205,6 @@ extension XCUIApplication {
     
     private func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
         sleep(for: .seconds(2))
-        print(debugDescription)
         XCTAssert(scrollViews.staticTexts["STANFORD UNIVERSITY"].waitForExistence(timeout: 2))
         XCTAssert(scrollViews.staticTexts["CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
         func scrollToSwitchAndEnable(
@@ -276,10 +280,17 @@ extension XCUIApplication {
     }
     
     
-    private func navigateHealthKitAccess() throws {
+    private func navigateHealthKitAccess() {
         XCTAssert(staticTexts["HealthKit Access"].waitForExistence(timeout: 2))
         buttons["Grant Access"].tap()
         handleHealthKitAuthorization()
+    }
+    
+    
+    private func navigateHealthRecords(_ testCase: XCTestCase) {
+        XCTAssert(staticTexts["Health Records"].waitForExistence(timeout: 2))
+        buttons["Grant Access"].tap()
+        testCase.handleHealthRecordsAuthorization()
     }
     
     
@@ -292,8 +303,8 @@ extension XCUIApplication {
     
     private func navigateWorkoutPreferences() {
         XCTAssert(staticTexts["Workout Preference"].waitForExistence(timeout: 2))
-        XCTAssert(buttons["Cycling"].waitForExistence(timeout: 2))
-        buttons["Cycling"].tap()
+        XCTAssert(staticTexts["Cycling"].waitForExistence(timeout: 2))
+        staticTexts["Cycling"].tap()
         swipeUp()
         buttons["Continue"].tap()
     }
@@ -350,6 +361,13 @@ extension XCUIApplication {
         buttons["District of Columbia, DC"].tap()
         navigationBars.buttons["BackButton"].tap()
         XCTAssert(buttons["US State / Territory, DC"].waitForExistence(timeout: 1))
+        
+        if staticTexts["Education Level"].waitForExistence(timeout: 2) {
+            staticTexts["Education Level"].tap()
+            buttons["Master"].tap()
+            navigationBars.buttons["BackButton"].tap()
+            XCTAssert(buttons["Education Level, Master"].waitForExistence(timeout: 1))
+        }
         
         staticTexts["Total Household Income"].tap()
         buttons["Prefer not to state"].tap()

@@ -85,6 +85,12 @@ final class DemographicsData {
     var ukRegion: UKRegion? {
         didSet { onChange() }
     }
+    var usEducationLevel: EducationStatusUS? {
+        didSet { onChange() }
+    }
+    var ukEducationLevel: EducationStatusUK? {
+        didSet { onChange() }
+    }
     var usHouseholdIncome: HouseholdIncomeUS? {
         didSet { onChange() }
     }
@@ -124,6 +130,8 @@ final class DemographicsData {
         comorbidities = details.comorbidities
         usRegion = details.usRegion
         ukRegion = details.ukRegion
+        usEducationLevel = details.educationUS
+        ukEducationLevel = details.educationUK
         usHouseholdIncome = details.householdIncomeUS
         ukHouseholdIncome = details.householdIncomeUK
         nhsNumber = details.nhsNumber
@@ -181,6 +189,8 @@ final class DemographicsData {
         write(comorbidities, to: \.comorbidities)
         write(usRegion, to: \.usRegion)
         write(ukRegion, to: \.ukRegion)
+        write(usEducationLevel, to: \.educationUS)
+        write(ukEducationLevel, to: \.educationUK)
         write(usHouseholdIncome, to: \.householdIncomeUS)
         write(ukHouseholdIncome, to: \.householdIncomeUK)
         write(nhsNumber, to: \.nhsNumber)

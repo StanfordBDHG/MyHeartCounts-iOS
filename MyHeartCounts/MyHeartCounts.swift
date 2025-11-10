@@ -6,15 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
-import HealthKitOnFHIR
 import OSLog
 import Spezi
-import SpeziFoundation
 import SwiftUI
 
 
 // intentionally a global variable
-let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "")
+let logger = Logger(category: .init(""))
 
 
 @main
@@ -31,10 +29,8 @@ struct MyHeartCounts: App {
         WindowGroup {
             RootView()
                 .spezi(appDelegate)
-            OnboardingSheet(
-                didCompleteOnboarding: $didCompleteOnboarding
-            )
-            .environment(StudyBundleLoader.shared)
+            OnboardingSheet(didComplete: $didCompleteOnboarding)
+                .environment(StudyBundleLoader.shared)
         }
         .environment(appDelegate)
     }

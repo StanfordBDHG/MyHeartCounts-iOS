@@ -250,8 +250,7 @@ extension Collection where Element == QuantitySample {
                 calendar.date(byAdding: timeInterval.intervalComponents, to: date).map { date..<$0 }
             }
             .flatMap { (range: Range<Date>) in
-                print("range: \(range)")
-                return self/*.lazy*/.filter { sample in
+                self.lazy.filter { sample in
                     if sample.startDate == sample.endDate {
                         // if the sample represents a single point in time, we simply check whether the range contains that instant
                         range.contains(sample.startDate)

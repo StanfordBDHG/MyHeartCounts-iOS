@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable attributes
+
 import OSLog
 import SFSafeSymbols
 import Spezi
@@ -19,16 +21,11 @@ import SwiftUI
 
 
 struct HealthKitPermissions: View {
-    private var title = LocalizedStringResource("HealthKit Access")
+    private let title: LocalizedStringResource = "HealthKit Access"
     
-    @Environment(HealthKit.self)
-    private var healthKit
-    
-    @Environment(ManagedNavigationStack.Path.self)
-    private var onboardingPath
-    
-    @Environment(StudyBundleLoader.self)
-    private var studyLoader
+    @Environment(HealthKit.self) private var healthKit
+    @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(StudyBundleLoader.self) private var studyLoader
     
     @State private var viewState: ViewState = .idle
     @State private var isShowingLearnMoreText = false
@@ -70,13 +67,15 @@ struct HealthKitPermissions: View {
                 try await _Concurrency.Task.sleep(for: .seconds(5))
             } else {
                 let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
-                    .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
+                    .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData.filter { sampleType in
+                        !(sampleType.hkSampleType is HKClinicalType)
+                    }))
                 try await healthKit.askForAuthorization(for: accessReqs)
             }
         } catch {
             logger.error("Could not request HealthKit permissions: \(error)")
         }
-        onboardingPath.nextStep()
+        path.nextStep()
     }
 }
 
@@ -97,6 +96,13 @@ extension MyHeartCountsStandard {
             SampleType.bloodGlucose, SampleType.bloodPressure
         ] as [any AnySampleType]).map { $0.hkSampleType }
     )
+}
+
+
+extension SampleTypesCollection {
+    func filter(_ isIncluded: (any AnySampleType) -> Bool) -> SampleTypesCollection {
+        SampleTypesCollection(self.lazy.filter(isIncluded))
+    }
 }
 
 

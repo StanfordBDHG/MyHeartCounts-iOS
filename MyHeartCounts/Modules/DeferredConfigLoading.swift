@@ -37,7 +37,7 @@ extension LocalPreferenceKey {
 
 
 enum DeferredConfigLoading {
-    fileprivate static let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "Config")
+    fileprivate static let logger = Logger(category: .init("Config"))
     
     enum LoadingError: Error {
         case unableToLoadFirebaseConfigPlist(underlying: (any Error)? = nil)
@@ -195,7 +195,6 @@ enum DeferredConfigLoading {
     /// Returns nil if there was an issue resolving the selector.
     @MainActor
     static func config(for configSelector: FirebaseConfigSelector) -> [any Module] { // swiftlint:disable:this function_body_length
-        logger.notice("CLI args: \(CommandLine.arguments)")
         let preferredLocale = { () -> Locale in
             if let region = configSelector.region {
                 return .init(language: Locale.current.language, region: region)
@@ -262,7 +261,6 @@ enum DeferredConfigLoading {
                     FirebaseStorageConfiguration()
                 }
                 baseModules(preferredLocale: preferredLocale)
-                NewsManager()
                 TimeZoneTracking()
             }
         } catch {
@@ -299,6 +297,7 @@ enum DeferredConfigLoading {
 
 extension Spezi {
     @MainActor static var didLoadFirebase = false
+    @MainActor private(set) static var currentlyLoadedFirebaseSelector: DeferredConfigLoading.FirebaseConfigSelector?
     
     @MainActor // IDEA maybe rename this? (here and elsewhere (it's not just firebase any more))
     static func loadFirebase(for region: Locale.Region) {

@@ -39,18 +39,40 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     }
     
     // swiftlint:disable attributes
+    @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(SensorKit.self) private var sensorKit
     @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
-    @ObservationIgnored @Dependency(LocalNotifications.self) private var localNotifications
-    @ObservationIgnored @Application(\.logger) private var logger
     // swiftlint:enable attributes
     
     /// The sensors that are currently being processed.
     @MainActor private(set) var activeActivities = Set<InProgressActivity>()
     
+    /// The task that is fetching and uploading the SensorKit data.
+    @ObservationIgnored @MainActor private var processingTask: Task<Void, Never>?
+    
     
     nonisolated init() {}
+    
+    
+    func configure() {
+        do {
+            try backgroundTasks.register(.processing(
+                id: .sensorKitProcessing,
+                options: [.requiresExternalPower, .requiresNetworkConnectivity]
+            ) { [weak self] in
+                guard let self else {
+                    return
+                }
+                // it could be that the `run()` function already ran before the background task was triggered;
+                // in this case this call won't start a second, parallel fetch, but instead will simply wait for
+                // the already-active fetch to complete.
+                await fetchAndUploadNewData()
+            })
+        } catch {
+            logger.error("Error registering SK background task: \(error)")
+        }
+    }
     
     
     func run() async {
@@ -58,19 +80,30 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-            await doFetch()
+            await fetchAndUploadNewData()
         }
     }
     
     
-    @concurrent
-    private func doFetch() async {
-        await withManagedTaskQueue(limit: 2) { taskQueue in
-            for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
-                taskQueue.submit {
-                    await self.fetchAndUploadAnchored(uploadDefinition)
+    @MainActor
+    private func fetchAndUploadNewData() async {
+        guard await standard.shouldCollectHealthData else {
+            return
+        }
+        if let processingTask {
+            _ = await processingTask.result
+        } else {
+            let task = Task { @concurrent in
+                await withManagedTaskQueue(limit: 5) { taskQueue in
+                    for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
+                        taskQueue.submit {
+                            await self.fetchAndUploadAnchored(uploadDefinition)
+                        }
+                    }
                 }
             }
+            processingTask = task
+            _ = await task.result
         }
     }
     
@@ -81,7 +114,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         let uploadDefinition = MHCSensorUploadDefinition(uploadDefinition)
         let sensor = uploadDefinition.sensor
         guard sensorKit.authorizationStatus(for: sensor) == .authorized else {
-            logger.notice("Skipping Sensor '\(sensor.displayName)' bc it's not authorized.")
+            logger.notice("Skipping Sensor '\(sensor.displayName)' bc it's not authorized")
             return
         }
         logger.notice("Starting anchored fetch for SensorKit sensor '\(sensor.id)'")
@@ -176,27 +209,11 @@ extension SensorKit {
         MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy()),
-        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations())
-//        Sensor.visits
+        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
+        MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations())
     ]
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }
-    
-    // periphery:ignore
-    /// All sensors we technicall have access to.
-    static let mhcSensorsExtended: [any AnySensor] = [
-        Sensor.onWrist,
-        Sensor.heartRate,
-        Sensor.pedometer,
-        Sensor.wristTemperature,
-        Sensor.accelerometer,
-        Sensor.ppg,
-        Sensor.ecg,
-        Sensor.ambientLight,
-        Sensor.ambientPressure,
-        Sensor.visits,
-        Sensor.deviceUsage
-    ]
 }
 
 

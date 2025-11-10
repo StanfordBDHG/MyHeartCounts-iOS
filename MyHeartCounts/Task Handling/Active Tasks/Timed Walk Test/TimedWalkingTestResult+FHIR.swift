@@ -81,7 +81,7 @@ extension TimedWalkingTestResult {
         for builder in extensions {
             try builder.apply(typeErasedInput: self, to: observation)
         }
-        try observation.addMHCAppAsSource()
+        observation.addMHCAppAsSource()
         return observation
     }
 }
@@ -119,7 +119,7 @@ extension TimedWalkingTestResult {
         }
         self.init(
             id: id,
-            test: .init(duration: .seconds(duration), kind: activity),
+            test: .init(duration: .minutes(duration), kind: activity),
             startDate: timeRange.lowerBound,
             endDate: timeRange.upperBound,
             numberOfSteps: numSteps,

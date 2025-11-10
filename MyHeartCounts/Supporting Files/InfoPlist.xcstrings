@@ -49,6 +49,18 @@
         }
       }
     },
+    "NSHealthClinicalHealthRecordsShareUsageDescription" : {
+      "comment" : "Privacy - Health Records Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "My Heart Counts uses Health data to understand all aspects of health."
+          }
+        }
+      }
+    },
     "NSHealthShareUsageDescription" : {
       "comment" : "Privacy - Health Share Usage Description",
       "extractionState" : "extracted_with_value",

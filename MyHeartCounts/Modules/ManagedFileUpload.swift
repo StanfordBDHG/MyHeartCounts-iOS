@@ -25,7 +25,7 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
     // swiftlint:enable attributes
     
     private(set) var categories: Set<Category>
-    private let fileManager = FileManager()
+    nonisolated(unsafe) private let fileManager = FileManager()
     
     /// A `Progress` instance representing each category's upload progress,
     /// i.e. the progress of uploading the category's submitted files into the Firebase Storage.
@@ -43,6 +43,11 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
     }
     
     func configure() {
+        createStagingDirs(for: categories)
+        scheduleOrphanedExportsForUpload()
+    }
+    
+    private func createStagingDirs(for categories: some Collection<Category>) {
         for category in categories {
             let url = category.stagingDirUrl
             if !fileManager.isDirectory(at: url) {
@@ -53,7 +58,6 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
                 }
             }
         }
-        scheduleOrphanedExportsForUpload()
     }
     
     /// Schedules all files in the different categories' folders to be uploaded, unless they have already been scheduled.
@@ -81,8 +85,10 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
 
 
 extension ManagedFileUpload {
-    nonisolated static func clearPendingUploads() throws {
-        try FileManager.default.removeItem(at: Self.directory)
+    @MainActor
+    func clearPendingUploads() throws {
+        try fileManager.removeItem(at: Self.directory)
+        createStagingDirs(for: categories)
     }
 }
 
@@ -143,11 +149,13 @@ extension ManagedFileUpload {
     
     @concurrent
     func upload(_ url: URL, category: Category) async throws {
-        Task { @MainActor in
-            categories.insert(category)
+        await MainActor.run {
+            if categories.insert(category).inserted {
+                createStagingDirs(for: CollectionOfOne(category))
+            }
         }
         let stagingUrl = category.stagingDirUrl.appending(path: url.lastPathComponent)
-        try FileManager.default.moveItem(at: url, to: stagingUrl)
+        try fileManager.moveItem(at: url, to: stagingUrl)
         await Task.yield()
         try await self.uploadAndDelete(stagingUrl, category: category)
     }
@@ -181,6 +189,9 @@ extension ManagedFileUpload {
             throw .noAccount
         }
         let storageRef = Storage.storage().reference(withPath: "users/\(accountId)/\(category.firebasePath)/\(url.lastPathComponent)")
+        let bucket = storageRef.bucket
+        let path = storageRef.fullPath
+        await logger.notice("uploading to \(bucket):\(path)")
         let metadata = StorageMetadata()
         metadata.contentType = "application/octet-stream"
         do {
@@ -191,7 +202,7 @@ extension ManagedFileUpload {
             throw .uploadFailed(error)
         }
         do {
-            try FileManager.default.removeItem(at: url)
+            try fileManager.removeItem(at: url)
         } catch {
             throw .deletionFailed(error)
         }

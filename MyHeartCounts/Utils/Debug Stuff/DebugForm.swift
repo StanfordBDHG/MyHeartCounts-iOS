@@ -40,6 +40,9 @@ private struct DebugFormImpl: View {
     var body: some View {
         Form { // swiftlint:disable:this closure_body_length
             Section {
+                DemographicsButton()
+            }
+            Section {
                 MemoryUsageIndicator()
             }
             Section("Notifications") {
@@ -156,7 +159,7 @@ extension DebugForm {
                     guard let enrollment = studyManager.studyEnrollments.first else {
                         return
                     }
-                    try studyManager.unenroll(from: enrollment)
+                    try await studyManager.unenroll(from: enrollment)
                     refresh()
                 }
             }

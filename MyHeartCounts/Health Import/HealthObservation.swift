@@ -12,7 +12,7 @@ import HealthKitOnFHIR
 import ModelsR4
 
 
-protocol HealthObservation: Sendable {
+protocol HealthObservation: Sendable { // might want to rename this (@lukas); the resulting ResourceProxy is not necessarily an Observation...)
     var id: UUID { get }
     var sampleTypeIdentifier: String { get }
     
@@ -40,18 +40,5 @@ extension TimedWalkingTestResult: HealthObservation {
     
     var sampleTypeIdentifier: String {
         Self.sampleTypeIdentifier
-    }
-}
-
-
-extension Observation {
-    func addMHCAppAsSource() throws {
-        let revision = HKSourceRevision(
-            source: HKSource.default(),
-            version: "\(Bundle.main.appVersion) (\(Bundle.main.appBuildNumber ?? -1))",
-            productType: nil,
-            operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersion
-        )
-        try self.apply(.sourceRevision, input: revision)
     }
 }

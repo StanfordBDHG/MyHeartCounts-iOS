@@ -23,21 +23,20 @@ struct AccountSheet: View {
     @Environment(\.openURL) private var openUrl
     @Environment(\.openSettingsApp) private var openSettingsApp
     @Environment(Account.self) private var account
-    @Environment(\.accountRequired) private var accountRequired
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
     @Environment(ManagedFileUpload.self) private var managedFileUpload
     @Environment(SensorKitDataFetcher.self) private var sensorKitDataFetcher
     // swiftlint:enable attributes
     
     @State private var isInSetup = false
-    @State private var isPresentingDemographicsSheet = false
     @State private var isPresentingFeedbackSheet = false
     
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled)
+    private var debugModeEnabled
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {
-        NavigationStack { // swiftlint:disable:this closure_body_length
+        NavigationStack {
             ZStack {
                 if account.signedIn && !isInSetup {
                     AccountOverview(close: .showCloseButton) {
@@ -54,24 +53,6 @@ struct AccountSheet: View {
                     .onAppear {
                         isInSetup = true
                     }
-                    .toolbar {
-                        if !accountRequired {
-                            closeButton
-                        }
-                    }
-                }
-            }
-            .sheet(isPresented: $isPresentingDemographicsSheet) {
-                NavigationStack {
-                    DemographicsForm()
-                        .toolbar {
-                            ToolbarItem(placement: .primaryAction) {
-                                Button("Done") {
-                                    isPresentingDemographicsSheet = false
-                                }
-                                .bold()
-                            }
-                        }
                 }
             }
             .sheet(isPresented: $isPresentingFeedbackSheet) {
@@ -92,14 +73,8 @@ struct AccountSheet: View {
     
     @ViewBuilder private var accountSheetExtraContent: some View {
         Section {
-            Button {
-                isPresentingDemographicsSheet = true
-            } label: {
-                Label("Demographics", systemSymbol: .personTextRectangle)
-            }
             SensorKitButton()
         }
-        
         if let enrollment = enrollments.first {
             Section("Study Participation") { // swiftlint:disable:this closure_body_length
                 Button {

@@ -8,6 +8,7 @@
 
 import CoreMotion
 import Foundation
+import MyHeartCountsShared
 import SFSafeSymbols
 import Spezi
 import SpeziFoundation
@@ -71,12 +72,12 @@ private struct TimedWalkingTestView: View {
         let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
         return switch test.kind {
         case .walking:
-            LocalizedStringResource("\(durationInMinutes)-Minute Walk Test")
+            "\(durationInMinutes)-Minute Walk Test"
         case .running:
             if test == .twelveMinuteRunTest {
-                LocalizedStringResource("12-Minute Run Test (Cooper Test)")
+                "12-Minute Run Test (Cooper Test)"
             } else {
-                LocalizedStringResource("\(durationInMinutes)-Minute Run Test")
+                "\(durationInMinutes)-Minute Run Test"
             }
         }
     }
@@ -311,8 +312,7 @@ extension TimedWalkingTestView {
         var body: some View {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 let remaining = max(0, Int(end.timeIntervalSince(context.date)))
-                let minutes = remaining / 60
-                let seconds = remaining % 60
+                let (minutes, seconds) = remaining.quotientAndRemainder(dividingBy: 60)
                 Text(String(format: "%d:%02d", minutes, seconds))
                     .font(.system(size: 70, design: .rounded).bold())
                     .monospacedDigit()
@@ -366,16 +366,6 @@ extension TimedWalkingTestView {
             self.explanation = explanation
             self.actionText = actionText
             self.action = action
-        }
-    }
-}
-
-
-extension TimedWalkingTestConfiguration.Kind {
-    var symbol: SFSymbol {
-        switch self {
-        case .walking: .figureWalk
-        case .running: .figureRun
         }
     }
 }

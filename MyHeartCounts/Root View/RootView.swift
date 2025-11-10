@@ -17,6 +17,9 @@ import SpeziViews
 import SwiftUI
 
 
+/// The "root" view of the app when logged in and enrolled in a study.
+///
+/// Displays and manages a `TabView`, with the different tabs in the app.
 struct RootView: View {
     // swiftlint:disable attributes
     @Environment(\.scenePhase) private var scenePhase
@@ -24,6 +27,7 @@ struct RootView: View {
     @Environment(ConsentManager.self) private var consentManager: ConsentManager?
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
     @Environment(Lifecycle.self) private var lifecycle
+    @Environment(TimedWalkingTest.self) private var timedWalkingTest
     @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
     @LocalPreference(.rootTabSelection) private var selectedTab
     @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
@@ -57,6 +61,9 @@ struct RootView: View {
         .onChange(of: scenePhase, initial: true) { _, newValue in
             lifecycle._set(\.scenePhase, to: newValue)
         }
+        // we might simply want to make every `taskPerformingAnchor` also an `taskContinuationAnchor` at some point?
+        // it's not trivial, though, since we'd also need to make sure that if there's multiple `taskContinuationAnchor`s, only one of them will actually pick up the task...
+        .taskContinuationAnchor()
         .taskPerformingAnchor()
     }
     
@@ -65,13 +72,9 @@ struct RootView: View {
             makeTab(HomeTab.self)
             makeTab(UpcomingTasksTab.self)
             makeTab(HeartHealthDashboardTab.self)
-            makeTab(NewsTab.self)
         }
         .tabViewStyle(.sidebarAdaptable)
         .tabViewCustomization($tabViewCustomization)
-        .accountRequired(!FeatureFlags.disableFirebase && !FeatureFlags.skipOnboarding) {
-            AccountSheet()
-        }
     }
     
     private func makeTab(_ tab: (some RootViewTab).Type) -> some TabContent<String> {

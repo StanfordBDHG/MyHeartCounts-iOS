@@ -12,6 +12,14 @@ import MachO
 
 
 extension ProcessInfo {
+    static var isRunningInSimulator: Bool {
+        #if targetEnvironment(simulator)
+        true
+        #else
+        false
+        #endif
+    }
+    
     static var isBeingUITested: Bool {
         ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
     }

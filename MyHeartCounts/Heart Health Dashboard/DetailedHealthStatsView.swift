@@ -14,6 +14,7 @@ import MHCStudyDefinition
 import SFSafeSymbols
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitUI
 import SpeziStudy
 import SpeziViews
 import SwiftUI
@@ -29,10 +30,10 @@ struct DetailedHealthStatsView: View {
     
     @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
-    @LocalPreference(.detailedHealthMetricChartTimeRange) private var chartTimeRange
+    @State private var chartTimeRange: ChartTimeRange = .lastNumDays(14)
     
     @CVHScore private var cvhScore
-    @DebugModeEnabled private var debugModeEnabled
+    @AccountFeatureFlagQuery(.isDebugModeEnabled) private var debugModeEnabled
     @State private var isPresentingAddSampleSheet = false
     
     private let keyPath: KeyPath<CVHScore, ScoreResult>
@@ -100,7 +101,7 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View {
+    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View { // swiftlint:disable:this function_body_length
         switch config {
         case .disabled:
             EmptyView()
@@ -119,6 +120,8 @@ struct DetailedHealthStatsView: View {
                     // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
                     let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
                         switch sampleType {
+                        case .healthKit(.quantity(.stepCount)):
+                            return .init(chartType: .bar, aggregationInterval: .day)
                         case .healthKit(.quantity(let sampleType)):
                             return .default(for: sampleType, in: timeRange)
                         case .healthKit:
