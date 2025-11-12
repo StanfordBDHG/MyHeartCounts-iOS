@@ -177,14 +177,30 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
         let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
-            .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData))
+            .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData.filter(isNotKindOf: SampleType<HKClinicalRecord>.self)))
         try await healthKit.askForAuthorization(for: accessReqs)
         if HKHealthStore().supportsHealthRecords() {
-            try await healthKit.askForAuthorization(for: .init(read: MyHeartCountsStandard.allRecordTypes))
+            try await _Concurrency.Task.sleep(for: .seconds(1))
+            try await healthKit.askForAuthorization(for: .init(read: studyBundle.studyDefinition.allCollectedHealthData.clinicalRecordTypes()))
         }
         signposter.emitEvent("health reqs complete", id: signpostId)
         try await standard.enroll(in: studyBundle)
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
         signposter.emitEvent("enrollment complete", id: signpostId)
+    }
+}
+
+
+extension SampleTypesCollection {
+    func clinicalRecordTypes() -> Self {
+        filter(isKindOf: SampleType<HKClinicalRecord>.self)
+    }
+    
+    func filter<Sample>(isKindOf _: SampleType<Sample>.Type) -> Self {
+        Self(self.filter { $0 is SampleType<Sample> })
+    }
+    
+    func filter<Sample>(isNotKindOf _: SampleType<Sample>.Type) -> Self {
+        Self(self.filter { !($0 is SampleType<Sample>) })
     }
 }
