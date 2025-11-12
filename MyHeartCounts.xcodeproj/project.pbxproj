@@ -1487,7 +1487,7 @@
 			repositoryURL = "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.7;
+				minimumVersion = 0.1.8;
 			};
 		};
 		80DCC0F42E060FAA008B6E01 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */ = {
