@@ -12,7 +12,6 @@ on:
   push:
     branches:
       - main
-      - lukas/fix-deployment
   workflow_dispatch:
     inputs:
       environment:
