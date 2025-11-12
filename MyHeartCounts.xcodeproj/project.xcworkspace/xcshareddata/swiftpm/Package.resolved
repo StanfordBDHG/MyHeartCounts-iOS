@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "9f1e50583a3d1ab1bcd57c8523ef54a4ead58e6e",
-        "version" : "0.1.6"
+        "revision" : "995f1300245b2ec97daca8323eaaa7ba8ef069cb",
+        "version" : "0.1.7"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "f446918b33f1945b1c48212c71649d854b337921",
-        "version" : "0.1.16"
+        "revision" : "da197e5420dd0902a92d476be487a4570f40d849",
+        "version" : "0.1.17"
       }
     },
     {
