@@ -53,6 +53,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
                     ManagedFileUpload.Category(sensor)
                 }
             }
+            NotificationTracking()
         }
     }
 }
