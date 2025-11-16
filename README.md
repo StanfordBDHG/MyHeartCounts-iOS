@@ -16,9 +16,57 @@ This repository contains the My Heart Counts iOS application, which is implement
 > Do you want to learn more about the Stanford Spezi Template Application and how to use, extend, and modify this application? Check out the [Stanford Spezi Template Application documentation](https://stanfordspezi.github.io/SpeziTemplateApplication).
 
 
-## My Heart Counts Features
+## Features
 
-*coming soon*
+My Heart Counts is a Heart Failure Study iOS app, developed by Stanford University.
+
+Key Features Include:
+- Schedule-based user-actionable tasks and content, such as surveys, active tasks, or informative articles
+- Active Tasks, e.g. a Six-Minute Walk Test and a 12-Minute Run Test
+- Automatic SensorKit and HealthKit data collection
+- MHC Heart Health Dashboard: provides an overview of the participant's overall health, computed from 8 metrics, which are read from HealthKit and survey responses
+- Physical Activity Trial with personalized coaching messages
+
+<table style="width: 80%">
+  <tr>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/nudge.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/nudge~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/questionnaire.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/questionnaire~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/dashboard.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/dashboard~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">Home</td>
+    <td align="center">Heart Health Surveys</td>
+    <td align="center">Heart Health Dashboard</td>
+  </tr>
+  <tr>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/6mwt.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/6mwt~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/sleep.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/sleep~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/home_es.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/home_es~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">Active Tasks (6 Minute Walk Test and 12 Minute Run Test)</td>
+    <td align="center">Detailed Health Stats</td>
+    <td align="center">Spanish Language Support</td>
+  </tr>
+</table>
 
 
 ## Setting Up a Local Development Environment
