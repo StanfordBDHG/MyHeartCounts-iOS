@@ -77,6 +77,8 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     func run() async {
         Task(priority: .background) {
+            // wait a little bit to make sure all of the other setup stuff (esp Firebase!) has time to finish before we start uploading
+            try await Task.sleep(for: .seconds(1))
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }

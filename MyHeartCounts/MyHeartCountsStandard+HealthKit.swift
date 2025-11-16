@@ -55,12 +55,12 @@ extension MyHeartCountsStandard: HealthKitConstraint {
     
     var shouldCollectHealthData: Bool {
         get async {
-            // we might continue receiving Health data for a bit after unenrolling; we want to ignore these.
-            guard let studyManager else {
+            guard let account, let studyManager else {
                 return false
             }
+            // we might continue receiving Health data for a bit after unenrolling; we want to ignore these.
             return await MainActor.run {
-                !studyManager.studyEnrollments.isEmpty
+                account.signedIn && !studyManager.studyEnrollments.isEmpty
             }
         }
     }
