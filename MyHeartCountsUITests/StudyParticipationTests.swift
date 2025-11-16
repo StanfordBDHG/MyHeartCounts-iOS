@@ -13,7 +13,7 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
-final class StudyParticipationTests: MHCTestCase, @unchecked Sendable {
+final class StudyParticipationTests: MHCTestCase {
     @MainActor
     func testStudyEnrollment() throws {
         try launchAppAndEnrollIntoStudy()

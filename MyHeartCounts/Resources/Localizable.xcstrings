@@ -671,7 +671,25 @@
 
     },
     "Answer Questionnaire" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responder al cuestionario"
+          }
+        }
+      }
+    },
+    "Answer Survey" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responder al cuestionario"
+          }
+        }
+      }
     },
     "Apple ID Sharing" : {
 
@@ -817,6 +835,9 @@
           }
         }
       }
+    },
+    "Cancel" : {
+
     },
     "Carotid Artery Blockage/Stenosis" : {
 
@@ -4251,7 +4272,14 @@
 
     },
     "Tasks" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tareas"
+          }
+        }
+      }
     },
     "Tennessee" : {
       "localizations" : {
@@ -4426,10 +4454,24 @@
       }
     },
     "Today" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        }
+      }
     },
     "Today's Tasks" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tareas de hoy"
+          }
+        }
+      }
     },
     "Total Household Income" : {
       "localizations" : {
@@ -4766,13 +4808,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+            "value" : "My Heart Counts will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+            "value" : "My Heart Counts will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         }
       }

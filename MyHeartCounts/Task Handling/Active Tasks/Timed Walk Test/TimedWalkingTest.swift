@@ -224,7 +224,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     }
     
     
-    func stop() async throws -> TimedWalkingTestResult? {
+    func stop(discardResult: Bool = false) async throws -> TimedWalkingTestResult? {
         switch state {
         case .idle:
             return nil
@@ -236,9 +236,16 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             var result = session.inProgressResult
             session.completeSessionTask?.cancel()
             stopPhoneSensorDataCollection()
-            try? vibrate()
+            if !discardResult {
+                try? vibrate()
+            }
             result = try await stop(inProgressTest: result, isRecoveredTest: false)
-            return result
+            if !discardResult {
+                try? await standard.uploadHealthObservation(result)
+                return result
+            } else {
+                return nil
+            }
         }
     }
     
@@ -274,7 +281,6 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
                 }
             }
         }
-        try? await standard.uploadHealthObservation(result)
         if isRecoveredTest || lifecycle.scenePhase == .active {
             // if we're stopping/finalizing a recovered test or we're in the foreground, we want to immediately remove the live activity
             for activity in LiveActivity.activities where activity.attributes.testRunId == result.id {

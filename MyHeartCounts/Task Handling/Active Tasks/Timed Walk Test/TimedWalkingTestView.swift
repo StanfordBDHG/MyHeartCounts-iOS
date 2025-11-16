@@ -68,7 +68,7 @@ private struct TimedWalkingTestView: View {
         timedWalkingTest.state.isActive
     }
     
-    private var textName: LocalizedStringResource {
+    private var testName: LocalizedStringResource {
         let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
         return switch test.kind {
         case .walking:
@@ -159,7 +159,8 @@ private struct TimedWalkingTestView: View {
         }
         PlainSection {
             VStack(alignment: .leading) {
-                Text(textName)
+                Text(testName)
+                    .multilineTextAlignment(.leading)
             }
             .font(.title.bold())
             .multilineTextAlignment(.center)
@@ -178,12 +179,27 @@ private struct TimedWalkingTestView: View {
                     VStack(alignment: .center, spacing: 16) {
                         CountdownView(start: session.inProgressResult.startDate, end: session.inProgressResult.endDate)
                         Group {
-                            Text("Your \(textName) is in progress.")
+                            Text("Your \(testName) is in progress.")
                             testInstructions
                         }
-                            .multilineTextAlignment(.center)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    }
+                }
+                .toolbar {
+                    if session.isRecoveredTest {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Menu {
+                                AsyncButton("Cancel", state: $viewState) {
+                                    _ = try await timedWalkingTest.stop(discardResult: true)
+                                    dismiss()
+                                }
+                            } label: {
+                                Image(systemSymbol: .ellipsisCircle)
+                                    .accessibilityLabel("More")
+                            }
+                        }
                     }
                 }
                 Spacer()

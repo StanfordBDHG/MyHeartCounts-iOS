@@ -14,7 +14,7 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
-final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
+final class AOnboardingTests: MHCTestCase {
     @MainActor
     func testAOnboardingFlow() throws {
         try launchHealthAppAndEnterCharacteristics(.init(

@@ -65,7 +65,11 @@ struct TasksList: View {
     enum HeaderConfig {
         case none
         case custom(LocalizedStringResource, subtitle: LocalizedStringResource? = nil)
-        case timeRange
+        case timeRange(subtitle: SubtitleMode)
+        
+        enum SubtitleMode {
+            case show, hide, automatic
+        }
     }
     
     struct NoTasksMessageLabels {
@@ -113,7 +117,7 @@ struct TasksList: View {
             return ("", nil)
         case let .custom(title, subtitle):
             return (title, subtitle)
-        case .timeRange:
+        case .timeRange(let subtitleMode):
             let (title, needsSubtitle): (LocalizedStringResource, Bool) = switch timeRange {
             case .days(1):
                 ("Today", false)
@@ -128,12 +132,13 @@ struct TasksList: View {
             case .months(let numMonths):
                 ("Next \(numMonths) Months", true)
             }
-            if needsSubtitle {
+            switch subtitleMode {
+            case .automatic where needsSubtitle, .show:
                 let timeRange = Self.effectiveTimeRange(for: timeRange, cal: cal)
                 let start = timeRange.lowerBound.formatted(date: .numeric, time: .omitted)
                 let end = timeRange.upperBound.addingTimeInterval(-1).formatted(date: .numeric, time: .omitted)
                 return (title, "\(start) – \(end)")
-            } else {
+            case .hide, .automatic:
                 return (title, nil)
             }
         }
@@ -183,7 +188,7 @@ struct TasksList: View {
     init(
         mode: Mode,
         timeRange: TimeRange,
-        headerConfig: HeaderConfig = .timeRange,
+        headerConfig: HeaderConfig = .timeRange(subtitle: .automatic),
         eventGroupingConfig: EventGroupingConfig,
         noTasksMessageLabels: NoTasksMessageLabels
     ) {

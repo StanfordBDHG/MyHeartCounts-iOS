@@ -12,7 +12,7 @@ import XCTest
 import XCTestExtensions
 
 
-final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
+final class ScheduledTaskTests: MHCTestCase {
     @MainActor
     func testSurveyHealthDataExtraction() throws {
         try launchAppAndEnrollIntoStudy(enableDebugMode: true)
@@ -92,6 +92,9 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
             // final step.
             .init(actions: [.continue])
         ])
+        
+        sleep(for: .seconds(10))
+        
         app.navigationBars["Debug Options"].buttons["BackButton"].tap()
         app.navigationBars["Account Overview"].buttons["Close"].tap()
         

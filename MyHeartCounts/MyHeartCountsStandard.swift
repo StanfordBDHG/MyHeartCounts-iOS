@@ -44,6 +44,8 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
     @Dependency(NotificationTracking.self) var notificationTracking
     @Dependency(Scheduler.self) var scheduler
+    @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalHealthDataUploadMgr
+    @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
     // swiftlint:disable attributes
     
     init() {}
@@ -114,6 +116,8 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             // would be anything but trivial.
             // if the user wants to switch to a different region, the easiest approach currently is to just kill and relaunch the app.
             try? await managedFileUpload.clearPendingUploads()
+            try? await historicalUploadManager.fullyResetSession(restart: false)
+            await sensorKitFetcher.resetAllQueryAnchors()
             let studyManager = studyManager
             _ = await _Concurrency.Task { @MainActor in
                 // this works bc we only ever enroll into the MHC study.

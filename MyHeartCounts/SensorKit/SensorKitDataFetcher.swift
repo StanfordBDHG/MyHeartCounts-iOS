@@ -86,6 +86,12 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         }
     }
     
+    @MainActor
+    func cancelAllActiveCollection() {
+        processingTask?.cancel()
+        processingTask = nil
+    }
+    
     
     @MainActor
     private func fetchAndUploadNewData() async {
@@ -130,6 +136,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
                 activity.updateTimeRange(batchInfo.timeRange)
                 try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
+                activity.updateMessage("Fetching Samples")
             }
         } catch {
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
