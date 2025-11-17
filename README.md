@@ -10,22 +10,15 @@ SPDX-License-Identifier: MIT
 
 # My Heart Counts
 
-This repository contains the My Heart Counts iOS application, which is implemented using the [Spezi](https://github.com/StanfordSpezi/Spezi) ecosystem and builds on top of the [Stanford Spezi Template Application](https://github.com/StanfordSpezi/SpeziTemplateApplication).
+[My Heart Counts (MHC) application](https://myheartcounts.stanford.edu) is a [Spezi](https://github.com/StanfordSpezi)-based large-scale cardiovascular study application, developed at Stanford University.
 
-> [!NOTE]  
-> Do you want to learn more about the Stanford Spezi Template Application and how to use, extend, and modify this application? Check out the [Stanford Spezi Template Application documentation](https://stanfordspezi.github.io/SpeziTemplateApplication).
-
-
-## Features
-
-[My Heart Counts](https://myheartcounts.stanford.edu) is a [Spezi](https://github.com/StanfordSpezi)-based large-scale cardiovascular study application, developed at Stanford University.
-
-Key Features Include:
-- Schedule-based user-actionable tasks and content, such as surveys, active tasks, or informative articles
-- Active Tasks, e.g. a Six-Minute Walk Test and a 12-Minute Run Test
-- Automatic SensorKit and HealthKit data collection
-- MHC Heart Health Dashboard: provides an overview of the participant's overall health, computed from 8 metrics, which are read from HealthKit and survey responses
+Key features include:
+- Schedule-based, user-actionable tasks and content, such as surveys, active tasks, or informative articles
+- Active tasks, for example a Six Minute Walk Test and a Twelve Minute Run Test
+- Automatic data collection through Apple’s SensorKit and HealthKit frameworks
+- MHC Heart Health Dashboard, which provides an overview of the participant’s overall health, computed from eight metrics read from HealthKit and survey responses
 - Physical Activity Trial with personalized coaching messages
+- Large Language Model (LLM) generated personalized physical activity nudges
 
 <table style="width: 80%">
   <tr>
@@ -67,6 +60,14 @@ Key Features Include:
     <td align="center">Spanish Language Support</td>
   </tr>
 </table>
+
+
+## Stanford Spezi
+
+This repository contains the My Heart Counts (MHC) iOS application, which is implemented using the [Spezi](https://github.com/StanfordSpezi/Spezi) ecosystem and builds on top of the [Stanford Spezi Template Application](https://github.com/StanfordSpezi/SpeziTemplateApplication).
+
+> [!NOTE]  
+> Do you want to learn more about the Stanford Spezi Template Application and how to use, extend, and modify this application? Check out the [Stanford Spezi Template Application documentation](https://stanfordspezi.github.io/SpeziTemplateApplication).
 
 
 ## Setting Up a Local Development Environment
@@ -118,6 +119,7 @@ In order to run and develop the My Heart Counts app locally, you'll need the fol
 ## Contributing
 
 Contributions to this project are welcome. Please make sure to read the [contribution guidelines](https://github.com/StanfordBDHG/.github/blob/main/CONTRIBUTING.md) and the [contributor covenant code of conduct](https://github.com/StanfordBDHG/.github/blob/main/CODE_OF_CONDUCT.md) first.
+
 
 ## License
 
