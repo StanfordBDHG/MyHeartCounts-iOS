@@ -18,7 +18,7 @@ This repository contains the My Heart Counts iOS application, which is implement
 
 ## Features
 
-My Heart Counts is a Heart Failure Study iOS app, developed by Stanford University.
+[My Heart Counts](https://myheartcounts.stanford.edu) is a [Spezi](https://github.com/StanfordSpezi)-based large-scale cardiovascular study application, developed at Stanford University.
 
 Key Features Include:
 - Schedule-based user-actionable tasks and content, such as surveys, active tasks, or informative articles
