@@ -10,15 +10,64 @@ SPDX-License-Identifier: MIT
 
 # My Heart Counts
 
-This repository contains the My Heart Counts iOS application, which is implemented using the [Spezi](https://github.com/StanfordSpezi/Spezi) ecosystem and builds on top of the [Stanford Spezi Template Application](https://github.com/StanfordSpezi/SpeziTemplateApplication).
+[My Heart Counts (MHC) application](https://myheartcounts.stanford.edu) is a [Spezi](https://github.com/StanfordSpezi)-based large-scale cardiovascular study application, developed at Stanford University.
+
+Key features include:
+- Schedule-based, user-actionable tasks and content, such as surveys, active tasks, or informative articles
+- Active tasks, for example a Six Minute Walk Test and a Twelve Minute Run Test
+- Automatic data collection through Apple’s SensorKit and HealthKit frameworks
+- MHC Heart Health Dashboard, which provides an overview of the participant’s overall health, computed from eight metrics read from HealthKit and survey responses
+- Physical Activity Trial with personalized coaching messages
+- Large Language Model (LLM) generated personalized physical activity nudges
+
+<table style="width: 80%">
+  <tr>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/nudge.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/nudge~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/questionnaire.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/questionnaire~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/dashboard.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/dashboard~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">Home</td>
+    <td align="center">Heart Health Surveys</td>
+    <td align="center">Heart Health Dashboard</td>
+  </tr>
+  <tr>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/6mwt.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/6mwt~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/sleep.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/sleep~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="assets/screenshots/home_es.png#gh-light-mode-only" width="80%"/>
+      <img src="assets/screenshots/home_es~dark.png#gh-dark-mode-only" width="80%"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">Active Tasks (6 Minute Walk Test and 12 Minute Run Test)</td>
+    <td align="center">Detailed Health Stats</td>
+    <td align="center">Spanish Language Support</td>
+  </tr>
+</table>
+
+
+## Stanford Spezi
+
+This repository contains the My Heart Counts (MHC) iOS application, which is implemented using the [Spezi](https://github.com/StanfordSpezi/Spezi) ecosystem and builds on top of the [Stanford Spezi Template Application](https://github.com/StanfordSpezi/SpeziTemplateApplication).
 
 > [!NOTE]  
 > Do you want to learn more about the Stanford Spezi Template Application and how to use, extend, and modify this application? Check out the [Stanford Spezi Template Application documentation](https://stanfordspezi.github.io/SpeziTemplateApplication).
-
-
-## My Heart Counts Features
-
-*coming soon*
 
 
 ## Setting Up a Local Development Environment
@@ -70,6 +119,7 @@ In order to run and develop the My Heart Counts app locally, you'll need the fol
 ## Contributing
 
 Contributions to this project are welcome. Please make sure to read the [contribution guidelines](https://github.com/StanfordBDHG/.github/blob/main/CONTRIBUTING.md) and the [contributor covenant code of conduct](https://github.com/StanfordBDHG/.github/blob/main/CODE_OF_CONDUCT.md) first.
+
 
 ## License
 
