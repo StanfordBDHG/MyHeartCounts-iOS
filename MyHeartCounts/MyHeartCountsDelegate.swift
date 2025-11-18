@@ -12,6 +12,8 @@ import SpeziFirebaseConfiguration
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
+import SpeziLLM
+import SpeziLLMLocal
 import SpeziNotifications
 import SpeziOnboarding
 import SpeziScheduler
@@ -53,6 +55,10 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
                     ManagedFileUpload.Category(sensor)
                 }
             }
+            LLMRunner {
+                LLMLocalPlatform()
+            }
+            OnDeviceNudgeService()
         }
     }
 }
