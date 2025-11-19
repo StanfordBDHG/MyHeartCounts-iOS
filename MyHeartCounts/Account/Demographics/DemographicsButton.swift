@@ -13,6 +13,8 @@ import SwiftUI
 struct DemographicsButton: View {
     @State private var isPresentingDemographicsSheet = false
     
+    let allowDragToDismiss: Bool
+    
     var body: some View {
         Button {
             isPresentingDemographicsSheet = true
@@ -22,6 +24,7 @@ struct DemographicsButton: View {
         .sheet(isPresented: $isPresentingDemographicsSheet) {
             NavigationStack {
                 DemographicsForm()
+                    .interactiveDismissDisabled(!allowDragToDismiss)
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
                             if #available(iOS 26, *) {
