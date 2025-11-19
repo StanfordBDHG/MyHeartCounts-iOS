@@ -110,6 +110,6 @@ extension SpeziFHIR.FHIRResource {
 
 extension FHIRResource {
     init(_ record: HKClinicalRecord, using healthKit: HealthKit) async throws {
-        try await self.init(SpeziFHIR.FHIRResource.initialize(basedOn: record, using: healthKit, loadHealthKitAttachements: true))
+        try await self.init(SpeziFHIR.FHIRResource.initialize(basedOn: record, using: healthKit, loadHealthKitAttachments: true))
     }
 }
