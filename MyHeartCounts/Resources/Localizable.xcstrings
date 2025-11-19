@@ -671,7 +671,25 @@
 
     },
     "Answer Questionnaire" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responder al cuestionario"
+          }
+        }
+      }
+    },
+    "Answer Survey" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responder al cuestionario"
+          }
+        }
+      }
     },
     "Apple ID Sharing" : {
 
@@ -817,6 +835,9 @@
           }
         }
       }
+    },
+    "Cancel" : {
+
     },
     "Carotid Artery Blockage/Stenosis" : {
 
@@ -1929,10 +1950,36 @@
 
     },
     "HEALTH_RECORDS_PERMISSIONS_DESCRIPTION" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you agree, this study can securely access selected health information that you have already stored in Apple’s Health app through your healthcare providers. This information may include:\n- Laboratory results (for example, cholesterol, blood sugar, or other blood tests)\n- Clinical measurements such as blood pressure, heart rate, or body mass index recorded by your medical provider\n- Medications prescribed to you\nImmunizations (such as flu or COVID-19 vaccines)\n- Allergies, diagnoses, and conditions listed in your medical record\n- Procedures and clinical visits documented by your health system\n\nAccess will occur only if you grant permission in Apple Health. Your health records are encrypted and transferred securely. The research team will not receive your full medical chart, only the specific data types you approve. You may withdraw this permission at any time through the Health app settings.\nThe purpose of collecting this information is to combine it with other data you choose to share—such as physical activity, heart rate, or survey responses—to help researchers better understand how clinical history relates to heart health and to develop improved strategies for prevention and treatment."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you agree, this study can securely access selected health information that you have already stored in Apple’s Health app through your healthcare providers. This information may include:\n- Laboratory results (for example, cholesterol, blood sugar, or other blood tests)\n- Clinical measurements such as blood pressure, heart rate, or body mass index recorded by your medical provider\n- Medications prescribed to you\nImmunizations (such as flu or COVID-19 vaccines)\n- Allergies, diagnoses, and conditions listed in your medical record\n- Procedures and clinical visits documented by your health system\n\nAccess will occur only if you grant permission in Apple Health. Your health records are encrypted and transferred securely. The research team will not receive your full medical chart, only the specific data types you approve. You may withdraw this permission at any time through the Health app settings.\nThe purpose of collecting this information is to combine it with other data you choose to share—such as physical activity, heart rate, or survey responses—to help researchers better understand how clinical history relates to heart health and to develop improved strategies for prevention and treatment."
+          }
+        }
+      }
     },
     "HEALTH_RECORDS_PERMISSIONS_SUBTITLE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You may choose to share certain health records from your Apple Health app, such as lab results, medications, or immunizations. This information will be used for research to better understand heart health. Sharing is voluntary and can be withdrawn at any time."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You may choose to share certain health records from your Apple Health app, such as lab results, medications, or immunizations. This information will be used for research to better understand heart health. Sharing is voluntary and can be withdrawn at any time."
+          }
+        }
+      }
     },
     "HealthKit" : {
 
@@ -2243,6 +2290,9 @@
         }
       }
     },
+    "Is selected" : {
+
+    },
     "Kansas" : {
       "localizations" : {
         "es" : {
@@ -2506,6 +2556,9 @@
       }
     },
     "Master" : {
+
+    },
+    "Master's Degree" : {
 
     },
     "Memory Usage" : {
@@ -3390,6 +3443,12 @@
     "Peripheral Vascular Disease" : {
 
     },
+    "Ph.D., M.D., J.D., etc." : {
+
+    },
+    "Please select the clause that most closely matches what you do." : {
+      "comment" : "adapted from the instructions at https://pmc.ncbi.nlm.nih.gov/articles/PMC5367771/"
+    },
     "Prefer not to state" : {
 
     },
@@ -4157,6 +4216,207 @@
     "stage 3, 4 or 5" : {
 
     },
+    "Stage of Change" : {
+
+    },
+    "STAGE_OF_CHANGE_OPTION_A" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tend to take part in planned physical activity for health, sport, or fitness regularly (e.g. at least 3 times per week, 30 minutes per day), but sometimes I do not."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tend to take part in planned physical activity for health, sport, or fitness regularly (e.g. at least 3 times per week, 30 minutes per day), but sometimes I do not."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiendo a participar regularmente en actividad física planificada por razones de salud, deporte o fitness (por ejemplo, al menos 3 veces por semana, 30 minutos por día), pero a veces no lo hago."
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_B" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I take part in planned physical activity for health, sport, or fitness regularly (e.g. at least 3 times per week, 30 minutes per day); it is part of my routine life."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I take part in planned physical activity for health, sport, or fitness regularly (e.g. at least 3 times per week, 30 minutes per day); it is part of my routine life."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participo regularmente en actividad física planificada por motivos de salud, deporte o fitness (por ejemplo, al menos 3 veces por semana, 30 minutos por día); Es parte de mi vida rutinaria."
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_C" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I don’t do any planned physical activity for health, sport, or fitness regularly (e.g. at least 3 times per week, 30 minutes per day); and I have not thought about doing planned physical activity at that level. "
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I don’t do any planned physical activity for health, sport, or fitness regularly (e.g. at least 3 times per week, 30 minutes per day); and I have not thought about doing planned physical activity at that level. "
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hago ninguna actividad física planificada por motivos de salud, deporte o fitness con regularidad (por ejemplo, al menos 3 veces por semana, 30 minutos al día); y no he pensado en hacer actividad física planificada a ese nivel."
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_D" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I don’t take part in planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day), but I do think about starting to reach that level of planned physical activity."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I don’t take part in planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day), but I do think about starting to reach that level of planned physical activity."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No realizo actividad física planificada por salud, deporte o fitness de forma regular (al menos 3 veces por semana, 30 minutos al día), pero sí pienso en empezar a alcanzar ese nivel de actividad física planificada."
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_E" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I am planning to begin doing planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day) but still have not started."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I am planning to begin doing planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day) but still have not started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estoy pensando en empezar a realizar actividad física planificada por motivos de salud, deporte o fitness con regularidad (al menos 3 veces por semana, 30 minutos al día), pero todavía no he empezado."
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_F" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the last 6 months I started doing planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day)."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the last 6 months I started doing planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En los últimos 6 meses comencé a realizar actividad física planificada por salud, deporte o fitness de forma regular (al menos 3 veces por semana, 30 minutos por día)."
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_G" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More than 6 months ago I started take doing planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More than 6 months ago I started take doing planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hace más de 6 meses comencé a realizar actividad física planificada por salud, deporte o fitness de forma regular (al menos 3 veces por semana, 30 minutos al día)"
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_H" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I do take part in planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day) most of the time; but sometimes I cannot do it 3 times a week or more."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I do take part in planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day) most of the time; but sometimes I cannot do it 3 times a week or more."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Realizo actividad física planificada por motivos de salud, deporte o fitness con regularidad (al menos 3 veces por semana, 30 minutos por día) la mayor parte del tiempo; pero a veces no puedo hacerlo 3 veces por semana o más."
+          }
+        }
+      }
+    },
+    "STAGE_OF_CHANGE_OPTION_I" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For several years I have routinely done planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day); it is part of my lifestyle."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For several years I have routinely done planned physical activity for health, sport, or fitness regularly (at least 3 times per week, 30 minutes per day); it is part of my lifestyle."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desde hace varios años practico deporte o realizo actividad física recreativa de forma rutinaria, es parte de mi estilo de vida."
+          }
+        }
+      }
+    },
     "Start" : {
       "localizations" : {
         "es" : {
@@ -4251,7 +4511,14 @@
 
     },
     "Tasks" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tareas"
+          }
+        }
+      }
     },
     "Tennessee" : {
       "localizations" : {
@@ -4426,10 +4693,24 @@
       }
     },
     "Today" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        }
+      }
     },
     "Today's Tasks" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tareas de hoy"
+          }
+        }
+      }
     },
     "Total Household Income" : {
       "localizations" : {
@@ -4766,13 +5047,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+            "value" : "My Heart Counts will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The My Heart Counts app will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
+            "value" : "My Heart Counts will send you personalized notifications to help you stay active. Tell us which workouts you prefer and when during the day you’d like to receive reminders. This helps us tailor your experience to your schedule and goals."
           }
         }
       }

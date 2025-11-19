@@ -251,7 +251,8 @@ enum DeferredConfigLoading {
                         .manual(\.dateOfEnrollment),
                         .manual(\.preferredWorkoutTypes),
                         .manual(\.preferredNudgeNotificationTime),
-                        .manual(\.didOptInToTrial)
+                        .manual(\.didOptInToTrial),
+                        .manual(\.stageOfChange)
                     ]
                 )
                 firestore

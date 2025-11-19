@@ -40,7 +40,7 @@ private struct DebugFormImpl: View {
     var body: some View {
         Form { // swiftlint:disable:this closure_body_length
             Section {
-                DemographicsButton()
+                DemographicsButton(allowDragToDismiss: false)
             }
             Section {
                 MemoryUsageIndicator()
@@ -98,7 +98,7 @@ private struct DebugFormImpl: View {
     
     private var answerQuestionnaireRow: some View {
         Menu {
-            let options = ["HeartRisk", "Diet"]
+            let options = ["HeartRisk", "Diet", "NicotineExposure"]
             ForEach(options, id: \.self) { option in
                 Button(option) {
                     let fileRef = StudyBundle.FileReference(category: .questionnaire, filename: option, fileExtension: "json")

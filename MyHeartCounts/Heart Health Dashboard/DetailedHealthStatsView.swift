@@ -425,7 +425,7 @@ private struct FurtherReadingSection: View {
     var body: some View {
         Section(title) {
             VStack(alignment: .leading) {
-                MarkdownView(markdownDocument: document)
+                MarkdownView(document: document)
                     .padding(.vertical, 5)
             }
             ForEach(Array(links.indices), id: \.self) { idx in

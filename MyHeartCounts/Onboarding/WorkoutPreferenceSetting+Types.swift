@@ -67,7 +67,7 @@ extension WorkoutPreferenceSetting.WorkoutType {
         Self(id: "walk", title: "Walking", symbol: .figureWalk),
         Self(id: "run", title: "Running", symbol: .figureRun),
         Self(id: "bicycle", title: "Cycling", symbol: .figureOutdoorCycle),
-        Self(id: "swim", title: "Swimmimg", symbol: .figurePoolSwim),
+        Self(id: "swim", title: "Swimming", symbol: .figurePoolSwim),
         Self(id: "strength", title: "Strength", symbol: .figureStrengthtrainingFunctional),
         Self(id: "HIIT", title: "High-intensity Training", symbol: .figureHighintensityIntervaltraining),
         Self(id: "yoga/pilates", title: "Yoga / Pilates", symbol: .figureYoga),

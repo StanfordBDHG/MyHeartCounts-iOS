@@ -149,7 +149,7 @@ struct HeartHealthDashboard: View {
     @ViewBuilder private var learnMoreSection: some View {
         if let learnMoreText = studyManager.localizedMarkdown(for: "LearnMore", in: .hhdExplainer) {
             Section("Understanding Your Heart Health Score") {
-                MarkdownView(markdownDocument: .init(metadata: [:], blocks: [.markdown(id: nil, rawContents: learnMoreText)]))
+                MarkdownView(document: .init(metadata: [:], blocks: [.markdown(id: nil, rawContents: learnMoreText)]))
             }
         }
     }

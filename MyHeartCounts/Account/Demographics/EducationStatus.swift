@@ -37,8 +37,8 @@ extension EducationStatusUS {
         Self(id: "highSchool", title: "High School"),
         Self(id: "someCollege", title: "Some College", subtitle: "Some college or vocational school or associate degree"),
         Self(id: "bachelor", title: "Bachelor", subtitle: "College graduate or Baccalaureate Degree"),
-        Self(id: "master", title: "Master"),
-        Self(id: "doctoralDegree", title: "Doctoral Degree")
+        Self(id: "master", title: "Master's Degree"),
+        Self(id: "doctoralDegree", title: "Doctoral Degree", subtitle: "Ph.D., M.D., J.D., etc.")
     ]
 }
 

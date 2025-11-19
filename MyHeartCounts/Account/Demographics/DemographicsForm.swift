@@ -192,7 +192,12 @@ private struct Impl<Footer: View>: View {
                 }
             }
             if region == .unitedKingdom {
-                nhsNumberSection
+                Section {
+                    nhsNumberSection
+                }
+            }
+            Section {
+                stageOfChangeSection
             }
             Section {
                 DemographicsComponent(\.futureStudiesOptIn, noSelectionValue: nil) { binding, _ in
@@ -260,6 +265,20 @@ private struct Impl<Footer: View>: View {
                 Link("Find your NHS Number", destination: "https://www.nhs.uk/nhs-services/online-services/find-nhs-number/")
                     .font(.footnote)
                     .tint(.blue)
+            }
+        }
+    }
+    
+    @ViewBuilder private var stageOfChangeSection: some View {
+        DemographicsComponent(\.stageOfChange, noSelectionValue: nil) { binding, isEmpty in
+            NavigationLink {
+                StageOfChangePicker(selection: binding)
+            } label: {
+                NavigationLinkLabel(
+                    "Stage of Change",
+                    isEmpty: isEmpty,
+                    value: isEmpty ? "No Selection" : "\(binding.withDefault(.notSet).id.uppercased())"
+                )
             }
         }
     }

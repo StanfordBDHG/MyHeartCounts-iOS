@@ -205,7 +205,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SensorKit Accelerometer data helps us better interpret your timed walk test results"
+            "value" : "SensorKit Accelerometer data helps us better interpret your timed walk test results."
           }
         }
       }
@@ -216,7 +216,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SensorKit Ambient Light data helps us better understand your [TODO]"
+            "value" : "Helps us better understand your environment and light exposure, which affects your circadian rhythms and may provide insights for providing more accurate physical activity prompts."
           }
         }
       }
@@ -227,13 +227,27 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SensorKit Ambient Pressure data helps us better interpret your timed walk test results"
+            "value" : "SensorKit Ambient Pressure data helps us better interpret your timed walk test results."
           }
         }
       }
     },
     "SENSORKIT_USAGE_DESC_DEVICE_USAGE" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can help us identify phone usage patterns that help us provide more effective physical activity interventions."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can help us identify phone usage patterns that help us provide more effective physical activity interventions."
+          }
+        }
+      }
     },
     "SENSORKIT_USAGE_DESC_ECG" : {
       "extractionState" : "manual",
@@ -241,18 +255,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SensorKit ECG provides the most in-depth and accurate heart readings possible"
+            "value" : "SensorKit ECG provides the most in-depth and accurate heart readings possible."
           }
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "SensorKit ECG provides the most in-depth and accurate heart readings possible"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "El ECG de SensorKit proporciona las lecturas cardíacas más detalladas y precisas posibles."
           }
         }
@@ -264,7 +278,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SensorKit Heart Rate data helps us better interpret your ECGs and timed walk test results"
+            "value" : "SensorKit Heart Rate data helps us better interpret your ECGs and timed walk test results."
           }
         }
       }
@@ -298,7 +312,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SensorKit Pedometer data helps us better interpret your timed walk test results"
+            "value" : "SensorKit Pedometer data helps us better interpret your timed walk test results."
           }
         }
       }
@@ -307,7 +321,27 @@
       "extractionState" : "manual"
     },
     "SENSORKIT_USAGE_DESC_VISITS" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allows researchers to better personalize physical activity interventions based on locations you visit."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allows researchers to better personalize physical activity interventions based on locations you visit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allows researchers to better personalize physical activity interventions based on locations you visit."
+          }
+        }
+      }
     },
     "SENSORKIT_USAGE_DESC_WRIST_TEMP" : {
       "extractionState" : "manual",
@@ -315,7 +349,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SensorKit Wrist Temperature data helps us better understand your [TODO]"
+            "value" : "Can help to detect early signs of health issues."
           }
         }
       }

@@ -364,14 +364,19 @@ extension XCUIApplication {
         
         if staticTexts["Education Level"].waitForExistence(timeout: 2) {
             staticTexts["Education Level"].tap()
-            buttons["Master"].tap()
+            buttons["Master's Degree"].tap()
             navigationBars.buttons["BackButton"].tap()
-            XCTAssert(buttons["Education Level, Master"].waitForExistence(timeout: 1))
+            XCTAssert(buttons["Education Level, Master's Degree"].waitForExistence(timeout: 1))
         }
         
         staticTexts["Total Household Income"].tap()
         buttons["Prefer not to state"].tap()
         navigationBars.buttons["BackButton"].tap()
+        
+        staticTexts["Stage of Change"].tap()
+        buttons["StageOfChangeButton:a"].tap()
+        navigationBars.buttons["BackButton"].tap()
+        XCTAssert(buttons["Stage of Change, A"].waitForExistence(timeout: 1))
         
         let continueButton = buttons["Continue"]
         while !continueButton.exists {

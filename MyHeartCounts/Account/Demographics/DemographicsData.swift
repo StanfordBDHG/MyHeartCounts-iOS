@@ -103,6 +103,9 @@ final class DemographicsData {
     var futureStudiesOptIn: Bool? {
         didSet { onChange() }
     }
+    var stageOfChange: StageOfChangeOption? {
+        didSet { onChange() }
+    }
     
     init() {
         initialDetails = AccountDetails()
@@ -136,6 +139,7 @@ final class DemographicsData {
         ukHouseholdIncome = details.householdIncomeUK
         nhsNumber = details.nhsNumber
         futureStudiesOptIn = details.futureStudies
+        stageOfChange = details.stageOfChange
     }
     
     private func onChange(_ trigger: StaticString = #function) {
@@ -195,6 +199,7 @@ final class DemographicsData {
         write(ukHouseholdIncome, to: \.householdIncomeUK)
         write(nhsNumber, to: \.nhsNumber)
         write(futureStudiesOptIn, to: \.futureStudies)
+        write(stageOfChange, to: \.stageOfChange)
         let modifications = try AccountModifications(modifiedDetails: updated, removedAccountDetails: removed)
         try await account.accountService.updateAccountDetails(modifications)
         print("Did write demographics values to account details")

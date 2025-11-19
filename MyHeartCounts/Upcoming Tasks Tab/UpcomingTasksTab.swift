@@ -25,6 +25,7 @@ struct UpcomingTasksTab: RootViewTab {
                 TasksList(
                     mode: .upcoming(includeIndefinitePastTasks: false, showFallbackTasks: true),
                     timeRange: .weeks(2),
+                    headerConfig: .timeRange(subtitle: .hide),
                     eventGroupingConfig: .byDay,
                     noTasksMessageLabels: .init(title: "No Upcoming Tasks")
                 )
@@ -45,27 +46,32 @@ struct UpcomingTasksTab: RootViewTab {
 
 
 extension UpcomingTasksTab {
+    @ViewBuilder
     static func sectionHeader(
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource? = nil
     ) -> some View {
-        Section {
-            VStack(alignment: .leading) {
-                Text(title)
-                if let subtitle, !String(localized: subtitle).isEmpty {
-                    Text(subtitle)
-                        .foregroundStyle(.secondary)
-                        .font(.footnote)
-                        .fontDesign(.rounded)
+        let title = title.localizedString()
+        let subtitle = subtitle?.localizedString()
+        if !title.isEmpty || !(subtitle ?? "").isEmpty {
+            Section {
+                VStack(alignment: .leading) {
+                    Text(title)
+                    if let subtitle, !subtitle.isEmpty {
+                        Text(subtitle)
+                            .foregroundStyle(.secondary)
+                            .font(.footnote)
+                            .fontDesign(.rounded)
+                    }
                 }
+                .foregroundStyle(.secondary)
+                .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 0))
+                .listRowBackground(Color.clear)
+                .font(.title2)
+                .fontDesign(.rounded)
+                .fontWeight(.bold)
             }
-            .foregroundStyle(.secondary)
-            .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 0))
-            .listRowBackground(Color.clear)
-            .font(.title2)
-            .fontDesign(.rounded)
-            .fontWeight(.bold)
+            .listSectionSpacing(.compact)
         }
-        .listSectionSpacing(.compact)
     }
 }

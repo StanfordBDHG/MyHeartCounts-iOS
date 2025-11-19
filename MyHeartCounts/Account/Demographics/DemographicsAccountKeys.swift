@@ -154,6 +154,16 @@ extension AccountDetails {
     
     @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
     var futureStudies: Bool? // swiftlint:disable:this discouraged_optional_boolean
+    
+    @AccountKey(
+        id: "stageOfChange",
+        name: "Stage of Change",
+        category: .demographics,
+        options: .mutable,
+        as: StageOfChangeOption.self,
+        initial: .empty(.notSet)
+    )
+    var stageOfChange: StageOfChangeOption?
 }
 
 
@@ -162,7 +172,7 @@ extension AccountDetails {
     \.ukRegion, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,
     \.raceEthnicity, \.latinoStatus,
-    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies
+    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies, \.stageOfChange
 )
 extension AccountKeys {}
 

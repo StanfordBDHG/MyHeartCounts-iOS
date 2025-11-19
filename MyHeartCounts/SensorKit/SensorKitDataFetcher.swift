@@ -77,11 +77,19 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     func run() async {
         Task(priority: .background) {
+            // wait a little bit to make sure all of the other setup stuff (esp Firebase!) has time to finish before we start uploading
+            try await Task.sleep(for: .seconds(1))
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
             await fetchAndUploadNewData()
         }
+    }
+    
+    @MainActor
+    func cancelAllActiveCollection() {
+        processingTask?.cancel()
+        processingTask = nil
     }
     
     
@@ -128,6 +136,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
                 activity.updateTimeRange(batchInfo.timeRange)
                 try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
+                activity.updateMessage("Fetching Samples")
             }
         } catch {
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")

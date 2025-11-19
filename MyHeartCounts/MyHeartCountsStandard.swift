@@ -18,6 +18,7 @@ import SpeziFirestore
 import SpeziHealthKit
 import SpeziLocalStorage
 import SpeziQuestionnaire
+import SpeziScheduler
 import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
@@ -41,13 +42,17 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(AccountFeatureFlags.self) private var accountFeatureFlags
     @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
     @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
+    @Dependency(NotificationTracking.self) var notificationTracking
+    @Dependency(Scheduler.self) var scheduler
+    @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalHealthDataUploadMgr
+    @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
     // swiftlint:disable attributes
     
     init() {}
     
     @MainActor
     func configure() {
-        Task {
+        _Concurrency.Task {
             await updateStudyDefinition()
         }
     }
@@ -111,8 +116,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             // would be anything but trivial.
             // if the user wants to switch to a different region, the easiest approach currently is to just kill and relaunch the app.
             try? await managedFileUpload.clearPendingUploads()
+            try? await historicalUploadManager.fullyResetSession(restart: false)
+            sensorKitFetcher.resetAllQueryAnchors()
             let studyManager = studyManager
-            _ = await Task { @MainActor in
+            _ = await _Concurrency.Task { @MainActor in
                 // this works bc we only ever enroll into the MHC study.
                 guard let studyManager, let enrollment = studyManager.studyEnrollments.first else {
                     return
@@ -124,7 +131,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                     logger.error("Error unenrolling from study: \(error)")
                 }
             }.result
-            Task {
+            _Concurrency.Task {
                 guard /*!ProcessInfo.isBeingUITested,*/ await !setupTestEnvironment.isInSetup else {
                     // ^we potentially log out and in as part of the test env setup; we want to skip this
                     return
@@ -134,7 +141,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 // onboarding sheet, thereby causing it to set the UserDefaults key (which, via a Binding, is used as the onboarding sheet's `isPresented` value)
                 // back to false.
                 // We try to work around this by waiting a bit, to give the account sheet a chance to dismiss itself.
-                try await Task.sleep(for: .seconds(2))
+                try await _Concurrency.Task.sleep(for: .seconds(2))
                 logger.notice("Triggering Onboarding Flow")
                 LocalPreferencesStore.standard[.onboardingFlowComplete] = false
             }
@@ -144,14 +151,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         case .detailsChanged:
             break
         }
-    }
-}
-
-
-extension MyHeartCountsStandard: NotificationHandler {
-    nonisolated func receiveIncomingNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions? {
-        // we want notifications to always display, even when the app is running.
-        [.badge, .banner, .list, .sound]
     }
 }
 

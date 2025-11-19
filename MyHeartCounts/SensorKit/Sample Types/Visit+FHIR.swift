@@ -69,7 +69,7 @@ extension SRVisit.SafeRepresentation: HealthObservation {
                 value: .uuid(FHIRPrimitive(FHIRURI(self.locationId)))
             ),
             Extension(
-                url: sensorDomainUrl.appending(component: "diatanceFromHome"),
+                url: sensorDomainUrl.appending(component: "distanceFromHome"),
                 value: .quantity(Quantity(unit: .meter, value: self.distanceFromHome))
             ),
             Extension(
