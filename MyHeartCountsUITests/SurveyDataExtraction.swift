@@ -12,7 +12,7 @@ import XCTest
 import XCTestExtensions
 
 
-final class ScheduledTaskTests: MHCTestCase {
+final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testSurveyHealthDataExtraction() throws {
         try launchAppAndEnrollIntoStudy(enableDebugMode: true)

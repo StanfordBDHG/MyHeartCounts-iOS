@@ -1242,9 +1242,6 @@
     "Doctoral Degree" : {
 
     },
-    "Doctoral Degree (Ph.D., M.D., J.D., etc.)" : {
-
-    },
     "Don't Know" : {
 
     },
@@ -1953,10 +1950,36 @@
 
     },
     "HEALTH_RECORDS_PERMISSIONS_DESCRIPTION" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you agree, this study can securely access selected health information that you have already stored in Apple’s Health app through your healthcare providers. This information may include:\n- Laboratory results (for example, cholesterol, blood sugar, or other blood tests)\n- Clinical measurements such as blood pressure, heart rate, or body mass index recorded by your medical provider\n- Medications prescribed to you\nImmunizations (such as flu or COVID-19 vaccines)\n- Allergies, diagnoses, and conditions listed in your medical record\n- Procedures and clinical visits documented by your health system\n\nAccess will occur only if you grant permission in Apple Health. Your health records are encrypted and transferred securely. The research team will not receive your full medical chart, only the specific data types you approve. You may withdraw this permission at any time through the Health app settings.\nThe purpose of collecting this information is to combine it with other data you choose to share—such as physical activity, heart rate, or survey responses—to help researchers better understand how clinical history relates to heart health and to develop improved strategies for prevention and treatment."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you agree, this study can securely access selected health information that you have already stored in Apple’s Health app through your healthcare providers. This information may include:\n- Laboratory results (for example, cholesterol, blood sugar, or other blood tests)\n- Clinical measurements such as blood pressure, heart rate, or body mass index recorded by your medical provider\n- Medications prescribed to you\nImmunizations (such as flu or COVID-19 vaccines)\n- Allergies, diagnoses, and conditions listed in your medical record\n- Procedures and clinical visits documented by your health system\n\nAccess will occur only if you grant permission in Apple Health. Your health records are encrypted and transferred securely. The research team will not receive your full medical chart, only the specific data types you approve. You may withdraw this permission at any time through the Health app settings.\nThe purpose of collecting this information is to combine it with other data you choose to share—such as physical activity, heart rate, or survey responses—to help researchers better understand how clinical history relates to heart health and to develop improved strategies for prevention and treatment."
+          }
+        }
+      }
     },
     "HEALTH_RECORDS_PERMISSIONS_SUBTITLE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You may choose to share certain health records from your Apple Health app, such as lab results, medications, or immunizations. This information will be used for research to better understand heart health. Sharing is voluntary and can be withdrawn at any time."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You may choose to share certain health records from your Apple Health app, such as lab results, medications, or immunizations. This information will be used for research to better understand heart health. Sharing is voluntary and can be withdrawn at any time."
+          }
+        }
+      }
     },
     "HealthKit" : {
 
@@ -3418,6 +3441,9 @@
 
     },
     "Peripheral Vascular Disease" : {
+
+    },
+    "Ph.D., M.D., J.D., etc." : {
 
     },
     "Please select the clause that most closely matches what you do." : {

@@ -12,7 +12,7 @@ import XCTestExtensions
 import XCTHealthKit
 
 
-final class BasicAppUsage: MHCTestCase {
+final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testRootLevelNavigation() throws {
         try launchAppAndEnrollIntoStudy()

@@ -16,7 +16,7 @@ import XCTHealthKit
  - an onboarding test where we enter invalid values and get to the "you're not eligible" step
  */
 
-class MHCTestCase: XCTestCase {
+class MHCTestCase: XCTestCase, @unchecked Sendable {
     static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
     
     private(set) var app: XCUIApplication! // swiftlint:disable:this implicitly_unwrapped_optional

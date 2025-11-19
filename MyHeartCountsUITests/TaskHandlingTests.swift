@@ -13,7 +13,7 @@ import XCTestExtensions
 import XCTHealthKit
 
 
-final class TaskHandlingTests: MHCTestCase {
+final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
     private let timedWalkTestDistance = switch Locale.current.measurementSystem {
     case .us:
         "2,762 ft"

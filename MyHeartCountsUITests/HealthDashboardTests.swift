@@ -11,7 +11,7 @@ import XCTestExtensions
 import XCTHealthKit
 
 
-class HealthDashboardTests: MHCTestCase {
+class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testHealthDashboardDataEntryBMIDirect() throws {
         let value = Int.random(in: 20...50)

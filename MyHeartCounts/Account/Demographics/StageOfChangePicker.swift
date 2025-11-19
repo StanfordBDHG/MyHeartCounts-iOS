@@ -75,5 +75,6 @@ struct StageOfChangePicker: View {
             }
             .contentShape(Rectangle())
         }
+        .accessibilityIdentifier("StageOfChangeButton:\(option.id)")
     }
 }
