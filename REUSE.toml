@@ -2,7 +2,7 @@ version = 1
 
 [[annotations]]
 path = [
-    "assets/*",
+    "assets/**",
     "MyHeartCounts.xcodeproj/**",
     "MyHeartCounts/Resources/Assets.xcassets/**",
     "MyHeartCountsWatchApp/Resources/Assets.xcassets/**",
