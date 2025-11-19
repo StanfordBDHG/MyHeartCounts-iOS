@@ -1370,24 +1370,24 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziViews.git";
 			requirement = {
-				branch = 5ed71d61cdda25c3b179912c2fe2b7526832c84f;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.12.8;
 			};
 		};
 		804C11E22ECA380D004783C3 /* XCRemoteSwiftPackageReference "MyHeartCounts-StudyDefinitions" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git";
 			requirement = {
-				kind = revision;
-				revision = a2847671dfaa54941275b4463c5db5d3624cf4e1;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.9;
 			};
 		};
 		804C11E72ECA382D004783C3 /* XCRemoteSwiftPackageReference "SpeziScheduler" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziScheduler.git";
 			requirement = {
-				kind = revision;
-				revision = ac13c4e12503cb4a6ef117385f728e13de687144;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.17;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
@@ -1402,8 +1402,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = revision;
-				revision = 021f3f89c242126575acb00a4f0b761492e25700;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.18;
 			};
 		};
 		8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
@@ -1467,7 +1467,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFHIR.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.8.1;
+				minimumVersion = 0.9.0;
 			};
 		};
 		80B8A2342EC1336F00F0E453 /* XCRemoteSwiftPackageReference "FHIRModels" */ = {
