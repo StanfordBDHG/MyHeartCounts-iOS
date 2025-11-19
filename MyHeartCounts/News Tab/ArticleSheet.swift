@@ -112,7 +112,7 @@ struct ArticleSheet: View {
         VStack(spacing: 0) {
             headlineImage
             Divider()
-            MarkdownView(markdownDocument: article.body)
+            MarkdownView(document: article.body)
                 .padding([.horizontal, .top])
         }
     }

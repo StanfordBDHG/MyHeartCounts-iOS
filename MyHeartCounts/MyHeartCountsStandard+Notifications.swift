@@ -32,8 +32,6 @@ extension MyHeartCountsStandard: NotificationHandler {
         case UNNotificationDefaultActionIdentifier:
             // the user simply tapped the notification
             let cal = Calendar.current
-            let id = response.notification.request.identifier
-            await logger.notice("DID TAP NOTI WITH ID \(id)")
             if let taskId = response.notification.request.content.userInfo[SchedulerNotifications.notificationTaskIdKey] as? String,
                let task = try? await scheduler.queryTasks(for: cal.rangeOfDay(for: response.notification.date)).last(where: { $0.id == taskId }),
                let context = task.studyContext,
