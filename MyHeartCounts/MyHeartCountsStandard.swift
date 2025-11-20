@@ -61,6 +61,9 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     @MainActor
     private func handleIsLoggedOut() async {
+        guard !FeatureFlags.disableFirebase else {
+            return
+        }
         let isLoggedIn1 = Auth.auth().currentUser != nil
         let isLoggedIn2 = await account?.signedIn ?? false
         if !isLoggedIn1 && !isLoggedIn2 {
