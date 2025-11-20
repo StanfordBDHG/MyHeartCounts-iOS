@@ -342,9 +342,9 @@ extension XCUIApplication {
         staticTexts["Race / Ethnicity"].tap()
         buttons["Prefer not to Answer"].tap()
         buttons["White"].tap()
-        buttons["Japanese"].tap()
+        buttons["Alaska Native"].tap()
         navigationBars.buttons["BackButton"].tap()
-        XCTAssert(buttons["Race / Ethnicity, White, Japanese"].waitForExistence(timeout: 1))
+        XCTAssert(buttons["Race / Ethnicity, White, Alaska Native"].waitForExistence(timeout: 1))
         
         staticTexts["Are you Hispanic/Latino?"].tap()
         buttons["No"].tap()

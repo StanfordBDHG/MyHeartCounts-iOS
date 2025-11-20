@@ -25,7 +25,7 @@ struct LocalPreferenceKey<Value: SendableMetatype>: Sendable {
         read: @escaping @Sendable (String, UserDefaults) -> Value,
         write: @escaping @Sendable (String, Value?, UserDefaults) throws -> Void
     ) {
-        // We want to be able to obvserve these entries via KVO, which doesn't work if they appear to be keyPaths,
+        // We want to be able to obsserve these entries via KVO, which doesn't work if they appear to be keyPaths,
         // therefore we replace all '.' with '_'.
         let key = "edu.stanford.MyHeartCounts.\(key)".replacingOccurrences(of: ".", with: "_")
         self.key = key
