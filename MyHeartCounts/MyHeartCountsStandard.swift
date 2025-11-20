@@ -7,6 +7,7 @@
 //
 
 @preconcurrency import FirebaseAuth
+@preconcurrency import FirebaseCore
 @preconcurrency import FirebaseFirestore
 @preconcurrency import FirebaseStorage
 import HealthKitOnFHIR
@@ -61,7 +62,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     @MainActor
     private func handleIsLoggedOut() async {
-        guard !FeatureFlags.disableFirebase else {
+        guard !FeatureFlags.disableFirebase, FirebaseApp.app() != nil else {
             return
         }
         let isLoggedIn1 = Auth.auth().currentUser != nil
