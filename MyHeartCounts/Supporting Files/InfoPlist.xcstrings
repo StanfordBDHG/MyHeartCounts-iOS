@@ -11,6 +11,12 @@
             "value" : "My Heart Counts"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26,6 +32,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "MyHeartCounts"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "MyHeartCounts"
           }
         },
@@ -56,6 +68,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "My Heart Counts uses Health data to understand all aspects of health."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "My Heart Counts uses Health data to understand all aspects of health."
           }
         }
@@ -179,6 +197,12 @@
             "value" : "Enabling SensorKit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabling SensorKit provides more accurate and in depth data for things like ECG to help advance cardiovascular research."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -207,6 +231,12 @@
             "state" : "translated",
             "value" : "SensorKit Accelerometer data helps us better interpret your timed walk test results."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Accelerometer data helps us better interpret your timed walk test results."
+          }
         }
       }
     },
@@ -218,6 +248,12 @@
             "state" : "translated",
             "value" : "Helps us better understand your environment and light exposure, which affects your circadian rhythms and may provide insights for providing more accurate physical activity prompts."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helps us better understand your environment and light exposure, which affects your circadian rhythms and may provide insights for providing more accurate physical activity prompts."
+          }
         }
       }
     },
@@ -225,6 +261,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Ambient Pressure data helps us better interpret your timed walk test results."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SensorKit Ambient Pressure data helps us better interpret your timed walk test results."
@@ -260,8 +302,8 @@
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "SensorKit ECG provides the most in-depth and accurate heart readings possible"
+            "state" : "translated",
+            "value" : "SensorKit ECG provides the most in-depth and accurate heart readings possible."
           }
         },
         "es" : {
@@ -276,6 +318,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Heart Rate data helps us better interpret your ECGs and timed walk test results."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SensorKit Heart Rate data helps us better interpret your ECGs and timed walk test results."
@@ -314,11 +362,31 @@
             "state" : "translated",
             "value" : "SensorKit Pedometer data helps us better interpret your timed walk test results."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit Pedometer data helps us better interpret your timed walk test results."
+          }
         }
       }
     },
     "SENSORKIT_USAGE_DESC_PPG" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit PPG data helps us better interpret your ECGs and timed walk test results."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit PPG data helps us better interpret your ECGs and timed walk test results."
+          }
+        }
+      }
     },
     "SENSORKIT_USAGE_DESC_VISITS" : {
       "extractionState" : "manual",
@@ -347,6 +415,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can help to detect early signs of health issues."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Can help to detect early signs of health issues."
