@@ -72,9 +72,10 @@ This repository contains the My Heart Counts (MHC) iOS application, which is imp
 
 ## Setting Up a Local Development Environment
 In order to run and develop the My Heart Counts app locally, you'll need the following:
-1. A firebase environment
-2. A study bundle
-3. The app itself (either in the simulator or on a real device)
+1. Clone this repository
+2. A firebase environment
+3. A study bundle
+4. The app itself (either in the simulator or on a real device)
 
 ### The Study Definition
 1. Go to the definitions submodule: `cd MyHeartCounts-StudyDefinitions`
@@ -88,14 +89,13 @@ In order to run and develop the My Heart Counts app locally, you'll need the fol
 3. Run `npm run serve:seeded`
 
 ### The App Itself
-1. Clone this repo (https://github.com/StanfordBDHG/MyHeartCounts-iOS)
-2. Disable SensorKit and adjust the Codesign options
+1. Disable SensorKit and adjust the Codesign options
     - (You can skip this step if you have access to a Stanford-generated provisioning profile and have Stanford's codesign certificate installed locally.)
     - Open `MyHeartCounts.entitlements` and remove the `com.apple.developer.sensorkit.reader.allow` entry
     - Change the bundle identifiers in all targets (e.g., by adding a custom prefix)
         - Note: you'll also need to edit the watch app's Info.plist and adjust the `WKCompanionAppBundleIdentifier` entry
     - Select your own development team in the MyHeartCounts and MyHeartCountsWatchApp targets, and enable the automatic code signing option
-3. Adjust the app's run configuration (open via `cmd+shift+,`) and enable the following options:
+2. Adjust the app's run configuration (open via `cmd+shift+,`) and enable the following options:
     - `--useFirebaseEmulator`
         - If you wish to use a custom firebase deployment instead of a local emulator, you'll need to use the `--overrideFirebaseConfig plist=name` flag instead, where `name` is either an absolute path of a GoogleService-Info.plist file (this will only work in the simulator), or the filename (without extension) of a GoogleService-Info.plist file bundled with the app.
     - `--overrideStudyBundleLocation`
@@ -111,6 +111,7 @@ In order to run and develop the My Heart Counts app locally, you'll need the fol
                     - Note that you'll need to replace `HOSTNAME` with your Mac's local-network name (you can find this in Settings.app → General → Sharing → Local hostname)
     - `--disableAutomaticBulkHealthExport`
         - (this option will disable the historical health data collection, improving performance when running the app on a real device)
+3. Run the application in Xcode.
 
 > [!NOTE]  
 > Please make sure not to commit and push any of the SensorKit, Code Signing, and run argument changes listed above; these changes are only required for local development.
