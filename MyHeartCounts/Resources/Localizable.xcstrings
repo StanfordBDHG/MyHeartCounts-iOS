@@ -3780,18 +3780,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefer not to Answer"
+            "value" : "Prefer not to state"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefer not to Answer"
+            "value" : "Prefer not to state"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Prefiero no responder"
           }
         }

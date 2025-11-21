@@ -341,7 +341,7 @@ extension XCUIApplication {
         swipeUp()
         
         staticTexts["Race / Ethnicity"].tap()
-        buttons["Prefer not to Answer"].tap()
+        buttons["Prefer not to state"].tap()
         buttons["White"].tap()
         buttons["Alaska Native"].tap()
         navigationBars.buttons["BackButton"].tap()
