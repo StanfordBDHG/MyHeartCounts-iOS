@@ -388,16 +388,16 @@ extension ScoreDefinition {
         ])
     ) { (measurement: BloodPressureMeasurement) in
         let systolicScore: Double = switch measurement.systolic as Int {
-        case ..<120: 0.75
-        case 120...129: 0.65
+        case ..<121: 0.75
+        case 121...129: 0.65
         case 130...139: 0.5
         case 140...159: 0.25
         case 160...: 0
         default: 0 // unreachable
         }
         let diastolicScore: Double = switch measurement.diastolic as Int {
-        case ..<80: 0.25
-        case 80...89: 0.15
+        case ..<81: 0.25
+        case 81...89: 0.15
         case 90...99: 0.05
         case 100...: 0
         default: 0 // unreachable
