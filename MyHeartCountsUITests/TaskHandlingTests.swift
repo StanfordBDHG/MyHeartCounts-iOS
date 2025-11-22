@@ -133,6 +133,23 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         try launchAppAndEnrollIntoStudy(skipHealthPermissionsHandling: true, skipGoingToHomeTab: true)
         XCTAssert(app.staticTexts["Your 6-Minute Walk Test is in progress."].waitForExistence(timeout: 5))
     }
+    
+    
+    @MainActor
+    func testHomeTabTaskSheetLifetime() throws {
+        try launchAppAndEnrollIntoStudy()
+        goToTab(.home)
+        app.buttons["Answer Survey: Diet"].firstMatch.tap()
+        let dietIntroTextElement = app.staticTexts.element(
+            matching: NSPredicate(format: "label BEGINSWITH %@", "This questionnaire is designed to allow you to assess the nutritional value of your diet.")
+        ) // swiftlint:disable:previous line_length
+        XCTAssert(dietIntroTextElement.waitForExistence(timeout: 2))
+        XCUIDevice.shared.press(.home)
+        sleep(for: .seconds(2))
+        app.activate()
+        XCTAssert(app.wait(for: .runningForeground, timeout: 2))
+        XCTAssert(dietIntroTextElement.waitForExistence(timeout: 2))
+    }
 }
 
 
