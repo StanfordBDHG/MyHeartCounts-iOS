@@ -156,10 +156,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             guard let studyManager else {
                 return
             }
-            await logger.notice("unenrolling from study.")
             // there should only ever be one enrollment (the MHC one)
             for enrollment in studyManager.studyEnrollments {
                 do {
+                    await logger.notice("unenrolling from study.")
                     try await studyManager.unenroll(from: enrollment)
                 } catch {
                     await logger.error("Error unenrolling from study: \(error)")
