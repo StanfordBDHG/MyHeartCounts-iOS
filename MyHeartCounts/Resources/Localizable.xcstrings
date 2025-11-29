@@ -2147,6 +2147,9 @@
     "Historical Fetch" : {
 
     },
+    "Historical Fetch Progress" : {
+
+    },
     "Home" : {
 
     },
@@ -3491,6 +3494,9 @@
           }
         }
       }
+    },
+    "Progress" : {
+
     },
     "Puerto Rico" : {
       "localizations" : {

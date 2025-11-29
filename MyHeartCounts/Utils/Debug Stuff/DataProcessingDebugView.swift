@@ -24,7 +24,7 @@ struct DataProcessingDebugView: View {
             Section("HealthKit") {
                 LabeledContent("Historical Fetch", value: historicalHealthDataExportMgr.session?.state.displayTitle ?? "n/a")
                 if let progress = historicalHealthDataExportMgr.exportProgress {
-                    ProgressView(progress)
+                    ProgressView("Historical Fetch Progress", value: progress.completion)
                 }
                 ForEach([ManagedFileUpload.Category.historicalHealthUpload, .liveHealthUpload]) { category in
                     if let progress = managedFileUpload.progressByCategory[category] {
@@ -40,7 +40,7 @@ struct DataProcessingDebugView: View {
                             VStack(alignment: .leading) {
                                 Text(activity.sensor.displayName)
                                 if let timeRange = activity.timeRange {
-                                    Text("\(timeRange.lowerBound, format: .dateTime) – \(timeRange.upperBound, format: .dateTime)")
+                                    Text(timeRange.displayText(using: .current))
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }

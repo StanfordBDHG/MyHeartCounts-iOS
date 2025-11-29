@@ -33,7 +33,7 @@ extension Range where Bound == Date {
             } else if cal.isDateInYesterday(upperBound) {
                 return String(localized: "Yesterday")
             } else {
-                return "\(lowerBound.formatted(date: .abbreviated, time: .omitted))"
+                return "\(lowerBound.formatted(date: .abbreviated, time: .shortened)) – \(upperBound.formatted(date: .omitted, time: .shortened))"
             }
         } else if lowerBound == cal.startOfDay(for: lowerBound),
                   upperBound == cal.startOfDay(for: upperBound),

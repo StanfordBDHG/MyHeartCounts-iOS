@@ -31,9 +31,8 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     private(set) var session: (any BulkExportSession<HealthKitSamplesFHIRUploader>)?
     
     // periphery:ignore
-    /// A `Progress` instance representing the current health data export progress,
-    /// i.e. the progress of fetching historical samples, converting them into FHIR observations, and compressing them.
-    var exportProgress: Progress? {
+    /// The progress of the currently active bulk export, if any.
+    var exportProgress: BulkExportSessionProgress? {
         session?.progress
     }
     
