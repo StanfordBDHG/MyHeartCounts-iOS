@@ -37,6 +37,9 @@ struct CVHScore: DynamicProperty {
         }
     }
     
+    @Environment(Account.self)
+    private var account: Account?
+    
     @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2))
     private var dietScores
     
@@ -169,6 +172,13 @@ extension CVHScore {
     }
     
     var bodyMassIndexScore: ScoreResult {
+        let def = { () -> ScoreDefinition in
+            guard let ethnicitySelection = account?.details?.raceEthnicity else {
+                return .cvhBMI
+            }
+            let isAsian = ethnicitySelection.overlaps([.asianIndian, .chinese, .filipino, .japanese, .korean, .vietnamese, .pacificIslander])
+            return isAsian ? .cvhBMIAsian : .cvhBMI
+        }()
         let title: LocalizedStringResource = "Most Recent Sample"
         let sampleType = MHCSampleType.healthKit(.quantity(.bodyMassIndex))
         let bmiSample = bodyMassIndex.last
@@ -183,7 +193,7 @@ extension CVHScore {
                 sampleType: sampleType,
                 sample: bmiSample,
                 value: { $0.quantity.doubleValue(for: SampleType.bodyMassIndex.displayUnit) },
-                definition: .cvhBMI
+                definition: def
             )
         }
         func makeScore(fromWeight weight: HKQuantitySample, height: HKQuantitySample) -> ScoreResult {
@@ -201,7 +211,7 @@ extension CVHScore {
         switch (bmiSample, weightSample, heightSample) {
         case (nil, nil, nil), (nil, .some, nil), (nil, nil, .some):
             // if there are no samples, return nil
-            return .init(title, sampleType: sampleType, definition: .cvhBMI)
+            return .init(title, sampleType: sampleType, definition: def)
         case (.some(let sample), nil, nil), (.some(let sample), .some, nil), (.some(let sample), nil, .some):
             // if we have a BMI sample, but not also a weight AND height sample, return the BMI sample
             return makeScore(bmiSample: sample)
@@ -210,7 +220,7 @@ extension CVHScore {
             guard weight.endDate.timeIntervalSinceNow < TimeConstants.year / 2 else {
                 // if the weight is from too long ago, we don't use it.
                 // we don't have the same check for height, since that doesn't flucuate as much as weight, for adults.
-                return .init(title, sampleType: sampleType, definition: .cvhBMI)
+                return .init(title, sampleType: sampleType, definition: def)
             }
             return makeScore(fromWeight: weight, height: height)
         case let (.some(bmi), .some(weight), .some(height)):
@@ -331,11 +341,22 @@ extension ScoreDefinition {
     ])
     
     static let cvhBMI = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<25, score: 1, explainer: "< 25"),
-        .inRange(25..<30, score: 0.7, explainer: "25 – 29"),
-        .inRange(30..<35, score: 0.3, explainer: "30 – 34"),
-        .inRange(35..<40, score: 0.15, explainer: "35 – 39"),
-        .inRange(40..., score: 0, explainer: "40 +")
+        .inRange(..<16, score: 0.4, explainer: "<16 (Severely underweight)"),
+        .inRange(16..<18.5, score: 0.6, explainer: "16 – 18.4 (Underweight)"),
+        .inRange(18.5..<25, score: 1, explainer: "18.5 – 24.9 (Normal weight)"),
+        .inRange(25..<30, score: 0.7, explainer: "25 – 29.9 (Overweight)"),
+        .inRange(30..<35, score: 0.5, explainer: "30 – 34.9 (Obesity class I)"),
+        .inRange(35..<40, score: 0.3, explainer: "35 – 39.9 (Obesity class II)"),
+        .inRange(40..., score: 0.1, explainer: "≥40 (Obesity class III)")
+    ])
+    
+    static let cvhBMIAsian = ScoreDefinition(default: 0, scoringBands: [
+        .inRange(..<16, score: 0.4, explainer: "<16 (Severely underweight)"),
+        .inRange(16..<18.5, score: 0.6, explainer: "16 – 18.4 (Underweight)"),
+        .inRange(18.5..<23, score: 1, explainer: "18.5 – 22.9 (Normal weight)"),
+        .inRange(23..<25, score: 0.75, explainer: "23 – 24.9 (Overweight / At risk)"),
+        .inRange(25..<30, score: 0.5, explainer: "25 – 29.9 (Obesity class I)"),
+        .inRange(30..., score: 0.2, explainer: "≥30 (Obesity class II)")
     ])
     
     static let cvhBloodLipids = ScoreDefinition(default: 0, scoringBands: [
@@ -367,16 +388,16 @@ extension ScoreDefinition {
         ])
     ) { (measurement: BloodPressureMeasurement) in
         let systolicScore: Double = switch measurement.systolic as Int {
-        case ..<120: 0.75
-        case 120...129: 0.65
+        case ..<121: 0.75
+        case 121...129: 0.65
         case 130...139: 0.5
         case 140...159: 0.25
         case 160...: 0
         default: 0 // unreachable
         }
         let diastolicScore: Double = switch measurement.diastolic as Int {
-        case ..<80: 0.25
-        case 80...89: 0.15
+        case ..<81: 0.25
+        case 81...89: 0.15
         case 90...99: 0.05
         case 100...: 0
         default: 0 // unreachable

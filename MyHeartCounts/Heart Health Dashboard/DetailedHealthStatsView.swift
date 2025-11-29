@@ -76,6 +76,7 @@ struct DetailedHealthStatsView: View {
                     Button("Add Data", systemSymbol: .plus) {
                         isPresentingAddSampleSheet = true
                     }
+                    .buttonStyleGlassProminent()
                 }
             }
         }

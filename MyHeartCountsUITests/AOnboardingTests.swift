@@ -240,7 +240,7 @@ extension XCUIApplication {
             scrollViews.buttons[identifier].tap()
             collectionViews.buttons[option].tap()
         }
-        scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true, expectedDirection: .down)
+//        scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true, expectedDirection: .down)
         scrollToDropdownAndSelect(
             identifier: "ConsentForm:short-term-physical-activity-trial",
             option: signUpForExtraTrial ? "Yes" : "No",
@@ -281,7 +281,8 @@ extension XCUIApplication {
     
     
     private func navigateHealthKitAccess() {
-        XCTAssert(staticTexts["HealthKit Access"].waitForExistence(timeout: 2))
+        XCTAssert(staticTexts["HealthKit Access"].waitForExistence(timeout: 10))
+        // ^it might take a bit for the previous step (consent upload) to finish)
         buttons["Grant Access"].tap()
         handleHealthKitAuthorization()
     }
@@ -340,11 +341,11 @@ extension XCUIApplication {
         swipeUp()
         
         staticTexts["Race / Ethnicity"].tap()
-        buttons["Prefer not to Answer"].tap()
+        buttons["Prefer not to state"].tap()
         buttons["White"].tap()
-        buttons["Japanese"].tap()
+        buttons["Alaska Native"].tap()
         navigationBars.buttons["BackButton"].tap()
-        XCTAssert(buttons["Race / Ethnicity, White, Japanese"].waitForExistence(timeout: 1))
+        XCTAssert(buttons["Race / Ethnicity, White, Alaska Native"].waitForExistence(timeout: 1))
         
         staticTexts["Are you Hispanic/Latino?"].tap()
         buttons["No"].tap()

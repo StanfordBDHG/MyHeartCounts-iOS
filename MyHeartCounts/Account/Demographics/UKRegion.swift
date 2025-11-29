@@ -110,7 +110,7 @@ extension UKRegion {
 
 
 extension UKRegion.County {
-    static let preferNotToSay = Self(name: "Prefer Not to State")
+    static let preferNotToSay = Self(name: "Prefer not to state")
     
     static let englishCounties: [Self] = [
         Self(name: "Aberdeenshire"),

@@ -22,15 +22,10 @@ import SwiftUI
 /// Displays and manages a `TabView`, with the different tabs in the app.
 struct RootView: View {
     // swiftlint:disable attributes
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(Account.self) private var account: Account?
     @Environment(ConsentManager.self) private var consentManager: ConsentManager?
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
-    @Environment(Lifecycle.self) private var lifecycle
-    @Environment(TimedWalkingTest.self) private var timedWalkingTest
     @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
-    @LocalPreference(.rootTabSelection) private var selectedTab
-    @LocalPreference(.rootTabViewCustomization) private var tabViewCustomization
     // swiftlint:enable attributes
     
     @State private var isShowingConsentRenewalSheet = false
@@ -40,7 +35,11 @@ struct RootView: View {
             switch setupTestEnvironment.state {
             case .disabled, .done:
                 if didCompleteOnboarding, account != nil {
-                    content
+                    TabView()
+                        // we might simply want to make every `taskPerformingAnchor` also an `taskContinuationAnchor` at some point?
+                        // it's not trivial, though, since we'd also need to make sure that if there's multiple `taskContinuationAnchor`s, only one of them will actually pick up the task...
+                        .taskContinuationAnchor()
+                        .taskPerformingAnchor()
                 } else {
                     EmptyView()
                 }
@@ -58,30 +57,35 @@ struct RootView: View {
         .sheet(isPresented: $isShowingConsentRenewalSheet) {
             ConsentRenewalFlow()
         }
-        .onChange(of: scenePhase, initial: true) { _, newValue in
-            lifecycle._set(\.scenePhase, to: newValue)
-        }
-        // we might simply want to make every `taskPerformingAnchor` also an `taskContinuationAnchor` at some point?
-        // it's not trivial, though, since we'd also need to make sure that if there's multiple `taskContinuationAnchor`s, only one of them will actually pick up the task...
-        .taskContinuationAnchor()
-        .taskPerformingAnchor()
+        .trackingScenePhase()
     }
-    
-    @ViewBuilder private var content: some View {
-        TabView(selection: $selectedTab) {
-            makeTab(HomeTab.self)
-            makeTab(UpcomingTasksTab.self)
-            makeTab(HeartHealthDashboardTab.self)
+}
+
+
+extension RootView {
+    private struct TabView: View {
+        @LocalPreference(.rootTabSelection)
+        private var selectedTab: String
+        
+        @LocalPreference(.rootTabViewCustomization)
+        private var tabViewCustomization
+        
+        var body: some View {
+            SwiftUI.TabView(selection: $selectedTab) {
+                makeTab(HomeTab.self)
+                makeTab(UpcomingTasksTab.self)
+                makeTab(HeartHealthDashboardTab.self)
+            }
+            .tabViewStyle(.sidebarAdaptable)
+            .tabViewCustomization($tabViewCustomization)
         }
-        .tabViewStyle(.sidebarAdaptable)
-        .tabViewCustomization($tabViewCustomization)
-    }
-    
-    private func makeTab(_ tab: (some RootViewTab).Type) -> some TabContent<String> {
-        Tab(String(localized: tab.tabTitle), systemImage: tab.tabSymbol.rawValue, value: tab.tabId) {
-            tab.init()
+        
+        private func makeTab(_ tab: (some RootViewTab).Type) -> some TabContent<String> {
+            Tab(String(localized: tab.tabTitle), systemImage: tab.tabSymbol.rawValue, value: tab.tabId) {
+                tab.init()
+            }
+            .customizationID(tab.tabId)
         }
-        .customizationID(tab.tabId)
     }
 }
 

@@ -39,3 +39,28 @@ final class Lifecycle: ServiceModule, EnvironmentAccessible, @unchecked Sendable
         }
     }
 }
+
+
+extension Lifecycle {
+    fileprivate struct ScenePhaseTrackingModifier: ViewModifier {
+        @Environment(\.scenePhase)
+        private var scenePhase
+        
+        @Environment(Lifecycle.self)
+        private var lifecycle
+        
+        func body(content: Content) -> some View {
+            content
+                .onChange(of: scenePhase, initial: true) { _, newValue in
+                    lifecycle._set(\.scenePhase, to: newValue)
+                }
+        }
+    }
+}
+
+
+extension View {
+    func trackingScenePhase() -> some View {
+        self.modifier(Lifecycle.ScenePhaseTrackingModifier())
+    }
+}

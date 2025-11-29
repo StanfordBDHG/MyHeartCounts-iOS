@@ -207,19 +207,25 @@
     "< 7" : {
 
     },
-    "< 25" : {
-
-    },
     "< 85" : {
 
     },
     "< 130" : {
 
     },
+    "<16 (Severely underweight)" : {
+
+    },
     "<120 / <80" : {
 
     },
     "> 140" : {
+
+    },
+    "≥30 (Obesity class II)" : {
+
+    },
+    "≥40 (Obesity class III)" : {
 
     },
     "$15,000 – $24,999" : {
@@ -408,22 +414,34 @@
     "14 – 16" : {
 
     },
+    "16 – 18.4 (Underweight)" : {
+
+    },
     "17 – 21" : {
 
     },
-    "25 – 29" : {
+    "18.5 – 22.9 (Normal weight)" : {
 
     },
-    "30 – 34" : {
+    "18.5 – 24.9 (Normal weight)" : {
+
+    },
+    "23 – 24.9 (Overweight / At risk)" : {
+
+    },
+    "25 – 29.9 (Obesity class I)" : {
+
+    },
+    "25 – 29.9 (Overweight)" : {
+
+    },
+    "30 – 34.9 (Obesity class I)" : {
 
     },
     "30 – 59" : {
 
     },
-    "35 – 39" : {
-
-    },
-    "40 +" : {
+    "35 – 39.9 (Obesity class II)" : {
 
     },
     "60 – 89" : {
@@ -3762,18 +3780,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefer not to Answer"
+            "value" : "Prefer not to state"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prefer not to Answer"
+            "value" : "Prefer not to state"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Prefiero no responder"
           }
         }
