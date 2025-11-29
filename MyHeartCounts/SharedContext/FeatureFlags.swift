@@ -33,7 +33,7 @@ enum FeatureFlags {
     ///
     /// Specifying this flag implicitly also sets the ``disableFirebase`` to `false`.
     static var useFirebaseEmulator: Bool {
-        LaunchOptions.launchOptions[.setupTestAccount] != .no || LaunchOptions.launchOptions[.useFirebaseEmulator]
+        LaunchOptions.launchOptions[.setupTestAccount].isYes || LaunchOptions.launchOptions[.useFirebaseEmulator]
     }
     
     /// Disables the automatic bulk export and upload of historical Health data
@@ -61,7 +61,9 @@ extension LaunchOptions {
     
     static let disableFirebase = LaunchOption<Bool>("--disableFirebase", default: false)
     static let useFirebaseEmulator = LaunchOption<Bool>("--useFirebaseEmulator", default: false)
-    static let setupTestAccount = LaunchOption<SetupTestEnvironment.Config>("--setupTestAccount", default: .no)
+    
+    static let setupTestAccount = LaunchOption<SetupTestEnvironment.Config>("--setupTestAccount", default: .no(resetExistingData: false))
+    
     static let overrideFirebaseConfig = LaunchOption<DeferredConfigLoading.FirebaseConfigSelector?>("--overrideFirebaseConfig", default: nil)
     
     static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)

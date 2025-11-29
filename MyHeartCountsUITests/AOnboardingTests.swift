@@ -14,6 +14,7 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
+// named like this bc tests are run based on the alpabetic ordering of the test classes, and we want this one to run first.
 final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testAOnboardingFlow() throws {
@@ -24,14 +25,24 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             skinType: .II,
             wheelchairUse: .no
         ))
-        app.launchArguments = [
-            "--useFirebaseEmulator",
-            "--overrideStudyBundleLocation",
-            try studyBundleUrl.path,
-            "--disableAutomaticBulkHealthExport"
-        ]
-        app.launch()
-        XCTAssert(app.wait(for: .runningForeground, timeout: 2))
+        try launchAppAndEnrollIntoStudy(
+//            enableDebugMode: <#T##Bool#>,
+            setupTestEnvironment: .no(resetExistingData: true),
+            skipOnboarding: false,
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true,
+//            heightEntryUnitOverride: <#T##String?#>,
+//            weightEntryUnitOverride: <#T##String?#>,
+//            extraLaunchArgs: <#T##[String?]#>
+        )
+//        app.launchArguments = [
+//            "--useFirebaseEmulator",
+//            "--overrideStudyBundleLocation",
+//            studyBundleUrl.path,
+//            "--disableAutomaticBulkHealthExport"
+//        ]
+//        app.launch()
+//        XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         try app.navigateOnboardingFlow(
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
@@ -44,7 +55,7 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
     
     @MainActor
     func testReviewConsentForms() throws {
-        try launchAppAndEnrollIntoStudy(keepExistingData: true)
+        try launchAppAndEnrollIntoStudy(setupTestEnvironment: .yes(resetExistingData: false))
         // check that the consent we just signed is showing up in the Account Sheet
         openAccountSheet()
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))

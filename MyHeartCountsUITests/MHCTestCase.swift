@@ -6,6 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable implicitly_unwrapped_optional type_contents_order
+
+import Foundation
+import MHCStudyDefinitionExporter
+import SpeziFoundation
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
@@ -16,33 +21,48 @@ import XCTHealthKit
  - an onboarding test where we enter invalid values and get to the "you're not eligible" step
  */
 
+/// The base class for all MHC UI tests.
+///
+/// This class sets up the ``app`` property, and provides the ``launchAppAndEnrollIntoStudy`` function.
 class MHCTestCase: XCTestCase, @unchecked Sendable {
+    /// How the app should be configured for the UI test.
+    ///
+    /// - Note: This type here is copied & adapted from the enum in the `SetupTestEnvironment` module.
+    enum SetupTestEnvironmentConfig {
+        /// The app should not set up a test environment upon launching
+        case no(resetExistingData: Bool) // swiftlint:disable:this identifier_name
+        /// The app should set up a test environment, and optionally should clear any existing data.
+        case yes(resetExistingData: Bool)
+    }
+    
     static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
     
-    private(set) var app: XCUIApplication! // swiftlint:disable:this implicitly_unwrapped_optional
+    private static let tempDir = URL.temporaryDirectory.appending(component: "edu.stanford.MyHeartCounts.UITests", directoryHint: .isDirectory)
     
-    private var interruptionMonitorTokens: [any NSObjectProtocol] = []
+    @MainActor private(set) var app: XCUIApplication!
+    @MainActor private(set) var studyBundleUrl: URL!
     
-    var studyBundleUrl: URL {
-        get throws {
-            try XCTUnwrap(Bundle(for: MHCTestCase.self).url(forResource: "mhcStudyBundle", withExtension: "spezistudybundle.aar"))
-        }
-    }
-    
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         continueAfterFailure = false
-        MainActor.assumeIsolated {
-            app = XCUIApplication()
-            app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
+        app = XCUIApplication()
+        app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
+        if studyBundleUrl == nil {
+            try FileManager.default.createDirectory(at: Self.tempDir, withIntermediateDirectories: true)
+            studyBundleUrl = try export(to: Self.tempDir, as: .archive)
         }
     }
     
-    override func tearDown() {
-        super.tearDown()
-        MainActor.assumeIsolated {
-            app.terminate()
-        }
+    @MainActor
+    override func tearDown() async throws {
+        try await super.tearDown()
+        app.terminate()
+        app = nil
+    }
+    
+    override class func tearDown() {
+        try? FileManager.default.removeItem(at: Self.tempDir)
     }
     
     /// Launches the app and puts it in a state where the participant is logged in and enrolled into the study.
@@ -57,23 +77,41 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     @MainActor
     func launchAppAndEnrollIntoStudy(
         enableDebugMode: Bool = false,
-        keepExistingData: Bool = false,
+//        keepExistingData: Bool = false,
+        setupTestEnvironment: SetupTestEnvironmentConfig = .yes(resetExistingData: true),
+        skipOnboarding: Bool = true,
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
         heightEntryUnitOverride: String? = nil,
         weightEntryUnitOverride: String? = nil,
         extraLaunchArgs: [String?] = []
     ) throws {
-        app.launchArguments = [
-            "--useFirebaseEmulator",
-            "--skipOnboarding",
-            "--setupTestAccount", keepExistingData ? "keepExistingData" : nil,
-            "--overrideStudyBundleLocation", try studyBundleUrl.path,
-            "--disableAutomaticBulkHealthExport",
-            "--forceEnableDebugMode", enableDebugMode ? "true" : "false",
-            "--heightInputUnitOverride", heightEntryUnitOverride ?? "none",
-            "--weightInputUnitOverride", weightEntryUnitOverride ?? "none"
-        ].compactMap { $0 as String? }
+        app.launchArguments = Array {
+            "--useFirebaseEmulator"
+            if skipOnboarding {
+                "--skipOnboarding"
+            }
+            switch setupTestEnvironment {
+            case .no(resetExistingData: false):
+                []
+            case .no(resetExistingData: true):
+                "--setupTestAccount"
+                "noButRemoveExistingData"
+            case .yes(let resetExistingData):
+                "--setupTestAccount"
+                if !resetExistingData {
+                    "keepExistingData"
+                }
+            }
+//            keepExistingData ? "keepExistingData" : nil
+            "--overrideStudyBundleLocation"; studyBundleUrl.path
+            "--disableAutomaticBulkHealthExport"
+            "--forceEnableDebugMode"; enableDebugMode ? "true" : "false"
+            "--heightInputUnitOverride"; heightEntryUnitOverride ?? "none"
+            "--weightInputUnitOverride"; weightEntryUnitOverride ?? "none"
+        }
+//        fatalError("\(app.launchArguments)")
+//        ].compactMap { $0 as String? }
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
@@ -85,8 +123,8 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
                 timeout: 10
             )
         }
-        XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
         if !skipGoingToHomeTab {
+            XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
             goToTab(.home)
             XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
             XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)

@@ -27,9 +27,16 @@ import struct SpeziViews.AnyLocalizedError
 final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     enum Config: LaunchOptionDecodable, Hashable {
         /// The app should not set up a test environment upon launching
-        case no // swiftlint:disable:this identifier_name
+        case no(resetExistingData: Bool) // swiftlint:disable:this identifier_name
         /// The app should set up a test environment, and optionally should clear any existing data.
         case yes(resetExistingData: Bool)
+        
+        var isYes: Bool {
+            switch self {
+            case .yes: true
+            case .no: false
+            }
+        }
         
         init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
             try context.assertNumRawArgs(.atMost(1))
@@ -40,6 +47,8 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
                 self = .yes(resetExistingData: true)
             case "keepExistingData":
                 self = .yes(resetExistingData: false)
+            case "noButRemoveExistingData":
+                self = .no(resetExistingData: true)
             case .some(let rawValue):
                 throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: rawValue)
             }
@@ -66,6 +75,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkHealthExporter
+    @ObservationIgnored @Dependency(ManagedFileUpload.self) private var fileUploader
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     // swiftlint:enable attributes
@@ -78,13 +88,13 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     /// - Note: This value being `true` or `false` does not mean that the test environment is currently enabled or disabled.
     ///     It just signals whether this module has/will set up a test environment.
     var isEnabled: Bool {
-        config != .no
+        config.isYes
     }
     
     private(set) var state: State
     
     init() {
-        state = if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && config != .no {
+        state = if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && config.isYes {
             .pending
         } else {
             .disabled
@@ -92,6 +102,11 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     }
     
     func configure() {
+        if config == .no(resetExistingData: true) {
+            Task {
+                try await self.resetExistingData()
+            }
+        }
         switch state {
         case .pending:
             Task { @MainActor in
@@ -120,8 +135,10 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             isInSetup = false
         }
         switch config {
-        case .no:
+        case .no(resetExistingData: false):
             return
+        case .no(resetExistingData: true):
+            try await self.resetExistingData()
         case .yes(let resetExistingData):
             try await setUp(resetExistingData: resetExistingData)
         }
@@ -140,19 +157,12 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             logger.error("Unable to set up test account: no account service")
             return
         }
-        guard let studyManager else {
-            logger.error("Unable to set up test account: no StudyManager")
-            return
-        }
+//        guard let studyManager else {
+//            logger.error("Unable to set up test account: no StudyManager")
+//            return
+//        }
         if resetExistingData {
-            for enrollment in studyManager.studyEnrollments {
-                try await studyManager.unenroll(from: enrollment)
-            }
-            do {
-                try await accountService.logout()
-            } catch FirebaseAccountError.notSignedIn {
-                // ok
-            }
+            try await self.resetExistingData()
         }
         do {
             try await accountService.login(userId: "lelandstanford@stanford.edu", password: "StanfordRocks!")
@@ -187,6 +197,25 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await standard.enroll(in: studyBundle)
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
         signposter.emitEvent("enrollment complete", id: signpostId)
+    }
+    
+    
+    private func resetExistingData() async throws {
+        try localStorage.deleteAll()
+        try await bulkHealthExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
+        try fileUploader.clearPendingUploads()
+        if let studyManager {
+            for enrollment in studyManager.studyEnrollments {
+                try await studyManager.unenroll(from: enrollment)
+            }
+        }
+        if let accountService {
+            do {
+                try await accountService.logout()
+            } catch FirebaseAccountError.notSignedIn {
+                // ok
+            }
+        }
     }
 }
 
