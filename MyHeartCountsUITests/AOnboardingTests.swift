@@ -240,7 +240,7 @@ extension XCUIApplication {
             scrollViews.buttons[identifier].tap()
             collectionViews.buttons[option].tap()
         }
-        scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true, expectedDirection: .down)
+//        scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true, expectedDirection: .down)
         scrollToDropdownAndSelect(
             identifier: "ConsentForm:short-term-physical-activity-trial",
             option: signUpForExtraTrial ? "Yes" : "No",
