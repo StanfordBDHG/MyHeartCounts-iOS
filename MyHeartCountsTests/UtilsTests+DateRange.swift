@@ -13,7 +13,8 @@ import SpeziLocalization
 import Testing
 
 
-@Suite(.tags(.unitTest), .serialized) final class DateRangeTests {
+@Suite(.tags(.unitTest), .serialized)
+final class DateRangeTests {
     private struct DateInput {
         enum Day {
             case absolute(year: Int, month: Int, day: Int)

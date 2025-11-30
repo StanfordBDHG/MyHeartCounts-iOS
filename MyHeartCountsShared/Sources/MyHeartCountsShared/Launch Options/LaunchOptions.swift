@@ -364,7 +364,7 @@ extension Optional: LaunchOptionDecodable where Wrapped: LaunchOptionDecodable {
 }
 
 extension Optional: LaunchOptionEncodable where Wrapped: LaunchOptionEncodable {
-    public func launchOptionArgs(for launchOption: LaunchOption<Optional<Wrapped>>) -> [String] {
+    public func launchOptionArgs(for launchOption: LaunchOption<Wrapped?>) -> [String] {
         switch self {
         case .none:
             []
