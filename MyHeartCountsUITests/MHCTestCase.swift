@@ -10,6 +10,7 @@
 
 import Foundation
 import MHCStudyDefinitionExporter
+import MyHeartCountsShared
 import SpeziFoundation
 import XCTest
 import XCTestExtensions
@@ -25,16 +26,6 @@ import XCTHealthKit
 ///
 /// This class sets up the ``app`` property, and provides the ``launchAppAndEnrollIntoStudy`` function.
 class MHCTestCase: XCTestCase, @unchecked Sendable {
-    /// How the app should be configured for the UI test.
-    ///
-    /// - Note: This type here is copied & adapted from the enum in the `SetupTestEnvironment` module.
-    enum SetupTestEnvironmentConfig {
-        /// The app should not set up a test environment upon launching
-        case no(resetExistingData: Bool) // swiftlint:disable:this identifier_name
-        /// The app should set up a test environment, and optionally should clear any existing data.
-        case yes(resetExistingData: Bool)
-    }
-    
     static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
     
     private static let tempDir = URL.temporaryDirectory.appending(component: "edu.stanford.MyHeartCounts.UITests", directoryHint: .isDirectory)
@@ -68,7 +59,6 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     /// Launches the app and puts it in a state where the participant is logged in and enrolled into the study.
     ///
     /// - parameter enableDebugMode: Whether the app should force-enable its debug mode for this launch. Defaults to `false`.
-    /// - parameter keepExistingData: Whether the app should keep the previous launch's state, w.r.t. stuff like e.g. the completed tasks. Defaults to `false`.
     /// - parameter heightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a height quantity.
     ///     Allowed values are `cm`, `feet`, or `nil` (the default).
     /// - parameter weightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a weight quantity.
@@ -77,9 +67,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     @MainActor
     func launchAppAndEnrollIntoStudy(
         enableDebugMode: Bool = false,
-//        keepExistingData: Bool = false,
-        setupTestEnvironment: SetupTestEnvironmentConfig = .yes(resetExistingData: true),
-        skipOnboarding: Bool = true,
+        testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, logIn: true),
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
         heightEntryUnitOverride: String? = nil,
@@ -88,30 +76,13 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     ) throws {
         app.launchArguments = Array {
             "--useFirebaseEmulator"
-            if skipOnboarding {
-                "--skipOnboarding"
-            }
-            switch setupTestEnvironment {
-            case .no(resetExistingData: false):
-                []
-            case .no(resetExistingData: true):
-                "--setupTestAccount"
-                "noButRemoveExistingData"
-            case .yes(let resetExistingData):
-                "--setupTestAccount"
-                if !resetExistingData {
-                    "keepExistingData"
-                }
-            }
-//            keepExistingData ? "keepExistingData" : nil
+            setupTestEnvironment.launchOptionRepresentation
             "--overrideStudyBundleLocation"; studyBundleUrl.path
             "--disableAutomaticBulkHealthExport"
             "--forceEnableDebugMode"; enableDebugMode ? "true" : "false"
             "--heightInputUnitOverride"; heightEntryUnitOverride ?? "none"
             "--weightInputUnitOverride"; weightEntryUnitOverride ?? "none"
         }
-//        fatalError("\(app.launchArguments)")
-//        ].compactMap { $0 as String? }
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))

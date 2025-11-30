@@ -87,6 +87,8 @@ enum LaunchOptionDecodingError: Error, LocalizedError {
     /// A launch option was supplied an incorrect number of arguments
     case invalidNumArguments(expected: LaunchOptionDecodingContext.NumRawArgsCondition, actual: Int)
     
+    case other(_ message: String)
+    
     var errorDescription: String? {
         switch self {
         case let .unableToDecode(type, rawValue):
@@ -97,6 +99,8 @@ enum LaunchOptionDecodingError: Error, LocalizedError {
             "Invalid number of arguments passed to launch option: got \(actual), expected at least \(expected)"
         case let .invalidNumArguments(.atMost(expected), actual):
             "Invalid number of arguments passed to launch option: got \(actual), expected at most \(expected)"
+        case .other(let message):
+            message
         }
     }
 }

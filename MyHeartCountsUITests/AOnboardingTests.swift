@@ -26,23 +26,11 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             wheelchairUse: .no
         ))
         try launchAppAndEnrollIntoStudy(
-//            enableDebugMode: <#T##Bool#>,
-            setupTestEnvironment: .no(resetExistingData: true),
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
             skipOnboarding: false,
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
-//            heightEntryUnitOverride: <#T##String?#>,
-//            weightEntryUnitOverride: <#T##String?#>,
-//            extraLaunchArgs: <#T##[String?]#>
         )
-//        app.launchArguments = [
-//            "--useFirebaseEmulator",
-//            "--overrideStudyBundleLocation",
-//            studyBundleUrl.path,
-//            "--disableAutomaticBulkHealthExport"
-//        ]
-//        app.launch()
-//        XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         try app.navigateOnboardingFlow(
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
@@ -55,7 +43,7 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
     
     @MainActor
     func testReviewConsentForms() throws {
-        try launchAppAndEnrollIntoStudy(setupTestEnvironment: .yes(resetExistingData: false))
+        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true))
         // check that the consent we just signed is showing up in the Account Sheet
         openAccountSheet()
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
