@@ -90,16 +90,7 @@ import Testing
         let end = try date(from: end, now: now)
         let range = start..<end
         let actual = range.displayText(using: locale, calendar: cal, now: now)
-        let normalized = String(actual.map { $0.isWhitespace ? " " : $0 })
         #expect(actual == expected, sourceLocation: sourceLocation)
-//        if actual != expected {
-//            print(actual.count, expected.count)
-//            print("act", actual)
-//            print("exp", expected)
-//            for (lhsChar, rhsChar) in zip(actual, expected) {
-//                print(lhsChar, rhsChar, lhsChar == rhsChar, lhsChar.isASCII, rhsChar.isASCII)
-//            }
-//        }
     }
     
     
@@ -139,17 +130,17 @@ import Testing
         try check(
             start: .init(day: .absolute(year: 2025, month: 9, day: 5), time: .absolute(hour: 14, minute: 15)),
             end: .init(day: .absolute(year: 2025, month: 9, day: 9), time: .absolute(hour: 17, minute: 49)),
-            expected: "Sep 5, 2025 2:15 PM – Sep 9, 2025 5:49 PM"
+            expected: "Sep 5, 2025 at 2:15 PM – Sep 9, 2025 at 5:49 PM"
         )
         try check(
             start: .init(day: .absolute(year: 2025, month: 9, day: 5), time: .midnight),
             end: .init(day: .absolute(year: 2025, month: 9, day: 9), time: .absolute(hour: 17, minute: 49)),
-            expected: "Sep 5, 2025 12:00 AM – Sep 9, 2025 5:49 PM"
+            expected: "Sep 5, 2025 at 12:00 AM – Sep 9, 2025 at 5:49 PM"
         )
         try check(
             start: .init(day: .absolute(year: 2025, month: 9, day: 5), time: .absolute(hour: 14, minute: 15)),
             end: .init(day: .absolute(year: 2025, month: 9, day: 9), time: .midnight),
-            expected: "Sep 5, 2025 2:15 PM – Sep 8, 2025 11:59 PM"
+            expected: "Sep 5, 2025 at 2:15 PM – Sep 8, 2025 at 11:59 PM"
         )
         try check(
             start: .init(day: .absolute(year: 2025, month: 9, day: 5), time: .midnight),

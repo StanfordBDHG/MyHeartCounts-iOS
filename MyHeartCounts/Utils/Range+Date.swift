@@ -17,8 +17,6 @@ extension Range where Bound == Date {
         timeZone: TimeZone = .current,
         now: Date = .now
     ) -> String {
-        // would it maybe make sense to have a "TimeRangeLabel"?
-        // certainly space for improvement here...
         func fmt(
             _ date: Date,
             date dateStyle: Date.FormatStyle.DateStyle,
@@ -77,8 +75,8 @@ extension Range where Bound == Date {
             }
         }
         // fallback, if nothing above returned
-//        let fmt = { ($0 as Date).formatted(date: .numeric, time: .omitted) }
-//        return "\(fmt(self.lowerBound)) – \(fmt(self.upperBound.addingTimeInterval(-1)))"
-        return "\(fmt(lowerBound, date: .abbreviated, time: .omitted)) – \(fmt(upperBound - 60, date: .abbreviated, time: .omitted))"
+        let start = fmt(lowerBound, date: .abbreviated, time: .shortened)
+        let end = fmt(upperBound == cal.startOfDay(for: upperBound) ? upperBound - 60 : upperBound, date: .abbreviated, time: .shortened)
+        return "\(start) – \(end)"
     }
 }
