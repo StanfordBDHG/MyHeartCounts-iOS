@@ -119,11 +119,6 @@ final class DateRangeTests {
             end: .init(day: .today, time: .midnight),
             expected: "Yesterday 2:15 PM – 11:59 PM"
         )
-        try check(
-            start: .init(day: .today, time: .absolute(hour: 9, minute: 15)),
-            end: .init(day: .today, time: .absolute(hour: 14, minute: 0, second: 0)),
-            expected: "9:15 AM – 2:00 PM"
-        )
     }
     
     @Test
@@ -153,10 +148,14 @@ final class DateRangeTests {
     @Test
     func fmtDateRangeInToday() throws {
         try check(
+            start: .init(day: .today, time: .absolute(hour: 9, minute: 15)),
+            end: .init(day: .today, time: .absolute(hour: 14, minute: 0, second: 0)),
+            expected: "9:15 AM – 2:00 PM"
+        )
+        try check(
             start: .init(day: .yesterday, time: .absolute(hour: 21, minute: 47, second: 0)),
             end: .init(day: .today, time: .absolute(hour: 7, minute: 21, second: 0)),
-            now: try date(from: .init(day: .today, time: .absolute(hour: 9, minute: 0, second: 0)), now: .now),
-            expected: "9:47 PM – 7:21 AM"
+            expected: "Yesterday 9:47 PM – Today 7:21 AM"
         )
     }
 }

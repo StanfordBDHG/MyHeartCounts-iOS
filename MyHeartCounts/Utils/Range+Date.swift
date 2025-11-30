@@ -24,10 +24,18 @@ extension Range where Bound == Date {
         ) -> String {
             date.formatted(Date.FormatStyle(date: dateStyle, time: timeStyle, locale: locale, calendar: cal, timeZone: timeZone))
         }
+        lazy var startOfYesterday = cal.startOfPrevDay(for: now)
+        lazy var startOfTomorrow = cal.startOfNextDay(for: now)
+        var yesterdayStr: String {
+            String(localized: "Yesterday", locale: locale)
+        }
+        var todayStr: String {
+            String(localized: "Today", locale: locale)
+        }
         if self == cal.rangeOfDay(for: now) {
             return String(localized: "Today", locale: locale)
-        } else if self == cal.rangeOfDay(for: cal.startOfPrevDay(for: now)) {
-            return String(localized: "Yesterday", locale: locale)
+        } else if self == cal.rangeOfDay(for: startOfYesterday) {
+            return yesterdayStr
         } else if self == cal.rangeOfDay(for: self.lowerBound) {
             return fmt(lowerBound, date: .abbreviated, time: .omitted)
         } else if self.isEmpty { // startDate == endDate
@@ -44,14 +52,16 @@ extension Range where Bound == Date {
             let endTime = fmt(cal.isDate(lowerBound, inSameDayAs: upperBound) ? upperBound : upperBound - 60, date: .omitted, time: .shortened)
             return if cal.isDate(lowerBound, inSameDayAs: now) { // starts today
                 "\(startTime) – \(endTime)"
-            } else if cal.isDate(lowerBound, inSameDayAs: cal.startOfPrevDay(for: now)) {
+            } else if cal.isDate(lowerBound, inSameDayAs: startOfYesterday) {
                 // is in yesterday
-                "\(String(localized: "Yesterday", locale: locale)) \(startTime) – \(endTime)"
+                "\(yesterdayStr) \(startTime) – \(endTime)"
             } else {
                 "\(fmt(lowerBound, date: .abbreviated, time: .omitted)) \(startTime) – \(endTime)"
             }
+        } else if cal.isDate(lowerBound, inSameDayAs: startOfYesterday), cal.isDate(upperBound, inSameDayAs: now) {
+            return "\(yesterdayStr) \(fmt(lowerBound, date: .omitted, time: .shortened)) – \(todayStr) \(fmt(upperBound, date: .omitted, time: .shortened))"
         } else if lowerBound == cal.startOfDay(for: lowerBound), upperBound == cal.startOfDay(for: upperBound) {
-            if upperBound == cal.startOfNextDay(for: now) {
+            if upperBound == startOfTomorrow {
                 // range ends today
                 let distance = cal.dateComponents([.day, .weekOfYear, .month, .year], from: lowerBound, to: upperBound)
                 // SAFETY: we've explicitly requested these components.
