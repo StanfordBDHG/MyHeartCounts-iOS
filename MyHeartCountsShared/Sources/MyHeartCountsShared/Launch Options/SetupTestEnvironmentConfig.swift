@@ -39,17 +39,29 @@ public struct SetupTestEnvironmentConfig: Hashable, Sendable {
 }
 
 
-extension SetupTestEnvironmentConfig {
+extension SetupTestEnvironmentConfig: LaunchOptionDecodable, LaunchOptionEncodable {
     public static let cliFlagName = "--setupTestEnvironment"
     public static let resetOptionName = "reset"
     public static let loginAndEnrollOptionName = "login-and-enroll"
     
-    public var launchOptionRepresentation: [String] {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+        try context.assertNumRawArgs(.atMost(2))
+        let allowedOptions: Set = [Self.resetOptionName, Self.loginAndEnrollOptionName]
+        if case let invalidOptions = context.rawArgs.filter({ !allowedOptions.contains($0) }), !invalidOptions.isEmpty {
+            throw LaunchOptionDecodingError.other("Invalid input: \(invalidOptions). Expected \(allowedOptions)")
+        }
+        self.init(
+            resetExistingData: context.rawArgs.contains(Self.resetOptionName),
+            loginAndEnroll: context.rawArgs.contains(Self.loginAndEnrollOptionName)
+        )
+    }
+    
+    public func launchOptionArgs(for launchOption: LaunchOption<Self>) -> [String] {
         guard self != .disabled else {
             return []
         }
         return Array {
-            Self.cliFlagName
+            launchOption.key
             if resetExistingData {
                 Self.resetOptionName
             }
@@ -59,3 +71,15 @@ extension SetupTestEnvironmentConfig {
         }
     }
 }
+
+
+extension LaunchOptions {
+    /// Configures a test environment in the app upon launch.
+    ///
+    /// - Note: When this option is specified and either of the two
+    public static let setupTestEnvironment = LaunchOption<SetupTestEnvironmentConfig>(
+        SetupTestEnvironmentConfig.cliFlagName,
+        default: .init(resetExistingData: false, loginAndEnroll: false)
+    )
+}
+

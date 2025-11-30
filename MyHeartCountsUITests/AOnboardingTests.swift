@@ -7,6 +7,7 @@
 //
 
 import HealthKit
+import MyHeartCountsShared
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
@@ -27,7 +28,6 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         ))
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
-            skipOnboarding: false,
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
         )

@@ -9,18 +9,21 @@
 // swiftlint:disable file_types_order
 // periphery:ignore:all
 
-import Foundation
-import OSLog
+public import Foundation
+private import OSLog
+
+
+private let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "LaunchOptions")
 
 
 // MARK: API
 
-protocol LaunchOptionDecodable: Sendable {
+public protocol LaunchOptionDecodable: Sendable {
     init(decodingLaunchOption context: LaunchOptionDecodingContext) throws
 }
 
-struct LaunchOptionDecodingContext {
-    enum NumRawArgsCondition {
+public struct LaunchOptionDecodingContext: Sendable {
+    public enum NumRawArgsCondition: Sendable {
         case atLeast(Int)
         case equal(Int)
         case atMost(Int)
@@ -36,11 +39,11 @@ struct LaunchOptionDecodingContext {
         }
     }
     
-    let rawArgs: [String]
+    public let rawArgs: [String]
     
     /// Checks that the number of raw args satisfies the specified condition.
     /// Throws an exception, if not.
-    func assertNumRawArgs(_ condition: NumRawArgsCondition) throws {
+    public func assertNumRawArgs(_ condition: NumRawArgsCondition) throws {
         guard condition.isSatisfied(by: rawArgs.count) else {
             throw LaunchOptionDecodingError.invalidNumArguments(expected: condition, actual: rawArgs.count)
         }
@@ -48,28 +51,28 @@ struct LaunchOptionDecodingContext {
 }
 
 
-protocol LaunchOptionsContainerProtocol: Sendable {
+public protocol LaunchOptionsContainerProtocol: Sendable {
     func _value<V>(for option: LaunchOption<V>) -> V? // swiftlint:disable:this identifier_name
 }
 
 extension LaunchOptionsContainerProtocol {
     /// Returns the specified `option`'s decoded launch option argument, falling back to its default value if no argument was specified.
-    subscript<V>(option: LaunchOption<V>) -> V {
+    public subscript<V>(option: LaunchOption<V>) -> V {
         _value(for: option) ?? option.makeDefault()
     }
 }
 
 
-class LaunchOptions: @unchecked Sendable {
+public class LaunchOptions: @unchecked Sendable {
     fileprivate init() {}
 }
 
-final class LaunchOption<Value: LaunchOptionDecodable>: LaunchOptions, @unchecked Sendable {
-    fileprivate let key: String
+public final class LaunchOption<Value: LaunchOptionDecodable>: LaunchOptions, @unchecked Sendable {
+    public let key: String
     fileprivate let makeDefault: @Sendable () -> Value
     fileprivate let _parsedValue = OSAllocatedUnfairLock<Value?>(initialState: nil)
     
-    init(_ key: String, default makeDefault: @autoclosure @escaping @Sendable () -> Value) {
+    public init(_ key: String, default makeDefault: @autoclosure @escaping @Sendable () -> Value) {
         self.key = key
         self.makeDefault = makeDefault
         super.init()
@@ -78,7 +81,7 @@ final class LaunchOption<Value: LaunchOptionDecodable>: LaunchOptions, @unchecke
 
 
 /// An error that can occur when decoding and processing launch options.
-enum LaunchOptionDecodingError: Error, LocalizedError {
+public enum LaunchOptionDecodingError: Error, LocalizedError {
     /// Decoding a ``LaunchOptionDecodable`` type failed
     /// - parameter type: The type we attempted to decode a value of.
     /// - parameter rawValue: The raw value we attempted to decode, as passed to the launch arguments.
@@ -89,7 +92,7 @@ enum LaunchOptionDecodingError: Error, LocalizedError {
     
     case other(_ message: String)
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case let .unableToDecode(type, rawValue):
             "Unable to decode \(type) from launch option value '\(rawValue)'"
@@ -103,6 +106,11 @@ enum LaunchOptionDecodingError: Error, LocalizedError {
             message
         }
     }
+}
+
+
+public protocol LaunchOptionEncodable: LaunchOptionDecodable {
+    func launchOptionArgs(for launchOption: LaunchOption<Self>) -> [String]
 }
 
 
@@ -120,7 +128,7 @@ private struct ParsedLaunchOptionArguments {
 
 
 extension LaunchOptionsContainerProtocol {
-    func prepending(_ other: some LaunchOptionsContainerProtocol) -> some LaunchOptionsContainerProtocol {
+    public func prepending(_ other: some LaunchOptionsContainerProtocol) -> some LaunchOptionsContainerProtocol {
         CombinedLaunchOptionsContainer(containers: [other, self])
     }
 }
@@ -140,13 +148,13 @@ private struct CombinedLaunchOptionsContainer: LaunchOptionsContainerProtocol {
 
 
 extension LaunchOptions {
-    static let launchOptions: any LaunchOptionsContainerProtocol = LaunchOptions.commandLineOptionsContainer(for: CommandLine.arguments)
+    public static let launchOptions: any LaunchOptionsContainerProtocol = LaunchOptions.commandLineOptionsContainer(for: CommandLine.arguments)
     
-    static func commandLineOptionsContainer(for arguments: [String]) -> some LaunchOptionsContainerProtocol {
+    public static func commandLineOptionsContainer(for arguments: [String]) -> some LaunchOptionsContainerProtocol {
         CommandLineLaunchOptionsContainer(arguments: arguments)
     }
     
-    static func urlQuerlOptionsContainer(for components: URLComponents) -> some LaunchOptionsContainerProtocol {
+    public static func urlQuerlOptionsContainer(for components: URLComponents) -> some LaunchOptionsContainerProtocol {
         guard let queryItems = components.queryItems else {
             return commandLineOptionsContainer(for: [])
         }
@@ -171,7 +179,7 @@ extension LaunchOptions {
     }
     
     /// Returns the specified `option`'s decoded launch option argument, falling back to its default value if no argument was specified.
-    static subscript<V>(option: LaunchOption<V>) -> V {
+    public static subscript<V>(option: LaunchOption<V>) -> V {
         Self.launchOptions[option]
     }
 }
@@ -260,7 +268,7 @@ extension Double: LaunchOptionDecodable {}
 extension String: LaunchOptionDecodable {}
 
 extension Bool: LaunchOptionDecodable {
-    init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         try context.assertNumRawArgs(.atMost(1))
         switch context.rawArgs.first?.lowercased() {
         case nil:
@@ -278,7 +286,7 @@ extension Bool: LaunchOptionDecodable {
 }
 
 extension LosslessStringConvertible where Self: LaunchOptionDecodable {
-    init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         try context.assertNumRawArgs(.equal(1))
         let rawValue = context.rawArgs[0]
         if let value = Self(rawValue) {
@@ -290,7 +298,7 @@ extension LosslessStringConvertible where Self: LaunchOptionDecodable {
 }
 
 extension RawRepresentable where RawValue: LosslessStringConvertible, Self: LaunchOptionDecodable {
-    init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         try context.assertNumRawArgs(.equal(1))
         let rawValue = context.rawArgs[0]
         if let rawValue = RawValue(rawValue), let value = Self(rawValue: rawValue) {
@@ -302,7 +310,7 @@ extension RawRepresentable where RawValue: LosslessStringConvertible, Self: Laun
 }
 
 extension URL: LaunchOptionDecodable {
-    init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         try context.assertNumRawArgs(.equal(1))
         self = try .decodeAsLaunchOptionValue(rawValue: context.rawArgs[0])
     }
@@ -326,7 +334,7 @@ extension URL: LaunchOptionDecodable {
 }
 
 extension Optional: LaunchOptionDecodable where Wrapped: LaunchOptionDecodable {
-    init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         self = .some(try Wrapped(decodingLaunchOption: context))
     }
 }
@@ -335,5 +343,5 @@ extension Optional: LaunchOptionDecodable where Wrapped: LaunchOptionDecodable {
 // MARK: Debugging
 
 extension LaunchOptions {
-    static let dumpOptionsAndExit = LaunchOption<Bool>("--dump-cli-options-and-exit", default: false)
+    public static let dumpOptionsAndExit = LaunchOption<Bool>("--dump-cli-options-and-exit", default: false)
 }

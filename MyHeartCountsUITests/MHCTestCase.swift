@@ -67,21 +67,23 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     @MainActor
     func launchAppAndEnrollIntoStudy(
         enableDebugMode: Bool = false,
-        testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, logIn: true),
+        testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: true),
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
-        heightEntryUnitOverride: String? = nil,
-        weightEntryUnitOverride: String? = nil,
+        heightEntryUnitOverride: LaunchOptions.HeightInputUnitOverride = .none,
+        weightEntryUnitOverride: LaunchOptions.WeightInputUnitOverride = .none,
         extraLaunchArgs: [String?] = []
     ) throws {
         app.launchArguments = Array {
             "--useFirebaseEmulator"
-            setupTestEnvironment.launchOptionRepresentation
+            testEnvironmentConfig.launchOptionArgs(for: .setupTestEnvironment)
             "--overrideStudyBundleLocation"; studyBundleUrl.path
             "--disableAutomaticBulkHealthExport"
             "--forceEnableDebugMode"; enableDebugMode ? "true" : "false"
-            "--heightInputUnitOverride"; heightEntryUnitOverride ?? "none"
-            "--weightInputUnitOverride"; weightEntryUnitOverride ?? "none"
+            heightEntryUnitOverride.launchOptionArgs(for: .heightInputUnitOverride)
+            weightEntryUnitOverride.launchOptionArgs(for: .weightInputUnitOverride)
+//            "--heightInputUnitOverride"; heightEntryUnitOverride ?? "none"
+//            "--weightInputUnitOverride"; weightEntryUnitOverride ?? "none"
         }
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launch()

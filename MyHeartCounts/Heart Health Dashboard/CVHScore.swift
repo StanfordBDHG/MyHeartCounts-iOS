@@ -9,6 +9,7 @@
 import Algorithms
 import Foundation
 import HealthKit
+import MyHeartCountsShared
 import SpeziAccount
 import SpeziFoundation
 import SpeziHealthKit
