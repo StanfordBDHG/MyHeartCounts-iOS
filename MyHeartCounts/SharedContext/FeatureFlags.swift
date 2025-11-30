@@ -43,16 +43,9 @@ enum FeatureFlags {
 
 
 extension LaunchOptions {
-    /// Whether we should force-enable the debug mode, even if the account key is set to `false`.
-    ///
-    /// - Note: Specifying `false` for this option when the account key is `true` will not force-disable the debug mode.
-    static let forceEnableDebugMode = LaunchOption<Bool>("--forceEnableDebugMode", default: false)
-    
     static let disableFirebase = LaunchOption<Bool>("--disableFirebase", default: false)
     static let useFirebaseEmulator = LaunchOption<Bool>("--useFirebaseEmulator", default: false)
     static let overrideFirebaseConfig = LaunchOption<DeferredConfigLoading.FirebaseConfigSelector?>("--overrideFirebaseConfig", default: nil)
-    
-    static let overrideStudyBundleLocation = LaunchOption<URL?>("--overrideStudyBundleLocation", default: nil)
     
     static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)
 }

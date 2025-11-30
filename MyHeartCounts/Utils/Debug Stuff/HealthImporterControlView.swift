@@ -60,7 +60,10 @@ struct HealthImporterControlView: View {
                     KeyPathComparator(\.timeRange.lowerBound)
                 ])
                 ForEach(batches, id: \.self) { batch in
-                    LabeledContent(batch.sampleType.displayTitle, value: batch.timeRange.displayText(using: .current))
+                    LabeledContent(
+                        batch.sampleType.displayTitle,
+                        value: batch.timeRange.displayText(using: .current)
+                    )
                 }
             }
         }

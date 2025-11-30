@@ -77,13 +77,11 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         app.launchArguments = Array {
             "--useFirebaseEmulator"
             testEnvironmentConfig.launchOptionArgs(for: .setupTestEnvironment)
-            "--overrideStudyBundleLocation"; studyBundleUrl.path
+            studyBundleUrl.launchOptionArgs(for: .overrideStudyBundleLocation)
             "--disableAutomaticBulkHealthExport"
-            "--forceEnableDebugMode"; enableDebugMode ? "true" : "false"
+            enableDebugMode.launchOptionArgs(for: .forceEnableDebugMode)
             heightEntryUnitOverride.launchOptionArgs(for: .heightInputUnitOverride)
             weightEntryUnitOverride.launchOptionArgs(for: .weightInputUnitOverride)
-//            "--heightInputUnitOverride"; heightEntryUnitOverride ?? "none"
-//            "--weightInputUnitOverride"; weightEntryUnitOverride ?? "none"
         }
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launch()

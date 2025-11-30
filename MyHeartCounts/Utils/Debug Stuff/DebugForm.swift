@@ -171,4 +171,5 @@ extension DebugForm {
 
 extension Locale {
     static let enUS = Locale(identifier: "en-US")
+    static let enDE = Locale(identifier: "en-DE")
 }

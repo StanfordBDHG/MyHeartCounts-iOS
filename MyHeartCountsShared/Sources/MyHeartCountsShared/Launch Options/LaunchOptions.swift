@@ -18,7 +18,9 @@ private let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "
 
 // MARK: API
 
+/// A Value that can be decoded from a parameter passed to the program's launch options (argv).
 public protocol LaunchOptionDecodable: Sendable {
+    /// Attempts to construct a value of the type, by decoding the raw arguments that were passed to this launch option.
     init(decodingLaunchOption context: LaunchOptionDecodingContext) throws
 }
 
@@ -109,7 +111,13 @@ public enum LaunchOptionDecodingError: Error, LocalizedError {
 }
 
 
+/// A type that can be encoded into an array of launch option arguments.
 public protocol LaunchOptionEncodable: LaunchOptionDecodable {
+    /// The raw argv values that represent this launch option.
+    ///
+    /// - Note: You are responsible for including the launch option's key as the first element in the array.
+    ///     If the receiver's value represents an empty value or does not have a launch option arguments representation,
+    ///     you can simply return an empty array.
     func launchOptionArgs(for launchOption: LaunchOption<Self>) -> [String]
 }
 
@@ -128,6 +136,7 @@ private struct ParsedLaunchOptionArguments {
 
 
 extension LaunchOptionsContainerProtocol {
+    /// Creates a new launch options container by chaining the container after another one.
     public func prepending(_ other: some LaunchOptionsContainerProtocol) -> some LaunchOptionsContainerProtocol {
         CombinedLaunchOptionsContainer(containers: [other, self])
     }
@@ -148,12 +157,15 @@ private struct CombinedLaunchOptionsContainer: LaunchOptionsContainerProtocol {
 
 
 extension LaunchOptions {
+    /// The CLI launch options passed to the current program.
     public static let launchOptions: any LaunchOptionsContainerProtocol = LaunchOptions.commandLineOptionsContainer(for: CommandLine.arguments)
     
+    /// Creates a container for parsing launch options from from an array of CLI launch options.
     public static func commandLineOptionsContainer(for arguments: [String]) -> some LaunchOptionsContainerProtocol {
         CommandLineLaunchOptionsContainer(arguments: arguments)
     }
     
+    /// Creates a container for parsing launch options from from a URL query string.
     public static func urlQuerlOptionsContainer(for components: URLComponents) -> some LaunchOptionsContainerProtocol {
         guard let queryItems = components.queryItems else {
             return commandLineOptionsContainer(for: [])
@@ -267,7 +279,7 @@ extension Float: LaunchOptionDecodable {}
 extension Double: LaunchOptionDecodable {}
 extension String: LaunchOptionDecodable {}
 
-extension Bool: LaunchOptionDecodable {
+extension Bool: LaunchOptionDecodable, LaunchOptionEncodable {
     public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         try context.assertNumRawArgs(.atMost(1))
         switch context.rawArgs.first?.lowercased() {
@@ -283,10 +295,14 @@ extension Bool: LaunchOptionDecodable {
             throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: rawValue)
         }
     }
+    
+    public func launchOptionArgs(for launchOption: LaunchOption<Bool>) -> [String] {
+        self ? [launchOption.key] : []
+    }
 }
 
 extension LosslessStringConvertible where Self: LaunchOptionDecodable {
-    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws { // swiftlint:disable:this missing_docs
         try context.assertNumRawArgs(.equal(1))
         let rawValue = context.rawArgs[0]
         if let value = Self(rawValue) {
@@ -298,7 +314,7 @@ extension LosslessStringConvertible where Self: LaunchOptionDecodable {
 }
 
 extension RawRepresentable where RawValue: LosslessStringConvertible, Self: LaunchOptionDecodable {
-    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
+    public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws { // swiftlint:disable:this missing_docs
         try context.assertNumRawArgs(.equal(1))
         let rawValue = context.rawArgs[0]
         if let rawValue = RawValue(rawValue), let value = Self(rawValue: rawValue) {
@@ -309,7 +325,7 @@ extension RawRepresentable where RawValue: LosslessStringConvertible, Self: Laun
     }
 }
 
-extension URL: LaunchOptionDecodable {
+extension URL: LaunchOptionDecodable, LaunchOptionEncodable {
     public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         try context.assertNumRawArgs(.equal(1))
         self = try .decodeAsLaunchOptionValue(rawValue: context.rawArgs[0])
@@ -331,6 +347,14 @@ extension URL: LaunchOptionDecodable {
             return URL(filePath: rawValue, relativeTo: rawValue.starts(with: "/") ? nil : fileUrlBasePath)
         }
     }
+    
+    public func launchOptionArgs(for launchOption: LaunchOption<URL>) -> [String] {
+        if self.isFileURL {
+            [launchOption.key, self.absoluteURL.path(percentEncoded: false)]
+        } else {
+            [launchOption.key, self.absoluteURL.absoluteString]
+        }
+    }
 }
 
 extension Optional: LaunchOptionDecodable where Wrapped: LaunchOptionDecodable {
@@ -339,9 +363,24 @@ extension Optional: LaunchOptionDecodable where Wrapped: LaunchOptionDecodable {
     }
 }
 
+extension Optional: LaunchOptionEncodable where Wrapped: LaunchOptionEncodable {
+    public func launchOptionArgs(for launchOption: LaunchOption<Optional<Wrapped>>) -> [String] {
+        switch self {
+        case .none:
+            []
+        case .some(let value):
+            // we need to create a fake LaunchOption here to adjust the generic parameter...
+            value.launchOptionArgs(
+                for: LaunchOption<Wrapped>(launchOption.key, default: value)
+            )
+        }
+    }
+}
+
 
 // MARK: Debugging
 
 extension LaunchOptions {
+    /// A special launch option that, if specified, simply prints all other parsed launch options to STDOUT and then terminates the program.
     public static let dumpOptionsAndExit = LaunchOption<Bool>("--dump-cli-options-and-exit", default: false)
 }

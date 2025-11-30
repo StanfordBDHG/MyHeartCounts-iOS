@@ -82,4 +82,3 @@ extension LaunchOptions {
         default: .init(resetExistingData: false, loginAndEnroll: false)
     )
 }
-

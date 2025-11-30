@@ -120,6 +120,9 @@ struct DefaultHealthDashboardTile: View {
 
 
 private struct TileImpl: View {
+    @Environment(\.locale)
+    private var locale
+    
     @Environment(\.calendar)
     private var cal
     
@@ -235,7 +238,7 @@ private struct TileImpl: View {
                 // NOTE: displaying the entire range here technically won't always be correct (it's not incorrect either, just not perfect):
                 // if we have a single-value grid cell that displays the max heart rate measured today, we'd have the label at the bottom say
                 // "Today", even though displaying the precise time of this max heart rate measurement would be more correct.
-                Text(input.timeRange.displayText(using: cal))
+                Text(input.timeRange.displayText(using: locale, calendar: cal))
                     .foregroundStyle(.secondary)
                     .font(.footnote)
             }

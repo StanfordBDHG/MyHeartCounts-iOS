@@ -203,6 +203,7 @@ private struct MostRecentValue: View {
         }
     }
     
+    @Environment(\.locale) private var locale
     @Environment(\.calendar) private var cal
     
     private let scoreResult: ScoreResult
@@ -216,7 +217,7 @@ private struct MostRecentValue: View {
             valueDisplay
                 .font(.headline)
             if let timeRange = scoreResult.timeRange {
-                Text(timeRange.displayText(using: cal))
+                Text(timeRange.displayText(using: locale, calendar: cal))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
