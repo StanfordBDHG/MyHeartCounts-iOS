@@ -15,6 +15,7 @@ public struct InterDeviceUserInfoKey: RawRepresentable, Hashable, Sendable {
     public let rawValue: String
     
     /// Creates a new key
+    @inlinable
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
@@ -40,6 +41,7 @@ extension InterDeviceUserInfoKey {
 
 extension WCSession {
     /// Sends the specified user info dictionary to the companion app.
+    @inlinable
     public func send(userInfo: [InterDeviceUserInfoKey: Any]) {
         let userInfo: [String: Any] = .init(userInfo)
         self.transferUserInfo(userInfo)

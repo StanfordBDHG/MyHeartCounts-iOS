@@ -29,6 +29,7 @@ public struct LaunchOptionDecodingContext: Sendable {
         case atLeast(Int)
         case equal(Int)
         case atMost(Int)
+        
         fileprivate func isSatisfied(by numArgs: Int) -> Bool {
             switch self {
             case .atLeast(let numExpected):

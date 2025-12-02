@@ -12,6 +12,7 @@ public import SpeziStudyDefinition
 
 extension Dictionary {
     /// Creates a dictionary based on its `Key` type's raw values
+    @inlinable
     public init?(_ other: [Key.RawValue: Value]) where Key: RawRepresentable, Key.RawValue: Hashable {
         self.init()
         self.reserveCapacity(other.count)
@@ -24,6 +25,7 @@ extension Dictionary {
     }
     
     /// Creates a Dictionary by mapping a `RawRepresentable` `Key` type into its raw values
+    @inlinable
     public init<K: RawRepresentable & Hashable>(_ other: [K: Value]) where Key == K.RawValue {
         self.init()
         self.reserveCapacity(other.count)
@@ -36,6 +38,7 @@ extension Dictionary {
 
 extension TimedWalkingTestConfiguration.Kind {
     /// A SFSymbol suitable for the test
+    @inlinable
     public var symbol: SFSymbol {
         switch self {
         case .walking: .figureWalk

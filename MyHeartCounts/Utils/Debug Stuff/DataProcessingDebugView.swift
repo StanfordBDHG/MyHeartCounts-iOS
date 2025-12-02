@@ -23,7 +23,7 @@ struct DataProcessingDebugView: View {
         Form { // swiftlint:disable:this closure_body_length
             Section("HealthKit") {
                 LabeledContent("Historical Fetch", value: historicalHealthDataExportMgr.session?.state.displayTitle ?? "n/a")
-                if let progress = historicalHealthDataExportMgr.exportProgress {
+                if let progress = historicalHealthDataExportMgr.session?.progress {
                     ProgressView("Historical Fetch Progress", value: progress.completion)
                 }
                 ForEach([ManagedFileUpload.Category.historicalHealthUpload, .liveHealthUpload]) { category in
