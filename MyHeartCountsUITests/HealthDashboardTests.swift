@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import MyHeartCountsShared
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
@@ -41,8 +42,8 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testHealthDashboardDataEntryBMIIndirectMetric() throws {
         try launchAppAndEnrollIntoStudy(
-            heightEntryUnitOverride: "cm",
-            weightEntryUnitOverride: "kg"
+            heightEntryUnitOverride: .cm,
+            weightEntryUnitOverride: .kg
         )
         goToTab(.heartHealth)
         app.buttons["Body Mass Index"].tap()
@@ -64,8 +65,8 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testHealthDashboardDataEntryBMIIndirectUSUnits() throws {
         try launchAppAndEnrollIntoStudy(
-            heightEntryUnitOverride: "feet",
-            weightEntryUnitOverride: "lbs"
+            heightEntryUnitOverride: .feet,
+            weightEntryUnitOverride: .lbs
         )
         goToTab(.heartHealth)
         app.buttons["Body Mass Index"].tap()

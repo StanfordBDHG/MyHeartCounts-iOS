@@ -9,6 +9,7 @@
 import Foundation
 import SpeziAccount
 import SpeziFoundation
+import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziStudy
 import SpeziViews
@@ -48,7 +49,22 @@ struct HealthImporterControlView: View {
                 Text(session.state.displayTitle)
             }
             if let progress = session.progress {
-                ProgressView(progress)
+                HStack {
+                    Text("Progress")
+                    Spacer()
+                    Text(progress.completion, format: .percent.precision(.fractionLength(0)))
+                    ProgressView()
+                }
+                let batches = progress.activeBatches.sorted(using: [
+                    KeyPathComparator(\.sampleType.displayTitle),
+                    KeyPathComparator(\.timeRange.lowerBound)
+                ])
+                ForEach(batches, id: \.self) { batch in
+                    LabeledContent(
+                        batch.sampleType.displayTitle,
+                        value: batch.timeRange.displayText(using: .current)
+                    )
+                }
             }
         }
     }

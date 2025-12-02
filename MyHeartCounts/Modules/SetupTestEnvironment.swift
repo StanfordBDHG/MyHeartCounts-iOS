@@ -6,12 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
+import HealthKitOnFHIR
+import MyHeartCountsShared
 import OSLog
 import Spezi
-import HealthKitOnFHIR
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziHealthKit
@@ -25,27 +24,7 @@ import struct SpeziViews.AnyLocalizedError
 @Observable
 @MainActor
 final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
-    enum Config: LaunchOptionDecodable, Hashable {
-        /// The app should not set up a test environment upon launching
-        case no // swiftlint:disable:this identifier_name
-        /// The app should set up a test environment, and optionally should clear any existing data.
-        case yes(resetExistingData: Bool)
-        
-        init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
-            try context.assertNumRawArgs(.atMost(1))
-            switch context.rawArgs.first {
-            case nil:
-                // if the option (/flag) exists but has no value,
-                // we implicitly set it to true (to indicate its presence)
-                self = .yes(resetExistingData: true)
-            case "keepExistingData":
-                self = .yes(resetExistingData: false)
-            case .some(let rawValue):
-                throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: rawValue)
-            }
-        }
-    }
-    
+    typealias Config = SetupTestEnvironmentConfig
     enum State {
         /// The test environment hasn't been set up, and will not be set up.
         case disabled
@@ -66,28 +45,21 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkHealthExporter
+    @ObservationIgnored @Dependency(ManagedFileUpload.self) private var fileUploader
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     // swiftlint:enable attributes
     
-    @ObservationIgnored private let config: Config = LaunchOptions.launchOptions[.setupTestAccount]
+    @ObservationIgnored private let config: Config = LaunchOptions.launchOptions[.setupTestEnvironment]
     @MainActor private(set) var isInSetup = false
-    
-    /// Whether the test environment setup, in general, is enabled.
-    ///
-    /// - Note: This value being `true` or `false` does not mean that the test environment is currently enabled or disabled.
-    ///     It just signals whether this module has/will set up a test environment.
-    var isEnabled: Bool {
-        config != .no
-    }
     
     private(set) var state: State
     
     init() {
-        state = if FeatureFlags.useFirebaseEmulator && FeatureFlags.skipOnboarding && config != .no {
-            .pending
-        } else {
+        state = if FeatureFlags.disableFirebase || config == .disabled {
             .disabled
+        } else {
+            .pending
         }
     }
     
@@ -119,40 +91,44 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         defer {
             isInSetup = false
         }
-        switch config {
-        case .no:
-            return
-        case .yes(let resetExistingData):
-            try await setUp(resetExistingData: resetExistingData)
+        if config.resetExistingData {
+            try await resetExistingData()
+        }
+        if config.loginAndEnroll {
+            try await loginAndEnroll()
         }
     }
     
     
-    private func setUp(resetExistingData: Bool) async throws {
-        let signposter = OSSignposter(logger: Logger(category: .pointsOfInterest))
-        let signpostId = signposter.makeSignpostID()
-        let state = signposter.beginInterval("Setup Test Environment", id: signpostId)
-        defer {
-            signposter.endInterval("Setup Test Environment", state)
-        }
-        logger.notice("Setting up Test Environment")
-        guard let accountService else {
-            logger.error("Unable to set up test account: no account service")
-            return
-        }
-        guard let studyManager else {
-            logger.error("Unable to set up test account: no StudyManager")
-            return
-        }
-        if resetExistingData {
+    private func resetExistingData() async throws {
+        logger.notice("Resetting existing data")
+        try localStorage.deleteAll()
+        try await bulkHealthExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
+        try fileUploader.clearPendingUploads()
+        if let studyManager {
             for enrollment in studyManager.studyEnrollments {
                 try await studyManager.unenroll(from: enrollment)
             }
+        }
+        if let accountService {
             do {
                 try await accountService.logout()
             } catch FirebaseAccountError.notSignedIn {
                 // ok
             }
+        }
+    }
+    
+    
+    private func loginAndEnroll() async throws {
+        logger.notice("Logging in and enrolling into Study")
+        guard let accountService else {
+            logger.error("Unable to log in and enroll: no AccountService!")
+            return
+        }
+        guard studyManager != nil else {
+            logger.error("Unable to log in and enroll: no StudyManager!")
+            return
         }
         do {
             try await accountService.login(userId: "lelandstanford@stanford.edu", password: "StanfordRocks!")
@@ -173,7 +149,6 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
-        signposter.emitEvent("did log in", id: signpostId)
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
         let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
@@ -183,10 +158,8 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             try await _Concurrency.Task.sleep(for: .seconds(1))
             try await healthKit.askForAuthorization(for: .init(read: studyBundle.studyDefinition.allCollectedHealthData.clinicalRecordTypes()))
         }
-        signposter.emitEvent("health reqs complete", id: signpostId)
         try await standard.enroll(in: studyBundle)
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
-        signposter.emitEvent("enrollment complete", id: signpostId)
     }
 }
 

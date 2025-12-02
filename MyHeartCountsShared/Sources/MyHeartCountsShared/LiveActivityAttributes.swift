@@ -25,6 +25,7 @@ public struct TimedWalkTestLiveActivityAttributes: ActivityAttributes {
     /// The test being conducted
     public let test: TimedWalkingTestConfiguration
     
+    @inlinable
     public init(testRunId: UUID, test: TimedWalkingTestConfiguration) {
         self.testRunId = testRunId
         self.test = test

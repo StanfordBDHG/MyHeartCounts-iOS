@@ -85,28 +85,16 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--overrideStudyBundleLocation https://firebasestorage.googleapis.com/v0/b/myheart-counts-development.firebasestorage.app/o/public%2FmhcStudyBundle.spezistudybundle.aar?alt=media"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--overrideStudyBundleLocation /Users/lukas/Desktop/mhcStudyBundle.spezistudybundle.aar"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--showOnboarding"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "--disableAutomaticBulkHealthExport"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--skipOnboarding"
-            isEnabled = "NO">
+            argument = "--setupTestEnvironment reset login-and-enroll"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--setupTestAccount"
-            isEnabled = "NO">
+            argument = "--forceEnableDebugMode"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--useFirebaseEmulator"
@@ -121,8 +109,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--dump-cli-options-and-exit"
-            isEnabled = "NO">
+            argument = "--overrideStudyBundleLocation &apos;/Users/lukas/Desktop/MHC StudyDefs/mhcStudyBundle.spezistudybundle.aar&apos;"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
@@ -134,7 +122,7 @@
          <EnvironmentVariable
             key = "IDELogRedirectionPolicy"
             value = "oslogToStdio"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "TZ"

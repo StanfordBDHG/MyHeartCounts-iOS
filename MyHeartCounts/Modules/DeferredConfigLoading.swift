@@ -12,6 +12,7 @@ import class FirebaseCore.FirebaseOptions
 import class FirebaseFirestore.FirestoreSettings
 import class FirebaseFirestore.MemoryCacheSettings
 import Foundation
+import MyHeartCountsShared
 import Observation
 import OSLog
 @_spi(APISupport) // we need to access `SpeziAppDelegate.spezi`
@@ -314,6 +315,7 @@ extension Spezi {
     
     @MainActor
     private func loadFirebase(for region: Locale.Region) {
+        DeferredConfigLoading.logger.notice("Will load firebase")
         let config = DeferredConfigLoading.config(for: .region(region))
         guard !config.isEmpty else {
             return
@@ -322,6 +324,7 @@ extension Spezi {
             self.loadModule(module)
         }
         LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = .region(region)
+        DeferredConfigLoading.logger.notice("Did load firebase")
     }
 }
 

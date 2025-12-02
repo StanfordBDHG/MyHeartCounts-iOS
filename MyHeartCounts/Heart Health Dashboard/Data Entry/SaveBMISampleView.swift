@@ -8,6 +8,7 @@
 
 import Foundation
 import HealthKit
+import MyHeartCountsShared
 import SFSafeSymbols
 import SpeziHealthKit
 import SpeziViews

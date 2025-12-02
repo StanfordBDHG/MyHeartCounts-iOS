@@ -177,3 +177,20 @@ extension Sequence {
         return avg / Element(count)
     }
 }
+
+
+extension Result {
+    /// Creates a new result by evaluating a throwing async closure, capturing the
+    /// returned value as a success, or any thrown error as a failure.
+    ///
+    /// - Parameter body: A potentially throwing async closure to evaluate.
+    @inlinable
+    @_disfavoredOverload
+    public init(catchingAsync body: sending () async throws(Failure) -> Success) async {
+        do {
+            self = .success(try await body())
+        } catch {
+            self = .failure(error)
+        }
+    }
+}

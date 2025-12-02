@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import MyHeartCountsShared
 import OSLog
 import Spezi
 import SwiftUI
@@ -40,11 +41,11 @@ struct MyHeartCounts: App {
         // i.e. before the AppDelegate's `willFinishLaunchingWithOptions`
         // method gets called. Hence why we put it in here.
         let prefs = LocalPreferencesStore.standard
-        if FeatureFlags.showOnboarding {
-            prefs[.onboardingFlowComplete] = false
+        if LaunchOptions.launchOptions[.setupTestEnvironment].resetExistingData {
             prefs[.lastUsedFirebaseConfig] = nil
+            prefs[.onboardingFlowComplete] = false
         }
-        if FeatureFlags.skipOnboarding {
+        if LaunchOptions.launchOptions[.setupTestEnvironment].loginAndEnroll {
             prefs[.onboardingFlowComplete] = true
         }
     }

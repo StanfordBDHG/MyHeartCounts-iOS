@@ -28,6 +28,7 @@ struct HeartHealthDashboard: View {
     
     // swiftlint:disable attributes
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.locale) private var locale
     @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
     // swiftlint:enable attributes
@@ -183,7 +184,7 @@ struct HeartHealthDashboard: View {
                 .padding(.top, 4)
                 .padding(.bottom, -8)
                 if let timeRange = score.timeRange, score.scoreAvailable {
-                    Text(timeRange.displayText(using: cal))
+                    Text(timeRange.displayText(using: locale, calendar: cal))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } else {

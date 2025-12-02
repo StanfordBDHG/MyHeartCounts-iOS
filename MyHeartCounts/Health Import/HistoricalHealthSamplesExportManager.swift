@@ -19,6 +19,12 @@ import SpeziStudy
 @Observable
 @MainActor
 final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible, Sendable {
+    enum CreateBulkExportSessionError: Error {
+        case noStudy
+        case multipleExportComponents
+        case other(any Error)
+    }
+    
     // swiftlint:disable attributes
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Application(\.logger) private var logger
@@ -29,14 +35,6 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     // swiftlint:enable attributes
     
     private(set) var session: (any BulkExportSession<HealthKitSamplesFHIRUploader>)?
-    
-    // periphery:ignore
-    /// A `Progress` instance representing the current health data export progress,
-    /// i.e. the progress of fetching historical samples, converting them into FHIR observations, and compressing them.
-    var exportProgress: Progress? {
-        session?.progress
-    }
-    
     
     func configure() {
         if let account, account.signedIn {
@@ -74,34 +72,10 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         guard !FeatureFlags.disableAutomaticBulkHealthExport else {
             return false
         }
-        if session == nil {
-            guard let study = studyManager?.studyEnrollments.first?.studyBundle?.studyDefinition else {
-                logger.error("\(#function) aborting: no study")
-                return false
-            }
-            for component in study.healthDataCollectionComponents {
-                switch component.historicalDataCollection {
-                case .disabled:
-                    continue
-                case .enabled(let startDate):
-                    do {
-                        logger.notice("Starting historical health upload")
-                        session = try await bulkExporter.session(
-                            withId: .mhcHistoricalDataExport,
-                            for: study.allCollectedHealthData,
-                            startDate: startDate,
-                            using: HealthKitSamplesFHIRUploader(standard: standard)
-                        )
-                    } catch {
-                        logger.error("Error creating bulk export session: \(error)")
-                        return false
-                    }
-                }
-            }
-        }
-        guard let session else {
+        guard let session = try? await getSession() else {
             return false
         }
+        self.session = session
         do {
             logger.notice("Will start BulkHealthExport session")
             let results = try session.start(retryFailedBatches: true)
@@ -110,6 +84,39 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         } catch {
             logger.error("Error starting session: \(error)")
             return false
+        }
+    }
+    
+    
+    private func getSession() async throws(CreateBulkExportSessionError) -> some BulkExportSession<HealthKitSamplesFHIRUploader> {
+        guard let study = studyManager?.studyEnrollments.first?.studyBundle?.studyDefinition else {
+            throw .noStudy
+        }
+        let healthCollectionComponents = study.healthDataCollectionComponents.filter {
+            $0.historicalDataCollection != .disabled
+        }
+        guard healthCollectionComponents.count <= 1 else {
+            logger.error("Error creating BulkExportSession: multiple data collection components in StudyBundle!")
+            throw .multipleExportComponents
+        }
+        guard let component = healthCollectionComponents.first else {
+            throw .noStudy
+        }
+        switch component.historicalDataCollection {
+        case .disabled:
+            // unreachable
+            throw .noStudy
+        case .enabled(let startDate):
+            do {
+                return try await bulkExporter.session(
+                    withId: .mhcHistoricalDataExport,
+                    for: study.allCollectedHealthData,
+                    startDate: startDate,
+                    using: HealthKitSamplesFHIRUploader(standard: standard)
+                )
+            } catch {
+                throw .other(error)
+            }
         }
     }
 }

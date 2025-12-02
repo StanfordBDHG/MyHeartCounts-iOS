@@ -23,6 +23,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/SpeziStudy.git", from: "0.1.15"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.5.0"),
         .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols.git", from: "7.0.0")
     ],
     targets: [
@@ -32,6 +33,7 @@ let package = Package(
             name: "MyHeartCountsShared",
             dependencies: [
                 .product(name: "SpeziStudyDefinition", package: "SpeziStudy"),
+                .product(name: "SpeziFoundation", package: "SpeziFoundation"),
                 .product(name: "SFSafeSymbols", package: "SFSafeSymbols")
             ],
             swiftSettings: [

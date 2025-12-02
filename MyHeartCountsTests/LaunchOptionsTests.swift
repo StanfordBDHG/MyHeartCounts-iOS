@@ -10,6 +10,7 @@
 
 import Foundation
 @testable import MyHeartCounts
+@testable import MyHeartCountsShared
 import Testing
 
 

@@ -102,9 +102,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             _ = await processingTask.result
         } else {
             let task = Task { @concurrent in
-                await withManagedTaskQueue(limit: 5) { taskQueue in
+                await withManagedTaskQueue(limit: 6) { taskQueue in
                     for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
-                        taskQueue.submit {
+                        taskQueue.addTask {
                             await self.fetchAndUploadAnchored(uploadDefinition)
                         }
                     }
