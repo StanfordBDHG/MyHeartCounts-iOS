@@ -38,8 +38,7 @@ extension Dictionary {
 
 extension TimedWalkingTestConfiguration.Kind {
     /// A SFSymbol suitable for the test
-    @inlinable
-    public var symbol: SFSymbol {
+    @inlinable public var symbol: SFSymbol {
         switch self {
         case .walking: .figureWalk
         case .running: .figureRun
