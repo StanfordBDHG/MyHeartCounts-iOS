@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "b4c486f1baece61f0cdc0591148a0b1a6edf7702",
-        "version" : "0.1.9"
+        "revision" : "721aecb63c1c1b09ef1b05ca83fc36e486426fb6",
+        "version" : "0.1.10"
       }
     },
     {
