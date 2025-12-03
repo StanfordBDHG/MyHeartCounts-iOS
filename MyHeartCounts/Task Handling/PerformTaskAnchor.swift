@@ -36,15 +36,32 @@ private final class MHCCurrentlyActiveTask: Sendable {
 @MainActor
 struct PerformTask: DynamicProperty {
     /// A task we might offer the user to perform, that isn't necessarily associated with any particular scheduled event.
-    struct Task {
+    @MainActor
+    final class Task: Sendable {
         enum Action: Hashable {
             case answerQuestionnaire(Questionnaire)
             case article(Article)
             case timedWalkTest(TimedWalkingTestConfiguration)
             case ecg
         }
+        /// The task's action
         fileprivate let action: Action
-        fileprivate let completionHandler: @Sendable @MainActor (_ success: Bool) -> Void
+        /// The task's completion handler. Will be set to `nil` upon marking the task as completed.
+        private var completionHandler: (@Sendable @MainActor (_ success: Bool) -> Void)?
+        
+        fileprivate var isCompleted: Bool {
+            completionHandler == nil
+        }
+        
+        init(action: Action, completionHandler: @escaping @Sendable @MainActor (_ didSucceed: Bool) -> Void) {
+            self.action = action
+            self.completionHandler = completionHandler
+        }
+        
+        func markCompleted(didSucceed: Bool) {
+            completionHandler?(didSucceed)
+            completionHandler = nil
+        }
     }
     
     @Environment(\.calendar)
@@ -146,9 +163,9 @@ private struct UserTaskPerforming: ViewModifier {
                         switch result {
                         case .completed(let response):
                             await standard.add(response)
-                            task.completionHandler(true)
+                            task.markCompleted(didSucceed: true)
                         case .cancelled, .failed:
-                            task.completionHandler(false)
+                            task.markCompleted(didSucceed: false)
                         }
                         currentlyActiveTask.task = nil
                     }
@@ -158,16 +175,16 @@ private struct UserTaskPerforming: ViewModifier {
                             // we consider simply presenting the component as being sufficient to complete the event.
                             // NOTE ISSUE HERE: completing the event puts it into a state where you can't trigger it again (understandably...)
                             // BUT: in this case, we do wanna allow this to happen again! how should we go about this?
-                            task.completionHandler(true)
+                            task.markCompleted(didSucceed: true)
                         }
                 case .timedWalkTest(let test):
                     TimedWalkingTestSheet(test) { result in
-                        task.completionHandler(result != nil)
+                        task.markCompleted(didSucceed: result != nil)
                     }
                 case .ecg:
                     NavigationStack {
                         ECGInstructionsSheet(shouldOfferManualCompletion: true) { success in
-                            task.completionHandler(success)
+                            task.markCompleted(didSucceed: success)
                         }
                     }
                 }
