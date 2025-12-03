@@ -33,7 +33,7 @@ struct DemographicsForm<Footer: View>: View {
     var body: some View {
         Impl(isComplete: $isComplete, footer: footer)
             .environment(data)
-            .navigationTitle("Demographics (isComplete: \(isComplete))" as String)
+            .navigationTitle("Demographics")
             .onAppear {
                 if !didPopulateData {
                     didPopulateData = true
