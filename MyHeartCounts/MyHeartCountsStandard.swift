@@ -123,7 +123,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     // MARK: Account Stuff
     
     func respondToEvent(_ event: AccountNotifications.Event) async {
-        print("ACCOUNT EVENT \(event)")
         let logger = logger
         switch event {
         case .deletingAccount:

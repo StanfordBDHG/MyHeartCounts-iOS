@@ -21,7 +21,7 @@ struct Consent: View {
     // swiftlint:disable attributes
     @Environment(\.dismiss) private var dismiss
     @Environment(ManagedNavigationStack.Path.self) private var path
-    @Environment(OnboardingDataCollection.self) private var onboardingData
+    @Environment(OnboardingDataCollection.self) private var onboardingData: OnboardingDataCollection?
     @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(Account.self) private var account
     @Environment(StudyBundleLoader.self) private var studyLoader
@@ -39,7 +39,7 @@ struct Consent: View {
             guard let consentDocument else {
                 return
             }
-            onboardingData.consentResponses = consentDocument.userResponses
+            onboardingData?.consentResponses = consentDocument.userResponses
             let result = try consentDocument.export(using: pdfExportConfig)
             try await standard.uploadConsentDocument(result)
             do {
