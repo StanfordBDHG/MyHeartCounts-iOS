@@ -50,7 +50,7 @@ func demographicsLayout(for region: Locale.Region) -> some DemographicsComponent
                         Text("Missing Response")
                             .font(.footnote)
                             .foregroundStyle(.red)
-                            .padding(.trailing)
+                            .padding(.trailing, 5)
                     }
                 }
             }

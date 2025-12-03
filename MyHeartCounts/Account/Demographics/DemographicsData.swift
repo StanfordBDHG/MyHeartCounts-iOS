@@ -145,7 +145,7 @@ final class DemographicsData {
         self[\.stageOfChange] = details.stageOfChange
     }
     
-    private func onChange(_ trigger: StaticString = #function) {
+    private func onChange() {
         updateCounter &+= 1
         guard shouldHandleUpdates, let account else {
             return
@@ -175,11 +175,14 @@ final class DemographicsData {
                 updated[keyPath: detailsKeyPath] = newValue
             }
         }
-        func write<T: Equatable>(_ selfKeyPath: KeyPath<DemographicsData, Field<T>>, to detailsKeyPath: WritableKeyPath<AccountDetails, T?>) {
+        func write<T: Equatable>(
+            _ selfKeyPath: ReferenceWritableKeyPath<DemographicsData, Field<T>>,
+            to detailsKeyPath: WritableKeyPath<AccountDetails, T?>
+        ) {
             write(self[selfKeyPath], to: detailsKeyPath)
         }
         func write<T, U: Equatable>(
-            _ selfKeyPath: KeyPath<DemographicsData, Field<T>>,
+            _ selfKeyPath: ReferenceWritableKeyPath<DemographicsData, Field<T>>,
             to detailsKeyPath: WritableKeyPath<AccountDetails, U?>,
             transform: (T) -> U
         ) {
@@ -209,7 +212,6 @@ final class DemographicsData {
         write(\.stageOfChange, to: \.stageOfChange)
         let modifications = try AccountModifications(modifiedDetails: updated, removedAccountDetails: removed)
         try await account.accountService.updateAccountDetails(modifications)
-        print("Did write demographics values to account details")
     }
 }
 
@@ -219,10 +221,7 @@ extension DemographicsData {
         self[keyPath: keyPath].isEmpty
     }
     
-    subscript<Value>(_ keyPath: KeyPath<DemographicsData, Field<Value>>) -> Value? {
-        self[keyPath: keyPath].value
-    }
-    
+    /// Accesses the value of a field
     subscript<Value>(_ keyPath: ReferenceWritableKeyPath<DemographicsData, Field<Value>>) -> Value? {
         get {
             self[keyPath: keyPath].value
@@ -236,12 +235,7 @@ extension DemographicsData {
 
 extension DemographicsData {
     @MainActor
-    protocol AnyField {
-        var isEmpty: Bool { get }
-    }
-    
-    @MainActor
-    struct Field<Value>: AnyField {
+    struct Field<Value> {
         private let _isEmpty: (Value) -> Bool
         fileprivate(set) var value: Value?
         
