@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable discouraged_optional_boolean
-
 import Foundation
 import HealthKit
 import SpeziAccount
@@ -21,91 +19,96 @@ final class DemographicsData {
     @ObservationIgnored private var account: Account?
     @ObservationIgnored private var updateTask: Task<Void, any Error>?
     @ObservationIgnored private var shouldHandleUpdates = true
+    private(set) var updateCounter: UInt64 = 0
     
-    var dateOfBirth: Date? {
-        didSet { onChange() }
+    var dateOfBirth = Field<Date>(isEmpty: { Calendar.current.isDateInToday($0) }) {
+        didSet {
+            onChange()
+        }
     }
-    var genderIdentity: GenderIdentity? {
+    
+    var genderIdentity = Field<GenderIdentity>() {
         didSet {
             defer {
                 onChange()
             }
-            guard let newGender = genderIdentity, sexAtBirth == nil else {
+            guard let newGender = self[\.genderIdentity], self[\.sexAtBirth] == nil else {
                 return
             }
             switch newGender {
             case .male, .transFemale:
-                sexAtBirth = .male
+                self[\.sexAtBirth] = .male
             case .female, .transMale:
-                sexAtBirth = .female
+                self[\.sexAtBirth] = .female
             case .other, .preferNotToState:
                 break
             }
         }
     }
-    var sexAtBirth: BiologicalSex? {
+    var sexAtBirth = Field<BiologicalSex>() {
         didSet {
             defer {
                 onChange()
             }
-            guard let newSex = sexAtBirth, genderIdentity == nil else {
+            guard let newSex = self[\.sexAtBirth], self[\.genderIdentity] == nil else {
                 return
             }
             switch newSex {
             case .male:
-                genderIdentity = .male
+                self[\.genderIdentity] = .male
             case .female:
-                genderIdentity = .female
+                self[\.genderIdentity] = .female
             case .preferNotToState, .intersex:
                 break
             }
         }
     }
-    var height: HKQuantity? {
+    var height = Field<HKQuantity>() {
         didSet { onChange() }
     }
-    var weight: HKQuantity? {
+    var weight = Field<HKQuantity>() {
         didSet { onChange() }
     }
-    var raceEthnicity: RaceEthnicity? {
+    var raceEthnicity = Field<RaceEthnicity>(isEmpty: { $0.isEmpty }) {
         didSet { onChange() }
     }
-    var latinoStatus: LatinoStatusOption? {
+    var latinoStatus = Field<LatinoStatusOption>(isEmpty: { $0 == .notSet }) {
         didSet { onChange() }
     }
-    var bloodType: HKBloodType? {
+    var bloodType = Field<HKBloodType>() {
         didSet { onChange() }
     }
-    var comorbidities: Comorbidities? {
+    var comorbidities = Field<Comorbidities>() {
         didSet { onChange() }
     }
-    var usRegion: USRegion? {
+    var usRegion = Field<USRegion>() {
         didSet { onChange() }
     }
-    var ukRegion: UKRegion? {
+    var ukRegion = Field<UKRegion>() {
         didSet { onChange() }
     }
-    var usEducationLevel: EducationStatusUS? {
+    var usEducationLevel = Field<EducationStatusUS>() {
         didSet { onChange() }
     }
-    var ukEducationLevel: EducationStatusUK? {
+    var ukEducationLevel = Field<EducationStatusUK>() {
         didSet { onChange() }
     }
-    var usHouseholdIncome: HouseholdIncomeUS? {
+    var usHouseholdIncome = Field<HouseholdIncomeUS>() {
         didSet { onChange() }
     }
-    var ukHouseholdIncome: HouseholdIncomeUK? {
+    var ukHouseholdIncome = Field<HouseholdIncomeUK>() {
         didSet { onChange() }
     }
-    var nhsNumber: NHSNumber? {
+    var nhsNumber = Field<NHSNumber>() {
         didSet { onChange() }
     }
-    var futureStudiesOptIn: Bool? {
+    var futureStudiesOptIn = Field<Bool>() {
         didSet { onChange() }
     }
-    var stageOfChange: StageOfChangeOption? {
+    var stageOfChange = Field<StageOfChangeOption>() {
         didSet { onChange() }
     }
+    
     
     init() {
         initialDetails = AccountDetails()
@@ -122,27 +125,28 @@ final class DemographicsData {
             shouldHandleUpdates = true
         }
         initialDetails = details
-        dateOfBirth = details.dateOfBirth
-        genderIdentity = details.mhcGenderIdentity
-        sexAtBirth = details.biologicalSexAtBirth
-        height = details.heightInCM.map { HKQuantity(unit: .meterUnit(with: .centi), doubleValue: $0) }
-        weight = details.weightInKG.map { HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: $0) }
-        raceEthnicity = details.raceEthnicity
-        latinoStatus = details.latinoStatus
-        bloodType = details.bloodType
-        comorbidities = details.comorbidities
-        usRegion = details.usRegion
-        ukRegion = details.ukRegion
-        usEducationLevel = details.educationUS
-        ukEducationLevel = details.educationUK
-        usHouseholdIncome = details.householdIncomeUS
-        ukHouseholdIncome = details.householdIncomeUK
-        nhsNumber = details.nhsNumber
-        futureStudiesOptIn = details.futureStudies
-        stageOfChange = details.stageOfChange
+        self[\.dateOfBirth] = details.dateOfBirth
+        self[\.genderIdentity] = details.mhcGenderIdentity
+        self[\.sexAtBirth] = details.biologicalSexAtBirth
+        self[\.height] = details.heightInCM.map { HKQuantity(unit: .meterUnit(with: .centi), doubleValue: $0) }
+        self[\.weight] = details.weightInKG.map { HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: $0) }
+        self[\.raceEthnicity] = details.raceEthnicity
+        self[\.latinoStatus] = details.latinoStatus
+        self[\.bloodType] = details.bloodType
+        self[\.comorbidities] = details.comorbidities
+        self[\.usRegion] = details.usRegion
+        self[\.ukRegion] = details.ukRegion
+        self[\.usEducationLevel] = details.educationUS
+        self[\.ukEducationLevel] = details.educationUK
+        self[\.usHouseholdIncome] = details.householdIncomeUS
+        self[\.ukHouseholdIncome] = details.householdIncomeUK
+        self[\.nhsNumber] = details.nhsNumber
+        self[\.futureStudiesOptIn] = details.futureStudies
+        self[\.stageOfChange] = details.stageOfChange
     }
     
     private func onChange(_ trigger: StaticString = #function) {
+        updateCounter &+= 1
         guard shouldHandleUpdates, let account else {
             return
         }
@@ -153,7 +157,7 @@ final class DemographicsData {
         }
     }
     
-    func write(to account: Account) async throws {
+    func write(to account: Account) async throws { // swiftlint:disable:this function_body_length
         var updated = AccountDetails()
         var removed = AccountDetails()
         func write<T: Equatable>(_ newValue: T?, to detailsKeyPath: WritableKeyPath<AccountDetails, T?>) {
@@ -171,37 +175,90 @@ final class DemographicsData {
                 updated[keyPath: detailsKeyPath] = newValue
             }
         }
+        
+//        let kp1: KeyPath<DemographicsData, Field<Bool>> = \.futureStudiesOptIn
+//        let kp1: KeyPath<DemographicsData, any AnyField> = \.futureStudiesOptIn
+        
+        func write<T: Equatable>(_ selfKeyPath: KeyPath<DemographicsData, Field<T>>, to detailsKeyPath: WritableKeyPath<AccountDetails, T?>) {
+            write(self[selfKeyPath], to: detailsKeyPath)
+        }
         func write<T, U: Equatable>(
-            _ newValue: T?,
+            _ selfKeyPath: KeyPath<DemographicsData, Field<T>>,
             to detailsKeyPath: WritableKeyPath<AccountDetails, U?>,
             transform: (T) -> U
         ) {
-            write(newValue.map(transform), to: detailsKeyPath)
+            write(self[selfKeyPath].map(transform), to: detailsKeyPath)
         }
-        write(dateOfBirth, to: \.dateOfBirth)
-        write(genderIdentity, to: \.mhcGenderIdentity)
-        write(sexAtBirth, to: \.biologicalSexAtBirth)
-        write(height, to: \.heightInCM) {
+        write(\.dateOfBirth, to: \.dateOfBirth)
+        write(\.genderIdentity, to: \.mhcGenderIdentity)
+        write(\.sexAtBirth, to: \.biologicalSexAtBirth)
+        write(\.height, to: \.heightInCM) {
             $0.doubleValue(for: .meterUnit(with: .centi))
         }
-        write(weight, to: \.weightInKG) {
+        write(\.weight, to: \.weightInKG) {
             $0.doubleValue(for: .gramUnit(with: .kilo))
         }
-        write(raceEthnicity, to: \.raceEthnicity)
-        write(latinoStatus, to: \.latinoStatus)
-        write(bloodType, to: \.bloodType)
-        write(comorbidities, to: \.comorbidities)
-        write(usRegion, to: \.usRegion)
-        write(ukRegion, to: \.ukRegion)
-        write(usEducationLevel, to: \.educationUS)
-        write(ukEducationLevel, to: \.educationUK)
-        write(usHouseholdIncome, to: \.householdIncomeUS)
-        write(ukHouseholdIncome, to: \.householdIncomeUK)
-        write(nhsNumber, to: \.nhsNumber)
-        write(futureStudiesOptIn, to: \.futureStudies)
-        write(stageOfChange, to: \.stageOfChange)
+        write(\.raceEthnicity, to: \.raceEthnicity)
+        write(\.latinoStatus, to: \.latinoStatus)
+        write(\.bloodType, to: \.bloodType)
+        write(\.comorbidities, to: \.comorbidities)
+        write(\.usRegion, to: \.usRegion)
+        write(\.ukRegion, to: \.ukRegion)
+        write(\.usEducationLevel, to: \.educationUS)
+        write(\.ukEducationLevel, to: \.educationUK)
+        write(\.usHouseholdIncome, to: \.householdIncomeUS)
+        write(\.ukHouseholdIncome, to: \.householdIncomeUK)
+        write(\.nhsNumber, to: \.nhsNumber)
+        write(\.futureStudiesOptIn, to: \.futureStudies)
+        write(\.stageOfChange, to: \.stageOfChange)
         let modifications = try AccountModifications(modifiedDetails: updated, removedAccountDetails: removed)
         try await account.accountService.updateAccountDetails(modifications)
         print("Did write demographics values to account details")
+    }
+}
+
+
+extension DemographicsData {
+    func isEmpty<Value>(_ keyPath: KeyPath<DemographicsData, Field<Value>>) -> Bool {
+        self[keyPath: keyPath].isEmpty
+    }
+    
+    subscript<Value>(_ keyPath: KeyPath<DemographicsData, Field<Value>>) -> Value? {
+        self[keyPath: keyPath].value
+    }
+    
+    subscript<Value>(_ keyPath: ReferenceWritableKeyPath<DemographicsData, Field<Value>>) -> Value? {
+        get {
+            self[keyPath: keyPath].value
+        }
+        set {
+            self[keyPath: keyPath].value = newValue
+        }
+    }
+}
+
+
+extension DemographicsData {
+    @MainActor
+    protocol AnyField {
+        var isEmpty: Bool { get }
+    }
+    
+    @MainActor
+    struct Field<Value>: AnyField {
+        private let _isEmpty: (Value) -> Bool
+        fileprivate(set) var value: Value?
+        
+        var isEmpty: Bool {
+            value.map(_isEmpty) ?? true
+        }
+        
+        /// Creates a new `Field` for a demographics value.
+        ///
+        /// - parameter isEmpty: A closure that determines whether a non-`nil` value for this field should be considered an empty value.
+        ///     `nil` values are always considered empty. By default, all non-`nil` values are considered as representing non-empty values.
+        fileprivate init(isEmpty: @escaping (Value) -> Bool = { _ in false }) {
+            self._isEmpty = isEmpty
+        }
     }
 }
