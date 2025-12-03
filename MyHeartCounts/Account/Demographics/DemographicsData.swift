@@ -175,10 +175,6 @@ final class DemographicsData {
                 updated[keyPath: detailsKeyPath] = newValue
             }
         }
-        
-//        let kp1: KeyPath<DemographicsData, Field<Bool>> = \.futureStudiesOptIn
-//        let kp1: KeyPath<DemographicsData, any AnyField> = \.futureStudiesOptIn
-        
         func write<T: Equatable>(_ selfKeyPath: KeyPath<DemographicsData, Field<T>>, to detailsKeyPath: WritableKeyPath<AccountDetails, T?>) {
             write(self[selfKeyPath], to: detailsKeyPath)
         }
