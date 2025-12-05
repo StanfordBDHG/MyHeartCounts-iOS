@@ -241,13 +241,12 @@ private struct NavigationLinkLabel: View {
 /// A Form row view for a quantity-based body measurement, e.g. height or weight.
 private struct BodyMeasurementRow: DemographicsComponent {
     @MainActor
-    struct BodyMeasurementDescriptor: Identifiable {
+    struct BodyMeasurementDescriptor {
         static var height: Self { Self(sampleType: .healthKit(.height), fieldKeyPath: \.height) }
         static var weight: Self { Self(sampleType: .healthKit(.bodyMass), fieldKeyPath: \.weight) }
         
         nonisolated let sampleType: MHCQuantitySampleType
         let fieldKeyPath: ReferenceWritableKeyPath<DemographicsData, DemographicsData.Field<HKQuantity>>
-        nonisolated var id: some Hashable { sampleType }
     }
     
     struct View: SwiftUI.View {
