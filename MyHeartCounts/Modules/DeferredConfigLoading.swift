@@ -189,7 +189,6 @@ enum DeferredConfigLoading {
     @ArrayBuilder<any Module>
     static func baseModules(preferredLocale: Locale) -> [any Module] {
         StudyManager(preferredLocale: preferredLocale)
-        NotificationsManager()
         ConsentManager()
     }
     
