@@ -24,8 +24,7 @@ struct DailyNudge: DynamicProperty {
     
     @MHCFirestoreQuery(
         collection: .user(path: "notificationHistory"),
-        filter: .whereField("category", in: ["nudge-predefined", "nudge-llm"]),
-        sortBy: [.init(fieldName: "timestamp", order: .reverse)],
+        sortBy: [.init(fieldName: "originalTimestamp", order: .reverse)],
         limit: 1,
         decode: { try? $0.data(as: MHCUserNotification.self) }
     )
