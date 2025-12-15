@@ -1,5 +1,5 @@
 {
-  "originHash" : "a82b96082e61c87bc056c74c4f54e7c4cde9fa5891485d1c7b07d8e4b3487dec",
+  "originHash" : "8756ec4a6b2e39d097c6bb3d29cdf5c364c8098ccb363ae0e4ff1f40c8b48dd0",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/marmelroy/PhoneNumberKit",
       "state" : {
-        "revision" : "8cba2258060e356d5fc4836d4ff8549faa2409dd",
-        "version" : "4.1.4"
+        "revision" : "f158939f66f4ef94512b7e6cd1e56057070a05e4",
+        "version" : "4.2.1"
       }
     },
     {
@@ -213,8 +213,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziAccount.git",
       "state" : {
-        "revision" : "c3a1febf5efca80c2900e8d7feff707a6019ea21",
-        "version" : "2.3.5"
+        "revision" : "7b0bad1d812b2090425920416a2208ac9751e95e"
       }
     },
     {
@@ -240,8 +239,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFirebase.git",
       "state" : {
-        "revision" : "5b14a18e5dcb6edc9514f0c6ae4be33d5696de95",
-        "version" : "2.0.8"
+        "branch" : "lukas/will-logout-hook",
+        "revision" : "2905de6d894765a0dcd75f0a87886de2829d8f2c"
       }
     },
     {

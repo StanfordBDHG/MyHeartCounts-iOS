@@ -49,6 +49,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Scheduler.self) var scheduler
     @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalHealthDataUploadMgr
     @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
+    @Dependency(NotificationsManager.self) private var notificationsManager
     // swiftlint:disable attributes
     
     init() {}
@@ -126,14 +127,17 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func respondToEvent(_ event: AccountNotifications.Event) async {
         let logger = logger
         switch event {
-        case .deletingAccount:
-            logger.notice("account is being deleted")
-        case .disassociatingAccount:
-            logger.notice("account is disassociating")
-            try? await performLogoutCleanup()
-        case .associatedAccount(let details):
+        case .didAssociate(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
             try? await timeZoneTracking?.updateTimeZoneInfo()
+        case .willLogOut:
+            logger.notice("account is being logged out")
+            try? await notificationsManager.setFCMToken(nil)
+        case .willDelete:
+            logger.notice("account is being deleted")
+        case .didDisassociate:
+            logger.notice("account did disassociate")
+            try? await performLogoutCleanup()
         case .detailsChanged:
             break
         }
