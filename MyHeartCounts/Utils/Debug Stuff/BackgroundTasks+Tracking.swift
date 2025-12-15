@@ -56,7 +56,7 @@ extension MHCBackgroundTasks {
         
         var body: some View {
             Form {
-                Section("Pending Tasks") {
+                Section("Pending Tasks" as String) {
                     ForEach(pendingRequests, id: \.self) { request in
                         VStack(alignment: .leading) {
                             Text(request.earliestBeginDate?.ISO8601Format() ?? "no begin date")
@@ -66,7 +66,7 @@ extension MHCBackgroundTasks {
                         }
                     }
                 }
-                Section("Event Log") {
+                Section("Event Log" as String) {
                     ForEach(processedEvents, id: \.self) { (event: ProcessedEvent) in
                         VStack(alignment: .leading) {
                             Text(event.taskId.rawValue)
@@ -77,9 +77,11 @@ extension MHCBackgroundTasks {
                                 Spacer()
                                 if let stopReason = event.stopReason, let end = event.end {
                                     let duration = end.timeIntervalSince(event.start)
-                                    Text("\(stopReason.rawValue.localizedCapitalized) after \(duration, format: .number.precision(.fractionLength(2))) sec")
+                                    Text(
+                                        "\(stopReason.rawValue.localizedCapitalized) after \(duration.formatted(.number.precision(.fractionLength(2)))) sec" as String
+                                    )
                                 } else {
-                                    Text("Ongoing")
+                                    Text("Ongoing" as String)
                                 }
                             }
                             .font(.footnote)
@@ -87,7 +89,7 @@ extension MHCBackgroundTasks {
                     }
                 }
             }
-            .navigationTitle("Background Tasks")
+            .navigationTitle("Background Tasks" as String)
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 reloadScheduledTasks()

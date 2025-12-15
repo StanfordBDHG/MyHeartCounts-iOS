@@ -21,10 +21,10 @@ struct DataProcessingDebugView: View {
     
     var body: some View {
         Form { // swiftlint:disable:this closure_body_length
-            Section("HealthKit") {
-                LabeledContent("Historical Fetch", value: historicalHealthDataExportMgr.session?.state.displayTitle ?? "n/a")
+            Section("HealthKit" as String) {
+                LabeledContent("Historical Fetch" as String, value: historicalHealthDataExportMgr.session?.state.displayTitle ?? "n/a")
                 if let progress = historicalHealthDataExportMgr.session?.progress {
-                    ProgressView("Historical Fetch Progress", value: progress.completion)
+                    ProgressView("Historical Fetch Progress" as String, value: progress.completion)
                 }
                 ForEach([ManagedFileUpload.Category.historicalHealthUpload, .liveHealthUpload]) { category in
                     if let progress = managedFileUpload.progressByCategory[category] {
@@ -33,7 +33,7 @@ struct DataProcessingDebugView: View {
                 }
             }
             if !sensorKitFetcher.activeActivities.isEmpty {
-                Section("SensorKit (Fetch)") {
+                Section("SensorKit (Fetch)" as String) {
                     let activities = sensorKitFetcher.activeActivities.sorted(using: KeyPathComparator(\.sensor.displayName))
                     ForEach(activities) { activity in
                         HStack {
@@ -60,7 +60,7 @@ struct DataProcessingDebugView: View {
                 $0.id.contains("SensorKit") ? $1 : nil
             }
             if !progresss.isEmpty {
-                Section("SensorKit (Upload)") {
+                Section("SensorKit (Upload)" as String) {
                     ForEach(Array(progresss.indices), id: \.self) { idx in
                         ProgressView(progresss[idx])
                     }

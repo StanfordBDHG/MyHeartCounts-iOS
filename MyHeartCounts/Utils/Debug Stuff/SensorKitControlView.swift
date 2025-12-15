@@ -29,15 +29,15 @@ struct SensorKitControlView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Background Upload Notifications", isOn: $sendSensorKitNotifications)
+                Toggle("Background Upload Notifications" as String, isOn: $sendSensorKitNotifications)
             }
             Section {
-                AsyncButton("Start Recording Data", state: $viewState) {
+                AsyncButton("Start Recording Data" as String, state: $viewState) {
                     for sensor in SensorKit.mhcSensors {
                         try await sensor.startRecording()
                     }
                 }
-                AsyncButton("Stop Recording Data", state: $viewState) {
+                AsyncButton("Stop Recording Data" as String, state: $viewState) {
                     for sensor in SensorKit.mhcSensors {
                         try await sensor.stopRecording()
                     }
@@ -51,13 +51,13 @@ struct SensorKitControlView: View {
                 }
             }
         }
-        .navigationTitle("SensorKit")
+        .navigationTitle("SensorKit" as String)
         .viewStateAlert(state: $viewState)
     }
     
     private var queryAnchorsSection: some View {
-        Section("Query Anchors") {
-            Button("Update") {
+        Section("Query Anchors" as String) {
+            Button("Update" as String) {
                 queryAnchorDatesId = UUID()
             }
             ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
@@ -67,7 +67,7 @@ struct SensorKitControlView: View {
                 )
             }
             .id(queryAnchorDatesId)
-            AsyncButton("Reset All", role: .destructive, state: $viewState) {
+            AsyncButton("Reset All" as String, role: .destructive, state: $viewState) {
                 @MainActor
                 func imp<Sample>(_ sensor: some AnySensor<Sample>) throws {
                     let sensor = Sensor(sensor)
@@ -84,7 +84,7 @@ struct SensorKitControlView: View {
     }
     
     private func makeRunFullUploadButton(for uploadDefinition: any AnyMHCSensorUploadDefinition) -> some View {
-        AsyncButton("Perform Full \(uploadDefinition.typeErasedSensor.displayName) Upload", state: $viewState) {
+        AsyncButton("Perform Full \(uploadDefinition.typeErasedSensor.displayName) Upload" as String, state: $viewState) {
             try await dataFetcher.fetchAndUploadAllSamples(for: uploadDefinition)
         }
     }

@@ -77,16 +77,16 @@ private struct Impl<Footer: View>: View {
         Form {
             if debugModeEnabled {
                 Section {
-                    Picker("Override Region", selection: $regionOverride) {
+                    Picker("Override Region" as String, selection: $regionOverride) {
                         ForEach([Locale.Region?.none, .unitedStates, .unitedKingdom, .germany], id: \.self) { region in
                             if let region {
                                 Text(region.localizedName(in: locale, includeEmoji: .front))
                             } else {
-                                Text("Disable Override")
+                                Text("Disable Override" as String)
                             }
                         }
                     }
-                    LabeledContent("Effective Region", value: region.localizedName(in: locale, includeEmoji: .front))
+                    LabeledContent("Effective Region" as String, value: region.localizedName(in: locale, includeEmoji: .front))
                 }
             }
             Section {

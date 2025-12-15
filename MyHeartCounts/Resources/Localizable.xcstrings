@@ -63,16 +63,6 @@
     "%@ +" : {
 
     },
-    "%@ after %@ sec" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ after %2$@ sec"
-          }
-        }
-      }
-    },
     "%@-Minute Run Test" : {
       "localizations" : {
         "es" : {
@@ -725,16 +715,6 @@
         }
       }
     },
-    "Add Sleep Sessions" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar sesiones de sueño"
-          }
-        }
-      }
-    },
     "Adult Congenital Heart Disease" : {
       "localizations" : {
         "es" : {
@@ -932,45 +912,12 @@
         }
       }
     },
-    "AuthorizationStatus" : {
-
-    },
     "Bachelor" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Licenciatura"
-          }
-        }
-      }
-    },
-    "Background Tasks" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tareas en segundo plano"
-          }
-        }
-      }
-    },
-    "Background Tasks Log" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Registro de tareas en segundo plano"
-          }
-        }
-      }
-    },
-    "Background Upload Notifications" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notificaciones de subida de datos en segundo plano"
           }
         }
       }
@@ -1033,16 +980,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Índice de masa corporal"
-          }
-        }
-      }
-    },
-    "Bulk Export Manager" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exportador datos en masa"
           }
         }
       }
@@ -1473,32 +1410,12 @@
         }
       }
     },
-    "Debug Options" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opciones de Debug"
-          }
-        }
-      }
-    },
     "Delaware" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delaware"
-          }
-        }
-      }
-    },
-    "Delete&Reset Session" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar y Restablecer Sesión"
           }
         }
       }
@@ -1549,16 +1466,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dieta"
-          }
-        }
-      }
-    },
-    "Disable Override" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deshabilitar control manual"
           }
         }
       }
@@ -1681,16 +1588,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nivel Educativo"
-          }
-        }
-      }
-    },
-    "Effective Region" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Región Efectiva"
           }
         }
       }
@@ -1894,16 +1791,6 @@
         }
       }
     },
-    "Event Log" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Registro de eventos"
-          }
-        }
-      }
-    },
     "EXERCISE_MINUTES_SCORE_EXPLAINER" : {
       "localizations" : {
         "en" : {
@@ -2034,16 +1921,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obteniendo…"
-          }
-        }
-      }
-    },
-    "File Upload Queue" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cola de carga de archivos"
           }
         }
       }
@@ -2224,17 +2101,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Para obtener resultados óptimos, por favor, mantén tu teléfono en tu bolsillo y %@ hasta que tu reloj vibre indicando que la prueba ha terminado."
-          }
-        }
-      }
-    },
-    "Future Studies" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estudios Futuros"
           }
         }
       }
@@ -2457,16 +2323,6 @@
         }
       }
     },
-    "Health Data Bulk Upload" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Carga masiva de datos de salud"
-          }
-        }
-      }
-    },
     "Health Records" : {
       "localizations" : {
         "es" : {
@@ -2517,16 +2373,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Puedes elegir compartir ciertos registros de salud desde la app Salud de Apple, como resultados de laboratorio, medicamentos o inmunizaciones. Esta información se utilizará con fines de investigación para comprender mejor la salud del corazón. El acceso a estos datos es voluntario y puede revocarse en cualquier momento."
-          }
-        }
-      }
-    },
-    "HealthKit" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "HealthKit"
           }
         }
       }
@@ -2735,26 +2581,6 @@
         }
       }
     },
-    "Historical Fetch" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtención de datos históricos"
-          }
-        }
-      }
-    },
-    "Historical Fetch Progress" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progreso de obtención de datos históricos"
-          }
-        }
-      }
-    },
     "Home" : {
       "localizations" : {
         "es" : {
@@ -2831,16 +2657,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Illinois"
-          }
-        }
-      }
-    },
-    "Inactive / Complete" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inactivo / Completado"
           }
         }
       }
@@ -3233,26 +3049,6 @@
         }
       }
     },
-    "Live Health Upload Notifications" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notificaciones de Carga de Salud en Vivo"
-          }
-        }
-      }
-    },
-    "Local Notifications Status" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estado de Notificaciones Locales"
-          }
-        }
-      }
-    },
     "Louisiana" : {
       "localizations" : {
         "es" : {
@@ -3339,16 +3135,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maestría"
-          }
-        }
-      }
-    },
-    "Memory Usage" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uso de memoria"
           }
         }
       }
@@ -3915,16 +3701,6 @@
         }
       }
     },
-    "Notifications Status" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estado de Notificaciones"
-          }
-        }
-      }
-    },
     "Number of Steps" : {
       "localizations" : {
         "es" : {
@@ -4229,16 +4005,6 @@
         }
       }
     },
-    "Ongoing" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En curso"
-          }
-        }
-      }
-    },
     "Only values from %@ to %@ are allowed" : {
       "localizations" : {
         "en" : {
@@ -4285,16 +4051,6 @@
         }
       }
     },
-    "Other" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otro"
-          }
-        }
-      }
-    },
     "Other auto-immune disease" : {
       "localizations" : {
         "es" : {
@@ -4331,16 +4087,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nuestro documento de consentimiento del estudio ha sido actualizado desde la última vez que lo firmaste %@.\n\nPor favor, revisa el nuevo documento de consentimiento y fírmalo nuevamente."
-          }
-        }
-      }
-    },
-    "Override Region" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anular región"
           }
         }
       }
@@ -4397,16 +4143,6 @@
         }
       }
     },
-    "Pending Tasks" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tareas pendientes"
-          }
-        }
-      }
-    },
     "Pennsylvania" : {
       "localizations" : {
         "es" : {
@@ -4423,16 +4159,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Realizar tarea siempre disponible"
-          }
-        }
-      }
-    },
-    "Perform Full %@ Upload" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Realizar carga completa de %@"
           }
         }
       }
@@ -4538,16 +4264,6 @@
         }
       }
     },
-    "Progress" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progreso"
-          }
-        }
-      }
-    },
     "Puerto Rico" : {
       "localizations" : {
         "es" : {
@@ -4574,16 +4290,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hipertensión pulmonar"
-          }
-        }
-      }
-    },
-    "Query Anchors" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anclas de consulta"
           }
         }
       }
@@ -5028,36 +4734,6 @@
         }
       }
     },
-    "Replace Root View Controller" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reemplazar el Controlador de Vista Raíz"
-          }
-        }
-      }
-    },
-    "Reset All" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restablecer todo"
-          }
-        }
-      }
-    },
-    "Reset rejeted HomeTab actions" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restablecer acciones rechazadas de HomeTab"
-          }
-        }
-      }
-    },
     "Restart Test" : {
       "localizations" : {
         "es" : {
@@ -5130,16 +4806,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Guardar"
-          }
-        }
-      }
-    },
-    "Scheduled Local Notifications" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notificaciones Locales Programadas"
           }
         }
       }
@@ -5270,36 +4936,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar Comentarios"
-          }
-        }
-      }
-    },
-    "SensorKit" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SensorKit"
-          }
-        }
-      }
-    },
-    "SensorKit (Fetch)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SensorKit (obtención)"
-          }
-        }
-      }
-    },
-    "SensorKit (Upload)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SensorKit (carga)"
           }
         }
       }
@@ -5690,16 +5326,6 @@
         }
       }
     },
-    "Start Recording Data" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iniciar registro de datos"
-          }
-        }
-      }
-    },
     "Start Test" : {
       "localizations" : {
         "es" : {
@@ -5713,32 +5339,12 @@
     "startDate" : {
 
     },
-    "State" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estado"
-          }
-        }
-      }
-    },
     "Steps" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pasos"
-          }
-        }
-      }
-    },
-    "Stop Recording Data" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detener el registro de datos"
           }
         }
       }
@@ -5953,16 +5559,6 @@
         }
       }
     },
-    "Timed Walking Test" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prueba de Caminata Cronometrada"
-          }
-        }
-      }
-    },
     "Timed Walking/Running Tests" : {
       "localizations" : {
         "es" : {
@@ -6165,16 +5761,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "unidad"
-          }
-        }
-      }
-    },
-    "Update" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Actualizar"
           }
         }
       }
