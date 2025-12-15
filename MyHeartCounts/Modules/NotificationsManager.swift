@@ -13,6 +13,7 @@ import Spezi
 import SpeziAccount
 import SpeziFoundation
 import SpeziNotifications
+import SpeziViews
 import enum UIKit.UIBackgroundFetchResult
 
 

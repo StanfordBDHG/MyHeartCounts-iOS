@@ -26,14 +26,16 @@ import SpeziFirestore
 import SpeziFoundation
 import SpeziSensorKit
 import SpeziStudy
+import SpeziViews
 import SwiftUI
 import UniformTypeIdentifiers
 
 
-extension LocalPreferenceKey {
-    static var lastUsedFirebaseConfig: LocalPreferenceKey<DeferredConfigLoading.FirebaseConfigSelector?> {
-        .make("lastUsedFirebaseConfig", default: nil)
-    }
+extension LocalPreferenceKeys {
+    static let lastUsedFirebaseConfig = LocalPreferenceKey<DeferredConfigLoading.FirebaseConfigSelector?>(
+        "lastUsedFirebaseConfig",
+        default: nil
+    )
 }
 
 

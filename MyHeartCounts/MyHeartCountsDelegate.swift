@@ -17,6 +17,7 @@ import SpeziOnboarding
 import SpeziScheduler
 import SpeziSensorKit
 import SpeziStudy
+import SpeziViews
 import SwiftUI
 import UserNotifications
 

@@ -8,6 +8,7 @@
 
 import BackgroundTasks
 import Foundation
+import SpeziViews
 import SwiftUI
 
 
@@ -30,10 +31,8 @@ extension MHCBackgroundTasks {
 }
 
 
-extension LocalPreferenceKey {
-    static var backgroundTaskEvents: LocalPreferenceKey<[MHCBackgroundTasks.Event]> {
-        .make("backgroundTaskEvents", default: [])
-    }
+extension LocalPreferenceKeys {
+    static let backgroundTaskEvents = LocalPreferenceKey<[MHCBackgroundTasks.Event]>("backgroundTaskEvents", default: [])
 }
 
 

@@ -9,6 +9,7 @@
 import MyHeartCountsShared
 import OSLog
 import Spezi
+import SpeziViews
 import SwiftUI
 
 

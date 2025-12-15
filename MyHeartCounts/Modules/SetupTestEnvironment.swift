@@ -17,7 +17,7 @@ import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziLocalStorage
 import SpeziStudy
-import struct SpeziViews.AnyLocalizedError
+import SpeziViews
 
 
 /// Sets up a test environment, by logging into a test account and enrolling in the current study definition.
