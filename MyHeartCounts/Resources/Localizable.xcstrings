@@ -3878,19 +3878,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement, GPS for location during specific fitness tests, and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared. We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
+            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared. We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement, GPS for location during specific fitness tests, and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared. We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
+            "value" : "The study collects data through your phone's sensors, including accelerometer data for movement and heart rate if available through connected devices. All data transmission uses encryption technology to protect your information. We separate your identifying information from your health data in our secure databases. You'll have options within the app to control what information is shared. We follow strict protocols approved by Stanford's Institutional Review Board to maintain your privacy."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El estudio recopila datos a través de los sensores de tu teléfono, incluidos los datos del acelerómetro para captar movimiento, el GPS para la ubicación durante pruebas de condición física específicas y la frecuencia cardíaca si está disponible mediante dispositivos conectados. Toda la transmisión de datos utiliza tecnología de cifrado para proteger tu información. Separamos tu información identificativa de tus datos de salud en nuestras bases de datos seguras. Tendrás opciones dentro de la aplicación para controlar qué información se comparte. Seguimos protocolos estrictos aprobados por la Junta de Revisión Institucional de Stanford para mantener tu privacidad."
+            "value" : "El estudio recopila datos a través de los sensores de su teléfono, incluidos datos del acelerómetro para medir el movimiento y la frecuencia cardíaca, cuando esta se encuentre disponible mediante dispositivos conectados. Toda la transmisión de datos utiliza tecnología de cifrado para proteger su información. Su información identificable se mantiene separada de sus datos de salud en nuestras bases de datos seguras. La aplicación le ofrecerá opciones para controlar qué información se comparte. Seguimos protocolos estrictos aprobados por el Comité de Revisión Institucional de la Universidad de Stanford para proteger su privacidad."
           }
         }
       }
