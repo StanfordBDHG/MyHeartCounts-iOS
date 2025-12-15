@@ -7,6 +7,7 @@
 //
 
 import Algorithms
+import MyHeartCountsShared
 import OSLog
 import Spezi
 import SpeziFoundation
@@ -82,7 +83,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-            await fetchAndUploadNewData()
+            if !LaunchOptions.launchOptions[.disableSensorKitUpload] {
+                await fetchAndUploadNewData()
+            }
         }
     }
     

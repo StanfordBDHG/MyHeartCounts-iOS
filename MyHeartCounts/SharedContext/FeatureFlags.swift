@@ -48,4 +48,6 @@ extension LaunchOptions {
     static let overrideFirebaseConfig = LaunchOption<DeferredConfigLoading.FirebaseConfigSelector?>("--overrideFirebaseConfig", default: nil)
     
     static let disableAutomaticBulkHealthExport = LaunchOption<Bool>("--disableAutomaticBulkHealthExport", default: false)
+    
+    static let disableSensorKitUpload = LaunchOption<Bool>("--disableSensorKitUpload", default: false)
 }
