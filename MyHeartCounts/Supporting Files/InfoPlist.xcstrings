@@ -58,6 +58,12 @@
             "state" : "new",
             "value" : "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este mensaje no debería aparecer nunca. Por favor, ajuste esto cuando comience a utilizar información de la cámara. Debemos incluirlo aquí porque ResearchKit tiene la posibilidad de usarla y no incluirlo genera un error en AppStore Connect."
+          }
         }
       }
     },
@@ -75,6 +81,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "My Heart Counts uses Health data to understand all aspects of health."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts utiliza datos de la app Salud para comprender todos los aspectos de la salud."
           }
         }
       }
@@ -172,6 +184,12 @@
             "state" : "new",
             "value" : "My Heart Counts uses motion data to conduct a timed walking test"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts utiliza datos de movimiento para realizar una prueba de caminata cronometrada."
+          }
         }
       }
     },
@@ -182,6 +200,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "https://myheartcounts.su.domains/privacy-policy/"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "https://myheartcounts.su.domains/privacy-policy/"
           }
         }
@@ -237,6 +261,12 @@
             "state" : "translated",
             "value" : "SensorKit Accelerometer data helps us better interpret your timed walk test results."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los datos del acelerómetro de SensorKit nos ayudan a interpretar mejor los resultados de su prueba de caminata cronometrada."
+          }
         }
       }
     },
@@ -253,6 +283,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Helps us better understand your environment and light exposure, which affects your circadian rhythms and may provide insights for providing more accurate physical activity prompts."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nos ayuda a comprender mejor su entorno y la exposición a la luz, lo que afecta sus ritmos circadianos y puede aportar información para ofrecer indicaciones de actividad física más precisas."
           }
         }
       }
@@ -271,6 +307,12 @@
             "state" : "translated",
             "value" : "SensorKit Ambient Pressure data helps us better interpret your timed walk test results."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los datos de presión ambiental de SensorKit nos ayudan a interpretar mejor los resultados de su prueba de caminata cronometrada."
+          }
         }
       }
     },
@@ -287,6 +329,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Can help us identify phone usage patterns that help us provide more effective physical activity interventions."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes ayudarnos a identificar patrones de uso del teléfono que nos permitan ofrecer intervenciones de actividad física más efectivas."
           }
         }
       }
@@ -328,6 +376,12 @@
             "state" : "translated",
             "value" : "SensorKit Heart Rate data helps us better interpret your ECGs and timed walk test results."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los datos de frecuencia cardíaca de SensorKit nos ayudan a interpretar mejor sus ECG y los resultados de las pruebas de caminata cronometradas."
+          }
         }
       }
     },
@@ -368,6 +422,12 @@
             "state" : "translated",
             "value" : "SensorKit Pedometer data helps us better interpret your timed walk test results."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los datos del podómetro de SensorKit nos ayudan a interpretar mejor los resultados de su prueba de caminata cronometrada."
+          }
         }
       }
     },
@@ -384,6 +444,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SensorKit PPG data helps us better interpret your ECGs and timed walk test results."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los datos de fotopletismografía (PPG) de SensorKit nos ayudan a interpretar mejor tus ECG y los resultados de la prueba de caminata cronometrada."
           }
         }
       }
@@ -424,6 +490,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Can help to detect early signs of health issues."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puede ayudar a detectar signos tempranos de problemas de salud."
           }
         }
       }
