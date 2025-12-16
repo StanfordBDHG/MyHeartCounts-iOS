@@ -12,7 +12,6 @@ import Spezi
 import SpeziAccount
 import SpeziFoundation
 import SpeziStudy
-import SpeziViews
 import SwiftUI
 
 

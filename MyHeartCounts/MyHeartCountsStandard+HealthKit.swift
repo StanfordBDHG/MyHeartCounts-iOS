@@ -20,7 +20,6 @@ import SpeziFHIR
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziStudy
-import SpeziViews
 import UserNotifications
 
 

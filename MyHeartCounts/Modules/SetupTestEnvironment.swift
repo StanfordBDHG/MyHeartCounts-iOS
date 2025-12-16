@@ -13,11 +13,12 @@ import OSLog
 import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziLocalStorage
 import SpeziStudy
-import SpeziViews
+import struct SpeziViews.AnyLocalizedError
 
 
 /// Sets up a test environment, by logging into a test account and enrolling in the current study definition.

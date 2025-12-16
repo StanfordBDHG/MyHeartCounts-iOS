@@ -26,7 +26,6 @@ import SpeziFirestore
 import SpeziFoundation
 import SpeziSensorKit
 import SpeziStudy
-import SpeziViews
 import SwiftUI
 import UniformTypeIdentifiers
 

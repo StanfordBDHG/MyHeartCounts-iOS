@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziFoundation
 @_spi(Internal)
 import SpeziSensorKit
 import SpeziViews

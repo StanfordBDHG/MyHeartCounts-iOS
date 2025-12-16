@@ -10,6 +10,7 @@ import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziAccount
+import SpeziFoundation
 import SpeziOnboarding
 import SpeziScheduler
 import SpeziStudy

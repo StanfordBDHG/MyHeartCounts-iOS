@@ -8,7 +8,7 @@
 
 import BackgroundTasks
 import Foundation
-import SpeziViews
+import SpeziFoundation
 import SwiftUI
 
 

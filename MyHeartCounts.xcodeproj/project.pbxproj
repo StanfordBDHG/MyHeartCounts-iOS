@@ -1368,8 +1368,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziViews.git";
 			requirement = {
-				kind = revision;
-				revision = adda879bdc2f2c12b41109d86af3a37dba80436b;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.12.9;
 			};
 		};
 		804C11E22ECA380D004783C3 /* XCRemoteSwiftPackageReference "MyHeartCounts-StudyDefinitions" */ = {
@@ -1408,8 +1408,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFoundation.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.2;
+				kind = revision;
+				revision = 58c3f2729b4f4104bdca0762753c0e0061870753;
 			};
 		};
 		8076696C2D772C07001B980B /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {

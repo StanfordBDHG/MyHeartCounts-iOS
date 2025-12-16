@@ -17,13 +17,13 @@ import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
 import SpeziFirestore
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziLocalStorage
 import SpeziQuestionnaire
 import SpeziScheduler
 import SpeziSensorKit
 import SpeziStudy
-import SpeziViews
 import SwiftUI
 
 

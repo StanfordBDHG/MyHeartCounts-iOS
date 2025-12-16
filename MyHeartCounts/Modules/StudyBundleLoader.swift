@@ -13,7 +13,6 @@ import OSLog
 import Spezi
 import SpeziFoundation
 import SpeziStudyDefinition
-import SpeziViews
 import UniformTypeIdentifiers
 
 
