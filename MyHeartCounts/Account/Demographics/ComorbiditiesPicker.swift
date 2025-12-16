@@ -96,9 +96,11 @@ extension ComorbiditiesPicker {
         @Environment(\.dismiss)
         private var dismiss
         
+        @Environment(\.locale)
+        private var locale
+        
         let option: Comorbidity
         @Binding var selection: Comorbidities.Status
-        @State private var showDiagnosisDatePicker = true
         
         var body: some View {
             NavigationStack { // swiftlint:disable:this closure_body_length
@@ -124,23 +126,35 @@ extension ComorbiditiesPicker {
                         }
                     }
                     Section("Date of Diagnosis") {
-                        Picker("", selection: $showDiagnosisDatePicker) {
+                        let binding = Binding<Bool> {
+                            switch selection {
+                            case .notSelected:
+                                false
+                            case .selected(let startDate):
+                                startDate.year != nil
+                            }
+                        } set: { newValue in
+                            let currentYear = locale.calendar.component(.year, from: .now)
+                            if newValue {
+                                switch selection {
+                                case .notSelected:
+                                    selection = .selected(startDate: DateComponents(year: currentYear))
+                                case .selected(var startDate):
+                                    startDate.year = startDate.year ?? currentYear
+                                    selection = .selected(startDate: startDate)
+                                }
+                            } else {
+                                selection = .selected(startDate: DateComponents())
+                            }
+                        }
+                        LabeledContent("selection" as String, value: String(describing: selection))
+                        LabeledContent("selection.bool" as String, value: String(describing: binding.wrappedValue))
+                        Picker("", selection: binding) {
                             Text("Don't Know").tag(false)
                             Text("Select Date").tag(true)
                         }
                         .pickerStyle(.segmented)
-                        if showDiagnosisDatePicker {
-                            MonthYearPicker(selection: Binding<DateComponents> {
-                                switch selection {
-                                case .notSelected:
-                                    DateComponents()
-                                case .selected(let startDate):
-                                    startDate
-                                }
-                            } set: { newValue in
-                                selection = .selected(startDate: newValue)
-                            })
-                        }
+                        MonthYearPicker(selection: $selection)
                     }
                 }
                 .navigationTitle(option.title)
@@ -151,12 +165,6 @@ extension ComorbiditiesPicker {
                         } label: {
                             Label("Done", systemSymbol: .checkmark)
                         }
-                    }
-                }
-                .onChange(of: showDiagnosisDatePicker) { oldValue, newValue in
-                    if oldValue && !newValue {
-                        // ie, the user has tapped the "don't know" option
-                        selection = .selected(startDate: DateComponents())
                     }
                 }
             }
@@ -170,15 +178,17 @@ extension ComorbiditiesPicker {
     private struct MonthYearPicker: View {
         @Environment(\.locale)
         private var locale
-        @Binding private var selection: DateComponents
+        
+        @Binding var selection: Comorbidities.Status
         
         private var currentYear: Int {
             locale.calendar.component(.year, from: .now)
         }
         
         var body: some View {
+            LabeledContent("selection" as String, value: selection.dateComponentsValue.description)
             HStack(spacing: 0) {
-                Picker("", selection: $selection.month) {
+                Picker("", selection: $selection.dateComponentsValue.month) {
                     Text("—")
                         .tag(Int?.none)
                     ForEach(0..<12, id: \.self) { monthIdx in
@@ -187,7 +197,9 @@ extension ComorbiditiesPicker {
                     }
                 }
                 .accessibilityIdentifier("MonthPicker")
-                Picker("", selection: $selection.year) {
+                Picker("", selection: $selection.dateComponentsValue.year) {
+                    Text("—")
+                        .tag(Int?.none)
                     ForEach(((currentYear - 100)...currentYear).reversed(), id: \.self) { year in
                         Text(String(year))
                             .tag(year)
@@ -196,15 +208,36 @@ extension ComorbiditiesPicker {
                 .accessibilityIdentifier("YearPicker")
             }
             .pickerStyle(.wheel)
-            .onChange(of: selection.year, initial: true) { _, newValue in
-                if newValue == nil {
-                    selection.year = currentYear
-                }
+        }
+    }
+}
+
+
+extension Comorbidities.Status {
+    fileprivate var dateComponentsValue: DateComponents {
+        get {
+            switch self {
+            case .notSelected:
+                DateComponents()
+            case .selected(let startDate):
+                startDate
             }
         }
-        
-        init(selection: Binding<DateComponents>) {
-            _selection = selection
+        set {
+            // NOTE: all of this needs to happen in here, rather than in an `onChange(of:)` somewhere in a view;
+            // the reason being that if we eg go from a fully empty state (ie, no month and no year) to a state where only a month is selected,
+            // the serialization will immediately turn that back into an empty selection (bc just a month is invalid),
+            // whereas what we actually want is to set the year to the current year.
+            var newValue = newValue
+            let oldValue = self.dateComponentsValue
+            let didChangeMonth = newValue.month != oldValue.month
+            let didChangeYear = newValue.year != oldValue.year
+            if didChangeYear && newValue.year == nil && oldValue.month != nil {
+                newValue.month = nil
+            } else if didChangeMonth && oldValue.month == nil && newValue.month != nil && newValue.year == nil {
+                newValue.year = Calendar.current.component(.year, from: .now)
+            }
+            self = .selected(startDate: newValue)
         }
     }
 }
