@@ -31,9 +31,12 @@ struct DailyNudge: DynamicProperty {
     private var notifications: [MHCUserNotification]
     
     var wrappedValue: Nudge? {
-        guard let notificaton = notifications.first, cal.isDateInToday(notificaton.timestamp) || cal.isDateInYesterday(notificaton.timestamp) else {
+        guard let notificaton = notifications.first else {
             return nil
         }
-        return .init(title: notificaton.title, message: notificaton.body)
+        guard cal.isDateInToday(notificaton.originalTimestamp) || cal.isDateInYesterday(notificaton.originalTimestamp) else {
+            return nil
+        }
+        return Nudge(title: notificaton.title, message: notificaton.body)
     }
 }

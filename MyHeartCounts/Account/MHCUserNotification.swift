@@ -10,7 +10,7 @@ import Foundation
 
 
 struct MHCUserNotification: Decodable {
-    let timestamp: Date
+    let originalTimestamp: Date
     let title: String
     let body: String
 }
