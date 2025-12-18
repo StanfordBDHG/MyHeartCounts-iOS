@@ -127,20 +127,22 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     func respondToEvent(_ event: AccountNotifications.Event) async {
         let logger = logger
         switch event {
-        case .didAssociate(let details):
+        case .associatedAccount(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
             try? await timeZoneTracking?.updateTimeZoneInfo()
-        case .willLogOut:
-            logger.notice("account is being logged out")
-            try? await notificationsManager.setFCMToken(nil)
-        case .willDelete:
+        case .deletingAccount:
             logger.notice("account is being deleted")
-        case .didDisassociate:
+        case .disassociatingAccount:
             logger.notice("account did disassociate")
             try? await performLogoutCleanup()
         case .detailsChanged:
             break
         }
+    }
+    
+    func willLogOut(_ details: AccountDetails) async {
+        logger.notice("account is being logged out")
+        try? await notificationsManager.setFCMToken(nil)
     }
     
     

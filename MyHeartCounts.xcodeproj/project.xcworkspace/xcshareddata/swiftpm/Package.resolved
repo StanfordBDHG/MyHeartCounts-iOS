@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/marmelroy/PhoneNumberKit",
       "state" : {
-        "revision" : "f158939f66f4ef94512b7e6cd1e56057070a05e4",
-        "version" : "4.2.1"
+        "revision" : "16bb5d46b82540280c5aab8976a94d8a9cda8135",
+        "version" : "4.2.2"
       }
     },
     {
@@ -213,7 +213,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziAccount.git",
       "state" : {
-        "revision" : "7b0bad1d812b2090425920416a2208ac9751e95e"
+        "revision" : "17e58c141fafc9563d5cd9569075925c0d459763"
       }
     },
     {
@@ -239,8 +239,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFirebase.git",
       "state" : {
-        "branch" : "lukas/will-logout-hook",
-        "revision" : "2905de6d894765a0dcd75f0a87886de2829d8f2c"
+        "revision" : "64a47e0e6befb57ad37df6a3ca3fc5b6f80e31d0"
       }
     },
     {
@@ -248,7 +247,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "58c3f2729b4f4104bdca0762753c0e0061870753"
+        "revision" : "7b1d3f4db9922f0b58f5e02064356e5f7cb77dfd",
+        "version" : "2.6.0"
       }
     },
     {
