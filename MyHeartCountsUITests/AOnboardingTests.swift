@@ -136,6 +136,9 @@ extension XCUIApplication {
             .element
             .waitForExistence(timeout: 2)
         if !isLoggedIn {
+            defer {
+                dismissSavePasswordAlert(timeout: 10)
+            }
             try login(email: email, password: password)
             let alert = alerts["Invalid Credentials"]
             if alert.waitForNonExistence(timeout: 3) {
@@ -158,7 +161,6 @@ extension XCUIApplication {
             XCTAssert(staticTexts[email].waitForExistence(timeout: 2))
             buttons["Next"].tap()
         }
-        app.dismissSavePasswordAlert(timeout: 10)
     }
     
     
