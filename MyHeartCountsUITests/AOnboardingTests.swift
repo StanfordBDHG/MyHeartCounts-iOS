@@ -158,6 +158,7 @@ extension XCUIApplication {
             XCTAssert(staticTexts[email].waitForExistence(timeout: 2))
             buttons["Next"].tap()
         }
+        app.dismissSavePasswordAlert(timeout: 10)
     }
     
     
