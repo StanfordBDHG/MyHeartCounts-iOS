@@ -1328,8 +1328,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFirebase.git";
 			requirement = {
-				kind = revision;
-				revision = 64a47e0e6befb57ad37df6a3ca3fc5b6f80e31d0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.9;
 			};
 		};
 		8015C3582EB22EE400CA845E /* XCRemoteSwiftPackageReference "swift-nio" */ = {
@@ -1384,8 +1384,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
-				kind = revision;
-				revision = 17e58c141fafc9563d5cd9569075925c0d459763;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.6;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
