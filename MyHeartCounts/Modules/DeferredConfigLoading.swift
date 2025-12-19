@@ -30,10 +30,11 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 
-extension LocalPreferenceKey {
-    static var lastUsedFirebaseConfig: LocalPreferenceKey<DeferredConfigLoading.FirebaseConfigSelector?> {
-        .make("lastUsedFirebaseConfig", default: nil)
-    }
+extension LocalPreferenceKeys {
+    static let lastUsedFirebaseConfig = LocalPreferenceKey<DeferredConfigLoading.FirebaseConfigSelector?>(
+        "lastUsedFirebaseConfig",
+        default: nil
+    )
 }
 
 
@@ -187,7 +188,6 @@ enum DeferredConfigLoading {
     @ArrayBuilder<any Module>
     static func baseModules(preferredLocale: Locale) -> [any Module] {
         StudyManager(preferredLocale: preferredLocale)
-        NotificationsManager()
         ConsentManager()
     }
     

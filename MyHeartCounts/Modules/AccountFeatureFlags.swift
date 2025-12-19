@@ -12,6 +12,7 @@ import Foundation
 import MyHeartCountsShared
 import Spezi
 import SpeziAccount
+import SpeziFoundation
 import SwiftUI
 
 

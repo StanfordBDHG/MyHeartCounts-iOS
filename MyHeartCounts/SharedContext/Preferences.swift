@@ -6,10 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SpeziFoundation
 
-extension LocalPreferenceKey {
+extension LocalPreferenceKeys {
     /// A `Bool` flag indicating of the onboarding was completed.
-    static var onboardingFlowComplete: LocalPreferenceKey<Bool> {
-        .make("onboardingFlowComplete", default: false)
-    }
+    static let onboardingFlowComplete = LocalPreferenceKey<Bool>("onboardingFlowComplete", default: false)
 }

@@ -31,6 +31,8 @@ struct Consent: View {
     @Environment(StudyManager.self) private var studyManager
     // swiftlint:enable attributes
     
+    private let continueAction: (@MainActor () -> Void)?
+    
     @State private var consentDocument: ConsentDocument?
     @State private var viewState: ViewState = .idle
     
@@ -52,8 +54,10 @@ struct Consent: View {
                 let modifications = try AccountModifications(modifiedDetails: accountDetailUpdates)
                 try await account.accountService.updateAccountDetails(modifications)
             }
-            if !path.nextStep() {
-                dismiss()
+            if let continueAction {
+                continueAction()
+            } else {
+                path.nextStep()
             }
         }
         .navigationTitle("Consent")
@@ -81,6 +85,12 @@ struct Consent: View {
         ConsentDocument.ExportConfiguration(
             paperSize: studyManager.preferredLocale.preferredPaperSize
         )
+    }
+    
+    /// - parameter continueAction: An action which should be performed when the user submits the consent, to continue in the flow.
+    ///     Defaults to `nil`, in which case the `Consent` view will advance its `ManagedNavigationStack`.
+    init(continueAction: (@MainActor () -> Void)? = nil) {
+        self.continueAction = continueAction
     }
     
     private func loadConsentDocument() async throws {

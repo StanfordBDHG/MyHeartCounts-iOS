@@ -37,10 +37,10 @@
           "image-name" : "My heart matters_Icon_FINAL-02 2.png",
           "name" : "My heart matters_Icon_FINAL-02 2",
           "position" : {
-            "scale" : 0.22,
+            "scale" : 0.201,
             "translation-in-points" : [
-              15.399999999999636,
-              150
+              14,
+              200
             ]
           }
         }
@@ -68,10 +68,10 @@
           "image-name" : "My heart matters_Icon_FINAL-01 3.png",
           "name" : "My heart matters_Icon_FINAL-01 3",
           "position" : {
-            "scale" : 0.22,
+            "scale" : 0.201,
             "translation-in-points" : [
-              15.399999999999636,
-              150
+              14,
+              200
             ]
           }
         }

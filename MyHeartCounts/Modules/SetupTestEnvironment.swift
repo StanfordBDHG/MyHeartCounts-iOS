@@ -13,6 +13,7 @@ import OSLog
 import Spezi
 import SpeziAccount
 import SpeziFirebaseAccount
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziLocalStorage

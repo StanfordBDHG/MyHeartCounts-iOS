@@ -180,18 +180,6 @@ func demographicsLayout(for region: Locale.Region) -> some DemographicsComponent
             }
         }
     }
-    Section {
-        LeafComponent(\.futureStudiesOptIn) { binding, _ in
-            Toggle(isOn: binding.withDefault(false)) {
-                VStack(alignment: .leading) {
-                    Text("Future Studies")
-                    Text("Can we contact you about future studies that may be of interest to you?")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-    }
 }
 
 

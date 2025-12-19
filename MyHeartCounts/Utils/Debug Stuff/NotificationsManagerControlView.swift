@@ -24,8 +24,8 @@ struct NotificationsManagerControlView: View {
     
     var body: some View {
         Form {
-            Section("Local Notifications Status") {
-                LabeledContent("AuthorizationStatus", value: notificationSettings?.authorizationStatus.description ?? "n/a")
+            Section("Local Notifications Status" as String) {
+                LabeledContent("AuthorizationStatus" as String, value: notificationSettings?.authorizationStatus.description ?? "n/a")
                 if let notificationSettings {
                     row(title: "sound", forSetting: notificationSettings.soundSetting)
                     row(title: "badge", forSetting: notificationSettings.badgeSetting)

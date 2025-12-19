@@ -54,6 +54,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
                 }
             }
             NotificationTracking()
+            NotificationsManager()
         }
     }
 }

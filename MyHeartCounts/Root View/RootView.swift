@@ -10,6 +10,7 @@ import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziAccount
+import SpeziFoundation
 import SpeziOnboarding
 import SpeziScheduler
 import SpeziStudy
@@ -90,14 +91,10 @@ extension RootView {
 }
 
 
-extension LocalPreferenceKey {
-    static var rootTabSelection: LocalPreferenceKey<String> {
-        .make("rootTabSelection", default: HomeTab.tabId)
-    }
+extension LocalPreferenceKeys {
+    static let rootTabSelection = LocalPreferenceKey<String>("rootTabSelection", default: HomeTab.tabId)
     
-    static var rootTabViewCustomization: LocalPreferenceKey<TabViewCustomization> {
-        .make("rootTabViewCustomization", default: .init())
-    }
+    static let rootTabViewCustomization = LocalPreferenceKey<TabViewCustomization>("rootTabViewCustomization", default: .init())
 }
 
 

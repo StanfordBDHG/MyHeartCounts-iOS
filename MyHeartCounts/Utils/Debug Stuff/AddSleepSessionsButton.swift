@@ -23,7 +23,7 @@ struct AddSleepSessionsButton: View {
     @Binding var viewState: ViewState
     
     var body: some View {
-        AsyncButton("Add Sleep Sessions", state: $viewState) {
+        AsyncButton("Add Sleep Sessions" as String, state: $viewState) {
             try await addSleepSamples()
         }
     }

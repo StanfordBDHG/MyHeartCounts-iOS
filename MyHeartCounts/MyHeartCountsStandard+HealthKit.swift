@@ -23,22 +23,16 @@ import SpeziStudy
 import UserNotifications
 
 
-extension LocalPreferenceKey {
-    static var sendHealthSampleUploadNotifications: LocalPreferenceKey<Bool> {
-        .make("sendHealthSampleUploadNotifications", default: false)
-    }
+extension LocalPreferenceKeys {
+    static let sendHealthSampleUploadNotifications = LocalPreferenceKey<Bool>("sendHealthSampleUploadNotifications", default: false)
     
-    static var sendSensorKitUploadNotifications: LocalPreferenceKey<Bool> {
-        .make("sendSensorKitUploadNotifications", default: false)
-    }
+    static let sendSensorKitUploadNotifications = LocalPreferenceKey<Bool>("sendSensorKitUploadNotifications", default: false)
     
     /// the last-seen value of the ``SpeziAccount/AccountDetails/enableDebugMode`` account key value.
     ///
     /// we need this to be able to access the account key value immediately after launch,
     /// where it typically isn't yet available if the account details haven't yet been delivered to the Standard.
-    static var lastSeenIsDebugModeEnabledAccountKey: LocalPreferenceKey<Bool> {
-        .make("lastSeenIsDebugModeEnabledAccountKey", default: false)
-    }
+    static let lastSeenIsDebugModeEnabledAccountKey = LocalPreferenceKey<Bool>("lastSeenIsDebugModeEnabledAccountKey", default: false)
 }
 
 

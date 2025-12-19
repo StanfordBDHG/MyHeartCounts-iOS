@@ -47,52 +47,52 @@ private struct DebugFormImpl: View {
             }
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
-                    Label("Live Health Upload Notifications", systemSymbol: .arrowUpHeart)
+                    Label("Live Health Upload Notifications" as String, systemSymbol: .arrowUpHeart)
                         .foregroundStyle(colorScheme.textLabelForegroundStyle)
                 }
-                NavigationLink(symbol: .appBadge, "Notifications Status") {
+                NavigationLink(symbol: .appBadge, "Notifications Status" as String) {
                     NotificationsManagerControlView()
                 }
-                NavigationLink(symbol: .bellBadge, "Scheduled Local Notifications") {
+                NavigationLink(symbol: .bellBadge, "Scheduled Local Notifications" as String) {
                     PendingNotificationsList()
                 }
             }
             Section {
-                NavigationLink(symbol: .calendar, "Health Data Bulk Upload") {
+                NavigationLink(symbol: .calendar, "Health Data Bulk Upload" as String) {
                     HealthImporterControlView()
                 }
-                NavigationLink("SensorKit") {
+                NavigationLink("SensorKit" as String) {
                     SensorKitControlView()
                 }
-                NavigationLink("Background Tasks Log") {
+                NavigationLink("Background Tasks Log" as String) {
                     MHCBackgroundTasks.EventsView()
                 }
-                NavigationLink("File Upload Queue") {
+                NavigationLink("File Upload Queue" as String) {
                     FileUploadInsights()
                 }
             }
-            Section("Other") {
-                Button("Reset rejeted HomeTab actions") {
+            Section("Other" as String) {
+                Button("Reset rejeted HomeTab actions" as String) {
                     rejectedHomeTabActions = []
                 }
                 Button {
                     performTask(.timedWalkTest(.sixMinuteWalkTest), context: nil)
                 } label: {
-                    Label("Timed Walking Test", systemSymbol: .figureWalk)
+                    Label("Timed Walking Test" as String, systemSymbol: .figureWalk)
                 }
                 // intended for the UI tests to have some data here...
                 AddSleepSessionsButton(viewState: $viewState)
                 answerQuestionnaireRow
             }
             Section {
-                Button("Replace Root View Controller", role: .destructive) {
+                Button("Replace Root View Controller" as String, role: .destructive) {
                     // The idea here is that discarding the root view controller should deallocate all our resources.
                     // We can then launch Xcode's memory graph debugger, and anything that's still in the left sidebar is leaked.
                     replaceRootVC()
                 }
             }
         }
-        .navigationTitle("Debug Options")
+        .navigationTitle("Debug Options" as String)
         .navigationBarTitleDisplayMode(.inline)
     }
     
@@ -109,7 +109,7 @@ private struct DebugFormImpl: View {
             }
         } label: {
             HStack {
-                Text("Answer Questionnaire")
+                Text("Answer Questionnaire" as String)
                 Spacer()
                 Image(systemSymbol: .chevronUpChevronDown)
                     .foregroundStyle(.secondary)

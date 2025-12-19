@@ -14,11 +14,11 @@ import SwiftUI
 struct TitleAndSymbolNavigationLinkLabel: View {
     @Environment(\.colorScheme) private var colorScheme // swiftlint:disable:this attributes
     private let symbol: SFSymbol
-    private let title: LocalizedStringResource
+    private let title: Text
     
     var body: some View {
         Label {
-            Text(title)
+            title
         } icon: {
             Image(systemSymbol: symbol)
                 .foregroundStyle(colorScheme.textLabelForegroundStyle)
@@ -28,7 +28,12 @@ struct TitleAndSymbolNavigationLinkLabel: View {
     
     nonisolated fileprivate init(symbol: SFSymbol, title: LocalizedStringResource) {
         self.symbol = symbol
-        self.title = title
+        self.title = Text(title)
+    }
+    
+    nonisolated fileprivate init(symbol: SFSymbol, title: some StringProtocol) {
+        self.symbol = symbol
+        self.title = Text(title)
     }
 }
 
@@ -37,6 +42,18 @@ extension NavigationLink {
     init(
         symbol: SFSymbol,
         _ title: LocalizedStringResource,
+        @ViewBuilder destination: () -> Destination
+    ) where Destination: View, Label == TitleAndSymbolNavigationLinkLabel {
+        self.init {
+            destination()
+        } label: {
+            TitleAndSymbolNavigationLinkLabel(symbol: symbol, title: title)
+        }
+    }
+    
+    init(
+        symbol: SFSymbol,
+        _ title: some StringProtocol,
         @ViewBuilder destination: () -> Destination
     ) where Destination: View, Label == TitleAndSymbolNavigationLinkLabel {
         self.init {

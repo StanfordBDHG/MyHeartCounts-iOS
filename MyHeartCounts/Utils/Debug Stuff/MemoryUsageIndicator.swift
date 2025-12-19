@@ -16,7 +16,7 @@ struct MemoryUsageIndicator: View {
     
     var body: some View {
         LabeledContent(
-            "Memory Usage",
+            "Memory Usage" as String,
             value: "\(ProcessInfo.processInfo.physicalMemory) / \(dataSource.residentMemory) / \(dataSource.memoryFootprint)"
         )
         .task {

@@ -17,10 +17,15 @@ import SwiftUI
 
 
 struct ConsentRenewalFlow: View {
+    @Environment(\.dismiss)
+    private var dismiss
+    
     var body: some View {
         ManagedNavigationStack {
             ConsentRenewalExplainer()
-            Consent()
+            Consent {
+                dismiss()
+            }
         }
         .interactiveDismissDisabled()
     }

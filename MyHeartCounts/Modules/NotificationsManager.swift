@@ -100,18 +100,30 @@ extension NotificationsManager: NotificationHandler {
 
 extension NotificationsManager: NotificationTokenHandler {
     func receiveUpdatedDeviceToken(_ deviceToken: Data) {
-        guard let account else {
-            return
-        }
         Task {
             let messaging = Messaging.messaging()
             messaging.apnsToken = deviceToken
             guard let fcmToken = try? await messaging.token() else {
                 return
             }
-            var newDetails = AccountDetails()
-            newDetails.fcmToken = fcmToken
-            try await account.accountService.updateAccountDetails(.init(modifiedDetails: newDetails))
+            try await setFCMToken(fcmToken)
         }
+    }
+    
+    func setFCMToken(_ newToken: String?) async throws {
+        guard let account else {
+            return
+        }
+        var updatedDetails = AccountDetails()
+        var removedDetails = AccountDetails()
+        switch (account.details?.fcmToken, newToken) {
+        case (.none, .none):
+            return
+        case (_, .some(let newToken)):
+            updatedDetails.fcmToken = newToken
+        case (.some(let oldToken), .none):
+            removedDetails.fcmToken = oldToken
+        }
+        try await account.accountService.updateAccountDetails(.init(modifiedDetails: updatedDetails, removedAccountDetails: removedDetails))
     }
 }

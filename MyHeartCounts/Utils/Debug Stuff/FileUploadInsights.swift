@@ -33,7 +33,7 @@ struct FileUploadInsights: View {
                     }
                 }
             }
-            Section("Inactive / Complete") {
+            Section("Inactive / Complete" as String) {
                 ForEach(inactiveCategories) { category in
                     Text(category.title)
                 }
