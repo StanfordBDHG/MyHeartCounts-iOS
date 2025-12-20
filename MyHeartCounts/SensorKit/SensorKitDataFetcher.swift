@@ -105,8 +105,14 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             _ = await processingTask.result
         } else {
             let task = Task { @concurrent in
-                    for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
                 await withManagedTaskQueue(limit: 3) { taskQueue in
+                    // we want to process the sensors in decreasing batch size;
+                    // i.e. sensors which expect a small amount of samples (and as a result fetch a relatively larger window)
+                    // should get processed first.
+                    let uploadDefinitions = SensorKit
+                        .mhcSensorUploadDefinitions
+                        .sorted(using: KeyPathComparator(\.typeErasedSensor.suggestedBatchSize, order: .reverse))
+                    for uploadDefinition in uploadDefinitions {
                         taskQueue.addTask {
                             await self.fetchAndUploadAnchored(uploadDefinition)
                         }
