@@ -147,8 +147,6 @@ extension ComorbiditiesPicker {
                                 selection = .selected(startDate: DateComponents())
                             }
                         }
-                        LabeledContent("selection" as String, value: String(describing: selection))
-                        LabeledContent("selection.bool" as String, value: String(describing: binding.wrappedValue))
                         Picker("", selection: binding) {
                             Text("Don't Know").tag(false)
                             Text("Select Date").tag(true)
@@ -186,7 +184,6 @@ extension ComorbiditiesPicker {
         }
         
         var body: some View {
-            LabeledContent("selection" as String, value: selection.dateComponentsValue.description)
             HStack(spacing: 0) {
                 Picker("", selection: $selection.dateComponentsValue.month) {
                     Text("—")
