@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable line_length
+
 import Foundation
 
 
@@ -102,7 +104,11 @@ extension Comorbidities.Comorbidity {
         Self(id: "heartFailure", title: "Heart Failure"),
         Self(id: "coronaryArteryDisease", title: "Coronary Artery Disease"),
         Self(id: "pulmonaryArterialHypertension", title: "Pulmonary Arterial Hypertension"),
-        Self(id: "adultCongenitalHeartDisease", title: "Adult Congenital Heart Disease")
+        Self(
+            id: "adultCongenitalHeartDisease",
+            title: "Adult Congenital Heart Disease (ACHD), Single Ventricle (Fontan) or Systemic Right Ventricle (Mustard, Senning, congenitally corrected transposition of the great arteries)"
+        ),
+        Self(id: "congenitalHeartDisease2", title: "Congenital Heart Disease OTHER than Single Ventricle or Systemic Right Ventricle")
     ]
     
     static let secondaryComorbidities: [Self] = [
