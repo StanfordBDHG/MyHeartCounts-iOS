@@ -78,7 +78,10 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         self.session = session
         do {
             logger.notice("Will start BulkHealthExport session")
-            let results = try session.start(retryFailedBatches: true)
+            let results = try session.start(
+                retryFailedBatches: true,
+                concurrencyLevel: .limit(3)
+            )
             managedFileUpload.scheduleForUpload(results.compactMap { $0 }, category: .historicalHealthUpload)
             return true
         } catch {
