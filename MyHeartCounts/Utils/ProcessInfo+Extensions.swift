@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+private import AVFoundation
 import Darwin
 import Foundation
 import MachO
@@ -60,4 +61,16 @@ extension ProcessInfo {
         }
         return kerr == KERN_SUCCESS ? info.phys_footprint / 1024 / 1024 : 0
     }
+}
+
+
+extension ProcessInfo {
+    static let isProDevice: Bool = {
+        let session = AVCaptureDevice.DiscoverySession(
+            deviceTypes: [.builtInTelephotoCamera],
+            mediaType: .video,
+            position: .back
+        )
+        return !session.devices.isEmpty
+    }()
 }

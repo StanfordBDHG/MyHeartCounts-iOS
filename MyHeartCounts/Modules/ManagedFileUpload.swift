@@ -90,6 +90,12 @@ extension ManagedFileUpload {
         try fileManager.removeItem(at: Self.directory)
         createStagingDirs(for: categories)
     }
+    
+    @MainActor
+    func clearPendingUploads(for category: Category) throws {
+        try fileManager.removeItem(at: category.stagingDirUrl)
+        createStagingDirs(for: CollectionOfOne(category))
+    }
 }
 
 

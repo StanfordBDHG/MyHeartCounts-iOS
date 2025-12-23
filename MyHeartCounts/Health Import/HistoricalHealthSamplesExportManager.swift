@@ -59,6 +59,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     /// - Note: This is intended primarily for debugging purposes
     func fullyResetSession(restart: Bool = true) async throws {
         try await bulkExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
+        try? managedFileUpload.clearPendingUploads(for: .historicalHealthUpload)
         self.session = nil
         if restart {
             await self.setupAndStartExportSession()
@@ -80,7 +81,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
             logger.notice("Will start BulkHealthExport session")
             let results = try session.start(
                 retryFailedBatches: true,
-                concurrencyLevel: .limit(3)
+                concurrencyLevel: .limit(ProcessInfo.isProDevice ? 4 : 2)
             )
             managedFileUpload.scheduleForUpload(results.compactMap { $0 }, category: .historicalHealthUpload)
             return true
