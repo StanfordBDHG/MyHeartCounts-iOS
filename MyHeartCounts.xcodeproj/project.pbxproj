@@ -1518,8 +1518,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziHealthKit.git";
 			requirement = {
-				kind = revision;
-				revision = eede3aaf73f9e7c747661d926f433d057c43a56a;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.2;
 			};
 		};
 		A94DDFFB2CBD1190004930BD /* XCRemoteSwiftPackageReference "SpeziNotifications" */ = {
