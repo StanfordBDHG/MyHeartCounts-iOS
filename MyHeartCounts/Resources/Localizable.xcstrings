@@ -716,6 +716,7 @@
       }
     },
     "Adult Congenital Heart Disease" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -724,6 +725,9 @@
           }
         }
       }
+    },
+    "Adult Congenital Heart Disease (ACHD), Single Ventricle (Fontan) or Systemic Right Ventricle (Mustard, Senning, congenitally corrected transposition of the great arteries)" : {
+
     },
     "Age" : {
       "localizations" : {
@@ -1239,6 +1243,9 @@
           }
         }
       }
+    },
+    "Congenital Heart Disease OTHER than Single Ventricle or Systemic Right Ventricle" : {
+
     },
     "Connecticut" : {
       "localizations" : {

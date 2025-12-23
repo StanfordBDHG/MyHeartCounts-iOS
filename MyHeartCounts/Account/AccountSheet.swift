@@ -205,5 +205,6 @@ struct AccountSheet: View {
         _ = try await Functions.functions()
             .httpsCallable("markAccountForDeletion")
             .call(["userId": accountId])
+        try await account.accountService.logout()
     }
 }
