@@ -22,7 +22,7 @@ jobs:
     name: Build and Test (Unit Tests)
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
-      runsonlabels: '["macOS", "self-hosted"]'
+      # runsonlabels: '["macOS", "self-hosted"]'
       scheme: MyHeartCounts
       testplan: MyHeartCounts Unit Tests
       resultBundle: MyHeartCounts-UnitTests.xcresult
@@ -33,7 +33,7 @@ jobs:
     permissions:
       contents: read
     with:
-      runsonlabels: '["macOS", "self-hosted"]'
+      # runsonlabels: '["macOS", "self-hosted"]'
       artifactname: MyHeartCounts-UITests.xcresult
       firebaseemulatorimport: ./firebase
       firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
