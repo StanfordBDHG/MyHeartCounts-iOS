@@ -62,17 +62,18 @@ struct SensorKitControlView: View {
                 queryAnchorDatesId = UUID()
             }
             ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
-                LabeledContent(
-                    sensor.displayName,
-                    value: sensorKit.queryAnchorValue(for: sensor)?.ISO8601Format() ?? "–"
-                )
+                // TODO bring this back!!!
+//                LabeledContent(
+//                    sensor.displayName,
+//                    value: sensorKit.queryAnchorValue(for: sensor)?.ISO8601Format() ?? "–"
+//                )
             }
             .id(queryAnchorDatesId)
             AsyncButton("Reset All" as String, role: .destructive, state: $viewState) {
                 @MainActor
                 func imp<Sample>(_ sensor: some AnySensor<Sample>) throws {
                     let sensor = Sensor(sensor)
-                    try sensorKit.resetQueryAnchor(for: sensor)
+                    try sensorKit.resetQueryAnchors(for: sensor)
                 }
                 defer {
                     queryAnchorDatesId = UUID()
