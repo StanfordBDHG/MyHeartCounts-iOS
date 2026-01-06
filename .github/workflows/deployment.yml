@@ -114,7 +114,7 @@ jobs:
     permissions:
       contents: read
     with:
-      # runsonlabels: '["macOS", "self-hosted"]'
+      runsonlabels: '["macOS", "self-hosted"]'
       environment: ${{ needs.determineenvironment.outputs.environment }}
       googleserviceinfoplistpath: 'MyHeartCounts/Supporting Files/GoogleService-Info.plist'
       setupsigning: true
