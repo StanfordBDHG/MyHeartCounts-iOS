@@ -74,7 +74,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
                 // in this case this call won't start a second, parallel fetch, but instead will simply wait for
                 // the already-active fetch to complete.
                 await fetchAndUploadNewData()
-                if standard.enableDebugSensorKitNotifications {
+                if await standard.enableDebugSensorKitNotifications {
                     try? await self.localNotifications.send(title: "SensorKit Background Processing", body: "Task ended")
                 }
             })
@@ -170,7 +170,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         defer {
             end(activity)
         }
-        let fetcher = try await AnchoredAsyncDataFetcher(sensor: sensor) { _ in
+        let fetcher = try await AnchoredFetcher(sensor: sensor) { _ in
             // we want to use ephemeral query anchors, bc this fetch is happening outside of the regular anchoring
             .ephemeral()
         }

@@ -61,8 +61,8 @@ struct SensorKitControlView: View {
             Button("Update" as String) {
                 queryAnchorDatesId = UUID()
             }
-            ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
-                // TODO bring this back!!!
+            ForEach(SensorKit.mhcSensors, id: \.id) { _ in
+                // TODO bring this back!!! // swiftlint:disable:this todo
 //                LabeledContent(
 //                    sensor.displayName,
 //                    value: sensorKit.queryAnchorValue(for: sensor)?.ISO8601Format() ?? "–"
