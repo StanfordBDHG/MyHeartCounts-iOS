@@ -67,7 +67,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
                 guard let self else {
                     return
                 }
-                if standard.enableDebugSensorKitNotifications {
+                if await standard.enableDebugSensorKitNotifications {
                     try? await self.localNotifications.send(title: "SensorKit Background Processing", body: "Task started")
                 }
                 // it could be that the `run()` function already ran before the background task was triggered;
