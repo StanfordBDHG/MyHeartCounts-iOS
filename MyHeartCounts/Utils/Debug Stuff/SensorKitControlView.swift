@@ -15,6 +15,22 @@ import SwiftUI
 
 
 struct SensorKitControlView: View {
+    private struct QueryAnchorsEntry: Hashable {
+        let sensor: any AnySensor
+        let deviceProductType: String
+        let value: Date
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.sensor.id == rhs.sensor.id && lhs.deviceProductType == rhs.deviceProductType && lhs.value == rhs.value
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            sensor.hash(into: &hasher)
+            hasher.combine(deviceProductType)
+            hasher.combine(value)
+        }
+    }
+    
     @Environment(SensorKit.self)
     private var sensorKit
     
@@ -25,7 +41,7 @@ struct SensorKitControlView: View {
     private var sendSensorKitNotifications
     
     @State private var viewState: ViewState = .idle
-    @State private var queryAnchorDatesId = UUID()
+    @State private var queryAnchorValues: [QueryAnchorsEntry] = []
     
     var body: some View {
         Form {
@@ -54,28 +70,39 @@ struct SensorKitControlView: View {
         }
         .navigationTitle("SensorKit" as String)
         .viewStateAlert(state: $viewState)
+        .task {
+            await updateQueryAnchorEntries()
+        }
     }
     
     private var queryAnchorsSection: some View {
         Section("Query Anchors" as String) {
-            Button("Update" as String) {
-                queryAnchorDatesId = UUID()
+            AsyncButton("Update" as String, state: $viewState) {
+                await updateQueryAnchorEntries()
             }
-            ForEach(SensorKit.mhcSensors, id: \.id) { sensor in
-                LabeledContent(
-                    sensor.displayName,
-                    value: sensorKit.queryAnchorValue(for: sensor)?.ISO8601Format() ?? "–"
-                )
+            ForEach(queryAnchorValues, id: \.self) { entry in
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(entry.sensor.displayName)
+                        Text(entry.deviceProductType)
+                            .font(.footnote)
+                    }
+                    Spacer()
+                    Text(entry.value, format: Date.FormatStyle(date: .numeric, time: .standard).hour(.twoDigits(amPM: .omitted)))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
             }
-            .id(queryAnchorDatesId)
             AsyncButton("Reset All" as String, role: .destructive, state: $viewState) {
                 @MainActor
                 func imp<Sample>(_ sensor: some AnySensor<Sample>) throws {
                     let sensor = Sensor(sensor)
-                    try sensorKit.resetQueryAnchor(for: sensor)
+                    try sensorKit.resetQueryAnchors(for: sensor)
                 }
                 defer {
-                    queryAnchorDatesId = UUID()
+                    Task {
+                        await updateQueryAnchorEntries()
+                    }
                 }
                 for sensor in SensorKit.allKnownSensors {
                     try imp(sensor)
@@ -88,5 +115,21 @@ struct SensorKitControlView: View {
         AsyncButton("Perform Full \(uploadDefinition.typeErasedSensor.displayName) Upload" as String, state: $viewState) {
             try await dataFetcher.fetchAndUploadAllSamples(for: uploadDefinition)
         }
+    }
+    
+    private func updateQueryAnchorEntries() async {
+        var entries: [QueryAnchorsEntry] = []
+        for sensor in SensorKit.mhcSensors {
+            guard let anchors = try? await sensorKit.queryAnchorValues(for: sensor) else {
+                continue
+            }
+            for (deviceModel, anchorValue) in anchors {
+                entries.append(.init(sensor: sensor, deviceProductType: deviceModel, value: anchorValue))
+            }
+        }
+        self.queryAnchorValues = entries.sorted(using: [
+            KeyPathComparator(\.sensor.displayName),
+            KeyPathComparator(\.deviceProductType)
+        ])
     }
 }

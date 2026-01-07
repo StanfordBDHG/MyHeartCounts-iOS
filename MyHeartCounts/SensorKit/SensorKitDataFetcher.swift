@@ -44,6 +44,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
     @ObservationIgnored @Dependency(SensorKit.self) private var sensorKit
     @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
+    @ObservationIgnored @Dependency(LocalNotifications.self) private var localNotifications
     // swiftlint:enable attributes
     
     /// The sensors that are currently being processed.
@@ -58,17 +59,23 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     func configure() {
         do {
-            try backgroundTasks.register(.processing(
+            try backgroundTasks.register(.healthResearch(
                 id: .sensorKitProcessing,
-                options: [.requiresExternalPower, .requiresNetworkConnectivity]
+                options: [.requiresNetworkConnectivity]
             ) { [weak self] in
                 guard let self else {
                     return
+                }
+                if await standard.enableDebugSensorKitNotifications {
+                    try? await self.localNotifications.send(title: "SensorKit Background Processing", body: "Task started")
                 }
                 // it could be that the `run()` function already ran before the background task was triggered;
                 // in this case this call won't start a second, parallel fetch, but instead will simply wait for
                 // the already-active fetch to complete.
                 await fetchAndUploadNewData()
+                if await standard.enableDebugSensorKitNotifications {
+                    try? await self.localNotifications.send(title: "SensorKit Background Processing", body: "Task ended")
+                }
             })
         } catch {
             logger.error("Error registering SK background task: \(error)")
@@ -102,17 +109,13 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             return
         }
         if let processingTask {
+            // if we're already performing this task, we simply wait on that task's result, instead of starting a competing second one.
+            // this is in order to properly support background processing/fetches.
             _ = await processingTask.result
         } else {
             let task = Task { @concurrent in
-                await withManagedTaskQueue(limit: 3) { taskQueue in
-                    // we want to process the sensors in decreasing batch size;
-                    // i.e. sensors which expect a small amount of samples (and as a result fetch a relatively larger window)
-                    // should get processed first.
-                    let uploadDefinitions = SensorKit
-                        .mhcSensorUploadDefinitions
-                        .sorted(using: KeyPathComparator(\.typeErasedSensor.suggestedBatchSize, order: .reverse))
-                    for uploadDefinition in uploadDefinitions {
+                await withManagedTaskQueue(limit: ProcessInfo.isProDevice ? 3 : 1) { taskQueue in
+                    for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
                         taskQueue.addTask {
                             await self.fetchAndUploadAnchored(uploadDefinition)
                         }
@@ -144,7 +147,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             activity.updateMessage("Fetching Samples")
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
                 activity.updateTimeRange(batchInfo.timeRange)
-                try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
+                try await uploadDefinition.strategy.upload(consume batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
                 activity.updateMessage("Fetching Samples")
             }
         } catch {
@@ -166,19 +169,15 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         defer {
             end(activity)
         }
-        let devices = try await sensor.fetchDevices()
-        for device in devices {
-            let deviceInfo = SensorKit.DeviceInfo(device)
-            let newestSampleDate = Date.now.addingTimeInterval(-sensor.dataQuarantineDuration.timeInterval)
-            let oldestSampleDate = newestSampleDate.addingTimeInterval(-TimeConstants.day * 5.5)
-            for startDate in stride(from: oldestSampleDate, through: newestSampleDate, by: sensor.suggestedBatchSize.timeInterval) {
-                let timeRange = startDate..<min(startDate.addingTimeInterval(sensor.suggestedBatchSize.timeInterval), newestSampleDate)
-                activity.updateTimeRange(timeRange)
-                activity.updateMessage("Fetching Samples")
-                let samples = (try? await sensor.fetch(from: device, timeRange: timeRange)) ?? []
-                let batchInfo = SensorKit.BatchInfo(timeRange: timeRange, device: deviceInfo)
-                try await uploadDefinition.strategy.upload(samples, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
-            }
+        let fetcher = try await AnchoredFetcher(sensor: sensor) { _ in
+            // we want to use ephemeral query anchors, bc this fetch is happening outside of the regular anchoring
+            .ephemeral()
+        }
+        activity.updateMessage("Fetching Samples")
+        for try await (batchInfo, samples) in fetcher {
+            activity.updateTimeRange(batchInfo.timeRange)
+            try await uploadDefinition.strategy.upload(consume samples, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
+            activity.updateMessage("Fetching Samples")
         }
     }
     
@@ -186,7 +185,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     func resetAllQueryAnchors() {
         func imp(_ sensor: some AnySensor) {
             let sensor = Sensor(sensor)
-            try? sensorKit.resetQueryAnchor(for: sensor)
+            try? sensorKit.resetQueryAnchors(for: sensor)
         }
         for sensor in SensorKit.allKnownSensors {
             imp(sensor)
@@ -216,19 +215,21 @@ extension MHCBackgroundTasks.TaskIdentifier {
 
 extension SensorKit {
     /// All sensors we want to enable automatic data collection for.
+    ///
+    /// - Note: The elements here are ordered roughly based on the expected number of samples and/or processing cost, in increasing order.
     static let mhcSensorUploadDefinitions: [any AnyMHCSensorUploadDefinition] = [
+        MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations()),
         MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
+        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
         MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
         MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyCSVFile2()),
         MHCSensorUploadDefinition(sensor: .heartRate, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .accelerometer, strategy: UploadStrategyCSVFile()),
+        MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
         
         MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()),
+        MHCSensorUploadDefinition(sensor: .accelerometer, strategy: UploadStrategyCSVFile()),
         MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy()),
-        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations())
+        MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy())
     ]
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }
