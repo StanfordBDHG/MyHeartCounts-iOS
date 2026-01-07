@@ -61,8 +61,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         do {
             try backgroundTasks.register(.healthResearch(
                 id: .sensorKitProcessing,
-                options: [.requiresNetworkConnectivity],
-//                protectionTypeOfRequiredData: .complete
+                options: [.requiresNetworkConnectivity]
             ) { [weak self] in
                 guard let self else {
                     return
