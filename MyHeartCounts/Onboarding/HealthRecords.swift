@@ -38,7 +38,7 @@ struct HealthRecords: View {
             EmptyView()
         } footer: {
             OnboardingActionsView(
-                primaryTitle: "Grant Access",
+                primaryTitle: "Review Permissions",
                 primaryViewState: $viewState,
                 primaryAction: {
                     await grantAccess()
