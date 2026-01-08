@@ -1,5 +1,5 @@
 {
-  "originHash" : "19b8c3b3078595f5dd373cc2cddd461f3a348f9ff823b9cbe68db3a6c08e23bf",
+  "originHash" : "a82b96082e61c87bc056c74c4f54e7c4cde9fa5891485d1c7b07d8e4b3487dec",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -312,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "branch" : "lukas/fix-crashes",
-        "revision" : "75d40430872a526b9cce081b0f211888ff65f230"
+        "revision" : "afa30250c3476c4a8a1db0385f66e1f318910606",
+        "version" : "0.6.1"
       }
     },
     {

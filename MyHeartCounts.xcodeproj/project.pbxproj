@@ -1462,8 +1462,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
-				branch = "lukas/fix-crashes";
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.6.1;
 			};
 		};
 		80B8A1D82EC0B70600F0E453 /* XCRemoteSwiftPackageReference "XCTHealthKit" */ = {
