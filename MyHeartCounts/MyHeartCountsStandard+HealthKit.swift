@@ -158,20 +158,20 @@ extension MyHeartCountsStandard {
                 return AnyEncodable(resource)
             }
         }
-        let supportsZlibUpload = !HKClinicalType.allKnownClinicalRecords.contains { $0.identifier == sampleTypeIdentifier }
-        if supportsZlibUpload && observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
+        let supportsZstdUpload = !HKClinicalType.allKnownClinicalRecords.contains { $0.identifier == sampleTypeIdentifier }
+        if supportsZstdUpload && observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
             let numObservations = observations.count
-            logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' via zlib upload")
+            logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' via zstd upload")
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
-                for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .zlib)
+                for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .compressed)
             )
             let resources = try await (consume observations).compactMapAsync(turnIntoFHIRResource)
             guard !resources.isEmpty else {
                 return
             }
             let encoded = try JSONEncoder().encode(resources)
-            let compressed = try (consume encoded).compressed(using: Zlib.self)
-            let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zlib", directoryHint: .notDirectory)
+            let compressed = try (consume encoded).compressed(using: Zstd.self)
+            let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zstd", directoryHint: .notDirectory)
             try (consume compressed).write(to: url)
             _Concurrency.Task {
                 try await managedFileUpload.upload(url, category: .liveHealthUpload)
@@ -225,7 +225,7 @@ extension MyHeartCountsStandard {
     
     private enum UploadMode: String {
         case direct
-        case zlib
+        case compressed
     }
     
     /// - returns: A closure that should be called upon completion of the uploads, and will replaces the "will upload" notifications with "did upload" notifications.
