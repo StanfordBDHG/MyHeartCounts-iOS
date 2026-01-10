@@ -249,8 +249,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "7b1d3f4db9922f0b58f5e02064356e5f7cb77dfd",
-        "version" : "2.6.0"
+        "revision" : "f583558192f989c4b03b89ef29ebdccb3bb4e913"
       }
     },
     {
@@ -488,6 +487,15 @@
       }
     },
     {
+      "identity" : "threadlocal",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordBDHG/ThreadLocal.git",
+      "state" : {
+        "revision" : "2600d766183e7223f1e951b0ab03bf98738e1ccc",
+        "version" : "0.1.1"
+      }
+    },
+    {
       "identity" : "tppdf",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/techprimate/TPPDF.git",
@@ -521,6 +529,15 @@
       "state" : {
         "revision" : "ba5753f59905b80fd98d0da0f552f4e5d5c0488e",
         "version" : "2.2.0"
+      }
+    },
+    {
+      "identity" : "zstd",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StanfordBDHG/zstd.git",
+      "state" : {
+        "branch" : "dev",
+        "revision" : "ae9f20ca2716f2605822ca375995b7d876389b64"
       }
     }
   ],
