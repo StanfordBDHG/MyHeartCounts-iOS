@@ -1477,6 +1477,9 @@
         }
       }
     },
+    "Dilated Cardiomyopathy (DCM)" : {
+
+    },
     "Disabled" : {
       "localizations" : {
         "es" : {
@@ -2617,6 +2620,9 @@
           }
         }
       }
+    },
+    "Hypertrophic Cardiomyopathy (HCM)" : {
+
     },
     "I don't have this comorbidity" : {
       "localizations" : {
@@ -4771,6 +4777,9 @@
         }
       }
     },
+    "Review Permissions" : {
+
+    },
     "Rheumatoid arthritis" : {
       "localizations" : {
         "es" : {
@@ -5106,6 +5115,7 @@
       }
     },
     "stage 3, 4 or 5" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5114,6 +5124,9 @@
           }
         }
       }
+    },
+    "Stage 3, 4 or 5" : {
+
     },
     "Stage of Change" : {
       "localizations" : {

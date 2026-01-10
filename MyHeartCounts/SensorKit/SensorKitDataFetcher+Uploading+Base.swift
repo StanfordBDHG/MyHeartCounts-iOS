@@ -29,12 +29,12 @@ extension MHCSensorSampleUploadStrategy {
         postprocessObservation: (Observation) throws -> Void
     ) async throws {
         activity.updateMessage("Compressing Data")
-        let data = shouldCompress ? try (consume data).compressed(using: Zlib.self) : consume data
+        let data = shouldCompress ? try (consume data).compressed(using: Zstd.self) : consume data
         let sha1 = Insecure.SHA1.hash(data: data)
         let size = data.count
         let url = URL.temporaryDirectory
             .appending(component: UUID().uuidString)
-            .appendingPathExtension("\(fileExtension).zlib")
+            .appendingPathExtension("\(fileExtension).zstd")
         try (consume data).write(to: url)
         
         activity.updateMessage("Submitting for upload")
@@ -45,7 +45,7 @@ extension MHCSensorSampleUploadStrategy {
         let referenceDocName = observationDocName + "_Ref"
         
         let attachment = Attachment(
-            contentType: "application/zlib",
+            contentType: "application/zstd",
             creation: try FHIRPrimitive(DateTime(date: .now)),
             hash: FHIRPrimitive(Base64Binary(Data(sha1).base64EncodedString())),
             // for some reason, R4 uses a "32-bit unsigned integer"

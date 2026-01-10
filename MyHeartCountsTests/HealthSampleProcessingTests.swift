@@ -18,7 +18,7 @@ import Testing
 
 @Suite(.tags(.unitTest))
 struct HealthSampleProcessingTests {
-    // check that the zlib-compressed FHIR-encoded Health samples can be decompressed and decoded and have the correct values.
+    // check that the zstd-compressed FHIR-encoded Health samples can be decompressed and decoded and have the correct values.
     // note that this test is only very barebones; we have more inp-depth testing for this in HealthKitOnFHIR.
     @Test
     func healthKitSamplesProcessing() async throws {
@@ -38,7 +38,7 @@ struct HealthSampleProcessingTests {
         ]
         let processor = HealthKitSamplesFHIRUploader(standard: nil)
         let compressedUrl = try #require(await processor.process(samples, of: .stepCount))
-        let decompressed = try Data(contentsOf: compressedUrl).decompressed(using: Zlib.self)
+        let decompressed = try Data(contentsOf: compressedUrl).decompressed(using: Zstd.self)
         let observations = try JSONDecoder().decode([Observation].self, from: decompressed)
         #expect(observations.count == 3)
         #expect(observations.map(\.quantityValue) == [

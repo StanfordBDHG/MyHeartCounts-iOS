@@ -39,8 +39,8 @@ struct HealthKitSamplesFHIRUploader: BatchProcessor {
         let resources = try (consume samples).mapIntoResourceProxies()
         let encoded = try JSONEncoder().encode(consume resources)
         
-        let compressed = try (consume encoded).compressed(using: Zlib.self)
-        let compressedUrl = fileManager.temporaryDirectory.appendingPathComponent("\(sampleType.id)_\(UUID().uuidString).json.zlib")
+        let compressed = try (consume encoded).compressed(using: Zstd.self)
+        let compressedUrl = fileManager.temporaryDirectory.appendingPathComponent("\(sampleType.id)_\(UUID().uuidString).json.zstd")
         try (consume compressed).write(to: compressedUrl)
         return compressedUrl
     }
