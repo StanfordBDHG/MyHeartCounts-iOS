@@ -227,12 +227,25 @@ platform :ios do
         notify_external_testers: true,
         changelog: releasenotes
       )
+    elsif environment == "development"
+      upload_to_testflight(
+        app_identifier: appidentifier,
+        distribute_external: true,
+        reject_build_waiting_for_review: true,
+        expire_previous_builds: false,
+        groups: [
+          "Development"
+        ],
+        submit_beta_review: true,
+        notify_external_testers: true,
+        changelog: commit[:message]
+      )
     else
       upload_to_testflight(
         app_identifier: appidentifier,
         distribute_external: true,
         reject_build_waiting_for_review: true,
-        expire_previous_builds: false, # Change to true, once we make App Store releases on production deployments.
+        expire_previous_builds: false,
         groups: [
           "External Testers"
         ],
