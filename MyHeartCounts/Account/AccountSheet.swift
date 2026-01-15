@@ -34,6 +34,7 @@ struct AccountSheet: View {
     
     @AccountFeatureFlagQuery(.isDebugModeEnabled)
     private var debugModeEnabled
+    
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {
@@ -42,7 +43,16 @@ struct AccountSheet: View {
                 if account.signedIn && !isInSetup {
                     AccountOverview(
                         close: .showCloseButton,
-                        deletion: .inEditMode(.custom(deleteAccount))
+                        deletion: .inEditMode(.custom(
+                            labels: .init(
+                                formButton: "Withdraw from Study",
+                                confirmationAlertTitle: "Withdraw from Study",
+                                // swiftlint:disable:next line_length
+                                confirmationAlertMessage: "Are you sure you want to withdraw from the My Heart Counts study?\nYou can re-enroll in the future if you choose.",
+                                confirmationAlertSubmitButton: "Withdraw"
+                            ),
+                            withdrawFromStudy
+                        ))
                     ) {
                         accountSheetExtraContent
                     }
@@ -196,7 +206,7 @@ struct AccountSheet: View {
         }
     }
     
-    private func deleteAccount() async throws {
+    private func withdrawFromStudy() async throws {
         guard let accountId = account.details?.accountId else {
             throw NSError(domain: "edu.stanford.MyHeartCounts", code: 1, userInfo: [
                 NSLocalizedDescriptionKey: "Unable to delete account"
