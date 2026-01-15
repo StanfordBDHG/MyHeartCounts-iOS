@@ -1387,7 +1387,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
 				kind = revision;
-				revision = 41dc7c99943990932f947156029e77df25c89105;
+				revision = 221e94e587bb7334c64408e8f2eb67c93f0cfc9f;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
