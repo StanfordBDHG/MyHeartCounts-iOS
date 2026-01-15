@@ -154,6 +154,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld missed task in the past 2 weeks"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld missed tasks in the past 2 weeks"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -201,13 +219,34 @@
 
     },
     "< 7" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< 7"
+          }
+        }
+      }
     },
     "< 85" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< 85"
+          }
+        }
+      }
     },
     "< 130" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< 130"
+          }
+        }
+      }
     },
     "<16 (Severely underweight)" : {
       "localizations" : {
@@ -220,10 +259,24 @@
       }
     },
     "<120 / <80" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "<120 / <80"
+          }
+        }
+      }
     },
     "> 140" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "> 140"
+          }
+        }
+      }
     },
     "≥30 (Obesity class II)" : {
       "localizations" : {
@@ -396,7 +449,14 @@
       }
     },
     "1 – 29" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 – 29"
+          }
+        }
+      }
     },
     "4 to 5 hours" : {
       "localizations" : {
@@ -409,7 +469,14 @@
       }
     },
     "5 – 7" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 – 7"
+          }
+        }
+      }
     },
     "5 to 6 hours" : {
       "localizations" : {
@@ -442,7 +509,14 @@
       }
     },
     "8 – 10" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 – 10"
+          }
+        }
+      }
     },
     "9 to 10 hours" : {
       "localizations" : {
@@ -465,7 +539,14 @@
       }
     },
     "11 – 13" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "11 – 13"
+          }
+        }
+      }
     },
     "12-Minute Run Test (Cooper Test)" : {
       "localizations" : {
@@ -478,7 +559,14 @@
       }
     },
     "14 – 16" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "14 – 16"
+          }
+        }
+      }
     },
     "16 – 18.4 (Underweight)" : {
       "localizations" : {
@@ -491,7 +579,14 @@
       }
     },
     "17 – 21" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "17 – 21"
+          }
+        }
+      }
     },
     "18.5 – 22.9 (Normal weight)" : {
       "localizations" : {
@@ -514,22 +609,57 @@
       }
     },
     "23 – 24.9 (Overweight / At risk)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Sobrepeso / En riesgo)"
+          }
+        }
+      }
     },
     "25 – 29.9 (Obesity class I)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Obesidad clase I)"
+          }
+        }
+      }
     },
     "25 – 29.9 (Overweight)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Sobrepeso)"
+          }
+        }
+      }
     },
     "30 – 34.9 (Obesity class I)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Obesidad clase I)"
+          }
+        }
+      }
     },
     "30 – 59" : {
 
     },
     "35 – 39.9 (Obesity class II)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Obesidad clase II)"
+          }
+        }
+      }
     },
     "60 – 89" : {
 
@@ -727,7 +857,14 @@
       }
     },
     "Adult Congenital Heart Disease (ACHD), Single Ventricle (Fontan) or Systemic Right Ventricle (Mustard, Senning, congenitally corrected transposition of the great arteries)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enfermedad cardíaca congénita del adulto (ACHD), ventrículo único (Fontan) o ventrículo derecho sistémico (Mustard, Senning, transposición congénitamente corregida de las grandes arterias)"
+          }
+        }
+      }
     },
     "Age" : {
       "localizations" : {
@@ -1245,7 +1382,14 @@
       }
     },
     "Congenital Heart Disease OTHER than Single Ventricle or Systemic Right Ventricle" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enfermedad cardíaca congénita DISTINTA de ventrículo único o de ventrículo derecho sistémico"
+          }
+        }
+      }
     },
     "Connecticut" : {
       "localizations" : {
@@ -1478,7 +1622,14 @@
       }
     },
     "Dilated Cardiomyopathy (DCM)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miocardiopatía Dilatada "
+          }
+        }
+      }
     },
     "Disabled" : {
       "localizations" : {
@@ -2622,7 +2773,14 @@
       }
     },
     "Hypertrophic Cardiomyopathy (HCM)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miocardiopatía Hipertrófica"
+          }
+        }
+      }
     },
     "I don't have this comorbidity" : {
       "localizations" : {
@@ -2840,6 +2998,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld days"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -2868,6 +3044,24 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
+                  "value" : "Last %lld month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld months"
+                }
+              }
+            }
+          }
+        },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
                   "value" : "Last %lld month"
                 }
               },
@@ -2920,6 +3114,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld weeks"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -2948,6 +3160,24 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
+                  "value" : "Last %lld year"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld years"
+                }
+              }
+            }
+          }
+        },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
                   "value" : "Last %lld year"
                 }
               },
@@ -4778,7 +5008,14 @@
       }
     },
     "Review Permissions" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisar Permisos"
+          }
+        }
+      }
     },
     "Rheumatoid arthritis" : {
       "localizations" : {
@@ -5126,7 +5363,14 @@
       }
     },
     "Stage 3, 4 or 5" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etapa 3, 4 o 5"
+          }
+        }
+      }
     },
     "Stage of Change" : {
       "localizations" : {
