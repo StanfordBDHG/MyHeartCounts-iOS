@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/Spezi.git",
       "state" : {
-        "revision" : "b066256d77efbde4e786256819ea8200a3ba330e",
-        "version" : "1.9.3"
+        "branch" : "lukas/inferred-isolated-conformances",
+        "revision" : "757682993116588efeadc49cebc6b506334a2bc5"
       }
     },
     {
