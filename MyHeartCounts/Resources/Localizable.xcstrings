@@ -40,6 +40,102 @@
         }
       }
     },
+    "%@ – %@ (Normal weight)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Normal weight)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (peso normal)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Obesity class I)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Obesity class I)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Obesidad clase I)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Obesity class II)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Obesity class II)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Obesidad clase II)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Overweight / At risk)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Overweight / At risk)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Sobrepeso / En riesgo)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Overweight)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Overweight)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Sobrepeso)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Underweight)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Underweight)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (bajo peso)"
+          }
+        }
+      }
+    },
     "%@ (%lld)" : {
       "localizations" : {
         "en" : {
@@ -218,6 +314,16 @@
     "< %@" : {
 
     },
+    "< %@ (Severely underweight)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< %@ (delgadez severa)"
+          }
+        }
+      }
+    },
     "< 7" : {
       "localizations" : {
         "es" : {
@@ -248,16 +354,6 @@
         }
       }
     },
-    "<16 (Severely underweight)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "<16 (delgadez severa)"
-          }
-        }
-      }
-    },
     "<120 / <80" : {
       "localizations" : {
         "es" : {
@@ -278,22 +374,22 @@
         }
       }
     },
-    "≥30 (Obesity class II)" : {
+    "≥ %@ (Obesity class II)" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "≥30 (obesidad clase II)"
+            "value" : "≥ %@ (Obesidad clase II)"
           }
         }
       }
     },
-    "≥40 (Obesity class III)" : {
+    "≥ %@ (Obesity class III)" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "≥40 (Obesidad clase III)"
+            "value" : "≥ %@ (Obesidad clase III)"
           }
         }
       }
@@ -568,16 +664,6 @@
         }
       }
     },
-    "16 – 18.4 (Underweight)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "16 – 18.4 (bajo peso)"
-          }
-        }
-      }
-    },
     "17 – 21" : {
       "localizations" : {
         "es" : {
@@ -588,78 +674,8 @@
         }
       }
     },
-    "18.5 – 22.9 (Normal weight)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "18.5 – 22.9 (peso normal)"
-          }
-        }
-      }
-    },
-    "18.5 – 24.9 (Normal weight)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "18.5 – 24.9 (peso normal)"
-          }
-        }
-      }
-    },
-    "23 – 24.9 (Overweight / At risk)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(Sobrepeso / En riesgo)"
-          }
-        }
-      }
-    },
-    "25 – 29.9 (Obesity class I)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(Obesidad clase I)"
-          }
-        }
-      }
-    },
-    "25 – 29.9 (Overweight)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(Sobrepeso)"
-          }
-        }
-      }
-    },
-    "30 – 34.9 (Obesity class I)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(Obesidad clase I)"
-          }
-        }
-      }
-    },
     "30 – 59" : {
 
-    },
-    "35 – 39.9 (Obesity class II)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(Obesidad clase II)"
-          }
-        }
-      }
     },
     "60 – 89" : {
 
