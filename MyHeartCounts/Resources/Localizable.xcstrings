@@ -722,7 +722,7 @@
     "190 – 219" : {
 
     },
-    "220 +" : {
+    "220+" : {
 
     },
     "Abdominal Aortic Aneurysm" : {
@@ -5854,19 +5854,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance."
+            "value" : "This test measures your exercise capacity by tracking how far you walk in 6 minutes on a flat surface. (For reference ranges see [here](https://mhc-6mwts.streamlit.app).)\n\n**How to:** Find a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance. Keep your phone in your hand until it vibrates."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance."
+            "value" : "This test measures your exercise capacity by tracking how far you walk in 6 minutes on a flat surface. (For reference ranges see [here](https://mhc-6mwts.streamlit.app).)\n\n**How to:** Find a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance. Keep your phone in your hand until it vibrates."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta prueba mide tu capacidad funcional de ejercicio al registrar qué tan lejos caminas en 6 minutos sobre una superficie plana.\n\nBusca una superfície plana y sin obstáculos. Usa zapatos cómodos. Toca “Iniciar” y camina a un ritmo constante y moderadamente desafiante y cubre la mayor distancia posible."
+            "value" : "Esta prueba mide su capacidad funcional de ejercicio al registrar la distancia que recorre caminando en 6 minutos sobre una superficie plana. (Para rangos de referencia, consulte [aquí](https://mhc-6mwts.streamlit.app).)\n\n**Cómo hacerlo:** Busque un trayecto plano y libre de obstáculos. Use calzado cómodo. Toque \"Iniciar\" y camine a un ritmo constante que le resulte cómodamente desafiante para cubrir la mayor distancia posible. Mantenga su teléfono en la mano hasta que vibre."
           }
         }
       }
@@ -5876,19 +5876,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The 12-Minute Run Test measures your cardiovascular fitness by tracking how far you can run or jog in 12 minutes. This simple endurance test helps assess your aerobic fitness level and can be used to monitor progress over time. This test is best for people who already have some running experience.\n\nTo perform the test, find a flat area where you can run continuously without interruption. Wear appropriate running shoes and comfortable clothing. Warm up for 5-10 minutes with light jogging and stretching. When ready, tap \"Start\" on the app and begin running at a steady pace. Your goal is to cover as much distance as possible in the 12 minutes. Pace yourself - starting too fast might force you to slow down later. The app will alert you when 12 minutes have elapsed."
+            "value" : "This test estimates your aerobic fitness (VO2 max) by tracking how far you run in 12 minutes on a flat surface. (For reference ranges see [here](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Warm-up:** Before beginning the test, perform about 10 minutes of light jogging to loosen your muscles and avoid injury. Catch your breath before proceeding.\n\n**How to:** Find a flat, obstacle-free path or running track. Wear comfortable running shoes. When you are ready, tap \"Start\" and run as fast as you possibly can to cover maximum distance until your phone vibrates. Keep your phone in your hand until it vibrates."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The 12-Minute Run Test measures your cardiovascular fitness by tracking how far you can run or jog in 12 minutes. This simple endurance test helps assess your aerobic fitness level and can be used to monitor progress over time. This test is best for people who already have some running experience.\n\nTo perform the test, find a flat area where you can run continuously without interruption. Wear appropriate running shoes and comfortable clothing. Warm up for 5-10 minutes with light jogging and stretching. When ready, tap \"Start\" on the app and begin running at a steady pace. Your goal is to cover as much distance as possible in the 12 minutes. Pace yourself - starting too fast might force you to slow down later. The app will alert you when 12 minutes have elapsed."
+            "value" : "This test estimates your aerobic fitness (VO2 max) by tracking how far you run in 12 minutes on a flat surface. (For reference ranges see [here](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Warm-up:** Before beginning the test, perform about 10 minutes of light jogging to loosen your muscles and avoid injury. Catch your breath before proceeding.\n\n**How to:** Find a flat, obstacle-free path or running track. Wear comfortable running shoes. When you are ready, tap \"Start\" and run as fast as you possibly can to cover maximum distance until your phone vibrates. Keep your phone in your hand until it vibrates."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Prueba de Carrera de 12 Minutos mide tu aptitud cardiovascular al registrar cuán lejos puedes correr o trotar en 12 minutos. Esta simple prueba de resistencia ayuda a evaluar tu nivel de condición aeróbica y puede usarse para monitorear el progreso a lo largo del tiempo. Esta prueba es mejor para personas que ya tienen experiencia corriendo.\n\nPara realizar la prueba, encuentra un área plana donde puedas correr continuamente sin interrupciones. Usa zapatos para correr adecuados y ropa cómoda. Calienta durante 5-10 minutos con un trote ligero y estiramientos. Cuando estés listo/a, toca \"Iniciar\" en la aplicación y comienza a correr a un ritmo constante. Tu objetivo es recorrer la mayor distancia posible en los 12 minutos. Mantenga un paso constante - comenzar demasiado rápido podría ralentizarte más tarde. La aplicación te alertará cuando hayan pasado 12 minutos."
+            "value" : "Esta prueba estima su aptitud aeróbica (VO2 máx) al medir qué tan lejos corre en 12 minutos en una superficie plana. (Para rangos de referencia, consulte [aquí](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Calentamiento:** Antes de comenzar la prueba, realice unos 10 minutos de trote ligero para aflojar los músculos y evitar lesiones. Recupere el aliento antes de continuar.\n\n**Instrucciones:** Busque un camino plano y sin obstáculos o una pista de atletismo. Use tenis para correr (zapatillas deportivas). Cuando esté listo, toque “Iniciar” y corra lo más rápido que pueda para cubrir la mayor distancia posible hasta que su teléfono vibre. Mantenga el teléfono en la mano hasta que vibre."
           }
         }
       }
@@ -5898,19 +5898,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
+            "value" : "**Warning:** Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
+            "value" : "**Warning:** Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deténte inmediatamente si tienes dolor de pecho, dificultad respiratoria severa, mareos ó fatiga inusual."
+            "value" : "**Advertencia:** Deténgase de inmediato si presenta dolor en el pecho, falta de aire intensa, mareo o fatiga inusual."
           }
         }
       }
