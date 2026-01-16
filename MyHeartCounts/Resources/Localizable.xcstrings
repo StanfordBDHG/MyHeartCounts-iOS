@@ -1029,9 +1029,6 @@
         }
       }
     },
-    "Are you sure you want to withdraw from the My Heart Counts study?\nYou can re-enroll in the future if you choose." : {
-
-    },
     "Are you using a shared Apple ID?" : {
       "localizations" : {
         "es" : {
@@ -6345,12 +6342,6 @@
           }
         }
       }
-    },
-    "Withdraw" : {
-
-    },
-    "Withdraw from Study" : {
-
     },
     "Workout Preference" : {
       "localizations" : {

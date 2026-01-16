@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/Spezi.git",
       "state" : {
-        "branch" : "lukas/inferred-isolated-conformances",
-        "revision" : "757682993116588efeadc49cebc6b506334a2bc5"
+        "revision" : "9786fa758e1f8f43532d7b76f43a5286d12a731f",
+        "version" : "1.10.1"
       }
     },
     {
@@ -213,7 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziAccount.git",
       "state" : {
-        "revision" : "221e94e587bb7334c64408e8f2eb67c93f0cfc9f"
+        "revision" : "e6da5e4ebf9ec2f36cb6e4f04da0853632e752c3",
+        "version" : "2.3.6"
       }
     },
     {

@@ -1282,8 +1282,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
 			requirement = {
-				branch = "lukas/inferred-isolated-conformances";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.10.1;
 			};
 		};
 		2F66D20D2BB723180010D555 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
@@ -1386,8 +1386,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
-				kind = revision;
-				revision = 221e94e587bb7334c64408e8f2eb67c93f0cfc9f;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.6;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
