@@ -40,6 +40,102 @@
         }
       }
     },
+    "%@ – %@ (Normal weight)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Normal weight)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (peso normal)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Obesity class I)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Obesity class I)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Obesidad clase I)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Obesity class II)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Obesity class II)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Obesidad clase II)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Overweight / At risk)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Overweight / At risk)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Sobrepeso / En riesgo)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Overweight)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Overweight)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Sobrepeso)"
+          }
+        }
+      }
+    },
+    "%@ – %@ (Underweight)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@ (Underweight)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (bajo peso)"
+          }
+        }
+      }
+    },
     "%@ (%lld)" : {
       "localizations" : {
         "en" : {
@@ -154,6 +250,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld missed task in the past 2 weeks"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld missed tasks in the past 2 weeks"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -200,47 +314,82 @@
     "< %@" : {
 
     },
-    "< 7" : {
-
-    },
-    "< 85" : {
-
-    },
-    "< 130" : {
-
-    },
-    "<16 (Severely underweight)" : {
+    "< %@ (Severely underweight)" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "<16 (delgadez severa)"
+            "value" : "< %@ (delgadez severa)"
+          }
+        }
+      }
+    },
+    "< 7" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< 7"
+          }
+        }
+      }
+    },
+    "< 85" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< 85"
+          }
+        }
+      }
+    },
+    "< 130" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< 130"
           }
         }
       }
     },
     "<120 / <80" : {
-
-    },
-    "> 140" : {
-
-    },
-    "≥30 (Obesity class II)" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "≥30 (obesidad clase II)"
+            "value" : "<120 / <80"
           }
         }
       }
     },
-    "≥40 (Obesity class III)" : {
+    "> 140" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "≥40 (Obesidad clase III)"
+            "value" : "> 140"
+          }
+        }
+      }
+    },
+    "≥ %@ (Obesity class II)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≥ %@ (Obesidad clase II)"
+          }
+        }
+      }
+    },
+    "≥ %@ (Obesity class III)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≥ %@ (Obesidad clase III)"
           }
         }
       }
@@ -396,7 +545,14 @@
       }
     },
     "1 – 29" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 – 29"
+          }
+        }
+      }
     },
     "4 to 5 hours" : {
       "localizations" : {
@@ -409,7 +565,14 @@
       }
     },
     "5 – 7" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 – 7"
+          }
+        }
+      }
     },
     "5 to 6 hours" : {
       "localizations" : {
@@ -442,7 +605,14 @@
       }
     },
     "8 – 10" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8 – 10"
+          }
+        }
+      }
     },
     "9 to 10 hours" : {
       "localizations" : {
@@ -465,7 +635,14 @@
       }
     },
     "11 – 13" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "11 – 13"
+          }
+        }
+      }
     },
     "12-Minute Run Test (Cooper Test)" : {
       "localizations" : {
@@ -478,57 +655,26 @@
       }
     },
     "14 – 16" : {
-
-    },
-    "16 – 18.4 (Underweight)" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "16 – 18.4 (bajo peso)"
+            "value" : "14 – 16"
           }
         }
       }
     },
     "17 – 21" : {
-
-    },
-    "18.5 – 22.9 (Normal weight)" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "18.5 – 22.9 (peso normal)"
+            "value" : "17 – 21"
           }
         }
       }
-    },
-    "18.5 – 24.9 (Normal weight)" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "18.5 – 24.9 (peso normal)"
-          }
-        }
-      }
-    },
-    "23 – 24.9 (Overweight / At risk)" : {
-
-    },
-    "25 – 29.9 (Obesity class I)" : {
-
-    },
-    "25 – 29.9 (Overweight)" : {
-
-    },
-    "30 – 34.9 (Obesity class I)" : {
-
     },
     "30 – 59" : {
-
-    },
-    "35 – 39.9 (Obesity class II)" : {
 
     },
     "60 – 89" : {
@@ -576,7 +722,7 @@
     "190 – 219" : {
 
     },
-    "220 +" : {
+    "220+" : {
 
     },
     "Abdominal Aortic Aneurysm" : {
@@ -727,7 +873,14 @@
       }
     },
     "Adult Congenital Heart Disease (ACHD), Single Ventricle (Fontan) or Systemic Right Ventricle (Mustard, Senning, congenitally corrected transposition of the great arteries)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enfermedad cardíaca congénita del adulto (ACHD), ventrículo único (Fontan) o ventrículo derecho sistémico (Mustard, Senning, transposición congénitamente corregida de las grandes arterias)"
+          }
+        }
+      }
     },
     "Age" : {
       "localizations" : {
@@ -1245,7 +1398,14 @@
       }
     },
     "Congenital Heart Disease OTHER than Single Ventricle or Systemic Right Ventricle" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enfermedad cardíaca congénita DISTINTA de ventrículo único o de ventrículo derecho sistémico"
+          }
+        }
+      }
     },
     "Connecticut" : {
       "localizations" : {
@@ -1478,7 +1638,14 @@
       }
     },
     "Dilated Cardiomyopathy (DCM)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miocardiopatía Dilatada "
+          }
+        }
+      }
     },
     "Disabled" : {
       "localizations" : {
@@ -2622,7 +2789,14 @@
       }
     },
     "Hypertrophic Cardiomyopathy (HCM)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miocardiopatía Hipertrófica"
+          }
+        }
+      }
     },
     "I don't have this comorbidity" : {
       "localizations" : {
@@ -2840,6 +3014,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld days"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -2868,6 +3060,24 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
+                  "value" : "Last %lld month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld months"
+                }
+              }
+            }
+          }
+        },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
                   "value" : "Last %lld month"
                 }
               },
@@ -2920,6 +3130,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld weeks"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -2948,6 +3176,24 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
+                  "value" : "Last %lld year"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Last %lld years"
+                }
+              }
+            }
+          }
+        },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
                   "value" : "Last %lld year"
                 }
               },
@@ -4778,7 +5024,14 @@
       }
     },
     "Review Permissions" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisar Permisos"
+          }
+        }
+      }
     },
     "Rheumatoid arthritis" : {
       "localizations" : {
@@ -5126,7 +5379,14 @@
       }
     },
     "Stage 3, 4 or 5" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etapa 3, 4 o 5"
+          }
+        }
+      }
     },
     "Stage of Change" : {
       "localizations" : {
@@ -5594,19 +5854,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance."
+            "value" : "This test measures your exercise capacity by tracking how far you walk in 6 minutes on a flat surface. (For reference ranges see [here](https://mhc-6mwts.streamlit.app).)\n\n**How to:** Find a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance. Keep your phone in your hand until it vibrates."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This test measures your functional exercise capacity by tracking how far you walk in 6 minutes on a flat surface.\n\nFind a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance."
+            "value" : "This test measures your exercise capacity by tracking how far you walk in 6 minutes on a flat surface. (For reference ranges see [here](https://mhc-6mwts.streamlit.app).)\n\n**How to:** Find a flat, obstacle-free path. Wear comfortable shoes. Tap \"Start\" and walk at a steady, comfortably challenging pace to cover maximum distance. Keep your phone in your hand until it vibrates."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta prueba mide tu capacidad funcional de ejercicio al registrar qué tan lejos caminas en 6 minutos sobre una superficie plana.\n\nBusca una superfície plana y sin obstáculos. Usa zapatos cómodos. Toca “Iniciar” y camina a un ritmo constante y moderadamente desafiante y cubre la mayor distancia posible."
+            "value" : "Esta prueba mide su capacidad funcional de ejercicio al registrar la distancia que recorre caminando en 6 minutos sobre una superficie plana. (Para rangos de referencia, consulte [aquí](https://mhc-6mwts.streamlit.app).)\n\n**Cómo hacerlo:** Busque un trayecto plano y libre de obstáculos. Use calzado cómodo. Toque \"Iniciar\" y camine a un ritmo constante que le resulte cómodamente desafiante para cubrir la mayor distancia posible. Mantenga su teléfono en la mano hasta que vibre."
           }
         }
       }
@@ -5616,19 +5876,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The 12-Minute Run Test measures your cardiovascular fitness by tracking how far you can run or jog in 12 minutes. This simple endurance test helps assess your aerobic fitness level and can be used to monitor progress over time. This test is best for people who already have some running experience.\n\nTo perform the test, find a flat area where you can run continuously without interruption. Wear appropriate running shoes and comfortable clothing. Warm up for 5-10 minutes with light jogging and stretching. When ready, tap \"Start\" on the app and begin running at a steady pace. Your goal is to cover as much distance as possible in the 12 minutes. Pace yourself - starting too fast might force you to slow down later. The app will alert you when 12 minutes have elapsed."
+            "value" : "This test estimates your aerobic fitness (VO2 max) by tracking how far you run in 12 minutes on a flat surface. (For reference ranges see [here](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Warm-up:** Before beginning the test, perform about 10 minutes of light jogging to loosen your muscles and avoid injury. Catch your breath before proceeding.\n\n**How to:** Find a flat, obstacle-free path or running track. Wear comfortable running shoes. When you are ready, tap \"Start\" and run as fast as you possibly can to cover maximum distance until your phone vibrates. Keep your phone in your hand until it vibrates."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The 12-Minute Run Test measures your cardiovascular fitness by tracking how far you can run or jog in 12 minutes. This simple endurance test helps assess your aerobic fitness level and can be used to monitor progress over time. This test is best for people who already have some running experience.\n\nTo perform the test, find a flat area where you can run continuously without interruption. Wear appropriate running shoes and comfortable clothing. Warm up for 5-10 minutes with light jogging and stretching. When ready, tap \"Start\" on the app and begin running at a steady pace. Your goal is to cover as much distance as possible in the 12 minutes. Pace yourself - starting too fast might force you to slow down later. The app will alert you when 12 minutes have elapsed."
+            "value" : "This test estimates your aerobic fitness (VO2 max) by tracking how far you run in 12 minutes on a flat surface. (For reference ranges see [here](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Warm-up:** Before beginning the test, perform about 10 minutes of light jogging to loosen your muscles and avoid injury. Catch your breath before proceeding.\n\n**How to:** Find a flat, obstacle-free path or running track. Wear comfortable running shoes. When you are ready, tap \"Start\" and run as fast as you possibly can to cover maximum distance until your phone vibrates. Keep your phone in your hand until it vibrates."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Prueba de Carrera de 12 Minutos mide tu aptitud cardiovascular al registrar cuán lejos puedes correr o trotar en 12 minutos. Esta simple prueba de resistencia ayuda a evaluar tu nivel de condición aeróbica y puede usarse para monitorear el progreso a lo largo del tiempo. Esta prueba es mejor para personas que ya tienen experiencia corriendo.\n\nPara realizar la prueba, encuentra un área plana donde puedas correr continuamente sin interrupciones. Usa zapatos para correr adecuados y ropa cómoda. Calienta durante 5-10 minutos con un trote ligero y estiramientos. Cuando estés listo/a, toca \"Iniciar\" en la aplicación y comienza a correr a un ritmo constante. Tu objetivo es recorrer la mayor distancia posible en los 12 minutos. Mantenga un paso constante - comenzar demasiado rápido podría ralentizarte más tarde. La aplicación te alertará cuando hayan pasado 12 minutos."
+            "value" : "Esta prueba estima su aptitud aeróbica (VO2 máx) al medir qué tan lejos corre en 12 minutos en una superficie plana. (Para rangos de referencia, consulte [aquí](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Calentamiento:** Antes de comenzar la prueba, realice unos 10 minutos de trote ligero para aflojar los músculos y evitar lesiones. Recupere el aliento antes de continuar.\n\n**Instrucciones:** Busque un camino plano y sin obstáculos o una pista de atletismo. Use tenis para correr (zapatillas deportivas). Cuando esté listo, toque “Iniciar” y corra lo más rápido que pueda para cubrir la mayor distancia posible hasta que su teléfono vibre. Mantenga el teléfono en la mano hasta que vibre."
           }
         }
       }
@@ -5638,19 +5898,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
+            "value" : "**Warning:** Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
+            "value" : "**Warning:** Stop immediately if you experience chest pain, severe shortness of breath, dizziness, or unusual fatigue."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deténte inmediatamente si tienes dolor de pecho, dificultad respiratoria severa, mareos ó fatiga inusual."
+            "value" : "**Advertencia:** Deténgase de inmediato si presenta dolor en el pecho, falta de aire intensa, mareo o fatiga inusual."
           }
         }
       }

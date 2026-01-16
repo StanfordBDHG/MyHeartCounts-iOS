@@ -34,16 +34,14 @@ struct AccountSheet: View {
     
     @AccountFeatureFlagQuery(.isDebugModeEnabled)
     private var debugModeEnabled
+    
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {
         NavigationStack {
             ZStack {
                 if account.signedIn && !isInSetup {
-                    AccountOverview(
-                        close: .showCloseButton,
-                        deletion: .inEditMode(.custom(deleteAccount))
-                    ) {
+                    AccountOverview(close: .showCloseButton, deletion: .disabled) {
                         accountSheetExtraContent
                     }
                 } else {
@@ -194,17 +192,5 @@ struct AccountSheet: View {
             Text("Study not available")
                 .foregroundStyle(.secondary)
         }
-    }
-    
-    private func deleteAccount() async throws {
-        guard let accountId = account.details?.accountId else {
-            throw NSError(domain: "edu.stanford.MyHeartCounts", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "Unable to delete account"
-            ])
-        }
-        _ = try await Functions.functions()
-            .httpsCallable("markAccountForDeletion")
-            .call(["userId": accountId])
-        try await account.accountService.logout()
     }
 }

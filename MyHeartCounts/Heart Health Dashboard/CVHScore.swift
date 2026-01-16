@@ -341,31 +341,37 @@ extension ScoreDefinition {
         .inRange(4..<5, score: 0.2, explainer: "4 to 5 hours")
     ])
     
-    static let cvhBMI = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<16, score: 0.4, explainer: "<16 (Severely underweight)"),
-        .inRange(16..<18.5, score: 0.6, explainer: "16 – 18.4 (Underweight)"),
-        .inRange(18.5..<25, score: 1, explainer: "18.5 – 24.9 (Normal weight)"),
-        .inRange(25..<30, score: 0.7, explainer: "25 – 29.9 (Overweight)"),
-        .inRange(30..<35, score: 0.5, explainer: "30 – 34.9 (Obesity class I)"),
-        .inRange(35..<40, score: 0.3, explainer: "35 – 39.9 (Obesity class II)"),
-        .inRange(40..., score: 0.1, explainer: "≥40 (Obesity class III)")
-    ])
+    static let cvhBMI: ScoreDefinition = {
+        let fmt = { ($0 as Double).formatted(.number.precision(.fractionLength(0...1))) }
+        return ScoreDefinition(default: 0, scoringBands: [
+            .inRange(..<16, score: 0.4, explainer: "< \(fmt(16)) (Severely underweight)"),
+            .inRange(16..<18.5, score: 0.6, explainer: "\(fmt(16)) – \(fmt(18.4)) (Underweight)"),
+            .inRange(18.5..<25, score: 1, explainer: "\(fmt(18.5)) – \(fmt(24.9)) (Normal weight)"),
+            .inRange(25..<30, score: 0.7, explainer: "\(fmt(25)) – \(fmt(29.9)) (Overweight)"),
+            .inRange(30..<35, score: 0.5, explainer: "\(fmt(30)) – \(fmt(34.9)) (Obesity class I)"),
+            .inRange(35..<40, score: 0.3, explainer: "\(fmt(35)) – \(fmt(39.9)) (Obesity class II)"),
+            .inRange(40..., score: 0.1, explainer: "≥ \(fmt(40)) (Obesity class III)")
+        ])
+    }()
     
-    static let cvhBMIAsian = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<16, score: 0.4, explainer: "<16 (Severely underweight)"),
-        .inRange(16..<18.5, score: 0.6, explainer: "16 – 18.4 (Underweight)"),
-        .inRange(18.5..<23, score: 1, explainer: "18.5 – 22.9 (Normal weight)"),
-        .inRange(23..<25, score: 0.75, explainer: "23 – 24.9 (Overweight / At risk)"),
-        .inRange(25..<30, score: 0.5, explainer: "25 – 29.9 (Obesity class I)"),
-        .inRange(30..., score: 0.2, explainer: "≥30 (Obesity class II)")
-    ])
+    static let cvhBMIAsian: ScoreDefinition = {
+        let fmt = { ($0 as Double).formatted(.number.precision(.fractionLength(0...1))) }
+        return ScoreDefinition(default: 0, scoringBands: [
+            .inRange(..<16, score: 0.4, explainer: "< \(fmt(16)) (Severely underweight)"),
+            .inRange(16..<18.5, score: 0.6, explainer: "\(fmt(16)) – \(fmt(18.4)) (Underweight)"),
+            .inRange(18.5..<23, score: 1, explainer: "\(fmt(18.5)) – \(fmt(22.9)) (Normal weight)"),
+            .inRange(23..<25, score: 0.75, explainer: "\(fmt(23)) – \(fmt(24.9)) (Overweight / At risk)"),
+            .inRange(25..<30, score: 0.5, explainer: "\(fmt(25)) – \(fmt(29.9)) (Obesity class I)"),
+            .inRange(30..., score: 0.2, explainer: "≥ \(fmt(30)) (Obesity class II)")
+        ])
+    }()
     
     static let cvhBloodLipids = ScoreDefinition(default: 0, scoringBands: [
         .inRange(..<130, score: 1, explainer: "< 130"),
         .inRange(130..<160, score: 0.6, explainer: "130 – 159"),
         .inRange(160..<190, score: 0.4, explainer: "160 – 189"),
         .inRange(190..<220, score: 0.2, explainer: "190 – 219"),
-        .inRange(220..., score: 0, explainer: "220 +")
+        .inRange(220..., score: 0, explainer: "220+")
     ])
     
     static let cvhBloodGlucose = ScoreDefinition(default: 0, scoringBands: [

@@ -69,14 +69,14 @@ private struct TimedWalkingTestView: View {
     }
     
     private var testName: LocalizedStringResource {
-        let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
-        return switch test.kind {
-        case .walking:
-            "\(durationInMinutes)-Minute Walk Test"
-        case .running:
-            if test == .twelveMinuteRunTest {
-                "12-Minute Run Test (Cooper Test)"
-            } else {
+        if test == .twelveMinuteRunTest {
+            return "12-Minute Run Test (Cooper Test)"
+        } else {
+            let durationInMinutes = (test.duration.totalSeconds / 60).formatted(.number.precision(.fractionLength(0...1)))
+            return switch test.kind {
+            case .walking:
+                "\(durationInMinutes)-Minute Walk Test"
+            case .running:
                 "\(durationInMinutes)-Minute Run Test"
             }
         }

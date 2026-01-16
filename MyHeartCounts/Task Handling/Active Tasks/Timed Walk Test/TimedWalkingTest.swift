@@ -40,7 +40,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     
     @Observable
     @MainActor
-    final class ActiveSession: Hashable, Identifiable, Sendable {
+    final class ActiveSession: nonisolated Hashable, nonisolated Identifiable, Sendable {
         let isRecoveredTest: Bool
         private(set) var inProgressResult: TimedWalkingTestResult
         /// The `Task` that waits for the session's duration to pass, and then ends the session

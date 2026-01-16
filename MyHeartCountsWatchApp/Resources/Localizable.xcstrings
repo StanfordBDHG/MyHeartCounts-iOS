@@ -32,7 +32,14 @@
       }
     },
     "Test Ongoing" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba en curso"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
