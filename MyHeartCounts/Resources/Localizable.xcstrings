@@ -185,6 +185,16 @@
         }
       }
     },
+    "%@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
+    },
     "%@: %@" : {
       "localizations" : {
         "en" : {
@@ -1507,12 +1517,12 @@
         }
       }
     },
-    "Daily Average, Last 7 Days" : {
+    "Daily Average" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Promedio diario, últimos 7 días"
+            "value" : "Promedio diario"
           }
         }
       }
@@ -3002,7 +3012,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Last %lld day"
+                  "value" : "Last day"
                 }
               },
               "other" : {
@@ -3019,8 +3029,8 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld day"
+                  "state" : "translated",
+                  "value" : "Last day"
                 }
               },
               "other" : {
@@ -3037,20 +3047,23 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld day"
+                  "state" : "translated",
+                  "value" : "Último día"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld days"
+                  "state" : "translated",
+                  "value" : "Últimos %lld días"
                 }
               }
             }
           }
         }
       }
+    },
+    "Last %lld Days" : {
+
     },
     "Last %lld months" : {
       "localizations" : {
@@ -3060,7 +3073,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Last %lld month"
+                  "value" : "Last month"
                 }
               },
               "other" : {
@@ -3077,8 +3090,8 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld month"
+                  "state" : "translated",
+                  "value" : "Last month"
                 }
               },
               "other" : {
@@ -3095,14 +3108,14 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld month"
+                  "state" : "translated",
+                  "value" : "Último mes"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld months"
+                  "state" : "translated",
+                  "value" : "Últimos %lld meses"
                 }
               }
             }
@@ -3118,7 +3131,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Last %lld week"
+                  "value" : "Last week"
                 }
               },
               "other" : {
@@ -3135,8 +3148,8 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld week"
+                  "state" : "translated",
+                  "value" : "Last week"
                 }
               },
               "other" : {
@@ -3153,14 +3166,14 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld week"
+                  "state" : "translated",
+                  "value" : "Última semana"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld weeks"
+                  "state" : "translated",
+                  "value" : "Últimos %lld semanas"
                 }
               }
             }
@@ -3176,7 +3189,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Last %lld year"
+                  "value" : "Last year"
                 }
               },
               "other" : {
@@ -3193,8 +3206,8 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld year"
+                  "state" : "translated",
+                  "value" : "Last year"
                 }
               },
               "other" : {
@@ -3211,27 +3224,17 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld year"
+                  "state" : "translated",
+                  "value" : "Último año"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Last %lld years"
+                  "state" : "translated",
+                  "value" : "Últimos %lld años"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "Last 7 Days" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Últimos 7 días"
           }
         }
       }
@@ -3696,6 +3699,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Siguiente"
+          }
+        }
+      }
+    },
+    "Next %lld Days" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next Day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Next %lld Days"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Siguiente día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Próximos %lld días"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Next %lld Months" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next Month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Next %lld Months"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Próximo mes"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Próximos %lld meses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Next %lld Weeks" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next Week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Next %lld Weeks"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Próxima semana"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Próximas %lld semanas"
+                }
+              }
+            }
           }
         }
       }

@@ -125,7 +125,7 @@ extension CVHScore {
     
     var physicalExerciseScore: ScoreResult {
         ScoreResult(
-            "Last 7 Days",
+            "Last \(7) Days",
             sampleType: .healthKit(.quantity(.appleExerciseTime)),
             sample: weeklyExerciseTime.last,
             value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
@@ -134,8 +134,10 @@ extension CVHScore {
     }
     
     var stepCountScore: ScoreResult {
-        ScoreResult(
-            "Daily Average, Last 7 Days",
+        let avgText: LocalizedStringResource = "Daily Average"
+        let timeRangeText: LocalizedStringResource = "Last \(7) Days"
+        return ScoreResult(
+            "\(avgText), \(timeRangeText)",
             sampleType: .healthKit(.quantity(.stepCount)),
             timeRange: $dailyStepCount.timeRange.range,
             input: dailyStepCount,
