@@ -14,7 +14,7 @@ import SpeziFoundation
 extension WorkoutPreferenceSetting {
     struct WorkoutType: Hashable, Identifiable, Sendable {
         let id: String
-        let title: String
+        let title: LocalizedStringResource
         let symbol: SFSymbol
     }
     

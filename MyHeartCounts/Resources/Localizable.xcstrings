@@ -1517,6 +1517,16 @@
         }
       }
     },
+    "Cycling" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciclismo"
+          }
+        }
+      }
+    },
     "Daily Average" : {
       "localizations" : {
         "es" : {
@@ -2764,6 +2774,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Educación secundaria"
+          }
+        }
+      }
+    },
+    "High-intensity Training" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrenamiento de alta intensidad"
           }
         }
       }
@@ -4433,6 +4453,16 @@
         }
       }
     },
+    "Other" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro"
+          }
+        }
+      }
+    },
     "Other auto-immune disease" : {
       "localizations" : {
         "es" : {
@@ -5179,6 +5209,16 @@
     "run" : {
 
     },
+    "Running" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correr"
+          }
+        }
+      }
+    },
     "Sample Type" : {
       "localizations" : {
         "es" : {
@@ -5490,6 +5530,16 @@
         }
       }
     },
+    "Sport" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deporte"
+          }
+        }
+      }
+    },
     "stage 3, 4 or 5" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -5762,6 +5812,16 @@
         }
       }
     },
+    "Strength" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuerza"
+          }
+        }
+      }
+    },
     "Stroke" : {
       "localizations" : {
         "es" : {
@@ -5798,6 +5858,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Éxito"
+          }
+        }
+      }
+    },
+    "Swimming" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Natación"
           }
         }
       }
@@ -6298,6 +6368,16 @@
         }
       }
     },
+    "Walking" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caminata"
+          }
+        }
+      }
+    },
     "Warning Sign" : {
       "localizations" : {
         "es" : {
@@ -6584,6 +6664,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayer"
+          }
+        }
+      }
+    },
+    "Yoga / Pilates" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yoga / Pilates"
           }
         }
       }
