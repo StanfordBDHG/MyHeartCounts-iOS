@@ -73,7 +73,7 @@ extension QuantitySample: HealthObservation {
                 unit: "mg/dL".asFHIRStringPrimitive(),
                 value: value.asFHIRDecimalPrimitive()
             ))
-        case .custom(.nicotineExposure), .custom(.dietMEPAScore):
+        case .custom(.nicotineExposure), .custom(.dietMEPAScore), .custom(.mentalWellbeingScore):
             let code = sampleType.id.asFHIRStringPrimitive()
             observation.appendCoding(Coding(
                 code: code,

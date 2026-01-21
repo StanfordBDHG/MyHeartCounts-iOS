@@ -1,5 +1,5 @@
 {
-  "originHash" : "79e9cc6618be844984226719209da36c10c76eddfbd1dce41dfaae7f56abc7c4",
+  "originHash" : "ee18dd01c3a9d677b979b93a33b1e2ae09012e9da2e9451a916930217758aed5",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "28ee7ba2ead5986ad0597b47b88695e0de536a03",
-        "version" : "0.1.12"
+        "revision" : "b184d8c8d20bc275319dc14db0bd52ed43090a5c",
+        "version" : "0.1.13"
       }
     },
     {
