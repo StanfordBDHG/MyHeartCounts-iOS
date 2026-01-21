@@ -112,7 +112,7 @@ struct PerformTask: DynamicProperty {
         // see if we can find a scheduled event with the same action, and mark it as complete if possible.
         let eventQueryTimeRange: Range<Date> = {
             let start = cal.startOfDay(for: .now)
-            guard let end = cal.date(byAdding: .weekOfYear, value: 1, to: start) else {
+            guard let end = cal.date(byAdding: .weekOfYear, value: 2, to: start) else {
                 fatalError("Unable to compute date")
             }
             return start..<end
