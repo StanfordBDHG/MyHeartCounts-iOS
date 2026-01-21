@@ -37,7 +37,7 @@ jobs:
       resultBundle: MyHeartCountsShared-UnitTests.xcresult
       artifactname: MyHeartCountsShared-UnitTests.xcresult
   mhc_ui_tests:
-    name: Build and Test (UI Tests)
+    name: Build and Test (App UI Tests)
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     permissions:
       contents: read
@@ -58,6 +58,6 @@ jobs:
     permissions:
       contents: read
     with:
-      coveragereports: MyHeartCounts-UnitTests.xcresult MyHeartCounts-UITests.xcresult
+      coveragereports: MyHeartCounts-UnitTests.xcresult MyHeartCounts-UITests.xcresult MyHeartCountsShared-UnitTests.xcresult
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}
