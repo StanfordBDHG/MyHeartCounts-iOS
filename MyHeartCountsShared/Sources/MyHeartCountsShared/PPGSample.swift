@@ -159,7 +159,13 @@ extension PPGSample {
         public let z: Double // swiftlint:disable:this identifier_name
         
         @inlinable
-        public init(nanosecondsSinceStart: Int64, samplingFrequency: Double, x: Double, y: Double, z: Double) { // swiftlint:disable:this identifier_name line_length
+        public init(
+            nanosecondsSinceStart: Int64,
+            samplingFrequency: Double,
+            x: Double, // swiftlint:disable:this identifier_name
+            y: Double, // swiftlint:disable:this identifier_name
+            z: Double // swiftlint:disable:this identifier_name
+        ) { // swiftlint:disable:this identifier_name
             self.nanosecondsSinceStart = nanosecondsSinceStart
             self.samplingFrequency = samplingFrequency
             self.x = x
