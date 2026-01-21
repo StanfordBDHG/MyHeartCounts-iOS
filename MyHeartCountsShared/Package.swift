@@ -69,6 +69,10 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
             swiftSettings: commonSwiftSettings
+        ),
+        .testTarget(
+            name: "MyHeartCountsSharedTests",
+            dependencies: ["MyHeartCountsShared"]
         )
     ]
 )
