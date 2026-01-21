@@ -7,7 +7,10 @@
 //
 
 public import Foundation
+public import NIOFoundationCompat
 
+
+// MARK: Basic Types
 
 extension Bool: BinaryCodable {
     @inlinable
@@ -86,42 +89,17 @@ extension Double: BinaryCodable {
 }
 
 
-// MARK: Collections
-
-public protocol BinaryEncodableCollection: Collection, BinaryEncodable where Element: BinaryEncodable {}
-
-extension BinaryEncodableCollection {
-    @inlinable
-    public func binaryEncode(to encoder: BinaryEncoder) throws {
-        encoder.encodeVarInt(self.count)
-        for element in self {
-            try encoder.encode(element)
-        }
-    }
-}
-
-public protocol BinaryDecodableCollection: Collection, BinaryDecodable where Element: BinaryDecodable {
-    init(_ elements: [Element])
-}
-
-extension BinaryDecodableCollection {
+extension Date: BinaryCodable {
     @inlinable
     public init(fromBinary decoder: BinaryDecoder) throws {
-        let count = try decoder.decodeVarInt(Int.self)
-        var elements: [Element] = []
-        elements.reserveCapacity(count)
-        for _ in 0..<count {
-            elements.append(try decoder.decode(Element.self))
-        }
-        self.init(elements)
+        self.init(timeIntervalSince1970: try decoder.decode(TimeInterval.self))
+    }
+    
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
+        try encoder.encode(timeIntervalSince1970)
     }
 }
-
-public typealias BinaryCodableCollection = BinaryEncodableCollection & BinaryDecodableCollection
-
-
-extension Array: BinaryEncodable, BinaryEncodableCollection where Element: BinaryEncodable {}
-extension Array: BinaryDecodable, BinaryDecodableCollection where Element: BinaryDecodable {}
 
 
 extension String: BinaryCodable {
@@ -141,18 +119,57 @@ extension String: BinaryCodable {
 }
 
 
-extension Date: BinaryCodable {
+// MARK: Collections
+
+extension Array: BinaryEncodable where Element: BinaryEncodable {
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
+        try encoder.encodeLengthPrefixed(self)
+    }
+}
+
+extension Array: BinaryDecodable where Element: BinaryDecodable {
     @inlinable
     public init(fromBinary decoder: BinaryDecoder) throws {
-        self.init(timeIntervalSince1970: try decoder.decode(TimeInterval.self))
+        self = try decoder.decodeLengthPrefixed(Self.self)
+    }
+}
+
+
+extension Set: BinaryEncodable where Element: BinaryEncodable {
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
+        try encoder.encodeLengthPrefixed(self)
+    }
+}
+
+extension Set: BinaryDecodable where Element: BinaryDecodable {
+    public init(fromBinary decoder: BinaryDecoder) throws {
+        let length = try decoder.decodeVarInt(Int.self)
+        self.init()
+        self.reserveCapacity(length)
+        for _ in 0..<length {
+            self.insert(try decoder.decode(Element.self))
+        }
+    }
+}
+
+
+extension Data: BinaryCodable {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
+        let length = try decoder.decodeVarInt(Int.self)
+        self = try decoder.readRawBytes(length: length, byteTransferStrategy: .automatic)
     }
     
     @inlinable
     public func binaryEncode(to encoder: BinaryEncoder) throws {
-        try encoder.encode(timeIntervalSince1970)
+        encoder.encodeVarInt(self.count)
+        encoder.writeRawBytes(self)
     }
 }
 
+
+// MARK: Other
 
 extension Optional: BinaryDecodable where Wrapped: BinaryDecodable {
     @inlinable

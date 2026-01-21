@@ -11,6 +11,7 @@ public import SensorKit
 
 
 extension PPGSample {
+    /// Creates an instance from a SensorKit `SRPhotoplethysmogramSample` sample.
     @inlinable
     public init(_ sample: SRPhotoplethysmogramSample) {
         self.init(
@@ -26,6 +27,7 @@ extension PPGSample {
 
 
 extension PPGSample.Usage {
+    /// Creates an instance from a SensorKit `SRPhotoplethysmogramSample.Usage` value.
     @inlinable
     public init(_ other: SRPhotoplethysmogramSample.Usage) {
         self.init(rawValue: other.rawValue)
@@ -34,11 +36,12 @@ extension PPGSample.Usage {
 
 
 extension PPGSample.OpticalSample {
+    /// Creates an instance from a SensorKit `SRPhotoplethysmogramOpticalSample`.
     @inlinable
     public init(_ other: SRPhotoplethysmogramOpticalSample) {
         self.init(
             emitter: other.emitter,
-            activePhotodiodeIndexes: other.activePhotodiodeIndexes,
+            activePhotodiodeIndexes: Set(other.activePhotodiodeIndexes),
             signalIdentifier: other.signalIdentifier,
             nominalWavelength: other.nominalWavelength.converted(to: .nanometers).value,
             effectiveWavelength: other.effectiveWavelength.converted(to: .nanometers).value,
@@ -53,6 +56,7 @@ extension PPGSample.OpticalSample {
 
 
 extension PPGSample.OpticalSample.NoiseTerms {
+    /// Creates an instance from a SensorKit `SRPhotoplethysmogramOpticalSample.NoiseTerms` value.
     @inlinable
     public init(_ other: SRPhotoplethysmogramOpticalSample.NoiseTerms) {
         self.init(
@@ -66,6 +70,7 @@ extension PPGSample.OpticalSample.NoiseTerms {
 
 
 extension PPGSample.AccelerometerSample {
+    /// Creates an instance from a SensorKit `SRPhotoplethysmogramAccelerometerSample`.
     @inlinable
     public init(_ other: SRPhotoplethysmogramAccelerometerSample) {
         self.init(

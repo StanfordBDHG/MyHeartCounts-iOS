@@ -39,7 +39,7 @@ enum BinaryDecodingError: Swift.Error {
 
 
 public final class BinaryDecoder {
-    @usableFromInline var _buffer: ByteBuffer
+    @usableFromInline var _buffer: ByteBuffer // swiftlint:disable:this identifier_name
     
     @inlinable public var readableBytes: Int {
         _buffer.readableBytes
@@ -57,8 +57,17 @@ public final class BinaryDecoder {
     }
     
     @inlinable
-    public func decodeLengthPrefixed<C: BinaryDecodableCollection>(_ type: C.Type) throws -> C {
-        try type.init(fromBinary: self)
+    public func decodeLengthPrefixed<C: RangeReplaceableCollection>(
+        lengthType: (some FixedWidthInteger).Type = Int.self,
+        _ type: C.Type
+    ) throws -> C where C.Element: BinaryDecodable {
+        let length = try decodeVarInt(lengthType)
+        var result = C()
+        result.reserveCapacity(Int(length))
+        for _ in 0..<length {
+            result.append(try decode(C.Element.self))
+        }
+        return result
     }
     
     @inlinable
@@ -114,5 +123,13 @@ public final class BinaryDecoder {
     public func decodeVarInt<T: FixedWidthInteger>(_ type: T.Type) throws -> T {
         let u64Value = try decodeUInt64VarInt()
         return type.init(truncatingIfNeeded: u64Value)
+    }
+    
+    @inlinable
+    public func readRawBytes(length: Int, byteTransferStrategy: ByteBuffer.ByteTransferStrategy = .automatic) throws -> Data {
+        guard let data = _buffer.readData(length: length, byteTransferStrategy: byteTransferStrategy) else {
+            throw BinaryDecodingError.other("Unable to read raw bytes")
+        }
+        return data
     }
 }

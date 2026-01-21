@@ -54,7 +54,7 @@ extension PPGSample.OpticalSample: BinaryCodable {
     public init(fromBinary decoder: BinaryDecoder) throws {
         self.init(
             emitter: try decoder.decode(Int.self),
-            activePhotodiodeIndexes: IndexSet(try decoder.decode([Int].self)),
+            activePhotodiodeIndexes: try decoder.decode(Set<Int>.self),
             signalIdentifier: try decoder.decode(Int.self),
             nominalWavelength: try decoder.decode(Double.self),
             effectiveWavelength: try decoder.decode(Double.self),
@@ -68,7 +68,7 @@ extension PPGSample.OpticalSample: BinaryCodable {
     
     public func binaryEncode(to encoder: BinaryEncoder) throws {
         try encoder.encode(self.emitter)
-        try encoder.encode(Array(self.activePhotodiodeIndexes))
+        try encoder.encode(self.activePhotodiodeIndexes)
         try encoder.encode(self.signalIdentifier)
         try encoder.encode(self.nominalWavelength)
         try encoder.encode(self.effectiveWavelength)

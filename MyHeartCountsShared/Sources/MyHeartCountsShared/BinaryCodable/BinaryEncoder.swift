@@ -28,7 +28,7 @@ extension BinaryEncoder { // swiftlint:disable:this file_types_order
 
 
 public final class BinaryEncoder {
-    @usableFromInline var _buffer: ByteBuffer
+    @usableFromInline var _buffer: ByteBuffer // swiftlint:disable:this identifier_name
     
     @inlinable
     init(buffer: ByteBuffer = ByteBuffer()) {
@@ -76,6 +76,11 @@ public final class BinaryEncoder {
         }
     }
     
+    
+    @inlinable
+    public func writeRawBytes(_ bytes: some Sequence<UInt8>) {
+        try _buffer.writeBytes(bytes)
+    }
     
     @inlinable
     public func writeRawBytes(minimumWritableBytes: Int, _ block: (UnsafeMutableRawBufferPointer) -> Int) {

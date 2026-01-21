@@ -86,7 +86,7 @@ extension PPGSample {
         public let emitter: Int
         
         /// The set of photodiodes in use during the sample reading
-        public let activePhotodiodeIndexes: IndexSet
+        public let activePhotodiodeIndexes: Set<Int>
         
         /// Identifier to distinguish between different signals produced using the same photodiodes and emitters
         ///
@@ -120,7 +120,7 @@ extension PPGSample {
         @inlinable
         public init(
             emitter: Int,
-            activePhotodiodeIndexes: IndexSet,
+            activePhotodiodeIndexes: Set<Int>,
             signalIdentifier: Int,
             nominalWavelength: Double,
             effectiveWavelength: Double,
@@ -152,14 +152,14 @@ extension PPGSample {
         /// Sampling frequency of accelerometer data in Hz
         public let samplingFrequency: Double
         /// X-axis acceleration in G's
-        public let x: Double
+        public let x: Double // swiftlint:disable:this identifier_name
         /// Y-axis acceleration in G's
-        public let y: Double
+        public let y: Double // swiftlint:disable:this identifier_name
         /// Z-axis acceleration in G's
-        public let z: Double
+        public let z: Double // swiftlint:disable:this identifier_name
         
         @inlinable
-        public init(nanosecondsSinceStart: Int64, samplingFrequency: Double, x: Double, y: Double, z: Double) {
+        public init(nanosecondsSinceStart: Int64, samplingFrequency: Double, x: Double, y: Double, z: Double) { // swiftlint:disable:this identifier_name line_length
             self.nanosecondsSinceStart = nanosecondsSinceStart
             self.samplingFrequency = samplingFrequency
             self.x = x
