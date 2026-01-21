@@ -6,12 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import NIOCore
+public import Foundation
 
 
 extension Bool: BinaryCodable {
-    init(fromBinary decoder: BinaryDecoder) throws {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
         let byte = try decoder.decodeFullWidthInt(UInt8.self)
         switch byte {
         case 0:
@@ -23,18 +23,21 @@ extension Bool: BinaryCodable {
         }
     }
     
-    func binaryEncode(to encoder: BinaryEncoder) throws {
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         encoder.encodeFullWidthInt(self ? 1 : 0 as UInt8)
     }
 }
 
 
 extension FixedWidthInteger {
-    init(fromBinary decoder: BinaryDecoder) throws {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
         self = try decoder.decodeVarInt(Self.self)
     }
-
-    func binaryEncode(to encoder: BinaryEncoder) throws {
+    
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         encoder.encodeVarInt(self)
     }
 }
@@ -54,12 +57,14 @@ extension Int: BinaryCodable {}
 
 
 extension Float: BinaryCodable {
-    init(fromBinary decoder: BinaryDecoder) throws {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
         let bitPattern = try decoder.decodeFullWidthInt(UInt32.self)
         self = CFConvertFloatSwappedToHost(CFSwappedFloat32(v: bitPattern))
     }
     
-    func binaryEncode(to encoder: BinaryEncoder) throws {
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         let bitPattern: UInt32 = CFConvertFloatHostToSwapped(self).v
         encoder.encodeFullWidthInt(bitPattern)
     }
@@ -67,12 +72,14 @@ extension Float: BinaryCodable {
 
 
 extension Double: BinaryCodable {
-    init(fromBinary decoder: BinaryDecoder) throws {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
         let bitPattern = try decoder.decodeFullWidthInt(UInt64.self)
         self = CFConvertDoubleSwappedToHost(CFSwappedFloat64(v: bitPattern))
     }
     
-    func binaryEncode(to encoder: BinaryEncoder) throws {
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         let bitPattern: UInt64 = CFConvertDoubleHostToSwapped(self).v
         encoder.encodeFullWidthInt(bitPattern)
     }
@@ -81,10 +88,11 @@ extension Double: BinaryCodable {
 
 // MARK: Collections
 
-protocol BinaryEncodableCollection: Collection, BinaryEncodable where Element: BinaryEncodable {}
+public protocol BinaryEncodableCollection: Collection, BinaryEncodable where Element: BinaryEncodable {}
 
 extension BinaryEncodableCollection {
-    func binaryEncode(to encoder: BinaryEncoder) throws {
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         encoder.encodeVarInt(self.count)
         for element in self {
             try encoder.encode(element)
@@ -92,12 +100,13 @@ extension BinaryEncodableCollection {
     }
 }
 
-protocol BinaryDecodableCollection: Collection, BinaryDecodable where Element: BinaryDecodable {
+public protocol BinaryDecodableCollection: Collection, BinaryDecodable where Element: BinaryDecodable {
     init(_ elements: [Element])
 }
 
 extension BinaryDecodableCollection {
-    init(fromBinary decoder: BinaryDecoder) throws {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
         let count = try decoder.decodeVarInt(Int.self)
         var elements: [Element] = []
         elements.reserveCapacity(count)
@@ -108,7 +117,7 @@ extension BinaryDecodableCollection {
     }
 }
 
-typealias BinaryCodableCollection = BinaryEncodableCollection & BinaryDecodableCollection
+public typealias BinaryCodableCollection = BinaryEncodableCollection & BinaryDecodableCollection
 
 
 extension Array: BinaryEncodable, BinaryEncodableCollection where Element: BinaryEncodable {}
@@ -116,7 +125,8 @@ extension Array: BinaryDecodable, BinaryDecodableCollection where Element: Binar
 
 
 extension String: BinaryCodable {
-    init(fromBinary decoder: BinaryDecoder) throws {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
         let utf8 = try decoder.decode(Array<UTF8.CodeUnit>.self)
         guard let string = String(bytes: utf8, encoding: .utf8) else {
             throw BinaryDecodingError.other("Unable to decode as UTF-8 String")
@@ -124,14 +134,29 @@ extension String: BinaryCodable {
         self = string
     }
     
-    func binaryEncode(to encoder: BinaryEncoder) throws {
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         try encoder.encodeLengthPrefixed(self.utf8)
     }
 }
 
 
+extension Date: BinaryCodable {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
+        self.init(timeIntervalSince1970: try decoder.decode(TimeInterval.self))
+    }
+    
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
+        try encoder.encode(timeIntervalSince1970)
+    }
+}
+
+
 extension Optional: BinaryDecodable where Wrapped: BinaryDecodable {
-    init(fromBinary decoder: BinaryDecoder) throws {
+    @inlinable
+    public init(fromBinary decoder: BinaryDecoder) throws {
         switch try decoder.decode(Bool.self) {
         case false:
             self = .none
@@ -142,7 +167,8 @@ extension Optional: BinaryDecodable where Wrapped: BinaryDecodable {
 }
 
 extension Optional: BinaryEncodable where Wrapped: BinaryEncodable {
-    func binaryEncode(to encoder: BinaryEncoder) throws {
+    @inlinable
+    public func binaryEncode(to encoder: BinaryEncoder) throws {
         switch self {
         case .none:
             try encoder.encode(false)

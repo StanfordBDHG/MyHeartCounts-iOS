@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if canImport(WatchConnectivity)
+
 public import WatchConnectivity
 
 
@@ -47,3 +49,5 @@ extension WCSession {
         self.transferUserInfo(userInfo)
     }
 }
+
+#endif

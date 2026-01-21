@@ -9,6 +9,7 @@
 import Foundation
 import HealthKitOnFHIR
 import ModelsR4
+import MyHeartCountsShared
 import NIOCore
 import NIOFoundationCompat
 import SensorKit
@@ -31,7 +32,7 @@ extension SRPhotoplethysmogramSample {
                 // nothing to do if samples is empty...
                 return
             }
-            let buffer = try BinaryEncoder.encode((consume samples).lazy.map(\.sample))
+            let buffer = try BinaryEncoder.encode((consume samples).lazy.map { PPGSample($0.sample) })
             guard let data = buffer.getData(at: buffer.readerIndex, length: buffer.readableBytes, byteTransferStrategy: .noCopy) else {
                 // should probably be unreachable
                 assertionFailure("Failed to retrieve Data for encoded PPG samples")

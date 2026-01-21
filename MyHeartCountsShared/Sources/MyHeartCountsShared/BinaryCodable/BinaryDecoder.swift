@@ -6,11 +6,29 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import NIOCore
-import NIOFoundationCompat
+public import Foundation
+public import NIOCore
+public import NIOFoundationCompat
 
 
+extension BinaryDecoder { // swiftlint:disable:this file_types_order
+    /// Decodes an instance of `type` from `buffer`.
+    @inlinable
+    public static func decode<T: BinaryDecodable>(_ type: T.Type, from buffer: ByteBuffer) throws -> T {
+        let decoder = BinaryDecoder(buffer: buffer)
+        return try type.init(fromBinary: decoder)
+    }
+    
+    /// Decodes an instance of `type` from `data`.
+    @inlinable
+    public static func decode<T: BinaryDecodable>(_ type: T.Type, from data: some DataProtocol) throws -> T {
+        let buffer = ByteBuffer(bytes: data)
+        return try decode(type, from: buffer)
+    }
+}
+
+
+@usableFromInline
 enum BinaryDecodingError: Swift.Error {
     case noData
     case unableToDecodeVarInt(message: String)
@@ -20,37 +38,32 @@ enum BinaryDecodingError: Swift.Error {
 }
 
 
-final class BinaryDecoder {
-    private var buffer: ByteBuffer
+public final class BinaryDecoder {
+    @usableFromInline var _buffer: ByteBuffer
     
-    var readableBytes: Int { buffer.readableBytes }
+    @inlinable public var readableBytes: Int {
+        _buffer.readableBytes
+    }
     
+    @inlinable
     init(buffer: ByteBuffer) {
-        self.buffer = buffer
+        self._buffer = buffer
     }
     
     
-    static func decode<T: BinaryDecodable>(_ type: T.Type, from buffer: ByteBuffer) throws -> T {
-        let decoder = BinaryDecoder(buffer: buffer)
-        return try type.init(fromBinary: decoder)
-    }
-    
-    static func decode<T: BinaryDecodable>(_ type: T.Type, from data: some DataProtocol) throws -> T {
-        let buffer = ByteBuffer(bytes: data)
-        return try decode(type, from: buffer)
-    }
-    
-    
-    func decode<T: BinaryDecodable>(_ type: T.Type) throws -> T {
+    @inlinable
+    public func decode<T: BinaryDecodable>(_ type: T.Type) throws -> T {
         try type.init(fromBinary: self)
     }
     
-    func decodeLengthPrefixed<C: BinaryDecodableCollection>(_ type: C.Type) throws -> C {
+    @inlinable
+    public func decodeLengthPrefixed<C: BinaryDecodableCollection>(_ type: C.Type) throws -> C {
         try type.init(fromBinary: self)
     }
     
-    func decodeString(length: Int, encoding: String.Encoding = .utf8) throws -> String {
-        if let string = buffer.readString(length: length, encoding: encoding) {
+    @inlinable
+    public func decodeString(length: Int, encoding: String.Encoding = .utf8) throws -> String {
+        if let string = _buffer.readString(length: length, encoding: encoding) {
             return string
         } else {
             throw BinaryDecodingError.other("Unable to read string")
@@ -58,8 +71,9 @@ final class BinaryDecoder {
     }
     
     
-    func decodeFullWidthInt<T: FixedWidthInteger>(_: T.Type) throws -> T {
-        if let value = buffer.readInteger(endianness: .big, as: T.self) {
+    @inlinable
+    public func decodeFullWidthInt<T: FixedWidthInteger>(_: T.Type) throws -> T {
+        if let value = _buffer.readInteger(endianness: .big, as: T.self) {
             return value
         } else {
             throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Unable to read \(T.self)"))
@@ -69,18 +83,18 @@ final class BinaryDecoder {
     
     /// Reads the value at the current reader index as a VarInt
     /// - returns: the read number, or `nil` if we were unable to read a number (e.g. because there's no data left to be read)
-    func decodeUInt64VarInt() throws -> UInt64 {
-        guard buffer.readableBytes > 0 else {
+    public func decodeUInt64VarInt() throws -> UInt64 {
+        guard _buffer.readableBytes > 0 else {
             throw BinaryDecodingError.noData
         }
         var bytes: [UInt8] = [
             // SAFETY: We know there's at least one byte.
-            buffer.readInteger(endianness: .little, as: UInt8.self)! // swiftlint:disable:this force_unwrapping
+            _buffer.readInteger(endianness: .little, as: UInt8.self)! // swiftlint:disable:this force_unwrapping
         ]
         // SAFETY: we initialize the array with a single element, and then only ever append.
         while (bytes.last! & (1 << 7)) != 0 { // swiftlint:disable:this force_unwrapping
             // we have another byte to parse
-            guard let nextByte = buffer.readInteger(endianness: .little, as: UInt8.self) else {
+            guard let nextByte = _buffer.readInteger(endianness: .little, as: UInt8.self) else {
                 throw BinaryDecodingError.unableToDecodeVarInt(
                     message: "Unexpectedly found no byte to read (even though the VarInt's previous byte indicated that there's be one)"
                 )
@@ -96,7 +110,8 @@ final class BinaryDecoder {
     }
     
     
-    func decodeVarInt<T: FixedWidthInteger>(_ type: T.Type) throws -> T {
+    @inlinable
+    public func decodeVarInt<T: FixedWidthInteger>(_ type: T.Type) throws -> T {
         let u64Value = try decodeUInt64VarInt()
         return type.init(truncatingIfNeeded: u64Value)
     }
