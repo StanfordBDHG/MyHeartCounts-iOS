@@ -34,11 +34,13 @@ extension Bool: BinaryCodable {
 
 
 extension FixedWidthInteger {
+    /// Creates an instance of the type by decoding it as a VarInt.
     @inlinable
     public init(fromBinary decoder: BinaryDecoder) throws {
         self = try decoder.decodeVarInt(Self.self)
     }
     
+    /// Encodes the value as a VarInt.
     @inlinable
     public func binaryEncode(to encoder: BinaryEncoder) throws {
         encoder.encodeVarInt(self)

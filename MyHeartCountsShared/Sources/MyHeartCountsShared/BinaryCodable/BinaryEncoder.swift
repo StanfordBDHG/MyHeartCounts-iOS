@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable missing_docs
+
 import Foundation
 public import NIOCore
 
@@ -79,7 +81,7 @@ public final class BinaryEncoder {
     
     @inlinable
     public func writeRawBytes(_ bytes: some Sequence<UInt8>) {
-        try _buffer.writeBytes(bytes)
+        _buffer.writeBytes(bytes)
     }
     
     @inlinable
