@@ -98,7 +98,7 @@ private struct DebugFormImpl: View {
     
     private var answerQuestionnaireRow: some View {
         Menu {
-            let options = ["HeartRisk", "Diet", "NicotineExposure"]
+            let options = ["HeartRisk", "Diet", "NicotineExposure", "WHO5"]
             ForEach(options, id: \.self) { option in
                 Button(option) {
                     let fileRef = StudyBundle.FileReference(category: .questionnaire, filename: option, fileExtension: "json")
