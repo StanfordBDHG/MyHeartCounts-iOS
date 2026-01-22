@@ -1432,7 +1432,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziConsent.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.1.2;
+				minimumVersion = 0.1.3;
 			};
 		};
 		809AEC372EA2BC8500997484 /* XCRemoteSwiftPackageReference "SpeziStorage" */ = {

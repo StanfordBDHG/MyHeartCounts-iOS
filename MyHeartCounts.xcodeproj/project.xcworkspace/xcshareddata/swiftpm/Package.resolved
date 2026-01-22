@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziConsent.git",
       "state" : {
-        "revision" : "cd08c54a4f7630fa9482da5f162b4fa258de2e32",
-        "version" : "0.1.2"
+        "revision" : "147f2153b177bc181fa6f2383b0f75dc8b51c84d",
+        "version" : "0.1.3"
       }
     },
     {
