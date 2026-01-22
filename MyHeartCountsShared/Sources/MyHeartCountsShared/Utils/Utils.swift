@@ -49,7 +49,6 @@ extension TimedWalkingTestConfiguration.Kind {
 }
 
 
-
 extension RangeReplaceableCollection {
     /// Creates a new Collection, containing of the receiver's elements and the elements of some other sequence.
     @inlinable
@@ -59,7 +58,6 @@ extension RangeReplaceableCollection {
         return copy
     }
 }
-
 
 
 extension URL: @retroactive ExpressibleByStringLiteral, @retroactive ExpressibleByStringInterpolation {
@@ -148,6 +146,7 @@ extension Double {
 
 
 extension Sequence {
+    /// Maps the elements of the sequence, using an asynchronous function.
     public func mapAsync<Result, E>(_ transform: (Element) async throws(E) -> Result) async throws(E) -> [Result] {
         var results: [Result] = []
         results.reserveCapacity(underestimatedCount)
@@ -157,6 +156,7 @@ extension Sequence {
         return results
     }
     
+    /// Compact-maps the elements of the sequence, using an asynchronous function.
     public func compactMapAsync<Result, E>(_ transform: (Element) async throws(E) -> Result?) async throws(E) -> [Result] {
         var results: [Result] = []
         results.reserveCapacity(underestimatedCount)

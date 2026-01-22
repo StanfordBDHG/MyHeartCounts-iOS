@@ -11,6 +11,7 @@
 public protocol AnyObjectBasedDefaultImpls {}
 
 extension AnyObjectBasedDefaultImpls where Self: AnyObject & Equatable {
+    /// Default `Equatable` implementation, using the object's identity.
     @inlinable
     public static func == (lhs: Self, rhs: Self) -> Bool {
         ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
@@ -18,6 +19,7 @@ extension AnyObjectBasedDefaultImpls where Self: AnyObject & Equatable {
 }
 
 extension AnyObjectBasedDefaultImpls where Self: AnyObject & Hashable {
+    /// Default `Hashable` implementation, using the object's identity.
     @inlinable
     public func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))

@@ -10,9 +10,13 @@ public import Foundation
 
 
 extension Locale.Region {
+    /// Where an emoji should be placed.
     public enum EmojiPosition {
+        /// No emoji should be included.
         case none
+        /// The emoji should be placed at the front.
         case front
+        /// The emoji should be placed at the back.
         case back
     }
     

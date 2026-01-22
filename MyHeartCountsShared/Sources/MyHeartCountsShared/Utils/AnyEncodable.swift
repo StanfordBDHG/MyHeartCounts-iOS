@@ -7,9 +7,11 @@
 //
 
 
+/// Wraps an `any Encodable`
 public struct AnyEncodable: Encodable {
     var value: any Encodable
     
+    /// Creates an instance from an `any Encodable` value.
     public init(_ value: any Encodable) {
         self.value = value
     }

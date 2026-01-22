@@ -19,6 +19,7 @@ extension Date {
 
 
 extension Calendar {
+    /// Returns a `Date` that is "noon" in the day the date falls into.
     @inlinable
     public func makeNoon(_ date: Date) -> Date {
         if let result = self.date(bySettingHour: 12, minute: 0, second: 0, of: date, direction: .forward), isDate(result, inSameDayAs: date) {
@@ -33,6 +34,7 @@ extension Calendar {
 
 
 extension Date.FormatStyle {
+    /// Removes all time-related components from the format style
     @inlinable
     public func omittingTime() -> Self {
         self.hour(.omitted)

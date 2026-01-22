@@ -32,6 +32,7 @@ extension FileManager {
     }
     
     // periphery:ignore - API
+    /// Archives the contents of the directory.
     public func archiveDirectory(at srcUrl: URL, to dstUrl: URL) throws(ArchiveOperationError) {
         let sourcePath = FilePath(srcUrl.path)
         let destinationPath = FilePath(dstUrl.path)

@@ -13,6 +13,7 @@ import MachO
 
 
 extension ProcessInfo {
+    /// Whether the app is currently running in a simulator environment.
     @inlinable public static var isRunningInSimulator: Bool {
         #if targetEnvironment(simulator)
         true
@@ -21,6 +22,7 @@ extension ProcessInfo {
         #endif
     }
     
+    /// Whether the app is currently being UI-Tested
     @inlinable public static var isBeingUITested: Bool {
         ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
     }
@@ -40,6 +42,7 @@ extension ProcessInfo {
 
 
 extension ProcessInfo {
+    /// The app's current amount of resident memory.
     @inlinable public static var residentMemory: UInt64 {
         var taskInfo = mach_task_basic_info()
         var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size) / mach_msg_type_number_t(MemoryLayout<natural_t>.size)
@@ -51,6 +54,7 @@ extension ProcessInfo {
         return kerr == KERN_SUCCESS ? taskInfo.resident_size / 1024 / 1024 : 0
     }
     
+    /// The app's current memory footprint.
     @inlinable public static var memoryFootprint: UInt64 {
         var info = task_vm_info_data_t()
         var count = mach_msg_type_number_t(MemoryLayout<task_vm_info_data_t>.size) / mach_msg_type_number_t(MemoryLayout<integer_t>.size)
@@ -66,6 +70,7 @@ extension ProcessInfo {
 
 #if os(iOS)
 extension ProcessInfo {
+    /// Whether the iPhone the app currently is running on is a "Pro" model.
     public static let isProDevice: Bool = {
         let session = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.builtInTelephotoCamera],

@@ -8,6 +8,7 @@
 
 
 extension SetAlgebra {
+    /// Whether the set has any elements in common with another set.
     @inlinable
     public func overlaps(_ other: Self) -> Bool {
         !isDisjoint(with: other)

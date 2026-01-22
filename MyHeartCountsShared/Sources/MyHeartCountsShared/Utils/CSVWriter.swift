@@ -91,6 +91,7 @@ extension CSVWriter {
 
 
 extension CSVWriter {
+    /// A value that can be encoded into a CSV column field.
     public protocol FieldValue {
         /// A CSV-field-compatible representation of the value.
         ///
@@ -106,6 +107,7 @@ extension String: CSVWriter.FieldValue {
 }
 
 extension LosslessStringConvertible {
+    // swiftlint:disable:next missing_docs
     public var csvFieldValue: String {
         String(self)
     }

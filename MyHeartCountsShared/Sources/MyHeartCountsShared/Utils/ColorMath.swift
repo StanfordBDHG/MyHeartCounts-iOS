@@ -17,6 +17,7 @@ func lerp<T: FloatingPoint>(from a: T, to b: T, t: T) -> T { // swiftlint:disabl
 }
 
 extension Gradient {
+    /// Calculates the color at a specific position within the gradient.
     public func color(at position: CGFloat) -> Color {
         guard !stops.isEmpty else {
             preconditionFailure("Empty gradient!")
