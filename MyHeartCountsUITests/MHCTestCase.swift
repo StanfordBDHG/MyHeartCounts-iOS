@@ -99,8 +99,12 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
             goToTab(.home)
             XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
             XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
-            XCTAssert(app.staticTexts["WHO-5"].exists)
-            XCTAssert(app.staticTexts["Disease QOL"].exists)
+            XCTAssertGreaterThanOrEqual(
+                ["Diet", "Par-Q+", "Six-Minute Walk Test", "Heart Risk"].count {
+                    app.staticTexts[$0].exists
+                },
+                2
+            )
         }
     }
 }
