@@ -3214,7 +3214,6 @@
       }
     },
     "Last %lld years" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -6676,7 +6675,6 @@
       }
     },
     "Yesterday" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
