@@ -144,7 +144,7 @@ extension CVHScore {
             sampleType: .healthKit(.quantity(.stepCount)),
             timeRange: $dailyStepCount.timeRange.range,
             input: dailyStepCount,
-            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.average()?.rounded() },
+            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.mean()?.rounded() },
             definition: .cvhStepCount
         )
     }

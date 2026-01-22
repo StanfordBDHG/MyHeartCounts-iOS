@@ -8,6 +8,7 @@
 
 import FirebaseMessaging
 import Foundation
+import MyHeartCountsShared
 import OSLog
 import Spezi
 import SpeziAccount

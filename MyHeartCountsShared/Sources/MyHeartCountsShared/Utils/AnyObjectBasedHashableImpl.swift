@@ -8,16 +8,18 @@
 
 /// provides identity-based default implementations for `Equatable` and `Hashable` conformances, for `AnyObject` types that conform to either or both of these protocols.
 @_marker
-protocol AnyObjectBasedDefaultImpls {}
+public protocol AnyObjectBasedDefaultImpls {}
 
 extension AnyObjectBasedDefaultImpls where Self: AnyObject & Equatable {
-    static func == (lhs: Self, rhs: Self) -> Bool {
+    @inlinable
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
 }
 
 extension AnyObjectBasedDefaultImpls where Self: AnyObject & Hashable {
-    func hash(into hasher: inout Hasher) {
+    @inlinable
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
     }
 }

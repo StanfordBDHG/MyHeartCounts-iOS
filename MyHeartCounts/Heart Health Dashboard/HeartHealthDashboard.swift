@@ -10,6 +10,7 @@
 
 import Foundation
 import MHCStudyDefinition
+import MyHeartCountsShared
 import SFSafeSymbols
 import SpeziFoundation
 import SpeziHealthKit

@@ -10,6 +10,7 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 import ModelsR4
+import MyHeartCountsShared
 import SpeziFoundation
 import SpeziHealthKit
 

@@ -6,12 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
+public import Foundation
 import SpeziFoundation
 
 
 extension Range where Bound == Date {
-    func displayText( // swiftlint:disable:this cyclomatic_complexity function_body_length
+    public func displayText( // swiftlint:disable:this cyclomatic_complexity function_body_length
         using locale: Locale,
         calendar cal: Calendar = .current,
         timeZone: TimeZone = .current,

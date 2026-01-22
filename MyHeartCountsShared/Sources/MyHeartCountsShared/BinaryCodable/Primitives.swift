@@ -139,6 +139,7 @@ extension Array: BinaryDecodable where Element: BinaryDecodable {
 
 
 extension Set: BinaryEncodable where Element: BinaryEncodable {
+    @inlinable
     public func binaryEncode(to encoder: BinaryEncoder) throws {
         try encoder.encodeLengthPrefixed(self)
     }

@@ -69,3 +69,14 @@ extension OptionSet {
         transform(&self)
     }
 }
+
+extension SetAlgebra {
+    /// Inserts or removes a member, depending on whether it currently is present in the set.
+    mutating func toggleMembership(of member: Element) {
+        if contains(member) {
+            remove(member)
+        } else {
+            insert(member)
+        }
+    }
+}

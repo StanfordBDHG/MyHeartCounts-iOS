@@ -7,14 +7,9 @@
 //
 
 
-struct AnyEncodable: Encodable {
-    var value: any Encodable
-    
-    init(_ value: any Encodable) {
-        self.value = value
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        try value.encode(to: encoder)
+extension SetAlgebra {
+    @inlinable
+    public func overlaps(_ other: Self) -> Bool {
+        !isDisjoint(with: other)
     }
 }

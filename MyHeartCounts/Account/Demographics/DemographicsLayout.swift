@@ -8,6 +8,8 @@
 
 // swiftlint:disable file_types_order attributes file_length
 
+import Foundation
+import MyHeartCountsShared
 import SpeziHealthKit
 import SwiftUI
 

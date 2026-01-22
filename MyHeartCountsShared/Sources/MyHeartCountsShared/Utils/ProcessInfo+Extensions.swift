@@ -7,13 +7,13 @@
 //
 
 private import AVFoundation
-import Darwin
-import Foundation
+public import Darwin
+public import Foundation
 import MachO
 
 
 extension ProcessInfo {
-    static var isRunningInSimulator: Bool {
+    @inlinable public static var isRunningInSimulator: Bool {
         #if targetEnvironment(simulator)
         true
         #else
@@ -21,14 +21,14 @@ extension ProcessInfo {
         #endif
     }
     
-    static var isBeingUITested: Bool {
+    @inlinable public static var isBeingUITested: Bool {
         ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
     }
     
     /// Determines if a debgger is currently attached to the process.
     ///
     /// Source: https://stackoverflow.com/a/33177600
-    static var isBeingDebugged: Bool {
+    @inlinable public static var isBeingDebugged: Bool {
         var info = kinfo_proc()
         var size = MemoryLayout.stride(ofValue: info)
         var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()]
@@ -40,7 +40,7 @@ extension ProcessInfo {
 
 
 extension ProcessInfo {
-    static var residentMemory: UInt64 {
+    @inlinable public static var residentMemory: UInt64 {
         var taskInfo = mach_task_basic_info()
         var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size) / mach_msg_type_number_t(MemoryLayout<natural_t>.size)
         let kerr: kern_return_t = withUnsafeMutablePointer(to: &taskInfo) {
@@ -51,7 +51,7 @@ extension ProcessInfo {
         return kerr == KERN_SUCCESS ? taskInfo.resident_size / 1024 / 1024 : 0
     }
     
-    static var memoryFootprint: UInt64 {
+    @inlinable public static var memoryFootprint: UInt64 {
         var info = task_vm_info_data_t()
         var count = mach_msg_type_number_t(MemoryLayout<task_vm_info_data_t>.size) / mach_msg_type_number_t(MemoryLayout<integer_t>.size)
         let kerr: kern_return_t = withUnsafeMutablePointer(to: &info) {
@@ -64,8 +64,9 @@ extension ProcessInfo {
 }
 
 
+#if os(iOS)
 extension ProcessInfo {
-    static let isProDevice: Bool = {
+    public static let isProDevice: Bool = {
         let session = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.builtInTelephotoCamera],
             mediaType: .video,
@@ -74,3 +75,4 @@ extension ProcessInfo {
         return !session.devices.isEmpty
     }()
 }
+#endif

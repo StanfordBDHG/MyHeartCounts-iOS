@@ -6,16 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
+public import Foundation
 
 /// A CSV Writer.
-struct CSVWriter: ~Copyable {
+public struct CSVWriter: ~Copyable {
     private let separator: Character
     private let output: OutputStream
     private let columnHeaders: [String]
     
     /// Creates a new `CSVWriter`
-    init(separator: Character = ",", columns columnHeaders: [String]) throws {
+    public init(separator: Character = ",", columns columnHeaders: [String]) throws {
         self.separator = separator
         self.columnHeaders = columnHeaders
         output = .toMemory()
@@ -24,7 +24,7 @@ struct CSVWriter: ~Copyable {
     }
     
     /// Retrieves the written `Data`.
-    consuming func data() -> Data {
+    public consuming func data() -> Data {
         if let data = output.property(forKey: .dataWrittenToMemoryStreamKey) as? Data {
             return data
         } else {
@@ -42,13 +42,13 @@ struct CSVWriter: ~Copyable {
 
 
 extension CSVWriter {
-    enum AppendRowError: Error {
+    public enum AppendRowError: Error {
         case invalidNumberOfFields(expected: Int, supplied: Int)
         case writeError(any Error)
     }
     
     /// Appends a new row of fields to the CSV.
-    func appendRow(fields: some RandomAccessCollection<any FieldValue>) throws(AppendRowError) {
+    public func appendRow(fields: some RandomAccessCollection<any FieldValue>) throws(AppendRowError) {
         guard fields.count == columnHeaders.count else {
             throw .invalidNumberOfFields(expected: columnHeaders.count, supplied: fields.count)
         }
@@ -91,7 +91,7 @@ extension CSVWriter {
 
 
 extension CSVWriter {
-    protocol FieldValue {
+    public protocol FieldValue {
         /// A CSV-field-compatible representation of the value.
         ///
         /// - Note: The ``CSVWriter`` will take care of ensuring that the string is properly formatted for use within a CSV.
@@ -100,13 +100,13 @@ extension CSVWriter {
 }
 
 extension String: CSVWriter.FieldValue {
-    var csvFieldValue: String {
+    public var csvFieldValue: String {
         self
     }
 }
 
 extension LosslessStringConvertible {
-    var csvFieldValue: String {
+    public var csvFieldValue: String {
         String(self)
     }
 }
@@ -125,19 +125,19 @@ extension Double: CSVWriter.FieldValue {}
 extension Float: CSVWriter.FieldValue {}
 
 extension UUID: CSVWriter.FieldValue {
-    var csvFieldValue: String {
+    public var csvFieldValue: String {
         self.uuidString
     }
 }
 
 extension Date: CSVWriter.FieldValue {
-    var csvFieldValue: String {
+    public var csvFieldValue: String {
         self.timeIntervalSince1970.csvFieldValue
     }
 }
 
 extension Optional: CSVWriter.FieldValue where Wrapped: CSVWriter.FieldValue {
-    var csvFieldValue: String {
+    public var csvFieldValue: String {
         switch self {
         case .none:
             ""
@@ -148,7 +148,7 @@ extension Optional: CSVWriter.FieldValue where Wrapped: CSVWriter.FieldValue {
 }
 
 extension Array: CSVWriter.FieldValue where Element: CSVWriter.FieldValue {
-    var csvFieldValue: String {
+    public var csvFieldValue: String {
         self.lazy.map(\.csvFieldValue).joined(separator: ",")
     }
 }

@@ -6,11 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
+public import Foundation
 
 
 extension Locale.Region {
-    enum EmojiPosition {
+    public enum EmojiPosition {
         case none
         case front
         case back
@@ -19,7 +19,7 @@ extension Locale.Region {
     /// Returns, if possible, the region's corresponding flag emoji.
     ///
     /// Based on https://stackoverflow.com/a/30403199
-    var flagEmoji: String? {
+    public var flagEmoji: String? {
         switch self {
         case .europe, .northernEurope, .westernEurope, .easternEurope, .southernEurope:
             return "🇪🇺"
@@ -43,7 +43,7 @@ extension Locale.Region {
     /// Returns the localized name of the region, based on the specified locale, is possible.
     ///
     /// If no localized name can be determined, the region's underlying identifier is returned.
-    func localizedName(in locale: Locale, includeEmoji emojiPosition: EmojiPosition) -> String {
+    public func localizedName(in locale: Locale, includeEmoji emojiPosition: EmojiPosition) -> String {
         let name = switch self {
         case .world:
             String(localized: "World")
@@ -69,7 +69,8 @@ extension Locale.Language {
     /// Returns the localized name of the language, based on the specified locale, is possible.
     ///
     /// If no localized name can be determined, the language's underlying identifier is returned.
-    func localizedName(in locale: Locale) -> String {
+    @inlinable
+    public func localizedName(in locale: Locale) -> String {
         locale.localizedString(forLanguageCode: self.maximalIdentifier) ?? self.minimalIdentifier
     }
 }

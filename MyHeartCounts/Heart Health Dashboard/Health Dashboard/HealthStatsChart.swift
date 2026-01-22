@@ -11,6 +11,7 @@
 import Charts
 import Foundation
 import HealthKit
+import MyHeartCountsShared
 import SpeziFoundation
 import SpeziHealthKitUI
 import SpeziViews

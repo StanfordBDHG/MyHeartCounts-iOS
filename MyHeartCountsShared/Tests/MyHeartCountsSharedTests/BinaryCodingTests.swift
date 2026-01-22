@@ -8,6 +8,7 @@
 
 import Foundation
 import MyHeartCountsShared
+import NIOCore
 import Testing
 
 
@@ -25,6 +26,12 @@ struct BinaryCodingTests {
         #expect(try roundtrip(value: Optional(12)) == 12)
         #expect(try roundtrip(value: Optional(12.7)) == 12.7)
         #expect(try roundtrip(value: "Hello World") == "Hello World")
+    }
+    
+    @Test
+    func data() throws {
+        let data = Data([0, 1, 2, 3, 4, 5, 6, 7])
+        #expect(try BinaryEncoder.encode(data) == ByteBuffer(bytes: [8, 0, 1, 2, 3, 4, 5, 6, 7]))
     }
     
     @Test

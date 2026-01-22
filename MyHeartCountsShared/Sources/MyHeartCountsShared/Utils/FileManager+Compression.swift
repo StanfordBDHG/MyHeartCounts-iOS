@@ -7,17 +7,17 @@
 //
 
 import AppleArchive
-import Foundation
+public import Foundation
 import SpeziFoundation
 import System
 
 
 extension FileManager {
-    struct ArchiveOperationError: LocalizedError {
+    public struct ArchiveOperationError: LocalizedError {
         let message: String
         let underlyingError: (any Error)?
         
-        var errorDescription: String? {
+        public var errorDescription: String? {
             if let underlyingError {
                 "\(message): \(underlyingError)"
             } else {
@@ -32,7 +32,7 @@ extension FileManager {
     }
     
     // periphery:ignore - API
-    func archiveDirectory(at srcUrl: URL, to dstUrl: URL) throws(ArchiveOperationError) {
+    public func archiveDirectory(at srcUrl: URL, to dstUrl: URL) throws(ArchiveOperationError) {
         let sourcePath = FilePath(srcUrl.path)
         let destinationPath = FilePath(dstUrl.path)
         
@@ -83,7 +83,7 @@ extension FileManager {
     /// Unarchives a directory archive that was created with `-lk_archiveDirectory`.
     ///
     /// - Warning: this function will unconditionally override the contents of the destination folder.
-    func unarchiveDirectory(at archiveUrl: URL, to dstUrl: URL) throws(ArchiveOperationError) { // swiftlint:disable:this function_body_length
+    public func unarchiveDirectory(at archiveUrl: URL, to dstUrl: URL) throws(ArchiveOperationError) { // swiftlint:disable:this function_body_length
         // See: https://developer.apple.com/documentation/accelerate/decompressing_and_extracting_an_archived_directory
         guard archiveUrl.pathExtension == "aar" else {
             throw ArchiveOperationError("Invalid path extension ('\(archiveUrl.pathExtension)')")

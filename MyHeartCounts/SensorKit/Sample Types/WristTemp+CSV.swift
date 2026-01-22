@@ -9,6 +9,7 @@
 import Foundation
 import HealthKitOnFHIR
 import ModelsR4
+import MyHeartCountsShared
 import SensorKit
 import SpeziFoundation
 import SpeziSensorKit

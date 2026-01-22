@@ -9,6 +9,7 @@
 import Charts
 import Foundation
 import HealthKit
+import MyHeartCountsShared
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI

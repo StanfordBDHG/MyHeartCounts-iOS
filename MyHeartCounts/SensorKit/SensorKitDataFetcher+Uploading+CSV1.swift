@@ -9,6 +9,7 @@
 import Algorithms
 import Foundation
 import ModelsR4
+import MyHeartCountsShared
 import SpeziFoundation
 import SpeziSensorKit
 

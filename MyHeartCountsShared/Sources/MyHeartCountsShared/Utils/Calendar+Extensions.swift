@@ -6,20 +6,21 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
-import SpeziFoundation
+public import Foundation
 
 
 extension Date {
     /// Adds nanoseconds to a date.
-    func addingNanoseconds(_ nanoseconds: Int64) -> Date {
+    @inlinable
+    public func addingNanoseconds(_ nanoseconds: Int64) -> Date {
         addingTimeInterval(TimeInterval(nanoseconds) / 1_000_000_000)
     }
 }
 
 
 extension Calendar {
-    func makeNoon(_ date: Date) -> Date {
+    @inlinable
+    public func makeNoon(_ date: Date) -> Date {
         if let result = self.date(bySettingHour: 12, minute: 0, second: 0, of: date, direction: .forward), isDate(result, inSameDayAs: date) {
             return result
         } else if let result = self.date(bySettingHour: 12, minute: 0, second: 0, of: date, direction: .backward), isDate(result, inSameDayAs: date) {
@@ -32,15 +33,8 @@ extension Calendar {
 
 
 extension Date.FormatStyle {
-    /// Updates the `DateFormat`'s calendar and time zone, based on the input.
-    func calendar(_ calendar: Calendar) -> Self {
-        var copy = self
-        copy.calendar = calendar
-        copy.timeZone = calendar.timeZone
-        return copy
-    }
-    
-    func omittingTime() -> Self {
+    @inlinable
+    public func omittingTime() -> Self {
         self.hour(.omitted)
             .minute(.omitted)
             .second(.omitted)
