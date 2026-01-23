@@ -1423,8 +1423,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
 			requirement = {
-				kind = revision;
-				revision = c0149ef84928a07af55a7cd63923f961ffb9d718;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.6;
 			};
 		};
 		8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
