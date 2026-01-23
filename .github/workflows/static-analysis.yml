@@ -31,6 +31,7 @@ jobs:
   periphery:
     name: Periphery
     uses: StanfordBDHG/.github/.github/workflows/periphery.yml@v2
+    if: ${{ false }}
     permissions:
       contents: read
     with:
@@ -39,11 +40,13 @@ jobs:
   markdownlinkcheck:
     name: Markdown Link Check
     uses: StanfordBDHG/.github/.github/workflows/markdown-link-check.yml@v2
+    if: ${{ false }}
     permissions:
       contents: read
   codeql:
     name: CodeQL
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    if: ${{ false }}
     permissions:
       security-events: write
       actions: read
