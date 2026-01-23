@@ -1424,7 +1424,7 @@
 			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
 			requirement = {
 				kind = revision;
-				revision = b7c06d4cb580ca0989bd24b1ad8183b6d0bd9f73;
+				revision = 88a77958a14cafc083eedf88b9a8780e94c38165;
 			};
 		};
 		8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
