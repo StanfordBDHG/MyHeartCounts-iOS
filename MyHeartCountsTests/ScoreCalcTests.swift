@@ -12,7 +12,7 @@ import SwiftUI
 import Testing
 
 
-@Suite(.tags(.unitTest))
+@Suite//(.tags(.unitTest))
 struct ScoreCalcTests {
     @Test
     func scoreCalcA() {

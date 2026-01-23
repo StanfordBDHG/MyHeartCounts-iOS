@@ -13,7 +13,7 @@ import SpeziLocalization
 import Testing
 
 
-@Suite(.tags(.unitTest))
+@Suite//(.tags(.unitTest))
 final class DateRangeTests {
     private struct DateInput {
         enum Day {

@@ -11,7 +11,7 @@ import Foundation
 import Testing
 
 
-@Suite(.tags(.unitTest))
+@Suite//(.tags(.unitTest))
 struct UtilsTests {
     @Test
     func closureInputTypeErasure() {
