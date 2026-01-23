@@ -78,6 +78,7 @@ extension MHCSensorSampleUploadStrategy {
         
         observation.addMHCAppAsSource()
         try observation.apply(.sensorKitSourceDevice, input: deviceInfo)
+        try observation.apply(.sampleUploadTimeZone)
         try postprocessObservation(observation)
         
         let sensorCollection = try await standard.firebaseConfiguration.userDocumentReference
