@@ -36,7 +36,7 @@ extension HKUnit {
         }
     }()
     
-    static func parseFromFHIRUnit(_ unitString: String, mapping: HKSampleMapping = .default) -> HKUnit? {
+    static func parseFromFHIRUnit(_ unitString: String) -> HKUnit? {
         guard let units = defaultFHIRUnitsMapping[unitString], !units.isEmpty else {
             return nil
         }

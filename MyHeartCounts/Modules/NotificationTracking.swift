@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 @preconcurrency import FirebaseFirestore
 import Foundation
 import OSLog

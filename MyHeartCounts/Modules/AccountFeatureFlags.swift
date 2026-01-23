@@ -68,6 +68,7 @@ struct AccountFeatureFlagQuery: DynamicProperty {
         featureFlags[flag]
     }
     
+    // periphery:ignore - implicitly called
     init(_ flag: AccountFeatureFlags.FeatureFlagDefinition) {
         self.flag = flag
     }

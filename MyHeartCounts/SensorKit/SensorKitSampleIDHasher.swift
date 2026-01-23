@@ -69,6 +69,7 @@ struct SensorKitSampleIDHasher: ~Copyable {
         }
     }
     
+    // periphery:ignore - API
     mutating func combine(_ value: (some FixedWidthInteger)?) {
         switch value {
         case .none:

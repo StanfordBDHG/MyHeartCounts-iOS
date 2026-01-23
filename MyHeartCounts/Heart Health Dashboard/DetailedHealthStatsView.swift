@@ -29,7 +29,6 @@ struct DetailedHealthStatsView: View {
         case enabled(timeRange: HealthKitQueryTimeRange)
     }
     
-    @Environment(\.calendar) private var cal
     @Environment(StudyManager.self) private var studyManager
     @State private var chartTimeRange: ChartTimeRange = .lastNumDays(14)
     

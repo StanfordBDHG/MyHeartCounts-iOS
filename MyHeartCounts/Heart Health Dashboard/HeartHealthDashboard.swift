@@ -198,6 +198,7 @@ struct HeartHealthDashboard: View {
         }
     }
     
+    // periphery:ignore - API
     private func addNewSample(for keyPath: KeyPath<CVHScore, ScoreResult>) {
         if Self.canAddSample(for: keyPath) {
             addNewSampleDescriptor = .init(keyPath: keyPath)

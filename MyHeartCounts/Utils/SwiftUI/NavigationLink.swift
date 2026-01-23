@@ -26,6 +26,7 @@ struct TitleAndSymbolNavigationLinkLabel: View {
         }
     }
     
+    // periphery:ignore - API
     nonisolated fileprivate init(symbol: SFSymbol, title: LocalizedStringResource) {
         self.symbol = symbol
         self.title = Text(title)
@@ -39,6 +40,7 @@ struct TitleAndSymbolNavigationLinkLabel: View {
 
 
 extension NavigationLink {
+    // periphery:ignore - API
     init(
         symbol: SFSymbol,
         _ title: LocalizedStringResource,

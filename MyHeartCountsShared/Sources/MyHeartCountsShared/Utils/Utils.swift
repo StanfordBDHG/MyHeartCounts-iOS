@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 public import Algorithms
 public import Foundation
 public import SFSafeSymbols

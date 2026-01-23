@@ -24,7 +24,6 @@ struct HealthImporterControlView: View {
     @Environment(HistoricalHealthSamplesExportManager.self)
     private var exportManager
     
-    private let fileManager = FileManager.default
     @State private var viewState: ViewState = .idle
     
     var body: some View {

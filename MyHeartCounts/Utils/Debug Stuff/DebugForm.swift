@@ -171,5 +171,6 @@ extension DebugForm {
 
 extension Locale {
     static let enUS = Locale(identifier: "en-US")
+    // periphery:ignore - API
     static let enDE = Locale(identifier: "en-DE")
 }

@@ -54,6 +54,7 @@ final class WatchConnection: NSObject, Module, EnvironmentAccessible, Sendable {
         ])
     }
     
+    // periphery:ignore - API
     func stopWorkoutOnWatch() async throws {
         wcSession.send(userInfo: [.watchShouldEnableWorkout: false])
     }

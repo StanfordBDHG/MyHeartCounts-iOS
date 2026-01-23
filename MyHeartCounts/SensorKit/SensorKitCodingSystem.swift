@@ -28,6 +28,7 @@ struct SensorKitCodingSystem: CodingProtocol {
         )
     }
     
+    // periphery:ignore - API
     func property(_ name: String, display: String? = nil) -> Self {
         Self("\(code.value?.string ?? "")/\(name)", display: display)
     }

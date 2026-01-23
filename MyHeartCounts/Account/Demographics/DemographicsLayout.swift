@@ -429,6 +429,7 @@ private enum DemographicsLayoutBuilder {
         _ConditionalComponent(storage: .false(component))
     }
     
+    // periphery:ignore - implicity called
     static func buildBlock() -> some DemographicsComponent {
         _EmptyComponent()
     }

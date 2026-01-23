@@ -65,14 +65,6 @@ struct AccountSheet: View {
         }
     }
     
-    @ToolbarContentBuilder private var closeButton: some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button("Close") {
-                dismiss()
-            }
-        }
-    }
-    
     @ViewBuilder private var accountSheetExtraContent: some View {
         Section {
             SensorKitButton()

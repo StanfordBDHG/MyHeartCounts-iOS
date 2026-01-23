@@ -27,7 +27,8 @@ final class LocalNotifications: Module, EnvironmentAccessible, Sendable {
         try await UNUserNotificationCenter.current().add(request)
     }
     
-    func remove(withId id: String) {
+    // periphery:ignore - API
+    func removeDeliveredNotification(withId id: String) {
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [id])
     }
 }

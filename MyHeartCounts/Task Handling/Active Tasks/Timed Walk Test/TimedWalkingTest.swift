@@ -78,6 +78,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
         case cancelled
         case other(any Error)
         
+        // periphery:ignore - API
         var errorDescription: LocalizedStringResource? {
             switch self {
             case .unableToStart(.alreadyActive):

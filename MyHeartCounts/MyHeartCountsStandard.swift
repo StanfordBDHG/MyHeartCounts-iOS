@@ -29,10 +29,6 @@ import SwiftUI
 
 
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConstraint {
-    struct SimpleError: Error {
-        let message: String
-    }
-    
     // swiftlint:disable attributes
     @Application(\.logger) var logger
     @Dependency(HealthKit.self) var healthKit
@@ -43,12 +39,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
     @Dependency(ManagedFileUpload.self) var managedFileUpload
-    @Dependency(AccountFeatureFlags.self) private var accountFeatureFlags
     @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
     @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
     @Dependency(NotificationTracking.self) var notificationTracking
     @Dependency(Scheduler.self) var scheduler
-    @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalHealthDataUploadMgr
     @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
     @Dependency(NotificationsManager.self) private var notificationsManager
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
@@ -95,7 +89,9 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     func enroll(in studyBundle: StudyBundle) async throws {
         guard let account, let studyManager else {
-            throw SimpleError(message: "Missing Account / StudyManager")
+            throw NSError(domain: "edu.stanford.MyHeartCounts", code: 0, userInfo: [
+                NSLocalizedDescriptionKey: "Missing Account / StudyManager"
+            ])
         }
         do {
             if let enrollmentDate = await account.details?.dateOfEnrollment {
