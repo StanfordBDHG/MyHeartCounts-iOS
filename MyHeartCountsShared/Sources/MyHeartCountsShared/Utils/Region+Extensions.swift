@@ -9,7 +9,7 @@
 // swiftlint:disable missing_docs
 // periphery:ignore:all
 
-import Foundation
+public import Foundation
 
 // Note: The hard-coded region identifiers used here are defined by the United Nations.
 // See also: https://unstats.un.org/unsd/methodology/m49/

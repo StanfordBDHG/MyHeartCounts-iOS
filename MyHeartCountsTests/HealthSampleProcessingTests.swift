@@ -16,7 +16,7 @@ import SpeziHealthKit
 import Testing
 
 
-@Suite(.tags(.unitTest))
+@Suite
 struct HealthSampleProcessingTests {
     // check that the zstd-compressed FHIR-encoded Health samples can be decompressed and decoded and have the correct values.
     // note that this test is only very barebones; we have more inp-depth testing for this in HealthKitOnFHIR.

@@ -11,35 +11,68 @@
 
 import PackageDescription
 
+
+var packageDeps: [Package.Dependency] = [
+    .package(url: "https://github.com/StanfordSpezi/SpeziStudy.git", from: "0.1.15"),
+    .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.5.0"),
+    .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols.git", from: "7.0.0"),
+    .package(url: "https://github.com/apple/swift-nio.git", from: "2.93.0"),
+    .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.7.0")
+]
+
+#if os(iOS)
+packageDeps.append(.package(url: "https://github.com/StanfordSpezi/SpeziSensorKit.git", from: "0.6.1"))
+#endif
+
+
+/// dependencies of the `MyHeartCountsShared` target
+var mhcSharedTargetDeps: [Target.Dependency] = [
+    .product(name: "SpeziStudyDefinition", package: "SpeziStudy"),
+    .product(name: "SpeziFoundation", package: "SpeziFoundation"),
+    .product(name: "SFSafeSymbols", package: "SFSafeSymbols"),
+    .product(name: "NIOCore", package: "swift-nio"),
+    .product(name: "NIOFoundationCompat", package: "swift-nio")
+]
+
+#if os(iOS)
+mhcSharedTargetDeps.append(.product(name: "SpeziSensorKit", package: "SpeziSensorKit"))
+#endif
+
+let commonSwiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("InternalImportsByDefault")
+]
+
+/// The `MyHeartCountsShared` SPM package
 let package = Package(
     name: "MyHeartCountsShared",
     platforms: [
         .iOS(.v18),
-        .watchOS(.v11)
+        .watchOS(.v11),
+        .macOS(.v15) // for the CLI target
     ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(name: "MyHeartCountsShared", targets: ["MyHeartCountsShared"])
+        .library(name: "MyHeartCountsShared", targets: ["MyHeartCountsShared"]),
+        .executable(name: "SensorKitCLI", targets: ["SensorKitCLI"])
     ],
-    dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/SpeziStudy.git", from: "0.1.15"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.5.0"),
-        .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols.git", from: "7.0.0")
-    ],
+    dependencies: packageDeps,
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "MyHeartCountsShared",
+            dependencies: mhcSharedTargetDeps,
+            swiftSettings: commonSwiftSettings
+        ),
+        .executableTarget(
+            name: "SensorKitCLI",
             dependencies: [
-                .product(name: "SpeziStudyDefinition", package: "SpeziStudy"),
-                .product(name: "SpeziFoundation", package: "SpeziFoundation"),
-                .product(name: "SFSafeSymbols", package: "SFSafeSymbols")
+                "MyHeartCountsShared",
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
-            swiftSettings: [
-                .enableUpcomingFeature("ExistentialAny"),
-                .enableUpcomingFeature("InternalImportsByDefault")
-            ]
+            swiftSettings: commonSwiftSettings
+        ),
+        .testTarget(
+            name: "MyHeartCountsSharedTests",
+            dependencies: ["MyHeartCountsShared"]
         )
     ]
 )

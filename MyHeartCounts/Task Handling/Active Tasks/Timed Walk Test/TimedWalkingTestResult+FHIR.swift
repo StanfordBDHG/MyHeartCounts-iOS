@@ -10,6 +10,7 @@ import CoreMotion
 import Foundation
 import HealthKitOnFHIR
 import ModelsR4
+import MyHeartCountsShared
 import SpeziFoundation
 import SpeziStudyDefinition
 

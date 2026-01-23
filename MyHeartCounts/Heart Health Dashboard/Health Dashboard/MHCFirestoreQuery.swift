@@ -14,6 +14,7 @@ import struct ModelsR4.FHIRPrimitive
 import struct ModelsR4.FHIRURI
 import class ModelsR4.Period
 import enum ModelsR4.ResourceProxy
+import MyHeartCountsShared
 import OSLog
 import SpeziAccount
 import SpeziFoundation

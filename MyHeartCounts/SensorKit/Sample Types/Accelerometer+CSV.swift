@@ -7,6 +7,7 @@
 //
 
 import CoreMotion
+import MyHeartCountsShared
 import SpeziSensorKit
 
 

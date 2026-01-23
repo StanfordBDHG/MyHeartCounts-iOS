@@ -10,6 +10,7 @@
 
 import Foundation
 import MHCStudyDefinition
+import MyHeartCountsShared
 import SFSafeSymbols
 import SpeziFoundation
 import SpeziHealthKit
@@ -69,31 +70,30 @@ struct HeartHealthDashboard: View {
     }
     
     @ViewBuilder var healthDashboard: some View {
-        HealthDashboard(
-            layout: [
-                .large {
-                    topSection
-                },
-                .grid(
-                    sectionTitle: "Score Components",
-                    footer: "HHD_APPLE_WATCH_REQUIRED_FOOTER"
-                ) {
-                    makeGridComponent(for: \.dietScore)
-                    makeGridComponent(for: \.bodyMassIndexScore)
-                    switch $cvhScore.preferredExerciseMetric {
-                    case .exerciseMinutes:
-                        makeGridComponent(for: \.physicalExerciseScore)
-                    case .stepCount:
-                        makeGridComponent(for: \.stepCountScore)
-                    }
-                    makeGridComponent(for: \.bloodLipidsScore)
-                    makeGridComponent(for: \.nicotineExposureScore)
-                    makeGridComponent(for: \.bloodGlucoseScore)
-                    makeGridComponent(for: \.sleepHealthScore)
-                    makeGridComponent(for: \.bloodPressureScore)
+        HealthDashboard(layout: [
+            .large {
+                topSection
+            },
+            .grid(
+                sectionTitle: "Score Components",
+                footer: "HHD_APPLE_WATCH_REQUIRED_FOOTER"
+            ) {
+                switch $cvhScore.preferredExerciseMetric {
+                case .exerciseMinutes:
+                    makeGridComponent(for: \.physicalExerciseScore)
+                case .stepCount:
+                    makeGridComponent(for: \.stepCountScore)
                 }
-            ]
-        )
+                makeGridComponent(for: \.sleepHealthScore)
+                makeGridComponent(for: \.dietScore)
+                makeGridComponent(for: \.mentalHealthScore)
+                makeGridComponent(for: \.bloodPressureScore)
+                makeGridComponent(for: \.bloodLipidsScore)
+                makeGridComponent(for: \.bloodGlucoseScore)
+                makeGridComponent(for: \.bodyMassIndexScore)
+                makeGridComponent(for: \.nicotineExposureScore)
+            }
+        ])
         .makeBackgroundMatchFormBackground()
         learnMoreSection
         pastDataSection
@@ -209,6 +209,7 @@ struct HeartHealthDashboard: View {
 extension HeartHealthDashboard {
     private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, ScoreResult>> = [
         \.dietScore,
+        \.mentalHealthScore,
         \.bodyMassIndexScore,
         \.bloodLipidsScore,
         \.nicotineExposureScore,
@@ -228,6 +229,8 @@ extension HeartHealthDashboard {
                 HealthDashboardQuestionnaireView(questionnaireName: "NicotineExposure")
             case \.dietScore:
                 HealthDashboardQuestionnaireView(questionnaireName: "Diet")
+            case \.mentalHealthScore:
+                HealthDashboardQuestionnaireView(questionnaireName: "WHO5")
             case \.bodyMassIndexScore:
                 SaveBMISampleView()
             case \.bloodLipidsScore:

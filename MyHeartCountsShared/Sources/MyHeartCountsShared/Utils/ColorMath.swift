@@ -9,7 +9,7 @@
 import Algorithms
 import Foundation
 import SpeziFoundation
-import SwiftUI
+public import SwiftUI
 
 
 func lerp<T: FloatingPoint>(from a: T, to b: T, t: T) -> T { // swiftlint:disable:this identifier_name
@@ -17,11 +17,12 @@ func lerp<T: FloatingPoint>(from a: T, to b: T, t: T) -> T { // swiftlint:disabl
 }
 
 extension Gradient {
-    func color(at position: CGFloat) -> Color {
+    /// Calculates the color at a specific position within the gradient.
+    public func color(at position: CGFloat) -> Color {
         guard !stops.isEmpty else {
             preconditionFailure("Empty gradient!")
         }
-        precondition(stops.isSorted(by: { $0.location < $1.location }))
+        assert(stops.isSorted(by: { $0.location < $1.location }))
         
         let position = position.clamped(to: 0...1)
         
@@ -61,7 +62,9 @@ extension Gradient {
 
 
 extension Comparable {
-    func clamped(to range: ClosedRange<Self>) -> Self {
+    /// Clamps the value to the range.
+    @inlinable
+    public func clamped(to range: ClosedRange<Self>) -> Self {
         max(range.lowerBound, min(range.upperBound, self))
     }
 }

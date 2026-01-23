@@ -10,6 +10,7 @@ import Foundation
 import HealthKit
 import HealthKitOnFHIR
 import ModelsR4
+import MyHeartCountsShared
 import SpeziFoundation
 import SpeziHealthKit
 
@@ -73,7 +74,7 @@ extension QuantitySample: HealthObservation {
                 unit: "mg/dL".asFHIRStringPrimitive(),
                 value: value.asFHIRDecimalPrimitive()
             ))
-        case .custom(.nicotineExposure), .custom(.dietMEPAScore):
+        case .custom(.nicotineExposure), .custom(.dietMEPAScore), .custom(.mentalWellbeingScore):
             let code = sampleType.id.asFHIRStringPrimitive()
             observation.appendCoding(Coding(
                 code: code,

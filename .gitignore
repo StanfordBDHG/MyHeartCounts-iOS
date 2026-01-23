@@ -8,11 +8,12 @@
 
 # Swift Package Manager
 *.xcodeproj
-.swiftpm
-.derivedData
-.build
+*.swiftpm
+*.derivedData
+*.build
 .docs
 !MyHeartCounts.xcodeproj
+MyHeartCountsShared/Package.resolved
 
 # IDE related folders
 .idea

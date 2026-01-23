@@ -8,6 +8,7 @@
 
 import CoreMotion
 import Foundation
+import MyHeartCountsShared
 import SpeziSensorKit
 
 

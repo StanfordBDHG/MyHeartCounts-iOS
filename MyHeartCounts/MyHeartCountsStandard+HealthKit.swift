@@ -14,6 +14,7 @@ import HealthKit
 import HealthKitOnFHIR
 @preconcurrency import ModelsDSTU2
 @preconcurrency import ModelsR4
+import MyHeartCountsShared
 import OSLog
 import SpeziAccount
 import SpeziFHIR
@@ -122,7 +123,7 @@ extension MyHeartCountsStandard {
             return
         }
         let issuedDate = FHIRPrimitive<ModelsR4.Instant>(try .init(date: .now))
-        @Sendable
+        @concurrent
         func turnIntoFHIRResource(_ observation: some HealthObservation) async throws -> AnyEncodable? {
             switch observation {
             case let sample as HKElectrocardiogram:
@@ -140,7 +141,7 @@ extension MyHeartCountsStandard {
             case let record as HKClinicalRecord:
                 guard record.fhirResource != nil else {
                     // just fail silently...
-                    await self.logger.error("Skipping HKClinicalRecord, bc no fhirResource")
+                    self.logger.error("Skipping HKClinicalRecord, bc no fhirResource")
                     return nil
                 }
                 let resource = try await FHIRResource(record, using: healthKit)

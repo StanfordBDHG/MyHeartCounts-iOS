@@ -34,7 +34,7 @@ extension MHCSensorSampleUploadStrategy {
         let size = data.count
         let url = URL.temporaryDirectory
             .appending(component: UUID().uuidString)
-            .appendingPathExtension("\(fileExtension).zstd")
+            .appendingPathExtension("\(fileExtension)\(shouldCompress ? ".zstd" : "")")
         try (consume data).write(to: url)
         
         activity.updateMessage("Submitting for upload")
@@ -78,6 +78,7 @@ extension MHCSensorSampleUploadStrategy {
         
         observation.addMHCAppAsSource()
         try observation.apply(.sensorKitSourceDevice, input: deviceInfo)
+        try observation.apply(.sampleUploadTimeZone)
         try postprocessObservation(observation)
         
         let sensorCollection = try await standard.firebaseConfiguration.userDocumentReference

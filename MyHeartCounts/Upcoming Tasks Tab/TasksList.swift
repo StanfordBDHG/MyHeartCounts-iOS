@@ -118,19 +118,21 @@ struct TasksList: View {
         case let .custom(title, subtitle):
             return (title, subtitle)
         case .timeRange(let subtitleMode):
-            let (title, needsSubtitle): (LocalizedStringResource, Bool) = switch timeRange {
+            let title: LocalizedStringResource
+            let needsSubtitle: Bool
+            switch timeRange {
             case .days(1):
-                ("Today", false)
+                title = "Today"
+                needsSubtitle = false
             case .days(let numDays):
-                ("Next \(numDays) Days", true)
-            case .weeks(1):
-                ("Next Week", true)
+                title = "Next \(numDays) Days"
+                 needsSubtitle = true
             case .weeks(let numWeeks):
-                ("Next \(numWeeks) Weeks", true)
-            case .months(1):
-                ("Next Month", true)
+                title = "Next \(numWeeks) Weeks"
+                 needsSubtitle = true
             case .months(let numMonths):
-                ("Next \(numMonths) Months", true)
+                title = "Next \(numMonths) Months"
+                 needsSubtitle = true
             }
             switch subtitleMode {
             case .automatic where needsSubtitle, .show:

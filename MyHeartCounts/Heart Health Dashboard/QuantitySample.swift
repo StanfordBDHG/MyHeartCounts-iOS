@@ -10,6 +10,7 @@
 
 import Foundation
 import HealthKit
+import MyHeartCountsShared
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SpeziViews
@@ -97,6 +98,14 @@ extension CustomQuantitySampleType {
         preferredTintColor: .blue // ???
     )
     
+    static let mentalWellbeingScore = Self(
+        id: "MHCCustomSampleTypeWHO5Score",
+        displayTitle: "Mental Well Being",
+        displayUnit: .count(), // percentage???
+        aggregationKind: .avg,
+        preferredTintColor: .blue // ???
+    )
+    
     static let nicotineExposure = Self(
         id: "MHCCustomSampleTypeNicotineExposure",
         displayTitle: "Nicotine Exposure",
@@ -106,7 +115,7 @@ extension CustomQuantitySampleType {
     )
     
     init?(identifier: String) {
-        let wellKnownSampleTypes: [Self] = [.bloodLipids, .dietMEPAScore, .nicotineExposure]
+        let wellKnownSampleTypes: [Self] = [.bloodLipids, .dietMEPAScore, .nicotineExposure, .mentalWellbeingScore]
         if let sampleType = wellKnownSampleTypes.first(where: { $0.id == identifier }) {
             self = sampleType
         } else {

@@ -160,7 +160,7 @@ extension MHCQuantitySampleType {
             default:
                 false
             }
-        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
+        case .custom(.bloodLipids):
             true
         default:
             true

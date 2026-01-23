@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MyHeartCountsShared
 import SpeziFoundation
 import SpeziViews
 import SwiftUI

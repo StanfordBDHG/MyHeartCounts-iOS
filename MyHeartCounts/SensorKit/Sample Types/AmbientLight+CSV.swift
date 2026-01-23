@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MyHeartCountsShared
 import SensorKit
 import SpeziSensorKit
 

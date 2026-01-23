@@ -44,6 +44,9 @@ struct CVHScore: DynamicProperty {
     @MHCFirestoreQuery(sampleType: .dietMEPAScore, timeRange: .last(months: 2))
     private var dietScores
     
+    @MHCFirestoreQuery(sampleType: .mentalWellbeingScore, timeRange: .last(months: 2))
+    private var mentalWellbeingScores
+    
     @MHCFirestoreQuery(sampleType: .bloodLipids, timeRange: .last(months: 2))
     private var bloodLipids
     
@@ -125,7 +128,7 @@ extension CVHScore {
     
     var physicalExerciseScore: ScoreResult {
         ScoreResult(
-            "Last 7 Days",
+            "Last \(7) Days",
             sampleType: .healthKit(.quantity(.appleExerciseTime)),
             sample: weeklyExerciseTime.last,
             value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
@@ -134,12 +137,14 @@ extension CVHScore {
     }
     
     var stepCountScore: ScoreResult {
-        ScoreResult(
-            "Daily Average, Last 7 Days",
+        let avgText: LocalizedStringResource = "Daily Average"
+        let timeRangeText: LocalizedStringResource = "Last \(7) Days"
+        return ScoreResult(
+            "\(avgText), \(timeRangeText)",
             sampleType: .healthKit(.quantity(.stepCount)),
             timeRange: $dailyStepCount.timeRange.range,
             input: dailyStepCount,
-            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.average()?.rounded() },
+            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.mean()?.rounded() },
             definition: .cvhStepCount
         )
     }
@@ -151,6 +156,16 @@ extension CVHScore {
             sample: nicotineExposure.first,
             value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
             definition: .cvhNicotine
+        )
+    }
+    
+    var mentalHealthScore: ScoreResult {
+        ScoreResult(
+            "Most Recent Response",
+            sampleType: .custom(.mentalWellbeingScore),
+            sample: mentalWellbeingScores.first,
+            value: { $0.value * 4 },
+            definition: .cvhMentalWellbeing
         )
     }
     
@@ -284,6 +299,14 @@ extension ScoreDefinition {
         .inRange(8...10, score: 0.5, explainer: "8 – 10"),
         .inRange(5...7, score: 0.25, explainer: "5 – 7"),
         .inRange(...7, score: 0, explainer: "< 7")
+    ])
+    
+    static let cvhMentalWellbeing = ScoreDefinition(default: 0, scoringBands: [
+        .inRange(81...100, score: 1, explainer: "81 – 100"),
+        .inRange(71...80, score: 0.8, explainer: "71 – 80"),
+        .inRange(51...70, score: 0.69, explainer: "51 – 70"),
+        .inRange(31...50, score: 0.38, explainer: "31 – 50"),
+        .inRange(0...30, score: 0.0, explainer: "31 – 50")
     ])
     
     static let cvhPhysicalExercise = ScoreDefinition(

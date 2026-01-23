@@ -20,6 +20,7 @@ import SpeziFirestore
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziLocalStorage
+import SpeziNotifications
 import SpeziQuestionnaire
 import SpeziScheduler
 import SpeziSensorKit
@@ -50,6 +51,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalHealthDataUploadMgr
     @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
     @Dependency(NotificationsManager.self) private var notificationsManager
+    @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
     
     init() {}
@@ -129,7 +131,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         switch event {
         case .associatedAccount(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
-            try? await timeZoneTracking?.updateTimeZoneInfo()
+            _Concurrency.Task {
+                try? await timeZoneTracking?.updateTimeZoneInfo()
+                _ = try? await registerRemoteNotifications()
+            }
         case .deletingAccount:
             logger.notice("account is being deleted")
         case .disassociatingAccount:

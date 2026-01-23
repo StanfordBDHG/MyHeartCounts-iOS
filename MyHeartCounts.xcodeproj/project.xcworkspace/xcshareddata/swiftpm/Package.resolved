@@ -1,5 +1,5 @@
 {
-  "originHash" : "a82b96082e61c87bc056c74c4f54e7c4cde9fa5891485d1c7b07d8e4b3487dec",
+  "originHash" : "ee18dd01c3a9d677b979b93a33b1e2ae09012e9da2e9451a916930217758aed5",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "28ee7ba2ead5986ad0597b47b88695e0de536a03",
-        "version" : "0.1.12"
+        "revision" : "b184d8c8d20bc275319dc14db0bd52ed43090a5c",
+        "version" : "0.1.13"
       }
     },
     {
@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziConsent.git",
       "state" : {
-        "revision" : "cd08c54a4f7630fa9482da5f162b4fa258de2e32",
-        "version" : "0.1.2"
+        "revision" : "147f2153b177bc181fa6f2383b0f75dc8b51c84d",
+        "version" : "0.1.3"
       }
     },
     {
@@ -420,8 +420,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "4a9a97111099376854a7f8f0f9f88b9d61f52eff",
-        "version" : "2.92.2"
+        "revision" : "233f61bc2cfbb22d0edeb2594da27a20d2ce514e",
+        "version" : "2.93.0"
       }
     },
     {
@@ -510,8 +510,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTHealthKit.git",
       "state" : {
-        "revision" : "026d5c6f02cdafa31924548d1ee6ce2fdf182137",
-        "version" : "1.2.4"
+        "revision" : "f2e956b4d5e09a6b396c8f5bb38aaba05eaa35a1",
+        "version" : "1.2.6"
       }
     },
     {

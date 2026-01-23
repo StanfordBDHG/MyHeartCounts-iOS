@@ -11,6 +11,7 @@
 import Charts
 import Foundation
 import MHCStudyDefinition
+import MyHeartCountsShared
 import SFSafeSymbols
 import SpeziFoundation
 import SpeziHealthKit
@@ -127,7 +128,7 @@ struct DetailedHealthStatsView: View {
                             return .default(for: sampleType, in: timeRange)
                         case .healthKit:
                             return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure):
+                        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure), .custom(.mentalWellbeingScore):
                             return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
                         case .custom:
                             return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
@@ -474,13 +475,15 @@ private struct FurtherReadingSection: View {
 
 
 extension DetailedHealthStatsView {
-    private func explainerText(for sampleType: MHCSampleType) -> String? {
+    private func explainerText(for sampleType: MHCSampleType) -> String? { // swiftlint:disable:this cyclomatic_complexity
         let imp = { (key: String) -> String? in
             studyManager.localizedMarkdown(for: key, in: .hhdExplainer)
         }
         return switch sampleType {
         case .custom(.dietMEPAScore):
             imp("DietScore")
+        case .custom(.mentalWellbeingScore):
+            imp("MentalWellbeing")
         case .custom(.bloodLipids):
             imp("BloodLipids")
         case .custom(.nicotineExposure):

@@ -9,6 +9,7 @@
 // swiftlint:disable file_types_order attributes
 
 import Foundation
+import MyHeartCountsShared
 import SFSafeSymbols
 import SpeziAccount
 import SpeziHealthKit

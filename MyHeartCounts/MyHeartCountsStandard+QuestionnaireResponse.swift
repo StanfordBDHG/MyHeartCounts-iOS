@@ -8,6 +8,7 @@
 
 @preconcurrency import FirebaseFirestore
 import class ModelsR4.QuestionnaireResponse
+import MyHeartCountsShared
 import OSLog
 import Spezi
 import SpeziHealthKit

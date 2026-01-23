@@ -9,6 +9,7 @@
 // swiftlint:disable file_types_order type_contents_order
 
 import Foundation
+import MyHeartCountsShared
 import SpeziLocalization
 import SwiftUI
 

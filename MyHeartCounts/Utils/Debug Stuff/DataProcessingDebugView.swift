@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MyHeartCountsShared
 import SpeziHealthKitBulkExport
 import SpeziSensorKit
 import SwiftUI

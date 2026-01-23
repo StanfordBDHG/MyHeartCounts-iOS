@@ -7,14 +7,10 @@
 //
 
 
-struct AnyEncodable: Encodable {
-    var value: any Encodable
-    
-    init(_ value: any Encodable) {
-        self.value = value
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        try value.encode(to: encoder)
+extension SetAlgebra {
+    /// Whether the set has any elements in common with another set.
+    @inlinable
+    public func overlaps(_ other: Self) -> Bool {
+        !isDisjoint(with: other)
     }
 }

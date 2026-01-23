@@ -9,12 +9,11 @@
 // swiftlint:disable discouraged_optional_boolean
 
 import Foundation
-@testable import MyHeartCounts
 @testable import MyHeartCountsShared
 import Testing
 
 
-@Suite(.tags(.unitTest))
+@Suite
 struct LaunchOptionsTests {
     @Test
     func simpleTypes() {
