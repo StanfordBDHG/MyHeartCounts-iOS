@@ -11,7 +11,7 @@ import Foundation
 import Testing
 
 
-@Suite//(.tags(.unitTest))
+@Suite
 struct NHSNumberTests {
     @Test
     func validate() {
