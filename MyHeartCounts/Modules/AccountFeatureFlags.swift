@@ -18,7 +18,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-final class AccountFeatureFlags: Module, EnvironmentAccessible, DefaultInitializable, Sendable {
+final class AccountFeatureFlags: Module, EnvironmentAccessible, Sendable {
     struct FeatureFlagDefinition: Sendable {
         enum Source: Sendable {
             case accountDetail(any KeyPath<AccountDetails, Bool?> & Sendable)
