@@ -10,6 +10,7 @@ public import Foundation
 
 
 extension Date {
+    // periphery:ignore - API
     /// Adds nanoseconds to a date.
     @inlinable
     public func addingNanoseconds(_ nanoseconds: Int64) -> Date {

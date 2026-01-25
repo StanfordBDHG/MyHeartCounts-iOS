@@ -23,6 +23,7 @@ extension Logger {
 }
 
 extension Logger.Category {
+    // periphery:ignore - API
     /// The system-defined POI logging category
     public static let pointsOfInterest = Self("PointsOfInterest")
 }

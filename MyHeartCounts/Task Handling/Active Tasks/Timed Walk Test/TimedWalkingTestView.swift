@@ -326,7 +326,7 @@ extension TimedWalkingTestView {
         let end: Date
 
         var body: some View {
-            TimelineView(.periodic(from: .now, by: 1)) { context in
+            TimelineView(.periodic(from: start, by: 1)) { context in
                 let remaining = max(0, Int(end.timeIntervalSince(context.date)))
                 let (minutes, seconds) = remaining.quotientAndRemainder(dividingBy: 60)
                 Text(String(format: "%d:%02d", minutes, seconds))
@@ -350,7 +350,7 @@ extension TimedWalkingTestView {
         var body: some View {
             Section {
                 HStack(alignment: .top) {
-                    Image(systemSymbol: .exclamationmarkTriangle)
+                    Image(systemSymbol: icon)
                         .accessibilityLabel("Warning Sign")
                         .foregroundStyle(.red)
                     VStack(alignment: .leading) {

@@ -299,7 +299,6 @@ enum DeferredConfigLoading {
 
 extension Spezi {
     @MainActor static var didLoadFirebase = false
-    @MainActor private(set) static var currentlyLoadedFirebaseSelector: DeferredConfigLoading.FirebaseConfigSelector?
     
     @MainActor // IDEA maybe rename this? (here and elsewhere (it's not just firebase any more))
     static func loadFirebase(for region: Locale.Region) {
@@ -331,11 +330,11 @@ extension Spezi {
 
 extension FirebaseOptions {
     // periphery:ignore - unused but important
-    convenience init(plistInBundle filename: String) {
+    convenience init?(plistInBundle filename: String) {
         guard let path = Bundle.main.path(forResource: filename, ofType: "plist") else {
             preconditionFailure("Unable to find '\(filename).plist' in bundle")
         }
-        self.init(contentsOfFile: path)! // swiftlint:disable:this force_unwrapping
+        self.init(contentsOfFile: path)
     }
 }
 

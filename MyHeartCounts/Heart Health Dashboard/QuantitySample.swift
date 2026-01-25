@@ -221,6 +221,7 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
         precondition(endDate >= startDate)
     }
     
+    // periphery:ignore - API
     func value(as unit: HKUnit) -> Double {
         self.unit == unit ? value : HKQuantity(unit: self.unit, doubleValue: value).doubleValue(for: unit)
     }

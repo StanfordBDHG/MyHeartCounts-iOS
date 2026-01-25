@@ -110,6 +110,7 @@ extension UKRegion {
 
 
 extension UKRegion.County {
+    // periphery:ignore - ???
     static let preferNotToSay = Self(name: "Prefer not to state")
     
     static let englishCounties: [Self] = [

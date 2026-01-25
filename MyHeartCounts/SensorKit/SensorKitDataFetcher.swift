@@ -97,6 +97,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         }
     }
     
+    // periphery:ignore - API
     @MainActor
     func cancelAllActiveCollection() {
         processingTask?.cancel()

@@ -31,6 +31,7 @@ protocol AnyMHCSensorUploadDefinition<Sample, UploadStrategy>: Sendable {
     associatedtype UploadStrategy: MHCSensorSampleUploadStrategy where UploadStrategy.Sample == Sample
     
     var sensor: Sensor<Sample> { get }
+    // periphery:ignore - API
     var strategy: UploadStrategy { get }
 }
 

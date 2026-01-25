@@ -19,6 +19,7 @@ enum FHIRResource: Hashable {
     case dstu2(ModelsDSTU2.Resource)
     case r4(ModelsR4.Resource) // swiftlint:disable:this identifier_name
     
+    // periphery:ignore - API
     init(_ resource: ModelsDSTU2.Resource) {
         self = .dstu2(resource)
     }
@@ -27,6 +28,7 @@ enum FHIRResource: Hashable {
         self = .r4(resource)
     }
     
+    // periphery:ignore - API
     func get<T: ModelsDSTU2.Resource>(as _: T.Type) -> T? {
         switch self {
         case .dstu2(let resource):
@@ -97,6 +99,7 @@ extension FHIRResource {
 
 
 extension SpeziFHIR.FHIRResource {
+    // periphery:ignore - API
     init(_ other: FHIRResource) {
         switch other {
         case .dstu2(let resource):

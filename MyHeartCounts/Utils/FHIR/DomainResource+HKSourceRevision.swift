@@ -24,6 +24,7 @@ extension HKSourceRevision {
 
 
 extension ModelsDSTU2.DomainResource {
+    // periphery:ignore - API
     func addMHCAppAsSource() {
         addSourceRevisionExtensions(for: .mhc)
     }

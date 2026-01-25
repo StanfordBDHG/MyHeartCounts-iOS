@@ -37,5 +37,4 @@ final class AppRefresh: Module, Sendable {
 
 extension MHCBackgroundTasks.TaskIdentifier {
     static let generalAppRefresh = Self("edu.stanford.MyHeartCounts.AppRefresh")
-    static let generalBackgroundProcessing = Self("edu.stanford.MyHeartCounts.BackgroundProcessing")
 }

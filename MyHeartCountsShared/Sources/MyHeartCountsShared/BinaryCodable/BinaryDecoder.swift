@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
 // swiftlint:disable missing_docs
 
 public import Foundation

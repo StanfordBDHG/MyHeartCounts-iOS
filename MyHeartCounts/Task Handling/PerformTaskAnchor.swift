@@ -49,6 +49,7 @@ struct PerformTask: DynamicProperty {
         /// The task's completion handler. Will be set to `nil` upon marking the task as completed.
         private var completionHandler: (@Sendable @MainActor (_ success: Bool) -> Void)?
         
+        // periphery:ignore - API
         fileprivate var isCompleted: Bool {
             completionHandler == nil
         }

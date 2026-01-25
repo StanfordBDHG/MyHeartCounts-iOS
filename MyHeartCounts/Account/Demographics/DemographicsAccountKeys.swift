@@ -18,9 +18,6 @@ extension AccountKeyCategory {
 
 
 extension AccountDetails {
-    typealias UKCounty = UKRegion.County
-    
-    
     @AccountKey(
         id: "mhcGenderIdentity",
         name: "Gender Identity",

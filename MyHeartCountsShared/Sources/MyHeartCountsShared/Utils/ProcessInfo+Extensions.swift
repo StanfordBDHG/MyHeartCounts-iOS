@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 private import AVFoundation
 public import Darwin
 public import Foundation

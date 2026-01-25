@@ -19,7 +19,6 @@ import SwiftUI
 
 struct Consent: View {
     // swiftlint:disable attributes
-    @Environment(\.dismiss) private var dismiss
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(OnboardingDataCollection.self) private var onboardingData: OnboardingDataCollection?
     @Environment(MyHeartCountsStandard.self) private var standard

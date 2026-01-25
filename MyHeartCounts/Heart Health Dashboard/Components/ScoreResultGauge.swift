@@ -15,7 +15,7 @@ struct ScoreResultGauge: View {
     
     var body: some View {
         Gauge(
-            lineWidth: .relative(1.5),
+            lineWidth: lineWidth,
             gradient: scoreResult.scoreAvailable ? .redToGreen : Gradient(colors: [.secondary]),
             progress: scoreResult.score
         ) {

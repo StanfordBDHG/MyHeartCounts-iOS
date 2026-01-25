@@ -11,6 +11,7 @@ import Foundation
 
 struct StageOfChangeOption: Hashable, Identifiable, Sendable {
     let id: String
+    // periphery:ignore - API
     let title: LocalizedStringResource?
     let text: LocalizedStringResource
 }

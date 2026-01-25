@@ -12,7 +12,6 @@ import SwiftUI
 
 struct IsUsingSharedAppleID: ScreeningComponent {
     // swiftlint:disable attributes
-    @Environment(\.locale) private var locale
     @Environment(OnboardingDataCollection.self) private var data
     // swiftlint:enable attributes
     

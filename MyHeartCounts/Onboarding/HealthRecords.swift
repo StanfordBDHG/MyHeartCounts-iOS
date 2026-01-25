@@ -20,7 +20,6 @@ import SwiftUI
 struct HealthRecords: View {
     private let title: LocalizedStringResource = "Health Records"
     
-    @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(HealthKit.self) private var healthKit
     @Environment(StudyBundleLoader.self) private var studyLoader
     @Environment(ManagedNavigationStack.Path.self) private var path
@@ -73,19 +72,4 @@ struct HealthRecords: View {
         }
         path.nextStep()
     }
-}
-
-
-extension MyHeartCountsStandard {
-    static let allRecordTypes: [SampleType<HKClinicalRecord>] = [
-        .allergyRecord,
-        .clinicalNoteRecord,
-        .conditionRecord,
-        .immunizationRecord,
-        .labResultRecord,
-        .medicationRecord,
-        .procedureRecord,
-        .vitalSignRecord,
-        .coverageRecord
-    ]
 }

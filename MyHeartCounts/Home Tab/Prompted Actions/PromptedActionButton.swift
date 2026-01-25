@@ -15,9 +15,6 @@ import SwiftUI
 
 extension HomeTab {
     struct PromptedActionButton: View {
-        @Environment(\.colorScheme)
-        private var colorScheme
-        
         @PromptedActions private var promptedActions
         
         let action: PromptedAction
@@ -25,7 +22,13 @@ extension HomeTab {
         
         var body: some View {
             let content = action.content
-            LabeledButton(symbol: content.symbol, title: content.title, subtitle: content.message, state: $viewState, action: action.handler)
+            LabeledButton(
+                symbol: content.symbol,
+                title: content.title,
+                subtitle: content.message,
+                state: $viewState,
+                action: action.handler
+            )
             .contextMenu {
                 Button(role: .destructive) {
                     $promptedActions.reject(action.id)

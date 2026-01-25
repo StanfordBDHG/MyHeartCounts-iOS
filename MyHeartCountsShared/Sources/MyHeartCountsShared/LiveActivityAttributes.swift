@@ -22,6 +22,7 @@ public struct TimedWalkTestLiveActivityAttributes: ActivityAttributes {
     /// The id of the specific test run.
     public let testRunId: UUID
     
+    // periphery:ignore - API
     /// The test being conducted
     public let test: TimedWalkingTestConfiguration
     

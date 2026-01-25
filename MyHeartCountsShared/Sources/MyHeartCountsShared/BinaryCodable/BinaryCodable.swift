@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 
 /// A type that can be encoded into a binary representation.
 public protocol BinaryEncodable {

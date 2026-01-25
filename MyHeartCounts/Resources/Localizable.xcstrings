@@ -1233,22 +1233,6 @@
         }
       }
     },
-    "Close" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerrar"
-          }
-        }
-      }
-    },
     "College graduate or Baccalaureate Degree" : {
       "localizations" : {
         "es" : {
