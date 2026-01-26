@@ -1,0 +1,38 @@
+//
+// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+//
+// SPDX-FileCopyrightText: 2025 Stanford University
+//
+// SPDX-License-Identifier: MIT
+//
+
+import HealthKit
+import MyHeartCountsShared
+import XCTest
+import XCTestExtensions
+import XCTHealthKit
+
+
+final class OtherTests: MHCTestCase, @unchecked Sendable {
+    @MainActor
+    func testSkippingClinicalRecordsAuthorization() throws {
+        app.resetAuthorizationStatus(for: .health)
+        try launchAppAndEnrollIntoStudy(
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        XCTAssert(app.navigationBars["Health Access"].waitForExistence(timeout: 10))
+        app.handleHealthKitAuthorization()
+        XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForExistence(timeout: 20))
+        app.navigationBars.buttons["Cancel"].tap()
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 20))
+        
+        app.terminate()
+        try launchAppAndEnrollIntoStudy(
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForNonExistence(timeout: 20))
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 20))
+    }
+}

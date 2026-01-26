@@ -56,6 +56,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @MainActor private(set) var isInSetup = false
     
     private(set) var state: State
+    private(set) var desc = ""
     
     init() {
         state = if FeatureFlags.disableFirebase || config == .disabled {
@@ -94,9 +95,11 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             isInSetup = false
         }
         if config.resetExistingData {
+            desc = "\(#function) will reset existing data"
             try await resetExistingData()
         }
         if config.loginAndEnroll {
+            desc = "\(#function) will loginAndEnroll"
             try await loginAndEnroll()
         }
     }
@@ -151,18 +154,23 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
+        desc = "\(#function) will update study bundle loader"
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
         let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs.merging(
             with: .init(read: studyBundle.studyDefinition.allCollectedHealthData(includingOptionalSampleTypes: true).exceptClinicalRecordTypes())
         )
+        desc = "\(#function) will ask for regular HK auth"
         try await healthKit.askForAuthorization(for: accessReqs)
+        desc = "\(#function) will enroll"
         try await standard.enroll(in: studyBundle)
         if HKHealthStore().supportsHealthRecords() {
+            desc = "\(#function) will ask for clinical access"
             try await _Concurrency.Task.sleep(for: .seconds(1))
             try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: false)
         }
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
+        desc = "\(#function) DONE"
     }
 }
 

@@ -28,7 +28,7 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyLoader
-    @ObservationIgnored @Dependency(StudyManager.self) private var studyManager
+    @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     
     @ObservationIgnored @LocalPreference(.clinicalRecordAuthWasCancelledByUser)
     private var wasCancelledByUser
@@ -38,6 +38,7 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
     
     func configure() {
         Task {
+            _ = try? await studyLoader.update()
             await updateAuthorizationState()
         }
     }
@@ -74,7 +75,7 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
         do {
             try await healthKit.askForAuthorization(for: dataAccessRequirements())
             await updateAuthorizationState()
-            try await studyManager.updateHealthDataCollection()
+            try await studyManager?.updateHealthDataCollection()
         } catch {
             if let error = error as? HKError, error.code == .errorUserCanceled {
                 wasCancelledByUser = true
@@ -89,14 +90,25 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
     }
     
     private func requestedRecordTypes() async -> Set<SampleType<HKClinicalRecord>> {
-        studyManager.studyEnrollments.reduce(into: []) { types, enrollment in
-            guard let studyDefinition = enrollment.studyBundle?.studyDefinition else {
-                return
-            }
-            for component in studyDefinition.healthDataCollectionComponents {
+        let imp = { (_ study: StudyDefinition) -> Set<SampleType<HKClinicalRecord>> in
+            var types = Set<SampleType<HKClinicalRecord>>()
+            for component in study.healthDataCollectionComponents {
                 types.formUnion(component.sampleTypes.compactMap { $0 as? SampleType<HKClinicalRecord> })
                 types.formUnion(component.optionalSampleTypes.compactMap { $0 as? SampleType<HKClinicalRecord> })
             }
+            return types
+        }
+        if let enrollments = studyManager?.studyEnrollments {
+            return enrollments.reduce(into: []) { types, enrollment in
+                guard let studyDefinition = enrollment.studyBundle?.studyDefinition else {
+                    return
+                }
+                types.formUnion(imp(studyDefinition))
+            }
+        } else if let studyDefinition = try? studyLoader.studyBundle?.get().studyDefinition {
+            return imp(studyDefinition)
+        } else {
+            return []
         }
     }
 }

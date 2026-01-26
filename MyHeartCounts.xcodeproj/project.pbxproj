@@ -1368,7 +1368,7 @@
 			repositoryURL = "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git";
 			requirement = {
 				kind = revision;
-				revision = 3c0ebe8c1ebfd903bbbba2fc24c0db6fe25cb444;
+				revision = 7dfabe949e4838c6b1bc08203c17db1e32bf21a0;
 			};
 		};
 		804C11E72ECA382D004783C3 /* XCRemoteSwiftPackageReference "SpeziScheduler" */ = {
@@ -1512,7 +1512,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
 				kind = revision;
-				revision = 3edf7fc3f54e6ee8e2f3f5820a4937ec92f5cb87;
+				revision = 1da82264ed6c82fa1bb6249c0b75b93612839f1a;
 			};
 		};
 		80E6B9322EFAC1960037D4BB /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
