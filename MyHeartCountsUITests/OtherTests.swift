@@ -17,6 +17,7 @@ final class OtherTests: MHCTestCase, @unchecked Sendable {
     @MainActor
     func testSkippingClinicalRecordsAuthorization() throws {
         app.resetAuthorizationStatus(for: .health)
+        app.delete(app: "My Heart Counts")
         try launchAppAndEnrollIntoStudy(
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
