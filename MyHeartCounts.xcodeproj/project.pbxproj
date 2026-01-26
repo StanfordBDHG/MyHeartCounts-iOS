@@ -1367,8 +1367,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.13;
+				kind = revision;
+				revision = 3c0ebe8c1ebfd903bbbba2fc24c0db6fe25cb444;
 			};
 		};
 		804C11E72ECA382D004783C3 /* XCRemoteSwiftPackageReference "SpeziScheduler" */ = {
@@ -1511,8 +1511,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.18;
+				kind = revision;
+				revision = 3edf7fc3f54e6ee8e2f3f5820a4937ec92f5cb87;
 			};
 		};
 		80E6B9322EFAC1960037D4BB /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {

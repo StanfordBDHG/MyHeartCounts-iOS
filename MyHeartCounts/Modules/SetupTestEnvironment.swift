@@ -45,6 +45,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
+    @ObservationIgnored @Dependency(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkHealthExporter
     @ObservationIgnored @Dependency(ManagedFileUpload.self) private var fileUploader
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
@@ -152,22 +153,27 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
-        let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
-            .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData.filter(isNotKindOf: SampleType<HKClinicalRecord>.self)))
+        let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs.merging(
+            with: .init(read: studyBundle.studyDefinition.allCollectedHealthData(includingOptionalSampleTypes: true).exceptClinicalRecordTypes())
+        )
         try await healthKit.askForAuthorization(for: accessReqs)
+        try await standard.enroll(in: studyBundle)
         if HKHealthStore().supportsHealthRecords() {
             try await _Concurrency.Task.sleep(for: .seconds(1))
-            try await healthKit.askForAuthorization(for: .init(read: studyBundle.studyDefinition.allCollectedHealthData.clinicalRecordTypes()))
+            try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: false)
         }
-        try await standard.enroll(in: studyBundle)
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
     }
 }
 
 
 extension SampleTypesCollection {
-    func clinicalRecordTypes() -> Self {
+    func onlyClinicalRecordTypes() -> Self {
         filter(isKindOf: SampleType<HKClinicalRecord>.self)
+    }
+    
+    func exceptClinicalRecordTypes() -> Self {
+        filter(isNotKindOf: SampleType<HKClinicalRecord>.self)
     }
     
     func filter<Sample>(isKindOf _: SampleType<Sample>.Type) -> Self {

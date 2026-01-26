@@ -32,6 +32,7 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             SetupTestEnvironment()
             DeferredConfigLoading.initialAppLaunchConfig
             HealthKit()
+            ClinicalRecordPermissions()
             Scheduler()
             Notifications()
             BulkHealthExporter()
