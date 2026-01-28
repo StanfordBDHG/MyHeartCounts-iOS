@@ -11,8 +11,8 @@
 // swiftlint:disable file_types_order
 // periphery:ignore:all
 
-private import os
 public import Foundation
+private import os
 
 
 // MARK: API
