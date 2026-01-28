@@ -43,7 +43,7 @@ jobs:
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   mhc_utils_unit_tests:
-    name: Build and Test (Utils Unit Tests)
+    name: Build and Test (Utils Unit Tests @ macOS)
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       path: MyHeartCountsShared
@@ -51,6 +51,15 @@ jobs:
       scheme: MyHeartCountsShared-Package
       resultBundle: MyHeartCountsShared-UnitTests.xcresult
       artifactname: MyHeartCountsShared-UnitTests.xcresult
+  mhc_utils_unit_tests_linux:
+    name: Build and Test (Utils Unit Tests @ Linux)
+    uses: StanfordBDHG/.github/.github/workflows/swift-test.yml@v2
+    strategy:
+      matrix:
+        config: [Debug, Release]
+      fail-fast: false
+    with:
+      artifact_name: ${{ format('MyHeartCountsShared-UnitTests-Linux-{0}.lcov', matrix.config) }}
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [mhc_app_unit_tests, mhc_app_ui_tests, mhc_utils_unit_tests]
@@ -59,5 +68,6 @@ jobs:
       contents: read
     with:
       coveragereports: MyHeartCounts-UnitTests.xcresult MyHeartCounts-UITests.xcresult MyHeartCountsShared-UnitTests.xcresult
+      coveragereports_lcov: MyHeartCountsShared-UnitTests-Linux-*.lcov
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}

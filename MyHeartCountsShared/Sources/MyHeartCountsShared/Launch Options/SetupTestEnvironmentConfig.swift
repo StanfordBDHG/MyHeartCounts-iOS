@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if !os(Linux)
+
 private import SpeziFoundation
 
 
@@ -82,3 +84,5 @@ extension LaunchOptions {
         default: .init(resetExistingData: false, loginAndEnroll: false)
     )
 }
+
+#endif

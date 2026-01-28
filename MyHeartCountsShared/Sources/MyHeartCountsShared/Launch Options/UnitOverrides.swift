@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if !os(Linux)
+
 import Foundation
 import SpeziFoundation
 
@@ -65,3 +67,5 @@ extension LaunchOptions {
     /// Allows overriding which unit should be used when entering a weight value into the app.
     public static let weightInputUnitOverride = LaunchOption<WeightInputUnitOverride>("--weightInputUnitOverride", default: .none)
 }
+
+#endif

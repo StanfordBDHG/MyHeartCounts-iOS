@@ -6,14 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if !os(Linux)
+
 // swiftlint:disable file_types_order
 // periphery:ignore:all
 
 public import Foundation
-private import OSLog
-
-
-private let logger = Logger(subsystem: "edu.stanford.MyHeartCounts", category: "LaunchOptions")
 
 
 // MARK: API
@@ -231,14 +229,15 @@ private struct CommandLineLaunchOptionsContainer: LaunchOptionsContainerProtocol
         self.parsedArguments = parsedArguments
         
         if self[.dumpOptionsAndExit] {
-            logger.notice("Found CLI flag '\(LaunchOptions.dumpOptionsAndExit.key)'.")
-            logger.notice("CLI Options:")
-            logger.notice("- programName: \(parsedArguments.programName)")
-            logger.notice("- directProgramArguments: \(parsedArguments.directProgramArguments)")
-            logger.notice("- options:")
+            var summary = "Found CLI flag '\(LaunchOptions.dumpOptionsAndExit.key)'."
+            summary += "\nCLI Options:"
+            summary += "\n- programName: \(parsedArguments.programName)"
+            summary += "\n- directProgramArguments: \(parsedArguments.directProgramArguments)"
+            summary += "\n- options:"
             for (key, values) in parsedArguments.options {
-                logger.notice("  [\(key)] = \(values)")
+                summary += "\n  [\(key)] = \(values)"
             }
+            print(summary)
             exit(EXIT_SUCCESS)
         }
     }
@@ -256,7 +255,7 @@ private struct CommandLineLaunchOptionsContainer: LaunchOptionsContainerProtocol
                 value = try V(decodingLaunchOption: LaunchOptionDecodingContext(rawArgs: optionRawArgs))
                 return value
             } catch {
-                logger.error("Unable to parse value for option '\(option.key)': \(error)")
+                print("Unable to parse value for option '\(option.key)': \(error)")
                 return nil
             }
         }
@@ -385,3 +384,5 @@ extension LaunchOptions {
     /// A special launch option that, if specified, simply prints all other parsed launch options to STDOUT and then terminates the program.
     public static let dumpOptionsAndExit = LaunchOption<Bool>("--dump-cli-options-and-exit", default: false)
 }
+
+#endif

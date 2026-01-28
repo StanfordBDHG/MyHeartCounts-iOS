@@ -8,6 +8,7 @@
 
 // periphery:ignore:all - API
 
+public import CoreFoundation
 public import Foundation
 public import NIOFoundationCompat
 

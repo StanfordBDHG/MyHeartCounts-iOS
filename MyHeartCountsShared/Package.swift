@@ -13,26 +13,38 @@ import PackageDescription
 
 
 var packageDeps: [Package.Dependency] = [
-    .package(url: "https://github.com/StanfordSpezi/SpeziStudy.git", from: "0.1.15"),
     .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.5.0"),
-    .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols.git", from: "7.0.0"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.93.0"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.7.0")
 ]
 
+#if !os(Linux)
+packageDeps += [
+    .package(url: "https://github.com/StanfordSpezi/SpeziStudy.git", from: "0.1.15"),
+    .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols.git", from: "7.0.0")
+]
+#endif
+
 #if os(iOS)
-packageDeps.append(.package(url: "https://github.com/StanfordSpezi/SpeziSensorKit.git", from: "0.6.1"))
+packageDeps += [
+    .package(url: "https://github.com/StanfordSpezi/SpeziSensorKit.git", from: "0.6.1")
+]
 #endif
 
 
 /// dependencies of the `MyHeartCountsShared` target
 var mhcSharedTargetDeps: [Target.Dependency] = [
-    .product(name: "SpeziStudyDefinition", package: "SpeziStudy"),
     .product(name: "SpeziFoundation", package: "SpeziFoundation"),
-    .product(name: "SFSafeSymbols", package: "SFSafeSymbols"),
     .product(name: "NIOCore", package: "swift-nio"),
     .product(name: "NIOFoundationCompat", package: "swift-nio")
 ]
+
+#if !os(Linux)
+mhcSharedTargetDeps += [
+    .product(name: "SpeziStudyDefinition", package: "SpeziStudy"),
+    .product(name: "SFSafeSymbols", package: "SFSafeSymbols")
+]
+#endif
 
 #if os(iOS)
 mhcSharedTargetDeps.append(.product(name: "SpeziSensorKit", package: "SpeziSensorKit"))
