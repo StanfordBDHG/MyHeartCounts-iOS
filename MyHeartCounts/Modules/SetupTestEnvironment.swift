@@ -45,6 +45,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(FirebaseAccountService.self) private var accountService: FirebaseAccountService?
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
+    @ObservationIgnored @Dependency(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkHealthExporter
     @ObservationIgnored @Dependency(ManagedFileUpload.self) private var fileUploader
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
@@ -55,6 +56,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @MainActor private(set) var isInSetup = false
     
     private(set) var state: State
+    private(set) var desc = ""
     
     init() {
         state = if FeatureFlags.disableFirebase || config == .disabled {
@@ -93,9 +95,11 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             isInSetup = false
         }
         if config.resetExistingData {
+            desc = "\(#function) will reset existing data"
             try await resetExistingData()
         }
         if config.loginAndEnroll {
+            desc = "\(#function) will loginAndEnroll"
             try await loginAndEnroll()
         }
     }
@@ -150,24 +154,34 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
+        desc = "\(#function) will update study bundle loader"
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
-        let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
-            .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData.filter(isNotKindOf: SampleType<HKClinicalRecord>.self)))
+        let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs.merging(
+            with: .init(read: studyBundle.studyDefinition.allCollectedHealthData(includingOptionalSampleTypes: true).exceptClinicalRecordTypes())
+        )
+        desc = "\(#function) will ask for regular HK auth"
         try await healthKit.askForAuthorization(for: accessReqs)
-        if HKHealthStore().supportsHealthRecords() {
-            try await _Concurrency.Task.sleep(for: .seconds(1))
-            try await healthKit.askForAuthorization(for: .init(read: studyBundle.studyDefinition.allCollectedHealthData.clinicalRecordTypes()))
-        }
+        desc = "\(#function) will enroll"
         try await standard.enroll(in: studyBundle)
+        if HKHealthStore().supportsHealthRecords() {
+            desc = "\(#function) will ask for clinical access"
+            try await _Concurrency.Task.sleep(for: .seconds(1))
+            try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: false)
+        }
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
+        desc = "\(#function) DONE"
     }
 }
 
 
 extension SampleTypesCollection {
-    func clinicalRecordTypes() -> Self {
+    func onlyClinicalRecordTypes() -> Self {
         filter(isKindOf: SampleType<HKClinicalRecord>.self)
+    }
+    
+    func exceptClinicalRecordTypes() -> Self {
+        filter(isNotKindOf: SampleType<HKClinicalRecord>.self)
     }
     
     func filter<Sample>(isKindOf _: SampleType<Sample>.Type) -> Self {

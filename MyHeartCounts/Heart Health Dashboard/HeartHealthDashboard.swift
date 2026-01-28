@@ -267,7 +267,7 @@ private struct HealthDashboardQuestionnaireView: View {
                 QuestionnaireView(questionnaire: questionnaire) { result in
                     switch result {
                     case .completed(let response):
-                        await standard.add(response)
+                        await standard.add(response, for: questionnaire)
                     case .cancelled, .failed:
                         break
                     }
