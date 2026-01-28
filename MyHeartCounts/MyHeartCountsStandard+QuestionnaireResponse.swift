@@ -21,6 +21,7 @@ extension MyHeartCountsStandard {
         _ response: ModelsR4.QuestionnaireResponse,
         for questionnaire: ModelsR4.Questionnaire
     ) async {
+        // shouldn't be necessary, but we had some issues with these not being properly set
         response.questionnaire = questionnaire.url?.value?.url.absoluteString.asFHIRCanonicalPrimitive()
         let logger = await self.logger
         let id = response.identifier?.value?.value?.string ?? UUID().uuidString
