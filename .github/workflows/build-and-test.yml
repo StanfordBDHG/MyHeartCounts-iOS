@@ -25,8 +25,8 @@ jobs:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: MyHeartCounts
       testplan: MyHeartCounts Unit Tests
-      resultBundle: MyHeartCounts-UnitTests.xcresult
-      artifactname: MyHeartCounts-UnitTests.xcresult
+      resultBundle: MHC-App-UnitTests.xcresult
+      artifactname: MHC-App-UnitTests.xcresult
   mhc_app_ui_tests:
     name: App UI Tests
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -34,7 +34,7 @@ jobs:
       contents: read
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      artifactname: MyHeartCounts-UITests.xcresult
+      artifactname: MHC-App-UITests.xcresult
       firebaseemulatorimport: ./firebase
       firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
       setupfirebaseemulator: true
@@ -58,8 +58,8 @@ jobs:
       path: MyHeartCountsShared
       scheme: MyHeartCountsShared-Package
       destination: ${{ matrix.platform.destination }}
-      resultBundle: ${{ format('MyHeartCountsShared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
-      artifactname: ${{ format('MyHeartCountsShared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
+      resultBundle: ${{ format('MHC-Shared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
+      artifactname: ${{ format('MHC-Shared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   mhc_utils_unit_tests_linux:
     name: Utils Unit Tests (Linux ${{ matrix.config }})
     uses: StanfordBDHG/.github/.github/workflows/swift-test.yml@lukas/swift-test-lcov-fix
@@ -69,7 +69,7 @@ jobs:
       fail-fast: false
     with:
       path: MyHeartCountsShared
-      artifact_name: ${{ format('MyHeartCountsShared-UnitTests-Linux-{0}.lcov', matrix.config) }}
+      artifact_name: ${{ format('MHC-Shared-UnitTests-Linux-{0}.lcov', matrix.config) }}
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [mhc_app_unit_tests, mhc_app_ui_tests, mhc_utils_unit_tests, mhc_utils_unit_tests_linux]
@@ -77,7 +77,7 @@ jobs:
     permissions:
       contents: read
     with:
-      coveragereports: MyHeartCounts-UnitTests.xcresult MyHeartCounts-UITests.xcresult MyHeartCountsShared-UnitTests.xcresult
+      coveragereports: MHC-*.xcresult
       coveragereports_lcov: MyHeartCountsShared-UnitTests-Linux-*.lcov
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}
