@@ -45,8 +45,12 @@ struct RootView: View {
                     EmptyView()
                 }
             case .pending, .settingUp:
-                ProgressView("Preparing Test Environment")
-                Text(verbatim: setupTestEnvironment.desc)
+                VStack {
+                    ProgressView("Preparing Test Environment")
+                    Text(verbatim: setupTestEnvironment.desc)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             case .failure(let error):
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
             }
