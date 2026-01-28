@@ -43,16 +43,23 @@ jobs:
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   mhc_utils_unit_tests:
-    name: Build and Test (Utils Unit Tests @ macOS)
+    name: Build and Test (Utils Unit Tests @ macOS ${{ matrix.config }})
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    strategy:
+      matrix:
+        config: [Debug, Release]
+        platform:
+          - name: iOS
+            destination: 'platform=iOS Simulator,name=iPhone 17 Pro'
     with:
-      path: MyHeartCountsShared
       runsonlabels: '["macOS", "self-hosted"]'
+      path: MyHeartCountsShared
       scheme: MyHeartCountsShared-Package
-      resultBundle: MyHeartCountsShared-UnitTests.xcresult
-      artifactname: MyHeartCountsShared-UnitTests.xcresult
+      destination: ${{ matrix.platform.destination }}
+      resultBundle: ${{ format('MyHeartCountsShared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
+      artifactname: ${{ format('MyHeartCountsShared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   mhc_utils_unit_tests_linux:
-    name: Build and Test (Utils Unit Tests @ Linux)
+    name: Build and Test (Utils Unit Tests @ Linux ${{ matrix.config }})
     uses: StanfordBDHG/.github/.github/workflows/swift-test.yml@v2
     strategy:
       matrix:
