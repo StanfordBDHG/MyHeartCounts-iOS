@@ -7,7 +7,7 @@
 //
 
 @preconcurrency import FirebaseFirestore
-import class ModelsR4.QuestionnaireResponse
+import ModelsR4
 import MyHeartCountsShared
 import OSLog
 import Spezi
@@ -16,13 +16,19 @@ import SpeziHealthKit
 
 extension MyHeartCountsStandard {
     // periphery:ignore:parameters isolation
-    func add(isolation: isolated (any Actor)? = #isolation, _ response: ModelsR4.QuestionnaireResponse) async {
+    func add(
+        isolation: isolated (any Actor)? = #isolation,
+        _ response: ModelsR4.QuestionnaireResponse,
+        for questionnaire: ModelsR4.Questionnaire
+    ) async {
+        // shouldn't be necessary, but we had some issues with these not being properly set
+        response.questionnaire = questionnaire.url?.value?.url.absoluteString.asFHIRCanonicalPrimitive()
         let logger = await self.logger
         let id = response.identifier?.value?.value?.string ?? UUID().uuidString
         do {
             try await firebaseConfiguration.userDocumentReference
-                .collection("questionnaireResponses") // Add all HealthKit sources in a /QuestionnaireResponse collection.
-                .document(id) // Set the document identifier to the id of the response.
+                .collection("questionnaireResponses")
+                .document(id)
                 .setData(from: response)
         } catch {
             logger.error("Could not store questionnaire response: \(error)")

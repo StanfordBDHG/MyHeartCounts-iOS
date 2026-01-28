@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import FirebaseCore
 import FirebaseFunctions
 import SFSafeSymbols
 import SpeziAccount
@@ -129,10 +130,19 @@ struct AccountSheet: View {
         Section {
             LabeledContent {
                 let bundle = Bundle.main
-                Text("\(bundle.appVersion) (\(bundle.appBuildNumber ?? -1))")
+                Text(verbatim: "\(bundle.appVersion) (\(bundle.appBuildNumber ?? -1))")
             } label: {
-                Label("My Heart Counts", systemSymbol: .infoCircle)
-                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                Label(symbol: .infoCircle) {
+                    VStack(alignment: .leading) {
+                        Text("My Heart Counts")
+                        if let firebaseProjectId = FirebaseApp.app()?.options.projectID {
+                            Text(firebaseProjectId)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .foregroundStyle(colorScheme.textLabelForegroundStyle)
             }
             NavigationLink {
                 ContributionsList(projectLicense: .mit)

@@ -57,7 +57,7 @@ struct HealthKitPermissions: View {
     
     
     private func grantAccess() async {
-        guard let studyBundle = try? studyLoader.studyBundle?.get() else {
+        guard let studyDefinition = try? studyLoader.studyBundle?.get().studyDefinition else {
             // guaranteed to be non-nil if we end up in this view
             return
         }
@@ -66,10 +66,9 @@ struct HealthKitPermissions: View {
             if ProcessInfo.processInfo.isPreviewSimulator {
                 try await _Concurrency.Task.sleep(for: .seconds(5))
             } else {
-                let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs
-                    .merging(with: .init(read: studyBundle.studyDefinition.allCollectedHealthData.filter { sampleType in
-                        !(sampleType.hkSampleType is HKClinicalType)
-                    }))
+                let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs.merging(
+                    with: .init(read: studyDefinition.allCollectedHealthData(includingOptionalSampleTypes: false))
+                )
                 try await healthKit.askForAuthorization(for: accessReqs)
             }
         } catch {
@@ -96,13 +95,6 @@ extension MyHeartCountsStandard {
             SampleType.bloodGlucose, SampleType.bloodPressure
         ] as [any AnySampleType]).map { $0.hkSampleType }
     )
-}
-
-
-extension SampleTypesCollection {
-    func filter(_ isIncluded: (any AnySampleType) -> Bool) -> SampleTypesCollection {
-        SampleTypesCollection(self.lazy.filter(isIncluded))
-    }
 }
 
 

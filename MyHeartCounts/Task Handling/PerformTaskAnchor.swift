@@ -163,7 +163,7 @@ private struct UserTaskPerforming: ViewModifier {
                     QuestionnaireView(questionnaire: questionnaire, cancelBehavior: .cancel) { result in
                         switch result {
                         case .completed(let response):
-                            await standard.add(response)
+                            await standard.add(response, for: questionnaire)
                             task.markCompleted(didSucceed: true)
                         case .cancelled, .failed:
                             task.markCompleted(didSucceed: false)

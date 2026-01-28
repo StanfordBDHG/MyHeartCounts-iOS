@@ -20,9 +20,9 @@ import SwiftUI
 struct HealthRecords: View {
     private let title: LocalizedStringResource = "Health Records"
     
-    @Environment(HealthKit.self) private var healthKit
     @Environment(StudyBundleLoader.self) private var studyLoader
     @Environment(ManagedNavigationStack.Path.self) private var path
+    @Environment(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     
     @State private var viewState: ViewState = .idle
     @State private var isShowingLearnMoreText = false
@@ -59,14 +59,8 @@ struct HealthRecords: View {
     
     
     private func grantAccess() async {
-        guard let studyBundle = try? studyLoader.studyBundle?.get() else {
-            return
-        }
         do {
-            let clinicalTypes = studyBundle.studyDefinition.allCollectedHealthData.filter {
-                $0.hkSampleType is HKClinicalType
-            }
-            try await healthKit.askForAuthorization(for: .init(read: clinicalTypes))
+            try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: true)
         } catch {
             logger.error("Error requesting access to health records: \(error)")
         }
