@@ -43,7 +43,7 @@ jobs:
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   mhc_utils_unit_tests:
-    name: Build and Test (Utils Unit Tests @ macOS ${{ matrix.config }})
+    name: Build and Test (Utils Unit Tests @ ${{ matrix.platform.name }} ${{ matrix.config }})
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
@@ -51,6 +51,8 @@ jobs:
         platform:
           - name: iOS
             destination: 'platform=iOS Simulator,name=iPhone 17 Pro'
+          - name: macOS
+            destination: 'platform=macOS,arch=arm64'
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: MyHeartCountsShared
