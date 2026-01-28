@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if canImport(SwiftUI)
+
 import Algorithms
 import Foundation
 import SpeziFoundation
@@ -68,3 +70,5 @@ extension Comparable {
         max(range.lowerBound, min(range.upperBound, self))
     }
 }
+
+#endif

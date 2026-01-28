@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if !os(Linux)
+
 public import Foundation
 
 
@@ -20,3 +22,5 @@ extension LaunchOptions {
     /// The URL passed in here can be either a web url (https) or a local file system url.
     public static let overrideStudyBundleLocation = LaunchOption<URL?>("--overrideStudyBundleLocation", default: nil)
 }
+
+#endif

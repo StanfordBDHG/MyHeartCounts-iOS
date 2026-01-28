@@ -50,7 +50,11 @@ extension Locale.Region {
     public func localizedName(in locale: Locale, includeEmoji emojiPosition: EmojiPosition) -> String {
         let name = switch self {
         case .world:
+            #if !os(Linux)
             String(localized: "World")
+            #else
+            "World"
+            #endif
         default:
             locale.localizedString(forRegionCode: self.identifier) ?? self.identifier
         }

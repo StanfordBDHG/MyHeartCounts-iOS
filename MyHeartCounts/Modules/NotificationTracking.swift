@@ -25,11 +25,14 @@ final class NotificationTracking: Module, @unchecked Sendable {
     private var firebaseConfiguration
     
     func trackDidOpen(_ response: UNNotificationResponse) {
+        print("response \(response)")
+        print("userInfo \(response.notification.request.content.userInfo)")
         let event = TrackedNotificationEvent(
             timestamp: .now,
             timeZone: TimeZone.current.identifier,
             event: .opened,
-            notificationId: response.notification.request.identifier
+            notificationId: response.notification.request.identifier,
+            additionalStuff: String(describing: response.notification.request.content.userInfo)
         )
         Task {
             do {
@@ -55,5 +58,6 @@ extension NotificationTracking {
         let timeZone: String
         let event: Event
         let notificationId: String
+        let additionalStuff: String
     }
 }

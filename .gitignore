@@ -17,6 +17,7 @@ MyHeartCountsShared/Package.resolved
 
 # IDE related folders
 .idea
+.vscode
 
 # Xcode
 xcuserdata/

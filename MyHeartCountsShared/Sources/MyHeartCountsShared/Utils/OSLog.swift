@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if canImport(OSLog)
+
 public import OSLog
 
 
@@ -36,3 +38,5 @@ extension Logger {
         self.init(subsystem: subsystem, category: category.value)
     }
 }
+
+#endif
