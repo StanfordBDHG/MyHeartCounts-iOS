@@ -62,7 +62,7 @@ jobs:
       artifact_name: ${{ format('MyHeartCountsShared-UnitTests-Linux-{0}.lcov', matrix.config) }}
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [mhc_app_unit_tests, mhc_app_ui_tests, mhc_utils_unit_tests]
+    needs: [mhc_app_unit_tests, mhc_app_ui_tests, mhc_utils_unit_tests, mhc_utils_unit_tests_linux]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     permissions:
       contents: read
