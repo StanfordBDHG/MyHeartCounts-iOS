@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   mhc_app_unit_tests:
-    name: Build and Test (App Unit Tests)
+    name: App Unit Tests
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
@@ -28,7 +28,7 @@ jobs:
       resultBundle: MyHeartCounts-UnitTests.xcresult
       artifactname: MyHeartCounts-UnitTests.xcresult
   mhc_app_ui_tests:
-    name: Build and Test (App UI Tests)
+    name: App UI Tests
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     permissions:
       contents: read
@@ -43,7 +43,7 @@ jobs:
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   mhc_utils_unit_tests:
-    name: Build and Test (Utils Unit Tests @ ${{ matrix.platform.name }} ${{ matrix.config }})
+    name: Utils Unit Tests @ ${{ matrix.platform.name }} ${{ matrix.config }}
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
@@ -61,8 +61,8 @@ jobs:
       resultBundle: ${{ format('MyHeartCountsShared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
       artifactname: ${{ format('MyHeartCountsShared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   mhc_utils_unit_tests_linux:
-    name: Build and Test (Utils Unit Tests @ Linux ${{ matrix.config }})
-    uses: StanfordBDHG/.github/.github/workflows/swift-test.yml@v2
+    name: Utils Unit Tests @ Linux ${{ matrix.config }}
+    uses: StanfordBDHG/.github/.github/workflows/swift-test.yml@lukas/swift-test-lcov-fix
     strategy:
       matrix:
         config: [Debug, Release]
