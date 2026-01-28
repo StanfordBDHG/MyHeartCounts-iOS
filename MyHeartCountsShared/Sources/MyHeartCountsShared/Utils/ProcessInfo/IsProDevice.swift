@@ -10,7 +10,7 @@
 
 #if canImport(AVFoundation) && os(iOS)
 private import AVFoundation
-import Foundation
+public import Foundation
 
 
 extension ProcessInfo {
