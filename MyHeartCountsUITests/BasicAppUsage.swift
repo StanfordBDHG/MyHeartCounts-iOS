@@ -14,6 +14,11 @@ import XCTHealthKit
 
 
 final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
+    @MainActor
+    func testPlaceholder() {
+        XCTAssertEqual(1+1, 2)
+    }
+    
 //    @MainActor
 //    func testRootLevelNavigation() throws {
 //        return;

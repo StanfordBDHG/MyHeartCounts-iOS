@@ -56,11 +56,6 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         try? FileManager.default.removeItem(at: Self.tempDir)
     }
     
-    @MainActor
-    func testPlaceholder() {
-        XCTAssertEqual(1+1, 2)
-    }
-    
     /// Launches the app and puts it in a state where the participant is logged in and enrolled into the study.
     ///
     /// - parameter enableDebugMode: Whether the app should force-enable its debug mode for this launch. Defaults to `false`.

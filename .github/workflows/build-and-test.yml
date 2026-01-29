@@ -78,6 +78,6 @@ jobs:
       contents: read
     with:
       coveragereports: MHC-*.xcresult
-      coveragereports_lcov: MyHeartCountsShared-UnitTests-Linux-*.lcov
+      coveragereports_lcov: MHC-Shared-UnitTests-Linux-*.lcov
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}
