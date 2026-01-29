@@ -257,6 +257,7 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         app.swipeUp()
         app.swipeUp()
         app.buttons["Debug"].tap()
+        app.swipeUp()
         app.buttons["Add Sleep Sessions"].tap()
         app.handleHealthKitAuthorization()
         sleep(for: .seconds(2))
