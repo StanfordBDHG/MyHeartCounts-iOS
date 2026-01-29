@@ -39,7 +39,7 @@ platform :ios do
       concurrent_workers: 1,
       max_concurrent_simulators: 1,
       result_bundle: true,
-      result_bundle_path: "./MyHeartCounts-UITests.xcresult",
+      result_bundle_path: "./MHC-App-UITests.xcresult",
       output_directory: ".",
       xcargs: [
         "-skipPackagePluginValidation",

@@ -6,41 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if canImport(Darwin)
+
 // periphery:ignore:all - API
 
-private import AVFoundation
 public import Darwin
 public import Foundation
 import MachO
-
-
-extension ProcessInfo {
-    /// Whether the app is currently running in a simulator environment.
-    @inlinable public static var isRunningInSimulator: Bool {
-        #if targetEnvironment(simulator)
-        true
-        #else
-        false
-        #endif
-    }
-    
-    /// Whether the app is currently being UI-Tested
-    @inlinable public static var isBeingUITested: Bool {
-        ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
-    }
-    
-    /// Determines if a debgger is currently attached to the process.
-    ///
-    /// Source: https://stackoverflow.com/a/33177600
-    @inlinable public static var isBeingDebugged: Bool {
-        var info = kinfo_proc()
-        var size = MemoryLayout.stride(ofValue: info)
-        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()]
-        let junk = sysctl(&mib, UInt32(mib.count), &info, &size, nil, 0)
-        assert(junk == 0, "sysctl failed")
-        return (info.kp_proc.p_flag & P_TRACED) != 0
-    }
-}
 
 
 extension ProcessInfo {
@@ -69,17 +41,4 @@ extension ProcessInfo {
     }
 }
 
-
-#if os(iOS)
-extension ProcessInfo {
-    /// Whether the iPhone the app currently is running on is a "Pro" model.
-    public static let isProDevice: Bool = {
-        let session = AVCaptureDevice.DiscoverySession(
-            deviceTypes: [.builtInTelephotoCamera],
-            mediaType: .video,
-            position: .back
-        )
-        return !session.devices.isEmpty
-    }()
-}
 #endif

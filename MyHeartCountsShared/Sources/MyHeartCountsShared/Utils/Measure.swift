@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if canImport(OSLog) && canImport(QuartzCore)
+
 // periphery:ignore:all - API
 
 import Foundation
@@ -52,3 +54,5 @@ public func measure<Result, E, C: Clock>(
     }
     return result
 }
+
+#endif

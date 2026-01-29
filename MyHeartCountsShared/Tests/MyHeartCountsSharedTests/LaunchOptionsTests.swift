@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if !os(Linux)
+
 // swiftlint:disable discouraged_optional_boolean
 
 import Foundation
@@ -105,3 +107,5 @@ struct LaunchOptionsTests {
         }
     }
 }
+
+#endif
