@@ -36,7 +36,6 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
-        throw XCTSkip()
         continueAfterFailure = false
         app = XCUIApplication()
         app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
