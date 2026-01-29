@@ -75,7 +75,6 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         weightEntryUnitOverride: LaunchOptions.WeightInputUnitOverride = .none,
         extraLaunchArgs: [String?] = []
     ) throws {
-        throw XCTSkip()
         app.launchArguments = Array {
             "--useFirebaseEmulator"
             testEnvironmentConfig.launchOptionArgs(for: .setupTestEnvironment)
