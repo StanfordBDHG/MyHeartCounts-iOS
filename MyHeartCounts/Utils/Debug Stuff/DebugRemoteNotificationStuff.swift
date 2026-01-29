@@ -22,8 +22,15 @@ struct DebugRemoteNotificationStuff: View {
     
     var body: some View {
         Form {
-            AsyncButton("Trigger remote Notification" as String, state: $viewState) {
+            AsyncButton(state: $viewState) {
                 try await triggerRemoteNotification()
+            } label: {
+                VStack(alignment: .leading) {
+                    Text(verbatim: "Trigger remote Notification")
+                    Text(verbatim: "The notification will be delivered at the next 15 minute interval.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
             .disabled(account == nil)
         }

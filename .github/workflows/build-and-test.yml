@@ -62,7 +62,7 @@ jobs:
       artifactname: ${{ format('MHC-Shared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   mhc_utils_unit_tests_linux:
     name: Utils Unit Tests (Linux ${{ matrix.config }})
-    uses: StanfordBDHG/.github/.github/workflows/swift-test.yml@lukas/swift-test-lcov-fix
+    uses: StanfordBDHG/.github/.github/workflows/swift-test.yml@v2
     strategy:
       matrix:
         config: [Debug, Release]
@@ -73,7 +73,7 @@ jobs:
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [mhc_app_unit_tests, mhc_app_ui_tests, mhc_utils_unit_tests, mhc_utils_unit_tests_linux]
-    uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@lukas/swift-test-lcov-fix
+    uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     permissions:
       contents: read
     with:
