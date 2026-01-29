@@ -9,12 +9,14 @@
 import FirebaseFirestore
 import Foundation
 import SpeziAccount
+import SpeziFirestore
 import SpeziViews
 import SwiftUI
 
 
 struct DebugRemoteNotificationStuff: View {
-    @Environment(Account.self) private var account: Account?
+    @Environment(Account.self)
+    private var account: Account?
     
     @State private var viewState: ViewState = .idle
     
