@@ -14,27 +14,26 @@ import XCTHealthKit
 
 
 final class OtherTests: MHCTestCase, @unchecked Sendable {
-//    @MainActor
-//    func testSkippingClinicalRecordsAuthorization() throws {
-//        return;
-//        app.resetAuthorizationStatus(for: .health)
-//        app.delete(app: "My Heart Counts")
-//        try launchAppAndEnrollIntoStudy(
-//            skipHealthPermissionsHandling: true,
-//            skipGoingToHomeTab: true
-//        )
-//        XCTAssert(app.navigationBars["Health Access"].waitForExistence(timeout: 10))
-//        app.handleHealthKitAuthorization()
-//        XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForExistence(timeout: 20))
-//        app.navigationBars.buttons["Cancel"].tap()
-//        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 20))
-//        
-//        app.terminate()
-//        try launchAppAndEnrollIntoStudy(
-//            skipHealthPermissionsHandling: true,
-//            skipGoingToHomeTab: true
-//        )
-//        XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForNonExistence(timeout: 20))
-//        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 20))
-//    }
+    @MainActor
+    func testSkippingClinicalRecordsAuthorization() throws {
+        app.resetAuthorizationStatus(for: .health)
+        app.delete(app: "My Heart Counts")
+        try launchAppAndEnrollIntoStudy(
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        XCTAssert(app.navigationBars["Health Access"].waitForExistence(timeout: 10))
+        app.handleHealthKitAuthorization()
+        XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForExistence(timeout: 20))
+        app.navigationBars.buttons["Cancel"].tap()
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 20))
+        
+        app.terminate()
+        try launchAppAndEnrollIntoStudy(
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForNonExistence(timeout: 20))
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 20))
+    }
 }

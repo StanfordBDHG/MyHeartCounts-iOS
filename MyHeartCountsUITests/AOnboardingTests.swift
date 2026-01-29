@@ -17,53 +17,51 @@ import XCTSpeziNotifications
 
 // named like this bc tests are run based on the alpabetic ordering of the test classes, and we want this one to run first.
 final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
-//    @MainActor
-//    func testAOnboardingFlow() throws {
-//        return;
-//        try launchHealthAppAndEnterCharacteristics(.init(
-//            bloodType: .aPositive,
-//            dateOfBirth: .init(year: 1998, month: 6, day: 2),
-//            biologicalSex: .male,
-//            skinType: .II,
-//            wheelchairUse: .no
-//        ))
-//        try launchAppAndEnrollIntoStudy(
-//            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
-//            skipHealthPermissionsHandling: true,
-//            skipGoingToHomeTab: true,
-//        )
-//        try app.navigateOnboardingFlow(
-//            region: .unitedStates,
-//            name: .init(givenName: "Leland", familyName: "Stanford"),
-//            email: Self.loginCredentials.email,
-//            password: Self.loginCredentials.password,
-//            signUpForExtraTrial: true,
-//            sender: self
-//        )
-//    }
-//    
-//    @MainActor
-//    func testReviewConsentForms() throws {
-//        return;
-//        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true))
-//        // check that the consent we just signed is showing up in the Account Sheet
-//        openAccountSheet()
-//        XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
-//        app.staticTexts["Review Consent Forms"].tap()
-//        XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
-//        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).firstMatch.tap()
-//        sleep(for: .seconds(2))
-//        let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
-//        XCTAssert(consentPdf.exists)
-//        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].exists)
-//        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].exists)
-//        XCTAssert(
-//            consentPdf.staticTexts.element(
-//                matching: NSPredicate(format: "label BEGINSWITH 'You are invited to participate in a research study, \"My Heart Counts,\"'")
-//            )
-//            .waitForExistence(timeout: 2)
-//        )
-//    }
+    @MainActor
+    func testAOnboardingFlow() throws {
+        try launchHealthAppAndEnterCharacteristics(.init(
+            bloodType: .aPositive,
+            dateOfBirth: .init(year: 1998, month: 6, day: 2),
+            biologicalSex: .male,
+            skinType: .II,
+            wheelchairUse: .no
+        ))
+        try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true,
+        )
+        try app.navigateOnboardingFlow(
+            region: .unitedStates,
+            name: .init(givenName: "Leland", familyName: "Stanford"),
+            email: Self.loginCredentials.email,
+            password: Self.loginCredentials.password,
+            signUpForExtraTrial: true,
+            sender: self
+        )
+    }
+    
+    @MainActor
+    func testReviewConsentForms() throws {
+        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true))
+        // check that the consent we just signed is showing up in the Account Sheet
+        openAccountSheet()
+        XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
+        app.staticTexts["Review Consent Forms"].tap()
+        XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
+        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).firstMatch.tap()
+        sleep(for: .seconds(2))
+        let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
+        XCTAssert(consentPdf.exists)
+        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].exists)
+        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].exists)
+        XCTAssert(
+            consentPdf.staticTexts.element(
+                matching: NSPredicate(format: "label BEGINSWITH 'You are invited to participate in a research study, \"My Heart Counts,\"'")
+            )
+            .waitForExistence(timeout: 2)
+        )
+    }
 }
 
 
