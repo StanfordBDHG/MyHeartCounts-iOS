@@ -84,7 +84,8 @@ extension QuantitySample: HealthObservation {
             observation.value = .quantity(Quantity(
                 code: code,
                 system: Self.speziSystem,
-                unit: "score" // not ideal
+                unit: "count",
+                value: value.asFHIRDecimalPrimitive()
             ))
         default:
             throw FHIRObservationConversionError.notSupported
