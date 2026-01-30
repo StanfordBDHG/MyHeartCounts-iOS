@@ -57,6 +57,9 @@ private struct DebugFormImpl: View {
                 NavigationLink(symbol: .bellBadge, "Scheduled Local Notifications" as String) {
                     PendingNotificationsList()
                 }
+                NavigationLink(symbol: .serverRack, "Remote Notifications" as String) {
+                    DebugRemoteNotificationStuff()
+                }
             }
             Section {
                 NavigationLink(symbol: .calendar, "Health Data Bulk Upload" as String) {
