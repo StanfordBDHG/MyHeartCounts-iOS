@@ -677,19 +677,7 @@
     "30 – 59" : {
 
     },
-    "31 – 50" : {
-
-    },
-    "51 – 70" : {
-
-    },
     "60 – 89" : {
-
-    },
-    "71 – 80" : {
-
-    },
-    "81 – 100" : {
 
     },
     "85 – 99" : {
@@ -1589,6 +1577,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delaware"
+          }
+        }
+      }
+    },
+    "DEMO_NUDGE_MESSAGE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set a reminder to stand and walk for 5 minutes each hour this morning. Light movement can lift your mood and help you stay on track."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programe un recordatorio para levantarse y caminar durante cinco minutos cada hora esta mañana. El movimiento ligero puede mejorar su estado de ánimo y ayudarlo a mantenerse encaminado."
+          }
+        }
+      }
+    },
+    "DEMO_NUDGE_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a quick standing break"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incorpore una pausa breve para ponerse de pie"
           }
         }
       }
@@ -3069,7 +3089,26 @@
       }
     },
     "Last %lld Days" : {
-
+      "localizations" : {
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Último Día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Últimos %lld Días"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "Last %lld months" : {
       "localizations" : {
@@ -3738,13 +3777,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Siguiente día"
+                  "value" : "Siguiente Día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Próximos %lld días"
+                  "value" : "Próximos %lld Días"
                 }
               }
             }
@@ -3778,13 +3817,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Próximo mes"
+                  "value" : "Próximo Mes"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Próximos %lld meses"
+                  "value" : "Próximos %lld Meses"
                 }
               }
             }
@@ -3818,13 +3857,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Próxima semana"
+                  "value" : "Próxima Semana"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Próximas %lld semanas"
+                  "value" : "Próximas %lld Semanas"
                 }
               }
             }
