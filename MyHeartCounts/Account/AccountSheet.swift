@@ -128,22 +128,7 @@ struct AccountSheet: View {
             }
         }
         Section {
-            LabeledContent {
-                let bundle = Bundle.main
-                Text(verbatim: "\(bundle.appVersion) (\(bundle.appBuildNumber ?? -1))")
-            } label: {
-                Label(symbol: .infoCircle) {
-                    VStack(alignment: .leading) {
-                        Text("My Heart Counts")
-                        if let firebaseProjectId = FirebaseApp.app()?.options.projectID {
-                            Text(firebaseProjectId)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                .foregroundStyle(colorScheme.textLabelForegroundStyle)
-            }
+            AboutRow()
             NavigationLink {
                 ContributionsList(projectLicense: .mit)
             } label: {
@@ -193,6 +178,55 @@ struct AccountSheet: View {
         } else {
             Text("Study not available")
                 .foregroundStyle(.secondary)
+        }
+    }
+}
+
+
+extension AccountSheet {
+    private struct AboutRow: View {
+        @Environment(\.colorScheme)
+        private var colorScheme
+        
+        @StudyManagerQuery private var enrollments: [StudyEnrollment]
+        
+        @State private var showExtendedInfo = false
+        
+        var body: some View {
+            LabeledContent {
+                let bundle = Bundle.main
+                if !showExtendedInfo {
+                    Text(bundle.appVersion)
+                } else {
+                    Text(verbatim: "\(bundle.appVersion) (\(bundle.appBuildNumber ?? -1))")
+                }
+            } label: {
+                Label(symbol: .infoCircle) {
+                    VStack(alignment: .leading) {
+                        Text("My Heart Counts")
+                        if showExtendedInfo {
+                            extendedInfo
+                        }
+                    }
+                }
+                .foregroundStyle(colorScheme.textLabelForegroundStyle)
+            }
+            .onTapGesture(count: 3) {
+                showExtendedInfo = true
+            }
+        }
+        
+        private var extendedInfo: some View {
+            HStack {
+                if let firebaseProjectId = FirebaseApp.app()?.options.projectID {
+                    Text(firebaseProjectId)
+                }
+                if let enrollment = enrollments.first {
+                    Text(verbatim: "rev=\(enrollment.studyRevision)")
+                }
+            }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
         }
     }
 }
