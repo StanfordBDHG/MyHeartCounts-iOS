@@ -497,6 +497,18 @@ extension TasksList {
                     DefaultTileHeader(event)
                 } footer: {
                     let buttonLabel = eventButtonTitle(for: event)
+                    let accessibilityLabel: LocalizedStringResource = if let buttonLabel {
+                        switch event.task.category {
+                        case .customActiveTask(.ecg):
+                            buttonLabel
+                        default:
+                            // The buttonLabel is a prompt for an action (eg "Answer Questionnaire" or "Read Article),
+                            // and we then add as context the thing this action would relate to.
+                            "\(buttonLabel): \(String(localized: event.task.title))"
+                        }
+                    } else {
+                        "Perform Task: \(String(localized: event.task.title))"
+                    }
                     EventActionButton(event: event, label: buttonLabel) {
                         selectionHandler(.regular(
                             action: action,
@@ -505,20 +517,10 @@ extension TasksList {
                             shouldCompleteEvent: !event.isCompleted || interactions.shouldComplete
                         ))
                     }
-                    .accessibilityLabel({ () -> LocalizedStringResource in
-                        if let buttonLabel {
-                            switch event.task.category {
-                            case .customActiveTask(.ecg):
-                                buttonLabel
-                            default:
-                                // The buttonLabel is a prompt for an action (eg "Answer Questionnaire" or "Read Article),
-                                // and we then add as context the thing this action would relate to.
-                                "\(buttonLabel): \(String(localized: event.task.title))"
-                            }
-                        } else {
-                            "Perform Task: \(String(localized: event.task.title))"
-                        }
-                    }())
+                    .accessibilityLabel(accessibilityLabel)
+                    // not perfect bc the part after the label will still be incorrectly localized
+                    // (we can't easily fix this bc it's the task title, which is hardcoded to a localization...)
+                    .accessibilityIdentifier(accessibilityLabel.localizedString(for: .enUS))
                 }
             } else {
                 InstructionsTile(event)
