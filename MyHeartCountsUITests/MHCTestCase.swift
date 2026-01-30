@@ -12,6 +12,7 @@ import Foundation
 import MHCStudyDefinitionExporter
 import MyHeartCountsShared
 import SpeziFoundation
+import SpeziLocalization
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
@@ -32,13 +33,13 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     
     @MainActor private(set) var app: XCUIApplication!
     @MainActor private(set) var studyBundleUrl: URL!
+    @MainActor private(set) var appLocale: Locale!
     
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         if studyBundleUrl == nil {
             try FileManager.default.createDirectory(at: Self.tempDir, withIntermediateDirectories: true)
             studyBundleUrl = try export(to: Self.tempDir, as: .archive)
@@ -50,6 +51,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         try await super.tearDown()
         app.terminate()
         app = nil
+        appLocale = nil
     }
     
     override class func tearDown() {
@@ -66,13 +68,15 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     @MainActor
     func launchAppAndEnrollIntoStudy(
+        locale: Locale = .current,
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: true),
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
         heightEntryUnitOverride: LaunchOptions.HeightInputUnitOverride = .none,
         weightEntryUnitOverride: LaunchOptions.WeightInputUnitOverride = .none,
-        extraLaunchArgs: [String?] = []
+        extraLaunchArgs: [String?] = [],
+        extraEnvironmentEntries: [String: String] = [:]
     ) throws {
         app.launchArguments = Array {
             "--useFirebaseEmulator"
@@ -84,6 +88,13 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
             weightEntryUnitOverride.launchOptionArgs(for: .weightInputUnitOverride)
         }
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
+        appLocale = locale
+        app.launchArguments += [
+            "-AppleLanguages", "(\(locale.language.minimalIdentifier))",
+            "-AppleLocale", try XCTUnwrap(LocalizationKey(locale: locale)).description
+        ]
+        app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
+        app.launchEnvironment.merge(extraEnvironmentEntries, using: .override)
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         if !skipHealthPermissionsHandling {
@@ -128,8 +139,15 @@ extension MHCTestCase {
     
     @MainActor
     func openAccountSheet() {
-        let button = app.navigationBars.buttons["Your Account"]
+        let button = app.navigationBars.buttons["MHC:YourAccount"]
         XCTAssert(button.waitForExistence(timeout: 1))
         button.tap()
     }
+}
+
+
+extension Locale {
+    static let enUS = Locale(identifier: "en_US")
+    static let esUS = Locale(identifier: "es_US")
+    static let enDE = Locale(identifier: "en_DE")
 }

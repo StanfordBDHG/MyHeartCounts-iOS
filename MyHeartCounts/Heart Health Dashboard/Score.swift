@@ -24,12 +24,14 @@ protocol ScoreDefinitionPatternRange<Bound>: RangeExpression, Sendable {
 }
 
 
-/// Intended to be declared as a static property somewhere.
+/// Intended to be defined as a static property somewhere.
 final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     struct TextualExplainer: Sendable {
         final class Band: Sendable {
             enum Background: Sendable { // swiftlint:disable:this nesting
+                /// The band's background is a single `Color`
                 case color(Color)
+                /// The band's background is a `Gradient`, which will be laid out left-to-right behind the view.
                 case gradient(Gradient)
             }
             let leadingText: LocalizedStringResource?
@@ -63,12 +65,19 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     
     enum Variant: Sendable {
         case distinctMapping(default: Double, scoringBands: [ScoringBand], explainer: TextualExplainer)
-        case range(Range<Double>, explainer: TextualExplainer)
+        case range(ClosedRange<Double>, explainer: TextualExplainer)
         case custom(@Sendable (Any) -> Double, explainer: TextualExplainer)
+        
+        var explainer: TextualExplainer {
+            switch self {
+            case .distinctMapping(_, _, let explainer), .range(_, let explainer), .custom(_, let explainer):
+                explainer
+            }
+        }
     }
     
     final class ScoringBand: Hashable, Sendable, AnyObjectBasedDefaultImpls { // not ideal but we need this to be a class so that it can be Hashable
-        let score: Double
+        fileprivate let score: Double
         let explainerBand: TextualExplainer.Band
         private let matchImp: @Sendable (Any) -> Bool
         
@@ -78,6 +87,11 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
             let matches = erasingClosureInputType(floatToIntHandlingRule: .allowRounding, matches)
             self.matchImp = { matches($0) ?? false }
         }
+        
+//        init<Input>(explainerBand: TextualExplainer.Band, calcScore: @escaping @Sendable (Input) -> Double?) {
+//            self.score = nil
+//            self.explainerBand =
+//        }
         
         func matches(_ value: some Any) -> Bool {
             matchImp(value)
@@ -124,7 +138,6 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     
     let variant: Variant
     
-    
     // periphery:ignore:parameters `default` - false positive
     init(
         `default`: Double,
@@ -153,7 +166,12 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
         self.variant = .custom({ mapping($0) ?? `default` }, explainer: explainer)
     }
     
+    init(range: ClosedRange<Double>, explainer: TextualExplainer) {
+        variant = .range(range, explainer: explainer)
+    }
     
+    
+    /// Applies the Score Definition to some input, returning a value in the range of `0` to `1`.
     func callAsFunction(_ input: some Any) -> Double {
         switch variant {
         case let .distinctMapping(`default`, elements, _):

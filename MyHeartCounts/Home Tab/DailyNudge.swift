@@ -31,6 +31,12 @@ struct DailyNudge: DynamicProperty {
     private var notifications: [MHCUserNotification]
     
     var wrappedValue: Nudge? {
+        if FeatureFlags.isTakingDemoScreenshots {
+            return Nudge(
+                title: String(localized: "DEMO_NUDGE_TITLE"),
+                message: String(localized: "DEMO_NUDGE_MESSAGE")
+            )
+        }
         guard let notificaton = notifications.first else {
             return nil
         }

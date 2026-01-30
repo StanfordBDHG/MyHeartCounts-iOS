@@ -32,6 +32,7 @@ struct DebugForm: View {
 private struct DebugFormImpl: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(StudyManager.self) private var studyManager
+    @Environment(DemoSetup.self) private var demoSetup
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
     @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
     @PerformTask private var performTask
@@ -75,7 +76,7 @@ private struct DebugFormImpl: View {
                 }
             }
             Section("Other" as String) {
-                Button("Reset rejeted HomeTab actions" as String) {
+                Button("Reset rejected HomeTab actions" as String) {
                     rejectedHomeTabActions = []
                 }
                 Button {
@@ -86,6 +87,9 @@ private struct DebugFormImpl: View {
                 // intended for the UI tests to have some data here...
                 AddSleepSessionsButton(viewState: $viewState)
                 answerQuestionnaireRow
+                AsyncButton("Add Demo Data" as String, state: $viewState) {
+                    try await demoSetup.addDemoData()
+                }
             }
             Section {
                 Button("Replace Root View Controller" as String, role: .destructive) {
@@ -97,6 +101,7 @@ private struct DebugFormImpl: View {
         }
         .navigationTitle("Debug Options" as String)
         .navigationBarTitleDisplayMode(.inline)
+        .viewStateAlert(state: $viewState)
     }
     
     private var answerQuestionnaireRow: some View {

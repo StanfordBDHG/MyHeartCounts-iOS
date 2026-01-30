@@ -10,13 +10,14 @@ import SwiftUI
 
 
 struct ScoreResultGauge: View {
-    let scoreResult: ScoreResult
-    let lineWidth: Gauge.LineWidth
+    private let scoreResult: ScoreResult
+    private let lineWidth: Gauge.LineWidth
+    private let gradient: Gradient
     
     var body: some View {
         Gauge(
             lineWidth: lineWidth,
-            gradient: scoreResult.scoreAvailable ? .redToGreen : Gradient(colors: [.secondary]),
+            gradient: scoreResult.scoreAvailable ? gradient : Gradient(colors: [.secondary]),
             progress: scoreResult.score
         ) {
             if let score = scoreResult.score, !score.isNaN {
@@ -37,6 +38,12 @@ struct ScoreResultGauge: View {
     ) {
         self.lineWidth = lineWidth
         self.scoreResult = scoreResult
+        let explainer = scoreResult.definition.variant.explainer
+        if let band = explainer.bands.first, explainer.bands.count == 1, case .gradient(let gradient) = band.background {
+            self.gradient = gradient
+        } else {
+            self.gradient = .redToGreen
+        }
     }
 }
 
