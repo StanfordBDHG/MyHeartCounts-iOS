@@ -19,6 +19,7 @@ extension Dictionary {
         /// Uses the provided closure to merge values for duplicate entries
         case custom((_ key: Key, _ existingValue: Value, _ newValue: Value) -> Value)
         
+        /// A merge strategy that assumes that no duplicates will occur, and unconditionally fails otherwise.
         public static var expectNoDuplicatesElseFail: Self {
             .custom { _, _, _ in fatalError("Unexpectedly found duplicates.") }
         }
@@ -29,12 +30,13 @@ extension Dictionary {
                 existingValue
             case .override:
                 newValue
-            case .custom(let fn):
-                fn(key, existingValue, newValue)
+            case .custom(let merge):
+                merge(key, existingValue, newValue)
             }
         }
     }
     
+    /// Merges the contents of another dictionary into the receiver.
     public mutating func merge(_ other: Self, using mergeStrategy: MergeStrategy) {
         for (key, newValue) in other {
             switch self[key] {
@@ -46,7 +48,8 @@ extension Dictionary {
         }
     }
     
-    public func merging(_ other: Dictionary<Key, Value>, using mergeStrategy: MergeStrategy) -> Self {
+    /// Creates a new dictionary by merging the receiver with some other dictionary.
+    public func merging(_ other: Self, using mergeStrategy: MergeStrategy) -> Self {
         var copy = self
         copy.merge(other, using: mergeStrategy)
         return copy

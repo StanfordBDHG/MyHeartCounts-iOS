@@ -6,16 +6,14 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
-import UniformTypeIdentifiers
 import SpeziLocalization
+import UniformTypeIdentifiers
 import XCTest
 
 
 final class MHCScreenshotting: MHCTestCase, @unchecked Sendable {
-    private var screenshotsDir: URL!
+    private var screenshotsDir: URL! // swiftlint:disable:this implicitly_unwrapped_optional
     
     @MainActor
     override func setUp() async throws {

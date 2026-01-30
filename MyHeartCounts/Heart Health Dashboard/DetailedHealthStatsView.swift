@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order file_length attributes
+// swiftlint:disable file_types_order attributes
 
 import Charts
 import Foundation
