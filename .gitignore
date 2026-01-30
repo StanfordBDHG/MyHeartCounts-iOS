@@ -17,6 +17,7 @@ MyHeartCountsShared/Package.resolved
 
 # IDE related folders
 .idea
+.vscode
 
 # Xcode
 xcuserdata/
@@ -28,6 +29,7 @@ xcuserdata/
 .DS_Store
 .env
 GoogleService-Info*.plist
+screenshots/
 
 # Tests
 report.junit

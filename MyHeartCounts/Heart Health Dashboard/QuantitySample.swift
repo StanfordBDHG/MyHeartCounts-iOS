@@ -193,6 +193,10 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
         checkDateRangeValid()
     }
     
+    init(id: UUID, sampleType: SampleType, unit: HKUnit, value: Double, date: Date) {
+        self.init(id: id, sampleType: sampleType, unit: unit, value: value, startDate: date, endDate: date)
+    }
+    
     init(id: UUID, sampleType: SampleType, quantity: HKQuantity, startDate: Date, endDate: Date) {
         self.init(
             id: id,

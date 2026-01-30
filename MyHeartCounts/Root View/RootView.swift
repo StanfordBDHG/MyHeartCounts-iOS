@@ -87,6 +87,7 @@ extension RootView {
                 tab.init()
             }
             .customizationID(tab.tabId)
+            .accessibilityIdentifier("MHC:Tab:\(tab.tabTitle.localizedString(for: .enUS))")
         }
     }
 }

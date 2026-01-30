@@ -25,9 +25,7 @@ extension ProcessInfo {
     }
     
     /// Whether the app is currently being UI-Tested
-    @inlinable public static var isBeingUITested: Bool {
-        ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
-    }
+    public static let isBeingUITested = ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
     
     /// Determines if a debgger is currently attached to the process.
     ///

@@ -150,7 +150,7 @@ struct AccountSheet: View {
                 Label("License Information", systemSymbol: .buildingColumns)
                     .foregroundStyle(colorScheme.textLabelForegroundStyle)
             }
-            if debugModeEnabled {
+            if debugModeEnabled || FeatureFlags.isTakingDemoScreenshots {
                 NavigationLink {
                     DebugForm()
                 } label: {

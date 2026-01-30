@@ -38,6 +38,7 @@ struct MyHeartCounts: App {
     }
     
     init() {
+        print(CommandLine.arguments)
         // This needs to run before *any* Spezi-related code is executed,
         // i.e. before the AppDelegate's `willFinishLaunchingWithOptions`
         // method gets called. Hence why we put it in here.

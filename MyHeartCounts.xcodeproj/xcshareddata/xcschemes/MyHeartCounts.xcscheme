@@ -63,6 +63,8 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = "en"
+      region = "US"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -89,6 +91,14 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "--disableSensorKitUpload"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--setupTestEnvironment reset"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--setupTestEnvironment reset login-and-enroll"
             isEnabled = "YES">
          </CommandLineArgument>
@@ -98,7 +108,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--useFirebaseEmulator"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=/Users/lukas/Desktop/MHC.plist"
@@ -106,10 +116,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=GoogleService-Info-Override"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideStudyBundleLocation &apos;/Users/lukas/Desktop/MHC StudyDefs/mhcStudyBundle.spezistudybundle.aar&apos;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--dashboardConsiderAllSleepData"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
