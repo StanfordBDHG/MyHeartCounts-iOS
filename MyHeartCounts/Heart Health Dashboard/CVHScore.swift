@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable all
+
 import Algorithms
 import Foundation
 import HealthKit
@@ -301,13 +303,24 @@ extension ScoreDefinition {
         .inRange(...7, score: 0, explainer: "< 7")
     ])
     
-    static let cvhMentalWellbeing = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(81...100, score: 1, explainer: "81 – 100"),
-        .inRange(71...80, score: 0.8, explainer: "71 – 80"),
-        .inRange(51...70, score: 0.69, explainer: "51 – 70"),
-        .inRange(31...50, score: 0.38, explainer: "31 – 50"),
-        .inRange(0...30, score: 0.0, explainer: "31 – 50")
-    ])
+    static let cvhMentalWellbeing = ScoreDefinition(
+        range: 0...100,
+        explainer: .init(footerText: nil, bands: [
+            .init(
+                leadingText: "\(0)",
+                trailingText: "\(100)",
+                background: .gradient(
+                    // same colors as Gradient.redToGreen, but with different distribution
+                    Gradient(stops: [
+                        Gradient.Stop(color: .red, location: 0),
+                        Gradient.Stop(color: .orange, location: 0.2),
+                        Gradient.Stop(color: .yellow, location: 0.5),
+                        Gradient.Stop(color: .green, location: 0.8)
+                    ])
+                )
+            )
+        ])
+    )
     
     static let cvhPhysicalExercise = ScoreDefinition(
         default: 0,

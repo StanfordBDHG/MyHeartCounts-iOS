@@ -52,7 +52,9 @@ struct DetailedHealthStatsView: View {
             .listRowInsets(.zero)
             .listRowBackground(Color.clear)
             recentValuesChart(recentValuesChartConfig)
-            scoreResultExplainer(for: scoreResult)
+            if showScoreExplainerSection {
+                scoreResultExplainer(for: scoreResult)
+            }
             if let explainer = explainerText(for: sampleType) {
                 let document = (try? MarkdownDocument(processing: explainer))
                     ?? MarkdownDocument(metadata: [:], blocks: [.markdown(id: nil, rawContents: explainer)])
@@ -88,10 +90,21 @@ struct DetailedHealthStatsView: View {
     
     private var recentValuesChartConfig: RecentValuesChartConfig {
         switch keyPath {
-        case \.nicotineExposureScore, \.dietScore:
+        case \.nicotineExposureScore, \.dietScore, \.mentalHealthScore:
             .disabled
         default:
             .enabled(timeRange: .init(chartTimeRange))
+        }
+    }
+    
+    private var showScoreExplainerSection: Bool {
+        switch keyPath {
+        case \.mentalHealthScore:
+            // we disable this for the mental health score, bc the values go from 0 to 100, which is already indicated in the gauge,
+            // and it'd only show a single row, which looks weird.
+            false
+        default:
+            true
         }
     }
     
@@ -180,9 +193,8 @@ struct DetailedHealthStatsView: View {
         .padding(.horizontal)
     }
     
-    @ViewBuilder
     private func scoreResultExplainer(for scoreResult: ScoreResult) -> some View {
-        ScoreExplanationView(scoreResult: scoreResult)
+        ScoreExplanationSection(scoreResult: scoreResult)
             .listRowBackground(Color.clear)
     }
 }
@@ -217,6 +229,7 @@ private struct MostRecentValue: View {
             valueDisplay
                 .font(.headline)
             if let timeRange = scoreResult.timeRange {
+                // TODO display only upper bound; with date omitted if today?!!!
                 Text(timeRange.displayText(using: locale, calendar: cal))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -325,93 +338,6 @@ private struct MostRecentValue: View {
                 "\(value)"
             }
         }
-    }
-}
-
-
-/// Intended to be used as the content of a Form/List Section; displays information about how a Score is computed, and what the percise values mean.
-private struct ScoreExplanationView: View {
-    let scoreResult: ScoreResult
-    
-    var body: some View {
-        switch scoreResult.definition.variant {
-        case let .distinctMapping(_, bands, explainer):
-            makeViews(for: explainer, matchingBandIdx: { () -> Int? in
-                guard bands.count == explainer.bands.count, let inputValue = scoreResult.inputValue else {
-                    return nil
-                }
-                return bands.firstIndex { $0.matches(inputValue) }
-            }())
-            .listRowInsets(.zero)
-        case .range(_, let explainer):
-            makeViews(for: explainer)
-                .listRowInsets(.zero)
-        case .custom(_, let explainer):
-            makeViews(for: explainer)
-                .listRowInsets(.zero)
-        }
-    }
-    
-    @ViewBuilder
-    private func makeViews(for explainer: ScoreDefinition.TextualExplainer, matchingBandIdx: Int? = nil) -> some View {
-        Section(
-            content: {
-                VStack(alignment: .leading, spacing: 4) {
-                    ForEach(Array(explainer.bands.indices), id: \.self) { idx in
-                        let band = explainer.bands[idx]
-                        makeColorBar(didMatch: idx == matchingBandIdx, background: band.background) {
-                            HStack {
-                                if let leadingText = band.leadingText {
-                                    Text(leadingText)
-                                }
-                                Spacer()
-                                if let trailingText = band.trailingText {
-                                    Text(trailingText)
-                                }
-                            }
-                            .padding(.vertical, 2)
-                            .padding(.top, idx == 0 ? 4 : 0)
-                            .padding(.bottom, idx == explainer.bands.count - 1 ? 4 : 0)
-                        }
-                    }
-                }
-            },
-            header: {
-                Text("Score Result")
-                    .padding(.leading, 16)
-                    .padding(.vertical, 8)
-            },
-            footer: {
-                if let footerText = explainer.footerText {
-                    Text(footerText)
-                        .padding()
-                }
-            }
-        )
-    }
-    
-    @ViewBuilder
-    private func makeColorBar(
-        didMatch: Bool,
-        background: ScoreDefinition.TextualExplainer.Band.Background,
-        @ViewBuilder content: () -> some View
-    ) -> some View {
-        HStack {
-            content()
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 5)
-        .transforming { view in
-            switch background {
-            case .color(let color):
-                view.background(color)
-            case .gradient(let gradient):
-                view.background(gradient)
-            }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 7))
-        .foregroundStyle(.black)
-        .font(.subheadline.weight(didMatch ? .semibold : .medium))
     }
 }
 
