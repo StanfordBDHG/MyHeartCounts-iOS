@@ -88,11 +88,6 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
             self.matchImp = { matches($0) ?? false }
         }
         
-//        init<Input>(explainerBand: TextualExplainer.Band, calcScore: @escaping @Sendable (Input) -> Double?) {
-//            self.score = nil
-//            self.explainerBand =
-//        }
-        
         func matches(_ value: some Any) -> Bool {
             matchImp(value)
         }

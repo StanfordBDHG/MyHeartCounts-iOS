@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable force_unwrapping function_body_length attributes
+// SAFETY: only used when taking screenshots; not used in production
 
 import FirebaseFirestore
 import Foundation
@@ -16,16 +17,16 @@ import SpeziFoundation
 import SpeziHealthKit
 
 
-//@Observable
+@Observable
 @MainActor
-final class DemoSetup: Module, EnvironmentAccessible, Sendable {
-    /*@ObservationIgnored*/ @Application(\.logger) private var logger
-    /*@ObservationIgnored*/ @StandardActor private var standard: MyHeartCountsStandard
-    /*@ObservationIgnored*/ @Dependency(HealthKit.self) private var healthKit
+final class DemoSetup: Module, EnvironmentAccessible, Sendable { // swiftlint:disable:this type_body_length
+    @ObservationIgnored @Application(\.logger) private var logger
+    @ObservationIgnored @StandardActor private var standard: MyHeartCountsStandard
+    @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     
-    private let cal = Calendar.current
+    @ObservationIgnored private let cal = Calendar.current
     
-    private let healthKitAccessRequirements = HealthKit.DataAccessRequirements(readAndWrite: [
+    @ObservationIgnored private let healthKitAccessRequirements = HealthKit.DataAccessRequirements(readAndWrite: [
         SampleType.sleepAnalysis,
         SampleType.stepCount,
         SampleType.distanceWalkingRunning,
@@ -44,14 +45,14 @@ final class DemoSetup: Module, EnvironmentAccessible, Sendable {
     }
     
     func addDemoData() async throws {
-//        try assertCanAddDemoData()
+        try assertCanAddDemoData()
         try await removeAllDemoHealthKitData()
         
         try await healthKit.askForAuthorization(for: healthKitAccessRequirements)
         
         try await addCustomSurveysHealthDashboardData()
         try await addDemoSleepSamples()
-        try await addExerciseMinutes()
+        try await addStepsData()
         try await addBloodPressureSamples()
         
         try await addCustomHealthSample(QuantitySample(
@@ -123,7 +124,7 @@ final class DemoSetup: Module, EnvironmentAccessible, Sendable {
     }
     
     
-    func addExerciseMinutes() async throws { // TODO rename
+    func addStepsData() async throws {
         struct SampleDescriptor {
             let start: Date
             let durationInMin: Int
@@ -134,70 +135,70 @@ final class DemoSetup: Module, EnvironmentAccessible, Sendable {
         let descriptors = [
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -10, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 25198,
                 distanceInMeters: 19800,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -9, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 15948,
                 distanceInMeters: 10900,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -8, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 19056,
                 distanceInMeters: 14200,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -7, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 12932,
                 distanceInMeters: 9400,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -6, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 13972,
                 distanceInMeters: 9300,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -5, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 15015,
                 distanceInMeters: 10200,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -4, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 18102,
                 distanceInMeters: 1400,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -3, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 3060,
                 distanceInMeters: 3200,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -2, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 10730,
                 distanceInMeters: 9100,
                 createWorkout: false
             ),
             SampleDescriptor(
                 start: cal.date(byAdding: .day, value: -1, to: cal.startOfDay(for: .now))!,
-                durationInMin: 60 * 12, // TODO
+                durationInMin: 60 * 12,
                 numSteps: 4914,
                 distanceInMeters: 3900,
                 createWorkout: false

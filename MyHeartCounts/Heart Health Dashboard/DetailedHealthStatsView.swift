@@ -90,7 +90,7 @@ struct DetailedHealthStatsView: View {
     
     private var recentValuesChartConfig: RecentValuesChartConfig {
         switch keyPath {
-        case \.nicotineExposureScore, \.dietScore, \.mentalHealthScore:
+        case \.nicotineExposureScore, \.dietScore:
             .disabled
         default:
             .enabled(timeRange: .init(chartTimeRange))
