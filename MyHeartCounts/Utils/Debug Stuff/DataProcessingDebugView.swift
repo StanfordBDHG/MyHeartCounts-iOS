@@ -41,7 +41,7 @@ struct DataProcessingDebugView: View {
                             VStack(alignment: .leading) {
                                 Text(activity.sensor.displayName)
                                 if let timeRange = activity.timeRange {
-                                    Text(timeRange.displayText(using: .current))
+                                    Text(timeRange.displayText())
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }

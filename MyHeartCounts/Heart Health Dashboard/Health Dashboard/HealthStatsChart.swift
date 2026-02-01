@@ -72,7 +72,7 @@ struct HealthStatsChartDataPoint: Hashable, Sendable {
                         || range.upperBound.timeIntervalSince(range.lowerBound) < TimeConstants.hour * 12 {
                         Text(range.middle.formatted(Date.FormatStyle(date: .numeric, time: .omitted)))
                     } else {
-                        Text(range.displayText(using: .current))
+                        Text(range.displayText())
                     }
                 }()
             )

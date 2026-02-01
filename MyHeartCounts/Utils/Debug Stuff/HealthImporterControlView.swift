@@ -62,7 +62,7 @@ struct HealthImporterControlView: View {
                 ForEach(batches, id: \.self) { batch in
                     LabeledContent(
                         batch.sampleType.displayTitle,
-                        value: batch.timeRange.displayText(using: .current)
+                        value: batch.timeRange.displayText()
                     )
                 }
             }

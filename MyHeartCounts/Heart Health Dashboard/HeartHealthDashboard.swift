@@ -184,7 +184,7 @@ struct HeartHealthDashboard: View {
                 .padding(.top, 4)
                 .padding(.bottom, -8)
                 if let timeRange = score.timeRange, score.scoreAvailable {
-                    Text(timeRange.displayText(using: locale, calendar: cal))
+                    Text(timeRange.upperBound.shortDescription())
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } else {

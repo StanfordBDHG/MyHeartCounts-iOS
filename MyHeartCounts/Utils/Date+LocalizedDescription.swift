@@ -12,18 +12,18 @@ import SpeziFoundation
 
 
 extension Date {
-    func localizedShortDescription(
-        using cal: Calendar = .current,
+    func shortDescription(
+        locale: Locale = .current,
+        calendar cal: Calendar = .current,
+        timeZone: TimeZone = .current,
         relativeTo now: Date = .now
     ) -> String {
         if cal.isDate(self, inSameDayAs: now) {
-            return self.formatted(date: .omitted, time: .shortened)
+            self.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: locale, calendar: cal, timeZone: timeZone))
         } else if cal.isDate(self, inSameDayAs: cal.startOfPrevDay(for: now)) {
-            let timeDesc = self.formatted(date: .omitted, time: .shortened)
-            let yesterday = String(localized: "Yesterday")
-            return "\(yesterday), \(timeDesc)"
+            String(localized: "Yesterday")
         } else {
-            return self.formatted(date: .abbreviated, time: .shortened)
+            self.formatted(Date.FormatStyle(date: .abbreviated, time: .omitted, locale: locale, calendar: cal, timeZone: timeZone))
         }
     }
 }

@@ -229,8 +229,7 @@ private struct MostRecentValue: View {
             valueDisplay
                 .font(.headline)
             if let timeRange = scoreResult.timeRange {
-                // TODO display only upper bound; with date omitted if today?!!!
-                Text(timeRange.displayText(using: locale, calendar: cal))
+                Text(timeRange.upperBound.shortDescription())
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
