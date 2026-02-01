@@ -295,7 +295,6 @@ final class DemoSetup: Module, EnvironmentAccessible, Sendable { // swiftlint:di
         }
         let samples = makeSamples(
             from: sampleDescriptors,
-//            startingAt: cal.startOfPrevDay(for: cal.startOfPrevDay(for: .now))
             startingAt: cal.startOfPrevDay(for: .now)
         )
         logger.notice("[DBG] Adding \(samples.count) sleep samples to health")
