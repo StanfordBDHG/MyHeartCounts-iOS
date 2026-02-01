@@ -35,6 +35,9 @@
          <TestPlanReference
             reference = "container:MyHeartCounts Unit Tests.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:MyHeartCounts Screenshots.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

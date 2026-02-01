@@ -202,6 +202,7 @@
 		8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHeartCountsWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		806B08282ECA0E9200644925 /* CONTRIBUTORS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTORS.md; sourceTree = "<group>"; };
 		806B08292ECA0E9200644925 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		80932E4E2F2F870300C123C8 /* MyHeartCounts Screenshots.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts Screenshots.xctestplan"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -376,6 +377,7 @@
 			children = (
 				806B08292ECA0E9200644925 /* README.md */,
 				806B08282ECA0E9200644925 /* CONTRIBUTORS.md */,
+				80932E4E2F2F870300C123C8 /* MyHeartCounts Screenshots.xctestplan */,
 				2FC94CD4298B0A1D009C8209 /* MyHeartCounts UI Tests.xctestplan */,
 				8043E0102DC236C600E0DF01 /* MyHeartCounts Unit Tests.xctestplan */,
 				802521C32EBB458A007D1465 /* MyHeartCountsShared */,

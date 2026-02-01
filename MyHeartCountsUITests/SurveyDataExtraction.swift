@@ -175,9 +175,7 @@ extension MHCTestCase {
                         fatalError() // swiftlint:disable:this fatal_error_message
                     }
                 case .cancel:
-                    let title = try XCTUnwrap(
-                        app.mainBundle?.localizedString(forKey: "Cancel", tables: [.default], localizations: [appLocale.language])
-                    )
+                    let title = try lookupLocalizedString("Cancel")
                     let button = app.navigationBars["ORKFormStepView"].buttons[title]
                     XCTAssert(button.waitForExistence(timeout: 2))
                     button.tap()

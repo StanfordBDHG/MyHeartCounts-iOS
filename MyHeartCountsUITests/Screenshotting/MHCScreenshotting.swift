@@ -10,6 +10,7 @@ import Foundation
 import SpeziLocalization
 import UniformTypeIdentifiers
 import XCTest
+import XCTHealthKit
 
 
 final class MHCScreenshotting: MHCTestCase, @unchecked Sendable {
@@ -31,6 +32,7 @@ final class MHCScreenshotting: MHCTestCase, @unchecked Sendable {
     
     @MainActor
     func recordScreenshot(_ name: String) throws {
+        sleep(for: .seconds(0.5)) // give it some time to complete whatever animation might currently still be going on.
         let pngData = XCUIScreen.main.screenshot().pngRepresentation
         let localeKey = try XCTUnwrap(LocalizationKey(locale: appLocale)).description
         let dir = screenshotsDir.appending(path: localeKey, directoryHint: .isDirectory)
@@ -50,7 +52,7 @@ extension MHCScreenshotting {
     
     
     @MainActor
-    private func runScreenshotsFlow(for locale: Locale) throws {
+    private func runScreenshotsFlow(for locale: Locale) throws { // swiftlint:disable:this function_body_length
         let isFirstRun = locale == .enUS
         try launchAppAndEnrollIntoStudy(
             locale: locale,
@@ -65,25 +67,70 @@ extension MHCScreenshotting {
                 "MHC_IS_TAKING_DEMO_SCREENSHOTS": "1"
             ]
         )
-        app.tabBars.buttons["MHC:Tab:Home"].tap()
+        
+        goToTab(.home)
         try recordScreenshot("Home Tab 1")
-        app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'Read Article: '")).element.tap()
+        // open the "Welcome to My Heart Counts" article
+        // works when only looking at the prefix, bc there is only a single article on the Home tab.
+        app.buttons.matching("identifier BEGINSWITH %@", "Read Article: ").element.tap()
         try recordScreenshot("Welcome Article")
         app.navigationBars.buttons["Close"].tap()
         try recordScreenshot("Home Tab 2")
         
-        app.tabBars.buttons["MHC:Tab:Heart Health"].tap()
+        goToTab(.heartHealth)
         if isFirstRun { // only need to do this once
             openAccountSheet()
             app.swipeUp()
             app.buttons["Debug"].tap()
             app.swipeUp()
             app.buttons["Add Demo Data"].tap()
+            app.handleHealthKitAuthorization(timeout: 10)
             sleep(for: .seconds(5)) // give it some time to add everything
             app.navigationBars["Debug Options"].buttons["BackButton"].tap()
             app.navigationBars.buttons["Close"].tap()
         }
         sleep(for: .seconds(2)) // give it some time to load
         try recordScreenshot("Dashboard")
+        
+        goToTab(.home)
+        app.swipeUp()
+        // open the diet questionnaire
+        // note: we make use of the fact here that the english and spanish titles have the same prefix "Diet" vs "Dieta".
+        app.buttons.matching("identifier BEGINSWITH %@", "Answer Survey: Diet").element.tap()
+        try navigateResearchKitQuestionnaire(title: nil, steps: [
+            // initial page
+            .init(actions: [.continue]),
+            // "fruits and vegetables" page
+            .init(actions: [.scrollDown, .continue]),
+            // "fat" page
+            .init(actions: [.scrollDown, .continue]),
+            // "starchy foods" page
+            .init(actions: [
+                .selectOption(
+                    title: try lookupLocalizedString("Yes"),
+                    questionId: "055647aa-77aa-4877-81ae-40a2f08b8c5e"
+                ),
+                .selectOption(
+                    title: try lookupLocalizedString("No"),
+                    questionId: "784f7a2c-6ec8-414b-caa4-b59f1e8a6a1c"
+                ),
+                .scrollUp,
+                .custom {
+                    try self.recordScreenshot("Diet Questionnaire")
+                },
+                .cancel
+            ])
+        ])
+    }
+}
+
+
+extension MHCTestCase {
+    /// Looks up the localized string `key` in the main app's localization catalogue, for app's current language.
+    ///
+    /// If no entry exists for the key, the key itself is returned.
+    @MainActor
+    func lookupLocalizedString(_ key: String) throws -> String {
+        try XCTUnwrap(app.mainBundle).localizedString(forKey: key, tables: [.default], localizations: [appLocale.language]) ?? key
     }
 }

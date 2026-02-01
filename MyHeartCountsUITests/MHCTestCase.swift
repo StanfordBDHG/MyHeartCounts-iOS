@@ -96,7 +96,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         app.launchEnvironment.merge(extraEnvironmentEntries, using: .override)
         do {
-            var msg = "Will launch app \(app.debugDescription) with configuration:\n"
+            var msg = "Will launch app \(app.bundleIdentifier) with configuration:\n"
             msg += "argv:\n"
             for arg in app.launchArguments {
                 msg += "    \(arg)\n"
@@ -168,6 +168,7 @@ extension Locale {
 
 
 extension XCUIApplication {
+    /// The url of the iOS application being tested.
     var url: URL? {
         guard let impl = self.value(forKey: "_applicationImpl") as? NSObject else {
             return nil
@@ -178,6 +179,9 @@ extension XCUIApplication {
         return URL(filePath: path)
     }
     
+    /// The main bundle of the iOS application being tested.
+    ///
+    /// - Note: This property only works when the app is being tested in the simulator; it does not work when testing on a physical device.
     var mainBundle: Bundle? {
         url.flatMap(Bundle.init(url:))
     }
