@@ -27,11 +27,13 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             wheelchairUse: .no
         ))
         try launchAppAndEnrollIntoStudy(
+            locale: .enUS,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
         )
         try app.navigateOnboardingFlow(
+            locale: appLocale,
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
             email: Self.loginCredentials.email,
@@ -50,11 +52,10 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         app.staticTexts["Review Consent Forms"].tap()
         XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
         app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).firstMatch.tap()
-        sleep(for: .seconds(2))
         let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
-        XCTAssert(consentPdf.exists)
-        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].exists)
-        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].exists)
+        XCTAssert(consentPdf.waitForExistence(timeout: 5))
+        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
+        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
         XCTAssert(
             consentPdf.staticTexts.element(
                 matching: NSPredicate(format: "label BEGINSWITH 'You are invited to participate in a research study, \"My Heart Counts,\"'")
@@ -67,6 +68,7 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
 
 extension XCUIApplication {
     func navigateOnboardingFlow( // swiftlint:disable:this function_parameter_count
+        locale: Locale,
         region: Locale.Region,
         name: PersonNameComponents,
         email: String,
@@ -89,7 +91,7 @@ extension XCUIApplication {
         if staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
             navigateNotifications()
         }
-        navigateDemographics()
+        navigateDemographics(locale: locale)
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
     
@@ -196,9 +198,15 @@ extension XCUIApplication {
         
         for step in steps {
             XCTAssert(staticTexts[step.title].waitForExistence(timeout: 2))
-            XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.bodyPrefix)).firstMatch.waitForExistence(timeout: 2))
+            XCTAssert(
+                staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.bodyPrefix)).firstMatch.waitForExistence(timeout: 2),
+                "Unable to find staticText with prefix '\(step.bodyPrefix)'"
+            )
             buttons["Learn More"].tap()
-            XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.learnMorePrefix)).firstMatch.waitForExistence(timeout: 2))
+            XCTAssert(
+                staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.learnMorePrefix)).firstMatch.waitForExistence(timeout: 2),
+                "Unable to find staticText with prefix '\(step.learnMorePrefix)'"
+            )
             navigationBars.buttons["Close"].tap()
             buttons["Continue"].tap()
         }
@@ -313,7 +321,7 @@ extension XCUIApplication {
     }
     
     
-    private func navigateDemographics() { // swiftlint:disable:this function_body_length
+    private func navigateDemographics(locale: Locale) { // swiftlint:disable:this function_body_length
         XCTAssert(staticTexts["Demographics"].waitForExistence(timeout: 2))
         
         XCTAssert(navigationBars["Demographics"].waitForExistence(timeout: 1))
@@ -331,7 +339,7 @@ extension XCUIApplication {
         XCTAssert(
             datePickers.matching(NSPredicate(format: "label = 'Date of Birth' AND value = '1998-06-02'")).element.waitForExistence(timeout: 2)
         )
-        switch Locale.current.measurementSystem {
+        switch locale.measurementSystem {
         case .us:
             XCTAssert(buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
             XCTAssert(buttons["Weight, 154.32 lb"].waitForExistence(timeout: 2))

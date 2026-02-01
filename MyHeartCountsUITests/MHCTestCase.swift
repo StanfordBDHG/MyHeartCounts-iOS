@@ -95,6 +95,15 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         ]
         app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         app.launchEnvironment.merge(extraEnvironmentEntries, using: .override)
+        do {
+            var msg = "Will launch app \(app) with configuration:\n"
+            msg += "argv: \(app.launchArguments.joined(separator: " "))\n"
+            msg += "env:\n"
+            for (key, value) in app.launchEnvironment {
+                msg += "    \(key) = \(value)\n"
+            }
+            print(msg)
+        }
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         if !skipHealthPermissionsHandling {
