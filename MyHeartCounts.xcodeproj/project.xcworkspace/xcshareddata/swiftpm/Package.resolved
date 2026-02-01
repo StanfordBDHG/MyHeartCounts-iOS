@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/ResearchKit.git",
       "state" : {
-        "revision" : "8029e36bfa88b7995d8c997f4c7f52ef9e6679ea",
-        "version" : "3.1.2"
+        "revision" : "d1d523e9e738b7ad9c97ca6101aada1c041ea9da",
+        "version" : "3.1.4"
       }
     },
     {
