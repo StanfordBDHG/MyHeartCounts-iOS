@@ -48,6 +48,7 @@ extension MHCScreenshotting {
     func testTakeAppStoreScreenshots() throws {
         try runScreenshotsFlow(for: .enUS)
         try runScreenshotsFlow(for: .esUS)
+        try runScreenshotsFlow(for: .enUK)
     }
     
     

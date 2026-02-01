@@ -1589,6 +1589,12 @@
             "value" : "Set a reminder to stand and walk for 5 minutes each hour this morning. Light movement can lift your mood and help you stay on track."
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set a reminder to stand and walk for 5 minutes each hour this morning. Light movement can lift your mood and help you stay on track."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1600,6 +1606,12 @@
     "DEMO_NUDGE_TITLE" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a quick standing break"
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add a quick standing break"

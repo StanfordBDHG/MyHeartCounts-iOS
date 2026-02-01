@@ -162,6 +162,7 @@ extension MHCTestCase {
 
 extension Locale {
     static let enUS = Locale(identifier: "en_US")
+    static let enUK = Locale(identifier: "en_UK")
     static let esUS = Locale(identifier: "es_US")
     static let enDE = Locale(identifier: "en_DE")
 }
