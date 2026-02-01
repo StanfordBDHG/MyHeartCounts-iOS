@@ -8,6 +8,7 @@
 
 // swiftlint:disable multiline_function_chains function_body_length
 
+import SpeziLocalization
 import XCTest
 import XCTestExtensions
 
@@ -27,7 +28,7 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.buttons["HeartRisk"].waitForExistence(timeout: 2))
         app.buttons["HeartRisk"].tap()
         
-        try app.navigateResearchKitQuestionnaire(title: "Heart Risk", steps: [
+        try navigateResearchKitQuestionnaire(title: "Heart Risk", steps: [
             // initial page
             .init(actions: [.continue]),
             // Smoking Question
@@ -109,48 +110,83 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
 }
 
 
-extension XCUIApplication {
+extension MHCTestCase {
+    /// A Step within a ResearchKit questionnaire, i.e. one page with one or more questions.
     struct ResearchKitQuestionnaireStep {
         enum Action {
             case `continue`
-            case selectOption(title: String)
+            case selectOption(title: String, questionId: String? = nil)
             case enterValue(_ value: String, into: String)
             case scrollDown
+            case scrollUp
+            /// Special action that doesn't interact with the UI, but instead simply dumps the current state of the accessibility to stdout.
+            case dumpAccessibilityTree(`continue`: Bool)
+            /// Cancels the questionnaire.
+            case cancel
+            /// Performs a custom action.
+            case custom(@MainActor () throws -> Void)
         }
         let actions: [Action]
     }
     
     
-    func navigateResearchKitQuestionnaire(
-        title: String,
+    @MainActor
+    func navigateResearchKitQuestionnaire( // swiftlint:disable:this cyclomatic_complexity
+        title: String?,
         steps: [ResearchKitQuestionnaireStep]
     ) throws {
-        XCTAssert(self.staticTexts.element(
-            matching: NSPredicate(format: "identifier = %@ AND label = %@", "ORKStepContentView_titleLabel", title)
-        ).waitForExistence(timeout: 2))
-        
+        if let title {
+            XCTAssert(app.staticTexts.element(
+                matching: NSPredicate(format: "identifier = %@ AND label = %@", "ORKStepContentView_titleLabel", title)
+            ).waitForExistence(timeout: 2))
+            XCTAssert(app.staticTexts.element(
+                matching: "identifier = %@ AND label = %@", "ORKStepContentView_titleLabel", title
+            ).waitForExistence(timeout: 2))
+        }
         steps: for step in steps {
             for action in step.actions {
                 switch action {
                 case .continue:
-                    let button = buttons.matching(identifier: "ORKContinueButton.Next").element
+                    let button = app.buttons.matching(identifier: "ORKContinueButton.Next").element
                     XCTAssert(button.waitForExistence(timeout: 1))
                     button.tap()
                     continue steps
-                case .selectOption(let title):
-                    XCTAssert(cells[title].exists)
-                    cells[title].tap()
+                case let .selectOption(title, questionId):
+                    let cell = if let questionId {
+                        app.cells.matching("identifier BEGINSWITH %@ && label = %@", questionId, title).element
+                    } else {
+                        app.cells[title]
+                    }
+                    XCTAssert(cell.exists)
+                    cell.tap()
                 case .scrollDown:
-                    swipeUp()
+                    app.swipeUp()
+                case .scrollUp:
+                    app.swipeDown()
                 case let .enterValue(value, textFieldLabel):
-                    let textField = textFields[textFieldLabel]
+                    let textField = app.textFields[textFieldLabel]
                     XCTAssert(textField.exists)
                     textField.tap()
                     textField.typeText(value)
-                    toolbars.buttons["Done"].tap()
+                    app.toolbars.buttons["Done"].tap()
+                case .dumpAccessibilityTree(let `continue`):
+                    print(app.debugDescription)
+                    if !`continue` {
+                        fatalError() // swiftlint:disable:this fatal_error_message
+                    }
+                case .cancel:
+                    let title = try XCTUnwrap(
+                        app.mainBundle?.localizedString(forKey: "Cancel", tables: [.default], localizations: [appLocale.language])
+                    )
+                    let button = app.navigationBars["ORKFormStepView"].buttons[title]
+                    XCTAssert(button.waitForExistence(timeout: 2))
+                    button.tap()
+                    return
+                case .custom(let action):
+                    try action()
                 }
             }
-            buttons.matching(identifier: "ORKContinueButton.Next").element.tap()
+            app.buttons.matching(identifier: "ORKContinueButton.Next").element.tap()
         }
     }
 }

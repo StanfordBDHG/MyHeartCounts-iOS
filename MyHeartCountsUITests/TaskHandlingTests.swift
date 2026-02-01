@@ -141,8 +141,8 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
         goToTab(.home)
         app.buttons["Answer Survey: Diet"].firstMatch.tap()
         let dietIntroTextElement = app.staticTexts.element(
-            matching: NSPredicate(format: "label BEGINSWITH %@", "This questionnaire is designed to allow you to assess the nutritional value of your diet.")
-        ) // swiftlint:disable:previous line_length
+            matching: "label BEGINSWITH %@", "This questionnaire is designed to allow you to assess the nutritional value of your diet."
+        )
         XCTAssert(dietIntroTextElement.waitForExistence(timeout: 2))
         XCUIDevice.shared.press(.home)
         sleep(for: .seconds(2))
@@ -157,8 +157,7 @@ extension MHCTestCase {
     @MainActor
     func handleMotionAndFitnessAccessPrompt(timeout: Duration) {
         let app = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let alertPredicate = NSPredicate(format: "label LIKE %@", "“*” would like to access your Motion & Fitness activity.")
-        let alert = app.alerts.element(matching: alertPredicate)
+        let alert = app.alerts.element(matching: "label LIKE %@", "“*” would like to access your Motion & Fitness activity.")
         if alert.waitForExistence(timeout: timeout.timeInterval) {
             alert.buttons["Allow"].tap()
         }

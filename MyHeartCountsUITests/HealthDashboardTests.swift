@@ -58,7 +58,7 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         heightTextField.typeText("186")
         
         app.navigationBars["Enter BMI"].buttons["Save"].tap()
-        XCTAssert(app.staticTexts.element(matching: NSPredicate(format: "label MATCHES 'Most Recent Sample: 19.37'")).waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts.element(matching: "label MATCHES %@", "Most Recent Sample: 19.37").waitForExistence(timeout: 5))
     }
     
     
@@ -95,7 +95,7 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.staticTexts["Height, 6‘ 1“"].waitForExistence(timeout: 2))
         
         app.navigationBars["Enter BMI"].buttons["Save"].tap()
-        XCTAssert(app.staticTexts.element(matching: NSPredicate(format: "label MATCHES 'Most Recent Sample: 19.49'")).waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts.element(matching: "label MATCHES %@", "Most Recent Sample: 19.49").waitForExistence(timeout: 5))
     }
     
     
@@ -128,14 +128,14 @@ class HealthDashboardTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.navigationBars["Nicotine Exposure"].buttons["Add Data"].waitForExistence(timeout: 2))
         
         app.navigationBars["Nicotine Exposure"].buttons["Add Data"].tap()
-        try app.navigateResearchKitQuestionnaire(title: "Dashboard - Smoking", steps: [ // NOTE: might want to rename the survey here?!
+        try navigateResearchKitQuestionnaire(title: "Dashboard - Smoking", steps: [ // NOTE: might want to rename the survey here?!
             .init(actions: [.selectOption(title: "Never smoked/vaped")])
         ])
         XCTExpectFailure("Works locally, but fails on CI. Looking into it.")
         XCTAssert(app.staticTexts["Most Recent Response: Never Smoked"].waitForExistence(timeout: 10))
         
         app.navigationBars["Nicotine Exposure"].buttons["Add Data"].tap()
-        try app.navigateResearchKitQuestionnaire(title: "Dashboard - Smoking", steps: [ // NOTE: might want to rename the survey here?!
+        try navigateResearchKitQuestionnaire(title: "Dashboard - Smoking", steps: [ // NOTE: might want to rename the survey here?!
             .init(actions: [.selectOption(title: "Quit >5 years ago")])
         ])
         XCTExpectFailure("Works locally, but fails on CI. Looking into it.")

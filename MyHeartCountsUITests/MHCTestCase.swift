@@ -67,7 +67,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     ///     Allowed values are `kg`, `lbs`, or `nil` (the default).
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     @MainActor
-    func launchAppAndEnrollIntoStudy(
+    func launchAppAndEnrollIntoStudy( // swiftlint:disable:this function_body_length
         locale: Locale = .current,
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: true),
@@ -96,8 +96,11 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         app.launchEnvironment.merge(extraEnvironmentEntries, using: .override)
         do {
-            var msg = "Will launch app \(app) with configuration:\n"
-            msg += "argv: \(app.launchArguments.joined(separator: " "))\n"
+            var msg = "Will launch app \(app.debugDescription) with configuration:\n"
+            msg += "argv:\n"
+            for arg in app.launchArguments {
+                msg += "    \(arg)\n"
+            }
             msg += "env:\n"
             for (key, value) in app.launchEnvironment {
                 msg += "    \(key) = \(value)\n"
@@ -114,6 +117,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
                 timeout: 10
             )
         }
+        XCTAssert(app.staticTexts["Setting Up Test Environment"].waitForNonExistence(timeout: 5))
         if !skipGoingToHomeTab {
             XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
             goToTab(.home)
@@ -132,6 +136,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
 
 extension MHCTestCase {
     enum RootLevelTab: String, CaseIterable {
+        // needs to be kept in sync with the titles in the app
         case home = "Home"
         case upcoming = "Tasks"
         case heartHealth = "Heart Health"
@@ -139,7 +144,7 @@ extension MHCTestCase {
     
     @MainActor
     func goToTab(_ tab: RootLevelTab) {
-        let button = app.tabBars.buttons[tab.rawValue]
+        let button = app.tabBars.buttons["MHC:Tab:\(tab.rawValue)"]
         XCTAssert(button.exists)
         XCTAssert(button.isEnabled)
         XCTAssert(button.isHittable)
@@ -159,4 +164,31 @@ extension Locale {
     static let enUS = Locale(identifier: "en_US")
     static let esUS = Locale(identifier: "es_US")
     static let enDE = Locale(identifier: "en_DE")
+}
+
+
+extension XCUIApplication {
+    var url: URL? {
+        guard let impl = self.value(forKey: "_applicationImpl") as? NSObject else {
+            return nil
+        }
+        guard let path = impl.value(forKey: "_path") as? String else {
+            return nil
+        }
+        return URL(filePath: path)
+    }
+    
+    var mainBundle: Bundle? {
+        url.flatMap(Bundle.init(url:))
+    }
+}
+
+extension XCUIElementQuery {
+    func matching(_ predicateFormat: String, _ args: Any...) -> XCUIElementQuery {
+        self.matching(NSPredicate(format: predicateFormat, argumentArray: args))
+    }
+    
+    func element(matching predicateFormat: String, _ args: Any...) -> XCUIElement {
+        self.element(matching: NSPredicate(format: predicateFormat, args))
+    }
 }
