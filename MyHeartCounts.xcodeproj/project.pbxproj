@@ -190,19 +190,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2FC94CD4298B0A1D009C8209 /* MyHeartCounts UI Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts UI Tests.xctestplan"; sourceTree = "<group>"; };
 		653A254D283387FE005D4D48 /* MyHeartCounts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHeartCounts.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		653A255D28338800005D4D48 /* MyHeartCountsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyHeartCountsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		802521C32EBB458A007D1465 /* MyHeartCountsShared */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MyHeartCountsShared; sourceTree = "<group>"; };
-		8043E0102DC236C600E0DF01 /* MyHeartCounts Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts Unit Tests.xctestplan"; sourceTree = "<group>"; };
 		8052BB0F2EBA2AE0005E2D8C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		8052BB112EBA2AE0005E2D8C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		8052BB722EBA3374005E2D8C /* ActivityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActivityKit.framework; path = System/Library/Frameworks/ActivityKit.framework; sourceTree = SDKROOT; };
 		8054D9842DE54F8800458CD9 /* MyHeartCountsWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyHeartCountsWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		806B08282ECA0E9200644925 /* CONTRIBUTORS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTORS.md; sourceTree = "<group>"; };
 		806B08292ECA0E9200644925 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		80932E4E2F2F870300C123C8 /* MyHeartCounts Screenshots.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MyHeartCounts Screenshots.xctestplan"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -212,6 +209,21 @@
 				"Supporting Files/Info.plist",
 			);
 			target = 8054D9832DE54F8800458CD9 /* MyHeartCountsWatchApp */;
+		};
+		80932E572F2F9BE900C123C8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"MyHeartCounts Unit Tests.xctestplan",
+			);
+			target = 653A255C28338800005D4D48 /* MyHeartCountsTests */;
+		};
+		80932E582F2F9BF000C123C8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"MyHeartCounts Screenshots.xctestplan",
+				"MyHeartCounts UI Tests.xctestplan",
+			);
+			target = 653A256628338800005D4D48 /* MyHeartCountsUITests */;
 		};
 		80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -225,8 +237,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8054D9852DE54F8800458CD9 /* MyHeartCountsWatchApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8034CC092DE65C3000E7F9F6 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsWatchApp; sourceTree = "<group>"; };
 		80F72BA52D7E008E00150FE3 /* MyHeartCounts */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80F72BD72D7E008E00150FE3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCounts; sourceTree = "<group>"; };
-		80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsTests; sourceTree = "<group>"; };
-		80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsUITests; sourceTree = "<group>"; };
+		80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80932E572F2F9BE900C123C8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsTests; sourceTree = "<group>"; };
+		80F72BDF2D7E00AA00150FE3 /* MyHeartCountsUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80932E582F2F9BF000C123C8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MyHeartCountsUITests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -377,9 +389,6 @@
 			children = (
 				806B08292ECA0E9200644925 /* README.md */,
 				806B08282ECA0E9200644925 /* CONTRIBUTORS.md */,
-				80932E4E2F2F870300C123C8 /* MyHeartCounts Screenshots.xctestplan */,
-				2FC94CD4298B0A1D009C8209 /* MyHeartCounts UI Tests.xctestplan */,
-				8043E0102DC236C600E0DF01 /* MyHeartCounts Unit Tests.xctestplan */,
 				802521C32EBB458A007D1465 /* MyHeartCountsShared */,
 				80F72BA52D7E008E00150FE3 /* MyHeartCounts */,
 				80F72BD92D7E00A100150FE3 /* MyHeartCountsTests */,

@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: MIT
 #
 
-set -x
+set -x -o pipefail
 
 DEVICE_TYPE='iPhone 17 Pro Max'
 SIM_NAME=MHCScreenshotsSim
