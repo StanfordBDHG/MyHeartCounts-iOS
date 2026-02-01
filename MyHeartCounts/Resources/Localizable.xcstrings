@@ -4674,16 +4674,6 @@
         }
       }
     },
-    "Preparing Test Environment" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando el entorno de prueba"
-          }
-        }
-      }
-    },
     "Processing Health and SensorKit Data…" : {
       "localizations" : {
         "es" : {
