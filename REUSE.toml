@@ -8,7 +8,8 @@ path = [
     "MyHeartCounts/Resources/My Heart Counts.icon/**",
     "MyHeartCountsWatchApp/Resources/Assets.xcassets/**",
     "MyHeartCountsWatchApp/Resources/My Heart Counts.icon/**",
-    "MyHeartCountsLiveActivityWidget/Assets.xcassets/**"
+    "MyHeartCountsLiveActivityWidget/Assets.xcassets/**",
+    "**/*.xctestplan"
 ]
 SPDX-FileCopyrightText = "2025 Stanford University and the project authors (see CONTRIBUTORS.md)"
 SPDX-License-Identifier = "MIT"
