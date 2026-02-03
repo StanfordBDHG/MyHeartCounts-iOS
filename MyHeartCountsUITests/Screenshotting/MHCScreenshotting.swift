@@ -1,0 +1,137 @@
+//
+// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+//
+// SPDX-FileCopyrightText: 2026 Stanford University
+//
+// SPDX-License-Identifier: MIT
+//
+
+import Foundation
+import SpeziLocalization
+import UniformTypeIdentifiers
+import XCTest
+import XCTHealthKit
+
+
+final class MHCScreenshotting: MHCTestCase, @unchecked Sendable {
+    private var screenshotsDir: URL! // swiftlint:disable:this implicitly_unwrapped_optional
+    
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        /// The URL of the `MyHeartCounts-iOS` repository.
+        ///
+        /// The full value of `#filePath` is e.g. `/Users/lukas/Developer/Spezi/MyHeartCounts-iOS/MyHeartCountsUITests/Screenshotting/MHCScreenshotting.swift`;
+        /// we then need to remove the last 3 path components to get the root of the codebase.
+        screenshotsDir = URL(filePath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appending(path: "screenshots", directoryHint: .isDirectory)
+    }
+    
+    @MainActor
+    func recordScreenshot(_ name: String) throws {
+        sleep(for: .seconds(0.5)) // give it some time to complete whatever animation might currently still be going on.
+        let pngData = XCUIScreen.main.screenshot().pngRepresentation
+        let localeKey = try XCTUnwrap(LocalizationKey(locale: appLocale)).description
+        let dir = screenshotsDir.appending(path: localeKey, directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let fileUrl = dir.appendingPathComponent(name, conformingTo: .png)
+        try pngData.write(to: fileUrl)
+    }
+}
+
+
+extension MHCScreenshotting {
+    @MainActor
+    func testTakeAppStoreScreenshots() throws {
+        try runScreenshotsFlow(for: .enUS)
+        try runScreenshotsFlow(for: .esUS)
+        try runScreenshotsFlow(for: .enUK)
+    }
+    
+    
+    @MainActor
+    private func runScreenshotsFlow(for locale: Locale) throws { // swiftlint:disable:this function_body_length
+        let isFirstRun = locale == .enUS
+        try launchAppAndEnrollIntoStudy(
+            locale: locale,
+            skipHealthPermissionsHandling: !isFirstRun,
+            // the "go to home tab" thing implies checking for the on-screen existence of certain texts, which will fail if the language isn't english.
+            // we instead manually go to the home tab.
+            skipGoingToHomeTab: true,
+            extraLaunchArgs: [
+                "--dashboardConsiderAllSleepData"
+            ],
+            extraEnvironmentEntries: [
+                "MHC_IS_TAKING_DEMO_SCREENSHOTS": "1"
+            ]
+        )
+        
+        goToTab(.home)
+        try recordScreenshot("Home Tab 1")
+        // open the "Welcome to My Heart Counts" article
+        // works when only looking at the prefix, bc there is only a single article on the Home tab.
+        app.buttons.matching("identifier BEGINSWITH %@", "Read Article: ").element.tap()
+        try recordScreenshot("Welcome Article")
+        app.navigationBars.buttons["Close"].tap()
+        try recordScreenshot("Home Tab 2")
+        
+        goToTab(.heartHealth)
+        if isFirstRun { // only need to do this once
+            openAccountSheet()
+            app.swipeUp()
+            app.buttons["Debug"].tap()
+            app.swipeUp()
+            app.buttons["Add Demo Data"].tap()
+            app.handleHealthKitAuthorization(timeout: 10)
+            sleep(for: .seconds(5)) // give it some time to add everything
+            app.navigationBars["Debug Options"].buttons["BackButton"].tap()
+            app.navigationBars.buttons["Close"].tap()
+        }
+        sleep(for: .seconds(2)) // give it some time to load
+        try recordScreenshot("Dashboard")
+        
+        goToTab(.home)
+        app.swipeUp()
+        // open the diet questionnaire
+        // note: we make use of the fact here that the english and spanish titles have the same prefix "Diet" vs "Dieta".
+        app.buttons.matching("identifier BEGINSWITH %@", "Answer Survey: Diet").element.tap()
+        try navigateResearchKitQuestionnaire(title: nil, steps: [
+            // initial page
+            .init(actions: [.continue]),
+            // "fruits and vegetables" page
+            .init(actions: [.scrollDown, .continue]),
+            // "fat" page
+            .init(actions: [.scrollDown, .continue]),
+            // "starchy foods" page
+            .init(actions: [
+                .selectOption(
+                    title: try lookupLocalizedString("Yes"),
+                    questionId: "055647aa-77aa-4877-81ae-40a2f08b8c5e"
+                ),
+                .selectOption(
+                    title: try lookupLocalizedString("No"),
+                    questionId: "784f7a2c-6ec8-414b-caa4-b59f1e8a6a1c"
+                ),
+                .scrollUp,
+                .custom {
+                    try self.recordScreenshot("Diet Questionnaire")
+                },
+                .cancel
+            ])
+        ])
+    }
+}
+
+
+extension MHCTestCase {
+    /// Looks up the localized string `key` in the main app's localization catalogue, for app's current language.
+    ///
+    /// If no entry exists for the key, the key itself is returned.
+    @MainActor
+    func lookupLocalizedString(_ key: String) throws -> String {
+        try XCTUnwrap(app.mainBundle).localizedString(forKey: key, tables: [.default], localizations: [appLocale.language]) ?? key
+    }
+}

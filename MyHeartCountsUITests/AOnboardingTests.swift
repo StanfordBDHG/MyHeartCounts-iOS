@@ -27,6 +27,7 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             wheelchairUse: .no
         ))
         try launchAppAndEnrollIntoStudy(
+            locale: .enUS,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
@@ -49,15 +50,14 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
         app.staticTexts["Review Consent Forms"].tap()
         XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
-        app.collectionViews.cells.buttons.element(matching: NSPredicate(format: "label CONTAINS 'My Heart Counts Consent Form'")).firstMatch.tap()
-        sleep(for: .seconds(2))
+        app.collectionViews.cells.buttons.element(matching: "label CONTAINS %@", "My Heart Counts Consent Form").firstMatch.tap()
         let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
-        XCTAssert(consentPdf.exists)
-        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].exists)
-        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].exists)
+        XCTAssert(consentPdf.waitForExistence(timeout: 5))
+        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
+        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
         XCTAssert(
             consentPdf.staticTexts.element(
-                matching: NSPredicate(format: "label BEGINSWITH 'You are invited to participate in a research study, \"My Heart Counts,\"'")
+                matching: "label BEGINSWITH %@", #"You are invited to participate in a research study, "My Heart Counts,""#
             )
             .waitForExistence(timeout: 2)
         )
@@ -72,7 +72,7 @@ extension XCUIApplication {
         email: String,
         password: String,
         signUpForExtraTrial: Bool,
-        sender: XCTestCase
+        sender: MHCTestCase
     ) throws {
         navigateWelcome()
         try navigateEligibility(region: region)
@@ -89,14 +89,18 @@ extension XCUIApplication {
         if staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
             navigateNotifications()
         }
-        navigateDemographics()
+        navigateDemographics(locale: sender.appLocale)
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
     
     
     private func navigateWelcome() {
-        let predicate = NSPredicate(format: "label MATCHES 'Welcome to the My Heart Counts(\\n| )Cardiovascular Health Study'")
-        XCTAssert(staticTexts.element(matching: predicate).waitForExistence(timeout: 2))
+        XCTAssert(
+            staticTexts.element(
+                matching: "label MATCHES %@", "Welcome to the My Heart Counts(\\n| )Cardiovascular Health Study"
+            )
+            .waitForExistence(timeout: 2)
+        )
         buttons["Continue"].tap()
     }
     
@@ -132,7 +136,7 @@ extension XCUIApplication {
     private func navigateSignup(name: PersonNameComponents, email: String, password: String) throws {
         XCTAssert(staticTexts["Your Account"].waitForExistence(timeout: 10))
         let isLoggedIn = staticTexts
-            .matching(NSPredicate(format: "label BEGINSWITH %@", "You are already logged in"))
+            .matching("label BEGINSWITH %@", "You are already logged in")
             .element
             .waitForExistence(timeout: 2)
         if !isLoggedIn {
@@ -196,9 +200,15 @@ extension XCUIApplication {
         
         for step in steps {
             XCTAssert(staticTexts[step.title].waitForExistence(timeout: 2))
-            XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.bodyPrefix)).firstMatch.waitForExistence(timeout: 2))
+            XCTAssert(
+                staticTexts.matching("label BEGINSWITH %@", step.bodyPrefix).firstMatch.waitForExistence(timeout: 2),
+                "Unable to find staticText with prefix '\(step.bodyPrefix)'"
+            )
             buttons["Learn More"].tap()
-            XCTAssert(staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", step.learnMorePrefix)).firstMatch.waitForExistence(timeout: 2))
+            XCTAssert(
+                staticTexts.matching("label BEGINSWITH %@", step.learnMorePrefix).firstMatch.waitForExistence(timeout: 2),
+                "Unable to find staticText with prefix '\(step.learnMorePrefix)'"
+            )
             navigationBars.buttons["Close"].tap()
             buttons["Continue"].tap()
         }
@@ -313,7 +323,7 @@ extension XCUIApplication {
     }
     
     
-    private func navigateDemographics() { // swiftlint:disable:this function_body_length
+    private func navigateDemographics(locale: Locale) { // swiftlint:disable:this function_body_length
         XCTAssert(staticTexts["Demographics"].waitForExistence(timeout: 2))
         
         XCTAssert(navigationBars["Demographics"].waitForExistence(timeout: 1))
@@ -329,9 +339,9 @@ extension XCUIApplication {
         }
         buttons["Read from Health App"].tap()
         XCTAssert(
-            datePickers.matching(NSPredicate(format: "label = 'Date of Birth' AND value = '1998-06-02'")).element.waitForExistence(timeout: 2)
+            datePickers.matching("label = %@ AND value = %@", "Date of Birth", "1998-06-02").element.waitForExistence(timeout: 2)
         )
-        switch Locale.current.measurementSystem {
+        switch locale.measurementSystem {
         case .us:
             XCTAssert(buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
             XCTAssert(buttons["Weight, 154.32 lb"].waitForExistence(timeout: 2))
@@ -392,8 +402,7 @@ extension XCUIApplication {
     private func navigateFinalOnboardingStep(signUpForExtraTrial: Bool) {
         XCTAssert(staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 2))
         do {
-            let trialTextPredicate = NSPredicate(format: "label CONTAINS %@", "After your baseline week, you'll begin the 2-week trial")
-            let element = staticTexts.matching(trialTextPredicate).element
+            let element = staticTexts.matching("label CONTAINS %@", "After your baseline week, you'll begin the 2-week trial").element
             if signUpForExtraTrial {
                 XCTAssert(element.waitForExistence(timeout: 2))
             } else {

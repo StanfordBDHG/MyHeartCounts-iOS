@@ -45,11 +45,13 @@ struct RootView: View {
                     EmptyView()
                 }
             case .pending, .settingUp:
-                VStack {
-                    ProgressView("Preparing Test Environment")
-                    Text(verbatim: setupTestEnvironment.desc)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                ProgressView {
+                    VStack(alignment: .center) {
+                        Text(verbatim: "Setting Up Test Environment")
+                        Text(verbatim: setupTestEnvironment.desc)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             case .failure(let error):
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
@@ -91,6 +93,7 @@ extension RootView {
                 tab.init()
             }
             .customizationID(tab.tabId)
+            .accessibilityIdentifier("MHC:Tab:\(tab.tabTitle.localizedString(for: .enUS))")
         }
     }
 }

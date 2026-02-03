@@ -34,6 +34,10 @@
       }
     },
     {
+      "skippedTests" : [
+        "MHCScreenshotting",
+        "MHCScreenshotting\/testTakeAppStoreScreenshots()"
+      ],
       "target" : {
         "containerPath" : "container:MyHeartCounts.xcodeproj",
         "identifier" : "653A256628338800005D4D48",

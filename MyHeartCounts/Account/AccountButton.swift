@@ -16,5 +16,6 @@ struct AccountButton: View {
         Button("Your Account", systemImage: "person.crop.circle") {
             isPresented = true
         }
+        .accessibilityIdentifier("MHC:YourAccount")
     }
 }

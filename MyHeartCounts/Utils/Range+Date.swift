@@ -12,7 +12,7 @@ import SpeziFoundation
 
 extension Range where Bound == Date {
     func displayText( // swiftlint:disable:this cyclomatic_complexity function_body_length
-        using locale: Locale,
+        using locale: Locale = .current,
         calendar cal: Calendar = .current,
         timeZone: TimeZone = .current,
         now: Date = .now

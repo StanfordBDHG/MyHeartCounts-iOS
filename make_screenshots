@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#
+# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+#
+# SPDX-FileCopyrightText: 2026 Stanford University
+#
+# SPDX-License-Identifier: MIT
+#
+
+set -x -o pipefail
+
+DEVICE_TYPE='iPhone 17 Pro Max'
+SIM_NAME=MHCScreenshotsSim
+
+# setup the simulator
+if xcrun simctl list devices | grep -q "${SIM_NAME}"; then
+    # reset existing simulator
+    xcrun simctl shutdown "${SIM_NAME}"
+    xcrun simctl erase "${SIM_NAME}"
+else
+    # create new simulator
+    xcrun simctl create "${SIM_NAME}" "${DEVICE_TYPE}"
+fi
+xcrun simctl boot "${SIM_NAME}"
+
+# make the status bar look nice
+xcrun simctl status_bar "${SIM_NAME}" override \
+    --time '09:41' \
+    --dataNetwork 'wifi' \
+    --wifiBars 3 \
+    --cellularMode active \
+    --batteryState discharging \
+    --batteryLevel 100
+
+# run the UI test that records the screenshots
+xcrun xcodebuild \
+    -project ./MyHeartCounts.xcodeproj \
+    -scheme MyHeartCounts \
+    -destination "platform=iOS Simulator,name=${SIM_NAME}" \
+    -parallel-testing-worker-count 1 \
+    -maximum-concurrent-test-simulator-destinations 1 \
+    -enableCodeCoverage NO \
+    -testPlan 'MyHeartCounts Screenshots' \
+    -skipPackagePluginValidation \
+    -skipMacroValidation \
+    test \
+| xcbeautify

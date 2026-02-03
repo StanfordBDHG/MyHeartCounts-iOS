@@ -12,6 +12,7 @@ import Foundation
 import MHCStudyDefinitionExporter
 import MyHeartCountsShared
 import SpeziFoundation
+import SpeziLocalization
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
@@ -32,13 +33,13 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     
     @MainActor private(set) var app: XCUIApplication!
     @MainActor private(set) var studyBundleUrl: URL!
+    @MainActor private(set) var appLocale: Locale!
     
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         if studyBundleUrl == nil {
             try FileManager.default.createDirectory(at: Self.tempDir, withIntermediateDirectories: true)
             studyBundleUrl = try export(to: Self.tempDir, as: .archive)
@@ -50,6 +51,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         try await super.tearDown()
         app.terminate()
         app = nil
+        appLocale = nil
     }
     
     override class func tearDown() {
@@ -65,14 +67,16 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     ///     Allowed values are `kg`, `lbs`, or `nil` (the default).
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     @MainActor
-    func launchAppAndEnrollIntoStudy(
+    func launchAppAndEnrollIntoStudy( // swiftlint:disable:this function_body_length
+        locale: Locale = .current,
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: true),
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
         heightEntryUnitOverride: LaunchOptions.HeightInputUnitOverride = .none,
         weightEntryUnitOverride: LaunchOptions.WeightInputUnitOverride = .none,
-        extraLaunchArgs: [String?] = []
+        extraLaunchArgs: [String?] = [],
+        extraEnvironmentEntries: [String: String] = [:]
     ) throws {
         app.launchArguments = Array {
             "--useFirebaseEmulator"
@@ -84,6 +88,25 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
             weightEntryUnitOverride.launchOptionArgs(for: .weightInputUnitOverride)
         }
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
+        appLocale = locale
+        app.launchArguments += [
+            "-AppleLanguages", "(\(locale.language.minimalIdentifier))",
+            "-AppleLocale", try XCTUnwrap(LocalizationKey(locale: locale)).description
+        ]
+        app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
+        app.launchEnvironment.merge(extraEnvironmentEntries, using: .override)
+        do {
+            var msg = "Will launch app \(app.bundleIdentifier) with configuration:\n"
+            msg += "argv:\n"
+            for arg in app.launchArguments {
+                msg += "    \(arg)\n"
+            }
+            msg += "env:\n"
+            for (key, value) in app.launchEnvironment {
+                msg += "    \(key) = \(value)\n"
+            }
+            print(msg)
+        }
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         if !skipHealthPermissionsHandling {
@@ -94,6 +117,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
                 timeout: 10
             )
         }
+//        XCTAssert(app.staticTexts["Setting Up Test Environment"].waitForNonExistence(timeout: 5))
         if !skipGoingToHomeTab {
             XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
             goToTab(.home)
@@ -112,6 +136,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
 
 extension MHCTestCase {
     enum RootLevelTab: String, CaseIterable {
+        // needs to be kept in sync with the titles in the app
         case home = "Home"
         case upcoming = "Tasks"
         case heartHealth = "Heart Health"
@@ -119,7 +144,7 @@ extension MHCTestCase {
     
     @MainActor
     func goToTab(_ tab: RootLevelTab) {
-        let button = app.tabBars.buttons[tab.rawValue]
+        let button = app.tabBars.buttons["MHC:Tab:\(tab.rawValue)"]
         XCTAssert(button.exists)
         XCTAssert(button.isEnabled)
         XCTAssert(button.isHittable)
@@ -128,8 +153,47 @@ extension MHCTestCase {
     
     @MainActor
     func openAccountSheet() {
-        let button = app.navigationBars.buttons["Your Account"]
+        let button = app.navigationBars.buttons["MHC:YourAccount"]
         XCTAssert(button.waitForExistence(timeout: 1))
         button.tap()
+    }
+}
+
+
+extension Locale {
+    static let enUS = Locale(identifier: "en_US")
+    static let enUK = Locale(identifier: "en_UK")
+    static let esUS = Locale(identifier: "es_US")
+    static let enDE = Locale(identifier: "en_DE")
+}
+
+
+extension XCUIApplication {
+    /// The url of the iOS application being tested.
+    var url: URL? {
+        guard let impl = self.value(forKey: "_applicationImpl") as? NSObject else {
+            return nil
+        }
+        guard let path = impl.value(forKey: "_path") as? String else {
+            return nil
+        }
+        return URL(filePath: path)
+    }
+    
+    /// The main bundle of the iOS application being tested.
+    ///
+    /// - Note: This property only works when the app is being tested in the simulator; it does not work when testing on a physical device.
+    var mainBundle: Bundle? {
+        url.flatMap(Bundle.init(url:))
+    }
+}
+
+extension XCUIElementQuery {
+    func matching(_ predicateFormat: String, _ args: Any...) -> XCUIElementQuery {
+        self.matching(NSPredicate(format: predicateFormat, argumentArray: args))
+    }
+    
+    func element(matching predicateFormat: String, _ args: Any...) -> XCUIElement {
+        self.element(matching: NSPredicate(format: predicateFormat, argumentArray: args))
     }
 }

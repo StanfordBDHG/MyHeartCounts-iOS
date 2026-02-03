@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "B772A286-F7D1-4B9F-BF4B-83951D5D00C2",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "MHCScreenshotting\/testTakeAppStoreScreenshots()"
+      ],
+      "target" : {
+        "containerPath" : "container:MyHeartCounts.xcodeproj",
+        "identifier" : "653A256628338800005D4D48",
+        "name" : "MyHeartCountsUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
