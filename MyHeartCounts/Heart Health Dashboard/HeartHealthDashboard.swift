@@ -69,7 +69,7 @@ struct HeartHealthDashboard: View {
         }
     }
     
-    @ViewBuilder var healthDashboard: some View {
+    @ViewBuilder private var healthDashboard: some View {
         HealthDashboard(layout: [
             .large {
                 topSection

@@ -155,6 +155,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             throw error
         }
         desc = "\(#function) will update study bundle loader"
+        // this is important, bc if we're developing locally the study bundle might've been updated since the last time the app was launched.
         let studyBundle = try await studyBundleLoader.update()
         logger.notice("Enrolling test environment into study bundle")
         let accessReqs = MyHeartCountsStandard.baselineHealthAccessReqs.merging(

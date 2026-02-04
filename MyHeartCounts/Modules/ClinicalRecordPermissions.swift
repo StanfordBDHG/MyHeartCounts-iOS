@@ -79,10 +79,15 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
         } catch {
             if let error = error as? HKError, error.code == .errorUserCanceled {
                 wasCancelledByUser = true
+                await updateAuthorizationState()
             } else {
                 throw error
             }
         }
+    }
+    
+    func resetTracking() {
+        wasCancelledByUser = false
     }
     
     private func dataAccessRequirements() async -> HealthKit.DataAccessRequirements {

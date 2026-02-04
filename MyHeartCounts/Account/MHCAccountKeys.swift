@@ -11,6 +11,7 @@
 @preconcurrency import FirebaseStorage
 import Foundation
 import SpeziAccount
+import SpeziFoundation
 import SpeziLocalStorage
 import SwiftUI
 
@@ -128,9 +129,6 @@ extension AccountKeys {}
 
 // MARK: Other
 
-extension LocalStorageKeys {
-    static let studyActivationDate = LocalStorageKey<Date>(
-        "edu.stanford.MyHeartCounts.studyActivationDate",
-        setting: .unencrypted(excludeFromBackup: true)
-    )
+extension LocalPreferenceKeys {
+    static let studyActivationDate = LocalPreferenceKey<Date?>("studyActivationDate")
 }

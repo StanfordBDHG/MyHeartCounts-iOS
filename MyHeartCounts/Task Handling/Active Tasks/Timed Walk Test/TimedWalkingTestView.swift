@@ -120,18 +120,6 @@ private struct TimedWalkingTestView: View {
         watchManager.userHasWatch && watchManager.isWatchAppInstalled
     }
     
-    @ViewBuilder private var testInstructions: some View {
-        let kindText: LocalizedStringResource = switch test.kind {
-        case .walking: "walk"
-        case .running: "run"
-        }
-        if watchParticipatesInTest {
-            Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until your Watch vibrates to indicate that the test has ended.")
-        } else {
-            Text("For optimal results, please keep your Phone in your pocket, and \(kindText) until it vibrates to indicate that the test has ended.")
-        }
-    }
-    
     @ViewBuilder private var sections: some View {
         PlainSection {
             CenterH {
@@ -180,7 +168,6 @@ private struct TimedWalkingTestView: View {
                         CountdownView(start: session.inProgressResult.startDate, end: session.inProgressResult.endDate)
                         Group {
                             Text("Your \(testName) is in progress.")
-                            testInstructions
                         }
                         .multilineTextAlignment(.center)
                         .font(.footnote)
@@ -232,7 +219,6 @@ private struct TimedWalkingTestView: View {
                 default:
                     EmptyView()
                 }
-                testInstructions
                 Text("TIMED_WALK_TEST_EXPLAINER_FOOTER")
             }
             if showPermissionsErrorSection {

@@ -34,7 +34,7 @@ private struct DebugFormImpl: View {
     @Environment(StudyManager.self) private var studyManager
     @Environment(DemoSetup.self) private var demoSetup
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
-    @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
+    @LocalPreference(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
     @PerformTask private var performTask
     @State private var viewState: ViewState = .idle
     
