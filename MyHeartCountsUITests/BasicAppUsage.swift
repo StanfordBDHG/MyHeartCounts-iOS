@@ -72,7 +72,7 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.buttons["Stop Suggesting This"].tap()
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 2))
         app.terminate()
-        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true))
+        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: false))
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 5))
     }
     
