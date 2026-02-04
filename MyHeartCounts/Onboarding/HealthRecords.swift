@@ -18,6 +18,12 @@ import SwiftUI
 
 
 struct HealthRecords: View {
+    static let symbol: SFSymbol = if #available(iOS 18.1, *) {
+        .waveformPathEcgTextPage
+    } else {
+        .heartTextSquare
+    }
+    
     private let title: LocalizedStringResource = "Health Records"
     
     @Environment(StudyBundleLoader.self) private var studyLoader
@@ -28,12 +34,7 @@ struct HealthRecords: View {
     @State private var isShowingLearnMoreText = false
     
     var body: some View {
-        let symbol: SFSymbol = if #available(iOS 18.1, *) {
-            .waveformPathEcgTextPage
-        } else {
-            .heartTextSquare
-        }
-        OnboardingPage(symbol: symbol, title: title, description: "HEALTH_RECORDS_PERMISSIONS_SUBTITLE") {
+        OnboardingPage(symbol: Self.symbol, title: title, description: "HEALTH_RECORDS_PERMISSIONS_SUBTITLE") {
             EmptyView()
         } footer: {
             OnboardingActionsView(
