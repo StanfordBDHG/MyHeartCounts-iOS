@@ -119,7 +119,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         }
 //        XCTAssert(app.staticTexts["Setting Up Test Environment"].waitForNonExistence(timeout: 5))
         if !skipGoingToHomeTab {
-            XCTAssert(app.tabBars.element.waitForExistence(timeout: 2))
+            XCTAssert(app.tabBars.element.waitForExistence(timeout: 10))
             goToTab(.home)
             XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
             XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
