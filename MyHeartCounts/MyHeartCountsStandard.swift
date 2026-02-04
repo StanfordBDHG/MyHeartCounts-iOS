@@ -163,6 +163,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         await sensorKitFetcher.resetAllQueryAnchors()
         await clinicalRecordPermissions.resetTracking()
         LocalPreferencesStore.standard[.rejectedHomeTabPromptedActions] = nil
+        LocalPreferencesStore.standard[.studyActivationDate] = nil
         let studyManager = await studyManager
         _ = await _Concurrency.Task { @MainActor in
             guard let studyManager else {
