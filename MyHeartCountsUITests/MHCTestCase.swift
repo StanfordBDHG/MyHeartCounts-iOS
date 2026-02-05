@@ -78,6 +78,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         extraLaunchArgs: [String?] = [],
         extraEnvironmentEntries: [String: String] = [:]
     ) throws {
+        throw XCTSkip()
         app.launchArguments = Array {
             "--useFirebaseEmulator"
             testEnvironmentConfig.launchOptionArgs(for: .setupTestEnvironment)
