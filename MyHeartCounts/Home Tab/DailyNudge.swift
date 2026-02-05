@@ -32,10 +32,7 @@ struct DailyNudge: DynamicProperty {
     
     var wrappedValue: Nudge? {
         if FeatureFlags.isTakingDemoScreenshots {
-            return Nudge(
-                title: String(localized: "DEMO_NUDGE_TITLE"),
-                message: String(localized: "DEMO_NUDGE_MESSAGE")
-            )
+            return .demoNudge
         }
         guard let notificaton = notifications.first else {
             return nil
@@ -45,4 +42,12 @@ struct DailyNudge: DynamicProperty {
         }
         return Nudge(title: notificaton.title, message: notificaton.body)
     }
+}
+
+
+extension DailyNudge.Nudge {
+    static let demoNudge = Self(
+        title: String(localized: "DEMO_NUDGE_TITLE"),
+        message: String(localized: "DEMO_NUDGE_MESSAGE")
+    )
 }

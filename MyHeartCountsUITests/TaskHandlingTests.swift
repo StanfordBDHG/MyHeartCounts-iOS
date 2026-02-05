@@ -156,7 +156,7 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
 extension MHCTestCase {
     @MainActor
     func handleMotionAndFitnessAccessPrompt(timeout: Duration) {
-        let app = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let app = XCUIApplication.springboard
         let alert = app.alerts.element(matching: "label LIKE %@", "“*” would like to access your Motion & Fitness activity.")
         if alert.waitForExistence(timeout: timeout.timeInterval) {
             alert.buttons["Allow"].tap()

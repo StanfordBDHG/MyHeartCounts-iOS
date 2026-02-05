@@ -79,10 +79,15 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
         } catch {
             if let error = error as? HKError, error.code == .errorUserCanceled {
                 wasCancelledByUser = true
+                await updateAuthorizationState()
             } else {
                 throw error
             }
         }
+    }
+    
+    func resetTracking() {
+        wasCancelledByUser = false
     }
     
     private func dataAccessRequirements() async -> HealthKit.DataAccessRequirements {
@@ -98,7 +103,7 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
             }
             return types
         }
-        if let enrollments = studyManager?.studyEnrollments {
+        if let enrollments = studyManager?.studyEnrollments, !enrollments.isEmpty {
             return enrollments.reduce(into: []) { types, enrollment in
                 guard let studyDefinition = enrollment.studyBundle?.studyDefinition else {
                     return

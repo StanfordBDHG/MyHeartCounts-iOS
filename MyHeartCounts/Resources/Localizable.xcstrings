@@ -2300,26 +2300,6 @@
         }
       }
     },
-    "For optimal results, please keep your Phone in your pocket, and %@ until it vibrates to indicate that the test has ended." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para obtener resultados óptimos, por favor, mantén tu teléfono en tu bolsillo y %@ hasta que vibre indicando que la prueba ha terminado."
-          }
-        }
-      }
-    },
-    "For optimal results, please keep your Phone in your pocket, and %@ until your Watch vibrates to indicate that the test has ended." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para obtener resultados óptimos, por favor, mantén tu teléfono en tu bolsillo y %@ hasta que tu reloj vibre indicando que la prueba ha terminado."
-          }
-        }
-      }
-    },
     "Gender Identity" : {
       "localizations" : {
         "es" : {
@@ -2547,6 +2527,12 @@
           }
         }
       }
+    },
+    "HEALTH_RECORDS_NUDGE_SUBTITLE" : {
+
+    },
+    "HEALTH_RECORDS_NUDGE_TITLE" : {
+
     },
     "HEALTH_RECORDS_PERMISSIONS_DESCRIPTION" : {
       "localizations" : {
@@ -4100,7 +4086,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Permitir las notificaciones de My Heart Counts es importante, ya que por este medio recibirá recomendaciones. Para cumplir los objetivos de investigación, te pedimos que concedas este permiso.\n\nTambién te enviaremos notificaciones sobre nuevas encuestas, actividades, etc.\n\nHaremos todo lo posible por mantener las notificaciones al mínimo."
+            "value" : "Permitir las notificaciones de My Heart Counts es importante, ya que por este medio recibirá indicaciones del ensayo de promoción de la actividad física. Para cumplir los objetivos de investigación, le solicitamos que conceda este permiso.\n\nTambién le enviaremos notificaciones sobre nuevas encuestas, actividades, etc.\n\nHaremos todo lo posible por mantener las notificaciones al mínimo."
           }
         }
       }
@@ -5236,9 +5222,6 @@
         }
       }
     },
-    "run" : {
-
-    },
     "Running" : {
       "localizations" : {
         "es" : {
@@ -6089,7 +6072,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta prueba mide su capacidad funcional de ejercicio al registrar la distancia que recorre caminando en 6 minutos sobre una superficie plana. (Para rangos de referencia, consulte [aquí](https://mhc-6mwts.streamlit.app).)\n\n**Cómo hacerlo:** Busque un trayecto plano y libre de obstáculos. Use calzado cómodo. Toque \"Iniciar\" y camine a un ritmo constante que le resulte cómodamente desafiante para cubrir la mayor distancia posible. Mantenga su teléfono en la mano hasta que vibre."
+            "value" : "Esta prueba mide tu capacidad funcional de ejercicio al registrar la distancia que recorres caminando en 6 minutos sobre una superficie plana. (Para rangos de referencia, consulta [aquí](https://mhc-6mwts.streamlit.app).)\n\n**Cómo hacerlo:** Busqua un trayecto plano y libre de obstáculos. Usa calzado cómodo. Toqua \"Iniciar\" y camina a un ritmo constante que te resulte retador pero cómodo para cubrir la mayor distancia posible. Mantén tu teléfono en la mano hasta que vibre."
           }
         }
       }
@@ -6111,7 +6094,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta prueba estima su aptitud aeróbica (VO2 máx) al medir qué tan lejos corre en 12 minutos en una superficie plana. (Para rangos de referencia, consulte [aquí](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Calentamiento:** Antes de comenzar la prueba, realice unos 10 minutos de trote ligero para aflojar los músculos y evitar lesiones. Recupere el aliento antes de continuar.\n\n**Instrucciones:** Busque un camino plano y sin obstáculos o una pista de atletismo. Use tenis para correr (zapatillas deportivas). Cuando esté listo, toque “Iniciar” y corra lo más rápido que pueda para cubrir la mayor distancia posible hasta que su teléfono vibre. Mantenga el teléfono en la mano hasta que vibre."
+            "value" : "Esta prueba estima tu aptitud aeróbica (VO2 máx) al medir qué tan lejos corres en 12 minutos en una superficie plana. (Para rangos de referencia, consulta [aquí](https://www.ptdirect.com/training-delivery/client-assessment/cooper-12-minute-run-a-predictive-test-of-vo2max).)\n\n**Calentamiento:** Antes de comenzar la prueba, realiza 10 minutos de trote ligero para aflojar los músculos y evitar lesiones. Recupera el aliento antes de continuar.\n\n**Instrucciones:** Busca un camino plano y sin obstáculos o una pista de atletismo. Usa tenis para correr (zapatos deportivos). Cuando estés listo, toqua “Iniciar” y corre lo más rápido que puedas para cubrir la mayor distancia posible hasta que tu teléfono vibre. Mantén el teléfono en la mano hasta que vibre."
           }
         }
       }
@@ -6133,7 +6116,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Advertencia:** Deténgase de inmediato si presenta dolor en el pecho, falta de aire intensa, mareo o fatiga inusual."
+            "value" : "**Advertencia:** Detente de inmediato si presentas dolor en el pecho, falta de aire intensa, mareo o fatiga inusual."
           }
         }
       }
@@ -6389,6 +6372,7 @@
       }
     },
     "walk" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

@@ -28,6 +28,7 @@ xcrun simctl status_bar "${SIM_NAME}" override \
     --time '09:41' \
     --dataNetwork 'wifi' \
     --wifiBars 3 \
+    --operatorName '' \
     --cellularMode active \
     --batteryState discharging \
     --batteryLevel 100

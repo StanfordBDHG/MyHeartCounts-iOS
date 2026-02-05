@@ -33,8 +33,9 @@ private struct DebugFormImpl: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(StudyManager.self) private var studyManager
     @Environment(DemoSetup.self) private var demoSetup
+    @Environment(LocalNotifications.self) private var localNotifications
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
-    @LocalStorageEntry(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
+    @LocalPreference(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
     @PerformTask private var performTask
     @State private var viewState: ViewState = .idle
     
@@ -59,6 +60,16 @@ private struct DebugFormImpl: View {
                 }
                 NavigationLink(symbol: .serverRack, "Remote Notifications" as String) {
                     DebugRemoteNotificationStuff()
+                }
+                if FeatureFlags.isTakingDemoScreenshots {
+                    AsyncButton("Send Demo Nudge Notification" as String, state: $viewState) {
+                        let nudge = DailyNudge.Nudge.demoNudge
+                        try await localNotifications.send(
+                            title: nudge.title,
+                            body: nudge.message,
+                            date: .now.addingTimeInterval(5)
+                        )
+                    }
                 }
             }
             Section {

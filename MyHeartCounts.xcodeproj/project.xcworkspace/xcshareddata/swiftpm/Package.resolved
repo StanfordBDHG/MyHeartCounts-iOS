@@ -1,5 +1,5 @@
 {
-  "originHash" : "c7eea54a37a3bb413ed0a1053b9f740a89973dc92616adc54fbd2650965f6b04",
+  "originHash" : "d4d5564c2ef3e36f3c6e97c383dab6b9328b009c6401d0c06af2dccf478ea150",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "ab2de77fd7a4a6aada6ac17d7bbc81c44c360a0f",
-        "version" : "0.1.15"
+        "revision" : "a84f12d971eaf1b462cf20eef3708066a79c4afb",
+        "version" : "0.1.16"
       }
     },
     {
@@ -510,8 +510,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTHealthKit.git",
       "state" : {
-        "revision" : "f2e956b4d5e09a6b396c8f5bb38aaba05eaa35a1",
-        "version" : "1.2.6"
+        "revision" : "c6680615b43d34aefdcd1c9b278759fcadf60b19"
       }
     },
     {

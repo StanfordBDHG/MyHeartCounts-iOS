@@ -219,13 +219,19 @@ extension HealthDashboardLayout {
         case healthKit(SampleTypeProxy)
         case firebase(CustomQuantitySampleType)
         
-        var sampleTypeDisplayTitle: String {
+        var asMHCSampleType: MHCSampleType {
             switch self {
-            case .healthKit(let sampleType):
-                sampleType.underlyingSampleType.mhcDisplayTitle
-            case .firebase(let sampleType):
-                sampleType.displayTitle
+            case .healthKit(let sampleType): .healthKit(sampleType)
+            case .firebase(let sampleType): .custom(sampleType)
             }
+        }
+        
+        var sampleTypeDisplayTitle: String {
+            asMHCSampleType.displayTitle
+        }
+        
+        func sampleTypeDisplayTitle(in locale: Locale) -> String {
+            asMHCSampleType.displayTitle(in: locale)
         }
     }
     
@@ -267,17 +273,20 @@ extension HealthDashboardLayout {
         /// The config of a component that displays a custom view.
         struct CustomComponentConfig: Sendable {
             let title: String
+            let accessibilityIdentifier: String?
             let headerInsets: EdgeInsets
             let content: @MainActor () -> AnyView
             let tapAction: (@MainActor () -> Void)?
             
             fileprivate init(
                 title: String,
-                headerInsets: EdgeInsets = .zero,
+                accessibilityIdentifier: String?,
+                headerInsets: EdgeInsets,
                 content: @MainActor @escaping () -> AnyView,
                 tapAction: (@MainActor () -> Void)?
             ) {
                 self.title = title
+                self.accessibilityIdentifier = accessibilityIdentifier
                 self.headerInsets = headerInsets
                 self.content = content
                 self.tapAction = tapAction
@@ -319,12 +328,14 @@ extension HealthDashboardLayout {
         
         static func custom(
             title: String,
+            accessibilityIdentifier: String?,
             headerInsets: EdgeInsets = .zero,
             @ViewBuilder _ content: @MainActor @escaping () -> some View,
             onTap tapAction: (@MainActor () -> Void)? = nil
         ) -> Self {
             .custom(.init(
                 title: title,
+                accessibilityIdentifier: accessibilityIdentifier,
                 headerInsets: headerInsets,
                 content: { content().intoAnyView() },
                 tapAction: tapAction

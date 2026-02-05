@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import MarkdownUI
 import SFSafeSymbols
 import SwiftUI
 
@@ -13,7 +14,6 @@ import SwiftUI
 struct OnboardingIconGridRow: View {
     let icon: SFSymbol
     let text: LocalizedStringResource
-    
     
     var body: some View {
         GridRow {
@@ -26,21 +26,20 @@ struct OnboardingIconGridRow: View {
                 .gridCellAnchor(.topLeading)
                 .frame(width: 42, alignment: .topLeading)
             HStack {
-                Text(text)
-                    .font(.body)
-                    .lineLimit(32)
-                    .multilineTextAlignment(.leading)
-                    .foregroundStyle(.secondary)
+                // one of the elements contains a bullet list;
+                // we use the Markdown view here to have this properly indented (makes it easier to read)
+                Markdown(String(localized: text))
+                    .markdownTextStyle(\.text) {
+                        ForegroundColor(.secondary)
+                    }
+                    .markdownBlockStyle(\.list) { config in
+                        config.label
+                            .padding([.leading, .top], -12)
+                    }
                     .padding(.bottom)
                 Spacer()
             }
         }
-    }
-    
-    
-    init(icon: SFSymbol, text: LocalizedStringResource) {
-        self.icon = icon
-        self.text = text
     }
 }
 
