@@ -53,7 +53,6 @@ extension MHCScreenshotting {
     @MainActor
     func testTakeAppStoreScreenshots() throws {
         try runScreenshotsFlow(for: .enUS)
-        try runScreenshotsFlow(for: .esUS)
         try runScreenshotsFlow(for: .esES)
         try runScreenshotsFlow(for: .enUK)
     }
