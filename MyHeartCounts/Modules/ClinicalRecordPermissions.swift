@@ -103,7 +103,7 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
             }
             return types
         }
-        if let enrollments = studyManager?.studyEnrollments {
+        if let enrollments = studyManager?.studyEnrollments, !enrollments.isEmpty {
             return enrollments.reduce(into: []) { types, enrollment in
                 guard let studyDefinition = enrollment.studyBundle?.studyDefinition else {
                     return
