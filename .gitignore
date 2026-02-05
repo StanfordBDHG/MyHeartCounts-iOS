@@ -29,7 +29,6 @@ xcuserdata/
 .DS_Store
 .env
 GoogleService-Info*.plist
-screenshots/
 
 # Tests
 report.junit
