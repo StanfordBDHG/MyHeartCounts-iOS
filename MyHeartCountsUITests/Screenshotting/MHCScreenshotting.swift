@@ -16,6 +16,8 @@ import XCTHealthKit
 final class MHCScreenshotting: MHCTestCase, @unchecked Sendable {
     private var screenshotsDir: URL! // swiftlint:disable:this implicitly_unwrapped_optional
     
+    @MainActor private var screenshotIdx = 0
+    
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
@@ -27,12 +29,16 @@ final class MHCScreenshotting: MHCTestCase, @unchecked Sendable {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appending(path: "screenshots", directoryHint: .isDirectory)
+            .appending(path: "fastlane/screenshots", directoryHint: .isDirectory)
     }
     
     @MainActor
-    func recordScreenshot(_ name: String) throws {
+    func recordScreenshot(_ name: String? = nil) throws {
+        defer {
+            screenshotIdx += 1
+        }
         sleep(for: .seconds(0.5)) // give it some time to complete whatever animation might currently still be going on.
+        let name = name ?? "\(screenshotIdx)_APP_IPHONE_67_\(screenshotIdx)"
         let pngData = XCUIScreen.main.screenshot().pngRepresentation
         let localeKey = try XCTUnwrap(LocalizationKey(locale: appLocale)).description
         let dir = screenshotsDir.appending(path: localeKey, directoryHint: .isDirectory)
@@ -48,14 +54,17 @@ extension MHCScreenshotting {
     func testTakeAppStoreScreenshots() throws {
         try runScreenshotsFlow(for: .enUS)
         try runScreenshotsFlow(for: .esUS)
+        try runScreenshotsFlow(for: .esES)
         try runScreenshotsFlow(for: .enUK)
     }
     
     
     @MainActor
     private func runScreenshotsFlow(for locale: Locale) throws { // swiftlint:disable:this function_body_length
+        screenshotIdx = 0 // reset at begin
         let isFirstRun = locale == .enUS
         try launchAppAndEnrollIntoStudy(
+            skip: false,
             locale: locale,
             skipHealthPermissionsHandling: !isFirstRun,
             // the "go to home tab" thing implies checking for the on-screen existence of certain texts, which will fail if the language isn't english.
@@ -69,14 +78,24 @@ extension MHCScreenshotting {
             ]
         )
         
+        /*
+         screenshots:
+         0: home tab (with completed task)
+         1: dashboard
+         2: survey
+         3: sleep stats
+         4: home screen nudge
+         5: welcome article
+         */
+        
         goToTab(.home, timeout: 10) // give it a little extra time; the app might still be launching
-        try recordScreenshot("Home Tab 1")
+//        try recordScreenshot("Home Tab 1")
         // open the "Welcome to My Heart Counts" article
         // works when only looking at the prefix, bc there is only a single article on the Home tab.
         app.buttons.matching("identifier BEGINSWITH %@", "Read Article: ").element.tap()
-        try recordScreenshot("Welcome Article")
+        try recordScreenshot("5_APP_IPHONE_67_5")
         app.navigationBars.buttons["Close"].tap()
-        try recordScreenshot("Home Tab 2")
+        try recordScreenshot("0_APP_IPHONE_67_0")
         
         goToTab(.heartHealth)
         if isFirstRun { // only need to do this once
@@ -91,10 +110,10 @@ extension MHCScreenshotting {
             app.navigationBars.buttons["Close"].tap()
         }
         sleep(for: .seconds(2)) // give it some time to load
-        try recordScreenshot("Dashboard")
+        try recordScreenshot("1_APP_IPHONE_67_1") // dashboard screenshot
         
         app.buttons["MHC:DashboardTile:Sleep"].tap()
-        try recordScreenshot("Dashboard - Sleep")
+        try recordScreenshot("3_APP_IPHONE_67_3")
         app.navigationBars.buttons["Close"].tap()
         
         goToTab(.home)
@@ -121,7 +140,8 @@ extension MHCScreenshotting {
                 ),
                 .scrollUp,
                 .custom {
-                    try self.recordScreenshot("Diet Questionnaire")
+                    // survey screenshot
+                    try self.recordScreenshot("2_APP_IPHONE_67_2")
                 },
                 .cancel
             ])
@@ -141,7 +161,7 @@ extension MHCScreenshotting {
             let springboard = XCUIApplication.springboard
             let notification = springboard.descendants(matching: .any)["NotificationShortLookView"]
             XCTAssert(notification.waitForExistence(timeout: 10))
-            try recordScreenshot("Lock Screen Notification")
+            try recordScreenshot("4_APP_IPHONE_67_4")
             // dismiss the notification, so that the next screenshot (for the next language) only contains that
             notification.swipeLeft()
             let clearButton = springboard.buttons.matching("identifier = %@ && label = %@", "swipe-action-button-identifier", "Clear").element

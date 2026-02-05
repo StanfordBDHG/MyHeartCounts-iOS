@@ -203,29 +203,18 @@ platform :ios do
     commit = last_git_commit
     
     if environment == "production"
-      # For our 4.0 beta releases, we currently only use TestFlight in a larger release group.
-      # deliver(
-      #   app_identifier: appidentifier,
-      #   release_notes: {
-      #     'en-US' => releasenotes
-      #   },
-      #   submit_for_review: true,
-      #   force: true,
-      #   reject_if_possible: true,
-      #   automatic_release: true,
-      #   precheck_include_in_app_purchases: false,
-      # )
-      upload_to_testflight(
+      deliver(
         app_identifier: appidentifier,
-        distribute_external: true,
-        reject_build_waiting_for_review: true,
-        expire_previous_builds: false,
-        groups: [
-          "Release Testing"
-        ],
-        submit_beta_review: true,
-        notify_external_testers: true,
-        changelog: releasenotes
+        release_notes: {
+          'en-US' => releasenotes,
+          'es-ES' => releasenotes
+        },
+        overwrite_screenshots: true,
+        submit_for_review: true,
+        force: true,
+        reject_if_possible: true,
+        automatic_release: true,
+        precheck_include_in_app_purchases: false,
       )
     elsif environment == "development"
       upload_to_testflight(

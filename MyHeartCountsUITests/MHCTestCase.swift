@@ -68,6 +68,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     @MainActor
     func launchAppAndEnrollIntoStudy( // swiftlint:disable:this function_body_length
+        skip: Bool = true,
         locale: Locale = .current,
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: true),
@@ -78,7 +79,9 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
         extraLaunchArgs: [String?] = [],
         extraEnvironmentEntries: [String: String] = [:]
     ) throws {
-        throw XCTSkip()
+        if skip {
+            throw XCTSkip()
+        }
         app.launchArguments = Array {
             "--useFirebaseEmulator"
             testEnvironmentConfig.launchOptionArgs(for: .setupTestEnvironment)
@@ -164,6 +167,7 @@ extension Locale {
     static let enUS = Locale(identifier: "en_US")
     static let enUK = Locale(identifier: "en_UK")
     static let esUS = Locale(identifier: "es_US")
+    static let esES = Locale(identifier: "es_ES")
     static let enDE = Locale(identifier: "en_DE")
 }
 

@@ -1,0 +1,33 @@
+Turn your daily activity into a powerful tool for science with My Heart Counts, a revolutionary research study and personal health app from Stanford University School of Medicine, the University of Washington, and Imperial College London.
+
+Heart disease is the #1 cause of death worldwide. But what if we could change that, together? My Heart Counts invites you to partner directly with researchers to help us understand how activity, lifestyle, and fitness relate to cardiovascular health. This isn't just another fitness tracker, it's your chance to be part of the solution.
+
+WHY IS THIS SO EXCITING?
+- BE A CITIZEN SCIENTIST: You are not just a user; you are a research partner. By simply living your life, you contribute valuable data to one of the largest-ever studies on heart health. Your contribution can help unlock the secrets to preventing heart disease.
+- YOUR PERSONAL AI HEALTH COACH: This study includes a physical activity randomized controlled trial. My Heart Counts now features an intelligent coach powered by a cutting-edge Large Language Model (LLM). The coach provides personalized tips and encouragement to help you build healthier habits, one step at a time.
+- GET PERSONALIZED INSIGHTS: Discover your "Heart Score," a unique measure of your cardiovascular health based on your activity levels and other data. Learn more  about your own patterns and how they contribute to overall health.
+- POWERED BY STANFORD MEDICINE: This app is developed and run by leading cardiologists and researchers at Stanford University, the University of Washington, and Imperial College London. You can trust the science and know your data is handled with the highest standards of security and privacy.
+
+HOW IT WORKS:
+1. Download & Consent: Join the study in minutes with a simple, transparent consent process.
+2. Track Your Activity: The app uses the motion sensors in your iPhone or connects to your Apple Watch to automatically and securely measure your daily activity.
+3. LLM-Powered Physical Activity Recommendations: Our LLM-powered coach will provide motivation and personalized physical activity advice.
+4. Get Your Score & Contribute: See your activity patterns, get your Heart Score, and know that every step you take is advancing our collective understanding of heart health.
+
+KEY FEATURES:
+- Automatic Activity Tracking: Seamlessly monitors your steps, distance, and active time.
+- AI-Powered Coaching: Chat with our LLM-driven coach for personalized motivation and guidance on your physical activity journey.
+- Personalized Heart Score: Get a unique score and insights into your heart health.
+- Secure & Private: Your data is encrypted, anonymized, and stored on secure servers. Your personally identifiable information is never shared.
+- Optional Physical Activity Testing: Participate in a classic fitness assessment to provide even more valuable data.
+
+DATA SAFETY & SECURITY: 
+We take your privacy as seriously as your heart health and your data is protected by the highest institutional standards:
+- Open-source development: My Heart Counts is developed as an open-source project, allowing you to verify the functionality and security. We invite open-source contributors and are building on an open-source stack including the Stanford Spezi ecosystem.
+- Enterprise-Grade Security: Your data is managed by Stanford Medicine Technology & Digital Solutions (TDS), utilizing the same rigorous security infrastructure used by Stanford Medicine.
+- HIPAA Compliant: We are fully compliant with HIPAA regulations to ensure your Protected Health Information (PHI) remains safe and confidential.
+
+Join a global movement for better health. Your motion has meaning.
+
+Download My Heart Counts today and turn your daily activity into scientific discovery!
+

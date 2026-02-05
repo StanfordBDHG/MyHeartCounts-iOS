@@ -93,7 +93,7 @@ extension HomeTab.PromptedAction {
         conditions: [
             .daysSinceEnrollment(0...21),
             .custom { _ in
-                SensorKit.mhcSensors.contains { $0.authorizationStatus == .notDetermined }
+                !FeatureFlags.isTakingDemoScreenshots && SensorKit.mhcSensors.contains { $0.authorizationStatus == .notDetermined }
             }
         ],
         content: .init(
