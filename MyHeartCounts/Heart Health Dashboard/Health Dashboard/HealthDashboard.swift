@@ -197,7 +197,7 @@ extension HealthDashboardLayout.GridComponent {
         case .quantityDisplay(let config):
             config.dataSource.sampleTypeDisplayTitle(in: .enUS)
         case .custom(let config):
-            config.title
+            config.accessibilityIdentifier ?? config.title
         }
     }
 }
