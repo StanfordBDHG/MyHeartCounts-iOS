@@ -145,7 +145,7 @@ extension MHCTestCase {
     @MainActor
     func goToTab(_ tab: RootLevelTab) {
         let button = app.tabBars.buttons["MHC:Tab:\(tab.rawValue)"]
-        XCTAssert(button.exists)
+        XCTAssert(button.waitForExistence(timeout: 2))
         XCTAssert(button.isEnabled)
         XCTAssert(button.isHittable)
         button.tap()
