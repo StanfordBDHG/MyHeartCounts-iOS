@@ -93,6 +93,9 @@ extension MHCScreenshotting {
         sleep(for: .seconds(2)) // give it some time to load
         try recordScreenshot("Dashboard")
         
+        app.buttons["Sleep"].tap()
+        try recordScreenshot("Dashboard - Sleep")
+        
         goToTab(.home)
         app.swipeUp()
         // open the diet questionnaire
