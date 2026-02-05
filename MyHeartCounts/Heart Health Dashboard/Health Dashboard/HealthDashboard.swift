@@ -183,8 +183,21 @@ struct HealthDashboard: View {
                     config.title
                 }
             }())
+            .accessibilityIdentifier("MHC:DashboardTile:\(component.accessibilityIdentifier)")
         } else {
             view
+        }
+    }
+}
+
+
+extension HealthDashboardLayout.GridComponent {
+    var accessibilityIdentifier: String {
+        switch self {
+        case .quantityDisplay(let config):
+            config.dataSource.sampleTypeDisplayTitle(in: .enUS)
+        case .custom(let config):
+            config.title
         }
     }
 }

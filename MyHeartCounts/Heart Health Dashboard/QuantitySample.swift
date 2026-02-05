@@ -13,6 +13,7 @@ import HealthKit
 import MyHeartCountsShared
 import SpeziHealthKit
 import SpeziHealthKitUI
+import SpeziLocalization
 import SpeziViews
 import struct SwiftUI.Color
 
@@ -35,7 +36,7 @@ enum MHCSampleType: Hashable, Identifiable, Sendable {
         case .healthKit(let sampleType):
             sampleType.underlyingSampleType.mhcDisplayTitle
         case .custom(let sampleType):
-            sampleType.displayTitle
+            String(localized: sampleType.displayTitle)
         }
     }
     
@@ -55,12 +56,21 @@ enum MHCSampleType: Hashable, Identifiable, Sendable {
     var asQuantityType: MHCQuantitySampleType? {
         .init(self)
     }
+    
+    func displayTitle(in locale: Locale) -> String {
+        switch self {
+        case .healthKit(let sampleType):
+            sampleType.underlyingSampleType.localizedTitle(in: locale.language) ?? sampleType.underlyingSampleType.mhcDisplayTitle
+        case .custom(let sampleType):
+            sampleType.displayTitle.localizedString(for: locale)
+        }
+    }
 }
 
 
 struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     let id: String
-    let displayTitle: String
+    let displayTitle: LocalizedStringResource
     let displayUnit: HKUnit
     let aggregationKind: StatisticsAggregationOption
     let preferredTintColor: Color
@@ -73,7 +83,7 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
         preferredTintColor: Color
     ) {
         self.id = id
-        self.displayTitle = String(localized: displayTitle)
+        self.displayTitle = displayTitle
         self.displayUnit = displayUnit
         self.aggregationKind = aggregationKind
         self.preferredTintColor = preferredTintColor
@@ -143,7 +153,7 @@ enum MHCQuantitySampleType: Hashable, Identifiable, Sendable {
         case .healthKit(let sampleType):
             sampleType.mhcDisplayTitle
         case .custom(let sampleType):
-            sampleType.displayTitle
+            String(localized: sampleType.displayTitle)
         }
     }
     

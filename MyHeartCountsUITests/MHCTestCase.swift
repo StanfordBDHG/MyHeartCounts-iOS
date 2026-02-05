@@ -143,9 +143,9 @@ extension MHCTestCase {
     }
     
     @MainActor
-    func goToTab(_ tab: RootLevelTab) {
+    func goToTab(_ tab: RootLevelTab, timeout: TimeInterval = 2) {
         let button = app.tabBars.buttons["MHC:Tab:\(tab.rawValue)"]
-        XCTAssert(button.waitForExistence(timeout: 2))
+        XCTAssert(button.waitForExistence(timeout: timeout))
         XCTAssert(button.isEnabled)
         XCTAssert(button.isHittable)
         button.tap()
@@ -168,7 +168,18 @@ extension Locale {
 }
 
 
+extension XCUIDevice {
+    func pressLockButton() {
+        perform(NSSelectorFromString("pressLockButton"))
+    }
+}
+
+
 extension XCUIApplication {
+    static var springboard: XCUIApplication {
+        XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    }
+    
     /// The url of the iOS application being tested.
     var url: URL? {
         guard let impl = self.value(forKey: "_applicationImpl") as? NSObject else {
@@ -187,6 +198,7 @@ extension XCUIApplication {
         url.flatMap(Bundle.init(url:))
     }
 }
+
 
 extension XCUIElementQuery {
     func matching(_ predicateFormat: String, _ args: Any...) -> XCUIElementQuery {
