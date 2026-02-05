@@ -117,7 +117,6 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
                 timeout: 10
             )
         }
-//        XCTAssert(app.staticTexts["Setting Up Test Environment"].waitForNonExistence(timeout: 5))
         if !skipGoingToHomeTab {
             XCTAssert(app.tabBars.element.waitForExistence(timeout: 10))
             goToTab(.home)

@@ -57,7 +57,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.textViews["MHC.FeedbackTextField"].typeText("Heyyyy ;)")
         XCTAssert(sendButton.isEnabled)
         sendButton.tap()
-        XCTExpectFailure("Firestore rules are currently incorrectly configured")
         XCTAssert(app.navigationBars["Feedback"].waitForNonExistence(timeout: 2))
     }
     
@@ -72,9 +71,11 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.buttons["Stop Suggesting This"].tap()
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 2))
         app.terminate()
-        sleep(for: .seconds(0.25)) // no idea why but ut seems this wait is required for xctest
-        // to correctly pick up the acessibility identifiers when relaunching the app (required when going to the home tab)
-        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: false))
+        try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: false),
+            // no idea why but this sometimes isn't able to find the home tab item's accessibility id (is empty for some reason...)
+            skipGoingToHomeTab: true
+        )
         XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 5))
     }
     
