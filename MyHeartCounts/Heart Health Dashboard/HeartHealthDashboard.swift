@@ -69,7 +69,7 @@ struct HeartHealthDashboard: View {
         }
     }
     
-    @ViewBuilder var healthDashboard: some View {
+    @ViewBuilder private var healthDashboard: some View {
         HealthDashboard(layout: [
             .large {
                 topSection
@@ -176,6 +176,7 @@ struct HeartHealthDashboard: View {
         let score = $cvhScore[keyPath: scoreKeyPath]
         return .custom(
             title: score.sampleType.displayTitle,
+            accessibilityIdentifier: score.sampleType.displayTitle(in: .enUS),
             headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
         ) {
             VStack(spacing: 0) {

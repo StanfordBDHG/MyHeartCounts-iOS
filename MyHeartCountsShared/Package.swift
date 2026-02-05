@@ -20,7 +20,7 @@ var packageDeps: [Package.Dependency] = [
 
 #if !os(Linux)
 packageDeps += [
-    .package(url: "https://github.com/StanfordSpezi/SpeziStudy.git", from: "0.1.15"),
+    .package(url: "https://github.com/StanfordSpezi/SpeziStudy.git", from: "0.1.16"),
     .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols.git", from: "7.0.0")
 ]
 #endif

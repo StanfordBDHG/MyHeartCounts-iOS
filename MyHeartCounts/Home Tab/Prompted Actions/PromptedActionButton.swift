@@ -15,6 +15,9 @@ import SwiftUI
 
 extension HomeTab {
     struct PromptedActionButton: View {
+        @Environment(MyHeartCountsStandard.self)
+        private var standard
+        
         @PromptedActions private var promptedActions
         
         let action: PromptedAction
@@ -27,7 +30,7 @@ extension HomeTab {
                 title: content.title,
                 subtitle: content.message,
                 state: $viewState,
-                action: action.handler
+                action: { try await action(standard.spezi) }
             )
             .contextMenu {
                 Button(role: .destructive) {

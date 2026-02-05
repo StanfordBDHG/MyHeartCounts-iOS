@@ -35,11 +35,9 @@ jobs:
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       artifactname: MHC-App-UITests.xcresult
-      firebaseemulatorimport: ./firebase
-      firebasejsonpath: ./MyHeartCounts-Firebase/firebase.json
       setupfirebaseemulator: true
       checkout_submodules: true
-      customcommand: "firebase emulators:exec 'fastlane uitest'"
+      customcommand: "cd ./MyHeartCounts-Firebase && firebase emulators:exec 'cd .. && fastlane uitest'"
     secrets:
       GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   mhc_utils_unit_tests:

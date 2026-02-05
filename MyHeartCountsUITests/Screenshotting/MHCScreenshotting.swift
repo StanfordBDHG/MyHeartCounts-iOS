@@ -69,7 +69,7 @@ extension MHCScreenshotting {
             ]
         )
         
-        goToTab(.home)
+        goToTab(.home, timeout: 10) // give it a little extra time; the app might still be launching
         try recordScreenshot("Home Tab 1")
         // open the "Welcome to My Heart Counts" article
         // works when only looking at the prefix, bc there is only a single article on the Home tab.
@@ -92,6 +92,10 @@ extension MHCScreenshotting {
         }
         sleep(for: .seconds(2)) // give it some time to load
         try recordScreenshot("Dashboard")
+        
+        app.buttons["MHC:DashboardTile:Sleep"].tap()
+        try recordScreenshot("Dashboard - Sleep")
+        app.navigationBars.buttons["Close"].tap()
         
         goToTab(.home)
         app.swipeUp()
@@ -122,6 +126,28 @@ extension MHCScreenshotting {
                 .cancel
             ])
         ])
+        
+        // trigger nudge notification and take a screenshot
+        do {
+            openAccountSheet()
+            app.swipeUp()
+            app.buttons["Debug"].tap()
+            app.buttons["Send Demo Nudge Notification"].tap()
+            
+            // lock the device
+            XCUIDevice.shared.pressLockButton()
+            // turn on the device (doesn't unlock)
+            XCUIDevice.shared.press(.home)
+            let springboard = XCUIApplication.springboard
+            let notification = springboard.descendants(matching: .any)["NotificationShortLookView"]
+            XCTAssert(notification.waitForExistence(timeout: 10))
+            try recordScreenshot("Lock Screen Notification")
+            // dismiss the notification, so that the next screenshot (for the next language) only contains that
+            notification.swipeLeft()
+            let clearButton = springboard.buttons.matching("identifier = %@ && label = %@", "swipe-action-button-identifier", "Clear").element
+            XCTAssert(clearButton.waitForExistence(timeout: 2))
+            clearButton.tap()
+        }
     }
 }
 

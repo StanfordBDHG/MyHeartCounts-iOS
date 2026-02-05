@@ -17,13 +17,20 @@ final class LocalNotifications: Module, EnvironmentAccessible, Sendable {
         id: String = UUID().uuidString, // swiftlint:disable:this function_default_parameter_at_end
         title: String,
         body: String,
-        level: UNNotificationInterruptionLevel = .active
+        level: UNNotificationInterruptionLevel = .active,
+        date: Date? = nil
     ) async throws {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.interruptionLevel = level
-        let request = UNNotificationRequest(identifier: id, content: content, trigger: nil)
+        let trigger: UNNotificationTrigger?
+        if let date {
+            trigger = UNTimeIntervalNotificationTrigger(timeInterval: date.timeIntervalSinceNow, repeats: false)
+        } else {
+            trigger = nil
+        }
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
         try await UNUserNotificationCenter.current().add(request)
     }
     

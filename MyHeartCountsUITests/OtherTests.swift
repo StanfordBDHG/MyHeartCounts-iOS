@@ -30,6 +30,7 @@ final class OtherTests: MHCTestCase, @unchecked Sendable {
         
         app.terminate()
         try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: false),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )

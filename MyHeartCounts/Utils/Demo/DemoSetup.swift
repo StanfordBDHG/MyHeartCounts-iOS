@@ -59,7 +59,7 @@ final class DemoSetup: Module, EnvironmentAccessible, Sendable { // swiftlint:di
             id: UUID(),
             sampleType: .custom(.bloodLipids),
             unit: CustomQuantitySampleType.bloodLipids.displayUnit,
-            value: 130,
+            value: 110,
             date: cal.date(bySettingHour: 19, minute: 50, second: 0, of: cal.startOfPrevDay(for: .now))!
         ))
         try await healthKit.save(HKQuantitySample(
@@ -245,40 +245,40 @@ final class DemoSetup: Module, EnvironmentAccessible, Sendable { // swiftlint:di
     func addDemoSleepSamples() async throws {  // swiftlint:disable:this function_body_length
         struct SampleDescriptor {
             let phase: SleepSession.SleepPhase
-            let duration: TimeInterval
+            let duration: Duration
         }
         let sampleDescriptors = [
-            SampleDescriptor(phase: .asleepCore, duration: 750.0),
-            SampleDescriptor(phase: .asleepDeep, duration: 300.0),
-            SampleDescriptor(phase: .asleepCore, duration: 390.0),
-            SampleDescriptor(phase: .asleepDeep, duration: 330.0),
-            SampleDescriptor(phase: .asleepCore, duration: 30.0),
-            SampleDescriptor(phase: .awake, duration: 30.0),
-            SampleDescriptor(phase: .asleepCore, duration: 660.0),
-            SampleDescriptor(phase: .asleepDeep, duration: 1350.0),
-            SampleDescriptor(phase: .asleepCore, duration: 330.0),
-            SampleDescriptor(phase: .asleepREM, duration: 630.0),
-            SampleDescriptor(phase: .asleepCore, duration: 1140.0),
-            SampleDescriptor(phase: .asleepDeep, duration: 1350.0),
-            SampleDescriptor(phase: .asleepCore, duration: 930.0),
-            SampleDescriptor(phase: .asleepDeep, duration: 390.0),
-            SampleDescriptor(phase: .asleepCore, duration: 540.0),
-            SampleDescriptor(phase: .asleepREM, duration: 870.0),
-            SampleDescriptor(phase: .awake, duration: 60.0),
-            SampleDescriptor(phase: .asleepCore, duration: 450.0),
-            SampleDescriptor(phase: .asleepREM, duration: 90.0),
-            SampleDescriptor(phase: .asleepCore, duration: 3180.0),
-            SampleDescriptor(phase: .awake, duration: 90.0),
-            SampleDescriptor(phase: .asleepCore, duration: 660.0),
-            SampleDescriptor(phase: .asleepREM, duration: 2580.0),
-            SampleDescriptor(phase: .asleepCore, duration: 3930.0),
-            SampleDescriptor(phase: .awake, duration: 60.0),
-            SampleDescriptor(phase: .asleepCore, duration: 180.0),
-            SampleDescriptor(phase: .asleepREM, duration: 1350.0),
-            SampleDescriptor(phase: .awake, duration: 60.0),
-            SampleDescriptor(phase: .asleepCore, duration: 3690.0),
-            SampleDescriptor(phase: .awake, duration: 840.0),
-            SampleDescriptor(phase: .asleepCore, duration: 90.0)
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(12.5)),
+            SampleDescriptor(phase: .asleepDeep, duration: .minutes(5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(6.5)),
+            SampleDescriptor(phase: .asleepDeep, duration: .minutes(5.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(0.5)),
+            SampleDescriptor(phase: .awake, duration: .minutes(0.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(11)),
+            SampleDescriptor(phase: .asleepDeep, duration: .minutes(22.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(5.5)),
+            SampleDescriptor(phase: .asleepREM, duration: .minutes(10.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(19)),
+            SampleDescriptor(phase: .asleepDeep, duration: .minutes(22.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(15.5)),
+            SampleDescriptor(phase: .asleepDeep, duration: .minutes(6.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(9)),
+            SampleDescriptor(phase: .asleepREM, duration: .minutes(14.5)),
+            SampleDescriptor(phase: .awake, duration: .minutes(1)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(7.5)),
+            SampleDescriptor(phase: .asleepREM, duration: .minutes(1.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(53)),
+            SampleDescriptor(phase: .awake, duration: .minutes(1.5)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(11)),
+            SampleDescriptor(phase: .asleepREM, duration: .minutes(43)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(65.5)),
+            SampleDescriptor(phase: .awake, duration: .minutes(1)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(3)),
+            SampleDescriptor(phase: .asleepREM, duration: .minutes(22.5)),
+            SampleDescriptor(phase: .awake, duration: .minutes(1)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(21.5)),
+            SampleDescriptor(phase: .awake, duration: .minutes(54)),
+            SampleDescriptor(phase: .asleepCore, duration: .minutes(1.5))
         ]
         func makeSamples(from sampleDescriptors: [SampleDescriptor], startingAt startDate: Date) -> [HKCategorySample] {
             var samples: [HKCategorySample] = []
@@ -288,15 +288,32 @@ final class DemoSetup: Module, EnvironmentAccessible, Sendable { // swiftlint:di
                     type: SampleType.sleepAnalysis.hkSampleType,
                     value: descriptor.phase.rawValue,
                     start: start,
-                    end: start.addingTimeInterval(descriptor.duration)
+                    end: start.addingTimeInterval(descriptor.duration.timeInterval)
                 ))
             }
             return samples
         }
-        let samples = makeSamples(
+        var samples = makeSamples(
             from: sampleDescriptors,
             startingAt: cal.startOfPrevDay(for: .now)
         )
+        let hoursByDay = [6.5, 6.7, 5.2, 7.2, 8, 5.9, 6.3, 6.4, 6.4, 7, 6.9, 6.8, 4.5, 7]
+        for (numDaysAgo, hours) in zip(hoursByDay.indices.reversed(), hoursByDay) {
+            let start = cal.date(
+                bySettingHour: 22,
+                minute: 0,
+                second: 0,
+                of: cal.date(
+                    byAdding: .day,
+                    value: -(numDaysAgo + 3),
+                    to: cal.startOfDay(for: .now)
+                )!
+            )!
+            samples += makeSamples(
+                from: [SampleDescriptor(phase: .asleepCore, duration: .hours(hours))],
+                startingAt: start
+            )
+        }
         logger.notice("[DBG] Adding \(samples.count) sleep samples to health")
         try await healthKit.save(samples)
     }

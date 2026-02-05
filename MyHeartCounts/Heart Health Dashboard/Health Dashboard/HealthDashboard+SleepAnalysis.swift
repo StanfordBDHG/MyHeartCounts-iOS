@@ -102,7 +102,7 @@ struct LargeSleepAnalysisTile: View {
         }
         .chartXScale(domain: [
             cal.startOfDay(for: timeRange.lowerBound),
-            cal.startOfNextDay(for: timeRange.upperBound).addingTimeInterval(-1)
+            timeRange.upperBound
         ])
         .configureChartXAxis(for: timeRange)
         .chartXSelection(value: $xSelection)

@@ -94,7 +94,7 @@ struct HomeTab: RootViewTab {
         }
     }
     
-    @ViewBuilder private var learnMoreSection: some View {
+    private var learnMoreSection: some View {
         Section {
             Link(destination: MyHeartCounts.website) {
                 HStack {

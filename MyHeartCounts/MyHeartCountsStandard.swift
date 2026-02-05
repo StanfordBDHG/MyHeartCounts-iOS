@@ -30,6 +30,7 @@ import SwiftUI
 
 actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConstraint {
     // swiftlint:disable attributes
+    @Application(\.spezi) var spezi
     @Application(\.logger) var logger
     @Dependency(HealthKit.self) var healthKit
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
@@ -44,6 +45,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(NotificationTracking.self) var notificationTracking
     @Dependency(Scheduler.self) var scheduler
     @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
+    @Dependency(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     @Dependency(NotificationsManager.self) private var notificationsManager
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
@@ -109,7 +111,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                     try await account.accountService.updateAccountDetails(modifications)
                 }
             }
-            try localStorage.store(.now, for: .studyActivationDate)
+            LocalPreferencesStore.standard[.studyActivationDate] = .now
             _Concurrency.Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
             }
@@ -149,6 +151,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     @MainActor
     private func performLogoutCleanup() async throws {
+        await logger.notice("performing logout cleanup")
         // upon logging out, we want to throw the user back to the onboarding.
         // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
         // since the Firebase SDK and all related Spezi modules will still be loaded.
@@ -158,6 +161,9 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         try? await managedFileUpload.clearPendingUploads()
         try? await historicalUploadManager.fullyResetSession(restart: false)
         await sensorKitFetcher.resetAllQueryAnchors()
+        await clinicalRecordPermissions.resetTracking()
+        LocalPreferencesStore.standard[.rejectedHomeTabPromptedActions] = nil
+        LocalPreferencesStore.standard[.studyActivationDate] = nil
         let studyManager = await studyManager
         _ = await _Concurrency.Task { @MainActor in
             guard let studyManager else {
