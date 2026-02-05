@@ -87,9 +87,9 @@
 		807669752D772C40001B980B /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = 807669742D772C40001B980B /* DequeModule */; };
 		807669772D772C40001B980B /* HashTreeCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 807669762D772C40001B980B /* HashTreeCollections */; };
 		807669792D772C40001B980B /* HeapModule in Frameworks */ = {isa = PBXBuildFile; productRef = 807669782D772C40001B980B /* HeapModule */; };
-		807793302F237B0A009E9D3F /* XCTHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8077932F2F237B0A009E9D3F /* XCTHealthKit */; };
 		8086001D2D75133B0044A054 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 8086001C2D75133B0044A054 /* SFSafeSymbols */; };
 		808E10052DAD48F300DB240D /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 808E10042DAD48F300DB240D /* SpeziHealthKit */; };
+		809576642F350A3200AF4571 /* XCTHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 809576632F350A3200AF4571 /* XCTHealthKit */; };
 		809AEC392EA2BC8500997484 /* SpeziKeychainStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 809AEC382EA2BC8500997484 /* SpeziKeychainStorage */; };
 		809AEC3B2EA2BC8500997484 /* SpeziLocalStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 809AEC3A2EA2BC8500997484 /* SpeziLocalStorage */; };
 		80A0083F2DEFD0B300A446BA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A0083E2DEFD0B300A446BA /* Collections */; };
@@ -365,7 +365,7 @@
 				80404B0A2EDC635900DEA429 /* MyHeartCountsShared in Frameworks */,
 				804D893C2EF4C0030037E431 /* XCTSpeziAccount in Frameworks */,
 				80A8F7F32EDB222400944D94 /* MHCStudyDefinitionExporter in Frameworks */,
-				807793302F237B0A009E9D3F /* XCTHealthKit in Frameworks */,
+				809576642F350A3200AF4571 /* XCTHealthKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -597,7 +597,7 @@
 				80A8F7F22EDB222400944D94 /* MHCStudyDefinitionExporter */,
 				80404B092EDC635900DEA429 /* MyHeartCountsShared */,
 				804D893B2EF4C0030037E431 /* XCTSpeziAccount */,
-				8077932F2F237B0A009E9D3F /* XCTHealthKit */,
+				809576632F350A3200AF4571 /* XCTHealthKit */,
 			);
 			productName = MyHeartCountsUITests;
 			productReference = 653A256728338800005D4D48 /* MyHeartCountsUITests.xctest */;
@@ -701,7 +701,7 @@
 				80E6B9322EFAC1960037D4BB /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
 				80ADAC5E2F0FEC9C0061DE0C /* XCRemoteSwiftPackageReference "SpeziSensorKit" */,
 				80E144752F1E4AF500FE2A8A /* XCRemoteSwiftPackageReference "SpeziStudy" */,
-				8077932E2F237B0A009E9D3F /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
+				809576622F350A3200AF4571 /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1435,14 +1435,6 @@
 				minimumVersion = 1.1.4;
 			};
 		};
-		8077932E2F237B0A009E9D3F /* XCRemoteSwiftPackageReference "XCTHealthKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.6;
-			};
-		};
 		8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SFSafeSymbols/SFSafeSymbols";
@@ -1457,6 +1449,14 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 0.1.3;
+			};
+		};
+		809576622F350A3200AF4571 /* XCRemoteSwiftPackageReference "XCTHealthKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
+			requirement = {
+				kind = revision;
+				revision = c6680615b43d34aefdcd1c9b278759fcadf60b19;
 			};
 		};
 		809AEC372EA2BC8500997484 /* XCRemoteSwiftPackageReference "SpeziStorage" */ = {
@@ -1876,11 +1876,6 @@
 			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
 			productName = HeapModule;
 		};
-		8077932F2F237B0A009E9D3F /* XCTHealthKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8077932E2F237B0A009E9D3F /* XCRemoteSwiftPackageReference "XCTHealthKit" */;
-			productName = XCTHealthKit;
-		};
 		8086001C2D75133B0044A054 /* SFSafeSymbols */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8086001B2D75133B0044A054 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
@@ -1898,6 +1893,11 @@
 		808E10062DAD48F300DB240D /* SpeziHealthKitUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziHealthKitUI;
+		};
+		809576632F350A3200AF4571 /* XCTHealthKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 809576622F350A3200AF4571 /* XCRemoteSwiftPackageReference "XCTHealthKit" */;
+			productName = XCTHealthKit;
 		};
 		809AEC382EA2BC8500997484 /* SpeziKeychainStorage */ = {
 			isa = XCSwiftPackageProductDependency;
