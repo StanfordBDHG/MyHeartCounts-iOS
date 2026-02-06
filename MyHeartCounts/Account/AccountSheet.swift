@@ -42,7 +42,10 @@ struct AccountSheet: View {
         NavigationStack {
             ZStack {
                 if account.signedIn && !isInSetup {
-                    AccountOverview(close: .showCloseButton, deletion: .disabled) {
+                    AccountOverview(
+                        close: .showCloseButton,
+                        deletion: .inEditMode(.custom(withdrawFromStudy))
+                    ) {
                         accountSheetExtraContent
                     }
                 } else {
@@ -179,6 +182,11 @@ struct AccountSheet: View {
             Text("Study not available")
                 .foregroundStyle(.secondary)
         }
+    }
+    
+    private func withdrawFromStudy() async throws {
+        try await Functions.functions().httpsCallable("markAccountForStudyWithdrawl").call(nil)
+        try await account.accountService.logout()
     }
 }
 
