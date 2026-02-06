@@ -6560,6 +6560,12 @@
         }
       }
     },
+    "Withdraw" : {
+
+    },
+    "Withdraw from Study" : {
+
+    },
     "Workout Preference" : {
       "localizations" : {
         "es" : {

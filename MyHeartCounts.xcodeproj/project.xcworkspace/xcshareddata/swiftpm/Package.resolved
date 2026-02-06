@@ -213,8 +213,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziAccount.git",
       "state" : {
-        "revision" : "e6da5e4ebf9ec2f36cb6e4f04da0853632e752c3",
-        "version" : "2.3.6"
+        "revision" : "38a10799bf00dfb1de619ce7feccfab4542d675e"
       }
     },
     {
@@ -510,7 +509,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/XCTHealthKit.git",
       "state" : {
-        "revision" : "c6680615b43d34aefdcd1c9b278759fcadf60b19"
+        "revision" : "f2e956b4d5e09a6b396c8f5bb38aaba05eaa35a1",
+        "version" : "1.2.6"
       }
     },
     {

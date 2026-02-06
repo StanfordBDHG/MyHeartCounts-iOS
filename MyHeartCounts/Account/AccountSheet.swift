@@ -44,7 +44,9 @@ struct AccountSheet: View {
                 if account.signedIn && !isInSetup {
                     AccountOverview(
                         close: .showCloseButton,
-                        deletion: .inEditMode(.custom(withdrawFromStudy))
+                        deletion: .inEditMode(.custom(labels: .withdrawFromStudy) {
+                            try await withdrawFromStudy()
+                        })
                     ) {
                         accountSheetExtraContent
                     }
@@ -185,7 +187,7 @@ struct AccountSheet: View {
     }
     
     private func withdrawFromStudy() async throws {
-        try await Functions.functions().httpsCallable("markAccountForStudyWithdrawl").call(nil)
+        let result = try await Functions.functions().httpsCallable("markAccountForStudyWithdrawl").call(nil)
         try await account.accountService.logout()
     }
 }
@@ -237,4 +239,13 @@ extension AccountSheet {
             .foregroundStyle(.secondary)
         }
     }
+}
+
+extension AccountOverviewOperationLabels {
+    fileprivate static let withdrawFromStudy = Self(
+        formButton: "Withdraw from Study",
+        confirmationAlertTitle: "Withdraw from Study",
+        confirmationAlertMessage: nil,
+        confirmationAlertSubmitButton: "Withdraw"
+    )
 }
