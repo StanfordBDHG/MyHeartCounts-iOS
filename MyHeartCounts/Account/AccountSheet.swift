@@ -187,7 +187,7 @@ struct AccountSheet: View {
     }
     
     private func withdrawFromStudy() async throws {
-        let result = try await Functions.functions().httpsCallable("markAccountForStudyWithdrawl").call(nil)
+        _ = try await Functions.functions().httpsCallable("markAccountForStudyWithdrawl").call(nil)
         try await account.accountService.logout()
     }
 }
