@@ -25,8 +25,3 @@ SEGURIDAD Y PROTECCIÓN DE DATOS:
 Nos tomamos tu privacidad tan en serio como tu salud cardiovascular, Tus datos están protegidos por los más altos estándares institucionales:
 - Desarrollo de código abierto: My Heart Counts se desarrolla como un proyecto de código abierto, lo que permite verificar su funcionamiento y seguridad. El proyecto se apoya en una infraestructura abierta, incluido el ecosistema Stanford Spezi.
 - Seguridad de nivel empresarial: Tus datos son gestionados por Stanford Medicine Technology & Digital Solutions (TDS), utilizando la misma infraestructura de seguridad rigurosa que emplea Stanford Medicine.
-- Cumplimiento de HIPAA: Cumplimos plenamente con la normativa HIPAA para garantizar que tu Información de Salud Protegida (PHI) se mantenga segura y confidencial.
-
-Únete a un movimiento global por una mejor salud. Cada movimiento importa.
-
-Descarga My Heart Counts hoy y convierte tu actividad diaria en descubrimiento científico.
