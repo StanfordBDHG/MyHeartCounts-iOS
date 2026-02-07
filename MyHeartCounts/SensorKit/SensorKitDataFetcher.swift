@@ -58,6 +58,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     
     func configure() {
+        guard SensorKit.isAvailable else {
+            return
+        }
         do {
             try backgroundTasks.register(.healthResearch(
                 id: .sensorKitProcessing,
@@ -85,6 +88,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     
     func run() async {
+        guard SensorKit.isAvailable else {
+            return
+        }
         Task(priority: .background) {
             // wait a little bit to make sure all of the other setup stuff (esp Firebase!) has time to finish before we start uploading
             try await Task.sleep(for: .seconds(1))
@@ -107,6 +113,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     @MainActor
     private func fetchAndUploadNewData() async {
+        guard SensorKit.isAvailable else {
+            return
+        }
         guard await standard.shouldCollectHealthData else {
             return
         }
@@ -133,6 +142,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     /// Fetches all new SensorKit samples for the specified sensor (relative to the last time the function was called for the sensor), and uploads them all into the Firestore.
     @concurrent
     private func fetchAndUploadAnchored(_ uploadDefinition: some AnyMHCSensorUploadDefinition<some Any, some Any>) async {
+        guard SensorKit.isAvailable else {
+            return
+        }
         let uploadDefinition = MHCSensorUploadDefinition(uploadDefinition)
         let sensor = uploadDefinition.sensor
         guard sensorKit.authorizationStatus(for: sensor) == .authorized else {
@@ -164,6 +176,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     /// Primarily intended for testing purposes.
     @concurrent
     func fetchAndUploadAllSamples(for uploadDefinition: some AnyMHCSensorUploadDefinition<some Any, some Any>) async throws {
+        guard SensorKit.isAvailable else {
+            return
+        }
         let uploadDefinition = MHCSensorUploadDefinition(uploadDefinition)
         let sensor = uploadDefinition.sensor
         let activity = InProgressActivity(sensor: sensor)
@@ -185,6 +200,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     /// Intended for debugging and development purposes
     func resetAllQueryAnchors() {
+        guard SensorKit.isAvailable else {
+            return
+        }
         func imp(_ sensor: some AnySensor) {
             let sensor = Sensor(sensor)
             try? sensorKit.resetQueryAnchors(for: sensor)
@@ -219,20 +237,25 @@ extension SensorKit {
     /// All sensors we want to enable automatic data collection for.
     ///
     /// - Note: The elements here are ordered roughly based on the expected number of samples and/or processing cost, in increasing order.
-    static let mhcSensorUploadDefinitions: [any AnyMHCSensorUploadDefinition] = [
-        MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyCSVFile2()),
-        MHCSensorUploadDefinition(sensor: .heartRate, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
-        
-        MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .accelerometer, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy())
-    ]
+    static let mhcSensorUploadDefinitions: [any AnyMHCSensorUploadDefinition] = {
+        guard SensorKit.isAvailable else {
+            return []
+        }
+        return [
+            MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyCSVFile2()),
+            MHCSensorUploadDefinition(sensor: .heartRate, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
+            
+            MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .accelerometer, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy())
+        ]
+    }()
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }
 }

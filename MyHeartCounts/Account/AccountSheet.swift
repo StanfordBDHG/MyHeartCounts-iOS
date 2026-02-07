@@ -12,6 +12,7 @@ import SFSafeSymbols
 import SpeziAccount
 import SpeziHealthKitBulkExport
 import SpeziLicense
+import SpeziSensorKit
 import SpeziStudy
 import SpeziViews
 import SwiftUI
@@ -67,8 +68,10 @@ struct AccountSheet: View {
     }
     
     @ViewBuilder private var accountSheetExtraContent: some View {
-        Section {
-            SensorKitButton()
+        if SensorKit.isAvailable {
+            Section {
+                SensorKitButton()
+            }
         }
         if let enrollment = enrollments.first {
             Section("Study Participation") { // swiftlint:disable:this closure_body_length
