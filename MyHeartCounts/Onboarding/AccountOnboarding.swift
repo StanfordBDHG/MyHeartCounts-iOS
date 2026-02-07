@@ -65,13 +65,13 @@ private struct ReactivatePreviouslyWithdrawnAccount: View {
     
     var body: some View {
         OnboardingPage(
+            symbol: .personCropCircle,
             title: "REACTIVATE_WITHDRAWN_ACCOUNT_TITLE",
             description: "REACTIVATE_WITHDRAWN_ACCOUNT_MESSAGE"
         ) {
             EmptyView()
         } footer: {
             OnboardingActionsView(
-                symbol: .personCropCircle,
                 primaryTitle: "Reactivate Account",
                 primaryAction: {
                     _ = try await Functions.functions()
