@@ -1399,8 +1399,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziAccount.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.6;
+				kind = revision;
+				revision = 38a10799bf00dfb1de619ce7feccfab4542d675e;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
@@ -1455,8 +1455,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/XCTHealthKit.git";
 			requirement = {
-				kind = revision;
-				revision = c6680615b43d34aefdcd1c9b278759fcadf60b19;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.6;
 			};
 		};
 		809AEC372EA2BC8500997484 /* XCRemoteSwiftPackageReference "SpeziStorage" */ = {
