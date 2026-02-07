@@ -19,6 +19,15 @@ import SwiftUI
 // MARK: Study & Enrollment
 
 extension AccountDetails {
+    @AccountKey(
+        id: "hasWithdrawnFromStudy",
+        name: "Has withdrawn from Study",
+        category: .other,
+        options: .mutable,
+        as: Bool.self
+    )
+    var hasWithdrawnFromStudy: Bool?
+    
     /// The date the user first enrolled in the study.
     @AccountKey(
         id: "dateOfEnrollment",
@@ -120,6 +129,7 @@ extension AccountDetails {
 
 
 @KeyEntry(
+    \.hasWithdrawnFromStudy,
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
     \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep,
     \.preferredWorkoutTypes, \.preferredNudgeNotificationTime

@@ -187,7 +187,9 @@ struct AccountSheet: View {
     }
     
     private func withdrawFromStudy() async throws {
-        _ = try await Functions.functions().httpsCallable("markAccountForStudyWithdrawl").call(nil)
+        _ = try await Functions.functions()
+            .httpsCallable("markAccountForStudyWithdrawl")
+            .call([:])
         try await account.accountService.logout()
     }
 }
@@ -245,7 +247,7 @@ extension AccountOverviewOperationLabels {
     fileprivate static let withdrawFromStudy = Self(
         formButton: "Withdraw from Study",
         confirmationAlertTitle: "Withdraw from Study",
-        confirmationAlertMessage: nil,
+        confirmationAlertMessage: "Are you sure you want to withdraw from the My Heart Counts study?\nYou can re-enroll later if you choose.",
         confirmationAlertSubmitButton: "Withdraw"
     )
 }
