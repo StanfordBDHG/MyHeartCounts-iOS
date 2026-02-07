@@ -1484,7 +1484,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
 			requirement = {
 				kind = revision;
-				revision = c19c664089b9922f31efe7f0ff70216263a9052c;
+				revision = cecabc47a3e322adaa7f7260251344ea1877aa4b;
 			};
 		};
 		80B8A2112EC106A100F0E453 /* XCRemoteSwiftPackageReference "SpeziFHIR" */ = {
