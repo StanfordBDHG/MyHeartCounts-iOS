@@ -219,20 +219,25 @@ extension SensorKit {
     /// All sensors we want to enable automatic data collection for.
     ///
     /// - Note: The elements here are ordered roughly based on the expected number of samples and/or processing cost, in increasing order.
-    static let mhcSensorUploadDefinitions: [any AnyMHCSensorUploadDefinition] = [
-        MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
-        MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyCSVFile2()),
-        MHCSensorUploadDefinition(sensor: .heartRate, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
-        
-        MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .accelerometer, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
-        MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy())
-    ]
+    static let mhcSensorUploadDefinitions: [any AnyMHCSensorUploadDefinition] = {
+        guard SensorKit.isAvailable else {
+            return []
+        }
+        return [
+            MHCSensorUploadDefinition(sensor: .visits, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .onWrist, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .deviceUsage, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .ecg, strategy: UploadStrategyFHIRObservations()),
+            MHCSensorUploadDefinition(sensor: .wristTemperature, strategy: UploadStrategyCSVFile2()),
+            MHCSensorUploadDefinition(sensor: .heartRate, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .pedometer, strategy: UploadStrategyCSVFile()),
+            
+            MHCSensorUploadDefinition(sensor: .ambientLight, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .accelerometer, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .ambientPressure, strategy: UploadStrategyCSVFile()),
+            MHCSensorUploadDefinition(sensor: .ppg, strategy: SRPhotoplethysmogramSample.UploadStrategy())
+        ]
+    }()
     
     static let mhcSensors: [any AnySensor] = mhcSensorUploadDefinitions.map { $0.typeErasedSensor }
 }
