@@ -227,6 +227,7 @@ enum DeferredConfigLoading {
                         .manual(\.dateOfBirth),
                         .manual(\.fcmToken),
                         .manual(\.timeZone),
+                        .manual(\.hasWithdrawnFromStudy),
                         .manual(\.enableDebugMode),
                         .manual(\.mhcGenderIdentity),
                         .manual(\.usRegion),

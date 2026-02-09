@@ -67,6 +67,9 @@ private struct AppOnboardingFlow: View {
             )
                 .onboardingStep(.disclaimer1)
                 .injectingSpezi()
+                // we hide the back button here, to prevent the user from returning to the "re-activate account" page
+                // (in case that's presented), since that yes/no decision should only be made once.
+                .navigationBarBackButtonHidden()
             OnboardingDisclaimerStep(
                 icon: .figureWalkMotion,
                 title: "ONBOARDING_DISCLAIMER_2_TITLE",
