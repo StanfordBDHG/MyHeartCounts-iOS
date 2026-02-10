@@ -3363,6 +3363,9 @@
         }
       }
     },
+    "Logging Out…" : {
+
+    },
     "Louisiana" : {
       "localizations" : {
         "es" : {
@@ -5446,6 +5449,9 @@
           }
         }
       }
+    },
+    "Setting Up Test Environment" : {
+      "shouldTranslate" : false
     },
     "SEX_FEMALE" : {
       "localizations" : {

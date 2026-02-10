@@ -57,7 +57,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.textViews["MHC.FeedbackTextField"].typeText("Heyyyy ;)")
         XCTAssert(sendButton.isEnabled)
         sendButton.tap()
-//        XCTExpectFailure("Firestore rules are currently incorrectly configured")
         XCTAssert(app.navigationBars["Feedback"].waitForNonExistence(timeout: 2))
     }
     
@@ -107,9 +106,10 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         try navigator.navigateSignup(
             name: .init(givenName: "Leland", familyName: "Stanford"),
             email: Self.loginCredentials.email,
-            password: Self.loginCredentials.password,
+            password: Self.loginCredentials.password
         )
         XCTAssert(app.staticTexts["Reactivate Account"].waitForExistence(timeout: 10))
         app.buttons["Reactivate Account"].tap()
+        navigator.navigateOnboardingDisclaimers()
     }
 }

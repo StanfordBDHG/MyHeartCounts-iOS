@@ -86,7 +86,6 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
         navigateWelcome()
         try navigateEligibility(region: region)
         try navigateSignup(name: name, email: email, password: password)
-        sleep(for: .seconds(5))
         navigateOnboardingDisclaimers()
         navigateConsentComprehension()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
@@ -177,7 +176,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    private func navigateOnboardingDisclaimers() {
+    func navigateOnboardingDisclaimers(initialTimeout: TimeInterval = 10) {
         struct StepInfo {
             let title: String
             let bodyPrefix: String
@@ -207,8 +206,8 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
             )
         ]
         
-        for step in steps {
-            XCTAssert(app.staticTexts[step.title].waitForExistence(timeout: 2))
+        for (idx, step) in steps.enumerated() {
+            XCTAssert(app.staticTexts[step.title].waitForExistence(timeout: idx == 0 ? initialTimeout : 2))
             XCTAssert(
                 app.staticTexts.matching("label BEGINSWITH %@", step.bodyPrefix).firstMatch.waitForExistence(timeout: 2),
                 "Unable to find staticText with prefix '\(step.bodyPrefix)'"
