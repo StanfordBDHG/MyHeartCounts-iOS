@@ -136,11 +136,11 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             return
         }
         do {
-            try await accountService.login(userId: "lelandstanford@stanford.edu", password: "StanfordRocks!")
+            try await accountService.login(userId: "leland@stanford.edu", password: "StanfordRocks!")
         } catch FirebaseAccountError.invalidCredentials {
             // account doesn't exist yet, signup
             var details = AccountDetails()
-            details.userId = "lelandstanford@stanford.edu"
+            details.userId = "leland@stanford.edu"
             details.password = "StanfordRocks!"
             details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
             details.genderIdentity = .male

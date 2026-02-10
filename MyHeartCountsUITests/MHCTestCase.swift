@@ -27,7 +27,7 @@ import XCTHealthKit
 ///
 /// This class sets up the ``app`` property, and provides the ``launchAppAndEnrollIntoStudy`` function.
 class MHCTestCase: XCTestCase, @unchecked Sendable {
-    static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
+    static let loginCredentials = (email: "leland@stanford.edu", password: "StanfordRocks!")
     
     private static let tempDir = URL.temporaryDirectory.appending(component: "edu.stanford.MyHeartCounts.UITests", directoryHint: .isDirectory)
     
