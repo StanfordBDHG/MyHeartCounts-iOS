@@ -136,11 +136,11 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             return
         }
         do {
-            try await accountService.login(userId: "lelandstanford@stanford.edu", password: "StanfordRocks!")
+            try await accountService.login(userId: "leland@stanford.edu", password: "StanfordRocks!")
         } catch FirebaseAccountError.invalidCredentials {
             // account doesn't exist yet, signup
             var details = AccountDetails()
-            details.userId = "lelandstanford@stanford.edu"
+            details.userId = "leland@stanford.edu"
             details.password = "StanfordRocks!"
             details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
             details.genderIdentity = .male
@@ -165,7 +165,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await healthKit.askForAuthorization(for: accessReqs)
         desc = "\(#function) will enroll"
         try await standard.enroll(in: studyBundle)
-        if HKHealthStore().supportsHealthRecords() {
+        if ClinicalRecordPermissions.isAvailable {
             desc = "\(#function) will ask for clinical access"
             try await _Concurrency.Task.sleep(for: .seconds(1))
             try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: false)

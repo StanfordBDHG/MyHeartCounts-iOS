@@ -23,6 +23,7 @@ import SwiftUI
 /// Displays and manages a `TabView`, with the different tabs in the app.
 struct RootView: View {
     // swiftlint:disable attributes
+    @Environment(AppState.self) private var appState
     @Environment(Account.self) private var account: Account?
     @Environment(ConsentManager.self) private var consentManager: ConsentManager?
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
@@ -36,23 +37,24 @@ struct RootView: View {
             switch setupTestEnvironment.state {
             case .disabled, .done:
                 if didCompleteOnboarding, account != nil {
-                    TabView()
+                    ZStack {
+                        TabView()
                         // we might simply want to make every `taskPerformingAnchor` also an `taskContinuationAnchor` at some point?
                         // it's not trivial, though, since we'd also need to make sure that if there's multiple `taskContinuationAnchor`s, only one of them will actually pick up the task...
-                        .taskContinuationAnchor()
-                        .taskPerformingAnchor()
+                            .taskContinuationAnchor()
+                            .taskPerformingAnchor()
+                        if appState.isLoggingOut {
+                            FullScreenProgressView(title: "Logging Out…")
+                        }
+                    }
                 } else {
                     EmptyView()
                 }
             case .pending, .settingUp:
-                ProgressView {
-                    VStack(alignment: .center) {
-                        Text(verbatim: "Setting Up Test Environment")
-                        Text(verbatim: setupTestEnvironment.desc)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                FullScreenProgressView(
+                    title: "Setting Up Test Environment",
+                    subtitle: "\(setupTestEnvironment.desc)"
+                )
             case .failure(let error):
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
             }

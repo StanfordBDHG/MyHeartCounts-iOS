@@ -27,7 +27,7 @@ import XCTHealthKit
 ///
 /// This class sets up the ``app`` property, and provides the ``launchAppAndEnrollIntoStudy`` function.
 class MHCTestCase: XCTestCase, @unchecked Sendable {
-    static let loginCredentials = (email: "lelandstanford@stanford.edu", password: "StanfordRocks!")
+    static let loginCredentials = (email: "leland@stanford.edu", password: "StanfordRocks!")
     
     private static let tempDir = URL.temporaryDirectory.appending(component: "edu.stanford.MyHeartCounts.UITests", directoryHint: .isDirectory)
     
@@ -68,7 +68,7 @@ class MHCTestCase: XCTestCase, @unchecked Sendable {
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     @MainActor
     func launchAppAndEnrollIntoStudy( // swiftlint:disable:this function_body_length
-        skip: Bool = true,
+        skip: Bool = false,
         locale: Locale = .current,
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: true),

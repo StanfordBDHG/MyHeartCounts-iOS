@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import HealthKit
 import MyHeartCountsShared
 import XCTest
@@ -32,13 +34,13 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
         )
-        try app.navigateOnboardingFlow(
+        let navigator = OnboardingNavigator(testCase: self)
+        try navigator.navigateFullOnboardingFlow(
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
             email: Self.loginCredentials.email,
             password: Self.loginCredentials.password,
-            signUpForExtraTrial: true,
-            sender: self
+            signUpForExtraTrial: true
         )
     }
     
@@ -65,86 +67,92 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
 }
 
 
-extension XCUIApplication {
-    func navigateOnboardingFlow( // swiftlint:disable:this function_parameter_count
+@MainActor
+struct OnboardingNavigator { // swiftlint:disable:this type_body_length
+    let testCase: MHCTestCase
+    
+    private var app: XCUIApplication {
+        testCase.app
+    }
+    
+    
+    func navigateFullOnboardingFlow(
         region: Locale.Region,
         name: PersonNameComponents,
         email: String,
         password: String,
-        signUpForExtraTrial: Bool,
-        sender: MHCTestCase
+        signUpForExtraTrial: Bool
     ) throws {
         navigateWelcome()
         try navigateEligibility(region: region)
         try navigateSignup(name: name, email: email, password: password)
-        sleep(for: .seconds(5))
         navigateOnboardingDisclaimers()
         navigateConsentComprehension()
         navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
         navigateHealthKitAccess()
-        if staticTexts["Health Records"].waitForExistence(timeout: 2) { // only included if Health Records are actually available
-            navigateHealthRecords(sender)
+        if app.staticTexts["Health Records"].waitForExistence(timeout: 2) { // only included if Health Records are actually available
+            navigateHealthRecords()
         }
         navigateWorkoutPreferences()
-        if staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
+        if app.staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
             navigateNotifications()
         }
-        navigateDemographics(locale: sender.appLocale)
+        navigateDemographics()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
     
     
-    private func navigateWelcome() {
+    func navigateWelcome(timeout: TimeInterval = 2) {
         XCTAssert(
-            staticTexts.element(
+            app.staticTexts.element(
                 matching: "label MATCHES %@", "Welcome to the My Heart Counts(\\n| )Cardiovascular Health Study"
             )
-            .waitForExistence(timeout: 2)
+            .waitForExistence(timeout: timeout)
         )
-        buttons["Continue"].tap()
+        app.buttons["Continue"].tap()
     }
     
     
-    private func navigateEligibility(region: Locale.Region) throws {
-        let continueButton = collectionViews.firstMatch.buttons["Continue"]
-        let ofAgeToggle = switches["Are you 18 years old or older?"].descendants(matching: .switch).firstMatch
+    func navigateEligibility(region: Locale.Region) throws {
+        let continueButton = app.collectionViews.firstMatch.buttons["Continue"]
+        let ofAgeToggle = app.switches["Are you 18 years old or older?"].descendants(matching: .switch).firstMatch
         XCTAssert(ofAgeToggle.waitForExistence(timeout: 2))
         XCTAssertEqual(try XCTUnwrap(ofAgeToggle.value as? String), "0")
         ofAgeToggle.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         sleep(for: .seconds(0.25))
         XCTAssertEqual(try XCTUnwrap(ofAgeToggle.value as? String), "1")
-        buttons["What country do you currently live in?"].tap()
+        app.buttons["What country do you currently live in?"].tap()
         sleep(for: .seconds(0.55))
         do {
-            searchFields["Search"].firstMatch.tap()
-            searchFields["Search"].firstMatch.typeText(try XCTUnwrap(region.name()))
-            let countryButton = buttons[try XCTUnwrap(region.name(includeEmoji: true))]
+            app.searchFields["Search"].firstMatch.tap()
+            app.searchFields["Search"].firstMatch.typeText(try XCTUnwrap(region.name()))
+            let countryButton = app.buttons[try XCTUnwrap(region.name(includeEmoji: true))]
             XCTAssert(countryButton.waitForExistence(timeout: 1))
             countryButton.tap()
             sleep(for: .seconds(0.25))
-            swipeUp()
+            app.swipeUp()
             XCTAssertFalse(continueButton.isEnabled)
         }
-        otherElements["Screening Section, Language"].buttons["Yes"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        app.otherElements["Screening Section, Language"].buttons["Yes"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         XCTAssertFalse(continueButton.isEnabled)
-        otherElements["Screening Section, Apple ID Sharing"].buttons["No"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        app.otherElements["Screening Section, Apple ID Sharing"].buttons["No"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         XCTAssertTrue(continueButton.isEnabled)
         continueButton.tap()
     }
     
     
-    private func navigateSignup(name: PersonNameComponents, email: String, password: String) throws {
-        XCTAssert(staticTexts["Your Account"].waitForExistence(timeout: 10))
-        let isLoggedIn = staticTexts
+    func navigateSignup(name: PersonNameComponents, email: String, password: String) throws {
+        XCTAssert(app.staticTexts["Your Account"].waitForExistence(timeout: 10))
+        let isLoggedIn = app.staticTexts
             .matching("label BEGINSWITH %@", "You are already logged in")
             .element
             .waitForExistence(timeout: 2)
         if !isLoggedIn {
             defer {
-                dismissSavePasswordAlert(timeout: 10)
+                app.dismissSavePasswordAlert(timeout: 10)
             }
-            try login(email: email, password: password)
-            let alert = alerts["Invalid Credentials"]
+            try app.login(email: email, password: password)
+            let alert = app.alerts["Invalid Credentials"]
             if alert.waitForNonExistence(timeout: 3) {
                 // no "invalid credentials" alert showed up, meaning that we did not try to log in to a non-existant user.
                 return
@@ -152,23 +160,23 @@ extension XCUIApplication {
             // we need to sign up instead of logging in
             alert.buttons["OK"].tap()
             
-            buttons["Signup"].tap()
+            app.buttons["Signup"].tap()
             sleep(for: .seconds(0.5))
-            XCTAssertFalse(collectionViews.firstMatch.buttons["Signup"].isEnabled) // this ia a different button from the one we just tapped.
-            try fillSignupForm(email: email, password: password, name: name)
-            XCTAssert(collectionViews.firstMatch.buttons["Signup"].isEnabled)
-            collectionViews.firstMatch.buttons["Signup"].tap()
+            XCTAssertFalse(app.collectionViews.firstMatch.buttons["Signup"].isEnabled) // this ia a different button from the one we just tapped.
+            try app.fillSignupForm(email: email, password: password, name: name)
+            XCTAssert(app.collectionViews.firstMatch.buttons["Signup"].isEnabled)
+            app.collectionViews.firstMatch.buttons["Signup"].tap()
         } else {
             if let firstName = name.givenName, let lastName = name.familyName {
-                XCTAssert(staticTexts["\(firstName) \(lastName)"].waitForExistence(timeout: 2))
+                XCTAssert(app.staticTexts["\(firstName) \(lastName)"].waitForExistence(timeout: 2))
             }
-            XCTAssert(staticTexts[email].waitForExistence(timeout: 2))
-            buttons["Next"].tap()
+            XCTAssert(app.staticTexts[email].waitForExistence(timeout: 2))
+            app.buttons["Next"].tap()
         }
     }
     
     
-    private func navigateOnboardingDisclaimers() {
+    func navigateOnboardingDisclaimers(initialTimeout: TimeInterval = 10) {
         struct StepInfo {
             let title: String
             let bodyPrefix: String
@@ -198,38 +206,38 @@ extension XCUIApplication {
             )
         ]
         
-        for step in steps {
-            XCTAssert(staticTexts[step.title].waitForExistence(timeout: 2))
+        for (idx, step) in steps.enumerated() {
+            XCTAssert(app.staticTexts[step.title].waitForExistence(timeout: idx == 0 ? initialTimeout : 2))
             XCTAssert(
-                staticTexts.matching("label BEGINSWITH %@", step.bodyPrefix).firstMatch.waitForExistence(timeout: 2),
+                app.staticTexts.matching("label BEGINSWITH %@", step.bodyPrefix).firstMatch.waitForExistence(timeout: 2),
                 "Unable to find staticText with prefix '\(step.bodyPrefix)'"
             )
-            buttons["Learn More"].tap()
+            app.buttons["Learn More"].tap()
             XCTAssert(
-                staticTexts.matching("label BEGINSWITH %@", step.learnMorePrefix).firstMatch.waitForExistence(timeout: 2),
+                app.staticTexts.matching("label BEGINSWITH %@", step.learnMorePrefix).firstMatch.waitForExistence(timeout: 2),
                 "Unable to find staticText with prefix '\(step.learnMorePrefix)'"
             )
-            navigationBars.buttons["Close"].tap()
-            buttons["Continue"].tap()
+            app.navigationBars.buttons["Close"].tap()
+            app.buttons["Continue"].tap()
         }
     }
     
     
     private func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
         sleep(for: .seconds(2))
-        XCTAssert(scrollViews.staticTexts["STANFORD UNIVERSITY"].waitForExistence(timeout: 2))
-        XCTAssert(scrollViews.staticTexts["CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
+        XCTAssert(app.scrollViews.staticTexts["STANFORD UNIVERSITY"].waitForExistence(timeout: 2))
+        XCTAssert(app.scrollViews.staticTexts["CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
         func scrollToSwitchAndEnable(
             identifier: String,
             isOn: Bool,
-            expectedDirection: Direction,
+            expectedDirection: XCUIElement.Direction,
             file: StaticString = #filePath,
             line: UInt = #line
         ) {
-            while !scrollViews.switches[identifier].isHittable {
-                swipe(expectedDirection.opposite, velocity: .fast)
+            while !app.scrollViews.switches[identifier].isHittable {
+                app.swipe(expectedDirection.opposite, velocity: .fast)
             }
-            let toggle = scrollViews.switches[identifier].switches.firstMatch
+            let toggle = app.scrollViews.switches[identifier].switches.firstMatch
             switch (toggle.value as? String, isOn) {
             case ("0", true), ("1", false):
                 toggle.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
@@ -242,15 +250,15 @@ extension XCUIApplication {
         func scrollToDropdownAndSelect(
             identifier: String,
             option: String,
-            expectedDirection: Direction,
+            expectedDirection: XCUIElement.Direction,
             file: StaticString = #filePath,
             line: UInt = #line
         ) {
-            while !scrollViews.buttons[identifier].isHittable {
-                swipe(expectedDirection.opposite, velocity: .fast)
+            while !app.scrollViews.buttons[identifier].isHittable {
+                app.swipe(expectedDirection.opposite, velocity: .fast)
             }
-            scrollViews.buttons[identifier].tap()
-            collectionViews.buttons[option].tap()
+            app.scrollViews.buttons[identifier].tap()
+            app.collectionViews.buttons[option].tap()
         }
 //        scrollToSwitchAndEnable(identifier: "ConsentForm:future-studies", isOn: true, expectedDirection: .down)
         scrollToDropdownAndSelect(
@@ -258,159 +266,159 @@ extension XCUIApplication {
             option: signUpForExtraTrial ? "Yes" : "No",
             expectedDirection: .down
         )
-        swipeUp()
-        XCTAssertFalse(buttons["I Consent"].isEnabled)
-        scrollViews["ConsentForm:sig"].swipeRight()
+        app.swipeUp()
+        XCTAssertFalse(app.buttons["I Consent"].isEnabled)
+        app.scrollViews["ConsentForm:sig"].swipeRight()
         if let firstName = expectedName?.givenName, let lastName = expectedName?.familyName {
-            XCTAssert(staticTexts["Name: \(firstName) \(lastName)"].waitForExistence(timeout: 1))
+            XCTAssert(app.staticTexts["Name: \(firstName) \(lastName)"].waitForExistence(timeout: 1))
         }
         sleep(for: .seconds(0.25))
-        XCTAssert(buttons["I Consent"].isEnabled)
-        buttons["I Consent"].tap()
+        XCTAssert(app.buttons["I Consent"].isEnabled)
+        app.buttons["I Consent"].tap()
         sleep(for: .seconds(0.5))
     }
     
     
     private func navigateConsentComprehension() {
-        let continueButton = collectionViews.firstMatch.buttons["Continue"]
+        let continueButton = app.collectionViews.firstMatch.buttons["Continue"]
         if continueButton.exists {
             XCTAssertFalse(continueButton.isEnabled)
         }
-        XCTAssert(staticTexts["Consent Survey"].waitForExistence(timeout: 2))
-        otherElements["Screening Section, 0"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        XCTAssert(app.staticTexts["Consent Survey"].waitForExistence(timeout: 2))
+        app.otherElements["Screening Section, 0"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         if continueButton.exists {
             XCTAssertFalse(continueButton.isEnabled)
         }
-        otherElements["Screening Section, 1"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        app.otherElements["Screening Section, 1"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         if continueButton.exists {
             XCTAssertFalse(continueButton.isEnabled)
         }
-        swipeUp()
-        otherElements["Screening Section, 2"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
+        app.swipeUp()
+        app.otherElements["Screening Section, 2"].buttons["True"].tryToTapReallySoftlyMaybeThisWillMakeItWork()
         XCTAssertTrue(continueButton.isEnabled)
         continueButton.tap()
     }
     
     
     private func navigateHealthKitAccess() {
-        XCTAssert(staticTexts["HealthKit Access"].waitForExistence(timeout: 10))
+        XCTAssert(app.staticTexts["HealthKit Access"].waitForExistence(timeout: 10))
         // ^it might take a bit for the previous step (consent upload) to finish)
-        buttons["Grant Access"].tap()
-        handleHealthKitAuthorization()
+        app.buttons["Grant Access"].tap()
+        app.handleHealthKitAuthorization()
     }
     
     
-    private func navigateHealthRecords(_ testCase: XCTestCase) {
-        XCTAssert(staticTexts["Health Records"].waitForExistence(timeout: 2))
-        buttons["Review Permissions"].tap()
+    private func navigateHealthRecords() {
+        XCTAssert(app.staticTexts["Health Records"].waitForExistence(timeout: 2))
+        app.buttons["Review Permissions"].tap()
         testCase.handleHealthRecordsAuthorization()
     }
     
     
     private func navigateNotifications() {
-        XCTAssert(staticTexts["Notifications"].waitForExistence(timeout: 2))
-        buttons["Allow Notifications"].tap()
-        confirmNotificationAuthorization()
+        XCTAssert(app.staticTexts["Notifications"].waitForExistence(timeout: 2))
+        app.buttons["Allow Notifications"].tap()
+        app.confirmNotificationAuthorization()
     }
     
     
     private func navigateWorkoutPreferences() {
-        XCTAssert(staticTexts["Workout Preference"].waitForExistence(timeout: 2))
-        XCTAssert(staticTexts["Cycling"].waitForExistence(timeout: 2))
-        staticTexts["Cycling"].tap()
-        swipeUp()
-        buttons["Continue"].tap()
+        XCTAssert(app.staticTexts["Workout Preference"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Cycling"].waitForExistence(timeout: 2))
+        app.staticTexts["Cycling"].tap()
+        app.swipeUp()
+        app.buttons["Continue"].tap()
     }
     
     
-    private func navigateDemographics(locale: Locale) { // swiftlint:disable:this function_body_length
-        XCTAssert(staticTexts["Demographics"].waitForExistence(timeout: 2))
+    private func navigateDemographics() { // swiftlint:disable:this function_body_length
+        XCTAssert(app.staticTexts["Demographics"].waitForExistence(timeout: 2))
         
-        XCTAssert(navigationBars["Demographics"].waitForExistence(timeout: 1))
-        XCTAssert(navigationBars.staticTexts["Demographics"].waitForExistence(timeout: 1))
+        XCTAssert(app.navigationBars["Demographics"].waitForExistence(timeout: 1))
+        XCTAssert(app.navigationBars.staticTexts["Demographics"].waitForExistence(timeout: 1))
         do {
-            let button = navigationBars["Demographics"].buttons["Testing Support"]
+            let button = app.navigationBars["Demographics"].buttons["Testing Support"]
             XCTAssert(button.waitForExistence(timeout: 1))
             button.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
             let optionTitle = "Add Height & Weight Samples"
-            XCTAssert(buttons[optionTitle].waitForExistence(timeout: 1))
-            buttons[optionTitle].tap()
-            handleHealthKitAuthorization()
+            XCTAssert(app.buttons[optionTitle].waitForExistence(timeout: 1))
+            app.buttons[optionTitle].tap()
+            app.handleHealthKitAuthorization()
         }
-        buttons["Read from Health App"].tap()
+        app.buttons["Read from Health App"].tap()
         XCTAssert(
-            datePickers.matching("label = %@ AND value = %@", "Date of Birth", "1998-06-02").element.waitForExistence(timeout: 2)
+            app.datePickers.matching("label = %@ AND value = %@", "Date of Birth", "1998-06-02").element.waitForExistence(timeout: 2)
         )
-        switch locale.measurementSystem {
+        switch testCase.appLocale.measurementSystem {
         case .us:
-            XCTAssert(buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
-            XCTAssert(buttons["Weight, 154.32 lb"].waitForExistence(timeout: 2))
+            XCTAssert(app.buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
+            XCTAssert(app.buttons["Weight, 154.32 lb"].waitForExistence(timeout: 2))
         default:
-            XCTAssert(buttons["Height, 186 cm"].waitForExistence(timeout: 2))
-            XCTAssert(buttons["Weight, 70 kg"].waitForExistence(timeout: 2))
+            XCTAssert(app.buttons["Height, 186 cm"].waitForExistence(timeout: 2))
+            XCTAssert(app.buttons["Weight, 70 kg"].waitForExistence(timeout: 2))
         }
         
-        swipeUp()
+        app.swipeUp()
         
-        staticTexts["Race / Ethnicity"].tap()
-        buttons["Prefer not to state"].tap()
-        buttons["White"].tap()
-        buttons["Alaska Native"].tap()
-        navigationBars.buttons["BackButton"].tap()
-        XCTAssert(buttons["Race / Ethnicity, White, Alaska Native"].waitForExistence(timeout: 1))
+        app.staticTexts["Race / Ethnicity"].tap()
+        app.buttons["Prefer not to state"].tap()
+        app.buttons["White"].tap()
+        app.buttons["Alaska Native"].tap()
+        app.navigationBars.buttons["BackButton"].tap()
+        XCTAssert(app.buttons["Race / Ethnicity, White, Alaska Native"].waitForExistence(timeout: 1))
         
-        staticTexts["Are you Hispanic/Latino?"].tap()
-        buttons["No"].tap()
-        navigationBars.buttons["BackButton"].tap()
-        XCTAssert(buttons["Are you Hispanic/Latino?, No"].waitForExistence(timeout: 1))
+        app.staticTexts["Are you Hispanic/Latino?"].tap()
+        app.buttons["No"].tap()
+        app.navigationBars.buttons["BackButton"].tap()
+        XCTAssert(app.buttons["Are you Hispanic/Latino?, No"].waitForExistence(timeout: 1))
         
-        staticTexts["Comorbidities"].tap()
-        buttons["Heart Failure"].tap()
-        navigationBars.buttons["Done"].tap()
-        navigationBars.buttons["BackButton"].tap()
-        XCTAssert(buttons["Comorbidities, 1 selected"].waitForExistence(timeout: 1))
+        app.staticTexts["Comorbidities"].tap()
+        app.buttons["Heart Failure"].tap()
+        app.navigationBars.buttons["Done"].tap()
+        app.navigationBars.buttons["BackButton"].tap()
+        XCTAssert(app.buttons["Comorbidities, 1 selected"].waitForExistence(timeout: 1))
         
-        staticTexts["US State / Territory"].tap()
-        buttons["District of Columbia, DC"].tap()
-        navigationBars.buttons["BackButton"].tap()
-        XCTAssert(buttons["US State / Territory, DC"].waitForExistence(timeout: 1))
+        app.staticTexts["US State / Territory"].tap()
+        app.buttons["District of Columbia, DC"].tap()
+        app.navigationBars.buttons["BackButton"].tap()
+        XCTAssert(app.buttons["US State / Territory, DC"].waitForExistence(timeout: 1))
         
-        if staticTexts["Education Level"].waitForExistence(timeout: 2) {
-            staticTexts["Education Level"].tap()
-            buttons["Master's Degree"].tap()
-            navigationBars.buttons["BackButton"].tap()
-            XCTAssert(buttons["Education Level, Master's Degree"].waitForExistence(timeout: 1))
+        if app.staticTexts["Education Level"].waitForExistence(timeout: 2) {
+            app.staticTexts["Education Level"].tap()
+            app.buttons["Master's Degree"].tap()
+            app.navigationBars.buttons["BackButton"].tap()
+            XCTAssert(app.buttons["Education Level, Master's Degree"].waitForExistence(timeout: 1))
         }
         
-        staticTexts["Total Household Income"].tap()
-        buttons["Prefer not to state"].tap()
-        navigationBars.buttons["BackButton"].tap()
+        app.staticTexts["Total Household Income"].tap()
+        app.buttons["Prefer not to state"].tap()
+        app.navigationBars.buttons["BackButton"].tap()
         
-        staticTexts["Stage of Change"].tap()
-        buttons["StageOfChangeButton:a"].tap()
-        navigationBars.buttons["BackButton"].tap()
-        XCTAssert(buttons["Stage of Change, A"].waitForExistence(timeout: 1))
+        app.staticTexts["Stage of Change"].tap()
+        app.buttons["StageOfChangeButton:a"].tap()
+        app.navigationBars.buttons["BackButton"].tap()
+        XCTAssert(app.buttons["Stage of Change, A"].waitForExistence(timeout: 1))
         
-        let continueButton = buttons["Continue"]
+        let continueButton = app.buttons["Continue"]
         while !continueButton.exists {
-            swipeUp()
+            app.swipeUp()
         }
         continueButton.tap()
     }
     
     
     private func navigateFinalOnboardingStep(signUpForExtraTrial: Bool) {
-        XCTAssert(staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 2))
         do {
-            let element = staticTexts.matching("label CONTAINS %@", "After your baseline week, you'll begin the 2-week trial").element
+            let element = app.staticTexts.matching("label CONTAINS %@", "After your baseline week, you'll begin the 2-week trial").element
             if signUpForExtraTrial {
                 XCTAssert(element.waitForExistence(timeout: 2))
             } else {
                 XCTAssert(element.waitForNonExistence(timeout: 2))
             }
         }
-        buttons["Start"].tap()
-        XCTAssert(staticTexts["Today's Tasks"].waitForExistence(timeout: 10))
+        app.buttons["Start"].tap()
+        XCTAssert(app.staticTexts["Today's Tasks"].waitForExistence(timeout: 10))
     }
 }
 

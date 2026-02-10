@@ -19,7 +19,7 @@ final class StudyParticipationTests: MHCTestCase, @unchecked Sendable {
         try launchAppAndEnrollIntoStudy()
         openAccountSheet()
         XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 1))
-        XCTAssert(app.staticTexts["lelandstanford@stanford.edu"].waitForExistence(timeout: 1))
+        XCTAssert(app.staticTexts["leland@stanford.edu"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["Study Participation"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
         XCTAssert(app.staticTexts["Improve your cardiovascular health"].waitForExistence(timeout: 1))

@@ -57,7 +57,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.textViews["MHC.FeedbackTextField"].typeText("Heyyyy ;)")
         XCTAssert(sendButton.isEnabled)
         sendButton.tap()
-        XCTExpectFailure("Firestore rules are currently incorrectly configured")
         XCTAssert(app.navigationBars["Feedback"].waitForNonExistence(timeout: 2))
     }
     
@@ -89,5 +88,28 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         app.buttons["Logout"].tap()
         app.alerts["Are you sure you want to logout?"].buttons["Logout"].tap()
         XCTAssert(app.staticTexts["Welcome to the My Heart Counts\nCardiovascular Health Study"].waitForExistence(timeout: 5))
+    }
+    
+    
+    @MainActor
+    func testWithdrawal() throws {
+        throw XCTSkip("needs https://github.com/StanfordBDHG/MyHeartCounts-Firebase/pull/111")
+        try launchAppAndEnrollIntoStudy()
+        openAccountSheet()
+        app.swipeUp()
+        app.navigationBars.buttons["Edit"].tap()
+        app.buttons["Withdraw from Study"].tap()
+        app.alerts["Withdraw from Study"].buttons["Withdraw"].tap()
+        let navigator = OnboardingNavigator(testCase: self)
+        navigator.navigateWelcome(timeout: 10)
+        try navigator.navigateEligibility(region: .unitedStates)
+        try navigator.navigateSignup(
+            name: .init(givenName: "Leland", familyName: "Stanford"),
+            email: Self.loginCredentials.email,
+            password: Self.loginCredentials.password
+        )
+        XCTAssert(app.staticTexts["Reactivate Account"].waitForExistence(timeout: 10))
+        app.buttons["Reactivate Account"].tap()
+        navigator.navigateOnboardingDisclaimers()
     }
 }
