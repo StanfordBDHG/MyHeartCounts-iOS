@@ -165,7 +165,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await healthKit.askForAuthorization(for: accessReqs)
         desc = "\(#function) will enroll"
         try await standard.enroll(in: studyBundle)
-        if HKHealthStore().supportsHealthRecords() {
+        if ClinicalRecordPermissions.isAvailable {
             desc = "\(#function) will ask for clinical access"
             try await _Concurrency.Task.sleep(for: .seconds(1))
             try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: false)

@@ -108,7 +108,7 @@ private struct AppOnboardingFlow: View {
                 HealthKitPermissions()
                     .onboardingStep(.healthAccess)
                     .injectingSpezi()
-                if HKHealthStore().supportsHealthRecords() {
+                if ClinicalRecordPermissions.isAvailable {
                     HealthRecords()
                         .onboardingStep(.healthRecords)
                         .injectingSpezi()
