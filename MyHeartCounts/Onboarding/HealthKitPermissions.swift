@@ -35,7 +35,7 @@ struct HealthKitPermissions: View {
             EmptyView()
         } footer: {
             OnboardingActionsView(
-                primaryTitle: "Grant Access",
+                primaryTitle: "Continue",
                 primaryViewState: $viewState,
                 primaryAction: {
                     await grantAccess()
