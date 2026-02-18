@@ -286,13 +286,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : " %lld tarea perdida en las últimas 2 semana"
+                  "value" : "%lld tarea perdida en las últimas 2 semanas"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : " %lld tareas perdidas en las últimas 2 semanas"
+                  "value" : "%lld tareas perdidas en las últimas 2 semanas"
                 }
               }
             }
