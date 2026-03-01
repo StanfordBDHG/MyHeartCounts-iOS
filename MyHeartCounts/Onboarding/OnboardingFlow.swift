@@ -32,6 +32,7 @@ struct OnboardingSheet: View {
     }
 }
 
+
 /// Displays a multi-step onboarding flow for the My Heart Counts iOS app
 ///
 /// - Note: This is the general app onboarding flow, **not** the study-specific onboarding
@@ -108,7 +109,7 @@ private struct AppOnboardingFlow: View {
                 HealthKitPermissions()
                     .onboardingStep(.healthAccess)
                     .injectingSpezi()
-                if HKHealthStore().supportsHealthRecords() {
+                if ClinicalRecordPermissions.isAvailable {
                     HealthRecords()
                         .onboardingStep(.healthRecords)
                         .injectingSpezi()

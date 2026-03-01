@@ -25,6 +25,9 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
         case undetermined
     }
     
+    /// Whether clinical records are available.
+    static var isAvailable: Bool = !FeatureFlags.disableHealthRecords && HKHealthStore().supportsHealthRecords()
+    
     // swiftlint:disable attributes
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyLoader
@@ -61,6 +64,9 @@ final class ClinicalRecordPermissions: Module, EnvironmentAccessible, Sendable {
     ///
     /// Also triggers any automatic health data collection for such sample types.
     func askForAuthorization(askAgainIfCancelledPreviously: Bool) async throws {
+        guard Self.isAvailable else {
+            return
+        }
         await updateAuthorizationState()
         switch authorizationState {
         case .decided:

@@ -260,8 +260,10 @@ enum DeferredConfigLoading {
                 firestore
                 if FeatureFlags.useFirebaseEmulator {
                     FirebaseStorageConfiguration(emulatorSettings: (host: "localhost", port: 9199))
+                    FirebaseFunctions(emulatorHost: "localhost", port: 5001)
                 } else {
                     FirebaseStorageConfiguration()
+                    FirebaseFunctions()
                 }
                 baseModules(preferredLocale: preferredLocale)
                 TimeZoneTracking()

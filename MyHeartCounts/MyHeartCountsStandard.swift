@@ -47,6 +47,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
     @Dependency(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     @Dependency(NotificationsManager.self) private var notificationsManager
+    @Dependency(AppState.self) private var appState
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
     
@@ -70,7 +71,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         if !isLoggedIn1 && !isLoggedIn2 {
             // both firebase and SpeziAccount tell us that there currently is no logged-in user.
             do {
-                try await performLogoutCleanup()
+                try await performLogoutCleanup(context: .onLaunchCleanupBcNoUser)
             } catch {
                 await logger.error("\(#function): \(error)")
             }
@@ -137,7 +138,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             logger.notice("account is being deleted")
         case .disassociatingAccount:
             logger.notice("account did disassociate")
-            try? await performLogoutCleanup()
+            try? await performLogoutCleanup(context: .explicitUserLogoutEvent)
         case .detailsChanged:
             break
         }
@@ -147,11 +148,29 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         logger.notice("account is being logged out")
         try? await notificationsManager.setFCMToken(nil)
     }
+}
+
+
+extension MyHeartCountsStandard {
+    private enum LogoutCleanupContext {
+        /// The cleanup is triggered as part of the app's internal on-launch cleanup handling, bc the app noticed that no user is logged in.
+        case onLaunchCleanupBcNoUser
+        /// The cleanup is triggered in response to an explicit user logout which just happened.
+        case explicitUserLogoutEvent
+    }
     
     
+    /// - parameter isInternalCleanup: Whether this call is part of the app's internal on-lauch cleanup routine (for the event that no user is logged in),
+    ///     as opposed to in response to the user explicitly logging out of the app.
     @MainActor
-    private func performLogoutCleanup() async throws {
+    private func performLogoutCleanup(context: LogoutCleanupContext) async throws {
         await logger.notice("performing logout cleanup")
+        switch context {
+        case .explicitUserLogoutEvent:
+            await appState.setIsLoggingOut(true)
+        case .onLaunchCleanupBcNoUser:
+            break
+        }
         // upon logging out, we want to throw the user back to the onboarding.
         // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
         // since the Firebase SDK and all related Spezi modules will still be loaded.
@@ -179,9 +198,17 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 }
             }
         }.result
+        switch context {
+        case .onLaunchCleanupBcNoUser:
+            return
+        case .explicitUserLogoutEvent:
+            break
+        }
+        let isInTestEnvSetup = await setupTestEnvironment.isInSetup
         _Concurrency.Task {
-            guard /*!ProcessInfo.isBeingUITested,*/ await !setupTestEnvironment.isInSetup else {
+            guard /*!ProcessInfo.isBeingUITested,*/ !isInTestEnvSetup else {
                 // ^we potentially log out and in as part of the test env setup; we want to skip this
+                await appState.setIsLoggingOut(false)
                 return
             }
             // it seems that the fact that the account sheet typically is still presented while logging out causes issues with us setting the
@@ -192,6 +219,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             try await _Concurrency.Task.sleep(for: .seconds(2))
             await logger.notice("Triggering Onboarding Flow")
             LocalPreferencesStore.standard[.onboardingFlowComplete] = false
+            await appState.setIsLoggingOut(false)
         }
     }
 }
