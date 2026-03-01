@@ -36,19 +36,16 @@ struct RootView: View {
         ZStack {
             switch setupTestEnvironment.state {
             case .disabled, .done:
-                if didCompleteOnboarding, account != nil {
+                if didCompleteOnboarding, account != nil, !appState.isLoggingOut {
                     ZStack {
                         TabView()
                         // we might simply want to make every `taskPerformingAnchor` also an `taskContinuationAnchor` at some point?
                         // it's not trivial, though, since we'd also need to make sure that if there's multiple `taskContinuationAnchor`s, only one of them will actually pick up the task...
                             .taskContinuationAnchor()
                             .taskPerformingAnchor()
-                        if appState.isLoggingOut {
-                            FullScreenProgressView(title: "Logging Out…")
-                        }
                     }
-                } else {
-                    EmptyView()
+                } else if appState.isLoggingOut {
+                    FullScreenProgressView(title: "Logging Out…")
                 }
             case .pending, .settingUp:
                 FullScreenProgressView(
