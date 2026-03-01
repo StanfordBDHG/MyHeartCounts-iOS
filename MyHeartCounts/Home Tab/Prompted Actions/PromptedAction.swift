@@ -123,7 +123,7 @@ extension HomeTab.PromptedAction {
         ],
         content: .init(
             symbol: HealthRecords.symbol,
-            title: "HEALTH_RECORDS_NUDGE_TITLE",
+            title: "Enable Clinical Records",
             message: "HEALTH_RECORDS_NUDGE_SUBTITLE"
         )
     ) { spezi in

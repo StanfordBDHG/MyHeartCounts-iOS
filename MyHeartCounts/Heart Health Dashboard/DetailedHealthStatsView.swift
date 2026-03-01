@@ -451,12 +451,12 @@ private struct BrowseFirestoreSamplesView: View {
             List(samples) { sample in
                 NavigationLink {
                     Form {
-                        LabeledContent("id", value: sample.id.uuidString)
-                        LabeledContent("sampleType", value: sample.sampleType.displayTitle)
-                        LabeledContent("unit", value: sample.unit.unitString)
-                        LabeledContent("value", value: sample.value, format: .number)
-                        LabeledContent("startDate", value: sample.startDate, format: .dateTime)
-                        LabeledContent("endDate", value: sample.endDate, format: .dateTime)
+                        LabeledContent { Text(verbatim: "id") } label: { Text(sample.id.uuidString) }
+                        LabeledContent { Text(verbatim: "sampleType") } label: { Text(sample.sampleType.displayTitle) }
+                        LabeledContent { Text(verbatim: "unit") } label: { Text(sample.unit.unitString) }
+                        LabeledContent { Text(verbatim: "value") } label: { Text(sample.value, format: .number) }
+                        LabeledContent { Text(verbatim: "startDate") } label: { Text(sample.startDate, format: .dateTime) }
+                        LabeledContent { Text(verbatim: "endDate") } label: { Text(sample.endDate, format: .dateTime) }
                     }
                 } label: {
                     HStack {

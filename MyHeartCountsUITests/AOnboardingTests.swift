@@ -303,7 +303,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     private func navigateHealthKitAccess() {
         XCTAssert(app.staticTexts["HealthKit Access"].waitForExistence(timeout: 10))
         // ^it might take a bit for the previous step (consent upload) to finish)
-        app.buttons["Grant Access"].tap()
+        app.buttons["Continue"].tap()
         app.handleHealthKitAuthorization()
     }
     
