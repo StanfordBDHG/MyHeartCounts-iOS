@@ -3253,7 +3253,14 @@
       }
     },
     "Logging Out…" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrando sesión…"
+          }
+        }
+      }
     },
     "Louisiana" : {
       "localizations" : {
