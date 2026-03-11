@@ -1,5 +1,5 @@
 {
-  "originHash" : "d4d5564c2ef3e36f3c6e97c383dab6b9328b009c6401d0c06af2dccf478ea150",
+  "originHash" : "cfc1de49e6a6754a61d20d0e63dc44e7835806e0c6ec0ccc76f6dd3470285a2a",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -249,8 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "923effb63115b35dff52eb478ac5c761df7e892a",
-        "version" : "2.7.2"
+        "branch" : "lukas/fix-locale-matching",
+        "revision" : "73a6f3ea7a2da669385552a3c9bae038f66b003a"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "3d8b226721ba3069190c809e74608c8fb49dbcf2",
-        "version" : "0.1.19"
+        "branch" : "lukas/locale-fixes",
+        "revision" : "8036e03a030b8d12fc83693266ea8dc77f5a63b9"
       }
     },
     {
@@ -402,8 +402,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log",
       "state" : {
-        "revision" : "7ee16e465622412764b0ff0c1301801dc71b8f61",
-        "version" : "1.9.0"
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
       }
     },
     {
@@ -483,8 +483,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/ThreadLocal.git",
       "state" : {
-        "revision" : "2600d766183e7223f1e951b0ab03bf98738e1ccc",
-        "version" : "0.1.1"
+        "revision" : "16704d12f51abdd44c1f3c09bf28e619e4d789b2",
+        "version" : "0.1.2"
       }
     },
     {

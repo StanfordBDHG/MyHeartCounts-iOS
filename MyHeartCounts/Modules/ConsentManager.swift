@@ -11,6 +11,7 @@ import Foundation
 import Spezi
 import SpeziAccount
 import SpeziFoundation
+import SpeziLocalization
 import SpeziStudy
 import SwiftUI
 
@@ -55,7 +56,12 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
             return
         }
         guard let consentFile = studyBundle.studyDefinition.metadata.consentFileRef,
-              let consentText = studyBundle.consentText(for: consentFile, in: studyManager.preferredLocale),
+              let consentText = studyBundle.consentText(
+                for: consentFile,
+                in: studyManager.preferredLocale,
+                using: .requirePerfectMatch,
+                fallbackLocale: studyManager.defaultLanguageFallbackLocale
+              ),
               let consentVersion = (try? MarkdownDocument.Metadata(parsing: consentText))?.version else {
                   return
         }
@@ -66,6 +72,24 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
 //            await MainActor.run {
 //                self.needsToSignNewConsentVersion = true
 //            }
+        }
+    }
+}
+
+
+extension StudyManager {
+    var defaultLanguageFallbackLocale: LocalizationKey {
+        guard let region = preferredLocale.region else {
+            // unreachable in regular usage bc we always set a region (based on the firebase config) when loading the module.
+            // only reachable when the firebase config is manually overwritten to point directly to a plist file.
+            return .enUS
+        }
+        return switch region {
+        case .unitedStates, .unitedKingdom:
+            LocalizationKey(language: .init(identifier: "en"), region: region)
+        default:
+            // unreachable bc we currently only support the regions listed above.
+            .enUS
         }
     }
 }
