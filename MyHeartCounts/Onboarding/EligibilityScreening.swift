@@ -19,7 +19,7 @@ struct EligibilityScreening: View {
     
     private let components: [any ScreeningComponent] = [
         AgeAtLeast(style: .toggle, minAge: 18),
-        IsFromRegion(allowedRegions: [.unitedStates, .unitedKingdom]),
+        IsFromRegion(allowedRegions: [.unitedStates]),
         // We ask if the user speaks the current language.
         // Since MHC only enables localization for languages we officially support (English and Spanish),
         // this will always ask for one of the two, even if the user's phone is set e.g. to German.
