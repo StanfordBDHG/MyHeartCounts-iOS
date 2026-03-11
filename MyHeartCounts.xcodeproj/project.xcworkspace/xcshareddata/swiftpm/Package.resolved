@@ -1,5 +1,5 @@
 {
-  "originHash" : "cfc1de49e6a6754a61d20d0e63dc44e7835806e0c6ec0ccc76f6dd3470285a2a",
+  "originHash" : "d4d5564c2ef3e36f3c6e97c383dab6b9328b009c6401d0c06af2dccf478ea150",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -249,8 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "branch" : "lukas/fix-locale-matching",
-        "revision" : "73a6f3ea7a2da669385552a3c9bae038f66b003a"
+        "revision" : "28534234aea6458937d3e927ed7587330205b137",
+        "version" : "2.7.4"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "branch" : "lukas/locale-fixes",
-        "revision" : "8036e03a030b8d12fc83693266ea8dc77f5a63b9"
+        "revision" : "6820e023943c2665cb893ee5a0e9a98625b3561b",
+        "version" : "0.1.20"
       }
     },
     {

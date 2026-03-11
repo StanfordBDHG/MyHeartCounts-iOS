@@ -1374,16 +1374,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziStudy.git";
 			requirement = {
-				branch = "lukas/locale-fixes";
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.20;
 			};
 		};
 		8047A8212F6205740094AAF3 /* XCRemoteSwiftPackageReference "SpeziFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFoundation.git";
 			requirement = {
-				branch = "lukas/fix-locale-matching";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.4;
 			};
 		};
 		804C11D42ECA371A004783C3 /* XCRemoteSwiftPackageReference "SpeziViews" */ = {
