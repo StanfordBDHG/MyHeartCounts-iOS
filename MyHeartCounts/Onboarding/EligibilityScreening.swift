@@ -19,7 +19,10 @@ struct EligibilityScreening: View {
     
     private let components: [any ScreeningComponent] = [
         AgeAtLeast(style: .toggle, minAge: 18),
-        IsFromRegion(allowedRegions: [.unitedStates]),
+        IsFromRegion(
+            enabledRegions: [.unitedStates],
+            comingSoonRegions: [.unitedKingdom]
+        ),
         // We ask if the user speaks the current language.
         // Since MHC only enables localization for languages we officially support (English and Spanish),
         // this will always ask for one of the two, even if the user's phone is set e.g. to German.
@@ -42,8 +45,8 @@ struct EligibilityScreening: View {
             }
             return nonnil(\.dateOfBirth) && nonnil(\.region) && nonnil(\.speaksEnglish) && nonnil(\.sharedAppleID)
         } continue: { data, path in
-            let isEligible = components.allSatisfy { $0.evaluate(data) }
-            if isEligible {
+            let results = components.mapIntoSet { $0.evaluate(data) }
+            if results == [.eligible] {
                 guard let region = data.screening.region else {
                     // unreachable
                     return
@@ -62,7 +65,20 @@ struct EligibilityScreening: View {
                 }
                 path.nextStep()
             } else {
-                path.append(customView: NotEligibleView())
+                for result in results {
+                    switch result {
+                    case .ineligible(.regionNotYetSupportedButComingSoon(let region)):
+                        path.append {
+                            RegionComingSoon(selectedRegion: region)
+                        }
+                        return
+                    default:
+                        continue
+                    }
+                }
+                path.append {
+                    NotEligibleView()
+                }
             }
         }
     }

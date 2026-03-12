@@ -15,6 +15,17 @@ import SpeziViews
 import SwiftUI
 
 
+enum ScreeningResult: Hashable {
+    case eligible
+    case ineligible(IneligibilityReason)
+    
+    enum IneligibilityReason: Hashable {
+        /// The user selected a region which isn't yet supported but which is coming soon
+        case regionNotYetSupportedButComingSoon(Locale.Region)
+        case other
+    }
+}
+
 /// The ``SinglePageScreening`` view consists of components, each of which should collect one piece of information from the user, and is placed in its own `Section`.
 protocol ScreeningComponent: View {
     /// The user-displayed title of this component.
@@ -25,7 +36,7 @@ protocol ScreeningComponent: View {
     /// Determines, based on the collected data, whether the user-entered value sasisfies the component's requirements.
     ///
     /// - Note: this function will be called outside of the component being installed in a SwiftUI hierarchy!
-    func evaluate(_ data: OnboardingDataCollection) -> Bool
+    func evaluate(_ data: OnboardingDataCollection) -> ScreeningResult
 }
 
 

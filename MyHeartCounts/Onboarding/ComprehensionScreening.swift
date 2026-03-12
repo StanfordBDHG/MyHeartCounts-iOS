@@ -67,8 +67,8 @@ private struct Question: ScreeningComponent {
         .accessibilityIdentifier("Consent Comprehension: \(String(localized: title))")
     }
     
-    func evaluate(_ data: OnboardingDataCollection) -> Bool {
-        data.comprehension[keyPath: storage] == true
+    func evaluate(_ data: OnboardingDataCollection) -> ScreeningResult {
+        data.comprehension[keyPath: storage] == true ? .eligible : .ineligible(.other)
     }
 }
 

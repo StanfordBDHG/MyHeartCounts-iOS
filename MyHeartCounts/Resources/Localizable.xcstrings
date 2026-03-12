@@ -1128,6 +1128,16 @@
         }
       }
     },
+    "Coming Soon" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muy pronto"
+          }
+        }
+      }
+    },
     "Comorbidities" : {
       "localizations" : {
         "es" : {
@@ -1757,6 +1767,9 @@
           }
         }
       }
+    },
+    "Email…" : {
+
     },
     "Enable" : {
       "localizations" : {
@@ -2875,6 +2888,9 @@
           }
         }
       }
+    },
+    "Invalid Email" : {
+
     },
     "Iowa" : {
       "localizations" : {
@@ -4044,6 +4060,9 @@
         }
       }
     },
+    "Notify Me" : {
+
+    },
     "Number of Steps" : {
       "localizations" : {
         "es" : {
@@ -5109,6 +5128,29 @@
         }
       }
     },
+    "REGION_COMING_SOON_TITLE" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coming Soon"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coming Soon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muy pronto"
+          }
+        }
+      }
+    },
     "Remote Notifications Registration" : {
       "localizations" : {
         "es" : {
@@ -5818,6 +5860,9 @@
         }
       }
     },
+    "Success!" : {
+
+    },
     "Swimming" : {
       "localizations" : {
         "es" : {
@@ -5928,6 +5973,9 @@
         }
       }
     },
+    "That doesn't seem to be a valid email address; make sure you typed it correctly!" : {
+
+    },
     "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
       "localizations" : {
         "es" : {
@@ -5947,6 +5995,9 @@
           }
         }
       }
+    },
+    "The My Heart Counts study isn't yet available in %@.\n\nAdd your email and we'll update you when it becomes available in your region." : {
+
     },
     "The test was cancelled" : {
       "localizations" : {
@@ -6323,6 +6374,9 @@
           }
         }
       }
+    },
+    "We'll let you know when the study becomes available in your region!" : {
+
     },
     "Weight" : {
       "localizations" : {
