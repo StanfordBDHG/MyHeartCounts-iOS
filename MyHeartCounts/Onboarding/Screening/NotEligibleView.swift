@@ -9,34 +9,38 @@
 import Foundation
 import SFSafeSymbols
 import SpeziOnboarding
+import SpeziViews
 import SwiftUI
 
 
 struct NotEligibleView: View {
     var body: some View {
-        OnboardingView {
-            OnboardingTitleView(title: "INELIGIBLE_TITLE")
-                .padding(.top, 47)
-        } content: {
-            Form {
-                Section {
-                    Text("INELIGIBLE_SUBTITLE")
-                }
-                .listRowBackground(Color.clear)
-                Section {
-                    Link(destination: MyHeartCounts.website) {
-                        HStack {
-                            Text("INELIGIBLE_LEARN_MORE")
-                            Spacer()
-                            Image(systemSymbol: .arrowUpRight)
-                                .accessibilityHidden(true)
-                        }
+        OnboardingPage(
+            symbol: .documentBadgeEllipsis,
+            title: "INELIGIBLE_TITLE",
+            description: "INELIGIBLE_SUBTITLE",
+            content: {
+                EmptyView()
+            },
+            footer: {
+                Link(destination: MyHeartCounts.website) {
+                    HStack {
+                        Text("INELIGIBLE_LEARN_MORE")
+                        Spacer()
+                        Image(systemSymbol: .arrowUpRight)
+                            .accessibilityHidden(true)
                     }
+                    .bold()
+                    .padding(12)
                 }
+                .buttonStyleGlassProminent()
             }
-        } footer: {
-            EmptyView()
-        }
+        )
         .makeBackgroundMatchFormBackground()
     }
+}
+
+
+#Preview {
+    NotEligibleView()
 }

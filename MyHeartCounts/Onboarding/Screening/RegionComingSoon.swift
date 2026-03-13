@@ -28,55 +28,65 @@ struct RegionComingSoon: View {
     @State private var showSuccessfullyAddedEmailAlert = false
     @State private var viewState: ViewState = .idle
     
+    
     var body: some View {
-        OnboardingView {
-            OnboardingTitleView(title: "Coming Soon")
-                .padding(.top, 47)
-        } content: {
-            Form {
-                Section {
-                    Text("""
-                        The My Heart Counts study isn't yet available in \(locale.localizedStringWithDefinitiveArticle(for: selectedRegion)).
-                        
-                        Add your email and we'll update you when it becomes available in your region.
-                        """)
-                }
-                Section {
-                    Link(destination: MyHeartCounts.website) {
-                        HStack {
-                            Text("INELIGIBLE_LEARN_MORE")
-                            Spacer()
-                            Image(systemSymbol: .arrowUpRight)
-                                .accessibilityHidden(true)
-                        }
-                    }
-                }
-                Section {
-                    TextField("Email…", text: $emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                    AsyncButton("Notify Me", state: $viewState) {
+        OnboardingPage(
+            symbol: .documentBadgeClock,
+            title: "Coming Soon",
+            description: """
+                The My Heart Counts study isn't yet available in \(locale.localizedStringWithDefinitiveArticle(for: selectedRegion)).
+                
+                Add your email and we'll update you when it becomes available in your region.
+                """,
+            content: {
+                TextField("Email…", text: $emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .font(.title3)
+                    .textFieldStyle(.roundedBorder)
+                    .padding(.vertical, 8)
+            },
+            footer: {
+                AsyncButton(
+                    state: $viewState,
+                    action: {
                         try await notifyMe()
+                    },
+                    label: {
+                        Text("Notify Me")
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .padding(12)
                     }
+                )
+                .buttonStyleGlassProminent()
+                Link(destination: MyHeartCounts.website) {
+                    HStack {
+                        Text("INELIGIBLE_LEARN_MORE")
+                        Spacer()
+                        Image(systemSymbol: .arrowUpRight)
+                            .accessibilityHidden(true)
+                    }
+                    .bold()
+                    .padding(12)
                 }
+                .buttonStyleGlass()
             }
-        } footer: {
-            EmptyView()
-        }
+        )
         .makeBackgroundMatchFormBackground()
-        .alert("Invalid Email", isPresented: $showInvalidEmailAlert) {
+        .alert("Invalid Email Address", isPresented: $showInvalidEmailAlert) {
             Button("OK") {
                 showInvalidEmailAlert = false
             }
         } message: {
-            Text("That doesn't seem to be a valid email address; make sure you typed it correctly!")
+            Text("Please enter a valid email address and try again.")
         }
-        .alert("Success!", isPresented: $showSuccessfullyAddedEmailAlert) {
+        .alert("You're on the List", isPresented: $showSuccessfullyAddedEmailAlert) {
             Button("OK") {
                 showSuccessfullyAddedEmailAlert = false
             }
         } message: {
-            Text("We'll let you know when the study becomes available in your region!")
+            Text("We've saved your email and will notify you when My Heart Counts becomes available in your region.")
         }
     }
     
@@ -148,4 +158,9 @@ extension Locale {
         }
         return name
     }
+}
+
+
+#Preview {
+    RegionComingSoon(selectedRegion: .unitedKingdom)
 }
