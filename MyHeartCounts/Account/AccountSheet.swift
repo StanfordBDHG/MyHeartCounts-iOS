@@ -81,7 +81,7 @@ struct AccountSheet: View {
         if let enrollment = enrollments.first {
             Section("Study Participation") { // swiftlint:disable:this closure_body_length
                 Button {
-                    openUrl(MyHeartCounts.website)
+                    openUrl(MyHeartCounts.website())
                 } label: {
                     HStack {
                         makeEnrolledStudyRow(for: enrollment)

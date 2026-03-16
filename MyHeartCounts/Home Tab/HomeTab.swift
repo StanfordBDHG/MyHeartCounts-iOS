@@ -96,7 +96,7 @@ struct HomeTab: RootViewTab {
     
     private var learnMoreSection: some View {
         Section {
-            Link(destination: MyHeartCounts.website) {
+            Link(destination: MyHeartCounts.website()) {
                 HStack {
                     Text("About the My Heart Counts Study")
                     Spacer()
