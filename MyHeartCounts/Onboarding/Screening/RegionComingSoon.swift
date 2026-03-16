@@ -8,62 +8,91 @@
 
 import FirebaseFunctions
 import Foundation
+import MyHeartCountsShared
 import SFSafeSymbols
 @_spi(APISupport)
 import Spezi
 import SpeziFirebaseAccount
+import SpeziFoundation
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
 
 struct RegionComingSoon: View {
+    enum RegionAvailabilityStatus {
+        /// The study will be launched soon in the selected region
+        case comingSoon
+        /// The study won't be launched in the selected region
+        case notSupported
+        
+        fileprivate var displayTitle: LocalizedStringResource {
+            switch self {
+            case .comingSoon:
+                "Coming Soon"
+            case .notSupported:
+                "Region Not Yet Supported"
+            }
+        }
+    }
+    
+    
     @Environment(\.locale)
     private var locale
     
     let selectedRegion: Locale.Region
+    let availabilityStatus: RegionAvailabilityStatus
     
     @State private var emailAddress = ""
+    @FocusState private var emailTextFieldIsFocused
     @State private var showInvalidEmailAlert = false
     @State private var showSuccessfullyAddedEmailAlert = false
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        OnboardingView {
-            OnboardingTitleView(title: "Coming Soon")
-                .padding(.top, 47)
-        } content: {
-            Form {
-                Section {
-                    Text("""
-                        The My Heart Counts study isn't yet available in \(locale.localizedStringWithDefinitiveArticle(for: selectedRegion)).
-                        
-                        Add your email and we'll update you when it becomes available in your region.
-                        """)
-                }
-                Section {
-                    Link(destination: MyHeartCounts.website) {
-                        HStack {
-                            Text("INELIGIBLE_LEARN_MORE")
-                            Spacer()
-                            Image(systemSymbol: .arrowUpRight)
-                                .accessibilityHidden(true)
-                        }
+        OnboardingPage(
+            symbol: symbol,
+            title: availabilityStatus.displayTitle,
+            description: """
+                The My Heart Counts study isn't yet available in \(locale.localizedStringWithDefinitiveArticle(for: selectedRegion)).
+                
+                Add your email below and we'll update you when it launches in your region.
+                """
+        ) {
+            VStack(spacing: 24) {
+                TextField("Email…", text: $emailAddress)
+                    .focused($emailTextFieldIsFocused)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .textFieldStyle(.plain)
+                    .padding()
+                    .background(.background.secondary)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                AsyncButton(state: $viewState) {
+                    try await notifyMe()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Notify Me")
+                        Spacer()
                     }
+                    .bold()
+                    .frame(maxWidth: .infinity, minHeight: 38)
                 }
-                Section {
-                    TextField("Email…", text: $emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                    AsyncButton("Notify Me", state: $viewState) {
-                        try await notifyMe()
-                    }
+                .buttonStyleGlassProminent()
+            }
+            Spacer(minLength: 24)
+            Link(destination: MyHeartCounts.website(for: selectedRegion)) {
+                HStack {
+                    Text("INELIGIBLE_LEARN_MORE")
+                    Spacer()
+                    Image(systemSymbol: .arrowUpRight)
+                        .accessibilityHidden(true)
                 }
             }
-        } footer: {
-            EmptyView()
         }
-        .makeBackgroundMatchFormBackground()
+        .viewStateAlert(state: $viewState)
+        .scrollDismissesKeyboard(.interactively)
         .alert("Invalid Email", isPresented: $showInvalidEmailAlert) {
             Button("OK") {
                 showInvalidEmailAlert = false
@@ -80,7 +109,25 @@ struct RegionComingSoon: View {
         }
     }
     
+    private var symbol: SFSymbol {
+        switch selectedRegion.continent {
+        case .americas:
+            .globeAmericas
+        case .europe, .africa:
+            .globeEuropeAfrica
+        case .asia, .oceania:
+            .globeAsiaAustralia
+        default:
+            .globe
+        }
+    }
+    
     private func notifyMe() async throws {
+        guard !emailAddress.isEmpty else {
+            // tapping "Notify Me" if nothing is entered nudges the user to provide their email.
+            emailTextFieldIsFocused = true
+            return
+        }
         let pattern = /^[A-Z0-9a-z.!#$%&'*+\-\/=?^_`{|}~]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
         guard emailAddress.wholeMatch(of: pattern) != nil else {
             showInvalidEmailAlert = true
@@ -90,11 +137,8 @@ struct RegionComingSoon: View {
             Spezi.loadFirebase(for: .unitedStates)
             try? await Task.sleep(for: .seconds(1))
         }
-        guard let spezi = SpeziAppDelegate.spezi else {
-            fatalError("Spezi not loaded?")
-        }
-        guard let accountService = spezi.module(FirebaseAccountService.self) else {
-            fatalError("Missing FirebaseAccountService?")
+        guard let spezi = SpeziAppDelegate.spezi, let accountService = spezi.module(FirebaseAccountService.self) else {
+            throw NSError(mhcErrorCode: .unspecified, localizedDescription: "Something went wrong")
         }
         try await accountService.signUpAnonymously()
         _ = try await Functions.functions()

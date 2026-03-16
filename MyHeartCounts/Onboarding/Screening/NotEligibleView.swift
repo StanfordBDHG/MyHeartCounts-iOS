@@ -6,37 +6,24 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Foundation
 import SFSafeSymbols
-import SpeziOnboarding
 import SwiftUI
 
 
 struct NotEligibleView: View {
     var body: some View {
-        OnboardingView {
-            OnboardingTitleView(title: "INELIGIBLE_TITLE")
-                .padding(.top, 47)
-        } content: {
-            Form {
-                Section {
-                    Text("INELIGIBLE_SUBTITLE")
-                }
-                .listRowBackground(Color.clear)
-                Section {
-                    Link(destination: MyHeartCounts.website) {
-                        HStack {
-                            Text("INELIGIBLE_LEARN_MORE")
-                            Spacer()
-                            Image(systemSymbol: .arrowUpRight)
-                                .accessibilityHidden(true)
-                        }
-                    }
+        OnboardingPage(
+            title: "INELIGIBLE_TITLE",
+            description: "INELIGIBLE_SUBTITLE"
+        ) {
+            Link(destination: MyHeartCounts.website()) {
+                HStack {
+                    Text("INELIGIBLE_LEARN_MORE")
+                    Spacer()
+                    Image(systemSymbol: .arrowUpRight)
+                        .accessibilityHidden(true)
                 }
             }
-        } footer: {
-            EmptyView()
         }
-        .makeBackgroundMatchFormBackground()
     }
 }

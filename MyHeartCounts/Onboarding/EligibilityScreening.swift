@@ -45,40 +45,52 @@ struct EligibilityScreening: View {
             }
             return nonnil(\.dateOfBirth) && nonnil(\.region) && nonnil(\.speaksEnglish) && nonnil(\.sharedAppleID)
         } continue: { data, path in
-            let results = components.mapIntoSet { $0.evaluate(data) }
-            if results == [.eligible] {
-                guard let region = data.screening.region else {
-                    // unreachable
-                    return
-                }
-                if !Spezi.didLoadFirebase {
-                    // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
-                    // the crux here is that there isn't a mechanism by which Firebase would let us know when it
-                    Spezi.loadFirebase(for: region)
-                    try? await Task.sleep(for: .seconds(3))
-                }
-                do {
-                    try await studyLoader.update()
-                } catch {
-                    path.append(customView: UnableToLoadStudyDefinitionStep())
-                    return
-                }
-                path.nextStep()
-            } else {
-                for result in results {
-                    switch result {
-                    case .ineligible(.regionNotYetSupportedButComingSoon(let region)):
-                        path.append {
-                            RegionComingSoon(selectedRegion: region)
-                        }
-                        return
-                    default:
-                        continue
+            await process(data: data, path: path)
+        }
+    }
+    
+    
+    private func process(data: OnboardingDataCollection, path: ManagedNavigationStack.Path) async {
+        let results = components.mapIntoSet { $0.evaluate(data) }
+        if results == [.eligible] {
+            guard let region = data.screening.region else {
+                // unreachable
+                return
+            }
+            if !Spezi.didLoadFirebase {
+                // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
+                // the crux here is that there isn't a mechanism by which Firebase would let us know when it
+                Spezi.loadFirebase(for: region)
+                try? await Task.sleep(for: .seconds(3))
+            }
+            do {
+                try await studyLoader.update()
+            } catch {
+                path.append(customView: UnableToLoadStudyDefinitionStep())
+                return
+            }
+            path.nextStep()
+        } else {
+            for result in results {
+                switch result {
+                // 2 bc we want everything else to have passed
+                case .ineligible(.regionNotYetSupportedButComingSoon(let region)) where results.count == 2:
+                    path.append {
+                        RegionComingSoon(selectedRegion: region, availabilityStatus: .comingSoon)
                     }
+                    return
+                // 2 bc we want everything else to have passed
+                case .ineligible(.unsupportedRegion(let region)) where results.count == 2:
+                    path.append {
+                        RegionComingSoon(selectedRegion: region, availabilityStatus: .notSupported)
+                    }
+                    return
+                default:
+                    continue
                 }
-                path.append {
-                    NotEligibleView()
-                }
+            }
+            path.append {
+                NotEligibleView()
             }
         }
     }

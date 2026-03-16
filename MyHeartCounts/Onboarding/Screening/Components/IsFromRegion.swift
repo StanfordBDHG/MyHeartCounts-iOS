@@ -72,7 +72,7 @@ struct IsFromRegion: ScreeningComponent {
         } else if comingSoonRegions.contains(region) {
             .ineligible(.regionNotYetSupportedButComingSoon(region))
         } else {
-            .ineligible(.other)
+            .ineligible(.unsupportedRegion(region))
         }
     }
 }

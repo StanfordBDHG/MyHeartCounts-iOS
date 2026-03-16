@@ -20,8 +20,10 @@ enum ScreeningResult: Hashable {
     case ineligible(IneligibilityReason)
     
     enum IneligibilityReason: Hashable {
-        /// The user selected a region which isn't yet supported but which is coming soon
+        /// The user selected a region which isn't yet supported but which is coming soon.
         case regionNotYetSupportedButComingSoon(Locale.Region)
+        /// The user selected a region which currently isn't supported, and for which no plans exist to launch the study.
+        case unsupportedRegion(Locale.Region)
         case other
     }
 }
