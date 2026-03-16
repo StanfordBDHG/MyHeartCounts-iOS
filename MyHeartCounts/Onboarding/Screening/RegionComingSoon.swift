@@ -143,14 +143,18 @@ struct RegionComingSoon: View {
             throw NSError(mhcErrorCode: .unspecified, localizedDescription: "Something went wrong")
         }
         try await accountService.signUpAnonymously()
-        _ = try await Functions.functions()
-            .httpsCallable("joinWaitlist")
-            .call([
-                "region": selectedRegion.identifier,
-                "email": emailAddress
-            ])
-        showSuccessfullyAddedEmailAlert = true
-        try await accountService.logout()
+        do {
+            _ = try await Functions.functions()
+                .httpsCallable("joinWaitlist")
+                .call([
+                    "region": selectedRegion.identifier,
+                    "email": emailAddress
+                ])
+            showSuccessfullyAddedEmailAlert = true
+        } catch {
+            try? await accountService.logout()
+            throw error
+        }
     }
 }
 
