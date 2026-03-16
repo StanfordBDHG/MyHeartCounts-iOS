@@ -44,9 +44,10 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         )
     }
     
+    
     @MainActor
     func testReviewConsentForms() throws {
-        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true))
+        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: true))
         // check that the consent we just signed is showing up in the Account Sheet
         openAccountSheet()
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
@@ -63,6 +64,35 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
             )
             .waitForExistence(timeout: 2)
         )
+    }
+    
+    
+    @MainActor
+    func testRegionEligibilityComingSoon() throws {
+        try launchAppAndEnrollIntoStudy(
+            locale: .enUS,
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        let navigator = OnboardingNavigator(testCase: self)
+        navigator.navigateWelcome()
+        try navigator.navigateEligibility(region: .unitedKingdom)
+        XCTAssert(app.staticTexts["Coming Soon"].waitForExistence(timeout: 5))
+    }
+    
+    @MainActor
+    func testRegionEligibilityNotSupported() throws {
+        try launchAppAndEnrollIntoStudy(
+            locale: .enUS,
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        let navigator = OnboardingNavigator(testCase: self)
+        navigator.navigateWelcome()
+        try navigator.navigateEligibility(region: .germany)
+        XCTAssert(app.staticTexts["Region Not Yet Supported"].waitForExistence(timeout: 5))
     }
 }
 
