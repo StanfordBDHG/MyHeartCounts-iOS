@@ -8138,12 +8138,12 @@
         }
       }
     },
-    "The My Heart Counts study isn't yet available in %@.\n\nAdd your email below and we'll update you when it becomes available in your region." : {
+    "The My Heart Counts study isn't yet available in %@.\n\nAdd your email below and we'll update you when it launches in your region." : {
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The My Heart Counts study isn't yet available in %@.\n\nAdd your email below and we'll update you when it becomes available in your region."
+            "value" : "The My Heart Counts study isn't yet available in %@.\n\nAdd your email below and we'll update you when it launches in your region."
           }
         },
         "es" : {

@@ -198,5 +198,9 @@ extension Locale {
 
 
 #Preview {
-    RegionComingSoon(selectedRegion: .unitedKingdom)
+    RegionComingSoon(selectedRegion: .unitedKingdom, availabilityStatus: .comingSoon)
+}
+
+#Preview {
+    RegionComingSoon(selectedRegion: .germany, availabilityStatus: .notSupported)
 }
