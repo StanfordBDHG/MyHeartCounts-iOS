@@ -21,7 +21,8 @@ struct IsFromRegion: ScreeningComponent {
     @Environment(OnboardingDataCollection.self) private var data
     // swiftlint:enable attributes
     
-    let allowedRegions: Set<Locale.Region>
+    let enabledRegions: Set<Locale.Region>
+    let comingSoonRegions: Set<Locale.Region>
     
     @State private var isPresentingRegionPicker = false
     
@@ -62,10 +63,16 @@ struct IsFromRegion: ScreeningComponent {
         }
     }
     
-    func evaluate(_ data: OnboardingDataCollection) -> Bool {
+    func evaluate(_ data: OnboardingDataCollection) -> ScreeningResult {
         guard let region = data.screening.region else {
-            return false
+            return .ineligible(.other)
         }
-        return allowedRegions.contains(region)
+        return if enabledRegions.contains(region) {
+            .eligible
+        } else if comingSoonRegions.contains(region) {
+            .ineligible(.regionNotYetSupportedButComingSoon(region))
+        } else {
+            .ineligible(.unsupportedRegion(region))
+        }
     }
 }

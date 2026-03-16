@@ -19,7 +19,10 @@ struct EligibilityScreening: View {
     
     private let components: [any ScreeningComponent] = [
         AgeAtLeast(style: .toggle, minAge: 18),
-        IsFromRegion(allowedRegions: [.unitedStates, .unitedKingdom]),
+        IsFromRegion(
+            enabledRegions: [.unitedStates],
+            comingSoonRegions: [.unitedKingdom]
+        ),
         // We ask if the user speaks the current language.
         // Since MHC only enables localization for languages we officially support (English and Spanish),
         // this will always ask for one of the two, even if the user's phone is set e.g. to German.
@@ -42,27 +45,52 @@ struct EligibilityScreening: View {
             }
             return nonnil(\.dateOfBirth) && nonnil(\.region) && nonnil(\.speaksEnglish) && nonnil(\.sharedAppleID)
         } continue: { data, path in
-            let isEligible = components.allSatisfy { $0.evaluate(data) }
-            if isEligible {
-                guard let region = data.screening.region else {
-                    // unreachable
+            await process(data: data, path: path)
+        }
+    }
+    
+    
+    private func process(data: OnboardingDataCollection, path: ManagedNavigationStack.Path) async {
+        let results = components.mapIntoSet { $0.evaluate(data) }
+        if results == [.eligible] {
+            guard let region = data.screening.region else {
+                // unreachable
+                return
+            }
+            if !Spezi.didLoadFirebase {
+                // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
+                // the crux here is that there isn't a mechanism by which Firebase would let us know when it
+                Spezi.loadFirebase(for: region)
+                try? await Task.sleep(for: .seconds(3))
+            }
+            do {
+                try await studyLoader.update()
+            } catch {
+                path.append(customView: UnableToLoadStudyDefinitionStep())
+                return
+            }
+            path.nextStep()
+        } else {
+            for result in results {
+                switch result {
+                // 2 bc we want everything else to have passed
+                case .ineligible(.regionNotYetSupportedButComingSoon(let region)) where results.count == 2:
+                    path.append {
+                        RegionComingSoon(selectedRegion: region, availabilityStatus: .comingSoon)
+                    }
                     return
-                }
-                if !Spezi.didLoadFirebase {
-                    // load the firebase modules into Spezi, and give it a couple seconds to fully configure everything
-                    // the crux here is that there isn't a mechanism by which Firebase would let us know when it
-                    Spezi.loadFirebase(for: region)
-                    try? await Task.sleep(for: .seconds(3))
-                }
-                do {
-                    try await studyLoader.update()
-                } catch {
-                    path.append(customView: UnableToLoadStudyDefinitionStep())
+                // 2 bc we want everything else to have passed
+                case .ineligible(.unsupportedRegion(let region)) where results.count == 2:
+                    path.append {
+                        RegionComingSoon(selectedRegion: region, availabilityStatus: .notSupported)
+                    }
                     return
+                default:
+                    continue
                 }
-                path.nextStep()
-            } else {
-                path.append(customView: NotEligibleView())
+            }
+            path.append {
+                NotEligibleView()
             }
         }
     }

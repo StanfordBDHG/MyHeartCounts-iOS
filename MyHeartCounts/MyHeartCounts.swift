@@ -19,8 +19,6 @@ let logger = Logger(category: .init(""))
 
 @main
 struct MyHeartCounts: App {
-    static let website: URL = "https://myheartcounts.stanford.edu"
-    
     @UIApplicationDelegateAdaptor(MyHeartCountsDelegate.self)
     private var appDelegate
     

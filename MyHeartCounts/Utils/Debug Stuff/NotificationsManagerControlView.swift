@@ -35,7 +35,7 @@ struct NotificationsManagerControlView: View {
                     row(title: "carPlay", forSetting: notificationSettings.carPlaySetting)
                 }
             }
-            Section("Remote Notifications Registration") {
+            Section("Remote Notifications Registration" as String) {
                 tokenRow(
                     "APNS Token",
                     value: notificationsManager.remoteNotificationsToken?.apns.map { $0.map { String($0) }.joined(separator: " ") }

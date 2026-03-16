@@ -43,7 +43,7 @@ struct SpeaksLanguage: ScreeningComponent {
         )
     }
     
-    func evaluate(_ data: OnboardingDataCollection) -> Bool {
-        data.screening.speaksEnglish == true
+    func evaluate(_ data: OnboardingDataCollection) -> ScreeningResult {
+        data.screening.speaksEnglish == true ? .eligible : .ineligible(.other)
     }
 }

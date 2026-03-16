@@ -24,6 +24,7 @@ import SpeziFirebaseConfiguration
 import SpeziFirebaseStorage
 import SpeziFirestore
 import SpeziFoundation
+import SpeziLocalization
 import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
@@ -198,7 +199,7 @@ enum DeferredConfigLoading {
     static func config(for configSelector: FirebaseConfigSelector) -> [any Module] { // swiftlint:disable:this function_body_length
         let preferredLocale = { () -> Locale in
             if let region = configSelector.region {
-                return .init(language: Locale.current.language, region: region)
+                return .init(language: Locale.current.language.withRegion(nil), region: region)
             } else {
                 logger.warning(
                     "Unable to determine preferredLocale for configSelector \(String(describing: configSelector)). Falling back to autoupdatingCurrent"

@@ -249,8 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "923effb63115b35dff52eb478ac5c761df7e892a",
-        "version" : "2.7.2"
+        "revision" : "28534234aea6458937d3e927ed7587330205b137",
+        "version" : "2.7.4"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStudy.git",
       "state" : {
-        "revision" : "3d8b226721ba3069190c809e74608c8fb49dbcf2",
-        "version" : "0.1.19"
+        "revision" : "6820e023943c2665cb893ee5a0e9a98625b3561b",
+        "version" : "0.1.20"
       }
     },
     {
@@ -402,8 +402,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log",
       "state" : {
-        "revision" : "7ee16e465622412764b0ff0c1301801dc71b8f61",
-        "version" : "1.9.0"
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
       }
     },
     {
@@ -483,8 +483,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordBDHG/ThreadLocal.git",
       "state" : {
-        "revision" : "2600d766183e7223f1e951b0ab03bf98738e1ccc",
-        "version" : "0.1.1"
+        "revision" : "16704d12f51abdd44c1f3c09bf28e619e4d789b2",
+        "version" : "0.1.2"
       }
     },
     {

@@ -29,11 +29,13 @@ struct OnboardingPage<Content: View, Footer: View>: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal)
             }
-                .scrollBounceBehavior(.basedOnSize)
-            Spacer(minLength: 8)
-                .border(Color.blue, width: 1)
-            footer
-                .padding(.horizontal)
+            .scrollBounceBehavior(.basedOnSize)
+            if !(footer is EmptyView) {
+                Spacer(minLength: 8)
+                    .border(Color.blue, width: 1)
+                footer
+                    .padding(.horizontal)
+            }
         }
         .navigationTitle(Text(verbatim: ""))
         .toolbar(.visible)
@@ -44,7 +46,7 @@ struct OnboardingPage<Content: View, Footer: View>: View {
         title: LocalizedStringResource,
         description: LocalizedStringResource,
         @ViewBuilder content: () -> Content,
-        @ViewBuilder footer: () -> Footer
+        @ViewBuilder footer: () -> Footer = { EmptyView() }
     ) {
         self.symbol = symbol
         self.title = title

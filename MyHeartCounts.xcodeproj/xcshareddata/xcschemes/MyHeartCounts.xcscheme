@@ -66,7 +66,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = "en"
       region = "US"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
@@ -99,11 +98,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--setupTestEnvironment reset"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--setupTestEnvironment reset login-and-enroll"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--forceEnableDebugMode"

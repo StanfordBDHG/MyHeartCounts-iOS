@@ -29,7 +29,7 @@ struct IsUsingSharedAppleID: ScreeningComponent {
         )
     }
     
-    func evaluate(_ data: OnboardingDataCollection) -> Bool {
-        data.screening.sharedAppleID == false
+    func evaluate(_ data: OnboardingDataCollection) -> ScreeningResult {
+        data.screening.sharedAppleID == false ? .eligible : .ineligible(.other)
     }
 }

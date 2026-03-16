@@ -79,15 +79,15 @@ struct AgeAtLeast: ScreeningComponent {
         }
     }
     
-    func evaluate(_ data: OnboardingDataCollection) -> Bool {
+    func evaluate(_ data: OnboardingDataCollection) -> ScreeningResult {
         switch data.screening.dateOfBirth {
         case nil:
-            return false
+            return .ineligible(.other)
         case .date(let date):
             let age = cal.dateComponents([.year], from: date, to: cal.startOfNextDay(for: .now)).year ?? 0
-            return age >= minAge
+            return age >= minAge ? .eligible : .ineligible(.other)
         case .binaryAtLeast(minAge: _, let response):
-            return response
+            return response ? .eligible : .ineligible(.other)
         }
     }
 }

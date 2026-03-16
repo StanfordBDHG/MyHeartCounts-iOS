@@ -98,7 +98,12 @@ struct Consent: View {
         }
         guard let studyBundle = try? studyLoader.studyBundle?.get(),
               let consentFileRef = studyBundle.studyDefinition.metadata.consentFileRef,
-              let text = studyBundle.consentText(for: consentFileRef, in: studyManager.preferredLocale) else {
+              let text = studyBundle.consentText(
+                for: consentFileRef,
+                in: studyManager.preferredLocale,
+                using: .requirePerfectMatch,
+                fallbackLocale: studyManager.defaultLanguageFallbackLocale
+              ) else {
             return
         }
         consentDocument = try ConsentDocument(
