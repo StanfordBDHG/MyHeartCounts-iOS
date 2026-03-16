@@ -7,6 +7,7 @@
 //
 
 import SFSafeSymbols
+import SpeziViews
 import SwiftUI
 
 
@@ -23,7 +24,13 @@ struct NotEligibleView: View {
                     Image(systemSymbol: .arrowUpRight)
                         .accessibilityHidden(true)
                 }
+                .buttonStyleGlassProminent()
             }
         }
     }
+}
+
+
+#Preview {
+    NotEligibleView()
 }

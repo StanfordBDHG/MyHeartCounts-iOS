@@ -49,6 +49,7 @@ struct RegionComingSoon: View {
     @State private var showSuccessfullyAddedEmailAlert = false
     @State private var viewState: ViewState = .idle
     
+    
     var body: some View {
         OnboardingPage(
             symbol: symbol,
@@ -89,23 +90,24 @@ struct RegionComingSoon: View {
                     Image(systemSymbol: .arrowUpRight)
                         .accessibilityHidden(true)
                 }
+                .buttonStyleGlass()
             }
         }
         .viewStateAlert(state: $viewState)
         .scrollDismissesKeyboard(.interactively)
-        .alert("Invalid Email", isPresented: $showInvalidEmailAlert) {
+        .alert("Invalid Email Address", isPresented: $showInvalidEmailAlert) {
             Button("OK") {
                 showInvalidEmailAlert = false
             }
         } message: {
-            Text("That doesn't seem to be a valid email address; make sure you typed it correctly!")
+            Text("Please enter a valid email address and try again.")
         }
-        .alert("Success!", isPresented: $showSuccessfullyAddedEmailAlert) {
+        .alert("You're on the List", isPresented: $showSuccessfullyAddedEmailAlert) {
             Button("OK") {
                 showSuccessfullyAddedEmailAlert = false
             }
         } message: {
-            Text("We'll let you know when the study becomes available in your region!")
+            Text("We've saved your email and will notify you when My Heart Counts becomes available in your region.")
         }
     }
     
@@ -192,4 +194,9 @@ extension Locale {
         }
         return name
     }
+}
+
+
+#Preview {
+    RegionComingSoon(selectedRegion: .unitedKingdom)
 }

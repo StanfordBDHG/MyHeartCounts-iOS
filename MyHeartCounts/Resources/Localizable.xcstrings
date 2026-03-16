@@ -43,6 +43,12 @@
             "value" : "%1$@ – %2$@ (Normal weight)"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Normal weight)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -56,6 +62,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%1$@ – %2$@ (Obesity class I)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%1$@ – %2$@ (Obesity class I)"
           }
         },
@@ -75,6 +87,12 @@
             "value" : "%1$@ – %2$@ (Obesity class II)"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Obesity class II)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -88,6 +106,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%1$@ – %2$@ (Overweight / At risk)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%1$@ – %2$@ (Overweight / At risk)"
           }
         },
@@ -107,6 +131,12 @@
             "value" : "%1$@ – %2$@ (Overweight)"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ – %2$@ (Overweight)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -120,6 +150,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%1$@ – %2$@ (Underweight)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%1$@ – %2$@ (Underweight)"
           }
         },
@@ -147,6 +183,12 @@
     },
     "%@-Minute Run Test" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@-Minute Run Test"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -157,6 +199,12 @@
     },
     "%@-Minute Walk Test" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@-Minute Walk Test"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -192,6 +240,12 @@
     },
     "%lld ft" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ft"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -205,6 +259,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%1$lld hours and %2$lld minutes"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%1$lld hours and %2$lld minutes"
           }
         },
@@ -224,6 +284,12 @@
             "value" : "%1$lld hr %2$lld min"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld hr %2$lld min"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -234,6 +300,12 @@
     },
     "%lld in" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld in"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -267,13 +339,13 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "new",
+                  "state" : "translated",
                   "value" : "%lld missed task in the past 2 weeks"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
+                  "state" : "translated",
                   "value" : "%lld missed tasks in the past 2 weeks"
                 }
               }
@@ -308,6 +380,12 @@
             "value" : "%1$lld over %2$lld"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld over %2$lld"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -330,6 +408,24 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
+                  "value" : "%lld selected"
+                }
+              }
+            }
+          }
+        },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld selected"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
                   "value" : "%lld selected"
                 }
               }
@@ -372,6 +468,12 @@
     },
     "< %@ (Severely underweight)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< %@ (Severely underweight)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -397,6 +499,12 @@
     },
     "≥ %@ (Obesity class II)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≥ %@ (Obesity class II)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -407,6 +515,12 @@
     },
     "≥ %@ (Obesity class III)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "≥ %@ (Obesity class III)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -435,6 +549,12 @@
     },
     "$150,000 and above" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "$150,000 and above"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -463,6 +583,12 @@
     },
     "£150,000 and above" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "£150,000 and above"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -479,6 +605,12 @@
     },
     "4 to 5 hours" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4 to 5 hours"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -492,6 +624,12 @@
     },
     "5 to 6 hours" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 to 6 hours"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -502,6 +640,12 @@
     },
     "6 to 7 hours" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 to 7 hours"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -512,6 +656,12 @@
     },
     "7 to 9 hours" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 to 9 hours"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -525,6 +675,12 @@
     },
     "9 to 10 hours" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9 to 10 hours"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -535,6 +691,12 @@
     },
     "10+ hours" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10+ hours"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -548,6 +710,12 @@
     },
     "12-Minute Run Test (Cooper Test)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12-Minute Run Test (Cooper Test)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -615,6 +783,12 @@
     },
     "Abdominal Aortic Aneurysm" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abdominal Aortic Aneurysm"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -625,6 +799,12 @@
     },
     "About %@" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About %@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -635,6 +815,12 @@
     },
     "About the My Heart Counts Study" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About the My Heart Counts Study"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -711,6 +897,12 @@
     },
     "Active" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -721,6 +913,12 @@
     },
     "Actively smoking" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actively smoking"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -731,6 +929,12 @@
     },
     "Add Data" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Data"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -741,6 +945,12 @@
     },
     "Add Height & Weight Samples" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Height & Weight Samples"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -751,6 +961,12 @@
     },
     "Adult Congenital Heart Disease (ACHD), Single Ventricle (Fontan) or Systemic Right Ventricle (Mustard, Senning, congenitally corrected transposition of the great arteries)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adult Congenital Heart Disease (ACHD), Single Ventricle (Fontan) or Systemic Right Ventricle (Mustard, Senning, congenitally corrected transposition of the great arteries)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -761,6 +977,12 @@
     },
     "Age" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Age"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -771,6 +993,12 @@
     },
     "Alabama" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alabama"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -781,6 +1009,12 @@
     },
     "Alaska" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alaska"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -791,6 +1025,12 @@
     },
     "All Samples" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All Samples"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -801,6 +1041,12 @@
     },
     "All tasks have been completed!" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All tasks have been completed!"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -817,6 +1063,12 @@
             "value" : "Allow Notifications"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Notifications"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -827,6 +1079,12 @@
     },
     "Always Available" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always Available"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -837,6 +1095,12 @@
     },
     "American Samoa" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "American Samoa"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -847,6 +1111,12 @@
     },
     "Angina (heart chest pains)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Angina (heart chest pains)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -857,6 +1127,12 @@
     },
     "Answer Questionnaire" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answer Questionnaire"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -868,6 +1144,12 @@
     "Answer Survey" : {
       "extractionState" : "manual",
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answer Survey"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -878,6 +1160,12 @@
     },
     "Apple ID Sharing" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple ID Sharing"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -888,6 +1176,12 @@
     },
     "Are you %lld years old or older?" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you %lld years old or older?"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -898,6 +1192,12 @@
     },
     "Are you Hispanic/Latino?" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you Hispanic/Latino?"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -908,6 +1208,12 @@
     },
     "Are you sure you want to withdraw from the My Heart Counts study?\nYou can re-enroll later if you choose." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to withdraw from the My Heart Counts study?\nYou can re-enroll later if you choose."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -918,6 +1224,12 @@
     },
     "Are you using a shared Apple ID?" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you using a shared Apple ID?"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -928,6 +1240,12 @@
     },
     "Arizona" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arizona"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -938,6 +1256,12 @@
     },
     "Arkansas" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arkansas"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -948,6 +1272,12 @@
     },
     "Atrial fibrillation (Afib)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atrial fibrillation (Afib)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -958,6 +1288,12 @@
     },
     "Bachelor" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bachelor"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -968,6 +1304,12 @@
     },
     "Biological Sex at Birth" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biological Sex at Birth"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -978,6 +1320,12 @@
     },
     "Blockage/Stenosis, Surgery, or Stent" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blockage/Stenosis, Surgery, or Stent"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1010,6 +1358,12 @@
     },
     "Blood Type" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blood Type"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1020,6 +1374,12 @@
     },
     "Body Mass Index" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Body Mass Index"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1030,6 +1390,12 @@
     },
     "California" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "California"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1040,6 +1406,12 @@
     },
     "Can you read and understand %@ in order to provide informed consent and follow instructions?" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can you read and understand %@ in order to provide informed consent and follow instructions?"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1050,6 +1422,12 @@
     },
     "Cancel" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1060,6 +1438,12 @@
     },
     "Carotid Artery Blockage/Stenosis" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carotid Artery Blockage/Stenosis"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1070,6 +1454,12 @@
     },
     "Carotid Artery Surgery or Stent" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carotid Artery Surgery or Stent"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1080,6 +1470,12 @@
     },
     "Change Language" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change Language"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1090,6 +1486,12 @@
     },
     "Chronic kidney disease" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chronic kidney disease"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1100,6 +1502,12 @@
     },
     "College graduate or Baccalaureate Degree" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "College graduate or Baccalaureate Degree"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1110,6 +1518,12 @@
     },
     "College/University Graduate Degree" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "College/University Graduate Degree"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1120,6 +1534,12 @@
     },
     "Colorado" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colorado"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1130,6 +1550,12 @@
     },
     "Coming Soon" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coming Soon"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1140,6 +1566,12 @@
     },
     "Comorbidities" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comorbidities"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1150,6 +1582,12 @@
     },
     "Companion Watch App Not Installed" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Companion Watch App Not Installed"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1270,6 +1708,12 @@
     },
     "Congenital Heart Defect" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Congenital Heart Defect"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1280,6 +1724,12 @@
     },
     "Congenital Heart Disease OTHER than Single Ventricle or Systemic Right Ventricle" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Congenital Heart Disease OTHER than Single Ventricle or Systemic Right Ventricle"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1290,6 +1740,12 @@
     },
     "Connecticut" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecticut"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1300,6 +1756,12 @@
     },
     "Consent" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consent"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1310,6 +1772,12 @@
     },
     "Consent Date" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consent Date"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1320,6 +1788,12 @@
     },
     "Consent Documents" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consent Documents"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1330,6 +1804,12 @@
     },
     "Consent Renewal" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consent Renewal"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1340,6 +1820,12 @@
     },
     "Consent Version" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consent Version"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1350,6 +1836,12 @@
     },
     "Continue" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1360,6 +1852,12 @@
     },
     "Coronary Artery Disease" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coronary Artery Disease"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1370,6 +1868,12 @@
     },
     "Coronary Blockage/Stenosis" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coronary Blockage/Stenosis"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1380,6 +1884,12 @@
     },
     "Coronary Stent/Angioplasty" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coronary Stent/Angioplasty"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1390,6 +1900,12 @@
     },
     "Cycling" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycling"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1400,6 +1916,12 @@
     },
     "Daily Average" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily Average"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1410,6 +1932,12 @@
     },
     "Data collection enabled for %lld sensors" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data collection enabled for %lld sensors"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1420,6 +1948,12 @@
     },
     "Date" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1430,6 +1964,12 @@
     },
     "Date of Birth" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date of Birth"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1440,6 +1980,12 @@
     },
     "Date of Diagnosis" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date of Diagnosis"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1450,6 +1996,12 @@
     },
     "Date of Enrollment" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date of Enrollment"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1460,6 +2012,12 @@
     },
     "Debug" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Debug"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1470,6 +2028,12 @@
     },
     "Delaware" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delaware"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1524,6 +2088,12 @@
     },
     "Demographics" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demographics"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1534,6 +2104,12 @@
     },
     "Diabetes" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diabetes"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1544,6 +2120,12 @@
     },
     "Did Opt In to Trial" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Did Opt In to Trial"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1554,6 +2136,12 @@
     },
     "Didn't attend school" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Didn't attend school"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1564,6 +2152,12 @@
     },
     "Diet" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diet"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1574,6 +2168,12 @@
     },
     "Dilated Cardiomyopathy (DCM)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dilated Cardiomyopathy (DCM)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1584,6 +2184,12 @@
     },
     "Disabled" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disabled"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1594,6 +2200,12 @@
     },
     "Disclosure Indicator" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disclosure Indicator"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1604,6 +2216,12 @@
     },
     "Distance" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1614,6 +2232,12 @@
     },
     "District of Columbia" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "District of Columbia"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1624,6 +2248,12 @@
     },
     "Doctoral Degree" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doctoral Degree"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1634,6 +2264,12 @@
     },
     "Don't Know" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don't Know"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1644,6 +2280,12 @@
     },
     "Don't reactivate" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don't reactivate"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1654,6 +2296,12 @@
     },
     "Done" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1664,6 +2312,12 @@
     },
     "ECG" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ECG"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1696,6 +2350,12 @@
     },
     "Education Level" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Education Level"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1706,6 +2366,12 @@
     },
     "Educational Level" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Educational Level"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1716,6 +2382,12 @@
     },
     "Electrocardiogram" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrocardiogram"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1735,7 +2407,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Before you begin, we'll ask you a few quick questions to ensure the study is a good fit for you."
+            "value" : "Before you begin, we’ll ask you a few quick questions to ensure the study is a good fit for you."
           }
         },
         "es" : {
@@ -1769,10 +2441,29 @@
       }
     },
     "Email…" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correo electrónico…"
+          }
+        }
+      }
     },
     "Enable" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1783,6 +2474,12 @@
     },
     "Enable App Debug Mode" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable App Debug Mode"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1793,6 +2490,12 @@
     },
     "Enable Clinical Records" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Clinical Records"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1803,6 +2506,12 @@
     },
     "Enable SensorKit" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable SensorKit"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1835,6 +2544,12 @@
     },
     "End" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1845,6 +2560,12 @@
     },
     "England (%@)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "England (%@)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1855,6 +2576,12 @@
     },
     "Enroll" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enroll"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1865,6 +2592,12 @@
     },
     "Enrolled since: %@" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enrolled since: %@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1875,6 +2608,12 @@
     },
     "Enter %@" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter %@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1885,6 +2624,12 @@
     },
     "Enter Blood Pressure" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Blood Pressure"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1895,6 +2640,12 @@
     },
     "Enter BMI" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter BMI"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1905,6 +2656,12 @@
     },
     "Erectile dysfunction" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erectile dysfunction"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1915,6 +2672,12 @@
     },
     "Error" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1947,6 +2710,12 @@
     },
     "Failed to Download Study Information" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to Download Study Information"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1957,6 +2726,12 @@
     },
     "Failed to Load Study into App" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to Load Study into App"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1967,6 +2742,12 @@
     },
     "Failed to process Sleep Sessions" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to process Sleep Sessions"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1977,6 +2758,12 @@
     },
     "False" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "False"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1987,6 +2774,12 @@
     },
     "Fasting Blood Glucose" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fasting Blood Glucose"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1997,6 +2790,12 @@
     },
     "FCM Token" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FCM Token"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2007,6 +2806,12 @@
     },
     "Feedback" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2039,6 +2844,12 @@
     },
     "Feel free to check back later!" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feel free to check back later!"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2049,6 +2860,12 @@
     },
     "Fetching…" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fetching…"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2169,6 +2986,12 @@
     },
     "Find your NHS Number" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find your NHS Number"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2179,6 +3002,12 @@
     },
     "First 3 Digits of ZIP Code" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First 3 Digits of ZIP Code"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2189,6 +3018,12 @@
     },
     "First half of Postcode" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First half of Postcode"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2199,6 +3034,12 @@
     },
     "Florida" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Florida"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2209,6 +3050,12 @@
     },
     "For more information and updates, visit myheartcounts.stanford.edu" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For more information and updates, visit myheartcounts.stanford.edu"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2219,6 +3066,12 @@
     },
     "Gender Identity" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gender Identity"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2361,6 +3214,12 @@
     },
     "Georgia" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Georgia"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2371,6 +3230,12 @@
     },
     "Go to next field" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to next field"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2381,6 +3246,12 @@
     },
     "Go to previous field" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to previous field"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2391,6 +3262,12 @@
     },
     "Grade School" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grade School"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2401,6 +3278,12 @@
     },
     "Guam" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guam"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2411,6 +3294,12 @@
     },
     "Has withdrawn from Study" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has withdrawn from Study"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2421,6 +3310,12 @@
     },
     "Hawaii" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hawaii"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2431,6 +3326,12 @@
     },
     "Health Records" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health Records"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2442,6 +3343,12 @@
     "HEALTH_RECORDS_NUDGE_SUBTITLE" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabling access to clinical and health record data helps support cardiovascular research through richer, longitudinal health information."
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enabling access to clinical and health record data helps support cardiovascular research through richer, longitudinal health information."
@@ -2507,6 +3414,12 @@
             "value" : "HealthKit Access"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthKit Access"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2517,6 +3430,12 @@
     },
     "HealthKit Upload (Historical)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthKit Upload (Historical)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2527,6 +3446,12 @@
     },
     "HealthKit Upload (Live)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthKit Upload (Live)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2581,6 +3506,12 @@
     },
     "Heart Attack/Myocardial Infarction" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Attack/Myocardial Infarction"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2591,6 +3522,12 @@
     },
     "Heart Bypass Surgery" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Bypass Surgery"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2601,6 +3538,12 @@
     },
     "Heart Failure" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Failure"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2611,6 +3554,12 @@
     },
     "Heart Failure or CHF" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Failure or CHF"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2621,6 +3570,12 @@
     },
     "Heart Health" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart Health"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2653,6 +3608,12 @@
     },
     "Height" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Height"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2685,6 +3646,12 @@
     },
     "High Coronary Calcium Score" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High Coronary Calcium Score"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2695,6 +3662,12 @@
     },
     "High School" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High School"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2705,6 +3678,12 @@
     },
     "High-intensity Training" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High-intensity Training"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2715,6 +3694,12 @@
     },
     "Home" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2725,6 +3710,12 @@
     },
     "Household Income" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Household Income"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2735,6 +3726,12 @@
     },
     "How to Manage SensorKit" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to Manage SensorKit"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2745,6 +3742,12 @@
     },
     "Hypertrophic Cardiomyopathy (HCM)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hypertrophic Cardiomyopathy (HCM)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2755,6 +3758,12 @@
     },
     "I don't have this comorbidity" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I don't have this comorbidity"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2765,6 +3774,12 @@
     },
     "I have this comorbidity" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I have this comorbidity"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2775,6 +3790,12 @@
     },
     "Idaho" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idaho"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2785,6 +3806,12 @@
     },
     "Illinois" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Illinois"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2795,6 +3822,12 @@
     },
     "Indiana" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indiana"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2871,6 +3904,12 @@
     },
     "Install on Apple Watch" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install on Apple Watch"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2881,6 +3920,12 @@
     },
     "Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing My Heart Counts on your Apple Watch will allow us to greatly increase the quality of the recorded data."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2889,11 +3934,30 @@
         }
       }
     },
-    "Invalid Email" : {
-
+    "Invalid Email Address" : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid Email Address"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección de correo electrónico no válida"
+          }
+        }
+      }
     },
     "Iowa" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iowa"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2904,6 +3968,12 @@
     },
     "Is selected" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Is selected"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2914,6 +3984,12 @@
     },
     "Kansas" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kansas"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2924,6 +4000,12 @@
     },
     "Kentucky" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kentucky"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2934,6 +4016,12 @@
     },
     "Language" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2973,7 +4061,7 @@
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
+                  "state" : "translated",
                   "value" : "Last %lld days"
                 }
               }
@@ -3002,6 +4090,12 @@
     },
     "Last %lld Days" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last %lld Days"
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -3053,7 +4147,7 @@
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
+                  "state" : "translated",
                   "value" : "Last %lld months"
                 }
               }
@@ -3111,7 +4205,7 @@
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
+                  "state" : "translated",
                   "value" : "Last %lld weeks"
                 }
               }
@@ -3169,7 +4263,7 @@
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
+                  "state" : "translated",
                   "value" : "Last %lld years"
                 }
               }
@@ -3198,6 +4292,12 @@
     },
     "Last Night" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Night"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3208,6 +4308,12 @@
     },
     "Latino / Hispanic?" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latino / Hispanic?"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3224,6 +4330,12 @@
             "value" : "Learn More"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn More"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3234,6 +4346,12 @@
     },
     "Less than $15,000" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less than $15,000"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3244,6 +4362,12 @@
     },
     "Less than £15,000" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less than £15,000"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3260,6 +4384,12 @@
             "value" : "License Information"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "License Information"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3270,6 +4400,12 @@
     },
     "Logging Out…" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logging Out…"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3280,6 +4416,12 @@
     },
     "Louisiana" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Louisiana"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3290,6 +4432,12 @@
     },
     "Maine" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maine"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3300,6 +4448,12 @@
     },
     "Make sure your device is connected to the internet and try again" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make sure your device is connected to the internet and try again"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3310,6 +4464,12 @@
     },
     "Manage SensorKit" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage SensorKit"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3320,6 +4480,12 @@
     },
     "Mark as Complete" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark as Complete"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3330,6 +4496,12 @@
     },
     "Maryland" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maryland"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3340,6 +4512,12 @@
     },
     "Massachusetts" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Massachusetts"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3350,6 +4528,12 @@
     },
     "Master" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3360,6 +4544,12 @@
     },
     "Master's Degree" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master's Degree"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3370,6 +4560,12 @@
     },
     "Mental Well Being" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mental Well Being"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3380,6 +4576,12 @@
     },
     "MHC Heart Health" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MHC Heart Health"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3390,6 +4592,12 @@
     },
     "Michigan" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Michigan"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3400,6 +4608,12 @@
     },
     "Migraines" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Migraines"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3410,6 +4624,12 @@
     },
     "Minnesota" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minnesota"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3420,6 +4640,12 @@
     },
     "Missed Tasks" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missed Tasks"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3430,6 +4656,12 @@
     },
     "Missing Required Motion Data Access Permission" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missing Required Motion Data Access Permission"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3440,6 +4672,12 @@
     },
     "Missing Response" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missing Response"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3450,6 +4688,12 @@
     },
     "Mississippi" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mississippi"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3460,6 +4704,12 @@
     },
     "Missouri" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missouri"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3470,6 +4720,12 @@
     },
     "Montana" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montana"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3480,6 +4736,12 @@
     },
     "More" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3490,6 +4752,12 @@
     },
     "Most Recent Night" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most Recent Night"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3500,6 +4768,12 @@
     },
     "Most Recent Response" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most Recent Response"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3510,6 +4784,12 @@
     },
     "Most Recent Sample" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most Recent Sample"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3520,6 +4800,12 @@
     },
     "Most Recent Score" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most Recent Score"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3536,6 +4822,12 @@
             "value" : "My Heart Counts"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3546,6 +4838,12 @@
     },
     "My Heart Counts does not access your Apple ID in any way; but using a shared account might cause inaccuracies in Health data collection." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Heart Counts does not access your Apple ID in any way; but using a shared account might cause inaccuracies in Health data collection."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3556,6 +4854,12 @@
     },
     "n/a" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/a"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3566,6 +4870,12 @@
     },
     "Nebraska" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nebraska"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3576,6 +4886,12 @@
     },
     "Network Issue" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network Issue"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3586,6 +4902,12 @@
     },
     "Nevada" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nevada"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3596,6 +4918,12 @@
     },
     "Never Smoked" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Never Smoked"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3606,6 +4934,12 @@
     },
     "New Hampshire" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Hampshire"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3616,6 +4950,12 @@
     },
     "New Jersey" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Jersey"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3626,6 +4966,12 @@
     },
     "New Mexico" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Mexico"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3636,6 +4982,12 @@
     },
     "New Test" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Test"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3646,6 +4998,12 @@
     },
     "New York" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New York"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3656,6 +5014,12 @@
     },
     "News" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "News"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3667,6 +5031,12 @@
     "Next" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next"
@@ -3694,6 +5064,24 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
+                  "value" : "Next %lld Days"
+                }
+              }
+            }
+          }
+        },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next Day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
                   "value" : "Next %lld Days"
                 }
               }
@@ -3740,6 +5128,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next Month"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next %lld Months"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -3780,6 +5186,24 @@
             }
           }
         },
+        "en-GB" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next Week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Next %lld Weeks"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -3802,6 +5226,12 @@
     },
     "NHS Number" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NHS Number"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3812,6 +5242,12 @@
     },
     "Nicotine Exposure" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicotine Exposure"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3822,6 +5258,12 @@
     },
     "No" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3832,6 +5274,12 @@
     },
     "No Data" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Data"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3842,6 +5290,12 @@
     },
     "No data collection active" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data collection active"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3852,6 +5306,12 @@
     },
     "No Internet" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Internet"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3862,6 +5322,12 @@
     },
     "No Missed Tasks" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Missed Tasks"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3872,6 +5338,12 @@
     },
     "No News Yet" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No News Yet"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3882,6 +5354,12 @@
     },
     "No recent data" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No recent data"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3892,6 +5370,12 @@
     },
     "No Selection" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Selection"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3902,6 +5386,12 @@
     },
     "No Upcoming Tasks" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Upcoming Tasks"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3912,6 +5402,12 @@
     },
     "None" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3922,6 +5418,12 @@
     },
     "North Carolina" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "North Carolina"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3932,6 +5434,12 @@
     },
     "North Dakota" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "North Dakota"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3942,6 +5450,12 @@
     },
     "Northern Ireland (%@)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Northern Ireland (%@)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3952,6 +5466,12 @@
     },
     "Northern Mariana Islands" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Northern Mariana Islands"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3962,6 +5482,12 @@
     },
     "Not a valid NHS number" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a valid NHS number"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3972,6 +5498,12 @@
     },
     "Not logged in" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not logged in"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3982,6 +5514,12 @@
     },
     "Not Set" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Set"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3992,6 +5530,12 @@
     },
     "Notification Time" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notification Time"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4052,6 +5596,12 @@
             "value" : "Notifications"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4061,10 +5611,29 @@
       }
     },
     "Notify Me" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify Me"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifícame"
+          }
+        }
+      }
     },
     "Number of Steps" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number of Steps"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4075,6 +5644,12 @@
     },
     "Ohio" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohio"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4085,6 +5660,12 @@
     },
     "OK" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4095,6 +5676,12 @@
     },
     "Oklahoma" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oklahoma"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4136,7 +5723,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You are invited to join an Imperial research study that uses physical activity collected from your smartphone to better understand how your previous, current and future levels of physical activity influence your your overall health today and in the future. \n\nYou’ll complete brief health surveys and perform simple fitness assessments like the 6-minute walk test using your phone. \n\nYou will also help us test whether personalised digital coaching can support improving your physical activity and health."
+            "value" : "You’re invited to join an Imperial research study that tracks physical activity through your smartphone to improve heart health knowledge. You’ll complete brief health surveys and perform simple fitness assessments like the 6-minute walk test using your phone."
           }
         },
         "es" : {
@@ -4202,7 +5789,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You will have the option to enroll in a 2-week physical activity coaching trial. If you choose to join, you’ll experience both personalised and standard coaching messages for 7 days each, helping us learn which approaches better motivate healthy behaviours."
+            "value" : "You have the option to enroll in a 2-week physical activity coaching trial. If you choose to join, you’ll experience both personalised and standard coaching messages for 7 days each, helping us learn which approaches better motivate healthy behaviours."
           }
         },
         "es" : {
@@ -4375,6 +5962,12 @@
             "value" : "Only values from %1$@ to %2$@ are allowed"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only values from %1$@ to %2$@ are allowed"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4385,6 +5978,12 @@
     },
     "Open In Browser" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open In Browser"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4395,6 +5994,12 @@
     },
     "Open Settings" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4405,6 +6010,12 @@
     },
     "Oregon" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oregon"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4415,6 +6026,12 @@
     },
     "Other" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4425,6 +6042,12 @@
     },
     "Other auto-immune disease" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other auto-immune disease"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4435,6 +6058,12 @@
     },
     "Other Tasks" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other Tasks"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4445,6 +6074,12 @@
     },
     "Other Territories" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other Territories"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4455,6 +6090,12 @@
     },
     "Our Study Consent document has been updated since you last signed it%@.\n\nPlease review the new Consent document and sign it again." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Our Study Consent document has been updated since you last signed it%@.\n\nPlease review the new Consent document and sign it again."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4465,6 +6106,12 @@
     },
     "Past 2 Weeks" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Past 2 Weeks"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4475,6 +6122,12 @@
     },
     "Past Data" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Past Data"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4485,6 +6138,12 @@
     },
     "Past Tests" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Past Tests"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4517,6 +6176,12 @@
     },
     "Pennsylvania" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pennsylvania"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4527,6 +6192,12 @@
     },
     "Perform Always Available Task" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perform Always Available Task"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4537,6 +6208,12 @@
     },
     "Perform Task: %@" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perform Task: %@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4547,6 +6224,12 @@
     },
     "Peripheral Vascular Disease" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peripheral Vascular Disease"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4557,6 +6240,12 @@
     },
     "Ph.D., M.D., J.D., etc." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ph.D., M.D., J.D., etc."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4565,9 +6254,31 @@
         }
       }
     },
+    "Please enter a valid email address and try again." : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter a valid email address and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce una dirección de correo electrónico válida e inténtalo de nuevo."
+          }
+        }
+      }
+    },
     "Please select the clause that most closely matches what you do." : {
       "comment" : "adapted from the instructions at https://pmc.ncbi.nlm.nih.gov/articles/PMC5367771/",
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please select the clause that most closely matches what you do."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4578,6 +6289,12 @@
     },
     "Prefer not to state" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer not to state"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4588,6 +6305,12 @@
     },
     "Preferred Notification Time" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferred Notification Time"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4598,6 +6321,12 @@
     },
     "Preferred Workout Types" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferred Workout Types"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4608,6 +6337,12 @@
     },
     "Processing Health and SensorKit Data…" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing Health and SensorKit Data…"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4618,6 +6353,12 @@
     },
     "Processing Sleep Data…" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing Sleep Data…"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4628,6 +6369,12 @@
     },
     "Puerto Rico" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puerto Rico"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4638,6 +6385,12 @@
     },
     "Pulmonary Arterial Hypertension" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulmonary Arterial Hypertension"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4648,6 +6401,12 @@
     },
     "Pulmonary Hypertension" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulmonary Hypertension"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4658,6 +6417,12 @@
     },
     "Questionnaire" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questionnaire"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4668,6 +6433,12 @@
     },
     "Quit 1 to 5 years ago" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit 1 to 5 years ago"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4678,6 +6449,12 @@
     },
     "Quit more than 5 years ago" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit more than 5 years ago"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4688,6 +6465,12 @@
     },
     "Quit within last year, or am using NDS" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit within last year, or am using NDS"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4698,6 +6481,12 @@
     },
     "Race / Ethnicity" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Race / Ethnicity"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5038,6 +6827,12 @@
     },
     "Raynaud's Phenomenon" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raynaud's Phenomenon"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5048,6 +6843,12 @@
     },
     "Reactivate Account" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reactivate Account"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5059,6 +6860,12 @@
     "REACTIVATE_WITHDRAWN_ACCOUNT_MESSAGE" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've previously withdrawn from the My Heart Counts study.\nDo you want to reactivate your account?"
+          }
+        },
+        "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "You've previously withdrawn from the My Heart Counts study.\nDo you want to reactivate your account?"
@@ -5080,6 +6887,12 @@
             "value" : "Reactivate Account"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reactivate Account"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5090,6 +6903,12 @@
     },
     "Read" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5100,6 +6919,12 @@
     },
     "Read Article" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Article"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5110,6 +6935,12 @@
     },
     "Read from Health App" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read from Health App"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5120,6 +6951,12 @@
     },
     "Region" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Region"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5134,28 +6971,12 @@
     "REGION_COMING_SOON_TITLE" : {
       "extractionState" : "stale",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coming Soon"
-          }
-        },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Coming Soon"
+            "value" : "Remote Notifications Registration"
           }
         },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muy pronto"
-          }
-        }
-      }
-    },
-    "Remote Notifications Registration" : {
-      "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5166,6 +6987,12 @@
     },
     "Restart Test" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart Test"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5176,6 +7003,12 @@
     },
     "Retry" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5186,6 +7019,12 @@
     },
     "Review Consent Forms" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Review Consent Forms"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5196,6 +7035,12 @@
     },
     "Review Permissions" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Review Permissions"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5206,6 +7051,12 @@
     },
     "Rheumatoid arthritis" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rheumatoid arthritis"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5216,6 +7067,12 @@
     },
     "Rhode Island" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rhode Island"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5226,6 +7083,12 @@
     },
     "Running" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Running"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5236,6 +7099,12 @@
     },
     "Sample Type" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sample Type"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5246,6 +7115,12 @@
     },
     "Save" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5256,6 +7131,12 @@
     },
     "Score Components" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score Components"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5266,6 +7147,12 @@
     },
     "Score Result" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score Result"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5276,6 +7163,12 @@
     },
     "Score Result: %lld percent" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score Result: %lld percent"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5286,6 +7179,12 @@
     },
     "Scotland (%@)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scotland (%@)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5296,6 +7195,12 @@
     },
     "Select a Region" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a Region"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5306,6 +7211,12 @@
     },
     "Select Comorbidities" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Comorbidities"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5316,6 +7227,12 @@
     },
     "Select Date" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Date"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5326,6 +7243,12 @@
     },
     "Select your State or Territory" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select your State or Territory"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5336,6 +7259,12 @@
     },
     "Selected" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5346,6 +7275,12 @@
     },
     "Selection" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5356,6 +7291,12 @@
     },
     "Selection Checkmark" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection Checkmark"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5366,6 +7307,12 @@
     },
     "Send" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5376,6 +7323,12 @@
     },
     "Send Feedback" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send Feedback"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5386,6 +7339,12 @@
     },
     "SensorKit %@" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SensorKit %@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5396,6 +7355,12 @@
     },
     "Sensors" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensors"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5406,6 +7371,12 @@
     },
     "Series" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Series"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5507,6 +7478,12 @@
     },
     "Some College" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some College"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5517,6 +7494,12 @@
     },
     "Some college or vocational school or associate degree" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some college or vocational school or associate degree"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5527,6 +7510,12 @@
     },
     "South Carolina" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "South Carolina"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5537,6 +7526,12 @@
     },
     "South Dakota" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "South Dakota"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5547,6 +7542,12 @@
     },
     "Sport" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sport"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5557,6 +7558,12 @@
     },
     "Stage 3, 4 or 5" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stage 3, 4 or 5"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5567,6 +7574,12 @@
     },
     "Stage of Change" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stage of Change"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5775,6 +7788,12 @@
     },
     "Start" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5785,6 +7804,12 @@
     },
     "Start Test" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Test"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5795,6 +7820,12 @@
     },
     "Steps" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steps"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5805,6 +7836,12 @@
     },
     "Stop Suggesting This" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop Suggesting This"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5815,6 +7852,12 @@
     },
     "Strength" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5825,6 +7868,12 @@
     },
     "Stroke" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stroke"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5835,6 +7884,12 @@
     },
     "Study not available" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Study not available"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5845,6 +7900,12 @@
     },
     "Study Participation" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Study Participation"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5855,6 +7916,12 @@
     },
     "Success" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Success"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5863,11 +7930,14 @@
         }
       }
     },
-    "Success!" : {
-
-    },
     "Swimming" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swimming"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5878,6 +7948,12 @@
     },
     "Systemic lupus erythematosus (SLE)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemic lupus erythematosus (SLE)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5888,6 +7964,12 @@
     },
     "Systemic Sclerosis or Scleroderma" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemic Sclerosis or Scleroderma"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5898,6 +7980,12 @@
     },
     "Take ECG" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take ECG"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5908,6 +7996,12 @@
     },
     "Take Test" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take Test"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5918,6 +8012,12 @@
     },
     "Tap to learn more…" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to learn more…"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5928,6 +8028,12 @@
     },
     "Tasks" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasks"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5938,6 +8044,12 @@
     },
     "Tennessee" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tennessee"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5948,6 +8060,12 @@
     },
     "Test Complete" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test Complete"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5958,6 +8076,12 @@
     },
     "Testing Support" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testing Support"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5968,6 +8092,12 @@
     },
     "Texas" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Texas"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5976,11 +8106,14 @@
         }
       }
     },
-    "That doesn't seem to be a valid email address; make sure you typed it correctly!" : {
-
-    },
     "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app was able to download the study, but failed to decode it.\nMake sure you have the newest version installed."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5991,6 +8124,12 @@
     },
     "The app was unable to load the study, but we're not sure why" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app was unable to load the study, but we're not sure why"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5999,11 +8138,30 @@
         }
       }
     },
-    "The My Heart Counts study isn't yet available in %@.\n\nAdd your email below and we'll update you when it launches in your region." : {
-
+    "The My Heart Counts study isn't yet available in %@.\n\nAdd your email below and we'll update you when it becomes available in your region." : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The My Heart Counts study isn't yet available in %@.\n\nAdd your email below and we'll update you when it becomes available in your region."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El estudio My Heart Counts aún no está disponible en %@.\n\nIntroduce tu correo electrónico y te avisaremos cuando esté disponible en tu región."
+          }
+        }
+      }
     },
     "The test was cancelled" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The test was cancelled"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6014,6 +8172,12 @@
     },
     "The Timed Walking Test requires read access to Motion and Fitness Data." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Timed Walking Test requires read access to Motion and Fitness Data."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6024,6 +8188,12 @@
     },
     "Time Asleep" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Asleep"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6034,6 +8204,12 @@
     },
     "Time Zone" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Zone"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6044,6 +8220,12 @@
     },
     "Timed Walking/Running Tests" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timed Walking/Running Tests"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6120,6 +8302,12 @@
     },
     "Today" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6130,6 +8318,12 @@
     },
     "Today's Tasks" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's Tasks"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6140,6 +8334,12 @@
     },
     "Total Household Income" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Household Income"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6150,6 +8350,12 @@
     },
     "Transient Ischemic Attack (TIA)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transient Ischemic Attack (TIA)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6160,6 +8366,12 @@
     },
     "True" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "True"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6170,6 +8382,12 @@
     },
     "Trust Territories" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trust Territories"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6180,6 +8398,12 @@
     },
     "UK Region" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UK Region"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6190,6 +8414,12 @@
     },
     "Unable to find Questionnaire" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to find Questionnaire"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6200,6 +8430,12 @@
     },
     "Unable to load data" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load data"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6210,6 +8446,12 @@
     },
     "Unable to save" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to save"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6220,6 +8462,12 @@
     },
     "Understanding Your Heart Health Score" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Understanding Your Heart Health Score"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6230,6 +8478,12 @@
     },
     "Unenroll" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unenroll"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6240,6 +8494,12 @@
     },
     "US State / Region" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "US State / Region"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6250,6 +8510,12 @@
     },
     "US State / Territory" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "US State / Territory"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6260,6 +8526,12 @@
     },
     "Use this option to auto-fill Blood Type, Height, Weight, Date of Birth, and Biological Sex, by reading each from the Health app, if available.\nAlternatively, you can also tap the respective fields below to manually enter a value, or to override the value read from the Health app." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use this option to auto-fill Blood Type, Height, Weight, Date of Birth, and Biological Sex, by reading each from the Health app, if available.\nAlternatively, you can also tap the respective fields below to manually enter a value, or to override the value read from the Health app."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6270,6 +8542,12 @@
     },
     "Utah" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utah"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6280,6 +8558,12 @@
     },
     "Value" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Value"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6290,6 +8574,12 @@
     },
     "Vermont" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vermont"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6300,6 +8590,12 @@
     },
     "Virgin Islands" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virgin Islands"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6310,6 +8606,12 @@
     },
     "Virginia" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virginia"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6320,6 +8622,12 @@
     },
     "Vocational Training" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocational Training"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6330,6 +8638,12 @@
     },
     "Vocational training / apprenticeship / diploma" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocational training / apprenticeship / diploma"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6340,6 +8654,12 @@
     },
     "Wales (%@)" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wales (%@)"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6350,6 +8670,12 @@
     },
     "Walking" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6360,6 +8686,12 @@
     },
     "Warning Sign" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warning Sign"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6370,6 +8702,12 @@
     },
     "Washington" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Washington"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6378,11 +8716,30 @@
         }
       }
     },
-    "We'll let you know when the study becomes available in your region!" : {
-
+    "We've saved your email and will notify you when My Heart Counts becomes available in your region." : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We've saved your email and will notify you when My Heart Counts becomes available in your region."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hemos guardado tu correo electrónico y te avisaremos cuando My Heart Counts esté disponible en tu región."
+          }
+        }
+      }
     },
     "Weight" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6393,6 +8750,12 @@
     },
     "Welcome to My Heart Counts" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to My Heart Counts"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6412,7 +8775,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your involvement will help researchers from Imperial understand how your previous, current and future levels of physical activity influence your your overall health today. You will also help us test whether personalised digital coaching can support improving your physical activity and health in the future."
+            "value" : "Your involvement helps Imperial researchers understand how personalised digital coaching can improve physical activity and your overall health today and in the future."
           }
         },
         "es" : {
@@ -6434,7 +8797,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We have significantly re-designed one of the first research study smartphone applications."
+            "value" : "Experience the re-designed version of one of the largest research study applications ever."
           }
         },
         "es" : {
@@ -6456,7 +8819,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Participate entirely online and control  which data you are sharing securely directly from your iPhone."
+            "value" : "Participate entirely online, securely sharing your activity data directly from your iPhone and Apple Watch."
           }
         },
         "es" : {
@@ -6491,6 +8854,12 @@
     },
     "West Virginia" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "West Virginia"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6501,6 +8870,12 @@
     },
     "What country do you currently live in?" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What country do you currently live in?"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6511,6 +8886,12 @@
     },
     "What happens next:" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What happens next:"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6521,6 +8902,12 @@
     },
     "Wisconsin" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wisconsin"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6531,6 +8918,12 @@
     },
     "Withdraw" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Withdraw"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6541,6 +8934,12 @@
     },
     "Withdraw from Study" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Withdraw from Study"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6551,6 +8950,12 @@
     },
     "Workout Preference" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout Preference"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6583,6 +8988,12 @@
     },
     "Wyoming" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyoming"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6593,6 +9004,12 @@
     },
     "Yes" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6603,6 +9020,12 @@
     },
     "Yes, Caribbean Hispanic, including Cuban and Puerto Rican" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, Caribbean Hispanic, including Cuban and Puerto Rican"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6613,6 +9036,12 @@
     },
     "Yes, European Hispanic, including Spanish and Portuguese, Hispanic, Latina" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, European Hispanic, including Spanish and Portuguese, Hispanic, Latina"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6623,6 +9052,12 @@
     },
     "Yes, Mexican, Mexican American, or Chicano" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, Mexican, Mexican American, or Chicano"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6633,6 +9068,12 @@
     },
     "Yes, other Hispanic, Latino" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, other Hispanic, Latino"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6643,6 +9084,12 @@
     },
     "Yes, South American Hispanic" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, South American Hispanic"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6653,6 +9100,12 @@
     },
     "Yesterday" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yesterday"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6663,6 +9116,12 @@
     },
     "Yoga / Pilates" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yoga / Pilates"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6673,6 +9132,12 @@
     },
     "You can change this in the iOS Settings app, under Privacy & Security → Health → My Heart Counts" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can change this in the iOS Settings app, under Privacy & Security → Health → My Heart Counts"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6683,6 +9148,12 @@
     },
     "You can enable or disable individual sensors in the iOS Settings app." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can enable or disable individual sensors in the iOS Settings app."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6693,6 +9164,12 @@
     },
     "You haven't granted My Heart Counts permission to add data to HealthKit for the following data types:\n%@" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven't granted My Heart Counts permission to add data to HealthKit for the following data types:\n%@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6703,6 +9180,12 @@
     },
     "You're All Set" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're All Set"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6711,8 +9194,30 @@
         }
       }
     },
+    "You're on the List" : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're on the List"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estás en la lista"
+          }
+        }
+      }
+    },
     "Your %@ is in progress." : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your %@ is in progress."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6723,6 +9228,12 @@
     },
     "Your Account" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Account"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6733,6 +9244,12 @@
     },
     "Your ECG has successfully been recorded" : {
       "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your ECG has successfully been recorded"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
