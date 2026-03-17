@@ -90,6 +90,7 @@ jobs:
           fi
   vars:
     name: Inject Environment Variables In Deployment Workflow
+    needs: determineenvironment
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.script.outputs.version }}
