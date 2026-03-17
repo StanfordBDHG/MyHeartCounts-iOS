@@ -17,6 +17,7 @@ APP_CONFIG = {
   default_version_name: "4.0.0",
   default_release_notes: "Bug fixes and performance improvements.",
   scheme: "MyHeartCounts",
+  xcodeproj: "MyHeartCounts.xcodeproj",
   plist_path: "MyHeartCounts/Supporting Files/Info.plist"
 }.freeze
 
@@ -80,7 +81,7 @@ platform :ios do
       skip_open_summary: true
     )
     
-    # Workaround for https://github.com/fastlane/fastlane/issues/21759 and 
+    # Workaround for https://github.com/fastlane/fastlane/issues/21759 
     Dir.glob("./screenshots/**/iPhone 17 Pro Max-*.png").each do |file|
       sh("sips --resampleHeightWidth 2796 1290 '#{file}'")
     end
@@ -175,18 +176,36 @@ platform :ios do
 
     releasenotes = releasenotes.gsub('\u2019', "'")
 
-    if environment == "production"
+    currentversion = get_version_number(
+      xcodeproj: APP_CONFIG[:xcodeproj],
+      target: APP_CONFIG[:scheme]
+    )
+    UI.message("Current version: #{currentversion}")
+
+    if Gem::Version.new(versionname) > Gem::Version.new(currentversion)
       increment_version_number(
+        xcodeproj: APP_CONFIG[:xcodeproj],
         version_number: versionname
       )
+      UI.message("Version bumped to #{versionname}.")
+    else
+      UI.message("No version bump needed. Current version (#{currentversion}) is greater than or equal to desired version (#{versionname}).")
     end
     
     signin
-    latest_build_number = latest_testflight_build_number(
-      app_identifier: appidentifier
-    )
+    
+    buildnumber = options[:buildnumber].to_s.strip
+    if buildnumber.empty?
+      latest_build_number = latest_testflight_build_number(
+        app_identifier: appidentifier
+      )
+      buildnumber = latest_build_number + 1
+      UI.message("No build number provided. Incrementing to #{buildnumber}.")
+    else
+      UI.message("Using provided build number: #{buildnumber}.")
+    end
     increment_build_number(
-      build_number: latest_build_number + 1
+      build_number: buildnumber
     )
 
     if strip_sensorkit_entitlement

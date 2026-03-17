@@ -59,10 +59,16 @@
             "value" : "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este mensaje no debería aparecer nunca. Por favor, ajuste esto cuando comience a utilizar información de la cámara. Debemos incluirlo aquí porque ResearchKit tiene la posibilidad de usarla y no incluirlo genera un error en AppStore Connect."
+            "value" : "This message should never appear. Please adjust this when you start using camera information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
           }
         }
       }
@@ -148,6 +154,18 @@
             "state" : "new",
             "value" : "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
         }
       }
     },
@@ -158,6 +176,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "This message should never appear. Please adjust this when you start using location information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
           }
         }
@@ -172,6 +202,18 @@
             "state" : "new",
             "value" : "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
           }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using microphone information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
         }
       }
     },
@@ -182,6 +224,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "My Heart Counts uses motion data to conduct a timed walking test"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "My Heart Counts uses motion data to conduct a timed walking test"
           }
         },
@@ -200,6 +248,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "https://myheartcounts.su.domains/privacy-policy/"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "https://myheartcounts.su.domains/privacy-policy/"
           }
         },
@@ -242,7 +296,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "This message should never appear. Please adjust this when you start using speecg information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+            "value" : "This message should never appear. Please adjust this when you start using speech information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using speech information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This message should never appear. Please adjust this when you start using speech information. We have to put this in here as ResearchKit has the possibility to use it and not putting it here returns an error on AppStore Connect."
           }
         }
       }
@@ -356,8 +422,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "El ECG de SensorKit proporciona las lecturas cardíacas más detalladas y precisas posibles."
+            "state" : "translated",
+            "value" : "SensorKit ECG proporciona las lecturas cardíacas más detalladas y precisas posibles."
           }
         }
       }
