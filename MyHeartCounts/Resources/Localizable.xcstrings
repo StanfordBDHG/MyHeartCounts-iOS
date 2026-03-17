@@ -6966,21 +6966,17 @@
       }
     },
     "Region Not Yet Supported" : {
-
-    },
-    "REGION_COMING_SOON_TITLE" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remote Notifications Registration"
+            "value" : "Region Not Yet Supported"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Registro de Notificaciones Remotas"
+            "value" : "Región aún no compatible"
           }
         }
       }
@@ -7386,7 +7382,20 @@
       }
     },
     "Setting Up Test Environment" : {
-      "shouldTranslate" : false
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setting Up Test Environment"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configuración del entorno de prueba"
+          }
+        }
+      }
     },
     "SEX_FEMALE" : {
       "localizations" : {

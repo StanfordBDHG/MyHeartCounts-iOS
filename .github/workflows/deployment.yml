@@ -29,6 +29,11 @@ on:
           The semantic version of the app that should be released.
         required: true
         type: string
+      buildnumber:
+        description: |
+          Optional build number to use for deployment.
+        required: false
+        type: string
       releasenotes:
         description: |
           Release notes of what changed in this version.
@@ -47,6 +52,11 @@ on:
         description: |
           The semantic version of the app that should be released.
         required: true
+        type: string
+      buildnumber:
+        description: |
+          Optional build number to use for deployment.
+        required: false
         type: string
       releasenotes:
         description: |
@@ -80,6 +90,7 @@ jobs:
           fi
   vars:
     name: Inject Environment Variables In Deployment Workflow
+    needs: determineenvironment
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.script.outputs.version }}
@@ -95,15 +106,22 @@ jobs:
         run: |
           echo "Injecting Environment Variables In Deployment Workflow ..."
           if [[ -z "${{ inputs.version }}" ]]; then
-            echo "version=${{ steps.get-latest-tag.outputs.tag }}" >> $GITHUB_OUTPUT
-            echo "version: ${{ steps.get-latest-tag.outputs.tag }}"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "${{ steps.get-latest-tag.outputs.tag }}"
+
+            PATCH=$((PATCH + 1))
+            NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+            echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "version: $NEW_VERSION"
           else
             echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
             echo "version: ${{ inputs.version }}"
           fi
+          echo "buildnumber: ${{ inputs.buildnumber }}"
           echo "releasenotes: ${{ inputs.releasenotes }}"
   test:
     name: Build and Test
+    needs: determineenvironment
     uses: ./.github/workflows/build-and-test.yml
     permissions:
       contents: read
@@ -119,5 +137,5 @@ jobs:
       environment: ${{ needs.determineenvironment.outputs.environment }}
       googleserviceinfoplistpath: 'MyHeartCounts/Supporting Files/GoogleService-Info.plist'
       setupsigning: true
-      fastlanelane: deploy environment:"${{ needs.determineenvironment.outputs.environment }}" versionname:"${{ needs.vars.outputs.version }}" releasenotes:"${{ inputs.releasenotes }}" strip_sensorkit_entitlement:false
+      fastlanelane: deploy environment:"${{ needs.determineenvironment.outputs.environment }}" versionname:"${{ needs.vars.outputs.version }}" releasenotes:"${{ inputs.releasenotes }}" ${{ inputs.buildnumber && format('buildnumber:"{0}"', inputs.buildnumber) || '' }} strip_sensorkit_entitlement:false
     secrets: inherit
