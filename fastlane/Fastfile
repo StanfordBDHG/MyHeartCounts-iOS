@@ -17,6 +17,7 @@ APP_CONFIG = {
   default_version_name: "4.0.0",
   default_release_notes: "Bug fixes and performance improvements.",
   scheme: "MyHeartCounts",
+  xcodeproj: "MyHeartCounts.xcodeproj",
   plist_path: "MyHeartCounts/Supporting Files/Info.plist"
 }.freeze
 
@@ -175,11 +176,15 @@ platform :ios do
 
     releasenotes = releasenotes.gsub('\u2019', "'")
 
-    currentversion = get_version_number()
+    currentversion = get_version_number(
+      xcodeproj: APP_CONFIG[:xcodeproj],
+      target: APP_CONFIG[:scheme]
+    )
     UI.message("Current version: #{currentversion}")
 
     if Gem::Version.new(versionname) > Gem::Version.new(currentversion)
       increment_version_number(
+        xcodeproj: APP_CONFIG[:xcodeproj],
         version_number: versionname
       )
       UI.message("Version bumped to #{versionname}.")
