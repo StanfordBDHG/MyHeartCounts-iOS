@@ -200,9 +200,10 @@ struct AccountSheet: View {
 
 extension AccountSheet {
     private struct AboutRow: View {
-        @Environment(\.colorScheme)
-        private var colorScheme
-        
+        // swiftlint:disable attributes
+        @Environment(\.colorScheme) private var colorScheme
+        @Environment(Account.self) private var account
+        // swiftlint:enable attributes
         @StudyManagerQuery private var enrollments: [StudyEnrollment]
         
         @State private var showExtendedInfo = false
@@ -210,38 +211,38 @@ extension AccountSheet {
         var body: some View {
             LabeledContent {
                 let bundle = Bundle.main
-                if !showExtendedInfo {
-                    Text(bundle.appVersion)
-                } else {
-                    Text(verbatim: "\(bundle.appVersion) (\(bundle.appBuildNumber ?? -1))")
-                }
+                Text(bundle.appVersion)
             } label: {
-                Label(symbol: .infoCircle) {
-                    VStack(alignment: .leading) {
-                        Text("My Heart Counts")
-                        if showExtendedInfo {
-                            extendedInfo
+                Label("My Heart Counts", systemSymbol: .infoCircle)
+                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+            }
+            .onTapGesture(count: 5) {
+                showExtendedInfo = true
+            }
+            .sheet(isPresented: $showExtendedInfo) {
+                NavigationStack {
+                    Form {
+                        Section {
+                            let bundle = Bundle.main
+                            LabeledContent("Version" as String, value: bundle.appVersion)
+                            LabeledContent("Build" as String, value: bundle.appBuildNumber ?? -1, format: .number)
+                        }
+                        Section {
+                            LabeledContent("Study Revision" as String, value: enrollments.first?.studyRevision.description ?? "n/a")
+                        }
+                        Section {
+                            LabeledContent("Project ID" as String, value: FirebaseApp.app()?.options.projectID ?? "n/a")
+                            LabeledContent("Account ID" as String, value: account.details?.accountId ?? "n/a")
+                        }
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            DismissButton()
                         }
                     }
                 }
-                .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                .presentationDetents([.medium])
             }
-            .onTapGesture(count: 3) {
-                showExtendedInfo = true
-            }
-        }
-        
-        private var extendedInfo: some View {
-            HStack {
-                if let firebaseProjectId = FirebaseApp.app()?.options.projectID {
-                    Text(firebaseProjectId)
-                }
-                if let enrollment = enrollments.first {
-                    Text(verbatim: "rev=\(enrollment.studyRevision)")
-                }
-            }
-            .font(.footnote)
-            .foregroundStyle(.secondary)
         }
     }
 }
