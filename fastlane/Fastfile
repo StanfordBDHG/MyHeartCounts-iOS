@@ -226,6 +226,7 @@ platform :ios do
         app_identifier: appidentifier,
         release_notes: {
           'en-US' => releasenotes,
+          'en-GB' => releasenotes,
           'es-ES' => releasenotes
         },
         overwrite_screenshots: true,
