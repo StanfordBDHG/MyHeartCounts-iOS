@@ -11,17 +11,19 @@ import Spezi
 import SpeziAccount
 
 
-final class LanguageTracking: Module, @unchecked Sendable {
+final class LanguageTracking: ServiceModule, @unchecked Sendable {
     @Dependency(Account.self)
     private var account: Account?
-
-    func configure() {
-        Task {
+    
+    func run() async {
+        try? await updateLanguageInfo()
+        let localeChanges = NotificationCenter.default.notifications(named: NSLocale.currentLocaleDidChangeNotification)
+        for await _ in localeChanges {
             try? await updateLanguageInfo()
         }
     }
-
-    func updateLanguageInfo() async throws {
+    
+    private func updateLanguageInfo() async throws {
         guard let account else {
             return
         }
@@ -31,3 +33,4 @@ final class LanguageTracking: Module, @unchecked Sendable {
         try await account.accountService.updateAccountDetails(.init(modifiedDetails: newDetails))
     }
 }
+
