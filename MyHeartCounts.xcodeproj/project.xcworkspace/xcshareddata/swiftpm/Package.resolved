@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziConsent.git",
       "state" : {
-        "revision" : "147f2153b177bc181fa6f2383b0f75dc8b51c84d",
-        "version" : "0.1.3"
+        "revision" : "831d43671bbfc5a3d0380f7adf2584b06736fa2e",
+        "version" : "0.1.4"
       }
     },
     {
@@ -321,8 +321,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziStorage.git",
       "state" : {
-        "revision" : "4b700b9ae19e0e003c3102f899adc665b955d7dc",
-        "version" : "2.1.3"
+        "revision" : "79ce6a23f61d38b175b8ee681cc74d7fc93fb8cb",
+        "version" : "2.1.4"
       }
     },
     {
@@ -339,8 +339,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziViews.git",
       "state" : {
-        "revision" : "ddf43847a434b122fd97582b5182bb88f858c01b",
-        "version" : "1.12.11"
+        "revision" : "236fd063407aaba2a34f3f61b3034dd3a01f22c5",
+        "version" : "1.12.14"
       }
     },
     {
