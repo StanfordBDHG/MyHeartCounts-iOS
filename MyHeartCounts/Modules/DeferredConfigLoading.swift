@@ -228,6 +228,7 @@ enum DeferredConfigLoading {
                         .manual(\.dateOfBirth),
                         .manual(\.fcmToken),
                         .manual(\.timeZone),
+                        .manual(\.language),
                         .manual(\.hasWithdrawnFromStudy),
                         .manual(\.enableDebugMode),
                         .manual(\.mhcGenderIdentity),
@@ -268,6 +269,7 @@ enum DeferredConfigLoading {
                 }
                 baseModules(preferredLocale: preferredLocale)
                 TimeZoneTracking()
+                LanguageTracking()
             }
         } catch {
             logger.error("""

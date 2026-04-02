@@ -115,6 +115,9 @@ extension AccountDetails {
     
     @AccountKey(id: "timeZone", name: "Time Zone", as: String.self)
     var timeZone: String?
+
+    @AccountKey(id: "language", name: "Language", as: String.self)
+    var language: String?
     
     @AccountKey(
         id: "mostRecentOnboardingStep",
@@ -131,7 +134,7 @@ extension AccountDetails {
 @KeyEntry(
     \.hasWithdrawnFromStudy,
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
-    \.fcmToken, \.enableDebugMode, \.timeZone, \.mostRecentOnboardingStep,
+    \.fcmToken, \.enableDebugMode, \.timeZone, \.language, \.mostRecentOnboardingStep,
     \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
 )
 extension AccountKeys {}
