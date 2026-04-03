@@ -78,7 +78,9 @@ extension MHCSensorSampleUploadStrategy {
         
         observation.addMHCAppAsSource()
         try observation.apply(.sensorKitSourceDevice, input: deviceInfo)
-        try observation.apply(.sampleUploadTimeZone)
+        for builder in MyHeartCountsStandard.defaultHealthObservationFHIRExtensions {
+            try builder.apply(typeErasedInput: self, to: observation)
+        }
         try postprocessObservation(observation)
         
         let sensorCollection = try await standard.firebaseConfiguration.userDocumentReference

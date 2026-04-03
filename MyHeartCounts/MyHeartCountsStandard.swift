@@ -85,6 +85,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
         do {
             try await studyManager.informAboutStudies([studyBundle])
+            await Self._updateCurrentEnrollmentInfo(studyManager)
         } catch {
             logger.error("\(error)")
         }
@@ -116,6 +117,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             _Concurrency.Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
             }
+            await Self._updateCurrentEnrollmentInfo(studyManager)
         } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
             // should be unreachable, but we'll handle this as a non-error just to be safe.
         } catch {
