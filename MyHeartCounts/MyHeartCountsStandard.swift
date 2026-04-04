@@ -84,7 +84,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         }
         defer {
             // we still want this to happen if the study bundle loading below failed
-            Swift::Task {
+            _Concurrency.Task {
                 await Self._updateCurrentEnrollmentInfo(studyManager)
             }
         }
