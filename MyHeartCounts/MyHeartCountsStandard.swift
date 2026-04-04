@@ -79,13 +79,21 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     }
     
     func updateStudyDefinition() async {
-        guard let studyManager, let studyBundle = try? await studyLoader.update() else {
+        guard let studyManager else {
+            return
+        }
+        defer {
+            // we still want this to happen if the study bundle loading below failed
+            Swift::Task {
+                await Self._updateCurrentEnrollmentInfo(studyManager)
+            }
+        }
+        guard let studyBundle = try? await studyLoader.update() else {
             return
         }
         logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
         do {
             try await studyManager.informAboutStudies([studyBundle])
-            await Self._updateCurrentEnrollmentInfo(studyManager)
         } catch {
             logger.error("\(error)")
         }
