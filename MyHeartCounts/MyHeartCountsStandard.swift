@@ -79,7 +79,16 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     }
     
     func updateStudyDefinition() async {
-        guard let studyManager, let studyBundle = try? await studyLoader.update() else {
+        guard let studyManager else {
+            return
+        }
+        defer {
+            // we still want this to happen if the study bundle loading below failed
+            _Concurrency.Task {
+                await Self._updateCurrentEnrollmentInfo(studyManager)
+            }
+        }
+        guard let studyBundle = try? await studyLoader.update() else {
             return
         }
         logger.notice("Informing StudyManager about v\(studyBundle.studyDefinition.studyRevision) of MHC studyBundle")
@@ -116,6 +125,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             _Concurrency.Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
             }
+            await Self._updateCurrentEnrollmentInfo(studyManager)
         } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
             // should be unreachable, but we'll handle this as a non-error just to be safe.
         } catch {

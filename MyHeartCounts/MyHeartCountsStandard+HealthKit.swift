@@ -103,6 +103,11 @@ extension MyHeartCountsStandard: HealthKitConstraint {
 
 
 extension MyHeartCountsStandard {
+    // NOTE: This is in fact concurrency-safe; we're just missing a `FHIRExtensionBuilderProtocol: Sendable` requirement in HKoF.
+    nonisolated(unsafe) static let defaultHealthObservationFHIRExtensions: [any FHIRExtensionBuilderProtocol] = [
+        .sampleUploadTimeZone, .mhcStudyRevision
+    ]
+    
     func uploadHealthObservation(
         _ observation: some HealthObservation & Sendable,
         postprocessResource: @Sendable (FHIRResource) throws -> Void = { _ in }
@@ -134,7 +139,7 @@ extension MyHeartCountsStandard {
                     voltageMeasurements: voltages.map { (time: $0.timeOffset, value: $0.voltage) },
                     withMapping: .default,
                     issuedDate: issuedDate,
-                    extensions: [.sampleUploadTimeZone]
+                    extensions: Self.defaultHealthObservationFHIRExtensions
                 )
                 try postprocessResource(FHIRResource(observation))
                 return AnyEncodable(observation)
@@ -154,7 +159,11 @@ extension MyHeartCountsStandard {
                 try postprocessResource(resource)
                 return AnyEncodable(resource)
             default:
-                let resource = try observation.resource(withMapping: .default, issuedDate: issuedDate, extensions: [.sampleUploadTimeZone])
+                let resource = try observation.resource(
+                    withMapping: .default,
+                    issuedDate: issuedDate,
+                    extensions: Self.defaultHealthObservationFHIRExtensions
+                )
                 try postprocessResource(FHIRResource(resource.get()))
                 return AnyEncodable(resource)
             }
@@ -272,6 +281,13 @@ extension FHIRExtensionUrls {
     /// Url of a FHIR Extension containing the user's time zone when uploading a FHIR `Observation`.
     nonisolated(unsafe) static let sampleUploadTimeZone: ModelsR4.FHIRPrimitive<_> = "https://bdh.stanford.edu/fhir/defs/sampleUploadTimeZone".asFHIRURIPrimitive()!
     // swiftlint:disable:previous force_unwrapping
+    
+    // SAFETY: this is in fact safe, since the FHIRPrimitive's `extension` property is empty.
+    // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
+    // it also never can be mutated to contain any.
+    /// Url of a FHIR Extension containing the user's enrollment info uploading a FHIR `Observation`.
+    nonisolated(unsafe) static let mhcStudyEnrollmentInfo: ModelsR4.FHIRPrimitive<_> = "https://myheartcounts.stanford.edu/fhir/StructureDefinition/study-enrollment".asFHIRURIPrimitive()!
+    // swiftlint:disable:previous force_unwrapping
 }
 
 extension FHIRExtensionBuilderProtocol where Self == FHIRExtensionBuilder<Void> {
@@ -281,6 +297,28 @@ extension FHIRExtensionBuilderProtocol where Self == FHIRExtensionBuilder<Void> 
                 url: FHIRExtensionUrls.sampleUploadTimeZone,
                 value: .string(TimeZone.current.identifier.asFHIRStringPrimitive())
             )
+            observation.appendExtension(ext, replaceAllExistingWithSameUrl: true)
+        }
+    }
+    
+    
+    static var mhcStudyRevision: Self {
+        .init { observation in
+            guard let enrollmentInfo = MyHeartCountsStandard.currentEnrollmentInfo else {
+                return
+            }
+            let extUrl = FHIRExtensionUrls.mhcStudyEnrollmentInfo
+            let ext = Extension(url: extUrl)
+            ext.extension = [
+                Extension(
+                    url: extUrl.appending(component: "study-id"),
+                    value: .string(enrollmentInfo.studyId.asFHIRStringPrimitive())
+                ),
+                Extension(
+                    url: extUrl.appending(component: "study-revision"),
+                    value: .integer(Int(enrollmentInfo.studyRevision).asFHIRIntegerPrimitive())
+                )
+            ]
             observation.appendExtension(ext, replaceAllExistingWithSameUrl: true)
         }
     }

@@ -225,7 +225,7 @@ extension AccountSheet {
                         Section {
                             let bundle = Bundle.main
                             LabeledContent("Version" as String, value: bundle.appVersion)
-                            LabeledContent("Build" as String, value: bundle.appBuildNumber ?? -1, format: .number)
+                            LabeledContent("Build" as String, value: bundle.appBuildNumber?.description ?? "n/a")
                         }
                         Section {
                             LabeledContent("Study Revision" as String, value: enrollments.first?.studyRevision.description ?? "n/a")
