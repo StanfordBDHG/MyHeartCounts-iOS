@@ -285,7 +285,7 @@ extension FHIRExtensionUrls {
     // SAFETY: this is in fact safe, since the FHIRPrimitive's `extension` property is empty.
     // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
     // it also never can be mutated to contain any.
-    /// Url of a FHIR Extension containing the user's time zone when uploading a FHIR `Observation`.
+    /// Url of a FHIR Extension containing the user's enrollment info uploading a FHIR `Observation`.
     nonisolated(unsafe) static let mhcStudyEnrollmentInfo: ModelsR4.FHIRPrimitive<_> = "https://myheartcounts.stanford.edu/fhir/StructureDefinition/study-enrollment".asFHIRURIPrimitive()!
     // swiftlint:disable:previous force_unwrapping
 }
