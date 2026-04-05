@@ -97,7 +97,6 @@
 		80A0083F2DEFD0B300A446BA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A0083E2DEFD0B300A446BA /* Collections */; };
 		80A008462DEFD0F900A446BA /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 80A008452DEFD0F900A446BA /* OrderedCollections */; };
 		80A72D7D2F377E90006B6EAD /* SensorKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80A72D7C2F377E90006B6EAD /* SensorKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		80A72DAB2F378A71006B6EAD /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80A72DAA2F378A71006B6EAD /* SpeziSensorKit */; };
 		80A8F7F32EDB222400944D94 /* MHCStudyDefinitionExporter in Frameworks */ = {isa = PBXBuildFile; productRef = 80A8F7F22EDB222400944D94 /* MHCStudyDefinitionExporter */; };
 		80B8A2132EC106A100F0E453 /* SpeziFHIR in Frameworks */ = {isa = PBXBuildFile; productRef = 80B8A2122EC106A100F0E453 /* SpeziFHIR */; };
 		80B8A2152EC106A100F0E453 /* SpeziFHIRHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80B8A2142EC106A100F0E453 /* SpeziFHIRHealthKit */; };
@@ -105,6 +104,7 @@
 		80B8A2382EC1336F00F0E453 /* ModelsR4 in Frameworks */ = {isa = PBXBuildFile; productRef = 80B8A2372EC1336F00F0E453 /* ModelsR4 */; };
 		80BE06542DCF3A6D00171114 /* SwiftPackageList in Frameworks */ = {isa = PBXBuildFile; productRef = 80BE06532DCF3A6D00171114 /* SwiftPackageList */; };
 		80D41BE92E25A9BC00D5EAAB /* ResearchKitOnFHIR in Frameworks */ = {isa = PBXBuildFile; productRef = 80D41BE82E25A9BC00D5EAAB /* ResearchKitOnFHIR */; };
+		80D596DC2F8303720029318F /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80D596DB2F8303720029318F /* SpeziSensorKit */; };
 		80E08A742DD32D9F00E80C11 /* SpeziHealthKitBulkExport in Frameworks */ = {isa = PBXBuildFile; productRef = 80E08A732DD32D9F00E80C11 /* SpeziHealthKitBulkExport */; };
 		80E0E3162EB27C4A00F445B6 /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80E0E3152EB27C4A00F445B6 /* SpeziSensorKit */; };
 		80E6B9342EFAC1960037D4BB /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80E6B9332EFAC1960037D4BB /* SpeziHealthKit */; };
@@ -330,9 +330,9 @@
 				A94DDFFD2CBD1190004930BD /* SpeziNotifications in Frameworks */,
 				807669772D772C40001B980B /* HashTreeCollections in Frameworks */,
 				809AEC3B2EA2BC8500997484 /* SpeziLocalStorage in Frameworks */,
+				80D596DC2F8303720029318F /* SpeziSensorKit in Frameworks */,
 				2FB099B62A875E2B00B20952 /* HealthKitOnFHIR in Frameworks */,
 				80E774A02D81B4B20035A0EE /* SpeziFirebaseAccountStorage in Frameworks */,
-				80A72DAB2F378A71006B6EAD /* SpeziSensorKit in Frameworks */,
 				8043DD7A2DC0CBE500E0DF01 /* FirebaseMessaging in Frameworks */,
 				800474712EF066E100585753 /* SpeziFirestore in Frameworks */,
 				80B8A2382EC1336F00F0E453 /* ModelsR4 in Frameworks */,
@@ -545,11 +545,11 @@
 				80E6B9352EFAC1960037D4BB /* SpeziHealthKitBulkExport */,
 				80E6B9372EFAC1960037D4BB /* SpeziHealthKitUI */,
 				807423532F28E15E00113313 /* MHCStudyDefinitionExporter */,
-				80A72DAA2F378A71006B6EAD /* SpeziSensorKit */,
 				8047A8172F62054E0094AAF3 /* SpeziStudy */,
 				8047A8192F62054E0094AAF3 /* SpeziStudyDefinition */,
 				8047A8222F6205750094AAF3 /* SpeziFoundation */,
 				8047A8242F6205750094AAF3 /* SpeziLocalization */,
+				80D596DB2F8303720029318F /* SpeziSensorKit */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -703,9 +703,9 @@
 				804D89382EF4C0030037E431 /* XCRemoteSwiftPackageReference "SpeziAccount" */,
 				80E6B9322EFAC1960037D4BB /* XCRemoteSwiftPackageReference "SpeziHealthKit" */,
 				809576622F350A3200AF4571 /* XCRemoteSwiftPackageReference "XCTHealthKit" */,
-				80A72DA92F378A71006B6EAD /* XCRemoteSwiftPackageReference "SpeziSensorKit" */,
 				8047A8162F62054E0094AAF3 /* XCRemoteSwiftPackageReference "SpeziStudy" */,
 				8047A8212F6205740094AAF3 /* XCRemoteSwiftPackageReference "SpeziFoundation" */,
+				80D596DA2F8303720029318F /* XCRemoteSwiftPackageReference "SpeziSensorKit" */,
 			);
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
 			projectDirPath = "";
@@ -1426,14 +1426,6 @@
 				minimumVersion = 3.1.4;
 			};
 		};
-		80A72DA92F378A71006B6EAD /* XCRemoteSwiftPackageReference "SpeziSensorKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.6.2;
-			};
-		};
 		80B8A2112EC106A100F0E453 /* XCRemoteSwiftPackageReference "SpeziFHIR" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordSpezi/SpeziFHIR.git";
@@ -1464,6 +1456,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.5;
+			};
+		};
+		80D596DA2F8303720029318F /* XCRemoteSwiftPackageReference "SpeziSensorKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordSpezi/SpeziSensorKit.git";
+			requirement = {
+				kind = revision;
+				revision = 920479e3f0ae150751b2c4500a2793ff8a68c7e9;
 			};
 		};
 		80DCC0F42E060FAA008B6E01 /* XCRemoteSwiftPackageReference "SpeziOnboarding" */ = {
@@ -1872,11 +1872,6 @@
 			package = 8076696F2D772C40001B980B /* XCRemoteSwiftPackageReference "swift-collections" */;
 			productName = OrderedCollections;
 		};
-		80A72DAA2F378A71006B6EAD /* SpeziSensorKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 80A72DA92F378A71006B6EAD /* XCRemoteSwiftPackageReference "SpeziSensorKit" */;
-			productName = SpeziSensorKit;
-		};
 		80A81C682D7C89D400444A17 /* SpeziStudy */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziStudy;
@@ -1924,6 +1919,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 80D41BE72E25A9BC00D5EAAB /* XCRemoteSwiftPackageReference "ResearchKitOnFHIR" */;
 			productName = ResearchKitOnFHIR;
+		};
+		80D596DB2F8303720029318F /* SpeziSensorKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80D596DA2F8303720029318F /* XCRemoteSwiftPackageReference "SpeziSensorKit" */;
+			productName = SpeziSensorKit;
 		};
 		80DCC0F52E060FAA008B6E01 /* SpeziConsent */ = {
 			isa = XCSwiftPackageProductDependency;

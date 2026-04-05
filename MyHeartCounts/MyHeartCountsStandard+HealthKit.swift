@@ -168,7 +168,7 @@ extension MyHeartCountsStandard {
                 return AnyEncodable(resource)
             }
         }
-        let supportsZstdUpload = !HKClinicalType.allKnownClinicalRecords.contains { $0.identifier == sampleTypeIdentifier }
+        let supportsZstdUpload = !HKClinicalTypeIdentifier.allKnownIdentifiers.contains(HKClinicalTypeIdentifier(rawValue: sampleTypeIdentifier))
         if supportsZstdUpload && observations.count >= 100 && observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) {
             let numObservations = observations.count
             logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' via zstd upload")
@@ -179,7 +179,7 @@ extension MyHeartCountsStandard {
             guard !resources.isEmpty else {
                 return
             }
-            let encoded = try JSONEncoder().encode(resources)
+            let encoded = try JSONEncoder().encode(consume resources)
             let compressed = try (consume encoded).compressed(using: Zstd.self)
             let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zstd", directoryHint: .notDirectory)
             try (consume compressed).write(to: url)
@@ -188,7 +188,7 @@ extension MyHeartCountsStandard {
                 await triggerDidUploadNotification()
             }
         } else {
-            for chunk in observations.chunks(ofCount: batchSize) {
+            for chunk in (consume observations).chunks(ofCount: batchSize) {
                 let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                     for: .new(sampleTypeTitle: sampleTypeIdentifier, count: chunk.count, uploadMode: .direct)
                 )
@@ -199,7 +199,7 @@ extension MyHeartCountsStandard {
                         let path = document.path
                         logger.notice("Uploading Health Resource to \(path)")
                         if let resource = try await turnIntoFHIRResource(observation) {
-                            try batch.setData(from: resource, forDocument: document)
+                            try batch.setData(from: consume resource, forDocument: document)
                         }
                     } catch {
                         logger.error("Error saving health observation to Firebase: \(error); input: \(String(describing: observation))")

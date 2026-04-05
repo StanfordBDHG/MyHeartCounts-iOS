@@ -45,7 +45,7 @@ private struct DebugFormImpl: View {
                 DemographicsButton(allowDragToDismiss: false)
             }
             Section {
-                MemoryUsageIndicator()
+                MemoryUsageIndicator(style: .labeledContent)
             }
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
