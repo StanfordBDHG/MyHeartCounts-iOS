@@ -67,6 +67,7 @@ jobs:
       fail-fast: false
     with:
       path: MyHeartCountsShared
+      build_configuration: ${{ matrix.config }}
       artifact_name: ${{ format('MHC-Shared-UnitTests-Linux-{0}.lcov', matrix.config) }}
   uploadcoveragereport:
     name: Upload Coverage Report
