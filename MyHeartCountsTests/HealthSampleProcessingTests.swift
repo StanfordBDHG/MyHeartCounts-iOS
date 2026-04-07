@@ -52,8 +52,8 @@ struct HealthSampleProcessingTests {
     @Test
     func fhirUnitToHKUnit() {
         #expect(HKUnit.parseFromFHIRUnit("steps") == .count())
-        #expect(HKUnit.parseFromFHIRUnit("/min") == .count() / .minute())
-        #expect(HKUnit.parseFromFHIRUnit("beats/minute") == .count() / .minute())
+        #expect(HKUnit.parseFromFHIRUnit("/min") == HKUnit.count() / .minute())
+        #expect(HKUnit.parseFromFHIRUnit("beats/minute") == HKUnit.count() / .minute())
         
         #expect(HKUnit.parseFromFHIRUnit("Cel") == .degreeCelsius())
         #expect(HKUnit.parseFromFHIRUnit("C") == .degreeCelsius())
