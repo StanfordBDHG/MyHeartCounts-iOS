@@ -29,11 +29,11 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:MyHeartCountsTests/MyHeartCounts Unit Tests.xctestplan"
-            default = "YES">
+            reference = "container:MyHeartCountsTests/MyHeartCounts Unit Tests.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:MyHeartCountsUITests/MyHeartCounts UI Tests.xctestplan">
+            reference = "container:MyHeartCountsUITests/MyHeartCounts UI Tests.xctestplan"
+            default = "YES">
          </TestPlanReference>
          <TestPlanReference
             reference = "container:MyHeartCountsUITests/MyHeartCounts Screenshots.xctestplan">
@@ -102,7 +102,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--setupTestEnvironment reset login-and-enroll"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--forceEnableDebugMode"
@@ -110,7 +110,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--useFirebaseEmulator"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=/Users/lukas/Desktop/MHC.plist"
@@ -122,7 +122,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideStudyBundleLocation &apos;/Users/lukas/Desktop/MHC StudyDefs/mhcStudyBundle.spezistudybundle.aar&apos;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--dashboardConsiderAllSleepData"

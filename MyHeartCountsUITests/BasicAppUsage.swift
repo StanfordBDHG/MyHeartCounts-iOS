@@ -93,6 +93,7 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     
     @MainActor
     func testWithdrawal() throws {
+        throw XCTSkip("needs https://github.com/StanfordBDHG/MyHeartCounts-Firebase/pull/111")
         try launchAppAndEnrollIntoStudy(locale: .enUS)
         openAccountSheet()
         app.swipeUp()
