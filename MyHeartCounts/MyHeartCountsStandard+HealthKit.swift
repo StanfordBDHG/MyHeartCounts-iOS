@@ -7,6 +7,7 @@
 //
 
 import Algorithms
+import AsyncAlgorithms
 import FirebaseFirestore
 import FirebaseFunctions
 import Foundation
@@ -175,7 +176,11 @@ extension MyHeartCountsStandard {
             let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                 for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadMode: .compressed)
             )
-            let resources = try await (consume observations).compactMapAsync(turnIntoFHIRResource)
+            let resources: [AnyEncodable] = try await (consume observations).async.reduce(into: []) { resources, observation in
+                if let resource = try await turnIntoFHIRResource(observation) {
+                    resources.append(resource)
+                }
+            }
             guard !resources.isEmpty else {
                 return
             }
