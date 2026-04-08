@@ -256,7 +256,8 @@ enum DeferredConfigLoading {
                         .manual(\.preferredWorkoutTypes),
                         .manual(\.preferredNudgeNotificationTime),
                         .manual(\.didOptInToTrial),
-                        .manual(\.stageOfChange)
+                        .manual(\.stageOfChange),
+                        .manual(\.lastActiveDate)
                     ]
                 )
                 firestore
@@ -270,6 +271,7 @@ enum DeferredConfigLoading {
                 baseModules(preferredLocale: preferredLocale)
                 TimeZoneTracking()
                 LanguageTracking()
+                ActivityTracking()
             }
         } catch {
             logger.error("""

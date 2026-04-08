@@ -97,6 +97,16 @@ extension AccountDetails {
         initial: .empty(.init(hour: 0))
     )
     var preferredNudgeNotificationTime: WorkoutPreferenceSetting.NotificationTime?
+    
+    @AccountKey(
+        id: "lastActiveDate",
+        name: "Last Active Date",
+        category: .other,
+        options: .mutable,
+        as: Date.self,
+        initial: .empty(.distantPast)
+    )
+    var lastActiveDate: Date?
 }
 
 
@@ -135,7 +145,7 @@ extension AccountDetails {
     \.hasWithdrawnFromStudy,
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
     \.fcmToken, \.enableDebugMode, \.timeZone, \.language, \.mostRecentOnboardingStep,
-    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
+    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime, \.lastActiveDate
 )
 extension AccountKeys {}
 
