@@ -1,5 +1,5 @@
 {
-  "originHash" : "d4d5564c2ef3e36f3c6e97c383dab6b9328b009c6401d0c06af2dccf478ea150",
+  "originHash" : "0e7c408f44e94da380c735a30a617586b8690a0f9e9299becf614b2121e293bf",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -249,8 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziFoundation.git",
       "state" : {
-        "revision" : "28534234aea6458937d3e927ed7587330205b137",
-        "version" : "2.7.4"
+        "revision" : "2181cfb239fca499a861b8cf09cfa6eb8585bf39",
+        "version" : "2.7.5"
       }
     },
     {
@@ -258,8 +258,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziHealthKit.git",
       "state" : {
-        "revision" : "a2b902164ffa9990e418f38b635f7867a4e453a1",
-        "version" : "1.3.2"
+        "revision" : "a86db5cf2a6fbc62a9c161b135d87a97911d2533",
+        "version" : "1.4.2"
       }
     },
     {
@@ -312,8 +312,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/StanfordSpezi/SpeziSensorKit.git",
       "state" : {
-        "revision" : "f34d41e96dc3512608be0f3c54b3cb44f89d37ed",
-        "version" : "0.6.2"
+        "revision" : "8addfd5f8ca54d85409ad9c70391859d44df227b",
+        "version" : "0.6.3"
       }
     },
     {
@@ -368,6 +368,15 @@
       "state" : {
         "revision" : "c5d11a805e765f52ba34ec7284bd4fcd6ba68615",
         "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "swift-async-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-async-algorithms.git",
+      "state" : {
+        "revision" : "9d349bcc328ac3c31ce40e746b5882742a0d1272",
+        "version" : "1.1.3"
       }
     },
     {
