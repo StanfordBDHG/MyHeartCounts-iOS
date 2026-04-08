@@ -37,6 +37,8 @@ struct AccountSheet: View {
     @AccountFeatureFlagQuery(.isDebugModeEnabled)
     private var debugModeEnabled
     
+    @State private var tmpViewState: ViewState = .idle
+    
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {
@@ -64,6 +66,7 @@ struct AccountSheet: View {
                     }
                 }
             }
+            .viewStateAlert(state: $tmpViewState)
             .sheet(isPresented: $isPresentingFeedbackSheet) {
                 NavigationStack {
                     FeedbackForm()
@@ -151,6 +154,9 @@ struct AccountSheet: View {
                         .foregroundStyle(colorScheme.textLabelForegroundStyle)
                 }
             }
+            AsyncButton("[TMP] Withdraw" as String, state: $tmpViewState) {
+                try await withdrawFromStudy()
+            }
         }
     }
     
@@ -190,10 +196,19 @@ struct AccountSheet: View {
     }
     
     private func withdrawFromStudy() async throws {
-        _ = try await Functions.functions()
-            .httpsCallable("markAccountForStudyWithdrawal")
-            .call([:])
-        try await account.accountService.logout()
+        do {
+            _ = try await Functions.functions()
+                .httpsCallable("markAccountForStudyWithdrawal")
+                .call([:])
+        } catch {
+            throw NSError(mhcErrorCode: .unspecified, localizedDescription: "function call failed: \(error)", underlyingError: error)
+        }
+        do {
+            try await account.accountService.logout()
+        } catch {
+            throw NSError(mhcErrorCode: .unspecified, localizedDescription: "logout failed: \(error)", underlyingError: error)
+        }
+        dismiss()
     }
 }
 
