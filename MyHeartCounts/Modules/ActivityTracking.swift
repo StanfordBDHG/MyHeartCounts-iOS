@@ -17,20 +17,23 @@ final class ActivityTracking: Module, @unchecked Sendable {
     // swiftlint:disable attributes
     @Application(\.logger) private var logger
     @Dependency(Lifecycle.self) private var lifecycle
-    @Dependency(Account.self) private var account
+    @Dependency(Account.self) private var account: Account?
     // swiftlint:enable attributes
     
     func configure() {
         lifecycle.onChange(of: \.scenePhase, initial: true) { _, newValue in
             if newValue == .active {
                 Task {
-                    try await self.updateLastSeen()
+                    try? await self.updateLastSeen()
                 }
             }
         }
     }
     
     private func updateLastSeen() async throws {
+        guard let account else {
+            return
+        }
         logger.notice("Updating last seen date")
         var newDetails = AccountDetails()
         newDetails.lastActiveDate = Date()
