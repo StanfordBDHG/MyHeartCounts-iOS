@@ -38,7 +38,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Account.self) var account: Account?
     @Dependency(LocalStorage.self) private var localStorage
     @Dependency(StudyBundleLoader.self) private var studyLoader
-    @Dependency(TimeZoneTracking.self) private var timeZoneTracking: TimeZoneTracking?
+    @Dependency(EnvironmentTracking.self) private var environmentTracking: EnvironmentTracking?
     @Dependency(ManagedFileUpload.self) var managedFileUpload
     @Dependency(SetupTestEnvironment.self) private var setupTestEnvironment
     @Dependency(HistoricalHealthSamplesExportManager.self) private var historicalUploadManager
@@ -141,7 +141,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         case .associatedAccount(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
             _Concurrency.Task {
-                try? await timeZoneTracking?.updateTimeZoneInfo()
+                await environmentTracking?.triggerAll()
                 _ = try? await registerRemoteNotifications()
             }
         case .deletingAccount:

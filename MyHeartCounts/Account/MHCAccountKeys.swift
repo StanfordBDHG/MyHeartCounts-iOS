@@ -129,6 +129,9 @@ extension AccountDetails {
     @AccountKey(id: "language", name: "Language", as: String.self)
     var language: String?
     
+    @AccountKey(id: "preferredMeasurementSystem", name: "Preferred Measurement System", as: String.self)
+    var preferredMeasurementSystem: String?
+    
     @AccountKey(
         id: "mostRecentOnboardingStep",
         name: "",
@@ -144,8 +147,8 @@ extension AccountDetails {
 @KeyEntry(
     \.hasWithdrawnFromStudy,
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
-    \.fcmToken, \.enableDebugMode, \.timeZone, \.language, \.mostRecentOnboardingStep,
-    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime, \.lastActiveDate
+    \.fcmToken, \.enableDebugMode, \.timeZone, \.language, \.preferredMeasurementSystem, \.lastActiveDate,
+    \.mostRecentOnboardingStep, \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
 )
 extension AccountKeys {}
 

@@ -226,11 +226,20 @@ enum DeferredConfigLoading {
                         .requires(\.name),
                         // additional values stored using the `FirestoreAccountStorage` within our Standard implementation
                         .manual(\.dateOfBirth),
-                        .manual(\.fcmToken),
-                        .manual(\.timeZone),
-                        .manual(\.language),
+                        // account mgmt
+                        .manual(\.didOptInToTrial),
+                        .manual(\.futureStudies),
                         .manual(\.hasWithdrawnFromStudy),
-                        .manual(\.enableDebugMode),
+                        .manual(\.dateOfEnrollment),
+                        // consent tracking
+                        .manual(\.lastSignedConsentDate),
+                        .manual(\.lastSignedConsentVersion),
+                        // notifications
+                        .manual(\.fcmToken),
+                        .manual(\.preferredWorkoutTypes),
+                        .manual(\.preferredNudgeNotificationTime),
+                        .manual(\.stageOfChange),
+                        // demographics
                         .manual(\.mhcGenderIdentity),
                         .manual(\.usRegion),
                         .manual(\.usZipCodePrefix),
@@ -248,16 +257,14 @@ enum DeferredConfigLoading {
                         .manual(\.educationUK),
                         .manual(\.comorbidities),
                         .manual(\.nhsNumber),
-                        .manual(\.lastSignedConsentDate),
-                        .manual(\.lastSignedConsentVersion),
-                        .manual(\.futureStudies),
+                        // env tracking
                         .manual(\.mostRecentOnboardingStep),
-                        .manual(\.dateOfEnrollment),
-                        .manual(\.preferredWorkoutTypes),
-                        .manual(\.preferredNudgeNotificationTime),
-                        .manual(\.didOptInToTrial),
-                        .manual(\.stageOfChange),
-                        .manual(\.lastActiveDate)
+                        .manual(\.lastActiveDate),
+                        .manual(\.timeZone),
+                        .manual(\.language),
+                        .manual(\.preferredMeasurementSystem),
+                        // internal stuff
+                        .manual(\.enableDebugMode)
                     ]
                 )
                 firestore
@@ -269,9 +276,7 @@ enum DeferredConfigLoading {
                     FirebaseFunctions()
                 }
                 baseModules(preferredLocale: preferredLocale)
-                TimeZoneTracking()
-                LanguageTracking()
-                ActivityTracking()
+                EnvironmentTracking()
             }
         } catch {
             logger.error("""
