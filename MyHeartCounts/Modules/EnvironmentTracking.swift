@@ -34,6 +34,13 @@ final class EnvironmentTracking: ServiceModule, @unchecked Sendable {
                 update: update
             )
         }
+        
+        static func notifications(
+            _ name: Notification.Name,
+            update: @escaping @Sendable (EnvironmentTracking) async -> Void
+        ) -> Self {
+            Self.stream(NotificationCenter.default.notifications(named: name), update: update)
+        }
     }
     
     // swiftlint:disable attributes
@@ -45,27 +52,27 @@ final class EnvironmentTracking: ServiceModule, @unchecked Sendable {
     
     func configure() {
         entries = [
-            .custom(setup: { [weak self] update in
+            .custom { [weak self] update in
                 self?.lifecycle.onChange(of: \.scenePhase, initial: true) { _, _ in
                     Task {
                         await update()
                     }
                 }
-            }, update: { tracking in
+            } update: { tracking in
                 guard tracking.lifecycle.scenePhase == .active else {
                     return
                 }
                 try? await tracking.updateUserCollectionValues(
                     (\.lastActiveDate, .now)
                 )
-            }),
-            .stream(NotificationCenter.default.notifications(named: UIApplication.significantTimeChangeNotification)) { tracking in
+            },
+            .notifications(UIApplication.significantTimeChangeNotification) { tracking in
                 try? await tracking.updateUserCollectionValues(
                     (\.timeZone, TimeZone.current.identifier)
                 )
             },
             // swiftlint:disable:next legacy_objc_type
-            .stream(NotificationCenter.default.notifications(named: NSLocale.currentLocaleDidChangeNotification)) { tracking in
+            .notifications(NSLocale.currentLocaleDidChangeNotification) { tracking in
                 let locale = Locale.current
                 try? await tracking.updateUserCollectionValues(
                     (\.language, locale.language.languageCode?.identifier ?? "en"),
