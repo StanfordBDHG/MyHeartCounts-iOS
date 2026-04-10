@@ -97,6 +97,16 @@ extension AccountDetails {
         initial: .empty(.init(hour: 0))
     )
     var preferredNudgeNotificationTime: WorkoutPreferenceSetting.NotificationTime?
+    
+    @AccountKey(
+        id: "lastActiveDate",
+        name: "Last Active Date",
+        category: .other,
+        options: .mutable,
+        as: Date.self,
+        initial: .empty(.distantPast)
+    )
+    var lastActiveDate: Date?
 }
 
 
@@ -119,6 +129,9 @@ extension AccountDetails {
     @AccountKey(id: "language", name: "Language", as: String.self)
     var language: String?
     
+    @AccountKey(id: "preferredMeasurementSystem", name: "Preferred Measurement System", as: String.self)
+    var preferredMeasurementSystem: String?
+    
     @AccountKey(
         id: "mostRecentOnboardingStep",
         name: "",
@@ -134,8 +147,8 @@ extension AccountDetails {
 @KeyEntry(
     \.hasWithdrawnFromStudy,
     \.dateOfEnrollment, \.lastSignedConsentVersion, \.lastSignedConsentDate, \.didOptInToTrial,
-    \.fcmToken, \.enableDebugMode, \.timeZone, \.language, \.mostRecentOnboardingStep,
-    \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
+    \.fcmToken, \.enableDebugMode, \.timeZone, \.language, \.preferredMeasurementSystem, \.lastActiveDate,
+    \.mostRecentOnboardingStep, \.preferredWorkoutTypes, \.preferredNudgeNotificationTime
 )
 extension AccountKeys {}
 

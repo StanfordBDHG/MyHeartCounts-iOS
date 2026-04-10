@@ -4290,6 +4290,9 @@
         }
       }
     },
+    "Last Active Date" : {
+
+    },
     "Last Night" : {
       "localizations" : {
         "en-GB" : {
@@ -6302,6 +6305,9 @@
           }
         }
       }
+    },
+    "Preferred Measurement System" : {
+
     },
     "Preferred Notification Time" : {
       "localizations" : {
