@@ -59,7 +59,7 @@ private struct AccountToolbarButton: View {
             // ```
             // but: this does not work, since for some reason presenting a sheet from a Button with a systemImage within a toolbar item
             // causes the sheet to reset to its initial value when the app is closed and reopened. (FB22483867)
-            // so we work around this by giving the button only an image (which seems to work) abd then adding an accessibilityLabel to the whole thing.
+            // so we work around this by giving the button a custom image (which seems to work, since it's not a Label) abd then adding an accessibilityLabel to the whole thing.
             // this means that the button is only usable for image-only contexts, but since it's only used for ToolbarItems, we'll be fine here.
             Button {
                 isPresentingAccount = true
