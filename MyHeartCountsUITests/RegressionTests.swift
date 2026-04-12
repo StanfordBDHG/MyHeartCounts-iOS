@@ -18,7 +18,7 @@ final class RegressionTests: MHCTestCase, @unchecked Sendable {
         app.staticTexts["Sign-In & Security"].tap()
         XCTAssert(app.buttons["Change Password"].waitForExistence(timeout: 2))
         XCUIDevice.shared.press(.home)
-        sleep(for: .seconds(1))
+        sleep(for: .seconds(3))
         app.activate()
         XCTAssert(app.buttons["Change Password"].waitForExistence(timeout: 2))
     }
