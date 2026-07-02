@@ -603,6 +603,12 @@
     "1 – 29" : {
       "shouldTranslate" : false
     },
+    "1. Request a verification link" : {
+
+    },
+    "2. Open the link in the email" : {
+
+    },
     "4 to 5 hours" : {
       "localizations" : {
         "en-GB" : {
@@ -1494,9 +1500,6 @@
         }
       }
     },
-    "Check your inbox and click the confirmation link to verify your account." : {
-
-    },
     "Chronic kidney disease" : {
       "localizations" : {
         "en-GB" : {
@@ -1512,6 +1515,9 @@
           }
         }
       }
+    },
+    "Close" : {
+
     },
     "College graduate or Baccalaureate Degree" : {
       "localizations" : {
@@ -2466,6 +2472,73 @@
         }
       }
     },
+    "Email verification is required to secure your account." : {
+
+    },
+    "EMAIL_VERIFICATION_SHEET_EXPLAINER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A verified email lets us confirm it's really you, protects your account from unauthorized changes, and ensures you can reset your password or recover your account if needed."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A verified email lets us confirm it's really you, protects your account from unauthorized changes, and ensures you can reset your password or recover your account if needed."
+          }
+        }
+      }
+    },
+    "EMAIL_VERIFICATION_SHEET_NO_ACCOUNT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to connect to account. Make sure you have a working network connection."
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to connect to account. Make sure you have a working network connection."
+          }
+        }
+      }
+    },
+    "EMAIL_VERIFICATION_SHEET_STATUS_IS_NOT_VERIFIED" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your email currently is not verified"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Your email currently is not verified"
+          }
+        }
+      }
+    },
+    "EMAIL_VERIFICATION_SHEET_STATUS_IS_VERIFIED" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your email address is verified"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your email address is verified"
+          }
+        }
+      }
+    },
     "Email…" : {
       "localizations" : {
         "en-GB" : {
@@ -3265,6 +3338,9 @@
         }
       }
     },
+    "Get Link" : {
+
+    },
     "Go to next field" : {
       "localizations" : {
         "en-GB" : {
@@ -3801,6 +3877,9 @@
           }
         }
       }
+    },
+    "How to verify" : {
+
     },
     "Hypertrophic Cardiomyopathy (HCM)" : {
       "localizations" : {
@@ -6074,7 +6153,7 @@
         }
       }
     },
-    "Open Mail App" : {
+    "Open Mail" : {
 
     },
     "Open Settings" : {
@@ -8599,6 +8678,9 @@
         }
       }
     },
+    "Tap the link in the email to complete the verification, then return here." : {
+
+    },
     "Tap to learn more…" : {
       "localizations" : {
         "en-GB" : {
@@ -9168,6 +9250,9 @@
     "Verify Account Email" : {
 
     },
+    "Verify Email" : {
+
+    },
     "Vermont" : {
       "localizations" : {
         "en-GB" : {
@@ -9311,6 +9396,9 @@
           }
         }
       }
+    },
+    "We'll email a link to %@" : {
+
     },
     "We've saved your email and will notify you when My Heart Counts becomes available in your region." : {
       "localizations" : {

@@ -113,12 +113,13 @@ extension PromptedAction {
         content: .init(
             symbol: .envelope,
             title: "Verify Account Email",
-            message: "Check your inbox and click the confirmation link to verify your account.",
-            performActionButtonTitle: "Open Mail App"
-        )
-    ) { _ in
-        await UIApplication.shared.open("message://")
-    }
+            message: "Email verification is required to secure your account.",
+            performActionButtonTitle: "Verify Email"
+        ),
+        sheetContent: {
+            VerifyEmailSheet()
+        }
+    )
     
     
     private static let completeDemographics = PromptedAction(
