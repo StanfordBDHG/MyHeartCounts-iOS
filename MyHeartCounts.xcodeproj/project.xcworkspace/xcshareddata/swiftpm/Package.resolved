@@ -1,5 +1,5 @@
 {
-  "originHash" : "2f4a1a24909ac631c7e1ea32cde1d065e09c140b9f5bcb033e128312e912f0ea",
+  "originHash" : "ec258c351c8f27c2c6cbc25b89f8813d2232ebe114c529d4c3aee80e9a417dd2",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/Spezi.git",
       "state" : {
-        "branch" : "lukas/firebase-verification-refresh",
-        "revision" : "f7a9d47363a83b24347ca7fc82ba517b75ddcaa9"
+        "revision" : "66208556a32adf8f7634f97da04463b204febea9",
+        "version" : "0.1.4"
       }
     },
     {

@@ -1306,8 +1306,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SchmiedmayerLab/Spezi.git";
 			requirement = {
-				branch = "lukas/firebase-verification-refresh";
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
