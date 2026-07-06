@@ -161,6 +161,18 @@ final class DemographicsData {
         }
     }
     
+    /// Submit pending writes immediately
+    func flush() async throws {
+        guard let updateTask = exchange(&updateTask, with: nil) else {
+            // if there is no updateTask, there are no pending writes
+            return
+        }
+        updateTask.cancel()
+        if let account {
+            try await write(to: account)
+        }
+    }
+    
     func write(to account: Account) async throws { // swiftlint:disable:this function_body_length
         var updated = AccountDetails()
         var removed = AccountDetails()

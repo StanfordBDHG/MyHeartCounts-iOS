@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable file_types_order
+
 import Foundation
 import HealthKit
 import MyHeartCountsShared
@@ -138,7 +140,7 @@ extension PromptedAction {
                 region: studyManager.preferredLocale.region ?? .unitedStates,
                 didOptInToTrial: details.didOptInToTrial == true
             )
-            return layout.completionState(in: data).isIncomplete ? .pending : .completed
+            return layout.isComplete(in: data) ? .completed : .pending
         },
         content: .init(
             symbol: .personTextRectangle,
@@ -147,9 +149,47 @@ extension PromptedAction {
             performActionButtonTitle: "Complete"
         ),
         sheetContent: {
-            NavigationStack {
-                DemographicsForm()
-            }
+            DemographicsHost()
         }
     )
+}
+
+
+private struct DemographicsHost: View {
+    @State private var isComplete = false
+    
+    var body: some View {
+        NavigationStack {
+            DemographicsForm(isComplete: $isComplete)
+                .toolbar {
+                    ToolbarItem(placement: isComplete ? .confirmationAction : .cancellationAction) {
+                        DismissButton(isComplete: isComplete)
+                    }
+                }
+        }
+    }
+}
+
+
+extension DemographicsHost {
+    private struct DismissButton: View {
+        @Environment(\.dismiss)
+        private var dismiss
+        
+        let isComplete: Bool
+        
+        var body: some View {
+            if #available(iOS 26, *) {
+                Button(role: isComplete ? .confirm : .close) {
+                    dismiss()
+                }
+            } else {
+                // iOS 18 fallback
+                Button(isComplete ? "Done" : "Close") {
+                    dismiss()
+                }
+                .bold(isComplete)
+            }
+        }
+    }
 }

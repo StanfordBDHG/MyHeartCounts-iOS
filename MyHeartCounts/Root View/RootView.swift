@@ -44,6 +44,7 @@ struct RootView: View {
                             .taskContinuationAnchor()
                             .taskPerformingAnchor()
                     }
+                            .rootSheetAnchor()
                 } else if appState.isLoggingOut {
                     FullScreenProgressView(title: "Logging Out…")
                 }

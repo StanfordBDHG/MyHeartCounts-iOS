@@ -40,9 +40,7 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         XCTAssert(digestButton.waitForExistence(timeout: 2))
         digestButton.tap()
         XCTAssert(sheet.waitForExistence(timeout: 2))
-        sheet.navigationBars.element
-            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-            .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)))
+        app.expandSheet(sheet)
         XCTAssert(sensorKitRow.waitForExistence(timeout: 2))
         
         app.terminate()
@@ -60,9 +58,7 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         XCTAssert(digestButton.waitForExistence(timeout: 2))
         digestButton.tap()
         XCTAssert(sheet.waitForExistence(timeout: 2))
-        sheet.navigationBars.element
-            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-            .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)))
+        app.expandSheet(sheet)
         XCTAssert(sensorKitRow.waitForExistence(timeout: 2))
     }
 }

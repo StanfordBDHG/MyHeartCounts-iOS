@@ -73,7 +73,7 @@ struct PromptedActionsDigest: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityHint(Text(.setupDigestA11yHint))
-                .sheet(isPresented: $isPresentingChecklist) {
+                .adaptiveSheet(isPresented: $isPresentingChecklist) {
                     PromptedActionsSheet(
                         context: context,
                         // we disable rejection if we explicitly want to include rejected actions in the list.
@@ -221,6 +221,9 @@ private struct PromptedActionsSheet: View {
     /// so that its error alert presents within the sheet and doesn't fight the Home tab's alert.
     @State private var viewState: ViewState = .idle
     
+    /// The ``PromptedAction`` whose sheet is currently being displayed.
+    @State private var presentedAction: PromptedAction?
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -259,6 +262,14 @@ private struct PromptedActionsSheet: View {
                 }
             }
         }
+        .sheet(item: $presentedAction) { action in
+            switch action.action {
+            case .sheet(let makeSheet):
+                makeSheet()
+            case .closure:
+                EmptyView() // should be unreachable
+            }
+        }
     }
     
     private func section(
@@ -270,7 +281,9 @@ private struct PromptedActionsSheet: View {
             Section {
                 PromptedActionRow(
                     action: action,
+                    state: $actions.state(of: action),
                     viewState: $viewState,
+                    presentedAction: $presentedAction,
                     stopSuggesting: rejectAction.map { rejectAction in
                         { withAnimation(.snappy) { rejectAction(action.id) } }
                     }
@@ -297,17 +310,16 @@ private struct PromptedActionRow: View {
     @ScaledMetric(relativeTo: .headline)
     private var iconBadgeSize: CGFloat = 36
     
-    @PromptedActions private var promptedActions
-    
     let action: PromptedAction
+    let state: PromptedAction.State
     @Binding var viewState: ViewState
+    @Binding var presentedAction: PromptedAction?
     let stopSuggesting: (() -> Void)?
     
     @State private var isConfirmingStopSuggesting = false
-    @State private var isShowingActionSheet = false
     
     var body: some View {
-        let isCompleted = $promptedActions.state(of: action) == .completed
+        let isCompleted = state == .completed
         VStack(alignment: .leading, spacing: 11) {
             HStack(spacing: 11) {
                 Image(systemSymbol: isCompleted ? .checkmark : action.content.symbol)
@@ -348,14 +360,6 @@ private struct PromptedActionRow: View {
         .listRowInsets(EdgeInsets())
         .disabled(viewState == .processing) // don't allow a second action (or a rejection) while one is running
         .accessibilityElement(children: .contain)
-        .sheet(isPresented: $isShowingActionSheet) {
-            switch action.action {
-            case .sheet(let makeSheet):
-                makeSheet()
-            case .closure:
-                EmptyView() // should be unreachable
-            }
-        }
     }
 
     private var enableButton: some View {
@@ -364,7 +368,7 @@ private struct PromptedActionRow: View {
             case .closure(let action):
                 try await action(standard.spezi)
             case .sheet:
-                isShowingActionSheet = true
+                presentedAction = action
             }
         } label: {
             Text(action.content.performActionButtonTitle)

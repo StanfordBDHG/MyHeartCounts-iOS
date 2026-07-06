@@ -45,6 +45,15 @@ struct DemographicsForm<Footer: View>: View {
                 data.populate(from: account)
             }
         }
+        .onDisappear {
+            Task {
+                do {
+                    try await data.flush()
+                } catch {
+                    logger.error("Failed flushing demographics data: \(error)")
+                }
+            }
+        }
     }
     
     init(

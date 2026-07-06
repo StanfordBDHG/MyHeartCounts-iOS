@@ -6689,13 +6689,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "These optional steps help My Heart Counts gather richer data for cardiovascular research. Suggestions you decline won't be shown again."
+            "value" : "These optional steps help My Heart Counts gather richer data for cardiovascular research. Suggestions you decline won't be shown again on the Home tab, but will remain accessible via the app’s settings."
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "These optional steps help My Heart Counts gather richer data for cardiovascular research. Suggestions you decline won't be shown again."
+            "value" : "These optional steps help My Heart Counts gather richer data for cardiovascular research. Suggestions you decline won't be shown again on the Home tab, but will remain accessible via the app’s settings."
           }
         }
       }

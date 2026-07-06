@@ -74,7 +74,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
                 self.state = .settingUp
                 if !Spezi.didLoadFirebase {
                     Spezi.loadFirebase(for: .unitedStates)
-                    try? await _Concurrency.Task.sleep(for: .seconds(4))
+                    try? await _Concurrency.Task.sleep(for: .seconds(1))
                 }
                 do {
                     try await setUp()
