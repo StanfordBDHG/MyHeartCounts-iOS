@@ -64,7 +64,6 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
     
     
     func testCompleteDemographics() throws {
-        throw XCTSkip("WIP")
         try launchAppAndEnrollIntoStudy(
             promptedActionsFilter: .only([.completeDemographics])
         )
@@ -79,7 +78,10 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         XCTAssert(sheet.exists)
         let demographicsRow = sheet.otherElements["PromptedActionRow:\(PromptedActionID.completeDemographics.value)"]
         XCTAssert(demographicsRow.exists)
-        demographicsRow.tap()
-        sleep(for: .seconds(10))
+        demographicsRow.buttons["Complete Demographics"].tap()
+        
+        let navigator = DemographicsNavigator(testCase: self)
+        app.swipeUp()
+        navigator.fillInReferralSourceOption("Friend")
     }
 }

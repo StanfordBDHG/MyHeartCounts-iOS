@@ -94,4 +94,14 @@ struct DemographicsNavigator {
         app.navigationBars.buttons["BackButton"].tap()
         XCTAssert(app.buttons["Stage of Change, A"].waitForExistence(timeout: 1))
     }
+    
+    
+    func fillInReferralSourceOption(_ title: String) {
+        app.staticTexts["Referral Source"].tap()
+        let optionButton = app.buttons.matching("label CONTAINS[c] %@", title).firstMatch
+        if !optionButton.isSelected {
+            optionButton.tap()
+        }
+        app.navigationBars.buttons["BackButton"].tap()
+    }
 }

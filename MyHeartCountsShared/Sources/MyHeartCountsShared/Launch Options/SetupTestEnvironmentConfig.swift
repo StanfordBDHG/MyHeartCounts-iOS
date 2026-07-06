@@ -66,7 +66,7 @@ extension SetupTestEnvironmentConfig: LaunchOptionDecodable, LaunchOptionEncodab
     public init(decodingLaunchOption context: LaunchOptionDecodingContext) throws {
         try context.assertNumRawArgs(.atMost(2))
         let allowedOptions: Set = [Self.resetOptionName, Self.loginAndEnrollOptionName]
-        if case let invalidOptions = context.rawArgs.filter({ $0 == Self.resetOptionName || $0.starts(with: Self.loginAndEnrollOptionName) }),
+        if case let invalidOptions = context.rawArgs.filter({ $0 != Self.resetOptionName && !$0.starts(with: Self.loginAndEnrollOptionName) }),
            !invalidOptions.isEmpty {
             throw LaunchOptionDecodingError.other("Invalid input: \(invalidOptions). Expected \(allowedOptions)")
         }

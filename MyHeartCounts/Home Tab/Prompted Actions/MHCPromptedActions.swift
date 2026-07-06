@@ -140,7 +140,12 @@ extension PromptedAction {
                 region: studyManager.preferredLocale.region ?? .unitedStates,
                 didOptInToTrial: details.didOptInToTrial == true
             )
-            return layout.isComplete(in: data) ? .completed : .pending
+            switch layout.completionState(in: data) {
+            case .completed:
+                return .completed
+            case .incomplete:
+                return .pending
+            }
         },
         content: .init(
             symbol: .personTextRectangle,
