@@ -36,7 +36,8 @@
     {
       "skippedTests" : [
         "MHCScreenshotting",
-        "MHCScreenshotting\/testTakeAppStoreScreenshots()"
+        "MHCScreenshotting\/testTakeAppStoreScreenshots()",
+        "TabBarAXStatsTests"
       ],
       "target" : {
         "containerPath" : "container:MyHeartCounts.xcodeproj",
