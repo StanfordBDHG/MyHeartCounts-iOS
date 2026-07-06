@@ -47,7 +47,10 @@ struct MyHeartCounts: App {
             prefs[.lastUsedFirebaseConfig] = nil
             prefs[.onboardingFlowComplete] = false
         }
-        if LaunchOptions.launchOptions[.setupTestEnvironment].loginAndEnroll {
+        switch LaunchOptions.launchOptions[.setupTestEnvironment].loginAndEnroll {
+        case .skip:
+            break
+        case .enable:
             prefs[.onboardingFlowComplete] = true
         }
     }

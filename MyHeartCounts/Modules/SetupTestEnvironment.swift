@@ -99,9 +99,12 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             desc = "\(#function) will reset existing data"
             try await resetExistingData()
         }
-        if config.loginAndEnroll {
+        switch config.loginAndEnroll {
+        case .skip:
+            break
+        case .enable(let credentials):
             desc = "\(#function) will loginAndEnroll"
-            try await loginAndEnroll()
+            try await loginAndEnroll(credentials)
         }
     }
     
@@ -112,7 +115,10 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await bulkHealthExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
         try fileUploader.clearPendingUploads()
         LocalPreferencesStore.standard.removeAllEntries(in: .app)
-        if config.loginAndEnroll {
+        switch config.loginAndEnroll {
+        case .skip:
+            break
+        case .enable:
             // we set this here already to prevent the onboarding sheet from popping up
             LocalPreferencesStore.standard[.onboardingFlowComplete] = true
         }
@@ -131,7 +137,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     }
     
     
-    private func loginAndEnroll() async throws {
+    private func loginAndEnroll(_ credentials: SetupTestEnvironmentConfig.Credentials) async throws {
         logger.notice("Logging in and enrolling into Study")
         // we set this immediately at the beginning, since the value will likely have been cleared in
         // the `resetExistingData()` call preceding this `loginAndEnroll()` call, and we don't want the
@@ -146,13 +152,12 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             return
         }
         do {
-            let credentials = TestingConstants.loginCredentials
             // FirebaseAccountService's `login(userId:password:)` will unconditionally log the user out,
             // even if it is the same user the function is asked to log in to.
             // we need to prevent this, since the logout would trigger all of the local data to get reset,
             // which might be at odds with our config here.
-            if !account.signedIn || account.details?.userId != credentials.email {
-                try await accountService.login(userId: credentials.email, password: credentials.password)
+            if !account.signedIn || account.details?.userId != credentials.username {
+                try await accountService.login(userId: credentials.username, password: credentials.password)
             }
         } catch FirebaseAccountError.invalidCredentials {
             // account doesn't exist yet, signup

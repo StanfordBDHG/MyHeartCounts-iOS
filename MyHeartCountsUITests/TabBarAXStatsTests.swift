@@ -25,7 +25,7 @@ final class TabBarAXStatsTests: MHCTestCase, Sendable {
         var dumpsPrinted = 0
         for iteration in 0..<iterations {
             try launchAppAndEnrollIntoStudy(
-                testEnvironmentConfig: .init(resetExistingData: iteration == 0, loginAndEnroll: true),
+                testEnvironmentConfig: .init(resetExistingData: iteration == 0, loginAndEnroll: .enable(.default)),
                 skipHealthPermissionsHandling: iteration > 0,
                 skipGoingToHomeTab: true
             )

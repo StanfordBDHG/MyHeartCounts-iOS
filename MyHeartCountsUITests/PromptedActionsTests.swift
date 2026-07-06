@@ -46,7 +46,7 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         app.terminate()
         
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true),
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(.default)),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
             promptedActionsFilter: .only([.sensorKit])
@@ -60,5 +60,26 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         XCTAssert(sheet.waitForExistence(timeout: 2))
         app.expandSheet(sheet)
         XCTAssert(sensorKitRow.waitForExistence(timeout: 2))
+    }
+    
+    
+    func testCompleteDemographics() throws {
+        throw XCTSkip("WIP")
+        try launchAppAndEnrollIntoStudy(
+            promptedActionsFilter: .only([.completeDemographics])
+        )
+        goToTab(.home)
+        let digestButton = app.buttons["PromptedActionsDigest"]
+        XCTAssert(digestButton.waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Complete Your Study Setup"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["1 recommended step to get the most out of the study"].waitForExistence(timeout: 2))
+        digestButton.tap()
+        XCTAssert(app.navigationBars["Suggested for You"].waitForExistence(timeout: 2))
+        let sheet = app.otherElements["PromptedActionsDigestSheet"]
+        XCTAssert(sheet.exists)
+        let demographicsRow = sheet.otherElements["PromptedActionRow:\(PromptedActionID.completeDemographics.value)"]
+        XCTAssert(demographicsRow.exists)
+        demographicsRow.tap()
+        sleep(for: .seconds(10))
     }
 }
