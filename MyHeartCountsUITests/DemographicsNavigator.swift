@@ -124,9 +124,11 @@ struct DemographicsNavigator {
         form.swipeUp()
         app.staticTexts["Referral Source"].tap()
         let optionButton = app.buttons.matching("label CONTAINS[c] %@", title).firstMatch
+        let fullOptionTitle = optionButton.label
         if !optionButton.isSelected {
             optionButton.tap()
         }
         app.navigationBars.buttons["BackButton"].tap()
+        XCTAssert(form.buttons["Referral Source, \(fullOptionTitle)"])
     }
 }

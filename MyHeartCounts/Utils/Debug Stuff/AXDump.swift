@@ -6,14 +6,21 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 import UIKit
 
 
-@MainActor
+/// Debugging utils for dumping the accessibility tree within an iOS app.
 enum AXDump {
-    nonisolated static func enableAXRuntime() {
+    /// Enables the accessibility runtime
+    ///
+    /// - returns: a boolean value indicating if the operation was successful.
+    @MainActor
+    static func enableAXRuntime() -> Bool {
+        #if DEBUG
         guard let lib = dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW) else {
-            return
+            return false
         }
         typealias SetEnabled = @convention(c) (Bool) -> Void
         for sym in ["_AXSSetAutomationEnabled", "_AXSApplicationAccessibilitySetEnabled"] {
@@ -21,24 +28,124 @@ enum AXDump {
                 unsafeBitCast(ptr, to: SetEnabled.self)(true)
             }
         }
+        return true
+        #else
+        return false
+        #endif
     }
     
-    // MARK: Identifier lookup (SwiftUI AX nodes respond to the selector but don't conform to UIAccessibilityIdentification)
     
-    
+    @MainActor
+    static func dumpAll() -> String {
+        guard enableAXRuntime() else {
+            return ""
+        }
+        let appLabel = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+        ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
+        ?? ""
+        var out = "Application, pid: \(ProcessInfo.processInfo.processIdentifier), label: '\(appLabel)'\n"
+        for scene in UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }) {
+            for window in scene.windows where !window.isHidden {
+                dump(window, depth: 1, into: &out)
+            }
+        }
+        return out
+    }
+}
+
+
+@MainActor
+extension AXDump {
     private static func axIdentifier(of obj: NSObject) -> String? {
         if let id = (obj as? any UIAccessibilityIdentification)?.accessibilityIdentifier {
             return id
         }
+        // SwiftUI AX nodes respond to the selector but don't conform to UIAccessibilityIdentification
         let sel = Selector(("accessibilityIdentifier"))
-        guard obj.responds(to: sel),
-              let id = obj.perform(sel)?.takeUnretainedValue() as? String else {
+        guard obj.responds(to: sel), let id = obj.perform(sel)?.takeUnretainedValue() as? String else {
             return nil
         }
         return id
     }
     
-    // MARK: XCUIElementType-style classification
+    
+    private static func line(for obj: NSObject, depth: Int) -> String {
+        var parts = [elementType(of: obj)]
+        let frame = obj.accessibilityFrame
+        parts.append(String(format: "{{%.1f, %.1f}, {%.1f, %.1f}}", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height))
+        if let id = axIdentifier(of: obj), !id.isEmpty {
+            parts.append("identifier: '\(id)'")
+        }
+        if let label = obj.accessibilityLabel, !label.isEmpty {
+            parts.append("label: '\(label)'")
+        }
+        if let value = obj.accessibilityValue, !value.isEmpty {
+            parts.append("value: \(value)")
+        }
+        if let hint = obj.accessibilityHint, !hint.isEmpty {
+            parts.append("hint: '\(hint)'")
+        }
+        let traits = obj.accessibilityTraits
+        if traits.contains(.selected) {
+            parts.append("Selected")
+        }
+        if traits.contains(.notEnabled) {
+            parts.append("Disabled")
+        }
+        return String(repeating: "  ", count: depth) + parts.joined(separator: ", ")
+    }
+    
+    
+    // XCUI omits pure layout containers; skip views with no AX relevance, flattening children up.
+    private static func isTransparentContainer(_ obj: NSObject) -> Bool {
+        guard let view = obj as? UIView, !(view is UIWindow) else {
+            return false
+        }
+        if view.isAccessibilityElement {
+            return false
+        }
+        if let id = axIdentifier(of: view), !id.isEmpty {
+            return false
+        }
+        if let label = view.accessibilityLabel, !label.isEmpty {
+            return false
+        }
+        if elementType(of: view) != "Other" {
+            return false
+        }
+        return true
+    }
+    
+    
+    private static func children(of obj: NSObject) -> [NSObject] {
+        if let elements = obj.accessibilityElements as? [NSObject], !elements.isEmpty {
+            return elements
+        }
+        let count = obj.accessibilityElementCount()
+        if count > 0, count != NSNotFound {
+            return (0..<count).compactMap {
+                obj.accessibilityElement(at: $0) as? NSObject
+            }
+        }
+        if let view = obj as? UIView {
+            return view.subviews.filter {
+                !$0.isHidden && $0.alpha > 0.01
+            }
+        }
+        return []
+    }
+    
+    
+    private static func dump(_ obj: NSObject, depth: Int, into out: inout String) {
+        let isTransparentContainer = isTransparentContainer(obj)
+        if !isTransparentContainer {
+            out += line(for: obj, depth: depth) + "\n"
+        }
+        for child in children(of: obj) {
+            dump(child, depth: isTransparentContainer ? depth : depth + 1, into: &out)
+        }
+    }
+    
     
     private static func elementType(of obj: NSObject) -> String { // swiftlint:disable:this cyclomatic_complexity function_body_length
         let traits = obj.accessibilityTraits
@@ -123,100 +230,5 @@ enum AXDump {
             return "StaticText"
         }
         return "Other"
-    }
-    
-    
-    // MARK: Formatting (mirrors XCUIElement debugDescription lines)
-    
-    private static func line(for obj: NSObject, depth: Int) -> String {
-        var parts = [elementType(of: obj)]
-        let frame = obj.accessibilityFrame
-        parts.append(String(format: "{{%.1f, %.1f}, {%.1f, %.1f}}", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height))
-        if let id = axIdentifier(of: obj), !id.isEmpty {
-            parts.append("identifier: '\(id)'")
-        }
-        if let label = obj.accessibilityLabel, !label.isEmpty {
-            parts.append("label: '\(label)'")
-        }
-        if let value = obj.accessibilityValue, !value.isEmpty {
-            parts.append("value: \(value)")
-        }
-        if let hint = obj.accessibilityHint, !hint.isEmpty {
-            parts.append("hint: '\(hint)'")
-        }
-        let traits = obj.accessibilityTraits
-        if traits.contains(.selected) {
-            parts.append("Selected")
-        }
-        if traits.contains(.notEnabled) {
-            parts.append("Disabled")
-        }
-        return String(repeating: "  ", count: depth) + parts.joined(separator: ", ")
-    }
-    
-    
-    // XCUI omits pure layout containers; skip views with no AX relevance, flattening children up.
-    private static func isTransparentContainer(_ obj: NSObject) -> Bool {
-        guard let view = obj as? UIView, !(view is UIWindow) else {
-            return false
-        }
-        if view.isAccessibilityElement {
-            return false
-        }
-        if let id = axIdentifier(of: view), !id.isEmpty {
-            return false
-        }
-        if let label = view.accessibilityLabel, !label.isEmpty {
-            return false
-        }
-        if elementType(of: view) != "Other" {
-            return false
-        }
-        return true
-    }
-    
-    
-    private static func children(of obj: NSObject) -> [NSObject] {
-        if let elements = obj.accessibilityElements as? [NSObject], !elements.isEmpty {
-            return elements
-        }
-        let count = obj.accessibilityElementCount()
-        if count > 0, count != NSNotFound {
-            return (0..<count).compactMap {
-                obj.accessibilityElement(at: $0) as? NSObject
-            }
-        }
-        if let view = obj as? UIView {
-            return view.subviews.filter {
-                !$0.isHidden && $0.alpha > 0.01
-            }
-        }
-        return []
-    }
-    
-    
-    private static func dump(_ obj: NSObject, depth: Int, into out: inout String) {
-        let isTransparentContainer = isTransparentContainer(obj)
-        if !isTransparentContainer {
-            out += line(for: obj, depth: depth) + "\n"
-        }
-        for child in children(of: obj) {
-            dump(child, depth: isTransparentContainer ? depth : depth + 1, into: &out)
-        }
-    }
-    
-    
-    static func dumpAll() -> String {
-        enableAXRuntime()
-        let appLabel = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
-            ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
-            ?? ""
-        var out = "Application, pid: \(ProcessInfo.processInfo.processIdentifier), label: '\(appLabel)'\n"
-        for scene in UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }) {
-            for window in scene.windows where !window.isHidden {
-                dump(window, depth: 1, into: &out)
-            }
-        }
-        return out
     }
 }
