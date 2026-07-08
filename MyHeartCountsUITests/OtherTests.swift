@@ -32,7 +32,7 @@ final class OtherTests: MHCTestCase, Sendable {
         
         app.terminate()
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: false),
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .skip),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )
@@ -52,7 +52,7 @@ final class OtherTests: MHCTestCase, Sendable {
         app.terminate()
         
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true),
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(.default)),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )

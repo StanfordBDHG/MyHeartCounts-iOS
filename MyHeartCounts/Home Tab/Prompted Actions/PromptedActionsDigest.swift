@@ -36,11 +36,18 @@ struct PromptedActionsDigest: View {
         }
     }
     
+    private struct SheetDismissalUpdateInputs: Equatable {
+        let actions: [PromptedAction]
+        let activeAction: PromptedAction?
+    }
+    
     @PromptedActions(inclusionCriterion: .only(.pending, includeRejected: false))
     private var actions: [PromptedAction]
     
     private let context: Context
     @State private var isPresentingChecklist = false
+    /// The currently active action.
+    @State private var activeAction: PromptedAction?
     
     var body: some View {
         let hideIfEmpty = switch context {
@@ -73,7 +80,7 @@ struct PromptedActionsDigest: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityHint(Text(.setupDigestA11yHint))
-                .sheet(isPresented: $isPresentingChecklist) {
+                .adaptiveSheet(isPresented: $isPresentingChecklist) {
                     PromptedActionsSheet(
                         context: context,
                         // we disable rejection if we explicitly want to include rejected actions in the list.
@@ -84,12 +91,13 @@ struct PromptedActionsDigest: View {
                             case .completePending:
                                 { $actions.reject($0) }
                             }
-                        }()
+                        }(),
+                        activeAction: $activeAction
                     )
                     .accessibilityIdentifier("PromptedActionsDigestSheet")
                 }
-                .onChange(of: actions.map(\.id)) { oldValue, newValue in
-                    if !oldValue.isEmpty && newValue.isEmpty {
+                .onChange(of: SheetDismissalUpdateInputs(actions: actions, activeAction: activeAction)) { _, newValue in
+                    if newValue.actions.isEmpty && newValue.activeAction == nil {
                         // dismiss the sheet if the there are no more actions to display
                         isPresentingChecklist = false
                     }
@@ -221,11 +229,19 @@ private struct PromptedActionsSheet: View {
     /// so that its error alert presents within the sheet and doesn't fight the Home tab's alert.
     @State private var viewState: ViewState = .idle
     
+    /// Used to inform the ``PromptedActionsDigest`` about our current work, so that it can decide when it is safe to dismiss the sheet.
+    @Binding var activeAction: PromptedAction?
+    
+    /// The ``PromptedAction`` whose sheet is currently being displayed.
+    @State private var presentedAction: PromptedAction?
+    
     var body: some View {
         NavigationStack {
             Form {
                 switch context {
                 case .completePending:
+                    // IDEA: it might be nice to keep actions that were pending when the sheet was initially presented,
+                    // but have since been completed, visible as part of a second section in the sheet?!
                     section(
                         footer: .setupChecklistFooterPendingOnly,
                         actions: $actions.actions(filter: context.filter, matching: .only(.pending, includeRejected: false))
@@ -259,6 +275,17 @@ private struct PromptedActionsSheet: View {
                 }
             }
         }
+        .onChange(of: presentedAction) { _, newValue in
+            activeAction = newValue
+        }
+        .sheet(item: $presentedAction) { action in
+            switch action.action {
+            case .sheet(let makeSheet):
+                makeSheet()
+            case .closure:
+                EmptyView() // should be unreachable
+            }
+        }
     }
     
     private func section(
@@ -270,7 +297,10 @@ private struct PromptedActionsSheet: View {
             Section {
                 PromptedActionRow(
                     action: action,
+                    state: $actions.state(of: action),
                     viewState: $viewState,
+                    activeAction: $activeAction,
+                    presentedAction: $presentedAction,
                     stopSuggesting: rejectAction.map { rejectAction in
                         { withAnimation(.snappy) { rejectAction(action.id) } }
                     }
@@ -297,17 +327,17 @@ private struct PromptedActionRow: View {
     @ScaledMetric(relativeTo: .headline)
     private var iconBadgeSize: CGFloat = 36
     
-    @PromptedActions private var promptedActions
-    
     let action: PromptedAction
+    let state: PromptedAction.State
     @Binding var viewState: ViewState
+    @Binding var activeAction: PromptedAction?
+    @Binding var presentedAction: PromptedAction?
     let stopSuggesting: (() -> Void)?
     
     @State private var isConfirmingStopSuggesting = false
-    @State private var isShowingActionSheet = false
     
     var body: some View {
-        let isCompleted = $promptedActions.state(of: action) == .completed
+        let isCompleted = state == .completed
         VStack(alignment: .leading, spacing: 11) {
             HStack(spacing: 11) {
                 Image(systemSymbol: isCompleted ? .checkmark : action.content.symbol)
@@ -348,23 +378,19 @@ private struct PromptedActionRow: View {
         .listRowInsets(EdgeInsets())
         .disabled(viewState == .processing) // don't allow a second action (or a rejection) while one is running
         .accessibilityElement(children: .contain)
-        .sheet(isPresented: $isShowingActionSheet) {
-            switch action.action {
-            case .sheet(let makeSheet):
-                makeSheet()
-            case .closure:
-                EmptyView() // should be unreachable
-            }
-        }
     }
 
     private var enableButton: some View {
         AsyncButton(state: $viewState) {
             switch action.action {
             case .closure(let action):
+                activeAction = self.action
+                defer {
+                    activeAction = nil
+                }
                 try await action(standard.spezi)
             case .sheet:
-                isShowingActionSheet = true
+                presentedAction = action
             }
         } label: {
             Text(action.content.performActionButtonTitle)

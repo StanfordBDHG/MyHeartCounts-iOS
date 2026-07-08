@@ -29,10 +29,23 @@ extension AccountDetails {
     var mhcGenderIdentity: GenderIdentity?
     
     
-    @AccountKey(id: "usRegion", name: "US State / Region", category: .demographics, options: .mutable, as: USRegion.self, initial: .empty(.notSet))
+    @AccountKey(
+        id: "usRegion",
+        name: "US State / Region",
+        category: .demographics,
+        options: .mutable,
+        as: USRegion.self,
+        initial: .empty(.notSet)
+    )
     var usRegion: USRegion?
     
-    @AccountKey(id: "usZipCodePrefix", name: "First 3 Digits of ZIP Code", category: .demographics, options: .mutable, as: String.self)
+    @AccountKey(
+        id: "usZipCodePrefix",
+        name: "First 3 Digits of ZIP Code",
+        category: .demographics,
+        options: .mutable,
+        as: String.self
+    )
     var usZipCodePrefix: String?
     
     @AccountKey(
@@ -67,13 +80,31 @@ extension AccountDetails {
     var householdIncomeUK: HouseholdIncomeUK?
     
     
-    @AccountKey(id: "heightInCM", name: "Height", category: .demographics, options: .mutable, as: Double.self)
+    @AccountKey(
+        id: "heightInCM",
+        name: "Height",
+        category: .demographics,
+        options: .mutable,
+        as: Double.self
+    )
     var heightInCM: Double?
     
-    @AccountKey(id: "weightInKG", name: "Weight", category: .demographics, options: .mutable, as: Double.self)
+    @AccountKey(
+        id: "weightInKG",
+        name: "Weight",
+        category: .demographics,
+        options: .mutable,
+        as: Double.self
+    )
     var weightInKG: Double?
     
-    @AccountKey(id: "raceEthnicity", name: "Race / Ethnicity", category: .demographics, options: .mutable, as: RaceEthnicity.self)
+    @AccountKey(
+        id: "raceEthnicity",
+        name: "Race / Ethnicity",
+        category: .demographics,
+        options: .mutable,
+        as: RaceEthnicity.self
+    )
     var raceEthnicity: RaceEthnicity?
     
     @AccountKey(
@@ -155,7 +186,13 @@ extension AccountDetails {
     )
     var ukPostcode: String?
     
-    @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
+    @AccountKey(
+        id: "futureStudies",
+        name: "",
+        category: .demographics,
+        options: .mutable,
+        as: Bool.self
+    )
     var futureStudies: Bool? // swiftlint:disable:this discouraged_optional_boolean
     
     @AccountKey(

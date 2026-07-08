@@ -261,6 +261,7 @@ enum DeferredConfigLoading {
                         .manual(\.educationUK),
                         .manual(\.comorbidities),
                         .manual(\.nhsNumber),
+                        .manual(\.referralSource),
                         // env tracking
                         .manual(\.mostRecentOnboardingStep),
                         .manual(\.lastActiveDate),

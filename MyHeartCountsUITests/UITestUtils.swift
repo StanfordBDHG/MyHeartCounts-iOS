@@ -56,3 +56,13 @@ extension XCUIElement {
         }
     }
 }
+
+
+extension XCUIApplication {
+    /// Expands a bottom sheet to cover the full height of the screen.
+    func expandSheet(_ sheet: XCUIElement) {
+        sheet.navigationBars.element
+            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+            .press(forDuration: 0.1, thenDragTo: self.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)))
+    }
+}

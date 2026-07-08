@@ -40,15 +40,13 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         XCTAssert(digestButton.waitForExistence(timeout: 2))
         digestButton.tap()
         XCTAssert(sheet.waitForExistence(timeout: 2))
-        sheet.navigationBars.element
-            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-            .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)))
+        app.expandSheet(sheet)
         XCTAssert(sensorKitRow.waitForExistence(timeout: 2))
         
         app.terminate()
         
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true),
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(.default)),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
             promptedActionsFilter: .only([.sensorKit])
@@ -60,9 +58,75 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         XCTAssert(digestButton.waitForExistence(timeout: 2))
         digestButton.tap()
         XCTAssert(sheet.waitForExistence(timeout: 2))
-        sheet.navigationBars.element
-            .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-            .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)))
+        app.expandSheet(sheet)
         XCTAssert(sensorKitRow.waitForExistence(timeout: 2))
+    }
+    
+    
+    func testCompleteDemographics() throws {
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
+        func launchApp(resetExistingData: Bool) throws {
+            try self.launchAppAndEnrollIntoStudy(
+                testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials)),
+                promptedActionsFilter: .only([.completeDemographics])
+            )
+            self.goToTab(.home)
+        }
+        func dismissDemographicsSheet() {
+            let navBar = app.navigationBars["Demographics"]
+            navBar.buttons.element(matching: "label = %@ OR label = %@", "Done", "Close").tap()
+        }
+        
+        try launchApp(resetExistingData: true)
+        
+        let digestButton = app.buttons["PromptedActionsDigest"]
+        XCTAssert(digestButton.waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Complete Your Study Setup"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["1 recommended step to get the most out of the study"].waitForExistence(timeout: 2))
+        digestButton.tap()
+        XCTAssert(app.navigationBars["Suggested for You"].waitForExistence(timeout: 2))
+        let actionsSheet = app.otherElements["PromptedActionsDigestSheet"]
+        XCTAssert(actionsSheet.exists)
+        let demographicsRow = actionsSheet.otherElements["PromptedActionRow:\(PromptedActionID.completeDemographics.value)"]
+        XCTAssert(demographicsRow.exists)
+        demographicsRow.buttons["Complete Demographics"].tap()
+        
+        // since we created a random new account above, the demographics will be completely empty.
+        // we first fill out everything except for the referral source.
+        // we then kill and relaunch the app, verify that it still prompts us to complete the demographics,
+        // then supply the referral source value, close the demographics sheet, and verify that it no longer
+        // shows the suggestion.
+        // we then kill and relaunch again, and verify that it continues to not show the suggestion.
+        let navigator = DemographicsNavigator(testCase: self)
+        // needed to make sure that fillInDemographics will work correctly
+        navigator.performTestingSupportAction("Reset All")
+        navigator.fillInDemographics(skipReferralSource: true)
+        sleep(for: .seconds(1.5)) // give it time to sync to server
+        dismissDemographicsSheet()
+        XCTAssert(demographicsRow.exists)
+        app.terminate()
+        sleep(for: .seconds(0.5))
+        
+        try launchApp(resetExistingData: false)
+        XCTAssert(digestButton.waitForExistence(timeout: 5))
+        digestButton.tap()
+        XCTAssert(demographicsRow.waitForExistence(timeout: 2))
+        demographicsRow.buttons["Complete Demographics"].tap()
+        
+        navigator.fillInReferralSourceOption("Friend")
+        sleep(for: .seconds(1.5)) // give it time to sync to server
+        dismissDemographicsSheet()
+        XCTAssert(demographicsRow.waitForNonExistence(timeout: 2))
+        
+        app.terminate()
+        sleep(for: .seconds(0.5))
+        
+        try launchApp(resetExistingData: false)
+//        if digestButton.waitForExistence(timeout: 5) {
+//            digestButton.tap()
+//            demographicsRow.buttons["Complete Demographics"].tap()
+//            sleep(for: .seconds(360))
+//        }
+        XCTAssert(digestButton.waitForNonExistence(timeout: 5))
     }
 }

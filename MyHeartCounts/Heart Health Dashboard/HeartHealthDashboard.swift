@@ -35,7 +35,6 @@ struct HeartHealthDashboard: View {
     @CVHScore private var cvhScore
     
     @State private var addNewSampleDescriptor: MetricDescriptor?
-    @State private var presentedArticle: Article?
     @State private var scoreResultToExplain: MetricDescriptor?
     @State private var isPresentingPastTimedWalkTestResults = false
     
@@ -45,9 +44,6 @@ struct HeartHealthDashboard: View {
         }
         .sheet(item: $addNewSampleDescriptor) { descriptor in
             Self.addSampleSheet(for: descriptor.keyPath)
-        }
-        .sheet(item: $presentedArticle) { article in
-            ArticleSheet(article: article)
         }
         .sheet(item: $scoreResultToExplain) { descriptor in
             NavigationStack {
@@ -59,7 +55,7 @@ struct HeartHealthDashboard: View {
                     }
             }
         }
-        .sheet(isPresented: $isPresentingPastTimedWalkTestResults) {
+        .adaptiveSheet(isPresented: $isPresentingPastTimedWalkTestResults) {
             NavigationStack {
                 PastTimedWalkTestResults()
                     .taskPerformingAnchor()

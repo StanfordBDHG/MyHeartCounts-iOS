@@ -109,3 +109,14 @@ final class PromptedAction: nonisolated Identifiable, Sendable {
         return currentState(context)
     }
 }
+
+
+extension PromptedAction: nonisolated Hashable, nonisolated Equatable {
+    nonisolated func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
+    }
+    
+    nonisolated static func == (lhs: PromptedAction, rhs: PromptedAction) -> Bool {
+        ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+    }
+}

@@ -81,8 +81,7 @@ final class BasicAppUsage: MHCTestCase, Sendable {
         try navigator.navigateEligibility(region: .unitedStates)
         try navigator.navigateSignup(
             name: .init(givenName: "Leland", familyName: "Stanford"),
-            email: TestingConstants.loginCredentials.email,
-            password: TestingConstants.loginCredentials.password
+            credentials: .default
         )
         XCTAssert(app.staticTexts["Reactivate Account"].waitForExistence(timeout: 10))
         app.buttons["Reactivate Account"].tap()

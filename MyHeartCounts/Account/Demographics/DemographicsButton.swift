@@ -22,7 +22,7 @@ struct DemographicsButton: View {
         } label: {
             Label("Demographics", systemSymbol: .personTextRectangle)
         }
-        .sheet(isPresented: $isPresentingSheet) {
+        .adaptiveSheet(isPresented: $isPresentingSheet) {
             NavigationStack {
                 DemographicsForm(isComplete: $isComplete)
                     .interactiveDismissDisabled(!allowDragToDismiss)

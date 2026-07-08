@@ -68,7 +68,7 @@ private struct AccountToolbarButton: View {
             }
             .accessibilityIdentifier("MHC:YourAccount")
             .accessibilityLabel("Your Account")
-            .sheet(isPresented: $isPresentingAccount) {
+            .adaptiveSheet(isPresented: $isPresentingAccount) {
                 AccountSheet()
             }
         }

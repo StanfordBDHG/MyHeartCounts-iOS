@@ -73,9 +73,9 @@ class MHCTestCase: XCTestCase, Sendable {
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     func launchAppAndEnrollIntoStudy( // swiftlint:disable:this function_body_length
         skip: Bool = false,
-        locale: Locale = .current,
+        locale: Locale = .enUS,
         enableDebugMode: Bool = false,
-        testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: true),
+        testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: .enable(.default)),
         enableHealthRecords: Bool = MHCTestCase.enableHealthRecords,
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
