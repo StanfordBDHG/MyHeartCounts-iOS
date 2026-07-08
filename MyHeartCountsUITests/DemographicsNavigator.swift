@@ -129,6 +129,6 @@ struct DemographicsNavigator {
             optionButton.tap()
         }
         app.navigationBars.buttons["BackButton"].tap()
-        XCTAssert(form.buttons["Referral Source, \(fullOptionTitle)"])
+        XCTAssert(form.buttons["Referral Source, \(fullOptionTitle)"].waitForExistence(timeout: 2))
     }
 }
