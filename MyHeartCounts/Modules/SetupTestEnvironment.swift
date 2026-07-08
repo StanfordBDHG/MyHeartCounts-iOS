@@ -138,7 +138,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     
     
     private func loginAndEnroll(_ credentials: SetupTestEnvironmentConfig.Credentials) async throws {
-        logger.notice("Logging in and enrolling into Study")
+        logger.notice("Logging in and enrolling into Study using credentials \(String(describing: credentials))")
         // we set this immediately at the beginning, since the value will likely have been cleared in
         // the `resetExistingData()` call preceding this `loginAndEnroll()` call, and we don't want the
         // onboarding sheet covering the "Setting up Test Environment" full-screen thing.
@@ -162,8 +162,8 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         } catch FirebaseAccountError.invalidCredentials {
             // account doesn't exist yet, signup
             var details = AccountDetails()
-            details.userId = "leland@stanford.edu"
-            details.password = "StanfordRocks!"
+            details.userId = credentials.username
+            details.password = credentials.password
             details.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
             details.genderIdentity = .male
             do {

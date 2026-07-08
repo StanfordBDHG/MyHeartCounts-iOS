@@ -105,10 +105,11 @@ private struct Impl<Footer: View>: View {
                 }
             footer()
         }
+        .accessibilityIdentifier("DemographicsForm")
         .viewStateAlert(state: $viewState)
         .toolbar {
             if ProcessInfo.isBeingUITested {
-                testingSupportMenu
+                testingSupportToolbarItem
             }
         }
     }
@@ -197,29 +198,68 @@ extension Impl {
 
 // MARK: Testing Support
 
+
 extension Impl {
-    private var testingSupportMenu: some ToolbarContent {
+    private var testingSupportToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Menu {
-                AsyncButton("Add Height & Weight Samples", state: $viewState) {
-                    let samples = [
-                        HKQuantitySample(
-                            type: SampleType.height.hkSampleType,
-                            quantity: HKQuantity(unit: .meterUnit(with: .centi), doubleValue: 186),
-                            start: .now,
-                            end: .now
-                        ),
-                        HKQuantitySample(
-                            type: SampleType.bodyMass.hkSampleType,
-                            quantity: HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: 70),
-                            start: .now,
-                            end: .now
-                        )
-                    ]
-                    try await healthKit.save(samples)
-                }
+                TestingSupportActions(viewState: $viewState)
             } label: {
                 Text("Testing Support")
+            }
+        }
+    }
+}
+
+
+extension Impl {
+    private struct TestingSupportActions: View {
+        @Environment(HealthKit.self) private var healthKit
+        @Environment(DemographicsData.self) private var data
+        
+        @Binding var viewState: ViewState
+        
+        var body: some View {
+            AsyncButton("Add Height & Weight Samples" as String, state: $viewState) {
+                let samples = [
+                    HKQuantitySample(
+                        type: SampleType.height.hkSampleType,
+                        quantity: HKQuantity(unit: .meterUnit(with: .centi), doubleValue: 186),
+                        start: .now,
+                        end: .now
+                    ),
+                    HKQuantitySample(
+                        type: SampleType.bodyMass.hkSampleType,
+                        quantity: HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: 70),
+                        start: .now,
+                        end: .now
+                    )
+                ]
+                try await healthKit.save(samples)
+            }
+            AsyncButton("Supply Test DoB" as String) {
+                data[\.dateOfBirth] = Calendar.current.date(from: DateComponents(year: 2014, month: 6, day: 2))
+                data[\.genderIdentity] = .male
+                data[\.sexAtBirth] = .male
+            }
+            Button("Supply All") {
+                data[\.dateOfBirth] = Calendar.current.date(from: DateComponents(year: 2014, month: 6, day: 2))
+                data[\.genderIdentity] = .male
+                data[\.sexAtBirth] = .male
+                data[\.height] = HKQuantity(unit: .meterUnit(with: .centi), doubleValue: 186)
+                data[\.weight] = HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: 67)
+                data[\.raceEthnicity] = .white
+                data[\.latinoStatus] = LatinoStatusOption.options[0]
+                data[\.bloodType] = .aPositive
+                data[\.comorbidities] = .init()
+                data[\.usRegion] = .dc
+                data[\.usEducationLevel] = EducationStatusUS.options[0]
+                data[\.usHouseholdIncome] = HouseholdIncomeUS.options[0]
+                data[\.stageOfChange] = StageOfChangeOption.allOptions[0]
+            }
+            Divider()
+            AsyncButton("Reset All" as String, role: .destructive, state: $viewState) {
+                try await data.clearAll()
             }
         }
     }

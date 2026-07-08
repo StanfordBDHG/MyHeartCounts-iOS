@@ -950,6 +950,7 @@
       }
     },
     "Add Height & Weight Samples" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -8597,6 +8598,9 @@
           }
         }
       }
+    },
+    "Supply All" : {
+
     },
     "Swimming" : {
       "localizations" : {

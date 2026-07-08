@@ -149,6 +149,7 @@ final class DemographicsData {
         self[\.referralSource] = details.referralSource
     }
     
+    
     fileprivate func onChange() {
         updateCounter &+= 1
         guard shouldHandleUpdates, let account else {
@@ -156,10 +157,27 @@ final class DemographicsData {
         }
         updateTask?.cancel()
         updateTask = Task {
-            try await Task.sleep(for: .seconds(2))
+            try await Task.sleep(for: .seconds(1))
             try await write(to: account)
         }
     }
+    
+    
+    /// Resets all fields in the `DemographicsData` and persists the changes to the server.
+    ///
+    /// - Note: This function is intended primarily for testing and debugging purposes.
+    func clearAll() async throws {
+        let baseline = initialDetails
+        populate(from: AccountDetails())
+        assert(allFields.allSatisfy(\.isEmpty))
+        // restore the real baseline (overriding what populate() just set),
+        // so that the flush below handles .some -> .none changes (ie, all of them) as removals.
+        initialDetails = baseline
+        if let account {
+            try await write(to: account)
+        }
+    }
+    
     
     /// Submit pending writes immediately
     func flush() async throws {
@@ -172,6 +190,7 @@ final class DemographicsData {
             try await write(to: account)
         }
     }
+    
     
     func write(to account: Account) async throws { // swiftlint:disable:this function_body_length
         var updated = AccountDetails()
@@ -229,6 +248,7 @@ final class DemographicsData {
         write(\.referralSource, to: \.referralSource)
         let modifications = try AccountModifications(modifiedDetails: updated, removedAccountDetails: removed)
         try await account.accountService.updateAccountDetails(modifications)
+        initialDetails.apply(modifications)
     }
 }
 
@@ -256,8 +276,21 @@ extension DemographicsData {
 
 
 extension DemographicsData {
+    private var allFields: [any AnyField] {
+        Mirror(reflecting: self)
+            .children
+            .compactMap { $0.value as? any AnyField }
+    }
+}
+
+
+extension DemographicsData {
+    private protocol AnyField {
+        var isEmpty: Bool { get }
+    }
+    
     // It's important that this be a struct, since we need these values to be Observation-trackable.
-    struct Field<Value> {
+    struct Field<Value>: AnyField {
         private let _isEmpty: (Value) -> Bool
         fileprivate(set) var value: Value?
         

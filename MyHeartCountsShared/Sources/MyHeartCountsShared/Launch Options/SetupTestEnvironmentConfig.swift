@@ -13,8 +13,6 @@ private import SpeziFoundation
 
 public struct SetupTestEnvironmentConfig: Hashable, Sendable {
     public struct Credentials: Hashable, Sendable {
-        public static let `default` = Self(username: "leland@stanford.edu", password: "StanfordRocks!")
-        
         public let username: String
         public let password: String
         
@@ -80,6 +78,9 @@ extension SetupTestEnvironmentConfig: LaunchOptionDecodable, LaunchOptionEncodab
                     // the option is present, but no credentials are supplied.
                     return .enable(.default)
                 }
+                if arg[colonIdx...].dropFirst() == "random" {
+                    return .enable(.random())
+                }
                 let components = arg[colonIdx...].dropFirst().split(separator: ";")
                 guard components.count == 2 else {
                     throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: arg)
@@ -103,11 +104,25 @@ extension SetupTestEnvironmentConfig: LaunchOptionDecodable, LaunchOptionEncodab
             }
             switch loginAndEnroll {
             case .skip:
-                let _ = ()
+                let _ = () // swiftlint:disable:this redundant_discardable_let
             case .enable(let credentials):
                 "\(Self.loginAndEnrollOptionName):\(credentials.username);\(credentials.password)"
             }
         }
+    }
+}
+
+
+extension SetupTestEnvironmentConfig.Credentials {
+    /// MHC default credentials
+    public static let `default` = Self(username: "leland@stanford.edu", password: "StanfordRocks!")
+    
+    /// Creates new, random `Credentials`
+    public static func random() -> Self {
+        Self(
+            username: "\(String.random(from: .alphanumerics, length: 5))@stanford.edu",
+            password: .random(from: .printableASCII, length: 12)
+        )
     }
 }
 

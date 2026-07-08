@@ -6,44 +6,63 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
-
 import Foundation
 import SpeziFoundation
 import XCTest
 import XCTHealthKit
 
 
+/// Allows for dynamically interacting with the `DeomgraphicsForm` in UI tests.
+///
+/// Currently only supports filling out the entire form at once;
+/// the plan is to add more granular per-field support, and support for the different regions, and awareness of different fields' optionality in the future.
 @MainActor
 struct DemographicsNavigator {
     private let testCase: MHCTestCase
     private var app: XCUIApplication {
         testCase.app
     }
+    private var form: XCUIElement {
+        app.collectionViews["DemographicsForm"]
+    }
     
     init(testCase: MHCTestCase) {
         self.testCase = testCase
     }
     
+    func performTestingSupportAction(_ title: String) {
+        let menuButton = app.navigationBars["Demographics"].buttons["Testing Support"]
+        XCTAssert(menuButton.waitForExistence(timeout: 1))
+        menuButton.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
+        XCTAssert(app.buttons[title].waitForExistence(timeout: 1))
+        app.buttons[title].tap()
+    }
+    
+    
     func fillInDemographics( // swiftlint:disable:this function_body_length
+        skipReferralSource: Bool = false
     ) {
         XCTAssert(app.staticTexts["Demographics"].waitForExistence(timeout: 2))
         
         XCTAssert(app.navigationBars["Demographics"].waitForExistence(timeout: 1))
         XCTAssert(app.navigationBars.staticTexts["Demographics"].waitForExistence(timeout: 1))
-        do {
-            let button = app.navigationBars["Demographics"].buttons["Testing Support"]
-            XCTAssert(button.waitForExistence(timeout: 1))
-            button.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
-            let optionTitle = "Add Height & Weight Samples"
-            XCTAssert(app.buttons[optionTitle].waitForExistence(timeout: 1))
-            app.buttons[optionTitle].tap()
-            app.handleHealthKitAuthorization()
-        }
+        performTestingSupportAction("Add Height & Weight Samples")
+        app.handleHealthKitAuthorization()
         app.buttons["Read from Health App"].tap()
-        XCTAssert(
-            app.datePickers.matching("label = %@ AND value = %@", "Date of Birth", "1998-06-02").element.waitForExistence(timeout: 2)
-        )
+        do {
+            let dobCell = form.cells.containing(.staticText, identifier: "Date of Birth")
+            let dobMissingResponseText = dobCell.staticTexts["Missing Response"]
+            if dobMissingResponseText.waitForExistence(timeout: 5) {
+                // HealthKit did not provide a DoB
+                performTestingSupportAction("Supply Test DoB")
+                XCTAssert(dobMissingResponseText.waitForNonExistence(timeout: 2))
+            } else {
+                // HealthKit did provide a DoB
+                XCTAssert(
+                    app.datePickers.matching("label = %@ AND value = %@", "Date of Birth", "1998-06-02").element.waitForExistence(timeout: 2)
+                )
+            }
+        }
         switch testCase.appLocale.measurementSystem {
         case .us:
             XCTAssert(app.buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
@@ -93,10 +112,16 @@ struct DemographicsNavigator {
         app.buttons["StageOfChangeButton:a"].tap()
         app.navigationBars.buttons["BackButton"].tap()
         XCTAssert(app.buttons["Stage of Change, A"].waitForExistence(timeout: 1))
+        
+        if !skipReferralSource {
+            fillInReferralSourceOption("Friend")
+        }
     }
     
     
     func fillInReferralSourceOption(_ title: String) {
+        form.swipeUp()
+        form.swipeUp()
         app.staticTexts["Referral Source"].tap()
         let optionButton = app.buttons.matching("label CONTAINS[c] %@", title).firstMatch
         if !optionButton.isSelected {
