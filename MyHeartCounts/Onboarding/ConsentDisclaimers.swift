@@ -74,6 +74,8 @@ struct ConsentDisclaimers: View {
             // we've gone through all disclaimers, the next step is the Consent Comprehension
             path.append {
                 ComprehensionScreening(consentDoc: consentDoc)
+                    .onboardingStep(.comprehension)
+                    .injectingSpezi()
             }
         }
     }
