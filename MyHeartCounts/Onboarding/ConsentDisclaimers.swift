@@ -6,77 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable attributes file_types_order
-
 import SFSafeSymbols
 import Spezi
-import SpeziAccount
 import SpeziConsent
 import SpeziFoundation
 import SpeziOnboarding
-import SpeziStudy
 import SpeziViews
 import SwiftUI
 
 
-struct OnboardingConsentFlow: View {
-    // swiftlint:disable attributes
-    @Environment(ManagedNavigationStack.Path.self) private var path
-    @Environment(ConsentManager.self) private var consentManager
-    // swiftlint:enable attributes
-    
-    @State private var consentDoc: ConsentDocument?
-    @State private var viewState: ViewState = .idle
-    
-    var body: some View {
-        OnboardingPage(
-            symbol: .signature,
-            title: "Consent",
-            description: ""
-        ) {
-            switch viewState {
-            case .idle, .processing:
-                ProgressView("Loading Consent Document…" as String)
-                    .controlSize(.large)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            case .error(let error):
-                ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
-            }
-        }
-        .task {
-            do {
-                viewState = .processing
-                let doc = try await loadConsentDocument()
-                switch try consentManager.shouldSign(doc.metadata) {
-                case .no:
-                    // the user does not need to go through the whole flow,
-                    // so we go to the next regularly scheduled step
-                    path.nextStep()
-                case .yes:
-                    // the user needs to go through the whole consent flow
-                    path.append {
-                        Disclaimers(consentDoc: doc)
-                            .navigationBarBackButtonHidden()
-                    }
-                }
-            } catch {
-                viewState = .error(AnyLocalizedError(error: error))
-            }
-        }
-    }
-    
-    private func loadConsentDocument() async throws -> ConsentDocument {
-        if let consentDoc {
-            return consentDoc
-        }
-        let doc = try await consentManager.loadConsentDoc()
-        consentDoc = doc
-        return doc
-    }
-}
-
-
-private struct Disclaimers: View {
+struct ConsentDisclaimers: View {
     struct DisclaimerConfig {
         let icon: SFSymbol
         let title: LocalizedStringResource
@@ -141,7 +80,7 @@ private struct Disclaimers: View {
 }
 
 
-extension Disclaimers {
+extension ConsentDisclaimers {
     init(consentDoc: ConsentDocument) {
         let steps: [DisclaimerConfig] = [
             .init(

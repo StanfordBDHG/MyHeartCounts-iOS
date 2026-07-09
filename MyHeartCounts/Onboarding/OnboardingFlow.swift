@@ -49,7 +49,7 @@ private struct AppOnboardingFlow: View {
     
     
     var body: some View {
-        ManagedNavigationStack(didComplete: $didComplete) { // swiftlint:disable:this closure_body_length
+        ManagedNavigationStack(didComplete: $didComplete) {
             Welcome()
                 .onboardingStep(.welcome)
             EligibilityScreening()
@@ -59,12 +59,8 @@ private struct AppOnboardingFlow: View {
                     .injectingSpezi()
                     .navigationBarBackButtonHidden()
                     .onboardingStep(.login)
+                // the `AccountOnboarding` step will, as needed, branch into the consent flow.
             }
-            OnboardingConsentFlow()
-                .injectingSpezi()
-            // we hide the back button here, to prevent the user from returning to the "re-activate account" page
-            // (in case that's presented), since that yes/no decision should only be made once.
-            .navigationBarBackButtonHidden()
             if HKHealthStore.isHealthDataAvailable() {
                 // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()

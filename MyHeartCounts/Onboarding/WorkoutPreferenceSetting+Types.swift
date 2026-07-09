@@ -94,6 +94,10 @@ extension WorkoutPreferenceSetting {
             elements = Set()
         }
         
+        init(_ options: some Sequence<WorkoutType>) {
+            elements = Set(options)
+        }
+        
         mutating func insert(_ element: WorkoutType) {
             elements.insert(element)
         }
