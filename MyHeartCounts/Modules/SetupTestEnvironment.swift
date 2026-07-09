@@ -220,6 +220,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
                 newDetails.lastSignedConsentVersion = consentVersion.description
                 newDetails.lastSignedConsentDate = Date()
             }
+            newDetails.didOptInToTrial = true
             // demographics
             newDetails.dateOfBirth = Calendar.current.date(
                 from: .init(timeZone: TimeZone(identifier: "America/New_York"), year: 1824, month: 3, day: 9)
