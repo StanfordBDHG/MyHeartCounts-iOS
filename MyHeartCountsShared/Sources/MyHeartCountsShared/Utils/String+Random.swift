@@ -23,6 +23,10 @@ extension String {
         public static func + (lhs: Self, rhs: Self) -> Self {
             Self(lhs.pool.union(rhs.pool))
         }
+        
+        public func excluding(_ chars: some Sequence<Character>) -> Alphabet {
+            Alphabet(pool.subtracting(chars))
+        }
     }
 }
 

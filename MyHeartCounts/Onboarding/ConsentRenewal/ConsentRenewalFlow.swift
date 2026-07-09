@@ -11,6 +11,7 @@
 import Foundation
 import SFSafeSymbols
 import SpeziAccount
+import SpeziConsent
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
@@ -20,14 +21,17 @@ struct ConsentRenewalFlow: View {
     @Environment(\.dismiss)
     private var dismiss
     
+    let document: ConsentDocument
+    
     var body: some View {
         ManagedNavigationStack {
             ConsentRenewalExplainer()
-            Consent {
+            Consent(document: document) {
                 dismiss()
             }
         }
         .interactiveDismissDisabled()
+        .accessibilityIdentifier("MHC:ConsentRenewalFlow")
     }
 }
 
@@ -39,29 +43,20 @@ private struct ConsentRenewalExplainer: View {
     // swiftlint:enable attributes
     
     var body: some View {
-        OnboardingView {
-            VStack(alignment: .leading) {
-                OnboardingTitleView(title: "Consent Renewal")
-                Spacer()
-                HStack {
-                    Spacer()
-                    Image(systemSymbol: .textDocument)
-                        .font(.system(size: 150))
-                        .foregroundColor(.accentColor)
-                        .accessibilityHidden(true)
-                    Spacer()
-                }
-                Spacer()
-                let lastSignDate = account?.details?.lastSignedConsentDate
-                Text("""
-                    Our Study Consent document has been updated since you last signed it\(lastSignDate.map { " on \($0.formatted(.dateTime))" } ?? "").
-                    
-                    Please review the new Consent document and sign it again.
-                    """)
-                Spacer()
-            }
+        OnboardingPage(
+            symbol: .signature,
+            title: "Consent Renewal",
+            description: "CONSENT_RENEWAL_SUBTITLE"
+        ) {
+            let lastSignDate = account?.details?.lastSignedConsentDate
+            Text("""
+                Our Study Consent document has been updated since you last signed it\(lastSignDate.map { " on \($0.formatted(.dateTime))" } ?? "").
+
+                Please review the new Consent document and sign it again.
+                """)
+            Spacer()
         } footer: {
-            OnboardingActionsView("OK") {
+            OnboardingActionsView("Continue") {
                 path.nextStep()
             }
         }

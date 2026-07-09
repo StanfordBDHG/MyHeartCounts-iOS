@@ -61,7 +61,7 @@ struct SensorKitButton: View {
         case 0:
             "No data collection active"
         case let count:
-            "Data collection enabled for \(count, format: .number) sensors"
+            "Data collection enabled for \(count) sensors"
         }
         return makeLabel(title: "Manage SensorKit", subtitle: subtitle)
     }

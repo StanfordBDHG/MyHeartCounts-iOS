@@ -44,10 +44,8 @@ class MHCTestCase: XCTestCase, Sendable {
         try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
-        if studyBundleUrl == nil {
-            try FileManager.default.createDirectory(at: Self.tempDir, withIntermediateDirectories: true)
-            studyBundleUrl = try export(to: Self.tempDir, as: .archive)
-        }
+        try FileManager.default.createDirectory(at: Self.tempDir, withIntermediateDirectories: true)
+        studyBundleUrl = try MHCStudyDefinitionExporter::export(to: Self.tempDir, as: .package)
     }
     
     override func tearDown() async throws {
@@ -55,6 +53,7 @@ class MHCTestCase: XCTestCase, Sendable {
         app.terminate()
         app = nil
         appLocale = nil
+        try FileManager.default.removeItem(at: studyBundleUrl)
     }
     
     override class func tearDown() {
@@ -73,21 +72,25 @@ class MHCTestCase: XCTestCase, Sendable {
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     func launchAppAndEnrollIntoStudy( // swiftlint:disable:this function_body_length
         skip: Bool = false,
-        locale: Locale = .enUS,
+        locale: consuming Locale = .enUS,
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: .enable(.default)),
         enableHealthRecords: Bool = MHCTestCase.enableHealthRecords,
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
         promptedActionsFilter: PromptedActionsFilter = .only([]),
+        triggerConsentRenewalIfNeverSigned: Bool = false,
         heightEntryUnitOverride: LaunchOptions.HeightInputUnitOverride = .none,
         weightEntryUnitOverride: LaunchOptions.WeightInputUnitOverride = .none,
+        extraLaunchOptions: [any _AnyExtraLaunchOption] = [],
         extraLaunchArgs: [String?] = [],
         extraEnvironmentEntries: [String: String] = [:]
     ) throws {
         if skip {
             throw XCTSkip()
         }
+        // note: we're intentionally just setting it here, and then using `appLocale` everywhere else.
+        appLocale = consume locale
         app.launchArguments = Array {
             "--useFirebaseEmulator"
             testEnvironmentConfig.launchOptionArgs(for: .setupTestEnvironment)
@@ -98,12 +101,13 @@ class MHCTestCase: XCTestCase, Sendable {
             heightEntryUnitOverride.launchOptionArgs(for: .heightInputUnitOverride)
             weightEntryUnitOverride.launchOptionArgs(for: .weightInputUnitOverride)
             promptedActionsFilter.launchOptionArgs(for: .promptedActionsFilter)
+            triggerConsentRenewalIfNeverSigned.launchOptionArgs(for: .triggerConsentRenewalIfNeverSigned)
         }
+        app.launchArguments += extraLaunchOptions.flatMap(\.rawArgs)
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
-        appLocale = locale
         app.launchArguments += [
-            "-AppleLanguages", "(\(locale.language.minimalIdentifier))",
-            "-AppleLocale", try XCTUnwrap(LocalizationKey(locale: locale)).description
+            "-AppleLanguages", "(\(appLocale.language.minimalIdentifier))",
+            "-AppleLocale", try XCTUnwrap(LocalizationKey(locale: appLocale)).description
         ]
         app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         app.launchEnvironment.merge(extraEnvironmentEntries, using: .override)
@@ -119,6 +123,10 @@ class MHCTestCase: XCTestCase, Sendable {
             }
             print(msg)
         }
+        XCTAssertFalse(
+            app.launchArguments.contains { $0.contains("'") },
+            "XCUIApplication.launchArguments doesn't support single quote chars within launch arguments (see FB23653577)"
+        )
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         if !skipHealthPermissionsHandling {
@@ -146,6 +154,27 @@ class MHCTestCase: XCTestCase, Sendable {
 
 
 extension MHCTestCase {
+    protocol _AnyExtraLaunchOption { // swiftlint:disable:this type_name
+        var rawArgs: [String] { get }
+    }
+    
+    struct LaunchOptionValue<T: LaunchOptionEncodable>: _AnyExtraLaunchOption {
+        private let option: LaunchOption<T>
+        private let value: T
+        
+        init(_ value: T, for option: LaunchOption<T>) {
+            self.option = option
+            self.value = value
+        }
+        
+        var rawArgs: [String] {
+            value.launchOptionArgs(for: option)
+        }
+    }
+}
+
+
+extension MHCTestCase {
     enum RootLevelTab: String, CaseIterable {
         // needs to be kept in sync with the titles in the app
         case home = "Home"
@@ -166,6 +195,12 @@ extension MHCTestCase {
         let button = app.navigationBars.buttons["MHC:YourAccount"]
         XCTAssert(button.waitForExistence(timeout: 1))
         button.tap()
+    }
+    
+    func closeAccountSheet() {
+        let sheet = app.otherElements["MHC:AccountSheet"]
+        XCTAssert(sheet.waitForExistence(timeout: 2))
+        sheet.navigationBars.buttons["Close"].tap()
     }
 }
 

@@ -1863,6 +1863,9 @@
         }
       }
     },
+    "CONSENT_RENEWAL_SUBTITLE" : {
+
+    },
     "Continue" : {
       "localizations" : {
         "en-GB" : {
@@ -1959,22 +1962,60 @@
         }
       }
     },
-    "Data collection enabled for %@ sensors" : {
-
-    },
     "Data collection enabled for %lld sensors" : {
-      "extractionState" : "stale",
       "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Data collection enabled for %lld sensor"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Data collection enabled for %lld sensors"
+                }
+              }
+            }
+          }
+        },
         "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data collection enabled for %lld sensors"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Data collection enabled for %lld sensors"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Data collection enabled for %lld sensors"
+                }
+              }
+            }
           }
         },
         "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recopilación de datos habilitada para %lld sensores"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "Recopilación de datos habilitada para %lld sensores"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Recopilación de datos habilitada para %lld sensores"
+                }
+              }
+            }
           }
         }
       }

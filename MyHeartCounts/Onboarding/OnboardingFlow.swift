@@ -60,55 +60,18 @@ private struct AppOnboardingFlow: View {
                     .navigationBarBackButtonHidden()
                     .onboardingStep(.login)
             }
-            OnboardingDisclaimerStep(
-                icon: .textPageBadgeMagnifyingglass,
-                title: "ONBOARDING_DISCLAIMER_1_TITLE",
-                primaryText: "ONBOARDING_DISCLAIMER_1_PRIMARY_TEXT",
-                learnMoreText: "ONBOARDING_DISCLAIMER_1_LEARN_MORE_TEXT"
-            )
-                .onboardingStep(.disclaimer1)
+            OnboardingConsentFlow()
                 .injectingSpezi()
-                // we hide the back button here, to prevent the user from returning to the "re-activate account" page
-                // (in case that's presented), since that yes/no decision should only be made once.
-                .navigationBarBackButtonHidden()
-            OnboardingDisclaimerStep(
-                icon: .figureWalkMotion,
-                title: "ONBOARDING_DISCLAIMER_2_TITLE",
-                primaryText: "ONBOARDING_DISCLAIMER_2_PRIMARY_TEXT",
-                learnMoreText: "ONBOARDING_DISCLAIMER_2_LEARN_MORE_TEXT"
-            )
-                .onboardingStep(.disclaimer2)
-                .injectingSpezi()
-            OnboardingDisclaimerStep(
-                icon: .lockSquareStack,
-                title: "ONBOARDING_DISCLAIMER_3_TITLE",
-                primaryText: "ONBOARDING_DISCLAIMER_3_PRIMARY_TEXT",
-                learnMoreText: "ONBOARDING_DISCLAIMER_3_LEARN_MORE_TEXT"
-            )
-                .onboardingStep(.disclaimer3)
-                .injectingSpezi()
-            OnboardingDisclaimerStep(
-                icon: .documentOnClipboard,
-                title: "ONBOARDING_DISCLAIMER_4_TITLE",
-                primaryText: "ONBOARDING_DISCLAIMER_4_PRIMARY_TEXT",
-                learnMoreText: "ONBOARDING_DISCLAIMER_4_LEARN_MORE_TEXT"
-            )
-                .onboardingStep(.disclaimer4)
-                .injectingSpezi()
-            ComprehensionScreening()
-                .onboardingStep(.comprehension)
-                .injectingSpezi()
-            #if !(targetEnvironment(simulator) && (arch(i386) || arch(x86_64)))
-            Consent()
-                .onboardingStep(.consent)
-                .injectingSpezi()
-                .navigationStepIdentifier("Consent")
-            #endif
+            // we hide the back button here, to prevent the user from returning to the "re-activate account" page
+            // (in case that's presented), since that yes/no decision should only be made once.
+            .navigationBarBackButtonHidden()
             if HKHealthStore.isHealthDataAvailable() {
                 // IDEA instead of having this in an if, we should probably have a full-screen "you can't participate" thing if the user doesn't have HealthKit?
                 HealthKitPermissions()
                     .onboardingStep(.healthAccess)
                     .injectingSpezi()
+                    // we don't want the user to be able to return to the Consent flow
+                    .navigationBarBackButtonHidden()
                 if ClinicalRecordPermissions.isAvailable && HealthRecordPermissions.includeInOnboarding {
                     HealthRecordPermissions()
                         .onboardingStep(.healthRecords)

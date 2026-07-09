@@ -8,8 +8,11 @@
 
 import FirebaseStorage
 import Foundation
+import MyHeartCountsShared
+@_spi(APISupport) // dynamic module loading
 import Spezi
 import SpeziAccount
+import class SpeziConsent.ConsentDocument
 import SpeziFoundation
 import SpeziLocalization
 import SpeziStudy
@@ -17,14 +20,21 @@ import SwiftUI
 
 
 @Observable
-final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
+@MainActor
+final class ConsentManager: Module, EnvironmentAccessible, Sendable {
     // swiftlint:disable attributes
+    @ObservationIgnored @Application(\.spezi) private var spezi
     @ObservationIgnored @Dependency(StudyBundleLoader.self) private var studyBundleLoader
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager
     // swiftlint:enable attributes
     
-    @MainActor private(set) var needsToSignNewConsentVersion = false
+    @MainActor var pendingConsentDoc: ConsentDocument?
+    
+    
+    private var isInTestEnvSetup: Bool {
+        spezi.module(SetupTestEnvironment.self)?.isInSetup ?? false
+    }
     
     nonisolated init() {}
     
@@ -43,35 +53,93 @@ final class ConsentManager: Module, EnvironmentAccessible, @unchecked Sendable {
                 await self?.doUpdate()
             }
         }
-        guard LocalPreferencesStore.standard[.onboardingFlowComplete] else {
-            return
-        }
-        guard !needsToSignNewConsentVersion else {
+        guard LocalPreferencesStore.standard[.onboardingFlowComplete], !isInTestEnvSetup else {
+            // we never want this to trigger during the regular onboarding, as it could interfere with the flow there.
             return
         }
         guard let studyBundle else {
             return
         }
-        guard let accountDetails = account?.details else {
+        guard let doc = try? loadConsentDoc(from: studyBundle) else {
             return
         }
-        guard let consentFile = studyBundle.studyDefinition.metadata.consentFileRef,
+        if let shouldSign = try? shouldSign(doc.metadata) {
+            print("shouldSign? \(shouldSign)")
+            switch shouldSign {
+            case .no:
+                pendingConsentDoc = nil
+            case .yes(.signedOldVersion):
+                pendingConsentDoc = doc
+            case .yes(.neverSigned):
+                if LaunchOptions[.triggerConsentRenewalIfNeverSigned] {
+                    pendingConsentDoc = doc
+                } else {
+                    pendingConsentDoc = nil
+                }
+            }
+        }
+    }
+    
+    
+    func loadConsentDoc() async throws -> ConsentDocument {
+        // NOTE: we need to get the StudyBundle from the StudyBundleLoader, instead of the StudyManager,
+        // since the app won't necessarily be already enrolled at this point.
+        // (it is if this is a Consent renewal, but not during the initial onboarding...)
+        try loadConsentDoc(from: try await studyBundleLoader.update())
+    }
+    
+    func loadConsentDoc(from studyBundle: StudyBundle) throws -> ConsentDocument {
+        guard let fileRef = studyBundle.studyDefinition.metadata.consentFileRef,
               let consentText = studyBundle.consentText(
-                for: consentFile,
+                for: fileRef,
                 in: studyManager.preferredLocale,
                 using: .requirePerfectMatch,
                 fallbackLocale: studyManager.defaultLanguageFallbackLocale
-              ),
-              let consentVersion = (try? MarkdownDocument.Metadata(parsing: consentText))?.version else {
-                  return
+              ) else {
+            throw NSError(mhcErrorCode: .unspecified, localizedDescription: "Failed to load doc")
         }
-        if let lastSignedVersion = accountDetails.lastSignedConsentVersion.flatMap(Version.init) {
-            needsToSignNewConsentVersion = consentVersion.isGreaterThan(lastSignedVersion, upFrom: .minor)
+        return try ConsentDocument(
+            markdown: consentText,
+            initialName: account?.details?.name
+        )
+    }
+}
+
+
+extension ConsentManager {
+    private struct UnableToDetermineShouldSignStatusError: Error {}
+    
+    enum ShouldSignConsentResult {
+        case yes(YesReason)
+        case no // swiftlint:disable:this identifier_name
+        
+        enum YesReason {
+            case neverSigned
+            case signedOldVersion
+        }
+    }
+    
+    /// Determines if the user should be prompted to sign a specific consent document.
+    ///
+    /// - returns: a boolean indicating whether the user should be asked to sign the supplied consent version.
+    /// - throws: if the function was unable to determine the consent state.
+    ///     this will typically happen if the app is offline and the last-signed version cannot be determined, or if the input does not contain a valid version.
+    ///
+    /// - Note: If this function is unsure whether the user already signed the document, or signed a recent enough version of it, it will err on the side of caution and
+    ///     rather suggest the user be asked to re-sign the document, than not.
+    @MainActor
+    func shouldSign(_ documentMetadata: MarkdownDocument.Metadata) throws -> ShouldSignConsentResult {
+        guard let accountDetails = account?.details,
+              let docVersion = documentMetadata.version else {
+            throw UnableToDetermineShouldSignStatusError()
+        }
+        guard let lastSignedVersion = accountDetails.lastSignedConsentVersion.flatMap(Version.init) else {
+            return .yes(.neverSigned)
+        }
+        return if docVersion.isGreaterThan(lastSignedVersion, upFrom: .minor) {
+            .yes(.signedOldVersion)
         } else {
-            // we're unable to get the most recent signed, so we'll make the user re-sign it
-//            await MainActor.run {
-//                self.needsToSignNewConsentVersion = true
-//            }
+            .no
         }
     }
 }

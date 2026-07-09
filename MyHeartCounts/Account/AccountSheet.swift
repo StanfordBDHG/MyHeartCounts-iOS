@@ -70,6 +70,7 @@ struct AccountSheet: View {
                 }
             }
         }
+        .accessibilityIdentifier("MHC:AccountSheet")
     }
     
     @ViewBuilder private var accountSheetExtraContent: some View {
@@ -267,6 +268,7 @@ extension AccountSheet {
     private struct AboutRow: View {
         // swiftlint:disable attributes
         @Environment(Account.self) private var account
+        @Environment(StudyBundleLoader.self) private var studyBundleLoader
         // swiftlint:enable attributes
         @StudyManagerQuery private var enrollments: [StudyEnrollment]
         
@@ -283,6 +285,8 @@ extension AccountSheet {
             .onTapGesture(count: 5) {
                 showExtendedInfo = true
             }
+            .accessibilityElement()
+            .accessibilityIdentifier("MHC:AboutRow")
             .sheet(isPresented: $showExtendedInfo) {
                 NavigationStack {
                     Form {
@@ -292,20 +296,31 @@ extension AccountSheet {
                             LabeledContent("Build" as String, value: bundle.appBuildNumber?.description ?? "n/a")
                         }
                         Section {
-                            LabeledContent("Study Revision" as String, value: enrollments.first?.studyRevision.description ?? "n/a")
-                        }
-                        Section {
                             LabeledContent("Project ID" as String, value: FirebaseApp.app()?.options.projectID ?? "n/a")
                             LabeledContent("Account ID" as String, value: account.details?.accountId ?? "n/a")
                         }
+                        Section {
+                            LabeledContent("Study Revision (enrolled)" as String, value: enrollments.first?.studyRevision.description ?? "n/a")
+                            LabeledContent(
+                                "Study Revision (fetched)" as String,
+                                value: (try? studyBundleLoader.studyBundle?.get())?.studyDefinition.studyRevision.description ?? "n/a"
+                            )
+                            LabeledContent(
+                                "lastSignedConsentVersion" as String,
+                                value: account.details?.lastSignedConsentVersion?.description ?? "n/a"
+                            )
+                        }
                     }
+                    .navigationTitle("Extended Info" as String)
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             DismissButton()
                         }
                     }
                 }
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
+                .accessibilityIdentifier("MHC:AboutRow:ExtendedInfoSheet")
             }
         }
     }
