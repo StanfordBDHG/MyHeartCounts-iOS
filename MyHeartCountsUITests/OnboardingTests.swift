@@ -16,9 +16,8 @@ import XCTSpeziAccount
 import XCTSpeziNotifications
 
 
-// named like this bc tests are run based on the alpabetic ordering of the test classes, and we want this one to run first.
-final class AOnboardingTests: MHCTestCase, Sendable {
-    func testAOnboardingFlow() throws {
+final class OnboardingTests: MHCTestCase, Sendable {
+    func testOnboardingFlow() throws {
         try supplyHealthCharacteristics()
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
