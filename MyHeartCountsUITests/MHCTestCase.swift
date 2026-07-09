@@ -132,11 +132,13 @@ class MHCTestCase: XCTestCase, Sendable {
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         if !skipHealthPermissionsHandling {
             app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
-            handleHealthRecordsAuthorization(
-                healthRecordTypes: HealthRecordType.allCases,
-                automaticallyShareUpdates: true,
-                timeout: 10
-            )
+            if MHCTestCase.enableHealthRecords {
+                handleHealthRecordsAuthorization(
+                    healthRecordTypes: HealthRecordType.allCases,
+                    automaticallyShareUpdates: true,
+                    timeout: 10
+                )
+            }
         }
         if !skipGoingToHomeTab {
             XCTAssert(app.tabBars.element.waitForExistence(timeout: 10))
