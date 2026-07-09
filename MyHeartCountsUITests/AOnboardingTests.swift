@@ -31,14 +31,15 @@ final class AOnboardingTests: MHCTestCase, Sendable {
             locale: .enUS,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
             skipHealthPermissionsHandling: true,
-            skipGoingToHomeTab: true,
+            skipGoingToHomeTab: true
         )
         let navigator = OnboardingNavigator(testCase: self)
         try navigator.navigateFullOnboardingFlow(
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
             credentials: .default,
-            signUpForExtraTrial: true
+            signUpForExtraTrial: true,
+            consentPresenceCheck: .dontCare
         )
     }
     
@@ -96,6 +97,12 @@ final class AOnboardingTests: MHCTestCase, Sendable {
 
 @MainActor
 struct OnboardingNavigator { // swiftlint:disable:this type_body_length
+    enum ConsentPresenceCheck {
+        case assertPresent
+        case assertSkipped
+        case dontCare
+    }
+    
     let testCase: MHCTestCase
     
     private var app: XCUIApplication {
@@ -103,18 +110,49 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    func navigateFullOnboardingFlow(
+    func navigateOnboardingFlowUntilHealthKit(
         region: Locale.Region,
         name: PersonNameComponents,
         credentials: SetupTestEnvironmentConfig.Credentials,
-        signUpForExtraTrial: Bool
+        signUpForExtraTrial: Bool,
+        consentPresenceCheck: ConsentPresenceCheck
     ) throws {
         navigateWelcome()
         try navigateEligibility(region: region)
         try navigateSignup(name: name, credentials: credentials)
-        navigateOnboardingDisclaimers()
-        navigateConsentComprehension()
-        navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
+        let consentFlowIndicator = app.staticTexts["Study Overview & Participation"]
+        let noConsentFlowIndicator = app.staticTexts["HealthKit Access"]
+        switch consentPresenceCheck {
+        case .assertPresent:
+            XCTAssert(consentFlowIndicator.waitForExistence(timeout: 5))
+        case .assertSkipped:
+            XCTAssertFalse(consentFlowIndicator.waitForExistence(timeout: 5))
+            XCTAssert(noConsentFlowIndicator.waitForExistence(timeout: 5))
+        case .dontCare:
+            break
+        }
+        if consentFlowIndicator.waitForExistence(timeout: 5) {
+            navigateOnboardingDisclaimers()
+            navigateConsentComprehension()
+            navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
+        }
+        XCTAssert(app.staticTexts["HealthKit Access"].waitForExistence(timeout: 10))
+    }
+    
+    func navigateFullOnboardingFlow(
+        region: Locale.Region,
+        name: PersonNameComponents,
+        credentials: SetupTestEnvironmentConfig.Credentials,
+        signUpForExtraTrial: Bool,
+        consentPresenceCheck: ConsentPresenceCheck
+    ) throws {
+        try navigateOnboardingFlowUntilHealthKit(
+            region: region,
+            name: name,
+            credentials: credentials,
+            signUpForExtraTrial: signUpForExtraTrial,
+            consentPresenceCheck: consentPresenceCheck
+        )
         navigateHealthKitAccess()
         if app.staticTexts["Health Records"].waitForExistence(timeout: 2) { // only included if Health Records are actually available
             navigateHealthRecords()

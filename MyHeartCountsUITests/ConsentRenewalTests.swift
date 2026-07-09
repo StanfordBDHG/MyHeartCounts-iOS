@@ -7,14 +7,16 @@
 //
 
 import Algorithms
+import HealthKit
 import MyHeartCountsShared
 import SpeziFoundation
 import SpeziStudyDefinition
 import XCTest
 import XCTestExtensions
+import XCTHealthKit
 
 
-final class ConsentRenewalTests: MHCTestCase, Sendable {
+final class ConsentTests: MHCTestCase, Sendable {
     private func onDiskConsentVersion(for locale: Locale) throws -> Version {
         let studyBundle = try StudyBundle(bundleUrl: try XCTUnwrap(studyBundleUrl))
         let consentFileRef = try XCTUnwrap(studyBundle.studyDefinition.metadata.consentFileRef)
@@ -22,6 +24,62 @@ final class ConsentRenewalTests: MHCTestCase, Sendable {
         let text = try String(contentsOf: url, encoding: .utf8)
         let match = try XCTUnwrap(text.firstMatch(of: /^version: (?<value>.*)$/.anchorsMatchLineEndings()))
         return try XCTUnwrap(Version(String(match.output.value)))
+    }
+    
+    func overwriteOnDiskConsentVersion(for locale: Locale, to newVersion: Version) throws {
+        let studyBundle = try StudyBundle(bundleUrl: try XCTUnwrap(studyBundleUrl))
+        let consentFileRef = try XCTUnwrap(studyBundle.studyDefinition.metadata.consentFileRef)
+        let url = try XCTUnwrap(studyBundle.resolve(consentFileRef, in: locale))
+        var text = try String(contentsOf: url, encoding: .utf8)
+        text.replace(/^version: (.*)$/.anchorsMatchLineEndings(), maxReplacements: 1) { _ in
+            "version: \(newVersion.description)"
+        }
+        try Data(text.utf8).write(to: url)
+    }
+    
+    
+    func testSkipDuringOnboardingIfAlreadySupplied() throws {
+        let locale: Locale = .enUS
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
+        
+        try launchHealthAppAndEnterCharacteristics(.init(
+            bloodType: .aPositive,
+            dateOfBirth: .init(year: 1998, month: 6, day: 2),
+            biologicalSex: .male,
+            skinType: .II,
+            wheelchairUse: .no
+        ))
+        try launchAppAndEnrollIntoStudy(
+            locale: locale,
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        let navigator = OnboardingNavigator(testCase: self)
+        try navigator.navigateFullOnboardingFlow(
+            region: try XCTUnwrap(locale.region),
+            name: .init(givenName: "Leland", familyName: "Stanford"),
+            credentials: credentials,
+            signUpForExtraTrial: false,
+            consentPresenceCheck: .assertPresent
+        )
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
+        app.terminate()
+        
+        try launchAppAndEnrollIntoStudy(
+            locale: locale,
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        
+        try navigator.navigateOnboardingFlowUntilHealthKit(
+            region: try XCTUnwrap(locale.region),
+            name: .init(givenName: "Leland", familyName: "Stanford"),
+            credentials: credentials,
+            signUpForExtraTrial: false,
+            consentPresenceCheck: .assertSkipped
+        )
     }
     
     
@@ -49,17 +107,6 @@ final class ConsentRenewalTests: MHCTestCase, Sendable {
         expectRenewalFlow: Bool
     ) throws {
         let locale: Locale = .enUS
-        
-        func overwriteOnDiskConsentVersion(to newVersion: Version) throws {
-            let studyBundle = try StudyBundle(bundleUrl: try XCTUnwrap(studyBundleUrl))
-            let consentFileRef = try XCTUnwrap(studyBundle.studyDefinition.metadata.consentFileRef)
-            let url = try XCTUnwrap(studyBundle.resolve(consentFileRef, in: locale))
-            var text = try String(contentsOf: url, encoding: .utf8)
-            text.replace(/^version: (.*)$/.anchorsMatchLineEndings(), maxReplacements: 1) { _ in
-                "version: \(newVersion.description)"
-            }
-            try Data(text.utf8).write(to: url)
-        }
         
         let config = SetupTestEnvironmentConfig(
             // note: having the reset here happen is important for the test below to work properly,
@@ -110,7 +157,7 @@ final class ConsentRenewalTests: MHCTestCase, Sendable {
         
         if expectRenewalFlow {
             // Step 2: check that the new version triggers renewal
-            try overwriteOnDiskConsentVersion(to: nextConsentVersion)
+            try overwriteOnDiskConsentVersion(for: locale, to: nextConsentVersion)
             try launchAppAndEnrollIntoStudy(
                 locale: locale,
                 testEnvironmentConfig: config,
