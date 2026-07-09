@@ -17,7 +17,7 @@ public struct SetupTestEnvironmentConfig: Hashable, Sendable {
         public let password: String
         
         public init(username: String, password: String) {
-            self.username = username
+            self.username = username.lowercased() // normalize for firebase
             self.password = password
         }
     }
@@ -122,7 +122,7 @@ extension SetupTestEnvironmentConfig.Credentials {
     /// Creates new, random `Credentials`
     public static func random() -> Self {
         Self(
-            username: "\(String.random(from: .alphanumerics, length: 7))@stanford.edu",
+            username: "\(String.random(from: .alphanumerics, length: 12))@stanford.edu",
             password: .random(from: .printableASCII.excluding("' "), length: 12)
             // ^ we need to disallow `'`s to work around FB23653577
             //   we also disallow ` ` just to be safe

@@ -29,7 +29,7 @@ final class OnboardingTests: MHCTestCase, Sendable {
         try navigator.navigateFullOnboardingFlow(
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
-            credentials: .default,
+            credentials: .random(),
             signUpForExtraTrial: true,
             consentPresenceCheck: .dontCare
         )

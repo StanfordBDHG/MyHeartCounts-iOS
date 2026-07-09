@@ -69,7 +69,7 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         func launchApp(resetExistingData: Bool) throws {
             try self.launchAppAndEnrollIntoStudy(
-                testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials)),
+                testEnvironmentConfig: .init(resetExistingData: resetExistingData, loginAndEnroll: .enable(credentials)),
                 promptedActionsFilter: .only([.completeDemographics])
             )
             self.goToTab(.home)

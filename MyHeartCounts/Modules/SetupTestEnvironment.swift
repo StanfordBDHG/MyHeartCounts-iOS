@@ -59,7 +59,12 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @MainActor private(set) var isInSetup = false
     
     private(set) var state: State
-    private(set) var desc = ""
+    private(set) var desc = "" {
+        didSet {
+            let desc = desc
+            logger.notice("\(desc)")
+        }
+    }
     
     init() {
         state = if FeatureFlags.disableFirebase || config == .disabled {
@@ -170,6 +175,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // we need to prevent this, since the logout would trigger all of the local data to get reset,
             // which might be at odds with our config here.
             if !account.signedIn || account.details?.userId != credentials.username {
+                logger.notice("account.signedIn? \(account.signedIn); account.userId: \(account.details?.userId ?? "n/a")")
                 try await accountService.login(userId: credentials.username, password: credentials.password)
             }
         } catch FirebaseAccountError.invalidCredentials {
