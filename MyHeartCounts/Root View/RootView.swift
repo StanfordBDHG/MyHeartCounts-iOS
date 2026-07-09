@@ -10,6 +10,7 @@ import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziAccount
+import class SpeziConsent.ConsentDocument
 import SpeziFoundation
 import SpeziOnboarding
 import SpeziScheduler
@@ -30,7 +31,7 @@ struct RootView: View {
     @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
     // swiftlint:enable attributes
     
-    @State private var isShowingConsentRenewalSheet = false
+    @State private var consentDocForRenewal: ConsentDocument?
     
     var body: some View {
         ZStack {
@@ -55,15 +56,8 @@ struct RootView: View {
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
             }
         }
-        .onChange(of: consentManager?.needsToSignNewConsentVersion) { oldValue, newValue in
-            if let oldValue, let newValue, !oldValue && newValue {
-                isShowingConsentRenewalSheet = true
-            }
-        }
-        .sheet(isPresented: $isShowingConsentRenewalSheet) {
-            ConsentRenewalFlow()
-        }
         .trackingScenePhase()
+        .modifier(ConsentRenewalSheetModifier())
     }
 }
 
@@ -105,6 +99,25 @@ extension RootView {
                 ids.append(tab.accessibilityIdentifier)
             }
             return (content, ids)
+        }
+    }
+}
+
+
+extension RootView {
+    private struct ConsentRenewalSheetModifier: ViewModifier {
+        @Environment(ConsentManager.self)
+        private var consentManager: ConsentManager?
+        
+        func body(content: Content) -> some View {
+            if let consentManager {
+                @Bindable var consentManager = consentManager
+                content.sheet(item: $consentManager.pendingConsentDoc) { doc in
+                    ConsentRenewalFlow(document: doc)
+                }
+            } else {
+                content
+            }
         }
     }
 }

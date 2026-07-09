@@ -30,6 +30,7 @@ struct DebugForm: View {
 
 
 private struct DebugFormImpl: View {
+    @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(StudyManager.self) private var studyManager
     @Environment(DemoSetup.self) private var demoSetup
     @Environment(LocalNotifications.self) private var localNotifications
@@ -119,6 +120,9 @@ private struct DebugFormImpl: View {
                 }
                 CheckForUpdateButton {
                     Text(verbatim: "Check for App Update")
+                }
+                AsyncButton("Spezi Dependency Graph" as String) {
+                    print(await standard.spezi.moduleDependencyGraph.dotDescription)
                 }
             }
             Section {

@@ -78,16 +78,18 @@ extension SetupTestEnvironmentConfig: LaunchOptionDecodable, LaunchOptionEncodab
                     // the option is present, but no credentials are supplied.
                     return .enable(.default)
                 }
-                if arg[colonIdx...].dropFirst() == "random" {
+                let emailAndPassword = arg[colonIdx...].dropFirst()
+                if emailAndPassword == "random" {
                     return .enable(.random())
                 }
-                let components = arg[colonIdx...].dropFirst().split(separator: ";")
-                guard components.count == 2 else {
+                guard let sepIdx = emailAndPassword.firstIndex(of: ";") else {
                     throw LaunchOptionDecodingError.unableToDecode(Self.self, rawValue: arg)
                 }
+                let email = emailAndPassword[..<sepIdx]
+                let password = emailAndPassword[sepIdx...].dropFirst()
                 return .enable(Credentials(
-                    username: String(components[0]),
-                    password: String(components[1])
+                    username: String(email),
+                    password: String(password)
                 ))
             }()
         )
@@ -120,8 +122,10 @@ extension SetupTestEnvironmentConfig.Credentials {
     /// Creates new, random `Credentials`
     public static func random() -> Self {
         Self(
-            username: "\(String.random(from: .alphanumerics, length: 5))@stanford.edu",
-            password: .random(from: .printableASCII, length: 12)
+            username: "\(String.random(from: .alphanumerics, length: 7))@stanford.edu",
+            password: .random(from: .printableASCII.excluding("' "), length: 12)
+            // ^ we need to disallow `'`s to work around FB23653577
+            //   we also disallow ` ` just to be safe
         )
     }
 }

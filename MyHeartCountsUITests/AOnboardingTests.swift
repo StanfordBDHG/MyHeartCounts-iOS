@@ -249,7 +249,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    private func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
+    func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
         sleep(for: .seconds(2))
         XCTAssert(app.scrollViews.staticTexts["STANFORD UNIVERSITY"].waitForExistence(timeout: 2))
         XCTAssert(app.scrollViews.staticTexts["CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))

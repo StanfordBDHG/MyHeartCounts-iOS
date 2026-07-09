@@ -12,6 +12,7 @@ import MyHeartCountsShared
 import OSLog
 import Spezi
 import SpeziAccount
+import SpeziConsent
 import SpeziFirebaseAccount
 import SpeziFoundation
 import SpeziHealthKit
@@ -50,6 +51,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(BulkHealthExporter.self) private var bulkHealthExporter
     @ObservationIgnored @Dependency(ManagedFileUpload.self) private var fileUploader
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
+    @ObservationIgnored @Dependency(ConsentManager.self) private var consentManager: ConsentManager?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     // swiftlint:enable attributes
     
@@ -94,6 +96,15 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         isInSetup = true
         defer {
             isInSetup = false
+            Task {
+                // It's important that this runs after isInSetup is cleared;
+                // otherwise eg the ConsentManager will see the new study bundle and run its renewal flow logic,
+                // but return early bc it sees that the test env setup is still ongoing.
+                // Run a bundle update, this will end up re-fetching the exact same bundle we already fetched above,
+                // but it'll also trigger all components in the app that observe the study bundle.
+                // (eg the ConsentManager, for the renewal flow.)
+                _ = try? await self.studyBundleLoader.update()
+            }
         }
         if config.resetExistingData {
             desc = "\(#function) will reset existing data"
@@ -137,14 +148,16 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     }
     
     
-    private func loginAndEnroll(_ credentials: SetupTestEnvironmentConfig.Credentials) async throws {
+    private func loginAndEnroll( // swiftlint:disable:this function_body_length
+        _ credentials: SetupTestEnvironmentConfig.Credentials
+    ) async throws {
         logger.notice("Logging in and enrolling into Study using credentials \(String(describing: credentials))")
         // we set this immediately at the beginning, since the value will likely have been cleared in
         // the `resetExistingData()` call preceding this `loginAndEnroll()` call, and we don't want the
         // onboarding sheet covering the "Setting up Test Environment" full-screen thing.
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
-        guard let accountService, let account else {
-            logger.error("Unable to log in and enroll: no AccountService and/or Account!")
+        guard let accountService, let account, let consentManager else {
+            logger.error("Unable to log in and enroll: missing dependencies!")
             return
         }
         guard studyManager != nil else {
@@ -192,6 +205,26 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             try await _Concurrency.Task.sleep(for: .seconds(1))
             try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: false)
         }
+        
+        if let newVersion = LaunchOptions[.overrideLastSignedConsentVersion] {
+            var newDetails = AccountDetails()
+            newDetails.lastSignedConsentVersion = newVersion.description
+            let modifications = try AccountModifications(modifiedDetails: newDetails)
+            try await accountService.updateAccountDetails(modifications)
+        } else {
+            // unless already present, we set the account's `lastSignedConsentVersion`; this otherwise would happen as part of the regular onboarding
+            if let details = account.details,
+               details.lastSignedConsentVersion == nil,
+               let consentDoc = try? consentManager.loadConsentDoc(from: studyBundle),
+               let consentVersion = consentDoc.metadata.version {
+                var newDetails = AccountDetails()
+                newDetails.lastSignedConsentVersion = consentVersion.description
+                newDetails.lastSignedConsentDate = Date()
+                let modifications = try AccountModifications(modifiedDetails: newDetails)
+                try await accountService.updateAccountDetails(modifications)
+            }
+        }
+        
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
         desc = "\(#function) DONE"
     }
