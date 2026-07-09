@@ -8,7 +8,6 @@
 
 // swiftlint:disable file_types_order
 
-import HealthKit
 import MyHeartCountsShared
 import XCTest
 import XCTestExtensions
@@ -20,13 +19,7 @@ import XCTSpeziNotifications
 // named like this bc tests are run based on the alpabetic ordering of the test classes, and we want this one to run first.
 final class AOnboardingTests: MHCTestCase, Sendable {
     func testAOnboardingFlow() throws {
-        try launchHealthAppAndEnterCharacteristics(.init(
-            bloodType: .aPositive,
-            dateOfBirth: .init(year: 1998, month: 6, day: 2),
-            biologicalSex: .male,
-            skinType: .II,
-            wheelchairUse: .no
-        ))
+        try supplyHealthCharacteristics()
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
@@ -41,29 +34,7 @@ final class AOnboardingTests: MHCTestCase, Sendable {
             signUpForExtraTrial: true,
             consentPresenceCheck: .dontCare
         )
-    }
-    
-    
-    func testReviewConsentForms() throws {
-        try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(.default))
-        )
-        // check that the consent we just signed is showing up in the Account Sheet
-        openAccountSheet()
-        XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
-        app.staticTexts["Review Consent Forms"].tap()
-        XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
-        app.collectionViews.cells.buttons.element(matching: "label CONTAINS %@", "My Heart Counts Consent Form").firstMatch.tap()
-        let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
-        XCTAssert(consentPdf.waitForExistence(timeout: 5))
-        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
-        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
-        XCTAssert(
-            consentPdf.staticTexts.element(
-                matching: "label BEGINSWITH %@", #"You are invited to participate in a research study, "My Heart Counts,""#
-            )
-            .waitForExistence(timeout: 2)
-        )
+        XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 5))
     }
     
     
@@ -412,6 +383,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     private func navigateFinalOnboardingStep(signUpForExtraTrial: Bool) {
         XCTAssert(app.staticTexts["Welcome to My Heart Counts"].waitForExistence(timeout: 2))
         do {
+            app.swipeUp()
             let element = app.staticTexts.matching("label CONTAINS %@", "After your baseline week, you'll begin the 2-week trial").element
             if signUpForExtraTrial {
                 XCTAssert(element.waitForExistence(timeout: 2))

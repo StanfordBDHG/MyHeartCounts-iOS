@@ -9,6 +9,7 @@
 // swiftlint:disable implicitly_unwrapped_optional type_contents_order
 
 import Foundation
+import HealthKit
 import MHCStudyDefinitionExporter
 import MyHeartCountsShared
 import SpeziFoundation
@@ -74,7 +75,7 @@ class MHCTestCase: XCTestCase, Sendable {
         skip: Bool = false,
         locale: consuming Locale = .enUS,
         enableDebugMode: Bool = false,
-        testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: .enable(.default)),
+        testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: .enable(.random())),
         enableHealthRecords: Bool = MHCTestCase.enableHealthRecords,
         skipHealthPermissionsHandling: Bool = false,
         skipGoingToHomeTab: Bool = false,
@@ -149,6 +150,17 @@ class MHCTestCase: XCTestCase, Sendable {
                 2
             )
         }
+    }
+    
+    
+    func supplyHealthCharacteristics() throws {
+        try launchHealthAppAndEnterCharacteristics(.init(
+            bloodType: .aPositive,
+            dateOfBirth: .init(year: 1998, month: 6, day: 2),
+            biologicalSex: .male,
+            skinType: .II,
+            wheelchairUse: .no
+        ))
     }
 }
 

@@ -44,7 +44,10 @@ final class OtherTests: MHCTestCase, Sendable {
     /// Tests that passing `testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true)` to
     /// `launchAppAndEnrollIntoStudy` behaves properly (ie, we are logged in and the data from the previous launch remains).
     func testLaunchKeepingData() throws {
-        try launchAppAndEnrollIntoStudy()
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
+        try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials))
+        )
         XCTAssert(app.staticTexts["Completed"].waitForNonExistence(timeout: 2))
         app.buttons["Read Article: Welcome to My Heart Counts"].tap()
         app.navigationBars.buttons["Close"].tap()
@@ -52,7 +55,7 @@ final class OtherTests: MHCTestCase, Sendable {
         app.terminate()
         
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(.default)),
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(credentials)),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )

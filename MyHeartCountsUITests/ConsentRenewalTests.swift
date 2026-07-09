@@ -38,17 +38,50 @@ final class ConsentTests: MHCTestCase, Sendable {
     }
     
     
+    func testReviewConsentForms() throws {
+        let locale: Locale = .enUS
+        try supplyHealthCharacteristics()
+        // launch app
+        try launchAppAndEnrollIntoStudy(
+            locale: locale,
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
+            skipHealthPermissionsHandling: true,
+            skipGoingToHomeTab: true
+        )
+        // go through consent
+        let onboardingNavigator = OnboardingNavigator(testCase: self)
+        try onboardingNavigator.navigateFullOnboardingFlow(
+            region: try XCTUnwrap(locale.region),
+            name: .init(givenName: "Leland", familyName: "Stanford"),
+            credentials: .random(),
+            signUpForExtraTrial: false,
+            consentPresenceCheck: .assertPresent
+        )
+        
+        // check that the consent we just signed is showing up in the Account Sheet
+        openAccountSheet()
+        XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
+        app.staticTexts["Review Consent Forms"].tap()
+        XCTAssert(app.collectionViews.cells.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
+        app.collectionViews.cells.buttons.element(matching: "label CONTAINS %@", "My Heart Counts Consent Form").firstMatch.tap()
+        let consentPdf = app.otherElements["QLPreviewControllerView"].textViews.element
+        XCTAssert(consentPdf.waitForExistence(timeout: 5))
+        XCTAssert(consentPdf.staticTexts["My Heart Counts Consent Form"].waitForExistence(timeout: 2))
+        XCTAssert(consentPdf.staticTexts["# STANFORD UNIVERSITY\n## CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
+        XCTAssert(
+            consentPdf.staticTexts.element(
+                matching: "label BEGINSWITH %@", #"You are invited to participate in a research study, "My Heart Counts,""#
+            )
+            .waitForExistence(timeout: 2)
+        )
+    }
+    
+    
     func testSkipDuringOnboardingIfAlreadySupplied() throws {
         let locale: Locale = .enUS
         let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         
-        try launchHealthAppAndEnterCharacteristics(.init(
-            bloodType: .aPositive,
-            dateOfBirth: .init(year: 1998, month: 6, day: 2),
-            biologicalSex: .male,
-            skinType: .II,
-            wheelchairUse: .no
-        ))
+        try supplyHealthCharacteristics()
         try launchAppAndEnrollIntoStudy(
             locale: locale,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),

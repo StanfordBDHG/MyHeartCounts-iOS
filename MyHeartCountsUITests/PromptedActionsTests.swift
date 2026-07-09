@@ -15,7 +15,9 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
     // Tests that dismissing a prompted action makes it disappear from the home tab
     // (but that it still shows up via the Account Sheet)
     func testPromptedActionDismissal() throws {
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials)),
             promptedActionsFilter: .only([.sensorKit])
         )
         goToTab(.home)
@@ -46,7 +48,7 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         app.terminate()
         
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(.default)),
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(credentials)),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true,
             promptedActionsFilter: .only([.sensorKit])
