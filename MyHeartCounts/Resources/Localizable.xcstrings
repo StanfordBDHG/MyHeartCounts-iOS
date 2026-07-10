@@ -604,10 +604,24 @@
       "shouldTranslate" : false
     },
     "1. Request a verification link" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. Solicita un enlace de verificación"
+          }
+        }
+      }
     },
     "2. Open the link in the email" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2. Abre el enlace en el correo electrónico"
+          }
+        }
+      }
     },
     "4 to 5 hours" : {
       "localizations" : {
@@ -1518,7 +1532,14 @@
       }
     },
     "Close" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar"
+          }
+        }
+      }
     },
     "College graduate or Baccalaureate Degree" : {
       "localizations" : {
@@ -1617,13 +1638,34 @@
       }
     },
     "Complete" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completar"
+          }
+        }
+      }
     },
     "Complete Demographics" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completar datos demográficos"
+          }
+        }
+      }
     },
     "Completed" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completados"
+          }
+        }
+      }
     },
     "COMPREHENSION_QUESTION_1" : {
       "localizations" : {
@@ -1863,9 +1905,6 @@
         }
       }
     },
-    "CONSENT_RENEWAL_SUBTITLE" : {
-
-    },
     "Continue" : {
       "localizations" : {
         "en-GB" : {
@@ -2005,8 +2044,8 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "Recopilación de datos habilitada para %lld sensores"
+                  "state" : "translated",
+                  "value" : "Recopilación de datos habilitada para %lld sensor"
                 }
               },
               "other" : {
@@ -2515,7 +2554,14 @@
       }
     },
     "Email verification is required to secure your account." : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La verificación del correo electrónico es necesaria para proteger tu cuenta."
+          }
+        }
+      }
     },
     "EMAIL_VERIFICATION_SHEET_EXPLAINER" : {
       "localizations" : {
@@ -2529,6 +2575,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A verified email lets us confirm it's really you, protects your account from unauthorized changes, and ensures you can reset your password or recover your account if needed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un correo electrónico verificado nos permite confirmar que realmente eres tú, protege tu cuenta contra cambios no autorizados y garantiza que puedas restablecer tu contraseña o recuperar tu cuenta si es necesario."
           }
         }
       }
@@ -2546,6 +2598,12 @@
             "state" : "translated",
             "value" : "Unable to connect to account. Make sure you have a working network connection."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo conectar con la cuenta. Asegúrate de tener una conexión de red activa."
+          }
         }
       }
     },
@@ -2559,8 +2617,14 @@
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Your email currently is not verified"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu correo electrónico aún no está verificado"
           }
         }
       }
@@ -2577,6 +2641,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your email address is verified"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu dirección de correo electrónico está verificada"
           }
         }
       }
@@ -3381,7 +3451,14 @@
       }
     },
     "Get Link" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtener enlace"
+          }
+        }
+      }
     },
     "Go to next field" : {
       "localizations" : {
@@ -3902,7 +3979,14 @@
       }
     },
     "How did you hear about the study?" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cómo te enteraste del estudio?"
+          }
+        }
+      }
     },
     "How to Manage SensorKit" : {
       "localizations" : {
@@ -3921,7 +4005,14 @@
       }
     },
     "How to verify" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo verificar"
+          }
+        }
+      }
     },
     "Hypertrophic Cardiomyopathy (HCM)" : {
       "localizations" : {
@@ -6196,7 +6287,14 @@
       }
     },
     "Open Mail" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Mail"
+          }
+        }
+      }
     },
     "Open Settings" : {
       "localizations" : {
@@ -6548,7 +6646,14 @@
       }
     },
     "Postcode (UK)" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código postal (Reino Unido)"
+          }
+        }
+      }
     },
     "Prefer not to state" : {
       "localizations" : {
@@ -6663,6 +6768,12 @@
             "state" : "translated",
             "value" : "Providing demographic information such as age, sex, and background helps researchers understand how heart health varies across different groups."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proporcionar información demográfica como edad, sexo y origen ayuda a los investigadores a comprender cómo varía la salud del corazón entre distintos grupos."
+          }
         }
       }
     },
@@ -6723,6 +6834,12 @@
             "state" : "translated",
             "value" : "These optional steps help My Heart Counts gather richer data for cardiovascular research."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estos pasos opcionales ayudan a My Heart Counts a recopilar datos más completos para la investigación cardiovascular."
+          }
         }
       }
     },
@@ -6738,6 +6855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "These optional steps help My Heart Counts gather richer data for cardiovascular research. Suggestions you decline won't be shown again on the Home tab, but will remain accessible via the app’s settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estos pasos opcionales ayudan a My Heart Counts a recopilar datos más completos para la investigación cardiovascular. Las sugerencias que rechaces no se volverán a mostrar en la pestaña Inicio, pero seguirán disponibles en la configuración de la aplicación."
           }
         }
       }
@@ -6832,6 +6955,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You’ve completed all recommended setup steps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has completado todos los pasos de configuración recomendados."
           }
         }
       }
@@ -7485,7 +7614,14 @@
       }
     },
     "Referral Source" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente de referencia"
+          }
+        }
+      }
     },
     "REFERRAL_OPTION_1" : {
       "localizations" : {
@@ -7499,6 +7635,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Healthcare provider (doctor, cardiologist, nurse)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profesional de la salud (médico, cardiólogo, enfermero)"
           }
         }
       }
@@ -7516,6 +7658,12 @@
             "state" : "translated",
             "value" : "Hospital or clinic"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hospital o clínica"
+          }
         }
       }
     },
@@ -7531,6 +7679,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Friend or family member"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amigo o familiar"
           }
         }
       }
@@ -7548,6 +7702,12 @@
             "state" : "translated",
             "value" : "Heart health organization or support group"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organización de salud cardiovascular o grupo de apoyo"
+          }
         }
       }
     },
@@ -7563,6 +7723,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Research or clinical trial website (ClinicalTrials.gov, ResearchMatch, etc.)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitio web de investigación o de ensayos clínicos (ClinicalTrials.gov, ResearchMatch, etc.)"
           }
         }
       }
@@ -7580,6 +7746,12 @@
             "state" : "translated",
             "value" : "Online ad (Google, Facebook, Instagram, Reddit, etc.)"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anuncio en línea (Google, Facebook, Instagram, Reddit, etc.)"
+          }
         }
       }
     },
@@ -7595,6 +7767,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Online search or social media (not an ad)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Búsqueda en línea o redes sociales (que no sea un anuncio)"
           }
         }
       }
@@ -7612,6 +7790,12 @@
             "state" : "translated",
             "value" : "Email invitation or newsletter"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invitación por correo electrónico o boletín informativo"
+          }
         }
       }
     },
@@ -7627,6 +7811,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "News media (article, TV, radio, podcast)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medios de comunicación (artículo, TV, radio, podcast)"
           }
         }
       }
@@ -7644,6 +7834,12 @@
             "state" : "translated",
             "value" : "Flyer or poster"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volante o cartel"
+          }
         }
       }
     },
@@ -7659,6 +7855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro"
           }
         }
       }
@@ -8032,7 +8234,7 @@
       }
     },
     "SensorKit" : {
-
+      "shouldTranslate" : false
     },
     "SensorKit %@" : {
       "localizations" : {
@@ -8641,7 +8843,7 @@
       }
     },
     "Supply All" : {
-
+      "shouldTranslate" : false
     },
     "Swimming" : {
       "localizations" : {
@@ -8724,7 +8926,14 @@
       }
     },
     "Tap the link in the email to complete the verification, then return here." : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca el enlace en el correo electrónico para completar la verificación y luego regresa aquí."
+          }
+        }
+      }
     },
     "Tap to learn more…" : {
       "localizations" : {
@@ -9293,10 +9502,24 @@
       }
     },
     "Verify Account Email" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verificar correo de la cuenta"
+          }
+        }
+      }
     },
     "Verify Email" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verificar correo electrónico"
+          }
+        }
+      }
     },
     "Vermont" : {
       "localizations" : {
@@ -9443,7 +9666,14 @@
       }
     },
     "We'll email a link to %@" : {
-
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te enviaremos un enlace a %@"
+          }
+        }
+      }
     },
     "We've saved your email and will notify you when My Heart Counts becomes available in your region." : {
       "localizations" : {

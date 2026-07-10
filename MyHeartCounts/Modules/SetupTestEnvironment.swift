@@ -59,7 +59,12 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @MainActor private(set) var isInSetup = false
     
     private(set) var state: State
-    private(set) var desc = ""
+    private(set) var desc = "" {
+        didSet {
+            let desc = desc
+            logger.notice("\(desc)")
+        }
+    }
     
     init() {
         state = if FeatureFlags.disableFirebase || config == .disabled {
@@ -170,6 +175,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // we need to prevent this, since the logout would trigger all of the local data to get reset,
             // which might be at odds with our config here.
             if !account.signedIn || account.details?.userId != credentials.username {
+                logger.notice("account.signedIn? \(account.signedIn); account.userId: \(account.details?.userId ?? "n/a")")
                 try await accountService.login(userId: credentials.username, password: credentials.password)
             }
         } catch FirebaseAccountError.invalidCredentials {
@@ -206,23 +212,46 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             try await clinicalRecordPermissions.askForAuthorization(askAgainIfCancelledPreviously: false)
         }
         
-        if let newVersion = LaunchOptions[.overrideLastSignedConsentVersion] {
+        // fill in all account details we'd normally have provided via the onboarding flow
+        do {
             var newDetails = AccountDetails()
-            newDetails.lastSignedConsentVersion = newVersion.description
-            let modifications = try AccountModifications(modifiedDetails: newDetails)
-            try await accountService.updateAccountDetails(modifications)
-        } else {
-            // unless already present, we set the account's `lastSignedConsentVersion`; this otherwise would happen as part of the regular onboarding
-            if let details = account.details,
-               details.lastSignedConsentVersion == nil,
-               let consentDoc = try? consentManager.loadConsentDoc(from: studyBundle),
-               let consentVersion = consentDoc.metadata.version {
-                var newDetails = AccountDetails()
+            // consent
+            if let newVersion = LaunchOptions[.overrideLastSignedConsentVersion] {
+                newDetails.lastSignedConsentVersion = newVersion.description
+            } else if let details = account.details,
+                      details.lastSignedConsentVersion == nil,
+                      let consentDoc = try? consentManager.loadConsentDoc(from: studyBundle),
+                      let consentVersion = consentDoc.metadata.version {
+                // unless already present, we set the account's `lastSignedConsentVersion`; this otherwise would happen as part of the regular onboarding {
                 newDetails.lastSignedConsentVersion = consentVersion.description
                 newDetails.lastSignedConsentDate = Date()
-                let modifications = try AccountModifications(modifiedDetails: newDetails)
-                try await accountService.updateAccountDetails(modifications)
             }
+            newDetails.didOptInToTrial = true
+            // demographics
+            if LaunchOptions[.supplyDemographicsWhenCreatingTestAccount] {
+                newDetails.dateOfBirth = Calendar.current.date(
+                    from: .init(timeZone: TimeZone(identifier: "America/New_York"), year: 1824, month: 3, day: 9)
+                )
+                newDetails.mhcGenderIdentity = .male
+                newDetails.biologicalSexAtBirth = .male
+                newDetails.bloodType = .aPositive
+                newDetails.heightInCM = 186
+                newDetails.weightInKG = 67
+                newDetails.raceEthnicity = .white
+                newDetails.latinoStatus = LatinoStatusOption.options[0]
+                newDetails.comorbidities = Comorbidities()
+                newDetails.usRegion = .dc
+                newDetails.householdIncomeUS = HouseholdIncomeUS.options[0]
+                newDetails.educationUS = EducationStatusUS.options[0]
+                newDetails.stageOfChange = StageOfChangeOption.allOptions[0]
+                newDetails.referralSource = ReferralSource.options[0]
+            }
+            // activity prefs
+            newDetails.preferredWorkoutTypes = .init([WorkoutPreferenceSetting.WorkoutType.options[0]])
+            newDetails.preferredNudgeNotificationTime = .init(hour: 9, minute: 0)
+            // finalize
+            let modifications = try AccountModifications(modifiedDetails: newDetails)
+            try await accountService.updateAccountDetails(modifications)
         }
         
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true

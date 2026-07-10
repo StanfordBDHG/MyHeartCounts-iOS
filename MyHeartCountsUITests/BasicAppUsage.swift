@@ -70,7 +70,11 @@ final class BasicAppUsage: MHCTestCase, Sendable {
     
     func testWithdrawal() throws {
         throw XCTSkip("needs https://github.com/SchmiedmayerLab/MyHeartCounts-Firebase/pull/111")
-        try launchAppAndEnrollIntoStudy(locale: .enUS)
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
+        try launchAppAndEnrollIntoStudy(
+            locale: .enUS,
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials))
+        )
         openAccountSheet()
         app.swipeUp()
         app.navigationBars.buttons["Edit"].tap()
@@ -81,7 +85,7 @@ final class BasicAppUsage: MHCTestCase, Sendable {
         try navigator.navigateEligibility(region: .unitedStates)
         try navigator.navigateSignup(
             name: .init(givenName: "Leland", familyName: "Stanford"),
-            credentials: .default
+            credentials: credentials
         )
         XCTAssert(app.staticTexts["Reactivate Account"].waitForExistence(timeout: 10))
         app.buttons["Reactivate Account"].tap()

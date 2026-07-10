@@ -15,7 +15,9 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
     // Tests that dismissing a prompted action makes it disappear from the home tab
     // (but that it still shows up via the Account Sheet)
     func testPromptedActionDismissal() throws {
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials)),
             promptedActionsFilter: .only([.sensorKit])
         )
         goToTab(.home)
@@ -46,8 +48,7 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         app.terminate()
         
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(.default)),
-            skipHealthPermissionsHandling: true,
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(credentials)),
             skipGoingToHomeTab: true,
             promptedActionsFilter: .only([.sensorKit])
         )
@@ -64,17 +65,22 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
     
     
     func testCompleteDemographics() throws {
+        try supplyHealthCharacteristics()
         let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         func launchApp(resetExistingData: Bool) throws {
             try self.launchAppAndEnrollIntoStudy(
-                testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials)),
-                promptedActionsFilter: .only([.completeDemographics])
+                testEnvironmentConfig: .init(resetExistingData: resetExistingData, loginAndEnroll: .enable(credentials)),
+                skipGoingToHomeTab: launchCounter > 0,
+                promptedActionsFilter: .only([.completeDemographics]),
+                extraLaunchOptions: [
+                    LaunchOptionValue(false, for: .supplyDemographicsWhenCreatingTestAccount)
+                ]
             )
             self.goToTab(.home)
         }
         func dismissDemographicsSheet() {
             let navBar = app.navigationBars["Demographics"]
-            navBar.buttons.element(matching: "label = %@ OR label = %@", "Done", "Close").tap()
+            navBar.buttons.element(matching: "label IN %@", ["Done", "Close"]).tap()
         }
         
         try launchApp(resetExistingData: true)
@@ -122,11 +128,6 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         sleep(for: .seconds(0.5))
         
         try launchApp(resetExistingData: false)
-//        if digestButton.waitForExistence(timeout: 5) {
-//            digestButton.tap()
-//            demographicsRow.buttons["Complete Demographics"].tap()
-//            sleep(for: .seconds(360))
-//        }
         XCTAssert(digestButton.waitForNonExistence(timeout: 5))
     }
 }

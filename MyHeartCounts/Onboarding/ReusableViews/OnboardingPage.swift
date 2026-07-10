@@ -14,7 +14,7 @@ import SwiftUI
 struct OnboardingPage<Content: View, Footer: View>: View {
     private let symbol: SFSymbol?
     private let title: LocalizedStringResource
-    private let description: LocalizedStringResource
+    private let description: LocalizedStringResource?
     private let content: Content
     private let footer: Footer
     
@@ -44,7 +44,7 @@ struct OnboardingPage<Content: View, Footer: View>: View {
     init(
         symbol: SFSymbol? = nil,
         title: LocalizedStringResource,
-        description: LocalizedStringResource,
+        description: LocalizedStringResource?,
         @ViewBuilder content: () -> Content,
         @ViewBuilder footer: () -> Footer = { EmptyView() }
     ) {

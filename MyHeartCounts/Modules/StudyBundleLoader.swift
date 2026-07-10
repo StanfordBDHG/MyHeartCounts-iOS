@@ -197,9 +197,6 @@ final class StudyBundleLoader: Module, Sendable {
     
     private func openDownloadedStudyBundle(at url: URL) async throws(LoadError) -> StudyBundle {
         let dstUrl = self.studyBundlesUrl.appendingPathComponent(UUID().uuidString, conformingTo: .speziStudyBundle)
-        guard url.studyBundleResourceType() == .archive else {
-            throw .unableToDecode(NSError(mhcErrorCode: .unspecified, localizedDescription: "Invalid file format"))
-        }
         // Can we maybe elide the url -> tmpUrl copy here?(!)
         let tmpUrl = URL.temporaryDirectory.appending(component: UUID().uuidString).appendingPathExtension("\(StudyBundle.fileExtension).aar")
         do {

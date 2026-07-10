@@ -16,6 +16,7 @@ import XCTest
 /// it launches the app repeatedly and prints AXSTATS lines with the hit rates.
 final class TabBarAXStatsTests: MHCTestCase, Sendable {
     func testTabBarIdentifierStats() throws {
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         let iterations = 10
         let ids = RootLevelTab.allCases.map { "MHC:Tab:\($0.rawValue)" }
         let labels = RootLevelTab.allCases.map(\.rawValue)
@@ -25,8 +26,8 @@ final class TabBarAXStatsTests: MHCTestCase, Sendable {
         var dumpsPrinted = 0
         for iteration in 0..<iterations {
             try launchAppAndEnrollIntoStudy(
-                testEnvironmentConfig: .init(resetExistingData: iteration == 0, loginAndEnroll: .enable(.default)),
-                skipHealthPermissionsHandling: iteration > 0,
+                testEnvironmentConfig: .init(resetExistingData: iteration == 0, loginAndEnroll: .enable(credentials)),
+                handlePermissionPrompts: iteration == 0 ? .yes : .no,
                 skipGoingToHomeTab: true
             )
             // the first launch resets and re-seeds the test environment (Firebase login, study enrollment),
