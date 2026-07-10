@@ -8,13 +8,14 @@
 
 // swiftlint:disable multiline_function_chains function_body_length
 
+@_spi(TestingSupport)
+import SpeziHealthKit
 import SpeziLocalization
 import XCTest
 import XCTestExtensions
 
 
-final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
-    @MainActor
+final class ScheduledTaskTests: MHCTestCase, Sendable {
     func testSurveyHealthDataExtraction() throws {
         try launchAppAndEnrollIntoStudy(enableDebugMode: true)
         openAccountSheet()
@@ -101,9 +102,11 @@ final class ScheduledTaskTests: MHCTestCase, @unchecked Sendable {
         
         goToTab(.heartHealth)
         app.swipeUp()
-        app.buttons["Blood Pressure"].tap()
-        XCTAssert(app.collectionViews.staticTexts["Most Recent Sample: 69 over 69"].waitForExistence(timeout: 2))
-        app.buttons["Close"].tap()
+        if !HealthKit.needsBloodPressureAuthFlowFix {
+            app.buttons["Blood Pressure"].tap()
+            XCTAssert(app.collectionViews.staticTexts["Most Recent Sample: 69 over 69"].waitForExistence(timeout: 2))
+            app.buttons["Close"].tap()
+        }
         app.buttons["Fasting Blood Glucose"].tap() // fasting blood glucose value
         XCTAssert(app.collectionViews.staticTexts["Most Recent Sample: 100 mg/dL"].waitForExistence(timeout: 2))
     }
@@ -130,7 +133,6 @@ extension MHCTestCase {
     }
     
     
-    @MainActor
     func navigateResearchKitQuestionnaire( // swiftlint:disable:this cyclomatic_complexity
         title: String?,
         steps: [ResearchKitQuestionnaireStep]

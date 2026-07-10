@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order attributes
+// swiftlint:disable file_types_order attributes discouraged_optional_boolean
 
 import Foundation
 import MyHeartCountsShared
@@ -32,15 +32,28 @@ struct DemographicsForm<Footer: View>: View {
     private let footer: @MainActor () -> Footer
     
     var body: some View {
-        Impl(isComplete: $isComplete, footer: footer)
-            .environment(data)
-            .navigationTitle("Demographics")
-            .onAppear {
-                if !didPopulateData {
-                    didPopulateData = true
-                    data.populate(from: account)
+        Impl(
+            didOptInToTrial: account.details?.didOptInToTrial == true,
+            isComplete: $isComplete,
+            footer: footer
+        )
+        .environment(data)
+        .navigationTitle("Demographics")
+        .onAppear {
+            if !didPopulateData {
+                didPopulateData = true
+                data.populate(from: account)
+            }
+        }
+        .onDisappear {
+            Task {
+                do {
+                    try await data.flush()
+                } catch {
+                    logger.error("Failed flushing demographics data: \(error)")
                 }
             }
+        }
     }
     
     init(
@@ -61,6 +74,7 @@ private struct Impl<Footer: View>: View {
     @Environment(StudyManager.self) private var studyManager
     @Environment(DemographicsData.self) private var data
     
+    let didOptInToTrial: Bool
     @Binding var isComplete: Bool
     let footer: @MainActor () -> Footer
     
@@ -68,42 +82,55 @@ private struct Impl<Footer: View>: View {
     
     @State private var viewState: ViewState = .idle
     @State private var regionOverride: Locale.Region?
+    @State private var trialOptInOverride: Bool?
     
     private var region: Locale.Region {
-        // NOTE: should probably use the region selected in the onboarding here?!
+        // if no override is set, we use `studyManager.preferredLocale`,
+        // which will be set to the region selected during the onboarding.
         regionOverride ?? studyManager.preferredLocale.region ?? .unitedStates
     }
     
     var body: some View {
         Form {
             if debugModeEnabled {
-                Section {
-                    Picker("Override Region" as String, selection: $regionOverride) {
-                        ForEach([Locale.Region?.none, .unitedStates, .unitedKingdom, .germany], id: \.self) { region in
-                            if let region {
-                                Text(region.localizedName(in: locale, includeEmoji: .front))
-                            } else {
-                                Text("Disable Override" as String)
-                            }
-                        }
-                    }
-                    LabeledContent("Effective Region" as String, value: region.localizedName(in: locale, includeEmoji: .front))
-                }
+                debugSection
             }
             Section {
                 ReadFromHealthKitButton(viewState: $viewState)
             }
-            let layout = demographicsLayout(for: region)
+            let layout = demographicsLayout(region: region, didOptInToTrial: trialOptInOverride ?? didOptInToTrial)
             layout.view
                 .onChange(of: data.updateCounter, initial: true) { _, _ in
                     isComplete = layout.isComplete(in: data)
                 }
             footer()
         }
+        .accessibilityIdentifier("DemographicsForm")
         .viewStateAlert(state: $viewState)
         .toolbar {
             if ProcessInfo.isBeingUITested {
-                testingSupportMenu
+                testingSupportToolbarItem
+            }
+        }
+    }
+    
+    private var debugSection: some View {
+        Section {
+            Picker("Override Region" as String, selection: $regionOverride) {
+                ForEach([Locale.Region?.none, .unitedStates, .unitedKingdom, .germany], id: \.self) { region in
+                    if let region {
+                        Text(region.localizedName(in: locale, includeEmoji: .front))
+                    } else {
+                        Text("Disable Override" as String)
+                    }
+                }
+            }
+            LabeledContent("Effective Region" as String, value: region.localizedName(in: locale, includeEmoji: .front))
+            Picker("TrialOptIn" as String, selection: $trialOptInOverride) {
+                Text("Default (\(didOptInToTrial))" as String).tag(Bool?.none)
+                Divider()
+                Text("Force Yes" as String).tag(Bool?.some(true))
+                Text("Force No" as String).tag(Bool?.some(false))
             }
         }
     }
@@ -133,7 +160,7 @@ extension Impl {
                     """,
                 state: $viewState
             ) {
-                // this likely isn't necessary
+                // this likely isn't necessary but we wanna be safe.
                 try await healthKit.askForAuthorization(for: .init(read: [
                     HealthKitCharacteristic.dateOfBirth.hkType,
                     HealthKitCharacteristic.bloodType.hkType,
@@ -171,29 +198,68 @@ extension Impl {
 
 // MARK: Testing Support
 
+
 extension Impl {
-    private var testingSupportMenu: some ToolbarContent {
+    private var testingSupportToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Menu {
-                AsyncButton("Add Height & Weight Samples", state: $viewState) {
-                    let samples = [
-                        HKQuantitySample(
-                            type: SampleType.height.hkSampleType,
-                            quantity: HKQuantity(unit: .meterUnit(with: .centi), doubleValue: 186),
-                            start: .now,
-                            end: .now
-                        ),
-                        HKQuantitySample(
-                            type: SampleType.bodyMass.hkSampleType,
-                            quantity: HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: 70),
-                            start: .now,
-                            end: .now
-                        )
-                    ]
-                    try await healthKit.save(samples)
-                }
+                TestingSupportActions(viewState: $viewState)
             } label: {
                 Text("Testing Support")
+            }
+        }
+    }
+}
+
+
+extension Impl {
+    private struct TestingSupportActions: View {
+        @Environment(HealthKit.self) private var healthKit
+        @Environment(DemographicsData.self) private var data
+        
+        @Binding var viewState: ViewState
+        
+        var body: some View {
+            AsyncButton("Add Height & Weight Samples" as String, state: $viewState) {
+                let samples = [
+                    HKQuantitySample(
+                        type: SampleType.height.hkSampleType,
+                        quantity: HKQuantity(unit: .meterUnit(with: .centi), doubleValue: 186),
+                        start: .now,
+                        end: .now
+                    ),
+                    HKQuantitySample(
+                        type: SampleType.bodyMass.hkSampleType,
+                        quantity: HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: 70),
+                        start: .now,
+                        end: .now
+                    )
+                ]
+                try await healthKit.save(samples)
+            }
+            AsyncButton("Supply Test DoB" as String) {
+                data[\.dateOfBirth] = Calendar.current.date(from: DateComponents(year: 2014, month: 6, day: 2))
+                data[\.genderIdentity] = .male
+                data[\.sexAtBirth] = .male
+            }
+            Button("Supply All") {
+                data[\.dateOfBirth] = Calendar.current.date(from: DateComponents(year: 2014, month: 6, day: 2))
+                data[\.genderIdentity] = .male
+                data[\.sexAtBirth] = .male
+                data[\.height] = HKQuantity(unit: .meterUnit(with: .centi), doubleValue: 186)
+                data[\.weight] = HKQuantity(unit: .gramUnit(with: .kilo), doubleValue: 67)
+                data[\.raceEthnicity] = .white
+                data[\.latinoStatus] = LatinoStatusOption.options[0]
+                data[\.bloodType] = .aPositive
+                data[\.comorbidities] = .init()
+                data[\.usRegion] = .dc
+                data[\.usEducationLevel] = EducationStatusUS.options[0]
+                data[\.usHouseholdIncome] = HouseholdIncomeUS.options[0]
+                data[\.stageOfChange] = StageOfChangeOption.allOptions[0]
+            }
+            Divider()
+            AsyncButton("Reset All" as String, role: .destructive, state: $viewState) {
+                try await data.clearAll()
             }
         }
     }

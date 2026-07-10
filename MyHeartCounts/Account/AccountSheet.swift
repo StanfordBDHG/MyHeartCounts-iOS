@@ -8,6 +8,7 @@
 
 import FirebaseCore
 import FirebaseFunctions
+import MyHeartCountsShared
 import SFSafeSymbols
 import SpeziAccount
 import SpeziHealthKitBulkExport
@@ -22,7 +23,6 @@ struct AccountSheet: View {
     private let dismissAfterSignIn: Bool
     // swiftlint:disable attributes
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.openSettingsApp) private var openSettingsApp
     @Environment(Account.self) private var account
     @Environment(HistoricalHealthSamplesExportManager.self) private var historicalDataExportMgr
@@ -36,6 +36,7 @@ struct AccountSheet: View {
     @AccountFeatureFlagQuery(.isDebugModeEnabled)
     private var debugModeEnabled
     
+    @SensorAccessPermissions private var sensorAccessPermissions
     @StudyManagerQuery private var enrollments: [StudyEnrollment]
     
     var body: some View {
@@ -69,17 +70,17 @@ struct AccountSheet: View {
                 }
             }
         }
+        .accessibilityIdentifier("MHC:AccountSheet")
     }
     
     @ViewBuilder private var accountSheetExtraContent: some View {
-        if SensorKit.isAvailable {
-            Section {
-                SensorKitButton()
-            }
-        }
         if let enrollment = enrollments.first {
+            PromptedActionsDigest(context: .viewAll)
             Section("Study Participation") {
                 studyParticipationSection(enrollment)
+            }
+            Section {
+                dataProcessingRow
             }
         }
         Section {
@@ -98,20 +99,23 @@ struct AccountSheet: View {
             AboutRow()
             Link2(MyHeartCounts.website(.privacyPolicy)) {
                 Label("Privacy Policy", systemSymbol: .lockShield)
-                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                    .foregroundStyle(.textLabel)
             }
             NavigationLink {
-                ContributionsList(projectLicense: .mit)
+                ContributionsList(
+                    projectLicense: .mit,
+                    projectUrl: "https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/"
+                )
             } label: {
                 Label("License Information", systemSymbol: .buildingColumns)
-                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                    .foregroundStyle(.textLabel)
             }
             if debugModeEnabled || FeatureFlags.isTakingDemoScreenshots {
                 NavigationLink {
                     DebugForm()
                 } label: {
                     Label("Debug", systemSymbol: .wrenchAdjustable)
-                        .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                        .foregroundStyle(.textLabel)
                 }
             }
         }
@@ -128,29 +132,7 @@ struct AccountSheet: View {
             || !sensorKitDataFetcher.activeActivities.isEmpty
     }
     
-    init(dismissAfterSignIn: Bool = true) {
-        self.dismissAfterSignIn = dismissAfterSignIn
-    }
-    
-    
-    @ViewBuilder
-    private func studyParticipationSection(_ enrollment: StudyEnrollment) -> some View {
-        Link2(MyHeartCounts.website(.homepage)) {
-            HStack {
-                makeEnrolledStudyRow(for: enrollment)
-                Spacer()
-                DisclosureIndicator()
-            }
-            .contentShape(Rectangle())
-            .foregroundStyle(colorScheme.textLabelForegroundStyle)
-        }
-        NavigationLink("View Participation Stats") {
-            ParticipationStatsView(enrollment: enrollment)
-        }
-        PostTrialNudgesToggle()
-        NavigationLink("Review Consent Forms") {
-            SignedConsentForms()
-        }
+    @ViewBuilder private var dataProcessingRow: some View {
         if let text = { () -> LocalizedStringResource? in
             switch (isProcessingHealthData, isProcessingSensorKitData) {
             case (true, true):
@@ -180,15 +162,49 @@ struct AccountSheet: View {
         }
     }
     
+    init(dismissAfterSignIn: Bool = true) {
+        self.dismissAfterSignIn = dismissAfterSignIn
+    }
+    
+    
+    @ViewBuilder
+    private func studyParticipationSection(_ enrollment: StudyEnrollment) -> some View {
+        Link2(MyHeartCounts.website(.homepage)) {
+            HStack {
+                makeEnrolledStudyRow(for: enrollment)
+                Spacer()
+                DisclosureIndicator()
+            }
+            .contentShape(Rectangle())
+            .foregroundStyle(.textLabel)
+        }
+        NavigationLink("View Participation Stats") {
+            ParticipationStatsView(enrollment: enrollment)
+        }
+        PostTrialNudgesToggle()
+        NavigationLink("Review Consent Forms") {
+            SignedConsentForms()
+        }
+        if SensorKit.isAvailable && !sensorAccessPermissions.isFullyUndetermined {
+            // if the SensorKit auth is fully undetermined (i.e., the user hasn't authorized any sensors),
+            // we skip this button, since in that case the prompted action above will kick in.
+            SensorKitButton()
+        }
+    }
+    
     @ViewBuilder
     private func makeEnrolledStudyRow(for enrollment: StudyEnrollment) -> some View {
         if let studyInfo = enrollment.studyBundle?.studyDefinition.metadata {
             VStack(alignment: .leading) {
-                Text(studyInfo.title)
-                    .font(.headline)
-                Text(studyInfo.shortExplanationText)
-                    .font(.footnote.weight(.medium))
-                    .foregroundStyle(.secondary)
+                if let title = studyInfo.title[.current] {
+                    Text(title)
+                        .font(.headline)
+                }
+                if let explainer = studyInfo.shortExplanationText[.current] {
+                    Text(explainer)
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(.secondary)
+                }
                 Text("Enrolled since: \(enrollment.enrollmentDate, format: .dateTime)")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -254,8 +270,8 @@ extension AccountSheet {
 extension AccountSheet {
     private struct AboutRow: View {
         // swiftlint:disable attributes
-        @Environment(\.colorScheme) private var colorScheme
         @Environment(Account.self) private var account
+        @Environment(StudyBundleLoader.self) private var studyBundleLoader
         // swiftlint:enable attributes
         @StudyManagerQuery private var enrollments: [StudyEnrollment]
         
@@ -267,11 +283,13 @@ extension AccountSheet {
                 Text(bundle.appVersion)
             } label: {
                 Label("My Heart Counts", systemSymbol: .infoCircle)
-                    .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                    .foregroundStyle(.textLabel)
             }
             .onTapGesture(count: 5) {
                 showExtendedInfo = true
             }
+            .accessibilityElement()
+            .accessibilityIdentifier("MHC:AboutRow")
             .sheet(isPresented: $showExtendedInfo) {
                 NavigationStack {
                     Form {
@@ -281,20 +299,31 @@ extension AccountSheet {
                             LabeledContent("Build" as String, value: bundle.appBuildNumber?.description ?? "n/a")
                         }
                         Section {
-                            LabeledContent("Study Revision" as String, value: enrollments.first?.studyRevision.description ?? "n/a")
-                        }
-                        Section {
                             LabeledContent("Project ID" as String, value: FirebaseApp.app()?.options.projectID ?? "n/a")
                             LabeledContent("Account ID" as String, value: account.details?.accountId ?? "n/a")
                         }
+                        Section {
+                            LabeledContent("Study Revision (enrolled)" as String, value: enrollments.first?.studyRevision.description ?? "n/a")
+                            LabeledContent(
+                                "Study Revision (fetched)" as String,
+                                value: (try? studyBundleLoader.studyBundle?.get())?.studyDefinition.studyRevision.description ?? "n/a"
+                            )
+                            LabeledContent(
+                                "lastSignedConsentVersion" as String,
+                                value: account.details?.lastSignedConsentVersion?.description ?? "n/a"
+                            )
+                        }
                     }
+                    .navigationTitle("Extended Info" as String)
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
+                        ToolbarItem(placement: .cancellationAction) {
                             DismissButton()
                         }
                     }
                 }
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large])
+                .accessibilityIdentifier("MHC:AboutRow:ExtendedInfoSheet")
             }
         }
     }
@@ -307,4 +336,12 @@ extension AccountOverviewOperationLabels {
         confirmationAlertMessage: "Are you sure you want to withdraw from the My Heart Counts study?\nYou can re-enroll later if you choose.",
         confirmationAlertSubmitButton: "Withdraw"
     )
+}
+
+
+extension LocalizationKey {
+    static var current: Self {
+        let locale = Locale.current
+        return LocalizationKey(language: locale.language, region: locale.region ?? .unitedStates)
+    }
 }

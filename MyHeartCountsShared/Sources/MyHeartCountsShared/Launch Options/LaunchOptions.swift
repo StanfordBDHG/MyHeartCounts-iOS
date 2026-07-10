@@ -56,7 +56,14 @@ public struct LaunchOptionDecodingContext: Sendable {
 
 public protocol LaunchOptionsContainerProtocol: Sendable {
     func _value<V>(for option: LaunchOption<V>) -> V? // swiftlint:disable:this identifier_name
+    
+    /// Performs a fresh decode of the option, ignoring any potential cached, previously decoded values.
+    ///
+    /// - returns: the decoded value, or `nil` if the container did not contain an entry for the option
+    /// - throws: if the container did contain an entry for the option, but it failed to decode.
+    func _decode<V>(_ option: LaunchOption<V>) throws -> V? // swiftlint:disable:this identifier_name
 }
+
 
 extension LaunchOptionsContainerProtocol {
     /// Returns the specified `option`'s decoded launch option argument, falling back to its default value if no argument was specified.
@@ -154,6 +161,22 @@ private struct CombinedLaunchOptionsContainer: LaunchOptionsContainerProtocol {
         }
         return nil
     }
+    
+    func _decode<V>(_ option: LaunchOption<V>) throws -> V? { // swiftlint:disable:this identifier_name
+        var mostRecentError: (any Error)?
+        for container in containers {
+            do {
+                return try container._decode(option)
+            } catch {
+                mostRecentError = error
+            }
+        }
+        if let mostRecentError {
+            throw mostRecentError
+        } else {
+            return nil
+        }
+    }
 }
 
 
@@ -250,17 +273,25 @@ private struct CommandLineLaunchOptionsContainer: LaunchOptionsContainerProtocol
             if let value {
                 return value
             }
-            guard let optionRawArgs = parsedArguments.options[option.key] else {
-                return nil
-            }
             do {
-                value = try V(decodingLaunchOption: LaunchOptionDecodingContext(rawArgs: optionRawArgs))
-                return value
+                if let decoded = try _decode(option) {
+                    value = decoded
+                    return decoded
+                } else {
+                    return nil
+                }
             } catch {
                 print("Unable to parse value for option '\(option.key)': \(error)")
                 return nil
             }
         }
+    }
+    
+    func _decode<V>(_ option: LaunchOption<V>) throws -> V? { // swiftlint:disable:this identifier_name
+        guard let optionRawArgs = parsedArguments.options[option.key] else {
+            return nil
+        }
+        return try V(decodingLaunchOption: LaunchOptionDecodingContext(rawArgs: optionRawArgs))
     }
 }
 
@@ -299,7 +330,11 @@ extension Bool: LaunchOptionDecodable, LaunchOptionEncodable {
     }
     
     public func launchOptionArgs(for launchOption: LaunchOption<Bool>) -> [String] {
-        self ? [launchOption.key] : []
+        if self {
+            [launchOption.key, "true"]
+        } else {
+            [launchOption.key, "false"]
+        }
     }
 }
 

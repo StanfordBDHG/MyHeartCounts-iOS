@@ -13,7 +13,7 @@ import XCTestExtensions
 import XCTHealthKit
 
 
-final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
+final class TaskHandlingTests: MHCTestCase, Sendable {
     private let timedWalkTestDistance = switch Locale.current.measurementSystem {
     case .us:
         "2,762 ft"
@@ -23,7 +23,6 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
     
     
     // also tests the Timed Walk Test UI
-    @MainActor
     func testCompleteScheduledTaskViaAlwaysAvailableMenu() throws {
         try launchAppAndEnrollIntoStudy()
         goToTab(.upcoming)
@@ -54,7 +53,6 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testECG() throws {
         try launchAppAndEnrollIntoStudy()
         goToTab(.upcoming)
@@ -79,7 +77,6 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testHHDPastTimedWalkTests() throws {
         try launchAppAndEnrollIntoStudy()
         goToTab(.heartHealth)
@@ -117,7 +114,6 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testRecoverTimedWalkTest() throws {
         try launchAppAndEnrollIntoStudy()
         goToTab(.upcoming)
@@ -135,10 +131,10 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testHomeTabTaskSheetLifetime() throws {
         try launchAppAndEnrollIntoStudy()
         goToTab(.home)
+        app.swipeUp()
         app.buttons["Answer Survey: Diet"].firstMatch.tap()
         let dietIntroTextElement = app.staticTexts.element(
             matching: "label BEGINSWITH %@", "This questionnaire is designed to allow you to assess the nutritional value of your diet."
@@ -154,12 +150,15 @@ final class TaskHandlingTests: MHCTestCase, @unchecked Sendable {
 
 
 extension MHCTestCase {
-    @MainActor
     func handleMotionAndFitnessAccessPrompt(timeout: Duration) {
         let app = XCUIApplication.springboard
         let alert = app.alerts.element(matching: "label LIKE %@", "“*” would like to access your Motion & Fitness activity.")
         if alert.waitForExistence(timeout: timeout.timeInterval) {
-            alert.buttons["Allow"].tap()
+            // wait a little longer. sometimes the "exists" above resolves to true while the alert is still being presented,
+            // in which case the tap is a little too early and doesn't actually get registered.
+            let allowButton = alert.buttons["Allow"]
+            XCTAssert(allowButton.wait(for: \.isHittable, toEqual: true, timeout: 5))
+            allowButton.tap()
         }
     }
 }

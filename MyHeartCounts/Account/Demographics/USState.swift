@@ -19,7 +19,9 @@ struct USRegion: Hashable, Codable {
     }
     
     init?(abbreviation: String) {
-        if let region = Self.allKnownRegions.first(where: { $0.abbreviation.lowercased() == abbreviation.lowercased() }) {
+        if abbreviation == Self.notSet.abbreviation {
+            self = .notSet
+        } else if let region = Self.allKnownRegions.first(where: { $0.abbreviation.lowercased() == abbreviation.lowercased() }) {
             self = region
         } else {
             return nil

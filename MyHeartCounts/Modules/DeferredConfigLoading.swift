@@ -249,7 +249,7 @@ enum DeferredConfigLoading {
                         .manual(\.usZipCodePrefix),
                         .manual(\.householdIncomeUS),
                         .manual(\.ukRegion),
-                        .manual(\.ukPostcodePrefix),
+                        .manual(\.ukPostcode),
                         .manual(\.householdIncomeUK),
                         .manual(\.heightInCM),
                         .manual(\.weightInKG),
@@ -261,6 +261,7 @@ enum DeferredConfigLoading {
                         .manual(\.educationUK),
                         .manual(\.comorbidities),
                         .manual(\.nhsNumber),
+                        .manual(\.referralSource),
                         // env tracking
                         .manual(\.mostRecentOnboardingStep),
                         .manual(\.lastActiveDate),

@@ -13,8 +13,7 @@ import XCTestExtensions
 import XCTHealthKit
 
 
-final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
-    @MainActor
+final class BasicAppUsage: MHCTestCase, Sendable {
     func testRootLevelNavigation() throws {
         try launchAppAndEnrollIntoStudy()
         goToTab(.upcoming)
@@ -24,7 +23,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testInformativeContent() throws {
         try launchAppAndEnrollIntoStudy()
         let articleTaskCompletedLabel = app.staticTexts["Welcome to My Heart Counts, Completed"]
@@ -44,7 +42,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testFeedback() throws {
         try launchAppAndEnrollIntoStudy()
         openAccountSheet()
@@ -61,26 +58,6 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
-    func testSensorKitNudgeDismissal() throws {
-        try launchAppAndEnrollIntoStudy()
-        goToTab(.home)
-        XCTAssert(app.staticTexts["Enable SensorKit"].waitForExistence(timeout: 2))
-        app.staticTexts["Enable SensorKit"].press(forDuration: 2)
-        XCTAssert(app.buttons["Stop Suggesting This"].waitForExistence(timeout: 2))
-        app.buttons["Stop Suggesting This"].tap()
-        XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 2))
-        app.terminate()
-        try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: false),
-            // no idea why but this sometimes isn't able to find the home tab item's accessibility id (is empty for some reason...)
-            skipGoingToHomeTab: true
-        )
-        XCTAssert(app.staticTexts["Enable SensorKit"].waitForNonExistence(timeout: 5))
-    }
-    
-    
-    @MainActor
     func testLogout() throws {
         try launchAppAndEnrollIntoStudy()
         openAccountSheet()
@@ -91,9 +68,8 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testWithdrawal() throws {
-        throw XCTSkip("needs https://github.com/StanfordBDHG/MyHeartCounts-Firebase/pull/111")
+        throw XCTSkip("needs https://github.com/SchmiedmayerLab/MyHeartCounts-Firebase/pull/111")
         try launchAppAndEnrollIntoStudy(locale: .enUS)
         openAccountSheet()
         app.swipeUp()
@@ -105,8 +81,7 @@ final class BasicAppUsage: MHCTestCase, @unchecked Sendable {
         try navigator.navigateEligibility(region: .unitedStates)
         try navigator.navigateSignup(
             name: .init(givenName: "Leland", familyName: "Stanford"),
-            email: Self.loginCredentials.email,
-            password: Self.loginCredentials.password
+            credentials: .default
         )
         XCTAssert(app.staticTexts["Reactivate Account"].waitForExistence(timeout: 10))
         app.buttons["Reactivate Account"].tap()

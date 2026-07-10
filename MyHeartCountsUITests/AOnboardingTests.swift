@@ -18,8 +18,7 @@ import XCTSpeziNotifications
 
 
 // named like this bc tests are run based on the alpabetic ordering of the test classes, and we want this one to run first.
-final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
-    @MainActor
+final class AOnboardingTests: MHCTestCase, Sendable {
     func testAOnboardingFlow() throws {
         try launchHealthAppAndEnterCharacteristics(.init(
             bloodType: .aPositive,
@@ -30,24 +29,25 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         ))
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
-            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
             skipHealthPermissionsHandling: true,
-            skipGoingToHomeTab: true,
+            skipGoingToHomeTab: true
         )
         let navigator = OnboardingNavigator(testCase: self)
         try navigator.navigateFullOnboardingFlow(
             region: .unitedStates,
             name: .init(givenName: "Leland", familyName: "Stanford"),
-            email: Self.loginCredentials.email,
-            password: Self.loginCredentials.password,
-            signUpForExtraTrial: true
+            credentials: .default,
+            signUpForExtraTrial: true,
+            consentPresenceCheck: .dontCare
         )
     }
     
     
-    @MainActor
     func testReviewConsentForms() throws {
-        try launchAppAndEnrollIntoStudy(testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: true))
+        try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(.default))
+        )
         // check that the consent we just signed is showing up in the Account Sheet
         openAccountSheet()
         XCTAssert(app.staticTexts["Review Consent Forms"].waitForExistence(timeout: 2))
@@ -67,11 +67,10 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
     }
     
     
-    @MainActor
     func testRegionEligibilityComingSoon() throws {
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
-            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )
@@ -81,11 +80,10 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
         XCTAssert(app.staticTexts["Coming Soon"].waitForExistence(timeout: 5))
     }
     
-    @MainActor
     func testRegionEligibilityNotSupported() throws {
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
-            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: false),
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
             skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )
@@ -99,6 +97,12 @@ final class AOnboardingTests: MHCTestCase, @unchecked Sendable {
 
 @MainActor
 struct OnboardingNavigator { // swiftlint:disable:this type_body_length
+    enum ConsentPresenceCheck {
+        case assertPresent
+        case assertSkipped
+        case dontCare
+    }
+    
     let testCase: MHCTestCase
     
     private var app: XCUIApplication {
@@ -106,19 +110,49 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    func navigateFullOnboardingFlow(
+    func navigateOnboardingFlowUntilHealthKit(
         region: Locale.Region,
         name: PersonNameComponents,
-        email: String,
-        password: String,
-        signUpForExtraTrial: Bool
+        credentials: SetupTestEnvironmentConfig.Credentials,
+        signUpForExtraTrial: Bool,
+        consentPresenceCheck: ConsentPresenceCheck
     ) throws {
         navigateWelcome()
         try navigateEligibility(region: region)
-        try navigateSignup(name: name, email: email, password: password)
-        navigateOnboardingDisclaimers()
-        navigateConsentComprehension()
-        navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
+        try navigateSignup(name: name, credentials: credentials)
+        let consentFlowIndicator = app.staticTexts["Study Overview & Participation"]
+        let noConsentFlowIndicator = app.staticTexts["HealthKit Access"]
+        switch consentPresenceCheck {
+        case .assertPresent:
+            XCTAssert(consentFlowIndicator.waitForExistence(timeout: 5))
+        case .assertSkipped:
+            XCTAssertFalse(consentFlowIndicator.waitForExistence(timeout: 5))
+            XCTAssert(noConsentFlowIndicator.waitForExistence(timeout: 5))
+        case .dontCare:
+            break
+        }
+        if consentFlowIndicator.waitForExistence(timeout: 5) {
+            navigateOnboardingDisclaimers()
+            navigateConsentComprehension()
+            navigateConsent(expectedName: name, signUpForExtraTrial: signUpForExtraTrial)
+        }
+        XCTAssert(app.staticTexts["HealthKit Access"].waitForExistence(timeout: 10))
+    }
+    
+    func navigateFullOnboardingFlow(
+        region: Locale.Region,
+        name: PersonNameComponents,
+        credentials: SetupTestEnvironmentConfig.Credentials,
+        signUpForExtraTrial: Bool,
+        consentPresenceCheck: ConsentPresenceCheck
+    ) throws {
+        try navigateOnboardingFlowUntilHealthKit(
+            region: region,
+            name: name,
+            credentials: credentials,
+            signUpForExtraTrial: signUpForExtraTrial,
+            consentPresenceCheck: consentPresenceCheck
+        )
         navigateHealthKitAccess()
         if app.staticTexts["Health Records"].waitForExistence(timeout: 2) { // only included if Health Records are actually available
             navigateHealthRecords()
@@ -171,7 +205,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    func navigateSignup(name: PersonNameComponents, email: String, password: String) throws {
+    func navigateSignup(name: PersonNameComponents, credentials: SetupTestEnvironmentConfig.Credentials) throws {
         XCTAssert(app.staticTexts["Your Account"].waitForExistence(timeout: 10))
         let isLoggedIn = app.staticTexts
             .matching("label BEGINSWITH %@", "You are already logged in")
@@ -181,7 +215,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
             defer {
                 app.dismissSavePasswordAlert(timeout: 10)
             }
-            try app.login(email: email, password: password)
+            try app.login(email: credentials.username, password: credentials.password)
             let alert = app.alerts["Invalid Credentials"]
             if alert.waitForNonExistence(timeout: 3) {
                 // no "invalid credentials" alert showed up, meaning that we did not try to log in to a non-existant user.
@@ -193,14 +227,14 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
             app.buttons["Signup"].tap()
             sleep(for: .seconds(0.5))
             XCTAssertFalse(app.collectionViews.firstMatch.buttons["Signup"].isEnabled) // this ia a different button from the one we just tapped.
-            try app.fillSignupForm(email: email, password: password, name: name)
+            try app.fillSignupForm(email: credentials.username, password: credentials.password, name: name)
             XCTAssert(app.collectionViews.firstMatch.buttons["Signup"].isEnabled)
             app.collectionViews.firstMatch.buttons["Signup"].tap()
         } else {
             if let firstName = name.givenName, let lastName = name.familyName {
                 XCTAssert(app.staticTexts["\(firstName) \(lastName)"].waitForExistence(timeout: 2))
             }
-            XCTAssert(app.staticTexts[email].waitForExistence(timeout: 2))
+            XCTAssert(app.staticTexts[credentials.username].waitForExistence(timeout: 2))
             app.buttons["Next"].tap()
         }
     }
@@ -253,7 +287,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    private func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
+    func navigateConsent(expectedName: PersonNameComponents?, signUpForExtraTrial: Bool) { // swiftlint:disable:this function_body_length
         sleep(for: .seconds(2))
         XCTAssert(app.scrollViews.staticTexts["STANFORD UNIVERSITY"].waitForExistence(timeout: 2))
         XCTAssert(app.scrollViews.staticTexts["CONSENT TO BE PART OF A RESEARCH STUDY"].waitForExistence(timeout: 2))
@@ -339,9 +373,11 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     
     
     private func navigateHealthRecords() {
-        XCTAssert(app.staticTexts["Health Records"].waitForExistence(timeout: 2))
+        let title = app.staticTexts["Health Records"]
+        XCTAssert(title.waitForExistence(timeout: 2))
         app.buttons["Review Permissions"].tap()
         testCase.handleHealthRecordsAuthorization()
+        XCTAssert(title.waitForNonExistence(timeout: 10)) // give it some time to complete the auth
     }
     
     
@@ -361,73 +397,9 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    private func navigateDemographics() { // swiftlint:disable:this function_body_length
-        XCTAssert(app.staticTexts["Demographics"].waitForExistence(timeout: 2))
-        
-        XCTAssert(app.navigationBars["Demographics"].waitForExistence(timeout: 1))
-        XCTAssert(app.navigationBars.staticTexts["Demographics"].waitForExistence(timeout: 1))
-        do {
-            let button = app.navigationBars["Demographics"].buttons["Testing Support"]
-            XCTAssert(button.waitForExistence(timeout: 1))
-            button.coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
-            let optionTitle = "Add Height & Weight Samples"
-            XCTAssert(app.buttons[optionTitle].waitForExistence(timeout: 1))
-            app.buttons[optionTitle].tap()
-            app.handleHealthKitAuthorization()
-        }
-        app.buttons["Read from Health App"].tap()
-        XCTAssert(
-            app.datePickers.matching("label = %@ AND value = %@", "Date of Birth", "1998-06-02").element.waitForExistence(timeout: 2)
-        )
-        switch testCase.appLocale.measurementSystem {
-        case .us:
-            XCTAssert(app.buttons["Height, 6‘ 1“"].waitForExistence(timeout: 2))
-            XCTAssert(app.buttons["Weight, 154.32 lb"].waitForExistence(timeout: 2))
-        default:
-            XCTAssert(app.buttons["Height, 186 cm"].waitForExistence(timeout: 2))
-            XCTAssert(app.buttons["Weight, 70 kg"].waitForExistence(timeout: 2))
-        }
-        
-        app.swipeUp()
-        
-        app.staticTexts["Race / Ethnicity"].tap()
-        app.buttons["Prefer not to state"].tap()
-        app.buttons["White"].tap()
-        app.buttons["Alaska Native"].tap()
-        app.navigationBars.buttons["BackButton"].tap()
-        XCTAssert(app.buttons["Race / Ethnicity, White, Alaska Native"].waitForExistence(timeout: 1))
-        
-        app.staticTexts["Are you Hispanic/Latino?"].tap()
-        app.buttons["No"].tap()
-        app.navigationBars.buttons["BackButton"].tap()
-        XCTAssert(app.buttons["Are you Hispanic/Latino?, No"].waitForExistence(timeout: 1))
-        
-        app.staticTexts["Comorbidities"].tap()
-        app.buttons["Heart Failure"].tap()
-        app.navigationBars.buttons["Done"].tap()
-        app.navigationBars.buttons["BackButton"].tap()
-        XCTAssert(app.buttons["Comorbidities, 1 selected"].waitForExistence(timeout: 1))
-        
-        app.staticTexts["US State / Territory"].tap()
-        app.buttons["District of Columbia, DC"].tap()
-        app.navigationBars.buttons["BackButton"].tap()
-        XCTAssert(app.buttons["US State / Territory, DC"].waitForExistence(timeout: 1))
-        
-        if app.staticTexts["Education Level"].waitForExistence(timeout: 2) {
-            app.staticTexts["Education Level"].tap()
-            app.buttons["Master's Degree"].tap()
-            app.navigationBars.buttons["BackButton"].tap()
-            XCTAssert(app.buttons["Education Level, Master's Degree"].waitForExistence(timeout: 1))
-        }
-        
-        app.staticTexts["Total Household Income"].tap()
-        app.buttons["Prefer not to state"].tap()
-        app.navigationBars.buttons["BackButton"].tap()
-        
-        app.staticTexts["Stage of Change"].tap()
-        app.buttons["StageOfChangeButton:a"].tap()
-        app.navigationBars.buttons["BackButton"].tap()
-        XCTAssert(app.buttons["Stage of Change, A"].waitForExistence(timeout: 1))
+    private func navigateDemographics() {
+        let navigator = DemographicsNavigator(testCase: testCase)
+        navigator.fillInDemographics()
         
         let continueButton = app.buttons["Continue"]
         while !continueButton.exists {

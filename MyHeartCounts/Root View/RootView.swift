@@ -10,6 +10,7 @@ import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziAccount
+import class SpeziConsent.ConsentDocument
 import SpeziFoundation
 import SpeziOnboarding
 import SpeziScheduler
@@ -30,20 +31,19 @@ struct RootView: View {
     @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
     // swiftlint:enable attributes
     
-    @State private var isShowingConsentRenewalSheet = false
+    @State private var consentDocForRenewal: ConsentDocument?
     
     var body: some View {
         ZStack {
             switch setupTestEnvironment.state {
             case .disabled, .done:
                 if didCompleteOnboarding, account != nil, !appState.isLoggingOut {
-                    ZStack {
-                        TabView()
+                    TabView()
                         // we might simply want to make every `taskPerformingAnchor` also an `taskContinuationAnchor` at some point?
                         // it's not trivial, though, since we'd also need to make sure that if there's multiple `taskContinuationAnchor`s, only one of them will actually pick up the task...
-                            .taskContinuationAnchor()
-                            .taskPerformingAnchor()
-                    }
+                        .taskContinuationAnchor()
+                        .taskPerformingAnchor()
+                        .rootSheetAnchor()
                 } else if appState.isLoggingOut {
                     FullScreenProgressView(title: "Logging Out…")
                 }
@@ -56,15 +56,8 @@ struct RootView: View {
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
             }
         }
-        .onChange(of: consentManager?.needsToSignNewConsentVersion) { oldValue, newValue in
-            if let oldValue, let newValue, !oldValue && newValue {
-                isShowingConsentRenewalSheet = true
-            }
-        }
-        .sheet(isPresented: $isShowingConsentRenewalSheet) {
-            ConsentRenewalFlow()
-        }
         .trackingScenePhase()
+        .modifier(ConsentRenewalSheetModifier())
     }
 }
 
@@ -72,28 +65,67 @@ struct RootView: View {
 extension RootView {
     private struct TabView: View {
         @LocalPreference(.rootTabSelection)
-        private var selectedTab: String
-        
-        @LocalPreference(.rootTabViewCustomization)
-        private var tabViewCustomization
+        private var selectedTab: String // tabId
         
         var body: some View {
+            let (tabs, tabIds) = assemble(
+                HomeTab.self,
+                UpcomingTasksTab.self,
+                HeartHealthDashboardTab.self
+            )
             SwiftUI.TabView(selection: $selectedTab) {
-                makeTab(HomeTab.self)
-                makeTab(UpcomingTasksTab.self)
-                makeTab(HeartHealthDashboardTab.self)
+                tabs
             }
-            .tabViewStyle(.sidebarAdaptable)
-            .tabViewCustomization($tabViewCustomization)
+            .tabBarAccessibilityIdentifiersWorkaround(tabIds)
         }
         
         private func makeTab(_ tab: (some RootViewTab).Type) -> some TabContent<String> {
             Tab(String(localized: tab.tabTitle), systemImage: tab.tabSymbol.rawValue, value: tab.tabId) {
                 tab.init()
             }
-            .customizationID(tab.tabId)
-            .accessibilityIdentifier("MHC:Tab:\(tab.tabTitle.localizedString(for: .enUS))")
+            .accessibilityIdentifier(tab.accessibilityIdentifier)
         }
+        
+        private func assemble<each Tab: RootViewTab>(
+            _ firstTab: (some RootViewTab).Type,
+            _ trailingTabs: repeat (each Tab).Type
+        ) -> (tabViewContent: some TabContent<String>, tabIds: [String]) {
+            // we sadly cannot simply do `TabContentBuilder.buildBlock(repeat makeTab(each tab))`,
+            // as the TabContentBuilder currently does not implement a `buildBlock` overload accepting a generic pack.
+            var content: AnyTabContent<String> = AnyTabContent(makeTab(firstTab))
+            var ids: [String] = [firstTab.accessibilityIdentifier]
+            for tab in repeat each trailingTabs {
+                content = AnyTabContent(TabContentBuilder.buildBlock(content, makeTab(tab)))
+                ids.append(tab.accessibilityIdentifier)
+            }
+            return (content, ids)
+        }
+    }
+}
+
+
+extension RootView {
+    private struct ConsentRenewalSheetModifier: ViewModifier {
+        @Environment(ConsentManager.self)
+        private var consentManager: ConsentManager?
+        
+        func body(content: Content) -> some View {
+            if let consentManager {
+                @Bindable var consentManager = consentManager
+                content.sheet(item: $consentManager.pendingConsentDoc) { doc in
+                    ConsentRenewalFlow(document: doc)
+                }
+            } else {
+                content
+            }
+        }
+    }
+}
+
+
+extension RootViewTab {
+    fileprivate static var accessibilityIdentifier: String {
+        "MHC:Tab:\(tabTitle.localizedString(for: .enUS))"
     }
 }
 

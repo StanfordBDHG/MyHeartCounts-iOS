@@ -29,10 +29,23 @@ extension AccountDetails {
     var mhcGenderIdentity: GenderIdentity?
     
     
-    @AccountKey(id: "usRegion", name: "US State / Region", category: .demographics, options: .mutable, as: USRegion.self, initial: .empty(.notSet))
+    @AccountKey(
+        id: "usRegion",
+        name: "US State / Region",
+        category: .demographics,
+        options: .mutable,
+        as: USRegion.self,
+        initial: .empty(.notSet)
+    )
     var usRegion: USRegion?
     
-    @AccountKey(id: "usZipCodePrefix", name: "First 3 Digits of ZIP Code", category: .demographics, options: .mutable, as: String.self)
+    @AccountKey(
+        id: "usZipCodePrefix",
+        name: "First 3 Digits of ZIP Code",
+        category: .demographics,
+        options: .mutable,
+        as: String.self
+    )
     var usZipCodePrefix: String?
     
     @AccountKey(
@@ -56,9 +69,6 @@ extension AccountDetails {
     )
     var ukRegion: UKRegion?
     
-    @AccountKey(id: "ukPostcodePrefix", name: "First half of Postcode", category: .demographics, options: .mutable, as: String.self)
-    var ukPostcodePrefix: String?
-    
     @AccountKey(
         id: "householdIncomeUK",
         name: "Household Income",
@@ -70,13 +80,31 @@ extension AccountDetails {
     var householdIncomeUK: HouseholdIncomeUK?
     
     
-    @AccountKey(id: "heightInCM", name: "Height", category: .demographics, options: .mutable, as: Double.self)
+    @AccountKey(
+        id: "heightInCM",
+        name: "Height",
+        category: .demographics,
+        options: .mutable,
+        as: Double.self
+    )
     var heightInCM: Double?
     
-    @AccountKey(id: "weightInKG", name: "Weight", category: .demographics, options: .mutable, as: Double.self)
+    @AccountKey(
+        id: "weightInKG",
+        name: "Weight",
+        category: .demographics,
+        options: .mutable,
+        as: Double.self
+    )
     var weightInKG: Double?
     
-    @AccountKey(id: "raceEthnicity", name: "Race / Ethnicity", category: .demographics, options: .mutable, as: RaceEthnicity.self)
+    @AccountKey(
+        id: "raceEthnicity",
+        name: "Race / Ethnicity",
+        category: .demographics,
+        options: .mutable,
+        as: RaceEthnicity.self
+    )
     var raceEthnicity: RaceEthnicity?
     
     @AccountKey(
@@ -149,7 +177,22 @@ extension AccountDetails {
     )
     var nhsNumber: NHSNumber?
     
-    @AccountKey(id: "futureStudies", name: "", category: .demographics, options: .mutable, as: Bool.self)
+    @AccountKey(
+        id: "ukPostcode",
+        name: "Postcode (UK)",
+        category: .demographics,
+        options: .mutable,
+        as: String.self
+    )
+    var ukPostcode: String?
+    
+    @AccountKey(
+        id: "futureStudies",
+        name: "",
+        category: .demographics,
+        options: .mutable,
+        as: Bool.self
+    )
     var futureStudies: Bool? // swiftlint:disable:this discouraged_optional_boolean
     
     @AccountKey(
@@ -161,15 +204,25 @@ extension AccountDetails {
         initial: .empty(.notSet)
     )
     var stageOfChange: StageOfChangeOption?
+    
+    @AccountKey(
+        id: "referralSource",
+        name: "Referral Source",
+        category: .demographics,
+        options: .mutable,
+        as: ReferralSource.self,
+        initial: .empty(.notSet)
+    )
+    var referralSource: ReferralSource?
 }
 
 
 @KeyEntry(
     \.usRegion, \.usZipCodePrefix, \.householdIncomeUS, \.educationUS,
-    \.ukRegion, \.ukPostcodePrefix, \.householdIncomeUK, \.educationUK,
+    \.ukRegion, \.ukPostcode, \.householdIncomeUK, \.educationUK,
     \.heightInCM, \.weightInKG, \.bloodType, \.nhsNumber, \.mhcGenderIdentity,
     \.raceEthnicity, \.latinoStatus,
-    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies, \.stageOfChange
+    \.biologicalSexAtBirth, \.comorbidities, \.futureStudies, \.stageOfChange, \.referralSource
 )
 extension AccountKeys {}
 

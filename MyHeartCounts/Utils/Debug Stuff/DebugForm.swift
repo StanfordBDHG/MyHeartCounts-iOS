@@ -30,7 +30,7 @@ struct DebugForm: View {
 
 
 private struct DebugFormImpl: View {
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(MyHeartCountsStandard.self) private var standard
     @Environment(StudyManager.self) private var studyManager
     @Environment(DemoSetup.self) private var demoSetup
     @Environment(LocalNotifications.self) private var localNotifications
@@ -50,7 +50,7 @@ private struct DebugFormImpl: View {
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
                     Label("Live Health Upload Notifications" as String, systemSymbol: .arrowUpHeart)
-                        .foregroundStyle(colorScheme.textLabelForegroundStyle)
+                        .foregroundStyle(.textLabel)
                 }
                 NavigationLink(symbol: .appBadge, "Notifications Status" as String) {
                     NotificationsManagerControlView()
@@ -121,6 +121,9 @@ private struct DebugFormImpl: View {
                 CheckForUpdateButton {
                     Text(verbatim: "Check for App Update")
                 }
+                AsyncButton("Spezi Dependency Graph" as String) {
+                    print(await standard.spezi.moduleDependencyGraph.dotDescription)
+                }
             }
             Section {
                 Button("Replace Root View Controller" as String, role: .destructive) {
@@ -150,9 +153,7 @@ private struct DebugFormImpl: View {
             HStack {
                 Text("Answer Questionnaire" as String)
                 Spacer()
-                Image(systemSymbol: .chevronUpChevronDown)
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
+                MenuIndicator()
             }
             .contentShape(Rectangle())
         }

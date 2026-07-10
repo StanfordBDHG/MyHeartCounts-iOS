@@ -26,7 +26,7 @@ extension AccountDetails {
             for entry in diff.removed {
                 result.append("- \(entry)")
             }
-            for entry in diff.insertd {
+            for entry in diff.inserted {
                 result.append("+ \(entry)")
             }
             for mutated in diff.mutated {
@@ -43,14 +43,14 @@ extension AccountDetails {
 extension Dictionary where Value: Equatable {
     struct DictDifference {
         var removed: [(Key, Value)] = []
-        var insertd: [(Key, Value)] = []
+        var inserted: [(Key, Value)] = []
         var mutated: [(key: Key, old: Value, new: Value)] = [] // swiftlint:disable:this large_tuple
     }
     
     func difference(from prev: Self) -> DictDifference {
         var diff = DictDifference()
         diff.removed = prev.filter { self[$0.key] == nil }
-        diff.insertd = self.filter { prev[$0.key] == nil }
+        diff.inserted = self.filter { prev[$0.key] == nil }
         diff.mutated = self.compactMap { key, value in
             if let old = prev[key], old != value {
                 (key, old, value)

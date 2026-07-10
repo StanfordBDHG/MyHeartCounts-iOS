@@ -9,6 +9,7 @@
 // swiftlint:disable file_types_order discouraged_optional_boolean
 
 import Foundation
+import SpeziConsent
 import SpeziFoundation
 import SpeziOnboarding
 import SpeziViews
@@ -16,6 +17,8 @@ import SwiftUI
 
 
 struct ComprehensionScreening: View {
+    let consentDoc: ConsentDocument
+    
     var body: some View {
         SinglePageScreening(
             title: "COMPREHENSION_STEP_TITLE",
@@ -39,7 +42,11 @@ struct ComprehensionScreening: View {
             }
             return isTrue(\.seekHelpIfNotFeelingWell) && isTrue(\.studyParticipationIsVoluntary) && isTrue(\.canStopParticipatingAtAnyTime)
         } continue: { _, path in
-            path.nextStep()
+            path.append {
+                Consent(document: consentDoc)
+                    .onboardingStep(.consent)
+                    .injectingSpezi()
+            }
         }
     }
 }
@@ -75,7 +82,7 @@ private struct Question: ScreeningComponent {
 
 #Preview {
     ManagedNavigationStack {
-        ComprehensionScreening()
+        ComprehensionScreening(consentDoc: .previewDoc)
     }
     .environment(OnboardingDataCollection())
 }

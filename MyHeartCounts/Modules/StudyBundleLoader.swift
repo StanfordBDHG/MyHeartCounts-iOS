@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Algorithms
 import FirebaseCore
 import Foundation
 import MHCStudyDefinitionExporter
@@ -88,14 +89,14 @@ final class StudyBundleLoader: Module, Sendable {
             case (.none, _), (.some(.failure), _):
                 value = newValue
                 return .changed(newValue)
-            case (.some(.success(let oldBundle)), .success(let newBundle)):
+            case let (.some(.success(oldBundle)), .success(newBundle)):
                 if newBundle != oldBundle {
                     value = .success(newBundle)
                     return .changed(.success(newBundle))
                 } else {
                     return .unchanged(.success(oldBundle))
                 }
-            case (.some(.success(let oldBundle)), .failure):
+            case let (.some(.success(oldBundle)), .failure):
                 if preferCachedBundleOnError {
                     // in this case (we successfully obtained a study bundle before, but it now has failed),
                     // we keep the old bundle around instead of updating `_studyBundle` with the error case.
@@ -183,6 +184,7 @@ final class StudyBundleLoader: Module, Sendable {
             // if we failed to decode the firebase-hosted study bundle, we try to use the bundled one as a fallback.
             // (otherwise, we simply propagate the error up the call stack.)
             do {
+                logger.error("Failed to decode firebase-hosted study bundle. falling back to the one bundled with the app. (error: \(underlyingDecodeError))")
                 return try await _update(using: .bundledWithApp)
             } catch LoadError.unableToCreateLocalBundle {
                 // if the local bundle creation fails, we don't expose that error (since the local bundle thing here was an implicit fallback),
@@ -194,8 +196,12 @@ final class StudyBundleLoader: Module, Sendable {
     
     
     private func openDownloadedStudyBundle(at url: URL) async throws(LoadError) -> StudyBundle {
-        let tmpUrl = URL.temporaryDirectory.appending(component: UUID().uuidString).appendingPathExtension("\(StudyBundle.fileExtension).aar")
         let dstUrl = self.studyBundlesUrl.appendingPathComponent(UUID().uuidString, conformingTo: .speziStudyBundle)
+        guard url.studyBundleResourceType() == .archive else {
+            throw .unableToDecode(NSError(mhcErrorCode: .unspecified, localizedDescription: "Invalid file format"))
+        }
+        // Can we maybe elide the url -> tmpUrl copy here?(!)
+        let tmpUrl = URL.temporaryDirectory.appending(component: UUID().uuidString).appendingPathExtension("\(StudyBundle.fileExtension).aar")
         do {
             try fileManager.copyItem(at: url, to: tmpUrl, overwriteExisting: true)
             defer {
@@ -225,7 +231,21 @@ final class StudyBundleLoader: Module, Sendable {
     private func download(_ url: URL) async throws -> URL {
         logger.notice("will try to download '\(url.absoluteString)'")
         let session = URLSession(configuration: .ephemeral)
-        let (downloadUrl, response) = try await session.download(from: url)
+        let (downloadUrl, response): (URL, URLResponse)
+        do {
+            (downloadUrl, response) = try await session.download(from: url)
+        } catch {
+            if (error as NSError).code == NSURLErrorFileIsDirectory, url.isFileURL {
+                // we're given a package-style input, rather than an archive.
+                // we simply turn it into an archive, and pass that url on.
+                let dstUrl: URL = .temporaryDirectory
+                    .appending(component: UUID().uuidString).appendingPathExtension("\(StudyBundle.fileExtension).aar")
+                try fileManager.archiveDirectory(at: url, to: dstUrl)
+                return dstUrl
+            } else {
+                throw error
+            }
+        }
         logger.notice("did finish download of '\(url.lastPathComponent)'")
         guard let response = response as? HTTPURLResponse else {
             guard !url.isFileURL else {
@@ -277,5 +297,29 @@ final class StudyBundleLoader: Module, Sendable {
 extension StudyBundleLoader {
     private static func url(ofFile filename: String, inBucket bucketName: String) -> URL {
         "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2F\(filename)?alt=media"
+    }
+}
+
+
+extension URL {
+    fileprivate enum StudyBundleResourceType {
+        case archive
+        case package
+    }
+    
+    fileprivate func studyBundleResourceType() -> StudyBundleResourceType? {
+        guard let values = try? self.resourceValues(forKeys: [.isRegularFileKey, .isDirectoryKey, .isPackageKey]) else {
+            return nil
+        }
+        if values.isRegularFile == true, hasExtension("spezistudybundle.aar") {
+            return .archive
+        } else if values.isDirectory == true, hasExtension("spezistudybundle") {
+            return .package
+        }
+        return nil
+    }
+    
+    private func hasExtension(_ ext: String) -> Bool {
+        lastPathComponent.ends(with: chain(".", ext))
     }
 }
