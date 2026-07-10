@@ -70,13 +70,16 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         func launchApp(resetExistingData: Bool) throws {
             try self.launchAppAndEnrollIntoStudy(
                 testEnvironmentConfig: .init(resetExistingData: resetExistingData, loginAndEnroll: .enable(credentials)),
-                promptedActionsFilter: .only([.completeDemographics])
+                promptedActionsFilter: .only([.completeDemographics]),
+                extraLaunchOptions: [
+                    LaunchOptionValue(false, for: .supplyDemographicsWhenCreatingTestAccount)
+                ]
             )
             self.goToTab(.home)
         }
         func dismissDemographicsSheet() {
             let navBar = app.navigationBars["Demographics"]
-            navBar.buttons.element(matching: "label = %@ OR label = %@", "Done", "Close").tap()
+            navBar.buttons.element(matching: "label IN %@", ["Done", "Close"]).tap()
         }
         
         try launchApp(resetExistingData: true)

@@ -228,22 +228,24 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             }
             newDetails.didOptInToTrial = true
             // demographics
-            newDetails.dateOfBirth = Calendar.current.date(
-                from: .init(timeZone: TimeZone(identifier: "America/New_York"), year: 1824, month: 3, day: 9)
-            )
-            newDetails.mhcGenderIdentity = .male
-            newDetails.biologicalSexAtBirth = .male
-            newDetails.bloodType = .aPositive
-            newDetails.heightInCM = 186
-            newDetails.weightInKG = 67
-            newDetails.raceEthnicity = .white
-            newDetails.latinoStatus = LatinoStatusOption.options[0]
-            newDetails.comorbidities = Comorbidities()
-            newDetails.usRegion = .dc
-            newDetails.householdIncomeUS = HouseholdIncomeUS.options[0]
-            newDetails.educationUS = EducationStatusUS.options[0]
-            newDetails.stageOfChange = StageOfChangeOption.allOptions[0]
-            newDetails.referralSource = ReferralSource.options[0]
+            if LaunchOptions[.supplyDemographicsWhenCreatingTestAccount] {
+                newDetails.dateOfBirth = Calendar.current.date(
+                    from: .init(timeZone: TimeZone(identifier: "America/New_York"), year: 1824, month: 3, day: 9)
+                )
+                newDetails.mhcGenderIdentity = .male
+                newDetails.biologicalSexAtBirth = .male
+                newDetails.bloodType = .aPositive
+                newDetails.heightInCM = 186
+                newDetails.weightInKG = 67
+                newDetails.raceEthnicity = .white
+                newDetails.latinoStatus = LatinoStatusOption.options[0]
+                newDetails.comorbidities = Comorbidities()
+                newDetails.usRegion = .dc
+                newDetails.householdIncomeUS = HouseholdIncomeUS.options[0]
+                newDetails.educationUS = EducationStatusUS.options[0]
+                newDetails.stageOfChange = StageOfChangeOption.allOptions[0]
+                newDetails.referralSource = ReferralSource.options[0]
+            }
             // activity prefs
             newDetails.preferredWorkoutTypes = .init([WorkoutPreferenceSetting.WorkoutType.options[0]])
             newDetails.preferredNudgeNotificationTime = .init(hour: 9, minute: 0)

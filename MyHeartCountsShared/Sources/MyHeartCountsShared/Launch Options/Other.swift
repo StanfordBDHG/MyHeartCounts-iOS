@@ -28,6 +28,13 @@ extension LaunchOptions {
 
 
 extension LaunchOptions {
+    /// Whether the app should supply demographics values for temporary accounts created via the ``setupTestEnvironment`` option.
+    public static let supplyDemographicsWhenCreatingTestAccount = LaunchOption<Bool>("--supplyDemographicsWhenCreatingTestAccount", default: true)
+    // swiftlint:disable:previous identifier_name
+}
+
+
+extension LaunchOptions {
     /// Force-overrides the last-signed consent version, if the app is being launched with ``setupTestEnvironment`` present.
     ///
     /// Intended solely for UI testing purposes.
