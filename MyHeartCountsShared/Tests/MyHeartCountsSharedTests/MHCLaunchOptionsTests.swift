@@ -23,7 +23,7 @@ struct MHCLaunchOptionsTests {
         )
         let argvInput = input.launchOptionArgs(for: .setupTestEnvironment)
         #expect(argvInput == [
-            "--setupTestEnvironment", "reset", "login-and-enroll:LoMhrYN@stanford.edu;>G;IFozm$]+M"
+            "--setupTestEnvironment", "reset", "login-and-enroll:lomhryn@stanford.edu;>G;IFozm$]+M"
         ])
         let container = LaunchOptions.commandLineOptionsContainer(for: [""] + argvInput)
         let parsed = try container._decode(.setupTestEnvironment)

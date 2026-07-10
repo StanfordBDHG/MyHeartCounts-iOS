@@ -21,7 +21,6 @@ final class OtherTests: MHCTestCase, Sendable {
         app.resetAuthorizationStatus(for: .health)
         app.delete(app: "My Heart Counts")
         try launchAppAndEnrollIntoStudy(
-            skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )
         XCTAssert(app.navigationBars["Health Access"].waitForExistence(timeout: 10))
@@ -33,7 +32,6 @@ final class OtherTests: MHCTestCase, Sendable {
         app.terminate()
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .skip),
-            skipHealthPermissionsHandling: true,
             skipGoingToHomeTab: true
         )
         XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForNonExistence(timeout: 20))
@@ -44,7 +42,11 @@ final class OtherTests: MHCTestCase, Sendable {
     /// Tests that passing `testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: true)` to
     /// `launchAppAndEnrollIntoStudy` behaves properly (ie, we are logged in and the data from the previous launch remains).
     func testLaunchKeepingData() throws {
-        try launchAppAndEnrollIntoStudy()
+        let credentials: SetupTestEnvironmentConfig.Credentials = .random()
+        try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials)),
+            skipGoingToHomeTab: true
+        )
         XCTAssert(app.staticTexts["Completed"].waitForNonExistence(timeout: 2))
         app.buttons["Read Article: Welcome to My Heart Counts"].tap()
         app.navigationBars.buttons["Close"].tap()
@@ -52,11 +54,9 @@ final class OtherTests: MHCTestCase, Sendable {
         app.terminate()
         
         try launchAppAndEnrollIntoStudy(
-            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(.default)),
-            skipHealthPermissionsHandling: true,
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(credentials)),
             skipGoingToHomeTab: true
         )
-        sleep(for: .seconds(100))
-        XCTAssert(app.staticTexts["Completed"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Completed"].waitForExistence(timeout: 7))
     }
 }

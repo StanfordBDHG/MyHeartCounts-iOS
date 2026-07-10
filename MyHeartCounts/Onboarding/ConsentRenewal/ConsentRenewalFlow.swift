@@ -46,7 +46,7 @@ private struct ConsentRenewalExplainer: View {
         OnboardingPage(
             symbol: .signature,
             title: "Consent Renewal",
-            description: "CONSENT_RENEWAL_SUBTITLE"
+            description: nil
         ) {
             let lastSignDate = account?.details?.lastSignedConsentDate
             Text("""

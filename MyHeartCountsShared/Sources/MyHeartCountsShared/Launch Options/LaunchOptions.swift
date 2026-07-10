@@ -166,7 +166,9 @@ private struct CombinedLaunchOptionsContainer: LaunchOptionsContainerProtocol {
         var mostRecentError: (any Error)?
         for container in containers {
             do {
-                return try container._decode(option)
+                if let value = try container._decode(option) {
+                    return value
+                }
             } catch {
                 mostRecentError = error
             }

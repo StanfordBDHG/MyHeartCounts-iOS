@@ -14,7 +14,7 @@ import SwiftUI
 struct OnboardingHeader: View {
     let icon: Image?
     let title: LocalizedStringResource
-    let description: LocalizedStringResource
+    let description: LocalizedStringResource?
     
     var body: some View {
         ScrollView {
@@ -44,19 +44,21 @@ struct OnboardingHeader: View {
             .font(.title2.bold())
             .multilineTextAlignment(.leading)
             .lineLimit(12)
-        Text(description)
-            .font(.title3)
-            .lineLimit(32)
-            .multilineTextAlignment(.leading)
-            .foregroundStyle(.secondary)
-            .padding(.bottom)
+        if let description {
+            Text(description)
+                .font(.title3)
+                .lineLimit(32)
+                .multilineTextAlignment(.leading)
+                .foregroundStyle(.secondary)
+                .padding(.bottom)
+        }
     }
     
     
     init(
         systemSymbol: SFSymbol? = nil,
         title: LocalizedStringResource,
-        description: LocalizedStringResource
+        description: LocalizedStringResource?
     ) {
         self.icon = systemSymbol.map {
             Image(systemSymbol: $0) // swiftlint:disable:this accessibility_label_for_image

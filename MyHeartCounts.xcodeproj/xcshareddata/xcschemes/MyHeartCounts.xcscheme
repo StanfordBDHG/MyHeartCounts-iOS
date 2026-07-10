@@ -66,6 +66,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      region = "US"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -88,6 +89,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "--prompted-actions-filter only=edu.stanford.MyHeartCounts.HomeTabAction.completeDemographics"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--disableAutomaticBulkHealthExport"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -97,11 +102,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--setupTestEnvironment reset"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--setupTestEnvironment login-and-enroll"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--setupTestEnvironment reset login-and-enroll"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--forceEnableDebugMode"
@@ -117,7 +126,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=GoogleService-Info-Override"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--studyBundle &apos;/Users/lukas/Desktop/MHC StudyDefs/mhcStudyBundle.spezistudybundle.aar&apos;"
