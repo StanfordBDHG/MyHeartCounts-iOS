@@ -39,8 +39,14 @@ class MHCTestCase: XCTestCase, Sendable {
     )
     
     private(set) var app: XCUIApplication!
+    /// The on-disk location of the study bundle, for this specific test run.
+    ///
+    /// Gets reset after every run, in order to isolate each run's study bundles.
     private(set) var studyBundleUrl: URL!
     private(set) var appLocale: Locale!
+    /// How many times the app was launched as part of the test currently being executed.
+    /// - Note: Only counts launches via ``launchAppAndEnrollIntoStudy``
+    private(set) var launchCounter = 0
     
     override func setUp() async throws {
         try await super.setUp()
@@ -55,6 +61,7 @@ class MHCTestCase: XCTestCase, Sendable {
         app.terminate()
         app = nil
         appLocale = nil
+        launchCounter = 0
         try FileManager.default.removeItem(at: studyBundleUrl)
     }
     
@@ -119,6 +126,7 @@ class MHCTestCase: XCTestCase, Sendable {
             "XCUIApplication.launchArguments doesn't support single quote chars within launch arguments (see FB23653577)"
         )
         app.launch()
+        launchCounter += 1
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
         if handlePermissionPrompts {
             app.confirmNotificationAuthorization()

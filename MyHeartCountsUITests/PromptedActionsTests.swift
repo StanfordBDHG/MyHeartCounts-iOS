@@ -65,11 +65,14 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
     }
     
     
-    func testCompleteDemographics() throws {
+    func testCompleteDemographics() throws { // swiftlint:disable:this function_body_length
+        try supplyHealthCharacteristics()
         let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         func launchApp(resetExistingData: Bool) throws {
             try self.launchAppAndEnrollIntoStudy(
                 testEnvironmentConfig: .init(resetExistingData: resetExistingData, loginAndEnroll: .enable(credentials)),
+                handlePermissionPrompts: launchCounter == 0,
+                skipGoingToHomeTab: launchCounter > 0,
                 promptedActionsFilter: .only([.completeDemographics]),
                 extraLaunchOptions: [
                     LaunchOptionValue(false, for: .supplyDemographicsWhenCreatingTestAccount)
@@ -127,11 +130,6 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         sleep(for: .seconds(0.5))
         
         try launchApp(resetExistingData: false)
-//        if digestButton.waitForExistence(timeout: 5) {
-//            digestButton.tap()
-//            demographicsRow.buttons["Complete Demographics"].tap()
-//            sleep(for: .seconds(360))
-//        }
         XCTAssert(digestButton.waitForNonExistence(timeout: 5))
     }
 }
