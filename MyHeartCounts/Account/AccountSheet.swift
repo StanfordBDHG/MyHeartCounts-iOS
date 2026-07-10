@@ -178,8 +178,10 @@ struct AccountSheet: View {
             .contentShape(Rectangle())
             .foregroundStyle(.textLabel)
         }
-        NavigationLink("View Participation Stats") {
-            ParticipationStatsView(enrollment: enrollment)
+        if FeatureFlags.enableStatsAndAchievements {
+            NavigationLink("View Participation Stats") {
+                ParticipationStatsView(enrollment: enrollment)
+            }
         }
         PostTrialNudgesToggle()
         NavigationLink("Review Consent Forms") {

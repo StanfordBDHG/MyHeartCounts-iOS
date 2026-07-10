@@ -49,7 +49,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     @Dependency(NotificationsManager.self) private var notificationsManager
     @Dependency(AppState.self) private var appState
-    @Dependency(AchievementsManager.self) var achievementsManager
+    @Dependency(AchievementsManager.self) var achievementsManager: AchievementsManager?
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
     
@@ -109,7 +109,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 // this only is relevant if the user wasn't logged in and enrolled when the app was launched.
                 // all subsequent launches will go only through the `associateWithAccount()` call below, and will work correctly
                 // bc both the account and the enrollment will exist in these cases.
-                try await achievementsManager.associateWithAccount()
+                try await achievementsManager?.associateWithAccount()
             }
             await Self._updateCurrentEnrollmentInfo(studyManager)
         } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {
@@ -129,7 +129,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             Swift::Task {
                 async let updateEnvTracking = environmentTracking?.triggerAll()
                 async let registerNotifications = try? registerRemoteNotifications()
-                async let syncAchievements = try? achievementsManager.associateWithAccount()
+                async let syncAchievements = try? achievementsManager?.associateWithAccount()
                 _ = await (updateEnvTracking, registerNotifications, syncAchievements)
             }
         case .deletingAccount:
@@ -139,17 +139,20 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             logger.notice("account did disassociate")
             try? await performLogoutCleanup(context: .explicitUserLogoutEvent)
         case let .detailsChanged(old, new):
-            logger.notice("Account Details Changed:\n\(new.debugDescOfDifference(from: old))")
-            break
+            let diff = new.debugDescOfDifference(from: old)
+            if !diff.isEmpty {
+                let text = "Account Details Changed:\n\(new.debugDescOfDifference(from: old))"
+                logger.notice("\(text)")
+            }
         }
     }
     
     func willLogOut(_ details: AccountDetails) async {
         logger.notice("account is being logged out")
         async let updateFCMToken = try? notificationsManager.setFCMToken(nil)
-        async let syncAchievements = try? achievementsManager.syncNow()
+        async let syncAchievements = try? achievementsManager?.syncNow()
         _ = await (updateFCMToken, syncAchievements)
-        await achievementsManager.disassociateFromAccount()
+        await achievementsManager?.disassociateFromAccount()
     }
 }
 

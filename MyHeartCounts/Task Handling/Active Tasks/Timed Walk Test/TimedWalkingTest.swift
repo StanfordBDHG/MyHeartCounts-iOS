@@ -104,7 +104,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(WatchConnection.self) private var watchManager
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(Lifecycle.self) private var lifecycle
-    @ObservationIgnored @Dependency(AchievementsManager.self) private var achievements
+    @ObservationIgnored @Dependency(AchievementsManager.self) private var achievements: AchievementsManager?
     // swiftlint:enable attributes
     
     private let hapticEngine = try? CHHapticEngine()
@@ -246,7 +246,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             if !discardResult {
                 do {
                     try await standard.uploadHealthObservation(result)
-                    Task {
+                    if let achievements {
                         switch result.test {
                         case .sixMinuteWalkTest:
                             achievements.record(.complete6MinWalkTest, timestamp: result.endDate)
