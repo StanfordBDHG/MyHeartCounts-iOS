@@ -127,7 +127,6 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     
     private func resetExistingData() async throws {
         logger.notice("Resetting existing data")
-        try localStorage.deleteAll()
         try await bulkHealthExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
         try fileUploader.clearPendingUploads()
         LocalPreferencesStore.standard.removeAllEntries(in: .app)
@@ -149,6 +148,13 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             } catch FirebaseAccountError.notSignedIn {
                 // ok
             }
+        }
+        try await Task.sleep(for: .seconds(0.5))
+        do {
+            try localStorage.deleteAll()
+        } catch {
+            try await Task.sleep(for: .seconds(1))
+            try localStorage.deleteAll()
         }
     }
     
