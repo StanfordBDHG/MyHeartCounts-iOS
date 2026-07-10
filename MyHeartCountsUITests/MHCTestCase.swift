@@ -17,6 +17,7 @@ import SpeziLocalization
 import XCTest
 import XCTestExtensions
 import XCTHealthKit
+import XCTSpeziNotifications
 
 /*
  Ideas for additional tests:
@@ -65,6 +66,7 @@ class MHCTestCase: XCTestCase, Sendable {
     /// Launches the app and puts it in a state where the participant is logged in and enrolled into the study.
     ///
     /// - parameter enableDebugMode: Whether the app should force-enable its debug mode for this launch. Defaults to `false`.
+    /// - parameter handlePermissionPrompts: Whether permission prompts for notifications, HealthKit, etc should be waited for and handled as part of launching the app.
     /// - parameter promptedActionsFilter: which prompted actions should be considered for display on the home tab, if any. defaults to not showing any prompted actions.
     /// - parameter heightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a height quantity.
     ///     Allowed values are `cm`, `feet`, or `nil` (the default).
@@ -73,11 +75,11 @@ class MHCTestCase: XCTestCase, Sendable {
     /// - parameter extraLaunchArgs: Additional arguments that will be appended to the app's launch arguments. `nil` values will be skipped.
     func launchAppAndEnrollIntoStudy( // swiftlint:disable:this function_body_length
         skip: Bool = false,
-        locale: consuming Locale = .enUS,
+        locale: Locale = .enUS,
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: .enable(.random())),
         enableHealthRecords: Bool = MHCTestCase.enableHealthRecords,
-        skipHealthPermissionsHandling: Bool = false,
+        handlePermissionPrompts: Bool = true,
         skipGoingToHomeTab: Bool = false,
         promptedActionsFilter: PromptedActionsFilter = .only([]),
         triggerConsentRenewalIfNeverSigned: Bool = false,
@@ -90,8 +92,7 @@ class MHCTestCase: XCTestCase, Sendable {
         if skip {
             throw XCTSkip()
         }
-        // note: we're intentionally just setting it here, and then using `appLocale` everywhere else.
-        appLocale = consume locale
+        appLocale = locale
         app.launchArguments = Array {
             "--useFirebaseEmulator"
             testEnvironmentConfig.launchOptionArgs(for: .setupTestEnvironment)
@@ -107,30 +108,20 @@ class MHCTestCase: XCTestCase, Sendable {
         app.launchArguments += extraLaunchOptions.flatMap(\.rawArgs)
         app.launchArguments += extraLaunchArgs.compactMap(\.self)
         app.launchArguments += [
-            "-AppleLanguages", "(\(appLocale.language.minimalIdentifier))",
-            "-AppleLocale", try XCTUnwrap(LocalizationKey(locale: appLocale)).description
+            "-AppleLanguages", "(\(locale.language.minimalIdentifier))",
+            "-AppleLocale", try XCTUnwrap(LocalizationKey(locale: locale)).description
         ]
         app.launchEnvironment["MHC_IS_BEING_UI_TESTED"] = "1"
         app.launchEnvironment.merge(extraEnvironmentEntries, using: .override)
-        do {
-            var msg = "Will launch app \(app.bundleIdentifier) with configuration:\n"
-            msg += "argv:\n"
-            for arg in app.launchArguments {
-                msg += "    \(arg)\n"
-            }
-            msg += "env:\n"
-            for (key, value) in app.launchEnvironment {
-                msg += "    \(key) = \(value)\n"
-            }
-            print(msg)
-        }
+        print(app.dumpLaunchContext())
         XCTAssertFalse(
             app.launchArguments.contains { $0.contains("'") },
             "XCUIApplication.launchArguments doesn't support single quote chars within launch arguments (see FB23653577)"
         )
         app.launch()
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
-        if !skipHealthPermissionsHandling {
+        if handlePermissionPrompts {
+            app.confirmNotificationAuthorization()
             app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
             if MHCTestCase.enableHealthRecords {
                 handleHealthRecordsAuthorization(
@@ -256,6 +247,20 @@ extension XCUIApplication {
     /// - Note: This property only works when the app is being tested in the simulator; it does not work when testing on a physical device.
     var mainBundle: Bundle? {
         url.flatMap(Bundle.init(url:))
+    }
+    
+    
+    func dumpLaunchContext() -> String {
+        var msg = "Will launch app \(self.bundleIdentifier) with configuration:\n"
+        msg += "argv:\n"
+        for arg in self.launchArguments {
+            msg += "    \(arg)\n"
+        }
+        msg += "env:\n"
+        for (key, value) in self.launchEnvironment {
+            msg += "    \(key) = \(value)\n"
+        }
+        return msg
     }
 }
 

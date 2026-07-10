@@ -61,7 +61,7 @@ extension MHCScreenshotting {
         try launchAppAndEnrollIntoStudy(
             skip: false,
             locale: locale,
-            skipHealthPermissionsHandling: !isFirstRun,
+            handlePermissionPrompts: isFirstRun,
             // the "go to home tab" thing implies checking for the on-screen existence of certain texts, which will fail if the language isn't english.
             // we instead manually go to the home tab.
             skipGoingToHomeTab: true,

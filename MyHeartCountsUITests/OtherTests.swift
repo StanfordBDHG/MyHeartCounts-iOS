@@ -21,7 +21,7 @@ final class OtherTests: MHCTestCase, Sendable {
         app.resetAuthorizationStatus(for: .health)
         app.delete(app: "My Heart Counts")
         try launchAppAndEnrollIntoStudy(
-            skipHealthPermissionsHandling: true,
+            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         XCTAssert(app.navigationBars["Health Access"].waitForExistence(timeout: 10))
@@ -33,7 +33,7 @@ final class OtherTests: MHCTestCase, Sendable {
         app.terminate()
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .skip),
-            skipHealthPermissionsHandling: true,
+            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         XCTAssert(app.staticTexts["How Sharing Health Records Works"].waitForNonExistence(timeout: 20))
@@ -47,7 +47,7 @@ final class OtherTests: MHCTestCase, Sendable {
         let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .enable(credentials)),
-            skipHealthPermissionsHandling: true,
+            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         XCTAssert(app.staticTexts["Completed"].waitForNonExistence(timeout: 2))
@@ -58,7 +58,7 @@ final class OtherTests: MHCTestCase, Sendable {
         
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(credentials)),
-            skipHealthPermissionsHandling: true,
+            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         XCTAssert(app.staticTexts["Completed"].waitForExistence(timeout: 7))

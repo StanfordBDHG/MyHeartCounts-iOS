@@ -49,7 +49,7 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(credentials)),
-            skipHealthPermissionsHandling: true,
+            handlePermissionPrompts: false,
             skipGoingToHomeTab: true,
             promptedActionsFilter: .only([.sensorKit])
         )

@@ -27,7 +27,7 @@ final class TabBarAXStatsTests: MHCTestCase, Sendable {
         for iteration in 0..<iterations {
             try launchAppAndEnrollIntoStudy(
                 testEnvironmentConfig: .init(resetExistingData: iteration == 0, loginAndEnroll: .enable(credentials)),
-                skipHealthPermissionsHandling: iteration > 0,
+                handlePermissionPrompts: iteration == 0,
                 skipGoingToHomeTab: true
             )
             // the first launch resets and re-seeds the test environment (Firebase login, study enrollment),

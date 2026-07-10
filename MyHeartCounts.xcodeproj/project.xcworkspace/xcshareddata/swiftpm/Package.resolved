@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/Spezi.git",
       "state" : {
-        "revision" : "66208556a32adf8f7634f97da04463b204febea9",
-        "version" : "0.1.4"
+        "branch" : "lukas/notification-alert-improvements",
+        "revision" : "298993ea27a069f825f964fb51290148190b1515"
       }
     },
     {
