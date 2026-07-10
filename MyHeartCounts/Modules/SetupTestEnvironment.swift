@@ -153,7 +153,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         do {
             try localStorage.deleteAll()
         } catch {
-            try await Task.sleep(for: .seconds(1))
+            try await Task.sleep(for: .seconds(2))
             try localStorage.deleteAll()
         }
     }
