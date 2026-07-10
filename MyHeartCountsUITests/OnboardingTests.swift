@@ -16,7 +16,6 @@ final class OnboardingTests: MHCTestCase, Sendable {
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         let navigator = OnboardingNavigator(testCase: self)
@@ -35,7 +34,6 @@ final class OnboardingTests: MHCTestCase, Sendable {
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         let navigator = OnboardingNavigator(testCase: self)
@@ -48,7 +46,6 @@ final class OnboardingTests: MHCTestCase, Sendable {
         try launchAppAndEnrollIntoStudy(
             locale: .enUS,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         let navigator = OnboardingNavigator(testCase: self)

@@ -45,7 +45,6 @@ final class ConsentTests: MHCTestCase, Sendable {
         try launchAppAndEnrollIntoStudy(
             locale: locale,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         // go through consent
@@ -85,7 +84,6 @@ final class ConsentTests: MHCTestCase, Sendable {
         try launchAppAndEnrollIntoStudy(
             locale: locale,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         let navigator = OnboardingNavigator(testCase: self)
@@ -102,7 +100,6 @@ final class ConsentTests: MHCTestCase, Sendable {
         try launchAppAndEnrollIntoStudy(
             locale: locale,
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip),
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         
@@ -194,7 +191,6 @@ final class ConsentTests: MHCTestCase, Sendable {
             try launchAppAndEnrollIntoStudy(
                 locale: locale,
                 testEnvironmentConfig: config,
-                handlePermissionPrompts: false,
                 skipGoingToHomeTab: true
             )
             // the study bundle now contains a new consent version than what was signed before, which we expect to trigger the renewal flow.
@@ -217,7 +213,6 @@ final class ConsentTests: MHCTestCase, Sendable {
         try launchAppAndEnrollIntoStudy(
             locale: locale,
             testEnvironmentConfig: config,
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true
         )
         XCTAssert(app.otherElements["MHC:ConsentRenewalFlow"].waitForNonExistence(timeout: 10))

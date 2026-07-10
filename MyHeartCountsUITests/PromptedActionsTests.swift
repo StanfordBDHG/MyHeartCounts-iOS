@@ -49,7 +49,6 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
         
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .enable(credentials)),
-            handlePermissionPrompts: false,
             skipGoingToHomeTab: true,
             promptedActionsFilter: .only([.sensorKit])
         )
@@ -65,13 +64,12 @@ final class PromptedActionsTests: MHCTestCase, Sendable {
     }
     
     
-    func testCompleteDemographics() throws { // swiftlint:disable:this function_body_length
+    func testCompleteDemographics() throws {
         try supplyHealthCharacteristics()
         let credentials: SetupTestEnvironmentConfig.Credentials = .random()
         func launchApp(resetExistingData: Bool) throws {
             try self.launchAppAndEnrollIntoStudy(
                 testEnvironmentConfig: .init(resetExistingData: resetExistingData, loginAndEnroll: .enable(credentials)),
-                handlePermissionPrompts: launchCounter == 0,
                 skipGoingToHomeTab: launchCounter > 0,
                 promptedActionsFilter: .only([.completeDemographics]),
                 extraLaunchOptions: [

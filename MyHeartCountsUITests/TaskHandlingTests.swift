@@ -14,11 +14,13 @@ import XCTHealthKit
 
 
 final class TaskHandlingTests: MHCTestCase, Sendable {
-    private let timedWalkTestDistance = switch Locale.current.measurementSystem {
-    case .us:
-        "2,762 ft"
-    default:
-        "842 m"
+    private var timedWalkTestDistance: String {
+        switch appLocale.measurementSystem {
+        case .us:
+            "2,762 ft"
+        default:
+            "842 m"
+        }
     }
     
     
@@ -126,7 +128,9 @@ final class TaskHandlingTests: MHCTestCase, Sendable {
         handleMotionAndFitnessAccessPrompt(timeout: .seconds(2))
         XCTAssert(app.staticTexts["Your 6-Minute Walk Test is in progress."].waitForExistence(timeout: 5))
         app.terminate()
-        try launchAppAndEnrollIntoStudy(handlePermissionPrompts: false, skipGoingToHomeTab: true)
+        try launchAppAndEnrollIntoStudy(
+            skipGoingToHomeTab: true
+        )
         XCTAssert(app.staticTexts["Your 6-Minute Walk Test is in progress."].waitForExistence(timeout: 5))
     }
     

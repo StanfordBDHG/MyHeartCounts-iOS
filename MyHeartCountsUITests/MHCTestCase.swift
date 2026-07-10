@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable implicitly_unwrapped_optional type_contents_order
+// swiftlint:disable implicitly_unwrapped_optional file_types_order type_contents_order identifier_name
 
 import Foundation
 import HealthKit
@@ -31,6 +31,17 @@ import XCTSpeziNotifications
 /// It does not contain any actual tests itself. All UI test classes should inherit from `MHCTestCase`.
 @MainActor
 class MHCTestCase: XCTestCase, Sendable {
+    enum HandlePermissionPrompts: ExpressibleByBooleanLiteral {
+        case yes
+        case no
+        case auto
+        
+        @available(*, deprecated)
+        init(booleanLiteral value: BooleanLiteralType) {
+            self = value ? .yes : .no
+        }
+    }
+    
     static let enableHealthRecords = false // temporarily disabled
     
     nonisolated private static let tempDir = URL.temporaryDirectory.appending(
@@ -38,7 +49,10 @@ class MHCTestCase: XCTestCase, Sendable {
         directoryHint: .isDirectory
     )
     
-    private(set) var app: XCUIApplication!
+    private var _app: MHCXCUIApplication!
+    
+    var app: XCUIApplication { _app }
+    
     /// The on-disk location of the study bundle, for this specific test run.
     ///
     /// Gets reset after every run, in order to isolate each run's study bundles.
@@ -47,19 +61,33 @@ class MHCTestCase: XCTestCase, Sendable {
     /// How many times the app was launched as part of the test currently being executed.
     /// - Note: Only counts launches via ``launchAppAndEnrollIntoStudy``
     private(set) var launchCounter = 0
+    /// Whether there likely is at least one protected resource (notifications, health, etc) that currently
+    /// is in an undecided state and might trigger a permission prompt during the next enrolled launch.
+    private var likelyHasUndecidedPermissions = true
+    private var alreadySuppliedHealthCharacteristics = false
+    
     
     override func setUp() async throws {
         try await super.setUp()
         continueAfterFailure = false
-        app = XCUIApplication()
+        _app = MHCXCUIApplication()
+        _app.onLaunch = {
+            self.launchCounter += 1
+        }
+        _app.onPermissionsReset = { _ in
+            self.likelyHasUndecidedPermissions = true
+        }
         try FileManager.default.createDirectory(at: Self.tempDir, withIntermediateDirectories: true)
+        // note that we intentionally export the study bundle as a package (rather than an archive),
+        // so that tests can tinker with the contents if they want to.
+        // e.g., the consent renewal tests use this to simulate the consent version updating between launches.
         studyBundleUrl = try MHCStudyDefinitionExporter::export(to: Self.tempDir, as: .package)
     }
     
     override func tearDown() async throws {
         try await super.tearDown()
         app.terminate()
-        app = nil
+        _app = nil
         appLocale = nil
         launchCounter = 0
         try FileManager.default.removeItem(at: studyBundleUrl)
@@ -74,6 +102,7 @@ class MHCTestCase: XCTestCase, Sendable {
     ///
     /// - parameter enableDebugMode: Whether the app should force-enable its debug mode for this launch. Defaults to `false`.
     /// - parameter handlePermissionPrompts: Whether permission prompts for notifications, HealthKit, etc should be waited for and handled as part of launching the app.
+    ///     Defaults to `.auto`, in which case the function will intelligently decide if permission prompts are likely to appear as part of the launch, and await and handle them as needed.
     /// - parameter promptedActionsFilter: which prompted actions should be considered for display on the home tab, if any. defaults to not showing any prompted actions.
     /// - parameter heightEntryUnitOverride: Allows overriding the unit the app will use when manually entering a height quantity.
     ///     Allowed values are `cm`, `feet`, or `nil` (the default).
@@ -86,7 +115,7 @@ class MHCTestCase: XCTestCase, Sendable {
         enableDebugMode: Bool = false,
         testEnvironmentConfig: SetupTestEnvironmentConfig = .init(resetExistingData: true, loginAndEnroll: .enable(.random())),
         enableHealthRecords: Bool = MHCTestCase.enableHealthRecords,
-        handlePermissionPrompts: Bool = true,
+        handlePermissionPrompts: HandlePermissionPrompts = .auto,
         skipGoingToHomeTab: Bool = false,
         promptedActionsFilter: PromptedActionsFilter = .only([]),
         triggerConsentRenewalIfNeverSigned: Bool = false,
@@ -126,9 +155,23 @@ class MHCTestCase: XCTestCase, Sendable {
             "XCUIApplication.launchArguments doesn't support single quote chars within launch arguments (see FB23653577)"
         )
         app.launch()
-        launchCounter += 1
         XCTAssert(app.wait(for: .runningForeground, timeout: 2))
-        if handlePermissionPrompts {
+        switch handlePermissionPrompts {
+        case .no:
+            break
+        case .auto:
+            let mightRunAccessRequestsOnLaunch = switch testEnvironmentConfig.loginAndEnroll {
+            case .skip:
+                false
+            case .enable:
+                true
+            }
+            if mightRunAccessRequestsOnLaunch && likelyHasUndecidedPermissions {
+                fallthrough
+            } else {
+                break
+            }
+        case .yes:
             app.confirmNotificationAuthorization()
             app.handleHealthKitAuthorization(timeout: 10) // Idea: maybe adjust this based on local vs CI?
             if MHCTestCase.enableHealthRecords {
@@ -138,6 +181,7 @@ class MHCTestCase: XCTestCase, Sendable {
                     timeout: 10
                 )
             }
+            likelyHasUndecidedPermissions = false
         }
         if !skipGoingToHomeTab {
             XCTAssert(app.tabBars.element.waitForExistence(timeout: 10))
@@ -155,6 +199,9 @@ class MHCTestCase: XCTestCase, Sendable {
     
     
     func supplyHealthCharacteristics() throws {
+        guard !alreadySuppliedHealthCharacteristics else {
+            return
+        }
         try launchHealthAppAndEnterCharacteristics(.init(
             bloodType: .aPositive,
             dateOfBirth: .init(year: 1998, month: 6, day: 2),
@@ -162,6 +209,7 @@ class MHCTestCase: XCTestCase, Sendable {
             skinType: .II,
             wheelchairUse: .no
         ))
+        alreadySuppliedHealthCharacteristics = true
     }
 }
 
@@ -280,5 +328,23 @@ extension XCUIElementQuery {
     
     func element(matching predicateFormat: String, _ args: Any...) -> XCUIElement {
         self.element(matching: NSPredicate(format: predicateFormat, argumentArray: args))
+    }
+}
+
+
+// MARK: XCUIApplication
+
+private final class MHCXCUIApplication: XCUIApplication {
+    var onLaunch: (() -> Void)?
+    var onPermissionsReset: ((_ resource: XCUIProtectedResource) -> Void)?
+    
+    override func launch() {
+        super.launch()
+        onLaunch?()
+    }
+    
+    override func resetAuthorizationStatus(for resource: XCUIProtectedResource) {
+        super.resetAuthorizationStatus(for: resource)
+        onPermissionsReset?(resource)
     }
 }
