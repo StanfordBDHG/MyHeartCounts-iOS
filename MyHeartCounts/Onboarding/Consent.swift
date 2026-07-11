@@ -92,6 +92,7 @@ extension Locale {
 }
 
 
+#if DEBUG
 #Preview {
     ManagedNavigationStack {
         Consent(document: .previewDoc)
@@ -103,3 +104,4 @@ extension Locale {
         MyHeartCounts.previewModels
     }
 }
+#endif
