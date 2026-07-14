@@ -83,6 +83,7 @@ struct ParticipationStatsView: View {
     
     private func updateStats() async {
         stats = await statsProvider.computeStats(for: enrollment)
+        try? await achievementsManager.refresh()
     }
 }
 
