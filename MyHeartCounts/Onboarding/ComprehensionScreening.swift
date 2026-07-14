@@ -79,10 +79,11 @@ private struct Question: ScreeningComponent {
     }
 }
 
-
+#if DEBUG
 #Preview {
     ManagedNavigationStack {
         ComprehensionScreening(consentDoc: .previewDoc)
     }
     .environment(OnboardingDataCollection())
 }
+#endif
