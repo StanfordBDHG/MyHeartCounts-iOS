@@ -122,6 +122,14 @@ final class DemographicsData {
         populate(from: account.details ?? AccountDetails())
     }
     
+    /// Populates the instance, unless it already has been populated before.
+    func populateIfEmpty(from account: Account) {
+        guard self.account == nil else {
+            return
+        }
+        populate(from: account)
+    }
+    
     private func populate(from details: AccountDetails) {
         shouldHandleUpdates = false
         defer {

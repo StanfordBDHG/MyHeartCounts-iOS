@@ -9421,6 +9421,28 @@
         }
       }
     },
+    "UPDATE_COMORBIDITIES_BUTTON_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Health Conditions"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Health Conditions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar afecciones médicas"
+          }
+        }
+      }
+    },
     "US State / Region" : {
       "localizations" : {
         "en-GB" : {

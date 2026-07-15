@@ -179,6 +179,7 @@ struct AccountSheet: View {
             .foregroundStyle(.textLabel)
         }
         PostTrialNudgesToggle()
+        UpdateComorbiditiesButton()
         NavigationLink("Review Consent Forms") {
             SignedConsentForms()
         }
