@@ -9591,6 +9591,28 @@
         }
       }
     },
+    "VO2MAX_ESTIMATE_LABEL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO₂ max (estimate)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO₂ max (estimate)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "VO₂ máx. (estimación)"
+          }
+        }
+      }
+    },
     "Vocational Training" : {
       "localizations" : {
         "en-GB" : {
