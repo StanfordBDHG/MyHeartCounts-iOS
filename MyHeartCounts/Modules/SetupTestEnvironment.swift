@@ -245,7 +245,16 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
                 newDetails.weightInKG = 67
                 newDetails.raceEthnicity = .white
                 newDetails.latinoStatus = LatinoStatusOption.options[0]
-                newDetails.comorbidities = Comorbidities()
+                newDetails.comorbidities = { () -> Comorbidities in
+                    var value = Comorbidities()
+                    guard let heartFailureOption = Comorbidities.Comorbidity.primaryComorbidities.first(where: {
+                        $0.title.localizedString(for: .enUS).contains("Heart Failure")
+                    }) else {
+                        return value
+                    }
+                    value[heartFailureOption] = .selected(startDate: DateComponents())
+                    return value
+                }()
                 newDetails.usRegion = .dc
                 newDetails.householdIncomeUS = HouseholdIncomeUS.options[0]
                 newDetails.educationUS = EducationStatusUS.options[0]

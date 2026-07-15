@@ -183,7 +183,7 @@ class MHCTestCase: XCTestCase, Sendable {
             }
             likelyHasUndecidedPermissions = false
         }
-        if !skipGoingToHomeTab {
+        if !skipGoingToHomeTab && !(testEnvironmentConfig == .init(resetExistingData: true, loginAndEnroll: .skip)) {
             XCTAssert(app.tabBars.element.waitForExistence(timeout: 10))
             goToTab(.home)
             XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))

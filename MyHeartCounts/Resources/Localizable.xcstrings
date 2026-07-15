@@ -2311,22 +2311,6 @@
         }
       }
     },
-    "Disclosure Indicator" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disclosure Indicator"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indicador de Divulgación"
-          }
-        }
-      }
-    },
     "Distance" : {
       "localizations" : {
         "en-GB" : {
