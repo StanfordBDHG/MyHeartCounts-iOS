@@ -2737,22 +2737,6 @@
         }
       }
     },
-    "End" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "End"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar"
-          }
-        }
-      }
-    },
     "England (%@)" : {
       "localizations" : {
         "en-GB" : {
@@ -5900,22 +5884,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notifícame"
-          }
-        }
-      }
-    },
-    "Number of Steps" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Number of Steps"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Número de pasos"
           }
         }
       }

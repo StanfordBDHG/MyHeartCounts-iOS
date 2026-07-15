@@ -159,7 +159,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     }
     
     
-    private func loginAndEnroll( // swiftlint:disable:this function_body_length
+    private func loginAndEnroll( // swiftlint:disable:this function_body_length cyclomatic_complexity
         _ credentials: SetupTestEnvironmentConfig.Credentials
     ) async throws {
         logger.notice("Logging in and enrolling into Study using credentials \(String(describing: credentials))")
