@@ -32,9 +32,6 @@ struct UpdateComorbiditiesButton: View {
             }
         }
         .disabled(account.details == nil)
-        .task {
-            demographicsData.populateIfEmpty(from: account)
-        }
         .sheet(isPresented: $showSheet) {
             @Bindable var data = demographicsData
             NavigationStack {
@@ -46,6 +43,9 @@ struct UpdateComorbiditiesButton: View {
                             closeSheetButton
                         }
                     }
+            }
+            .onAppear {
+                demographicsData.populateIfEmpty(from: account)
             }
         }
     }
