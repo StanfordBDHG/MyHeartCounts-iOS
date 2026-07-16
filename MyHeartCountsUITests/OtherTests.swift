@@ -63,6 +63,7 @@ final class OtherTests: MHCTestCase, Sendable {
     
     func testUpdateComorbidities() throws {
         let credentials: SetupTestEnvironmentConfig.Credentials = .random()
+        try supplyHealthCharacteristics()
         try launchAppAndEnrollIntoStudy(
             testEnvironmentConfig: .init(resetExistingData: true, loginAndEnroll: .skip)
         )
