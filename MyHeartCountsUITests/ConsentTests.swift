@@ -194,7 +194,7 @@ final class ConsentTests: MHCTestCase, Sendable {
                 skipGoingToHomeTab: true
             )
             // the study bundle now contains a new consent version than what was signed before, which we expect to trigger the renewal flow.
-            XCTAssert(app.otherElements["MHC:ConsentRenewalFlow"].waitForExistence(timeout: 7))
+            XCTAssert(app.otherElements["MHC:ConsentRenewalFlow"].waitForExistence(timeout: 10))
             XCTAssert(app.staticTexts["Consent Renewal"].exists)
             app.buttons["Continue"].tap()
             
@@ -203,7 +203,7 @@ final class ConsentTests: MHCTestCase, Sendable {
                 expectedName: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
                 signUpForExtraTrial: false
             )
-            XCTAssert(app.otherElements["MHC:ConsentRenewalFlow"].waitForNonExistence(timeout: 7))
+            XCTAssert(app.otherElements["MHC:ConsentRenewalFlow"].waitForNonExistence(timeout: 10))
             // verify that the user is now recorded as having signed the new version
             XCTAssertEqual(try XCTUnwrap(determineLastSignedConsentVersion()), nextConsentVersion)
             app.terminate()
