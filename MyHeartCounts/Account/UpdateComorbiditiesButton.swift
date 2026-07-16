@@ -6,7 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SFSafeSymbols
 import SpeziAccount
+import SpeziViews
 import SwiftUI
 
 
@@ -16,6 +18,7 @@ struct UpdateComorbiditiesButton: View {
     
     @State private var showSheet = false
     @State private var demographicsData = DemographicsData()
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
         Button {
@@ -48,22 +51,21 @@ struct UpdateComorbiditiesButton: View {
     }
     
     @ViewBuilder private var closeSheetButton: some View {
-        // look into using an AsyncButton here
         if #available(iOS 26, *) {
-            Button(role: .confirm) {
-                closeSheet()
+            AsyncButton(role: .confirm, state: $viewState) {
+                try await closeSheet()
+            } label: {
+                Label("Done", systemSymbol: .checkmark)
             }
         } else {
-            Button("Done") {
-                closeSheet()
+            AsyncButton("Done", state: $viewState) {
+                try await closeSheet()
             }
         }
     }
     
-    private func closeSheet() {
+    private func closeSheet() async throws {
         showSheet = false
-        Task {
-            try? await demographicsData.flush()
-        }
+        try await demographicsData.flush()
     }
 }
