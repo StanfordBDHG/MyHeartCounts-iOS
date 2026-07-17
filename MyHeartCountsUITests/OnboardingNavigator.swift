@@ -319,7 +319,6 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     private func navigateDemographics() {
         let navigator = DemographicsNavigator(testCase: testCase)
         navigator.fillInDemographics()
-        
         let continueButton = app.buttons["Continue"]
         while !continueButton.exists {
             app.swipeUp()

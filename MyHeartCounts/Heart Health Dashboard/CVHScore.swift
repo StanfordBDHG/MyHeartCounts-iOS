@@ -400,12 +400,15 @@ extension ScoreDefinition {
         ])
     }()
     
+    /// LDL Cholesterol
     static let cvhBloodLipids = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<130, score: 1, explainer: "< 130"),
-        .inRange(130..<160, score: 0.6, explainer: "130 – 159"),
-        .inRange(160..<190, score: 0.4, explainer: "160 – 189"),
-        .inRange(190..<220, score: 0.2, explainer: "190 – 219"),
-        .inRange(220..., score: 0, explainer: "220+")
+        .inRange(..<56, score: 1, explainer: "< 55"),
+        .inRange(56..<70, score: 0.9, explainer: "56 – 69"),
+        .inRange(70..<100, score: 0.8, explainer: "70 – 99"),
+        .inRange(100..<130, score: 0.6, explainer: "100 – 129"),
+        .inRange(130..<160, score: 0.4, explainer: "130 – 159"),
+        .inRange(160..<190, score: 0.2, explainer: "160 – 189"),
+        .inRange(190..., score: 0, explainer: "190+")
     ])
     
     static let cvhBloodGlucose = ScoreDefinition(default: 0, scoringBands: [

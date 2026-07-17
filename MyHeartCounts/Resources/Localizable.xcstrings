@@ -485,10 +485,10 @@
     "< 7" : {
       "shouldTranslate" : false
     },
-    "< 85" : {
-      "shouldTranslate" : false
+    "< 55" : {
+
     },
-    "< 130" : {
+    "< 85" : {
       "shouldTranslate" : false
     },
     "<120 / <80" : {
@@ -753,8 +753,14 @@
     "30 – 59" : {
       "shouldTranslate" : false
     },
+    "56 – 69" : {
+
+    },
     "60 – 89" : {
       "shouldTranslate" : false
+    },
+    "70 – 99" : {
+
     },
     "85 – 99" : {
       "shouldTranslate" : false
@@ -768,6 +774,9 @@
     "100 – 109" : {
       "shouldTranslate" : false
     },
+    "100 – 129" : {
+
+    },
     "110 – 125" : {
       "shouldTranslate" : false
     },
@@ -780,8 +789,8 @@
     "126 – 140" : {
       "shouldTranslate" : false
     },
-    "130 – 159" : {
-      "shouldTranslate" : false
+    "130 – 159" : {
+
     },
     "130–139 / 90–99" : {
       "shouldTranslate" : false
@@ -795,11 +804,8 @@
     "160 – 189" : {
       "shouldTranslate" : false
     },
-    "190 – 219" : {
-      "shouldTranslate" : false
-    },
-    "220+" : {
-      "shouldTranslate" : false
+    "190+" : {
+
     },
     "Abdominal Aortic Aneurysm" : {
       "localizations" : {
@@ -2311,22 +2317,6 @@
         }
       }
     },
-    "Disclosure Indicator" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disclosure Indicator"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indicador de Divulgación"
-          }
-        }
-      }
-    },
     "Distance" : {
       "localizations" : {
         "en-GB" : {
@@ -2749,22 +2739,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Al habilitar SensorKit, se obtienen datos más precisos y detallados como el electrocardiograma (ECG), contribuyéndo al avance de la investigación cardiovascular"
-          }
-        }
-      }
-    },
-    "End" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "End"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar"
           }
         }
       }
@@ -5916,22 +5890,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notifícame"
-          }
-        }
-      }
-    },
-    "Number of Steps" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Number of Steps"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Número de pasos"
           }
         }
       }
@@ -9421,6 +9379,28 @@
         }
       }
     },
+    "UPDATE_COMORBIDITIES_BUTTON_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Health Conditions"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Health Conditions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar afecciones médicas"
+          }
+        }
+      }
+    },
     "US State / Region" : {
       "localizations" : {
         "en-GB" : {
@@ -9565,6 +9545,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Virginia"
+          }
+        }
+      }
+    },
+    "VO2MAX_ESTIMATE_LABEL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO₂ max (estimate)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO₂ max (estimate)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "VO₂ máx. (estimación)"
           }
         }
       }

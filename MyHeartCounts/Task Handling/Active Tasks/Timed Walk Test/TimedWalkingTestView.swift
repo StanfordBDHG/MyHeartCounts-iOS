@@ -197,13 +197,7 @@ private struct TimedWalkingTestView: View {
     @ViewBuilder private var resultsSection: some View {
         if !testIsRunning, let result = mostRecentResult {
             Section("Test Complete") {
-                LabeledContent("Date", value: result.startDate, format: .dateTime)
-                LabeledContent("Steps", value: result.numberOfSteps, format: .number)
-                LabeledContent(
-                    "Distance",
-                    value: Measurement<UnitLength>(value: result.distanceCovered, unit: .meters),
-                    format: .measurement(width: .abbreviated)
-                )
+                TimedWalkRunTestResultInfo(result: result)
             }
         }
     }
