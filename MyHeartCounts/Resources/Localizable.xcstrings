@@ -485,10 +485,10 @@
     "< 7" : {
       "shouldTranslate" : false
     },
-    "< 85" : {
-      "shouldTranslate" : false
+    "< 55" : {
+
     },
-    "< 130" : {
+    "< 85" : {
       "shouldTranslate" : false
     },
     "<120 / <80" : {
@@ -753,8 +753,14 @@
     "30 – 59" : {
       "shouldTranslate" : false
     },
+    "56 – 69" : {
+
+    },
     "60 – 89" : {
       "shouldTranslate" : false
+    },
+    "70 – 99" : {
+
     },
     "85 – 99" : {
       "shouldTranslate" : false
@@ -768,6 +774,9 @@
     "100 – 109" : {
       "shouldTranslate" : false
     },
+    "100 – 129" : {
+
+    },
     "110 – 125" : {
       "shouldTranslate" : false
     },
@@ -780,8 +789,8 @@
     "126 – 140" : {
       "shouldTranslate" : false
     },
-    "130 – 159" : {
-      "shouldTranslate" : false
+    "130 – 159" : {
+
     },
     "130–139 / 90–99" : {
       "shouldTranslate" : false
@@ -795,11 +804,8 @@
     "160 – 189" : {
       "shouldTranslate" : false
     },
-    "190 – 219" : {
-      "shouldTranslate" : false
-    },
-    "220+" : {
-      "shouldTranslate" : false
+    "190+" : {
+
     },
     "Abdominal Aortic Aneurysm" : {
       "localizations" : {
