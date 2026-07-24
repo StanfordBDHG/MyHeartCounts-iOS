@@ -148,22 +148,50 @@ extension ManagedFileUpload {
     }
     
     nonisolated func scheduleForUpload(_ url: URL, category: Category) {
-        Task {
-            try await upload(url, category: category)
-        }
-    }
-    
-    @concurrent
-    func upload(_ url: URL, category: Category) async throws {
-        await MainActor.run {
-            if categories.insert(category).inserted {
-                createStagingDirs(for: CollectionOfOne(category))
+        do {
+            try stage(url, category: category)
+        } catch {
+            Task {
+                await logger.error("Failed to stage \(url.lastPathComponent) for upload: \(error)")
             }
         }
+    }
+
+    /// Moves the file into the category's persistent staging directory and schedules its upload.
+    ///
+    /// Once this function returns, the file survives app termination: any files remaining in the staging
+    /// directory are re-scheduled on the next launch. Use this instead of ``upload(_:category:)`` when the
+    /// caller is about to discard its own copy of the data and must not lose it if the upload doesn't finish.
+    ///
+    /// - returns: The task performing the upload; upload failures are retried on the next launch.
+    @discardableResult
+    nonisolated func stage(_ url: URL, category: Category) throws -> Task<Void, Never> {
+        let stagingDirUrl = category.stagingDirUrl
+        if !fileManager.isDirectory(at: stagingDirUrl) {
+            try fileManager.createDirectory(at: stagingDirUrl, withIntermediateDirectories: true)
+        }
+        let stagingUrl = stagingDirUrl.appending(path: url.lastPathComponent)
+        try fileManager.moveItem(at: url, to: stagingUrl)
+        return Task {
+            await registerCategory(category)
+            try? await self.uploadAndDelete(stagingUrl, category: category)
+        }
+    }
+
+    @concurrent
+    func upload(_ url: URL, category: Category) async throws {
+        await registerCategory(category)
         let stagingUrl = category.stagingDirUrl.appending(path: url.lastPathComponent)
         try fileManager.moveItem(at: url, to: stagingUrl)
         await Task.yield()
         try await self.uploadAndDelete(stagingUrl, category: category)
+    }
+
+    @MainActor
+    private func registerCategory(_ category: Category) {
+        if categories.insert(category).inserted {
+            createStagingDirs(for: CollectionOfOne(category))
+        }
     }
     
     @MainActor

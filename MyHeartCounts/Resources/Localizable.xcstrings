@@ -1152,6 +1152,9 @@
         }
       }
     },
+    "Another test is already active" : {
+
+    },
     "Answer Questionnaire" : {
       "localizations" : {
         "en-GB" : {
@@ -1184,6 +1187,9 @@
           }
         }
       }
+    },
+    "Answer Survey Again" : {
+
     },
     "Apple ID Sharing" : {
       "localizations" : {
@@ -1296,6 +1302,9 @@
           }
         }
       }
+    },
+    "Article" : {
+
     },
     "Atrial fibrillation (Afib)" : {
       "localizations" : {
@@ -6697,6 +6706,12 @@
         }
       }
     },
+    "Processing Health Data…" : {
+
+    },
+    "Processing SensorKit Data…" : {
+
+    },
     "Processing Sleep Data…" : {
       "localizations" : {
         "en-GB" : {
@@ -7554,6 +7569,9 @@
           }
         }
       }
+    },
+    "Read Article Again" : {
+
     },
     "Read from Health App" : {
       "localizations" : {
@@ -8883,6 +8901,9 @@
         }
       }
     },
+    "Take Test Again" : {
+
+    },
     "Tap the link in the email to complete the verification, then return here." : {
       "localizations" : {
         "es" : {
@@ -9062,6 +9083,9 @@
           }
         }
       }
+    },
+    "There are missing Motion Sensor permissions" : {
+
     },
     "Time Asleep" : {
       "localizations" : {

@@ -165,7 +165,7 @@ final class DemographicsData {
         }
         updateTask?.cancel()
         updateTask = Task {
-            try await Task.sleep(for: .seconds(1))
+            try await Task.sleep(for: .seconds(3))
             try await write(to: account)
         }
     }

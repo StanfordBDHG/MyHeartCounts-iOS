@@ -189,8 +189,9 @@ extension MyHeartCountsStandard {
             let compressed = try (consume encoded).compressed(using: Zstd.self)
             let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zstd", directoryHint: .notDirectory)
             try (consume compressed).write(to: url)
+            let uploadTask = try managedFileUpload.stage(url, category: .liveHealthUpload)
             _Concurrency.Task {
-                try await managedFileUpload.upload(url, category: .liveHealthUpload)
+                await uploadTask.value
                 await triggerDidUploadNotification()
             }
         case .directFirestore:

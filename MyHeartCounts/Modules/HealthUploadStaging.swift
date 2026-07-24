@@ -54,9 +54,14 @@ final class HealthUploadStaging: Spezi::Module, EnvironmentAccessible, @unchecke
             let dbQueue: DatabaseQueue
             switch persistence {
             case .onDisk(let url):
+                var configuration = GRDB::Configuration()
+                configuration.prepareDatabase { db in
+                    // WAL avoids the default rollback journal's write amplification
+                    try db.execute(sql: "PRAGMA journal_mode = WAL")
+                }
                 dbQueue = try DatabaseQueue(
                     path: url.absoluteURL.resolvingSymlinksInPath().path(percentEncoded: false),
-                    configuration: GRDB::Configuration()
+                    configuration: configuration
                 )
             case .inMemory:
                 dbQueue = try DatabaseQueue()
@@ -74,73 +79,6 @@ final class HealthUploadStaging: Spezi::Module, EnvironmentAccessible, @unchecke
         Task(priority: .utility) {
             try? self.elidePendingUploadsWherePossible()
         }
-    }
-}
-
-
-// MARK: DB + Schema
-
-extension HealthUploadStaging {
-    // swiftlint:disable:next type_name
-    protocol _PendingEntityRecord: Identifiable<UUID>, Codable, FetchableRecord, PersistableRecord, Sendable {
-        var sampleType: String { get }
-        var sampleId: UUID { get }
-    }
-    
-    struct PendingSampleRecord: _PendingEntityRecord {
-        enum Columns {
-            static let id = Column(CodingKeys.id)
-            static let timestamp = Column(CodingKeys.timestamp)
-            static let sampleType = Column(CodingKeys.sampleType)
-            static let sampleId = Column(CodingKeys.sampleId)
-            static let fhirJson = Column(CodingKeys.fhirJson)
-        }
-        static let databaseTableName = "pendingSamples"
-        let id: UUID
-        let timestamp: Date
-        let sampleType: String
-        let sampleId: UUID
-        /// zstd-compressed
-        let fhirJson: Data
-    }
-    
-    struct PendingDeletionRecord: _PendingEntityRecord {
-        enum Columns {
-            static let id = Column(CodingKeys.id)
-            static let timestamp = Column(CodingKeys.timestamp)
-            static let sampleType = Column(CodingKeys.sampleType)
-            static let sampleId = Column(CodingKeys.sampleId)
-        }
-        static let databaseTableName = "pendingDeletions"
-        let id: UUID
-        let timestamp: Date
-        let sampleType: String
-        let sampleId: UUID
-    }
-    
-    
-    private static func applyMigrations(to dbQueue: DatabaseQueue) throws {
-        var migrator = DatabaseMigrator()
-        migrator.registerMigration("v1") { db in
-            try db.create(table: "pendingDeletions", options: .strict) {
-                $0.primaryKey("id", .blob).notNull() // uuid
-                $0.column("timestamp", .text).notNull() // ISO8601 string
-                $0.column("sampleType", .text).notNull()
-                $0.column("sampleId", .blob).notNull() // uuid
-                // have it auto-resolve duplicates, based on sampleType+sampleId
-                $0.uniqueKey(["sampleType", "sampleId"], onConflict: .replace)
-            }
-            try db.create(table: "pendingSamples", options: .strict) {
-                $0.primaryKey("id", .blob).notNull() // uuid
-                $0.column("timestamp", .text).notNull() // ISO8601 string
-                $0.column("sampleType", .text).notNull()
-                $0.column("sampleId", .blob).notNull() // uuid
-                $0.column("fhirJson", .blob).notNull() // zstd-compressed ModelsR4.ResourceProxy
-                // have it auto-resolve duplicates, based on sampleType+sampleId
-                $0.uniqueKey(["sampleType", "sampleId"], onConflict: .replace)
-            }
-        }
-        try migrator.migrate(dbQueue)
     }
 }
 
@@ -416,48 +354,43 @@ extension HealthUploadStaging {
 }
 
 extension HealthUploadStaging {
-    struct DrainFetchResult: Sendable {
-        let samples: [DrainBatch<PendingSampleRecord>]
-        let deletions: [DrainBatch<PendingDeletionRecord>]
-    }
-    
-    struct DrainBatch<Value: _PendingEntityRecord>: Sendable {
+    struct DrainChunk<Value: _PendingEntityRecord>: Sendable {
         let sampleType: String
         let rows: [Value]
     }
-    
-    func drainData(in range: PartialRangeUpTo<Date>) throws -> DrainFetchResult {
+
+    /// Fetches the next chunk of pending records older than `cutoff`, for draining.
+    ///
+    /// The chunk contains at most `limit` rows, all of a single sample type, which bounds the memory needed to process it.
+    /// Callers are expected to process the chunk, ``remove(_:)`` it, and call this function again until it returns `nil`.
+    func fetchNextDrainChunk<R: _PendingEntityRecord>(
+        of _: R.Type,
+        before cutoff: Date,
+        limit: Int
+    ) throws -> DrainChunk<R>? {
         guard let dbQueue else {
             throw DBError.noDatabase
         }
-        return try dbQueue.read { db in
-            let samples = try PendingSampleRecord
-                .filter(PendingSampleRecord.Columns.timestamp < range.upperBound)
-                .order(PendingSampleRecord.Columns.sampleType)
+        let rows = try dbQueue.read { db in
+            try R
+                .filter(R.timestampColumn < cutoff.timeIntervalSince1970)
+                .order(R.sampleTypeColumn)
+                .limit(limit)
                 .fetchAll(db)
-            let deletions = try PendingDeletionRecord
-                .filter(PendingDeletionRecord.Columns.timestamp < range.upperBound)
-                .order(PendingDeletionRecord.Columns.sampleType)
-                .fetchAll(db)
-            return DrainFetchResult(
-                samples: samples.grouped(by: \.sampleType).reduce(into: []) { results, entry in
-                    let (sampleType, samples) = entry
-                    results.append(.init(sampleType: sampleType, rows: samples))
-                },
-                deletions: deletions.grouped(by: \.sampleType).reduce(into: []) { results, entry in
-                    let (sampleType, deletions) = entry
-                    results.append(.init(sampleType: sampleType, rows: deletions))
-                }
-            )
         }
+        guard let sampleType = rows.first?.sampleType else {
+            return nil
+        }
+        // rows beyond the sample-type boundary are picked up by the next call
+        return DrainChunk(sampleType: sampleType, rows: Array(rows.prefix(while: { $0.sampleType == sampleType })))
     }
-    
-    func remove<R>(_ drainBatch: DrainBatch<R>) throws {
+
+    func remove<R>(_ drainChunk: DrainChunk<R>) throws {
         guard let dbQueue else {
             throw DBError.noDatabase
         }
         try dbQueue.write { db in
-            _ = try R.deleteAll(db, keys: drainBatch.rows.lazy.map(\.id))
+            _ = try R.deleteAll(db, keys: drainChunk.rows.lazy.map(\.id))
         }
     }
 }

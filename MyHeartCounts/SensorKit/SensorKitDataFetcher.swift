@@ -49,14 +49,14 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     
     /// The sensors that are currently being processed.
     @MainActor private(set) var activeActivities = Set<InProgressActivity>()
-    
-    /// The task that is fetching and uploading the SensorKit data.
-    @ObservationIgnored @MainActor private var processingTask: Task<Void, Never>?
-    
-    
+
+    /// The currently-running fetch & upload of SensorKit data, if any.
+    @ObservationIgnored @MainActor private var activeFetch: Task<Void, Never>?
+
+
     nonisolated init() {}
-    
-    
+
+
     func configure() {
         guard SensorKit.isAvailable else {
             return
@@ -64,7 +64,9 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         do {
             try backgroundTasks.register(.healthResearch(
                 id: .sensorKitProcessing,
-                options: [.requiresNetworkConnectivity],
+                // fetching & uploading the SensorKit data is expensive (esp. PPG and accelerometer);
+                // requiring external power makes this task the battery-friendly primary fetch path.
+                options: [.requiresNetworkConnectivity, .requiresExternalPower],
                 protectionTypeOfRequiredData: .complete
             ) { [weak self] in
                 guard let self else {
@@ -88,32 +90,38 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             logger.error("Error registering SK background task: \(error)")
         }
     }
-    
-    
+
+
     func run() async {
         guard SensorKit.isAvailable else {
             return
         }
         Task(priority: .background) {
             // wait a little bit to make sure all of the other setup stuff (esp Firebase!) has time to finish before we start uploading
-            try await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: .seconds(1))
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
                 try? await sensor.startRecording()
             }
-            if !LaunchOptions.launchOptions[.disableSensorKitUpload] {
+            // the launch-time fetch only acts as a fallback for the background task (which requires external power),
+            // so that the data keeps flowing for users whose devices never charge while the task could run.
+            if !LaunchOptions.launchOptions[.disableSensorKitUpload],
+               await DeviceBattery.shouldRunDeferrableWork(
+                   lastRun: LocalPreferencesStore.standard[.lastSensorKitFetch],
+                   staleness: TimeConstants.day
+               ) {
                 await fetchAndUploadNewData()
             }
         }
     }
-    
+
     // periphery:ignore - API
     @MainActor
     func cancelAllActiveCollection() {
-        processingTask?.cancel()
-        processingTask = nil
+        activeFetch?.cancel()
+        activeFetch = nil
     }
-    
-    
+
+
     @MainActor
     private func fetchAndUploadNewData() async {
         guard SensorKit.isAvailable else {
@@ -122,23 +130,30 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         guard await standard.shouldCollectHealthData else {
             return
         }
-        if let processingTask {
+        if let activeFetch {
             // if we're already performing this task, we simply wait on that task's result, instead of starting a competing second one.
             // this is in order to properly support background processing/fetches.
-            _ = await processingTask.result
-        } else {
-            let task = Task { @concurrent in
-                await withManagedTaskQueue(limit: ProcessInfo.isProDevice ? 3 : 1) { taskQueue in
-                    for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
-                        taskQueue.addTask {
-                            await self.fetchAndUploadAnchored(uploadDefinition)
-                        }
+            _ = await activeFetch.result
+            if self.activeFetch == activeFetch {
+                self.activeFetch = nil
+            }
+            return
+        }
+        let task = Task { @concurrent in
+            await withManagedTaskQueue(limit: ProcessInfo.isProDevice ? 3 : 1) { taskQueue in
+                for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
+                    taskQueue.addTask {
+                        await self.fetchAndUploadAnchored(uploadDefinition)
                     }
                 }
             }
-            processingTask = task
-            _ = await task.result
         }
+        activeFetch = task
+        _ = await task.result
+        if activeFetch == task {
+            activeFetch = nil
+        }
+        LocalPreferencesStore.standard[.lastSensorKitFetch] = .now
     }
     
     
@@ -231,6 +246,12 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
 
 extension MHCBackgroundTasks.TaskIdentifier {
     static let sensorKitProcessing = Self("edu.stanford.MyHeartCounts.SensorKitProcessing")
+}
+
+
+extension LocalPreferenceKeys {
+    /// The last time a SensorKit fetch was performed.
+    static let lastSensorKitFetch = LocalPreferenceKey<Date?>("lastSensorKitFetch")
 }
 
 

@@ -12,6 +12,7 @@ import MyHeartCountsShared
 import OSLog
 import Spezi
 import SpeziAccount
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziStudy
@@ -39,7 +40,16 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     
     func configure() {
         if let account, account.signedIn {
-            startAutomaticExportingIfNeeded()
+            // resuming the export is expensive (HealthKit reads, FHIR encoding, uploads);
+            // at launch we prefer doing so while charging. enrollment triggers it unconditionally.
+            if DeviceBattery.shouldRunDeferrableWork(
+                lastRun: LocalPreferencesStore.standard[.lastHistoricalExportSessionStart],
+                staleness: TimeConstants.day
+            ) {
+                startAutomaticExportingIfNeeded()
+            } else {
+                logger.notice("Deferring historical upload resume until the device is charging")
+            }
         } else {
             logger.notice("Skipping initial historical upload trigger bc not logged in")
         }
@@ -82,9 +92,11 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
             logger.notice("Will start BulkHealthExport session")
             let results = try session.start(
                 retryFailedBatches: true,
-                concurrencyLevel: .limit(ProcessInfo.isProDevice ? 4 : 2)
+                // kept low: each concurrent batch holds its samples, FHIR resources, and encoded output in memory simultaneously
+                concurrencyLevel: .limit(ProcessInfo.isProDevice ? 2 : 1)
             )
             managedFileUpload.scheduleForUpload(results.compactMap { $0 }, category: .historicalHealthUpload)
+            LocalPreferencesStore.standard[.lastHistoricalExportSessionStart] = .now
             return true
         } catch {
             logger.error("Error starting session: \(error)")
@@ -130,6 +142,12 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
 
 extension BulkExportSessionIdentifier {
     static let mhcHistoricalDataExport = Self("mhcHistoricalDataExport")
+}
+
+
+extension LocalPreferenceKeys {
+    /// The last time a historical health export session was started or resumed.
+    static let lastHistoricalExportSessionStart = LocalPreferenceKey<Date?>("lastHistoricalExportSessionStart")
 }
 
 

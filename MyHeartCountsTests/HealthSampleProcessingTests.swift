@@ -210,7 +210,7 @@ struct HealthSampleProcessingTests {
     
     
     @Test
-    func healthUploadStagingJSONPersistence() async throws {
+    func healthUploadStagingJSONPersistence() async throws { // swiftlint:disable:this function_body_length
         let healthKit = HealthKit()
         let healthUploadStaging = HealthUploadStaging(persistence: .inMemory)
         await withDependencyResolution(standard: FakeStandard()) {
@@ -250,16 +250,27 @@ struct HealthSampleProcessingTests {
         try await healthUploadStaging.add(newSamples, ingestionTimestamp: timestamp)
         #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingSampleRecord.self) == 2)
         #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingDeletionRecord.self) == 0)
-        let drainFetchResult = try healthUploadStaging.drainData(in: ..<(.now))
-        #expect(drainFetchResult.deletions.isEmpty)
-        #expect(drainFetchResult.samples.count == 2)
-        #expect(drainFetchResult.samples.mapIntoSet(\.sampleType) == [SampleType.stepCount.id, SampleType.heartRate.id])
-        let allDecodedSamples: Set<ModelsR4.ResourceProxy> = try drainFetchResult.samples.reduce(into: []) { result, batch in
-            let jsonArray = try batch.rows.jsonArray()
+        var drainedSampleTypes: Set<String> = []
+        var allDecodedSamples: Set<ModelsR4.ResourceProxy> = []
+        while let chunk = try healthUploadStaging.fetchNextDrainChunk(
+            of: HealthUploadStaging.PendingSampleRecord.self,
+            before: .now,
+            limit: 100
+        ) {
+            drainedSampleTypes.insert(chunk.sampleType)
+            let jsonArray = try chunk.rows.jsonArrayData()
             let resources = try JSONDecoder().decode(Set<ModelsR4.ResourceProxy>.self, from: jsonArray)
-            result.formUnion(resources)
+            allDecodedSamples.formUnion(resources)
+            try healthUploadStaging.remove(chunk)
         }
+        #expect(try healthUploadStaging.fetchNextDrainChunk(
+            of: HealthUploadStaging.PendingDeletionRecord.self,
+            before: .now,
+            limit: 100
+        ) == nil)
+        #expect(drainedSampleTypes == [SampleType.stepCount.id, SampleType.heartRate.id])
         #expect(allDecodedSamples == samplesAsFHIR)
+        #expect(try healthUploadStaging.isEmpty)
     }
 }
 

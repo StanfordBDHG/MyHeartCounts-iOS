@@ -27,7 +27,26 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
     /// E.g., if this value is `2`, any data collected on monday will be processed on thursday at the earliest.
     /// (To ensure that there are 2 whole days inbetween.)
     nonisolated private static let dataRetentionOffsetInDays = 3
-    
+
+    /// The maximum number of records that are drained (and therefore held in memory) at a time.
+    /// Each chunk becomes its own upload file.
+    ///
+    /// Scales with the memory currently available to the app, within a fixed range;
+    /// it is re-evaluated for every chunk, so a drain adapts as memory conditions change.
+    nonisolated private static var drainChunkSize: Int {
+        // conservative per-record cost while draining: compressed + decompressed payload, plus output buffers
+        let bytesPerRecord = 10_000
+        let availableMemory = os_proc_available_memory()
+        guard availableMemory > 0 else {
+            // 0 means the amount couldn't be determined (e.g., on the simulator)
+            return 2000
+        }
+        // spend up to a quarter of the available memory on a chunk: the buffers are transient
+        // (freed after each chunk), and os_proc_available_memory is relative to the process's
+        // current memory limit, so this scales down automatically when running in the background.
+        return min(10_000, max(1000, availableMemory / 4 / bytesPerRecord))
+    }
+
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthUploadStaging.self) private var healthUploadStaging
@@ -49,7 +68,19 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
             logger.error("Failed to register \(MHCBackgroundTasks.TaskIdentifier.stagedHealthUpload) background task: \(error)")
         }
         Task(priority: .background) {
-            try await process()
+            // at launch, the drain (and the uploads it produces) only runs if the device is charging,
+            // with a staleness fallback; the background task above covers the regular case.
+            guard DeviceBattery.shouldRunDeferrableWork(
+                lastRun: LocalPreferencesStore.standard[.lastStagedHealthUploadDrain],
+                staleness: TimeConstants.day
+            ) else {
+                return
+            }
+            do {
+                try await process()
+            } catch {
+                logger.error("Error processing staged health uploads: \(error)")
+            }
         }
     }
     
@@ -68,7 +99,7 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
     }
     
     @concurrent
-    private func _process() async throws { // swiftlint:disable:this function_body_length
+    private func _process() async throws {
         let cal = Calendar.current
         let processingCutoff: Date
         if Self.dataRetentionOffsetInDays < 1 {
@@ -83,67 +114,97 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
             processingCutoff = cutoff
         }
         await logger.notice("processingCutoff: \(processingCutoff)")
-        let drainData = try await healthUploadStaging.drainData(in: ..<processingCutoff)
-        try await withThrowingDiscardingTaskGroup { taskGroup in // swiftlint:disable:this closure_body_length
-            for batch in drainData.samples {
-                taskGroup.addTask {
-                    let jsonArray = try batch.rows.jsonArray()
-                    let data = Data(jsonArray.utf8)
-                    let compressed = try (consume data).compressed(using: Zstd.self)
-                    let url = URL.temporaryDirectory.appending(
-                        path: "\(batch.sampleType)_\(UUID().uuidString).json.zstd",
-                        directoryHint: .notDirectory
-                    )
-                    try (consume compressed).write(to: url)
-                    Task {
-                        try await self.managedFileUpload.upload(url, category: .liveHealthUpload)
-                    }
-                    await self.deleteDrainBatch(batch)
-                }
-            }
-            // QUESTION have one CSV per samlpe type, or put them all into a single file?
-            for batch in drainData.deletions {
-                taskGroup.addTask {
-                    let csvWriter = try CSVWriter(columns: ["sampleType", "sampleId", "timestamp"])
-                    for deletion in batch.rows {
-                        try csvWriter.appendRow(fields: [
-                            deletion.sampleType, deletion.sampleId, deletion.timestamp
-                        ] as [any CSVWriter.FieldValue])
-                    }
-                    let csvData = csvWriter.data()
-                    let url = URL.temporaryDirectory.appending(
-                        path: "\(batch.sampleType)_\(UUID().uuidString).csv.zstd",
-                        directoryHint: .notDirectory
-                    )
-                    try (consume csvData).compressed(using: Zstd.self).write(to: url)
-                    Task {
-                        try await self.managedFileUpload.upload(url, category: .healthDeletions)
-                    }
-                    await self.deleteDrainBatch(batch)
-                }
-            }
+        let healthUploadStaging = await healthUploadStaging
+        let managedFileUpload = await managedFileUpload
+        // chunks are processed sequentially, to keep the peak memory usage bounded regardless of backlog size
+        let didDrainSamples = try await drainPendingSamples(from: healthUploadStaging, to: managedFileUpload, before: processingCutoff)
+        let didDrainDeletions = try await drainPendingDeletions(from: healthUploadStaging, to: managedFileUpload, before: processingCutoff)
+        if didDrainSamples && didDrainDeletions {
+            LocalPreferencesStore.standard[.lastStagedHealthUploadDrain] = .now
         }
     }
-    
-    private func deleteDrainBatch<R>(_ batch: HealthUploadStaging.DrainBatch<R>) {
-        do {
-            try healthUploadStaging.remove(batch)
-        } catch {
-            self.logger.error("Failed to delete '\(R.databaseTableName)' drain batch: \(error)")
+
+    /// - returns: Whether the drain ran to completion, as opposed to stopping early (e.g., because Low Power Mode was enabled).
+    @concurrent
+    private func drainPendingSamples(
+        from healthUploadStaging: HealthUploadStaging,
+        to managedFileUpload: ManagedFileUpload,
+        before processingCutoff: Date
+    ) async throws -> Bool {
+        while let chunk = try healthUploadStaging.fetchNextDrainChunk(
+            of: HealthUploadStaging.PendingSampleRecord.self,
+            before: processingCutoff,
+            limit: Self.drainChunkSize
+        ) {
+            guard !ProcessInfo.processInfo.isLowPowerModeEnabled else {
+                return false
+            }
+            let jsonArray = try chunk.rows.jsonArrayData()
+            let compressed = try (consume jsonArray).compressed(using: Zstd.self)
+            let url = URL.temporaryDirectory.appending(
+                path: "\(chunk.sampleType)_\(UUID().uuidString).json.zstd",
+                directoryHint: .notDirectory
+            )
+            try (consume compressed).write(to: url)
+            // the file must be durably staged before the records are removed from the database;
+            // and if the removal throws we must abort, since we'd otherwise re-upload the same chunk forever.
+            try managedFileUpload.stage(url, category: .liveHealthUpload)
+            try healthUploadStaging.remove(chunk)
         }
+        return true
+    }
+
+    // QUESTION have one CSV per samlpe type, or put them all into a single file?
+    /// - returns: Whether the drain ran to completion, as opposed to stopping early (e.g., because Low Power Mode was enabled).
+    @concurrent
+    private func drainPendingDeletions(
+        from healthUploadStaging: HealthUploadStaging,
+        to managedFileUpload: ManagedFileUpload,
+        before processingCutoff: Date
+    ) async throws -> Bool {
+        while let chunk = try healthUploadStaging.fetchNextDrainChunk(
+            of: HealthUploadStaging.PendingDeletionRecord.self,
+            before: processingCutoff,
+            limit: Self.drainChunkSize
+        ) {
+            guard !ProcessInfo.processInfo.isLowPowerModeEnabled else {
+                return false
+            }
+            let csvWriter = try CSVWriter(columns: ["sampleType", "sampleId", "timestamp"])
+            for deletion in chunk.rows {
+                try csvWriter.appendRow(fields: [
+                    deletion.sampleType, deletion.sampleId, deletion.timestamp
+                ] as [any CSVWriter.FieldValue])
+            }
+            let csvData = csvWriter.data()
+            let url = URL.temporaryDirectory.appending(
+                path: "\(chunk.sampleType)_\(UUID().uuidString).csv.zstd",
+                directoryHint: .notDirectory
+            )
+            try (consume csvData).compressed(using: Zstd.self).write(to: url)
+            try managedFileUpload.stage(url, category: .healthDeletions)
+            try healthUploadStaging.remove(chunk)
+        }
+        return true
     }
 }
 
 
 extension Collection where Element == HealthUploadStaging.PendingSampleRecord {
-    func jsonArray() throws -> String {
-        var json = "["
-        json.append(contentsOf: try self.lazy
-            .map {
-                String(decoding: try $0.fhirJson.decompressed(using: Zstd.self), as: UTF8.self)
+    /// Combines the records' decompressed FHIR JSON payloads into a single JSON array.
+    func jsonArrayData() throws -> Data {
+        var json = Data()
+        json.reserveCapacity(self.reduce(into: 2 + count) { $0 += $1.fhirJson.count * 6 }) // ~6x expected zstd ratio
+        json.append(UInt8(ascii: "["))
+        var isFirst = true
+        for record in self {
+            if !isFirst {
+                json.append(UInt8(ascii: ","))
             }
-            .joined(separator: ",") as JoinedSequence)
-        json.append("]")
+            isFirst = false
+            json.append(try record.fhirJson.decompressed(using: Zstd.self))
+        }
+        json.append(UInt8(ascii: "]"))
         return json
     }
 }
@@ -151,4 +212,10 @@ extension Collection where Element == HealthUploadStaging.PendingSampleRecord {
 
 extension MHCBackgroundTasks.TaskIdentifier {
     static let stagedHealthUpload = Self("edu.stanford.MyHeartCounts.stagedHealthSamplesUpload")
+}
+
+
+extension LocalPreferenceKeys {
+    /// The last time the staged health upload drain ran to completion.
+    static let lastStagedHealthUploadDrain = LocalPreferenceKey<Date?>("lastStagedHealthUploadDrain")
 }
