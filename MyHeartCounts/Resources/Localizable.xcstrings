@@ -1153,7 +1153,20 @@
       }
     },
     "Another test is already active" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another test is already active"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya hay otra prueba en curso"
+          }
+        }
+      }
     },
     "Answer Questionnaire" : {
       "localizations" : {
@@ -1189,7 +1202,20 @@
       }
     },
     "Answer Survey Again" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answer Survey Again"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a responder al cuestionario"
+          }
+        }
+      }
     },
     "Apple ID Sharing" : {
       "localizations" : {
@@ -1304,7 +1330,20 @@
       }
     },
     "Article" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Article"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artículo"
+          }
+        }
+      }
     },
     "Atrial fibrillation (Afib)" : {
       "localizations" : {
@@ -6707,10 +6746,36 @@
       }
     },
     "Processing Health Data…" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing Health Data…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procesando datos de salud..."
+          }
+        }
+      }
     },
     "Processing SensorKit Data…" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing SensorKit Data…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procesando datos de SensorKit..."
+          }
+        }
+      }
     },
     "Processing Sleep Data…" : {
       "localizations" : {
@@ -7571,7 +7636,20 @@
       }
     },
     "Read Article Again" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Article Again"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a leer el artículo"
+          }
+        }
+      }
     },
     "Read from Health App" : {
       "localizations" : {
@@ -8902,7 +8980,20 @@
       }
     },
     "Take Test Again" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take Test Again"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a realizar la prueba"
+          }
+        }
+      }
     },
     "Tap the link in the email to complete the verification, then return here." : {
       "localizations" : {
@@ -9085,7 +9176,20 @@
       }
     },
     "There are missing Motion Sensor permissions" : {
-
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are missing Motion Sensor permissions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faltan permisos para acceder a los sensores de movimiento"
+          }
+        }
+      }
     },
     "Time Asleep" : {
       "localizations" : {
