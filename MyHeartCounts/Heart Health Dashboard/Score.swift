@@ -356,7 +356,7 @@ extension ClosedRange: ScoreDefinitionPatternRange {
 
 extension PartialRangeFrom: ScoreDefinitionPatternRange {
     var textualDescription: String {
-        "≥ \(lowerBound)"
+        "\(lowerBound)+"
     }
     
     func map<NewBound: Comparable>(_ transform: (Bound) -> NewBound) -> any ScoreDefinitionPatternRange<NewBound> {
