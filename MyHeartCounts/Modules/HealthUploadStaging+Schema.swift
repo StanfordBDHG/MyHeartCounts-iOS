@@ -95,27 +95,30 @@ extension HealthUploadStaging {
     }
 
     private static func createDrainIndexes(in db: Database) throws {
-        let recordTypes: [any TableRecord.Type] = [
+        let recordTypes: [any _PendingEntityRecord.Type] = [
             PendingSampleRecord.self,
             PendingDeletionRecord.self
         ]
         for recordType in recordTypes {
-            try createDrainIndexes(in: db, for: recordType.databaseTableName)
+            try createDrainIndexes(in: db, for: recordType)
         }
     }
 
-    private static func createDrainIndexes(in db: Database, for table: String) throws {
-        typealias Column = PendingSampleRecord.Columns
+    private static func createDrainIndexes(
+        in db: Database,
+        for recordType: any _PendingEntityRecord.Type
+    ) throws {
+        let table = recordType.databaseTableName
         try db.create(
             index: "\(table)_on_timestamp_sampleType",
             on: table,
-            columns: [Column.timestamp.name, Column.sampleType.name],
+            columns: [recordType.timestampColumn.name, recordType.sampleTypeColumn.name],
             options: .ifNotExists
         )
         try db.create(
             index: "\(table)_on_sampleType_timestamp",
             on: table,
-            columns: [Column.sampleType.name, Column.timestamp.name],
+            columns: [recordType.sampleTypeColumn.name, recordType.timestampColumn.name],
             options: .ifNotExists
         )
     }

@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Combine
 @preconcurrency import FirebaseStorage
 import Foundation
 import MyHeartCountsShared
@@ -16,6 +17,7 @@ import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziStudy
+import UIKit
 
 
 @Observable
@@ -37,6 +39,10 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     // swiftlint:enable attributes
     
     private(set) var session: (any BulkExportSession<HealthKitSamplesFHIRUploader>)?
+    @ObservationIgnored private var deferredStartSubscription: AnyCancellable?
+    @ObservationIgnored private var isResetting = false
+    @ObservationIgnored private var restoresBatteryMonitoring = false
+    @ObservationIgnored private var startTask: Task<Bool, Never>?
     
     func configure() {
         if let account, account.signedIn {
@@ -60,6 +66,15 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     ///
     /// - Note: This is intended primarily for debugging purposes
     func fullyResetSession(restart: Bool = true, clearPendingUploads: Bool = true) async throws {
+        isResetting = true
+        defer {
+            isResetting = false
+        }
+        stopWaitingForSuitablePower()
+        let startTask = startTask
+        startTask?.cancel()
+        _ = await startTask?.value
+        self.startTask = nil
         if let session {
             await session.pause()
         }
@@ -69,6 +84,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         }
         self.session = nil
         if restart {
+            isResetting = false
             await self.setupAndStartExportSession()
         }
     }
@@ -77,21 +93,57 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     /// - returns: A Boolean indicating whether the session was successfully set up and started
     @discardableResult
     private func setupAndStartExportSession() async -> Bool {
+        guard !isResetting else {
+            return false
+        }
+        if let startTask {
+            return await startTask.value
+        }
+        let startTask = Task { @MainActor [weak self] in
+            guard let self else {
+                return false
+            }
+            return await performSetupAndStartExportSession()
+        }
+        self.startTask = startTask
+        let started = await startTask.value
+        if self.startTask == startTask {
+            self.startTask = nil
+        }
+        return started
+    }
+
+    private func performSetupAndStartExportSession() async -> Bool {
+        guard !Task.isCancelled else {
+            return false
+        }
         guard !FeatureFlags.disableAutomaticBulkHealthExport else {
             return false
         }
         guard DeviceBattery.isCharging, !ProcessInfo.processInfo.isLowPowerModeEnabled else {
             logger.notice("Deferring historical upload until the device is charging")
+            waitForSuitablePower()
             return false
         }
-        guard !LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] else {
+        stopWaitingForSuitablePower()
+        let preferences = LocalPreferencesStore.standard
+        let accountDataGeneration = preferences[.accountDataGeneration]
+        guard !preferences[.pendingAccountDataCleanupRequired] else {
             logger.notice("Skipping historical upload while cleanup from the previous account is pending")
             return false
         }
         guard let session = try? await getSession() else {
             return false
         }
+        guard !Task.isCancelled,
+              preferences[.accountDataGeneration] == accountDataGeneration,
+              !preferences[.pendingAccountDataCleanupRequired] else {
+            return false
+        }
         self.session = session
+        guard session.state != .running else {
+            return true
+        }
         do {
             logger.notice("Will start BulkHealthExport session")
             _ = try session.start(
@@ -103,6 +155,40 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         } catch {
             logger.error("Error starting session: \(error)")
             return false
+        }
+    }
+
+
+    private func waitForSuitablePower() {
+        guard deferredStartSubscription == nil else {
+            return
+        }
+        let device = UIDevice.current
+        restoresBatteryMonitoring = !device.isBatteryMonitoringEnabled
+        deferredStartSubscription = Publishers.Merge(
+            NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification),
+            NotificationCenter.default.publisher(for: .NSProcessInfoPowerStateDidChange)
+        )
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    guard let self, deferredStartSubscription != nil else {
+                        return
+                    }
+                    guard DeviceBattery.isCharging, !ProcessInfo.processInfo.isLowPowerModeEnabled else {
+                        return
+                    }
+                    stopWaitingForSuitablePower()
+                    await setupAndStartExportSession()
+                }
+            }
+        device.isBatteryMonitoringEnabled = true
+    }
+
+    private func stopWaitingForSuitablePower() {
+        deferredStartSubscription = nil
+        if restoresBatteryMonitoring {
+            UIDevice.current.isBatteryMonitoringEnabled = false
+            restoresBatteryMonitoring = false
         }
     }
     

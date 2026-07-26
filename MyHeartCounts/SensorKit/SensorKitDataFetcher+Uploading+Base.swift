@@ -87,9 +87,10 @@ extension MHCSensorSampleUploadStrategy {
         
         let sensorCollection = try await standard.firebaseConfiguration.userDocumentReference
             .collection("HealthObservations_\(sensor.id)")
+        let batch = sensorCollection.firestore.batch()
+        try batch.setData(from: reference, forDocument: sensorCollection.document(referenceDocName))
+        try batch.setData(from: observation, forDocument: sensorCollection.document(observationDocName))
         try _Concurrency.Task.checkCancellation()
-        try await sensorCollection.document(referenceDocName).setData(from: reference)
-        try _Concurrency.Task.checkCancellation()
-        try await sensorCollection.document(observationDocName).setData(from: observation)
+        try await batch.commit()
     }
 }

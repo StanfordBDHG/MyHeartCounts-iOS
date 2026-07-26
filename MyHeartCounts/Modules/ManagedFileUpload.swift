@@ -98,8 +98,8 @@ extension ManagedFileUpload {
         orphanReplayTask = nil
 
         let uploadQueue = uploadQueue
-        await uploadQueue.pauseAndCancel()
         await replayTask?.value
+        await uploadQueue.pauseAndCancel()
     }
 
     func clearPendingUploads() async throws {

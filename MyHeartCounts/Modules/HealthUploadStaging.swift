@@ -92,7 +92,11 @@ final class HealthUploadStaging: Spezi::Module, EnvironmentAccessible, @unchecke
             }
             var resourceValues = URLResourceValues()
             resourceValues.isExcludedFromBackup = true
-            try? url.setResourceValues(resourceValues)
+            do {
+                try url.setResourceValues(resourceValues)
+            } catch {
+                print("Unable to exclude \(url.lastPathComponent) from backup: \(error)")
+            }
         }
     }
     
