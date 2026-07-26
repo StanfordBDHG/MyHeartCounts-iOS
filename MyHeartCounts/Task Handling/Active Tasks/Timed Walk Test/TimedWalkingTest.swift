@@ -195,6 +195,7 @@ final class TimedWalkingTest: Module, EnvironmentAccessible, Sendable {
             #else
             try await Task.sleep(until: startInstant.advanced(by: inProgressTest.test.duration))
             #endif
+            session.completeSessionTask = nil
             return try await stop()
         }
         session.completeSessionTask = sessionTask
