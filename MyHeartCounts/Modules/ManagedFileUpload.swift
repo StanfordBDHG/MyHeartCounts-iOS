@@ -12,6 +12,7 @@ import OSLog
 import Spezi
 import SpeziAccount
 import SpeziFoundation
+import Synchronization
 
 
 @Observable
@@ -27,7 +28,7 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
 
     private(set) var categories: Set<Category>
     nonisolated(unsafe) private let fileManager = FileManager()
-    nonisolated private let stagingLock = NSLock()
+    nonisolated private let stagingLock = Mutex(())
     nonisolated private let directory: URL
     nonisolated private let accountIdProvider: (@Sendable () async -> String?)?
     nonisolated private let uploadOperation: (@Sendable (URL, Category, String) async throws -> Void)?
@@ -324,21 +325,19 @@ extension ManagedFileUpload {
 
     nonisolated
     private func moveToStaging(_ sourceUrl: URL, in directory: URL) throws -> URL {
-        stagingLock.lock()
-        defer {
-            stagingLock.unlock()
+        try stagingLock.withLock { _ in
+            let preferredUrl = directory.appending(component: sourceUrl.lastPathComponent, directoryHint: .notDirectory)
+            let stagingUrl = if fileManager.fileExists(atPath: preferredUrl.path(percentEncoded: false)) {
+                directory.appending(
+                    component: "\(UUID().uuidString)-\(sourceUrl.lastPathComponent)",
+                    directoryHint: .notDirectory
+                )
+            } else {
+                preferredUrl
+            }
+            try fileManager.moveItem(at: sourceUrl, to: stagingUrl)
+            return stagingUrl
         }
-        let preferredUrl = directory.appending(component: sourceUrl.lastPathComponent, directoryHint: .notDirectory)
-        let stagingUrl = if fileManager.fileExists(atPath: preferredUrl.path(percentEncoded: false)) {
-            directory.appending(
-                component: "\(UUID().uuidString)-\(sourceUrl.lastPathComponent)",
-                directoryHint: .notDirectory
-            )
-        } else {
-            preferredUrl
-        }
-        try fileManager.moveItem(at: sourceUrl, to: stagingUrl)
-        return stagingUrl
     }
 }
 

@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Combine
 @preconcurrency import FirebaseStorage
 import Foundation
 import MyHeartCountsShared
@@ -39,11 +38,11 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     // swiftlint:enable attributes
     
     private(set) var session: (any BulkExportSession<HealthKitSamplesFHIRUploader>)?
-    @ObservationIgnored private var deferredStartSubscription: AnyCancellable?
+    @ObservationIgnored private var deferredStartTask: Task<Void, Never>?
     @ObservationIgnored private var isResetting = false
     @ObservationIgnored private var restoresBatteryMonitoring = false
     @ObservationIgnored private var startTask: Task<Bool, Never>?
-    
+
     func configure() {
         if let account, account.signedIn {
             startAutomaticExportingIfNeeded()
@@ -51,8 +50,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
             logger.notice("Skipping initial historical upload trigger bc not logged in")
         }
     }
-    
-    
+
     /// Starts the automatic collection of historical health data,
     /// unless it's already running, or automatic collection is disabled via ``FeatureFlags/disableAutomaticBulkHealthExport``.
     nonisolated func startAutomaticExportingIfNeeded() {
@@ -160,32 +158,73 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
 
 
     private func waitForSuitablePower() {
-        guard deferredStartSubscription == nil else {
+        guard deferredStartTask == nil else {
             return
         }
         let device = UIDevice.current
         restoresBatteryMonitoring = !device.isBatteryMonitoringEnabled
-        deferredStartSubscription = Publishers.Merge(
-            NotificationCenter.default.publisher(for: UIDevice.batteryStateDidChangeNotification),
-            NotificationCenter.default.publisher(for: .NSProcessInfoPowerStateDidChange)
-        )
-            .sink { [weak self] _ in
-                Task { @MainActor [weak self] in
-                    guard let self, deferredStartSubscription != nil else {
-                        return
-                    }
-                    guard DeviceBattery.isCharging, !ProcessInfo.processInfo.isLowPowerModeEnabled else {
-                        return
-                    }
-                    stopWaitingForSuitablePower()
-                    await setupAndStartExportSession()
+        let powerChanges = powerStateChanges()
+        deferredStartTask = Task { @MainActor [weak self] in
+            if let self, await startDeferredExportIfPowerIsSuitable() {
+                return
+            }
+            for await _ in powerChanges {
+                guard !Task.isCancelled else {
+                    return
+                }
+                if let self, await startDeferredExportIfPowerIsSuitable() {
+                    return
                 }
             }
+        }
         device.isBatteryMonitoringEnabled = true
     }
 
+    private func powerStateChanges() -> AsyncStream<Void> {
+        let batteryStateDidChange = UIDevice.batteryStateDidChangeNotification
+        let lowPowerModeDidChange = Notification.Name.NSProcessInfoPowerStateDidChange
+        return AsyncStream { continuation in
+            let observationTask = Task { @concurrent in
+                await withDiscardingTaskGroup { group in
+                    group.addTask {
+                        for await _ in NotificationCenter.default.notifications(named: batteryStateDidChange) {
+                            continuation.yield()
+                        }
+                    }
+                    group.addTask {
+                        for await _ in NotificationCenter.default.notifications(named: lowPowerModeDidChange) {
+                            continuation.yield()
+                        }
+                    }
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in
+                observationTask.cancel()
+            }
+        }
+    }
+
+    private func startDeferredExportIfPowerIsSuitable() async -> Bool {
+        guard !Task.isCancelled, deferredStartTask != nil else {
+            return false
+        }
+        guard DeviceBattery.isCharging, !ProcessInfo.processInfo.isLowPowerModeEnabled else {
+            return false
+        }
+        deferredStartTask = nil
+        restoreBatteryMonitoringIfNeeded()
+        await setupAndStartExportSession()
+        return true
+    }
+
     private func stopWaitingForSuitablePower() {
-        deferredStartSubscription = nil
+        deferredStartTask?.cancel()
+        deferredStartTask = nil
+        restoreBatteryMonitoringIfNeeded()
+    }
+
+    private func restoreBatteryMonitoringIfNeeded() {
         if restoresBatteryMonitoring {
             UIDevice.current.isBatteryMonitoringEnabled = false
             restoresBatteryMonitoring = false
@@ -224,6 +263,10 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                 throw .other(error)
             }
         }
+    }
+
+    isolated deinit {
+        stopWaitingForSuitablePower()
     }
 }
 

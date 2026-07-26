@@ -6,8 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-import FirebaseStorage
+@preconcurrency import FirebaseStorage
 import Foundation
+import Synchronization
 
 
 private enum StorageUploadError: Error, Sendable {
@@ -15,28 +16,34 @@ private enum StorageUploadError: Error, Sendable {
 }
 
 
-private final class StorageUploadCancellation: @unchecked Sendable {
-    // Protected by lock.
-    private let lock = NSLock()
-    private var isCancelled = false
-    private var task: StorageUploadTask?
+private final class StorageUploadCancellation: Sendable {
+    private struct State {
+        var isCancelled = false
+        var task: StorageUploadTask?
+    }
+
+    private let state = Mutex(State())
 
     func install(_ task: StorageUploadTask) {
-        lock.lock()
-        if isCancelled {
-            lock.unlock()
+        let shouldCancel = state.withLock { state in
+            guard !state.isCancelled else {
+                return true
+            }
+            state.task = task
+            return false
+        }
+        if shouldCancel {
             task.cancel()
-        } else {
-            self.task = task
-            lock.unlock()
         }
     }
 
     func cancel() {
-        lock.lock()
-        isCancelled = true
-        let task = task
-        lock.unlock()
+        let task = state.withLock { state in
+            state.isCancelled = true
+            let task = state.task
+            state.task = nil
+            return task
+        }
         task?.cancel()
     }
 }

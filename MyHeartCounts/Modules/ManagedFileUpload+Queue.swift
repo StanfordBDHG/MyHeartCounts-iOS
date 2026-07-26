@@ -92,7 +92,7 @@ extension ManagedFileUpload {
             while acceptsUploads && activeTasks.count < maximumConcurrentUploads && hasPendingUploads {
                 let upload = dequeuePendingUpload()
                 let operation = operation
-                let task = Task(priority: .utility) { [weak self] in
+                let task = Task(priority: .utility) { @concurrent [weak self] in
                     if !Task.isCancelled {
                         await operation(upload)
                     }
