@@ -7,10 +7,17 @@
 //
 
 import Foundation
+import SpeziFoundation
 import UIKit
 
 
 enum DeviceBattery {
+    enum WorkAllowance: Equatable, Sendable {
+        case none
+        case limited
+        case full
+    }
+
     /// Whether the device is currently connected to external power.
     @MainActor static var isCharging: Bool {
         let device = UIDevice.current
@@ -29,21 +36,46 @@ enum DeviceBattery {
         }
     }
 
-    /// Whether expensive, deferrable work (e.g., large data uploads) should run right now.
-    ///
-    /// Returns `true` while charging, `false` in Low Power Mode, and otherwise falls back to
-    /// whether the work last ran more than `staleness` ago — so that deferring never starves it entirely.
+    /// Allows stale jobs to make limited progress on battery without starting every new job after an update.
     @MainActor
-    static func shouldRunDeferrableWork(lastRun: Date?, staleness: TimeInterval) -> Bool {
-        if isCharging {
-            return true
+    static func workAllowance(lastRun: Date?, staleness: TimeInterval) -> WorkAllowance {
+        let now = Date.now
+        let effectiveLastRun: Date
+        if let lastRun {
+            effectiveLastRun = lastRun
+        } else if let baseline = LocalPreferencesStore.standard[.deferrableWorkBaseline] {
+            effectiveLastRun = baseline
+        } else {
+            LocalPreferencesStore.standard[.deferrableWorkBaseline] = now
+            effectiveLastRun = now
         }
-        if ProcessInfo.processInfo.isLowPowerModeEnabled {
-            return false
-        }
-        guard let lastRun else {
-            return true
-        }
-        return Date.now.timeIntervalSince(lastRun) > staleness
+        return workAllowance(
+            isCharging: isCharging,
+            isLowPowerModeEnabled: ProcessInfo.processInfo.isLowPowerModeEnabled,
+            lastRun: effectiveLastRun,
+            now: now,
+            staleness: staleness
+        )
     }
+
+    static func workAllowance(
+        isCharging: Bool,
+        isLowPowerModeEnabled: Bool,
+        lastRun: Date,
+        now: Date,
+        staleness: TimeInterval
+    ) -> WorkAllowance {
+        if isLowPowerModeEnabled {
+            return .none
+        }
+        if isCharging {
+            return .full
+        }
+        return now.timeIntervalSince(lastRun) > staleness ? .limited : .none
+    }
+}
+
+
+extension LocalPreferenceKeys {
+    static let deferrableWorkBaseline = LocalPreferenceKey<Date?>("deferrableWorkBaseline")
 }

@@ -12,6 +12,18 @@ import OSLog
 import Spezi
 import SpeziFoundation
 import SpeziSensorKit
+import UIKit
+
+
+private enum SensorKitProcessingError: Error {
+    case protectedDataUnavailable
+}
+
+
+private struct SensorKitActiveFetch: Sendable {
+    let task: Task<Void, any Error>
+    let allowance: DeviceBattery.WorkAllowance
+}
 
 
 @Observable
@@ -51,7 +63,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
     @MainActor private(set) var activeActivities = Set<InProgressActivity>()
 
     /// The currently-running fetch & upload of SensorKit data, if any.
-    @ObservationIgnored @MainActor private var activeFetch: Task<Void, Never>?
+    @ObservationIgnored @MainActor private var activeFetch: SensorKitActiveFetch?
 
 
     nonisolated init() {}
@@ -64,8 +76,6 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         do {
             try backgroundTasks.register(.healthResearch(
                 id: .sensorKitProcessing,
-                // fetching & uploading the SensorKit data is expensive (esp. PPG and accelerometer);
-                // requiring external power makes this task the battery-friendly primary fetch path.
                 options: [.requiresNetworkConnectivity, .requiresExternalPower],
                 protectionTypeOfRequiredData: .complete
             ) { [weak self] in
@@ -75,13 +85,13 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
                 guard !LaunchOptions.launchOptions[.disableSensorKitUpload] else {
                     return
                 }
+                guard await UIApplication.shared.isProtectedDataAvailable else {
+                    throw SensorKitProcessingError.protectedDataUnavailable
+                }
                 if await standard.enableDebugSensorKitNotifications {
                     try? await self.localNotifications.send(title: "SensorKit Background Processing", body: "Task started")
                 }
-                // it could be that the `run()` function already ran before the background task was triggered;
-                // in this case this call won't start a second, parallel fetch, but instead will simply wait for
-                // the already-active fetch to complete.
-                await fetchAndUploadNewData()
+                try await fetchAndUploadNewData(.full)
                 if await standard.enableDebugSensorKitNotifications {
                     try? await self.localNotifications.send(title: "SensorKit Background Processing", body: "Task ended")
                 }
@@ -96,70 +106,115 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         guard SensorKit.isAvailable else {
             return
         }
-        Task(priority: .background) {
-            // wait a little bit to make sure all of the other setup stuff (esp Firebase!) has time to finish before we start uploading
-            try? await Task.sleep(for: .seconds(1))
+        do {
+            // Wait a little bit to make sure all of the other setup stuff (esp Firebase!) has time to finish before we start uploading.
+            try await Task.sleep(for: .seconds(1))
             for sensor in SensorKit.mhcSensors where sensor.authorizationStatus == .authorized {
+                try Task.checkCancellation()
                 try? await sensor.startRecording()
             }
-            // the launch-time fetch only acts as a fallback for the background task (which requires external power),
-            // so that the data keeps flowing for users whose devices never charge while the task could run.
-            if !LaunchOptions.launchOptions[.disableSensorKitUpload],
-               await DeviceBattery.shouldRunDeferrableWork(
-                   lastRun: LocalPreferencesStore.standard[.lastSensorKitFetch],
-                   staleness: TimeConstants.day
-               ) {
-                await fetchAndUploadNewData()
+            guard !LaunchOptions.launchOptions[.disableSensorKitUpload] else {
+                return
             }
+            let allowance = await DeviceBattery.workAllowance(
+                lastRun: LocalPreferencesStore.standard[.lastSensorKitFetch],
+                staleness: TimeConstants.day
+            )
+            guard allowance != .none else {
+                return
+            }
+            try await fetchAndUploadNewData(allowance)
+        } catch is CancellationError {} catch {
+            logger.error("Failed to fetch and upload SensorKit data: \(error)")
         }
     }
 
     // periphery:ignore - API
+    /// Does not await cancellation because SensorKit may leave a read suspended indefinitely.
     @MainActor
     func cancelAllActiveCollection() {
-        activeFetch?.cancel()
-        activeFetch = nil
+        guard let activeFetch else {
+            return
+        }
+        activeFetch.task.cancel()
+        if self.activeFetch?.task == activeFetch.task {
+            self.activeFetch = nil
+        }
     }
 
 
     @MainActor
-    private func fetchAndUploadNewData() async {
+    private func fetchAndUploadNewData(_ allowance: DeviceBattery.WorkAllowance) async throws {
+        guard allowance != .none else {
+            return
+        }
         guard SensorKit.isAvailable else {
             return
+        }
+        guard UIApplication.shared.isProtectedDataAvailable else {
+            throw SensorKitProcessingError.protectedDataUnavailable
         }
         guard await standard.shouldCollectHealthData else {
             return
         }
-        if let activeFetch {
-            // if we're already performing this task, we simply wait on that task's result, instead of starting a competing second one.
-            // this is in order to properly support background processing/fetches.
-            _ = await activeFetch.result
-            if self.activeFetch == activeFetch {
-                self.activeFetch = nil
+        while true {
+            let activeFetch: SensorKitActiveFetch
+            if let existingFetch = self.activeFetch {
+                activeFetch = existingFetch
+            } else {
+                let task = Task { @concurrent in
+                    try await self._fetchAndUploadNewData(allowance)
+                }
+                activeFetch = SensorKitActiveFetch(task: task, allowance: allowance)
+                self.activeFetch = activeFetch
+            }
+            defer {
+                if self.activeFetch?.task == activeFetch.task {
+                    self.activeFetch = nil
+                }
+            }
+            try await withTaskCancellationHandler {
+                try await activeFetch.task.value
+            } onCancel: {
+                activeFetch.task.cancel()
+            }
+            if allowance == .full && activeFetch.allowance == .limited {
+                continue
             }
             return
         }
-        let task = Task { @concurrent in
-            await withManagedTaskQueue(limit: ProcessInfo.isProDevice ? 3 : 1) { taskQueue in
-                for uploadDefinition in SensorKit.mhcSensorUploadDefinitions {
-                    taskQueue.addTask {
-                        await self.fetchAndUploadAnchored(uploadDefinition)
+    }
+
+    @concurrent
+    private func _fetchAndUploadNewData(_ allowance: DeviceBattery.WorkAllowance) async throws {
+        try Task.checkCancellation()
+        let maximumBatchesPerSensor = allowance == .limited ? 1 : nil
+        let concurrencyLimit = allowance == .limited ? 1 : (ProcessInfo.isProDevice ? 3 : 1)
+        for definitions in SensorKit.mhcSensorUploadDefinitions.chunks(ofCount: concurrencyLimit) {
+            try Task.checkCancellation()
+            try await withThrowingDiscardingTaskGroup { taskGroup in
+                for uploadDefinition in definitions {
+                    taskGroup.addTask {
+                        try await self.fetchAndUploadAnchored(
+                            uploadDefinition,
+                            maximumBatches: maximumBatchesPerSensor
+                        )
                     }
                 }
             }
         }
-        activeFetch = task
-        _ = await task.result
-        if activeFetch == task {
-            activeFetch = nil
-        }
+        try Task.checkCancellation()
         LocalPreferencesStore.standard[.lastSensorKitFetch] = .now
     }
     
     
     /// Fetches all new SensorKit samples for the specified sensor (relative to the last time the function was called for the sensor), and uploads them all into the Firestore.
     @concurrent
-    private func fetchAndUploadAnchored(_ uploadDefinition: some AnyMHCSensorUploadDefinition<some Any, some Any>) async {
+    private func fetchAndUploadAnchored(
+        _ uploadDefinition: some AnyMHCSensorUploadDefinition<some Any, some Any>,
+        maximumBatches: Int?
+    ) async throws {
+        try Task.checkCancellation()
         guard SensorKit.isAvailable else {
             return
         }
@@ -177,12 +232,28 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         }
         do {
             activity.updateMessage("Fetching Samples")
+            var uploadedBatches = 0
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
+                try Task.checkCancellation()
+                guard await UIApplication.shared.isProtectedDataAvailable else {
+                    throw SensorKitProcessingError.protectedDataUnavailable
+                }
                 activity.updateTimeRange(batchInfo.timeRange)
                 try await uploadDefinition.strategy.upload(consume batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
+                uploadedBatches += 1
+                if maximumBatches.map({ uploadedBatches >= $0 }) ?? false {
+                    break
+                }
                 activity.updateMessage("Fetching Samples")
             }
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch let error as SensorKitProcessingError {
+            throw error
         } catch {
+            if Task.isCancelled {
+                throw CancellationError()
+            }
             logger.error("Failed to fetch & upload data for Sensor '\(sensor.displayName)': \(error)")
         }
         logger.notice("Anchored fetch for '\(sensor.id)' is complete.")

@@ -40,16 +40,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     
     func configure() {
         if let account, account.signedIn {
-            // resuming the export is expensive (HealthKit reads, FHIR encoding, uploads);
-            // at launch we prefer doing so while charging. enrollment triggers it unconditionally.
-            if DeviceBattery.shouldRunDeferrableWork(
-                lastRun: LocalPreferencesStore.standard[.lastHistoricalExportSessionStart],
-                staleness: TimeConstants.day
-            ) {
-                startAutomaticExportingIfNeeded()
-            } else {
-                logger.notice("Deferring historical upload resume until the device is charging")
-            }
+            startAutomaticExportingIfNeeded()
         } else {
             logger.notice("Skipping initial historical upload trigger bc not logged in")
         }
@@ -59,7 +50,7 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     /// Starts the automatic collection of historical health data,
     /// unless it's already running, or automatic collection is disabled via ``FeatureFlags/disableAutomaticBulkHealthExport``.
     nonisolated func startAutomaticExportingIfNeeded() {
-        Task {
+        Task { @MainActor in
             await setupAndStartExportSession()
         }
     }
@@ -68,9 +59,14 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
     /// Cancels the session, deletes all progress associated with it, and restarts it
     ///
     /// - Note: This is intended primarily for debugging purposes
-    func fullyResetSession(restart: Bool = true) async throws {
+    func fullyResetSession(restart: Bool = true, clearPendingUploads: Bool = true) async throws {
+        if let session {
+            await session.pause()
+        }
         try await bulkExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
-        try? managedFileUpload.clearPendingUploads(for: .historicalHealthUpload)
+        if clearPendingUploads {
+            try await managedFileUpload.clearPendingUploads(for: .historicalHealthUpload)
+        }
         self.session = nil
         if restart {
             await self.setupAndStartExportSession()
@@ -84,19 +80,25 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
         guard !FeatureFlags.disableAutomaticBulkHealthExport else {
             return false
         }
+        guard DeviceBattery.isCharging, !ProcessInfo.processInfo.isLowPowerModeEnabled else {
+            logger.notice("Deferring historical upload until the device is charging")
+            return false
+        }
+        guard !LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] else {
+            logger.notice("Skipping historical upload while cleanup from the previous account is pending")
+            return false
+        }
         guard let session = try? await getSession() else {
             return false
         }
         self.session = session
         do {
             logger.notice("Will start BulkHealthExport session")
-            let results = try session.start(
+            _ = try session.start(
                 retryFailedBatches: true,
-                // kept low: each concurrent batch holds its samples, FHIR resources, and encoded output in memory simultaneously
+                // Each batch retains samples, FHIR resources, and encoded output in memory.
                 concurrencyLevel: .limit(ProcessInfo.isProDevice ? 2 : 1)
             )
-            managedFileUpload.scheduleForUpload(results.compactMap { $0 }, category: .historicalHealthUpload)
-            LocalPreferencesStore.standard[.lastHistoricalExportSessionStart] = .now
             return true
         } catch {
             logger.error("Error starting session: \(error)")
@@ -142,12 +144,6 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
 
 extension BulkExportSessionIdentifier {
     static let mhcHistoricalDataExport = Self("mhcHistoricalDataExport")
-}
-
-
-extension LocalPreferenceKeys {
-    /// The last time a historical health export session was started or resumed.
-    static let lastHistoricalExportSessionStart = LocalPreferenceKey<Date?>("lastHistoricalExportSessionStart")
 }
 
 

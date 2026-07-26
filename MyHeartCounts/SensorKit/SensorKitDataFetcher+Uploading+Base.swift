@@ -37,11 +37,12 @@ extension MHCSensorSampleUploadStrategy {
             .appending(component: UUID().uuidString)
             .appendingPathExtension("\(fileExtension)\(shouldCompress ? ".zstd" : "")")
         try (consume data).write(to: url)
+        defer {
+            try? FileManager.default.removeItem(at: url)
+        }
         
         activity.updateMessage("Submitting for upload")
-        // Note: this call does not wait for the upload to get completed;
-        // it just looks like it bc the standard is an actor...
-        await standard.uploadSensorKitFile(at: url, for: sensor)
+        try await standard.uploadSensorKitFile(at: url, for: sensor)
         
         let referenceDocName = observationDocName + "_Ref"
         
@@ -86,7 +87,9 @@ extension MHCSensorSampleUploadStrategy {
         
         let sensorCollection = try await standard.firebaseConfiguration.userDocumentReference
             .collection("HealthObservations_\(sensor.id)")
+        try _Concurrency.Task.checkCancellation()
         try await sensorCollection.document(referenceDocName).setData(from: reference)
+        try _Concurrency.Task.checkCancellation()
         try await sensorCollection.document(observationDocName).setData(from: observation)
     }
 }
