@@ -64,17 +64,19 @@ jobs:
       - name: Build for testing
         if: steps.restore-test-products.outputs.cache-hit != 'true'
         run: |
+          set -o pipefail
           mkdir -p "$(dirname "$UI_TEST_PRODUCTS_PATH")"
           xcodebuild \
             -scheme MyHeartCounts \
             -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "$UI_TEST_DESTINATION" \
             -testPlan 'MyHeartCounts UI Tests' \
             -enableCodeCoverage YES \
             -testProductsPath "$UI_TEST_PRODUCTS_PATH" \
             -skipPackagePluginValidation \
             -skipMacroValidation \
-            build-for-testing
+            build-for-testing \
+          | xcbeautify
       - name: Validate test products
         run: |
           test -f "$UI_TEST_PRODUCTS_PATH/Info.plist"
@@ -142,7 +144,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: microsoft
-          java-version: '17'
+          java-version: '21'
       - name: Prepare Firebase functions
         run: |
           npm --prefix MyHeartCounts-Firebase/functions run clean
