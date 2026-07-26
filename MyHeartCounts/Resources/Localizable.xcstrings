@@ -235,6 +235,38 @@
       },
       "shouldTranslate" : false
     },
+    "%@+ (Obesity class II)" : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesity class II)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesidad clase II)"
+          }
+        }
+      }
+    },
+    "%@+ (Obesity class III)" : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesity class III)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesidad clase III)"
+          }
+        }
+      }
+    },
     "%lld" : {
       "shouldTranslate" : false
     },
@@ -482,8 +514,8 @@
         }
       }
     },
-    "< 7" : {
-      "shouldTranslate" : false
+    "< 5" : {
+
     },
     "< 55" : {
 
@@ -493,41 +525,6 @@
     },
     "<120 / <80" : {
       "shouldTranslate" : false
-    },
-    "> 140" : {
-      "shouldTranslate" : false
-    },
-    "≥ %@ (Obesity class II)" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesity class II)"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesidad clase II)"
-          }
-        }
-      }
-    },
-    "≥ %@ (Obesity class III)" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesity class III)"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesidad clase III)"
-          }
-        }
-      }
     },
     "$15,000 – $24,999" : {
       "shouldTranslate" : false
@@ -753,7 +750,7 @@
     "30 – 59" : {
       "shouldTranslate" : false
     },
-    "56 – 69" : {
+    "55 – 69" : {
 
     },
     "60 – 89" : {
@@ -786,14 +783,17 @@
     "120–129 / 80–89" : {
       "shouldTranslate" : false
     },
-    "126 – 140" : {
-      "shouldTranslate" : false
+    "126 – 139" : {
+
     },
     "130 – 159" : {
 
     },
     "130–139 / 90–99" : {
       "shouldTranslate" : false
+    },
+    "140+" : {
+
     },
     "140+ / 90+" : {
       "shouldTranslate" : false

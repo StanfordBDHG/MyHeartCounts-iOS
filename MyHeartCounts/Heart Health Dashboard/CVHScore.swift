@@ -298,7 +298,7 @@ extension ScoreDefinition {
         .inRange(11...13, score: 0.7, explainer: "11 – 13"),
         .inRange(8...10, score: 0.5, explainer: "8 – 10"),
         .inRange(5...7, score: 0.25, explainer: "5 – 7"),
-        .inRange(...7, score: 0, explainer: "< 7")
+        .inRange(..<5, score: 0, explainer: "< 5")
     ])
     
     static let cvhMentalWellbeing = ScoreDefinition(
@@ -384,7 +384,7 @@ extension ScoreDefinition {
             .inRange(25..<30, score: 0.7, explainer: "\(fmt(25)) – \(fmt(29.9)) (Overweight)"),
             .inRange(30..<35, score: 0.5, explainer: "\(fmt(30)) – \(fmt(34.9)) (Obesity class I)"),
             .inRange(35..<40, score: 0.3, explainer: "\(fmt(35)) – \(fmt(39.9)) (Obesity class II)"),
-            .inRange(40..., score: 0.1, explainer: "≥ \(fmt(40)) (Obesity class III)")
+            .inRange(40..., score: 0.1, explainer: "\(fmt(40))+ (Obesity class III)")
         ])
     }()
     
@@ -396,14 +396,14 @@ extension ScoreDefinition {
             .inRange(18.5..<23, score: 1, explainer: "\(fmt(18.5)) – \(fmt(22.9)) (Normal weight)"),
             .inRange(23..<25, score: 0.75, explainer: "\(fmt(23)) – \(fmt(24.9)) (Overweight / At risk)"),
             .inRange(25..<30, score: 0.5, explainer: "\(fmt(25)) – \(fmt(29.9)) (Obesity class I)"),
-            .inRange(30..., score: 0.2, explainer: "≥ \(fmt(30)) (Obesity class II)")
+            .inRange(30..., score: 0.2, explainer: "\(fmt(30))+ (Obesity class II)")
         ])
     }()
     
     /// LDL Cholesterol
     static let cvhBloodLipids = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<56, score: 1, explainer: "< 55"),
-        .inRange(56..<70, score: 0.9, explainer: "56 – 69"),
+        .inRange(..<55, score: 1, explainer: "< 55"),
+        .inRange(55..<70, score: 0.9, explainer: "55 – 69"),
         .inRange(70..<100, score: 0.8, explainer: "70 – 99"),
         .inRange(100..<130, score: 0.6, explainer: "100 – 129"),
         .inRange(130..<160, score: 0.4, explainer: "130 – 159"),
@@ -416,8 +416,8 @@ extension ScoreDefinition {
         .inRange(85..<100, score: 0.9, explainer: "85 – 99"),
         .inRange(100..<110, score: 0.75, explainer: "100 – 109"),
         .inRange(110..<126, score: 0.5, explainer: "110 – 125"),
-        .inRange(126..<140, score: 0.25, explainer: "126 – 140"),
-        .inRange(140..., score: 0, explainer: "> 140")
+        .inRange(126..<140, score: 0.25, explainer: "126 – 139"),
+        .inRange(140..., score: 0, explainer: "140+")
     ])
     
     static let cvhBloodPressure = ScoreDefinition(
