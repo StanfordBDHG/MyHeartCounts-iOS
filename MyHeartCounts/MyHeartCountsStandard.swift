@@ -10,7 +10,6 @@
 @preconcurrency import FirebaseCore
 @preconcurrency import FirebaseFirestore
 @preconcurrency import FirebaseStorage
-import HealthKitOnFHIR
 import OSLog
 @preconcurrency import PDFKit.PDFDocument
 import Spezi

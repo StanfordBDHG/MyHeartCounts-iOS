@@ -10,7 +10,7 @@ import AsyncAlgorithms
 import FHIRModelsExtensions
 import Foundation
 import HealthKit
-import HealthKitOnFHIR
+//import HealthKitOnFHIR
 import ModelsR4
 @testable import MyHeartCounts
 @testable import MyHeartCountsShared
@@ -114,7 +114,7 @@ struct HealthSampleProcessingTests {
         )
         let resource = try sample.resource(extensions: [.sampleUploadTimeZone])
         let observation = try #require(resource.get(if: Observation.self))
-        let ext = try #require(observation.extensions(for: FHIRExtensionUrls.sampleUploadTimeZone).first)
+        let ext = try #require(observation.extensions(for: FHIRExtensionURL.sampleUploadTimeZone).first)
         switch try #require(ext.value) {
         case .string(let string):
             #expect(string.value?.string == TimeZone.current.identifier)
