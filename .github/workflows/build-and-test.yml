@@ -212,6 +212,7 @@ jobs:
       runsonlabels: '["macOS", "self-hosted"]'
       path: MyHeartCountsShared
       scheme: MyHeartCountsShared-Package
+      buildConfig: ${{ matrix.config }}
       destination: ${{ matrix.platform.destination }}
       resultBundle: ${{ format('MHC-Shared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
       artifactname: ${{ format('MHC-Shared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
