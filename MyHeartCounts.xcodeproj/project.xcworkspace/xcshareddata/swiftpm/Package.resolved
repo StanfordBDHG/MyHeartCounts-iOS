@@ -1,5 +1,5 @@
 {
-  "originHash" : "b39f9cf739aa1cf7193f7f9fbe1f935fc550fdcf54e4a7c4fdcfc3f14a737d6b",
+  "originHash" : "582cb960c0d878652dbbe57c44fa7dbf07d2dc2221ca591b0bdbb843cc22d24a",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -204,7 +204,6 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/Spezi.git",
       "state" : {
-        "branch" : "lukas/FHIRModels",
         "revision" : "a418f489eebc52713e8308c845540af78b6aa107"
       }
     },

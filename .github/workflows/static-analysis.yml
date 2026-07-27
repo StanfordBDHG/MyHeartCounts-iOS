@@ -36,6 +36,7 @@ jobs:
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       strict: false
+      extra-build-args: EXCLUDED_ARCHS=armv7k
   markdownlinkcheck:
     name: Markdown Link Check
     uses: SchmiedmayerLab/.github/.github/workflows/markdown-links.yml@v0.2
