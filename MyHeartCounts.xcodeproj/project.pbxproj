@@ -1294,8 +1294,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SchmiedmayerLab/Spezi.git";
 			requirement = {
-				branch = lukas/FHIRModels;
-				kind = branch;
+				kind = revision;
+				revision = a418f489eebc52713e8308c845540af78b6aa107;
 			};
 			traits = (
 				ResearchKit,

@@ -24,8 +24,7 @@ jobs:
     permissions:
       contents: read
     with:
-      runsonlabels: '["macOS", "self-hosted", "xcode-26.6"]'
-      xcodeversion: '26.6'
+      runsonlabels: '["macOS", "self-hosted"]'
       scheme: MyHeartCounts
       testplan: MyHeartCounts Unit Tests
       resultBundle: MHC-App-UnitTests.xcresult
