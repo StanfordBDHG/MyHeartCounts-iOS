@@ -30,7 +30,7 @@ jobs:
       contents: read
   periphery:
     name: Periphery
-    uses: SchmiedmayerLab/.github/.github/workflows/periphery.yml@v0.2
+    uses: SchmiedmayerLab/.github/.github/workflows/periphery.yml@lukas/fix
     permissions:
       contents: read
     with:
