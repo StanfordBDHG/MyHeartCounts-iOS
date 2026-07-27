@@ -10,13 +10,13 @@ import AsyncAlgorithms
 import FHIRModelsExtensions
 import Foundation
 import HealthKit
-//import HealthKitOnFHIR
 import ModelsR4
 @testable import MyHeartCounts
 @testable import MyHeartCountsShared
 import Spezi
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitFHIR
 import SpeziTesting
 import Testing
 
@@ -238,7 +238,7 @@ struct HealthSampleProcessingTests {
             )
         ]
         let timestamp = Date()
-        nonisolated(unsafe) let issuedDate = try ModelsR4.FHIRPrimitive<ModelsR4.Instant>(.init(date: timestamp))
+        let issuedDate = try ModelsR4.FHIRPrimitive<ModelsR4.Instant>(.init(date: timestamp))
         let samplesAsFHIR: Set<ModelsR4.ResourceProxy> = try await newSamples.async.reduce(into: []) { @Sendable result, observation in
             // ISSUE: we get back an `AnyEncodable` (bc the return type might be a ResourceProxy or an Observation or a R4/DSTU2 FHIRResource)
             // but we need these as `ModelsR4.ResourceProxy`s, so we need to do a quick JSON roundtrip to turn them into ResourceProxies (will work for everything except ClinicalRecords, but we don't have any of these anyway...
