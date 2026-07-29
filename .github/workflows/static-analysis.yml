@@ -36,6 +36,9 @@ jobs:
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       strict: false
+      # we need to exclude this bc FHIRModels doesn't compile for older watch models (pre series 4).
+      # not a problem for MHC, since our iOS 18 / watchOS 11 deployment target means that we don't
+      # support any of these models in the first place...
       extra-build-args: EXCLUDED_ARCHS=armv7k
   markdownlinkcheck:
     name: Markdown Link Check
