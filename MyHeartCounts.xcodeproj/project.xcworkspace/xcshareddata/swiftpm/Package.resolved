@@ -1,5 +1,5 @@
 {
-  "originHash" : "582cb960c0d878652dbbe57c44fa7dbf07d2dc2221ca591b0bdbb843cc22d24a",
+  "originHash" : "c9e39e0aeff5c7c930a429f0bdb0c38852e768ff74adca122fb884db6f7a2d66",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PhoneNumberKit/PhoneNumberKit.git",
       "state" : {
-        "revision" : "575bda0cd71186372e2ecb1352b91d7853bce048",
-        "version" : "5.0.5"
+        "revision" : "e18a029dbada1d8eb32e3f81a4eb72eba539ff75",
+        "version" : "5.0.6"
       }
     },
     {
@@ -204,7 +204,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/Spezi.git",
       "state" : {
-        "revision" : "a418f489eebc52713e8308c845540af78b6aa107"
+        "revision" : "4a685f4836564260a4f68ce4f58baf05ee8f0e2c"
       }
     },
     {

@@ -1295,7 +1295,7 @@
 			repositoryURL = "https://github.com/SchmiedmayerLab/Spezi.git";
 			requirement = {
 				kind = revision;
-				revision = a418f489eebc52713e8308c845540af78b6aa107;
+				revision = 4a685f4836564260a4f68ce4f58baf05ee8f0e2c;
 			};
 			traits = (
 				ResearchKit,
