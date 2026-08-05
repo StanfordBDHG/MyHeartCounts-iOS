@@ -118,5 +118,10 @@ final class OnboardingTests: MHCTestCase, Sendable {
         }
         
         // thesis: if we get to this point in the onboarding, we will make it to the end
+        
+        // we need to reset the health authorization at the end here, so that subsequent tests will re-request the whole set,
+        // instead of inheriting the "only active energy and only read-only" permission granted here...
+        app.terminate()
+        app.resetAuthorizationStatus(for: .health)
     }
 }
