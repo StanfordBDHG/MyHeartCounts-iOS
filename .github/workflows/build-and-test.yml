@@ -36,7 +36,7 @@ jobs:
       artifactname: MHC-App-UnitTests.xcresult
   
   mhc_app_ui_test_build:
-    name: Build App UI Test Products
+    name: App UI Tests (Build)
     runs-on: [macOS, self-hosted]
     permissions:
       contents: read
@@ -102,7 +102,7 @@ jobs:
           key: ${{ steps.toolchain.outputs.cache-key }}
 
   mhc_app_ui_test_run:
-    name: App UI Tests (${{ matrix.name }})
+    name: App UI Tests (Run; ${{ matrix.name }})
     needs: mhc_app_ui_test_build
     runs-on: [macOS, self-hosted]
     permissions:
@@ -176,7 +176,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: diagnostics-ui-shard-${{ matrix.shard }}-attempt-${{ github.run_attempt }}
+          name: diagnostics-ui-shard-${{ matrix.shard }}-attempt-${{ github.run_attempt }}.xcresult
           path: ${{ runner.temp }}/MHC-App-UITests-${{ matrix.shard }}-${{ github.run_attempt }}.xcresult
           if-no-files-found: warn
           retention-days: 7
