@@ -1,42 +1,42 @@
 {
   "shards": [
     {
-      "name": "Consent Review and Patch, Other",
+      "name": "Consent Review and Patch, Prompted Actions, Tasks",
       "shard": "01",
       "tests": [
         "MyHeartCountsUITests/ConsentTests/testReviewConsentForms",
         "MyHeartCountsUITests/ConsentTests/testConsentRenewalNewPatch",
-        "MyHeartCountsUITests/OtherTests"
+        "MyHeartCountsUITests/PromptedActionsTests",
+        "MyHeartCountsUITests/TaskHandlingTests",
+        "MyHeartCountsUITests/StudyParticipationTests"
       ]
     },
     {
-      "name": "Consent Skip, Health, Study, Regression",
+      "name": "Consent Major, Other, Timed Walk, Regression",
       "shard": "02",
       "tests": [
-        "MyHeartCountsUITests/ConsentTests/testSkipDuringOnboardingIfAlreadySupplied",
-        "MyHeartCountsUITests/HealthDashboardTests",
-        "MyHeartCountsUITests/StudyParticipationTests",
+        "MyHeartCountsUITests/ConsentTests/testConsentRenewalNewMajor",
+        "MyHeartCountsUITests/OtherTests",
+        "MyHeartCountsUITests/TimedWalkTestTests",
         "MyHeartCountsUITests/RegressionTests"
       ]
     },
     {
-      "name": "Consent Major, Onboarding, Prompted Actions",
+      "name": "Consent Skip, Health Dashboard, Scheduled",
       "shard": "03",
       "tests": [
-        "MyHeartCountsUITests/ConsentTests/testConsentRenewalNewMajor",
-        "MyHeartCountsUITests/OnboardingTests",
-        "MyHeartCountsUITests/PromptedActionsTests"
+        "MyHeartCountsUITests/ConsentTests/testSkipDuringOnboardingIfAlreadySupplied",
+        "MyHeartCountsUITests/HealthDashboardTests",
+        "MyHeartCountsUITests/ScheduledTaskTests"
       ]
     },
     {
-      "name": "Consent Minor, Timed Walk, Basic, Scheduled, Task",
+      "name": "Consent Minor, Onboarding, Basic Usage",
       "shard": "04",
       "tests": [
         "MyHeartCountsUITests/ConsentTests/testConsentRenewalNewMinor",
-        "MyHeartCountsUITests/TimedWalkTestTests",
-        "MyHeartCountsUITests/BasicAppUsage",
-        "MyHeartCountsUITests/ScheduledTaskTests",
-        "MyHeartCountsUITests/TaskHandlingTests"
+        "MyHeartCountsUITests/OnboardingTests",
+        "MyHeartCountsUITests/BasicAppUsage"
       ]
     }
   ]
