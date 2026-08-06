@@ -20,7 +20,7 @@ concurrency:
 env:
   UI_TEST_DESTINATION: 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5'
   UI_TEST_PRODUCTS_PATH: .ci-cache/MHC-App-UITests.xctestproducts
-  UI_TEST_XCODE_VERSION: '26.5'
+  UI_TEST_XCODE_VERSION: '26.6'
 
 jobs:
   mhc_app_unit_tests:
@@ -34,7 +34,8 @@ jobs:
       testplan: MyHeartCounts Unit Tests
       resultBundle: MHC-App-UnitTests.xcresult
       artifactname: MHC-App-UnitTests.xcresult
-  mhc_app_ui_test_products:
+  
+  mhc_app_ui_test_build:
     name: Build App UI Test Products
     runs-on: [macOS, self-hosted]
     permissions:
@@ -100,16 +101,16 @@ jobs:
           path: ${{ env.UI_TEST_PRODUCTS_PATH }}
           key: ${{ steps.toolchain.outputs.cache-key }}
 
-  mhc_app_ui_test_shards:
+  mhc_app_ui_test_run:
     name: App UI Tests (${{ matrix.name }})
-    needs: mhc_app_ui_test_products
+    needs: mhc_app_ui_test_build
     runs-on: [macOS, self-hosted]
     permissions:
       contents: read
     strategy:
       fail-fast: false
       max-parallel: 4
-      matrix: ${{ fromJSON(needs.mhc_app_ui_test_products.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.mhc_app_ui_test_build.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -183,14 +184,14 @@ jobs:
   mhc_app_ui_tests:
     name: App UI Tests / Test using xcodebuild or run fastlane
     if: always()
-    needs: mhc_app_ui_test_shards
+    needs: mhc_app_ui_test_run
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Check UI test shards
         env:
-          SHARD_RESULT: ${{ needs.mhc_app_ui_test_shards.result }}
+          SHARD_RESULT: ${{ needs.mhc_app_ui_test_run.result }}
         run: test "$SHARD_RESULT" = "success"
 
   mhc_utils_unit_tests:
