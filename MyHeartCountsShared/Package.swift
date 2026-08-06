@@ -11,7 +11,7 @@ import PackageDescription
 
 
 var packageDeps: [Package.Dependency] = [
-    .package(url: "https://github.com/SchmiedmayerLab/Spezi.git", revision: "4a685f4836564260a4f68ce4f58baf05ee8f0e2c"),
+    .package(url: "https://github.com/SchmiedmayerLab/Spezi.git", revision: "e7a66a44bea90bfc93ddaed5ac84cd1727fb0e56"),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.93.0"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.7.0")
 ]
