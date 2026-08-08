@@ -193,7 +193,7 @@
     {
       "identity" : "phonenumberkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/marmelroy/PhoneNumberKit",
+      "location" : "https://github.com/marmelroy/PhoneNumberKit.git",
       "state" : {
         "revision" : "169ab10234347fb19b37441f2867ace896a284b0",
         "version" : "4.3.0"
@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
       "state" : {
-        "revision" : "a90e2e40a7a840a853dd29e57cbef5dbb72c9d5b",
-        "version" : "1.4.0"
+        "revision" : "5fa253428866f2360c3754e88537f700ed2656b5",
+        "version" : "1.4.1"
       }
     },
     {
@@ -321,8 +321,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/huggingface/swift-jinja.git",
       "state" : {
-        "revision" : "0b67ecb79139f6addef8699eff3622808aa6c7dc",
-        "version" : "2.3.6"
+        "revision" : "7d0b8880ef8e567dd4e0089f8b99fb354129017c",
+        "version" : "2.4.2"
       }
     },
     {
@@ -366,8 +366,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-openapi-generator.git",
       "state" : {
-        "revision" : "d002e5d9a1ac4ff6466bb89ab8fa1c9a0afd820f",
-        "version" : "1.12.2"
+        "revision" : "af9a2a1f5dcfb00a278d4bb29c6d75080932e99e",
+        "version" : "1.13.0"
       }
     },
     {

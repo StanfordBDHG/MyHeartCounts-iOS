@@ -302,7 +302,7 @@ SPDX-License-Identifier: MIT
 
 
 
-### The `ManagedFileUpload` system
+## File Uploading
 
 - The `ManagedFileUpload` module is responsible for uploading files from the app to the server
 - Other parts of the app (e.g., the HealthKit or SensorKit ingestion pipelines) hand files to `ManagedFileUpload`, which then schedules them for upload
