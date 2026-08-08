@@ -14,7 +14,7 @@ import SpeziFHIR
 
 
 extension HKSourceRevision {
-    fileprivate static let mhc = HKSourceRevision(
+    static let mhc = HKSourceRevision(
         source: HKSource.default(),
         version: "\(Bundle.main.appVersion) (\(Bundle.main.appBuildNumber ?? -1))",
         productType: nil,

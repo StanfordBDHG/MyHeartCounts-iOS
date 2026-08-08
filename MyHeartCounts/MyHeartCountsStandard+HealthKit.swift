@@ -19,6 +19,7 @@ import SpeziAccount
 import SpeziFHIR
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitFHIR
 import SpeziStudy
 import UserNotifications
 
@@ -92,8 +93,7 @@ extension MyHeartCountsStandard {
     }
     
     
-    // NOTE: This is in fact concurrency-safe; we're just missing a `FHIRExtensionBuilderProtocol: Sendable` requirement in HKoF.
-    nonisolated(unsafe) static let defaultHealthObservationFHIRExtensions: [any FHIRExtensionBuilderProtocol] = [
+    static let defaultHealthObservationFHIRExtensions: [any FHIRExtensionBuilderProtocol] = [
         .sampleUploadTimeZone, .mhcStudyRevision
     ]
     
@@ -296,17 +296,17 @@ extension FHIRExtensionURL {
 
 extension FHIRExtensionBuilderProtocol where Self == FHIRExtensionBuilder<Void> {
     static var sampleUploadTimeZone: Self {
-        .init { observation in
+        .init { resource in
             let ext = Extension(
                 url: FHIRExtensionURL.sampleUploadTimeZone,
                 value: .string(TimeZone.current.identifier.asFHIRStringPrimitive())
             )
-            observation.append(extension: ext, behaviour: .replace)
+            resource.append(extension: ext, behaviour: .replace)
         }
     }
     
     static var mhcStudyRevision: Self {
-        .init { observation in
+        .init { resource in
             guard let enrollmentInfo = MyHeartCountsStandard.currentEnrollmentInfo else {
                 return
             }
@@ -324,7 +324,20 @@ extension FHIRExtensionBuilderProtocol where Self == FHIRExtensionBuilder<Void> 
                 ],
                 url: extUrl
             )
-            observation.append(extension: ext, behaviour: .replace)
+            resource.append(extension: ext, behaviour: .replace)
         }
     }
+    
+    static var mhcAppVersion: Self {
+        .init { resource in
+            try FHIRExtensionBuilder
+                .sourceRevision(url: .mhcAppRevision)
+                .apply(input: .mhc, to: &resource)
+        }
+    }
+}
+
+
+extension FHIRExtensionURL {
+    static let mhcAppRevision = Self("https://bdh.stanford.edu/fhir/defs/mhcAppRevision")
 }

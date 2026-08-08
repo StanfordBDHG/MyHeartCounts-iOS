@@ -14,8 +14,8 @@ import SpeziSensorKit
 
 extension FHIRExtensionBuilder where Input == SensorKit.DeviceInfo {
     static var sensorKitSourceDevice: Self {
-        Self { (deviceInfo: SensorKit.DeviceInfo, observation) in
-            observation.append(
+        Self { (deviceInfo: SensorKit.DeviceInfo, resource) in
+            resource.append(
                 extension: Extension(
                     extension: [
                         Extension(
