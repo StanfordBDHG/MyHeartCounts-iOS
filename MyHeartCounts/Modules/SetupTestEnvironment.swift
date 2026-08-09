@@ -151,7 +151,13 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
                 // ok
             }
         }
-        LocalPreferencesStore.standard.removeAllEntries(in: .app)
+        do {
+            // we need to carry this over, as the firebase load will already have happened at this point,
+            // and we need this value to exist afterwards.
+            let lastUsedFirebaseConfig = LocalPreferencesStore.standard[.lastUsedFirebaseConfig]
+            LocalPreferencesStore.standard.removeAllEntries(in: .app)
+            LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = lastUsedFirebaseConfig
+        }
         switch config.loginAndEnroll {
         case .skip:
             break
