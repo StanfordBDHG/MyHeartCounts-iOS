@@ -46,8 +46,8 @@ final class ConsentManager: Module, EnvironmentAccessible, Sendable {
     
     @MainActor
     private func doUpdate() async {
-        let studyBundle = withObservationTracking {
-            studyBundleLoader.studyBundle?.value
+        let (studyBundle, _) = withObservationTracking {
+            (studyBundleLoader.studyBundle?.value, account?.details)
         } onChange: { [weak self] in
             Task {
                 await self?.doUpdate()
@@ -67,15 +67,31 @@ final class ConsentManager: Module, EnvironmentAccessible, Sendable {
             print("shouldSign? \(shouldSign)")
             switch shouldSign {
             case .no:
-                pendingConsentDoc = nil
+                setPendingDoc(nil)
             case .yes(.signedOldVersion):
-                pendingConsentDoc = doc
+                setPendingDoc(doc)
             case .yes(.neverSigned):
                 if LaunchOptions[.triggerConsentRenewalIfNeverSigned] {
-                    pendingConsentDoc = doc
+                    setPendingDoc(doc)
                 } else {
-                    pendingConsentDoc = nil
+                    setPendingDoc(nil)
                 }
+            }
+        }
+    }
+    
+    
+    private func setPendingDoc(_ newDoc: ConsentDocument?) {
+        switch (pendingConsentDoc, newDoc) {
+        case (.none, .none):
+            return
+        case (.none, _), (.some, .none):
+            pendingConsentDoc = newDoc
+        case let (.some(old), .some(new)):
+            if old == new || old.metadata.version == new.metadata.version {
+                return
+            } else {
+                pendingConsentDoc = new
             }
         }
     }
@@ -130,9 +146,13 @@ extension ConsentManager {
     @MainActor
     func shouldSign(_ documentMetadata: MarkdownDocument.Metadata) throws -> ShouldSignConsentResult {
         guard let accountDetails = account?.details,
+              !accountDetails.isIncomplete,
               let docVersion = documentMetadata.version else {
             throw UnableToDetermineShouldSignStatusError()
         }
+//        print("LSV", accountDetails)
+        print("LSV", accountDetails.lastSignedConsentVersion)
+        print("LSV", accountDetails.lastSignedConsentVersion.flatMap(Version.init))
         guard let lastSignedVersion = accountDetails.lastSignedConsentVersion.flatMap(Version.init) else {
             return .yes(.neverSigned)
         }
