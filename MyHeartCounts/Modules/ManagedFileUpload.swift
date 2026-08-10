@@ -12,27 +12,11 @@ import OSLog
 import Spezi
 import SpeziAccount
 import SpeziFoundation
-import SwiftData
 
 
 @Observable
 @MainActor
 final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
-    @Model
-    private final class ScheduledUpload {
-        @Attribute(.unique)
-        let id = UUID()
-        
-        var numAttempts = 0
-        
-        let metadata: [String: String]
-        
-        init(metadata: [String: String]) {
-            self.metadata = metadata
-        }
-    }
-    
-    
     nonisolated private static let directory = URL.documentsDirectory.appending(component: "ManagedFileUploading", directoryHint: .isDirectory)
     
     // swiftlint:disable attributes

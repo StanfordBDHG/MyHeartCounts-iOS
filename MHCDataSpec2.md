@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 ## High-level data persistence locations
 - The app uses a firebase backend to store server-persisted data
   - Within that, it uses both firestore as well as firebase storage
+- This document mainly covers the iOS app's data flow/structure, but does also go a bit into server-relevant things
 - Data that does not need to persist across multiple installs of the app is stored as `UserDefaults`
 
 
@@ -23,6 +24,7 @@ SPDX-License-Identifier: MIT
 - automated data donation (healthkit, sensorkit)
 - user-provided data entered into the app (questionnaires, active tasks, custom quantity samples, etc)
 - scheduler state (*todo*)
+- (outside of iOS app) data coming from third-party wearable devices
 
 
 ### Demographics Data
@@ -302,6 +304,12 @@ SPDX-License-Identifier: MIT
 
 
 
+### Third-party wearable devices
+- MHC allows the user to connect third-party wearable fitness/activity trackers, such as Fitbit, Withings, etc.
+- This works by the user establishing a connection between their MHC account and their account with the third-party server, via the MHC account page in the iOS app
+- The MHC backend then periodically ingests data from the third-party service (be it via push or pull), and stores it into the firebase storage, as FHIR-encoded samples, in line with how the HealthKit data is represented and stored
+
+
 ## File Uploading
 
 - The `ManagedFileUpload` module is responsible for uploading files from the app to the server
@@ -311,6 +319,124 @@ SPDX-License-Identifier: MIT
 - Uploads are written to `users/{uid}\{category}/{filename}`
 
 
+
+
+## Client data needs
+
+- in addition to querying on-device HealthKit data for upload to the backend, MHC also needs to query data for displaying it in the app, to the user
+- we cannot rely only on querying local HealthKit data here, as this would miss any data that exists on the server but is not present in the client's HealthKit database:
+  - data imported from third-party wearable services that don't already push their samples into the user's Health app
+  - data manually entered by the user into the app, when we were not granted HealthKit write permissions
+
+
+| Data | Needed By | Fetched From |
+| :--- | :--- | :--- |
+| Exercise Minutes          | HHD | Stats doc (`/users/{uid}/stats/exercise-time`) |
+| Step Count                | HHD | Stats doc (`/users/{uid}/stats/steps`) |
+| Sleep Stats               | HHD | Stats doc (`/users/{uid}/stats/sleep`) |
+| Diet                      | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeDietMEPAScore/` |
+| Diet                      | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeNicotineExposure/` |
+| Mental Well Being         | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeWHO5Score/` |
+| Blood Pressure            | HHD | Stats doc (`/users/{uid}/stats/blood-pressure`) |
+| LDL cholesterol           | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodLipidMeasurement/`) |
+| Blood Glucose (Fasting)   | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodGlucoseFasting/`) |
+| Blood Glucose (A1c)       | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodGlucoseA1c/`) |
+| BMI                       | HHD | Individual samples (`/users/{uid}/HealthObservations_HKQuantityTypeIdentifierBodyMassIndex/`) |
+| Height                    | HHD | Individual samples (`/users/{uid}/HealthObservations_HKQuantityTypeIdentifierHeight/`) |
+| Weight                    | HHD | Individual samples (`/users/{uid}/HealthObservations_HKQuantityTypeIdentifierBodyMass/`) |
+| Past Timed Walk/Run tests | App | Individual samples (`/users/{uid}/HealthObservations_MHCHealthObservationTimedWalkingTestResultIdentifier/`) |
+
+
+
+
+## User Data Statistics
+
+- In order to drive certain in-app functionality (e.g., the health dashboard), the app needs statistics computed/derived from the user's data
+- E.g.: the Heart Health Dashboard needs to know a bunch of data to compute its individual cardiovascular health scores
+- Since we have data sources beyond the on-device HealthKit data, we cannot implement this the easy/trivial way (by simply running a local on-device HKStatisticsQuery)
+- ...
+- Solution: we maintain a series of well-known statistics documents, which store precomputed statistical values, that can be used by the client (eg the app) to compute whatever final statistics it needs
+- The purpose of these documents is to enable the app to be able to fetch *all* of the data it displays to the user from the cloud backend, instead of performing local fetches from e.g. HalthKit.
+- As such, we only need these stats documents for data that is being added into the app by multiple sources, and/or is not written directly into the firestore.
+
+
+### What data do we need?
+
+| Data | Need | Format |
+| :--- | :--- | :--- |
+| Exercise Minutes | HHD | Daily "number of active minutes" count |
+| Step Count | HHD | Daily step count |
+| Sleep Stats | HHD | Daily number of hours slept |
+| Diet | HHD | Score computed from survey responses |
+| Mental Well Being | HHD | Score computed from survey responses |
+| Blood Pressure | HHD | Individual samples for sys/dia |
+| LDL cholesterol | HHD | Individual samples |
+| Blood Glucose (Fasting + A1c) | HHD | Individual samples |
+| BMI | HHD | Individual samples |
+| Noicotine Exposure | HHD | Score computed from survey responses |
+| Past Timed Walk/Run tests | App | Individual samples |
+
+Constraints:
+- all data needs to go back at least 12 months
+- since we have multiple potential data sources (HealthKit, Android Health Connect, Fitbit, Withings, etc), we need the data handling/processing/storage and stats computation to somehow work in a way that supports these multiple, competing data sources
+
+
+### High-level structure
+- we have a special `stats` collection at `/users/{uid}/stats/`, which contains one document per sample type
+  - e.g. `/users/{uid}/stats/stepCount`
+- each statistics document contains the following:
+  - a `version` so we can easily evolve the structure down the road
+  - the `metric` of the values in the document
+  - `data-raw`, containing which is a mapping of 
+- different metrics' stats documents have different shapes, based on the speficic metric's shape and needs:
+  - for non-cumulative metrics, the stats document is simply a list of individual samples
+  - for cumulative metrics, the stats document contains 
+
+
+#### Non-cumulative metric stats document
+
+In this case, the document is effectively simply a list of individual samples.
+
+Example: exercise minutes stats, at `/users/{uid}/stats/exercise-minutes`
+
+```jsonc
+{
+  "version": 0,
+  "metric": "exercise-minutes",
+  "data-raw": {
+    "com.apple.HealthKit": [
+      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:55:00-07:00", "endDate": "2026-08-10T05:56:00-07:00" },
+      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:56:00-07:00", "endDate": "2026-08-10T05:57:00-07:00" },
+      // additional samples
+    ]
+  }
+}
+```
+
+
+#### Cumulative metric stats document
+
+Example: step count stats document
+
+```jsonc
+{
+  "version": 0,
+  "metric": "stepCount",
+  "data-raw": {
+    "com.apple.HealthKit": [
+      { "value": 123, "unit": "count", "startDate": "2026-08-10T14:08:49-07:00", "endDate": "2026-08-10T14:12:52-07:00" },
+      // additional samples
+    ],
+    "fitbit": [
+      { "value": 125, "unit": "count", "startDate": "2026-08-10T14:05:00-07:00", "endDate": "2026-08-10T14:10:00-07:00" },
+      // additional samples
+    ]
+  }
+}
+```
+
+
+(TODO Q: they're _very_ similar; do we really need bothg??? )
 
 <!--
 ## What do we collect?
