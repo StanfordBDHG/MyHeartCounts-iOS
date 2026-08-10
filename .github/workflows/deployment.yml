@@ -1,5 +1,5 @@
 #
-# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+# This source file is part of the My Heart Counts iOS open-source project
 #
 # SPDX-FileCopyrightText: 2025 Stanford University and the project authors (see CONTRIBUTORS.md)
 #
@@ -130,7 +130,7 @@ jobs:
   testflight:
     name: iOS App TestFlight Deployment
     needs: [determineenvironment, vars, test]
-    uses: SchmiedmayerLab/.github/.github/workflows/xcode-deploy.yml@v0.2
+    uses: SchmiedmayerLab/.github/.github/workflows/xcode-deploy.yml@v0.5
     permissions:
       contents: read
     with:
