@@ -25,7 +25,6 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
     // swiftlint:enable attributes
     
     private(set) var categories: Set<Category>
-    private let modelContainer: ModelContainer
     nonisolated(unsafe) private let fileManager = FileManager()
     
     /// A `Progress` instance representing each category's upload progress,
@@ -41,17 +40,6 @@ final class ManagedFileUpload: Module, EnvironmentAccessible, Sendable {
     /// - parameter categories: A list of well-known ``Category`` definitions.
     init(@ArrayBuilder<Category> categories: () -> [Category]) {
         self.categories = Set(categories())
-        let schema = Schema([ScheduledUpload.self], version: Schema.Version(0, 0, 1))
-        let config = ModelConfiguration(
-            "ManagedFileUpload",
-            schema: schema,
-            url: URL.documentsDirectory.appendingPathComponent("ManagedFileUpload.sqlite")
-        )
-        do {
-            modelContainer = try .init(for: schema, configurations: [config])
-        } catch {
-            fatalError("Unable to create \(config.name) model container")
-        }
     }
     
     func configure() {
