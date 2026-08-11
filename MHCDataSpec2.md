@@ -382,12 +382,12 @@ Constraints:
 
 
 ### High-level structure
-- we have a special `stats` collection at `/users/{uid}/stats/`, which contains one document per sample type
-  - e.g. `/users/{uid}/stats/stepCount`
+- we have special stats documents, at `/users/{uid}/stats/{metric}/{year}/{month}`, which contain hourly stats for a sample type for a month
+  - e.g. `/users/{uid}/stats/steps/2026/08`
 - each statistics document contains the following:
   - a `version` so we can easily evolve the structure down the road
   - the `metric` of the values in the document
-  - `data-raw`, containing which is a mapping of 
+  - `hourly`, containing the hourly stats
 - different metrics' stats documents have different shapes, based on the speficic metric's shape and needs:
   - for non-cumulative metrics, the stats document is simply a list of individual samples
   - for cumulative metrics, the stats document contains 
@@ -395,19 +395,42 @@ Constraints:
 
 #### Non-cumulative metric stats document
 
-In this case, the document is effectively simply a list of individual samples.
+In the case of a non-cumulative sample type, each month's stats document contains a list of hourly min/max/avg readings.
 
-Example: sleep stats, at `/users/{uid}/stats/sleep`
+Example: heart rate, at `/users/{uid}/stats/heart-rate/2026/08`
 
 ```jsonc
 {
   "version": 0,
-  "metric": "exercise-minutes",
-  "data-raw": {
+  "metric": "heart-rate",
+  "hourly": {
     "com.apple.HealthKit": [
-      { "value": 432, "unit": "min", "startDate": "2026-08-08T23:05:00-07:00", "endDate": "2026-08-09T06:17:00-07:00" },
-      { "value": 444, "unit": "min", "startDate": "2026-08-09T22:30:00-07:00", "endDate": "2026-08-10T05:54:00-07:00" },
-      // additional samples
+      // ...
+      {
+        "start": "2026-08-10T04:00:00-07:00",
+        "end": "2026-08-10T05:00:00-07:00",
+        "unit": "count/min",
+        "min": "49",
+        "max": "56",
+        "avg": "52.423825347707634"
+      },
+      {
+        "start": "2026-08-10T05:00:00-07:00",
+        "end": "2026-08-10T06:00:00-07:00",
+        "unit": "count/min",
+        "min": "47.83707809448242",
+        "max": "65",
+        "avg": "55.85580520629883"
+      },
+      {
+        "start": "2026-08-10T06:00:00-07:00",
+        "end": "2026-08-10T07:00:00-07:00",
+        "unit": "count/min",
+        "min": "50",
+        "max": "63",
+        "avg": "54.875"
+      },
+      // ...
     ],
     "fitbit": [
       // ...
@@ -419,41 +442,63 @@ Example: sleep stats, at `/users/{uid}/stats/sleep`
 
 #### Cumulative metric stats document
 
-In the case of cumulative metrics (e.g., step count, exercise minutes, etc)
+In the case of cumulative metrics (e.g., step count, exercise minutes, etc), each month's document simply contains a list of hourly sums.
 
-Example: step count stats document, at `/users/{uid}/stats/steps`
+Example: step count stats document, at `/users/{uid}/stats/steps/2026/08`
 ```jsonc
 {
   "version": 0,
   "metric": "stepCount",
-  "data-com": {
+  "hourly": {
     "com.apple.HealthKit": [
-      { "value": 123, "unit": "count", "startDate": "2026-08-10T14:08:49-07:00", "endDate": "2026-08-10T14:12:52-07:00" },
-      // additional samples
+      // ...
+      {
+        "start": "2026-08-10T07:00:00-07:00",
+        "end": "2026-08-10T08:00:00-07:00",
+        "unit": "count",
+        "sum": "2288"
+      },
+      {
+        "start": "2026-08-10T08:00:00-07:00",
+        "end": "2026-08-10T09:00:00-07:00",
+        "unit": "count",
+        "sum": "350"
+      },
+      {
+        "start": "2026-08-10T09:00:00-07:00",
+        "end": "2026-08-10T10:00:00-07:00",
+        "unit": "count",
+        "sum": "34"
+      },
+      // ...
     ],
     "fitbit": [
-      { "value": 125, "unit": "count", "startDate": "2026-08-10T14:05:00-07:00", "endDate": "2026-08-10T14:10:00-07:00" },
-      // additional samples
+      // ...
     ]
   }
 }
 ```
 
 
-Example: exercise minutes stats, at `/users/{uid}/stats/exercise-time`
-```jsonc
-{
-  "version": 0,
-  "metric": "exercise-minutes",
-  "data-raw": {
-    "com.apple.HealthKit": [
-      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:55:00-07:00", "endDate": "2026-08-10T05:56:00-07:00" },
-      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:56:00-07:00", "endDate": "2026-08-10T05:57:00-07:00" },
-      // additional samples
-    ]
-  }
-}
-```
+
+| Sample Type             | Aggregation Mode | Aggregation Time Range |
+| :---------------------- | :--------------: | :--------------------- |
+| Step Count              | sum              | hourly                 |
+| Heart Rate              | min/max/avg      | hourly                 |
+| Exercise Minutes        | sum              | hourly                 |
+| Sleep Stats             | sum              | daily                  |
+| Diet                    | min/max/avg      | daily                  |
+| Nicotine Exposure       | min/max/avg      | daily                  |
+| Mental Well Being       | min/max/avg      | daily                  |
+| Blood Pressure          | min/max/avg      | hourly                 |
+| LDL cholesterol         | min/max/avg      | hourly                 |
+| Blood Glucose (Fasting) | min/max/avg      | hourly                 |
+| Blood Glucose (A1c)     | min/max/avg      | hourly                 |
+| BMI                     | min/max/avg      | daily                  |
+| Height                  | min/max/avg      | daily                  |
+| Weight                  | min/max/avg      | hourly                 |
+
+
 
 
 (TODO Q: they're _very_ similar; do we really need bothg??? )
