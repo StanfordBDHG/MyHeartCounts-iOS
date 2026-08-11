@@ -13,7 +13,7 @@ SPDX-License-Identifier: MIT
 [![Build and Test](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/build-and-test.yml)
 [![Deployment](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/deployment.yml/badge.svg)](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/deployment.yml)
 [![REUSE status](https://api.reuse.software/badge/github.com/SchmiedmayerLab/MyHeartCounts-iOS)](https://api.reuse.software/info/github.com/SchmiedmayerLab/MyHeartCounts-iOS)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/blob/main/LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 
 [My Heart Counts (MHC) application](https://myheartcounts.stanford.edu) is a [Spezi](https://github.com/StanfordSpezi)-based large-scale cardiovascular study application, developed at Stanford University.
 
