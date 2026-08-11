@@ -34,7 +34,7 @@ jobs:
       testplan: MyHeartCounts Unit Tests
       resultBundle: MHC-App-UnitTests.xcresult
       artifactname: MHC-App-UnitTests.xcresult
-  
+
   mhc_app_ui_test_build:
     name: App UI Tests (Build)
     runs-on: [macOS, self-hosted]
