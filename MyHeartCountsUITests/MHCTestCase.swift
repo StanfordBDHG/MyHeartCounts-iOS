@@ -184,7 +184,7 @@ class MHCTestCase: XCTestCase, Sendable {
             likelyHasUndecidedPermissions = false
         }
         if !skipGoingToHomeTab && !(testEnvironmentConfig == .init(resetExistingData: true, loginAndEnroll: .skip)) {
-            XCTAssert(app.tabBars.element.waitForExistence(timeout: 10))
+            XCTAssert(waitForRootLevelTabBar(timeout: 60))
             goToTab(.home)
             XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
             XCTAssert(app.staticTexts["Welcome to My Heart Counts"].exists)
@@ -195,6 +195,25 @@ class MHCTestCase: XCTestCase, Sendable {
                 2
             )
         }
+    }
+    
+    
+    /// Waits for the app to reach its root-level tab bar, answering permission prompts for as long as it waits.
+    ///
+    /// The app requests notification and HealthKit access while it sets up the test environment, and how long that
+    /// takes depends on the machine the tests run on. A prompt that arrives after the fixed budget above is never
+    /// answered, and since it covers the app the tab bar can then never appear.
+    private func waitForRootLevelTabBar(timeout: TimeInterval) -> Bool {
+        let tabBar = app.tabBars.element
+        let deadline = Date.now.addingTimeInterval(timeout)
+        repeat {
+            if tabBar.waitForExistence(timeout: 1) {
+                return true
+            }
+            app.confirmNotificationAuthorization(timeout: 0)
+            app.handleHealthKitAuthorization(timeout: 0)
+        } while Date.now < deadline
+        return tabBar.exists
     }
     
     
