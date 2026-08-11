@@ -335,7 +335,7 @@ SPDX-License-Identifier: MIT
 | Step Count                | HHD | Stats doc (`/users/{uid}/stats/steps`) |
 | Sleep Stats               | HHD | Stats doc (`/users/{uid}/stats/sleep`) |
 | Diet                      | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeDietMEPAScore/` |
-| Diet                      | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeNicotineExposure/` |
+| Nicotine Exposure         | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeNicotineExposure/` |
 | Mental Well Being         | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeWHO5Score/` |
 | Blood Pressure            | HHD | Stats doc (`/users/{uid}/stats/blood-pressure`) |
 | LDL cholesterol           | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodLipidMeasurement/`) |
@@ -397,7 +397,7 @@ Constraints:
 
 In this case, the document is effectively simply a list of individual samples.
 
-Example: exercise minutes stats, at `/users/{uid}/stats/exercise-minutes`
+Example: sleep stats, at `/users/{uid}/stats/sleep`
 
 ```jsonc
 {
@@ -405,9 +405,12 @@ Example: exercise minutes stats, at `/users/{uid}/stats/exercise-minutes`
   "metric": "exercise-minutes",
   "data-raw": {
     "com.apple.HealthKit": [
-      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:55:00-07:00", "endDate": "2026-08-10T05:56:00-07:00" },
-      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:56:00-07:00", "endDate": "2026-08-10T05:57:00-07:00" },
+      { "value": 432, "unit": "min", "startDate": "2026-08-08T23:05:00-07:00", "endDate": "2026-08-09T06:17:00-07:00" },
+      { "value": 444, "unit": "min", "startDate": "2026-08-09T22:30:00-07:00", "endDate": "2026-08-10T05:54:00-07:00" },
       // additional samples
+    ],
+    "fitbit": [
+      // ...
     ]
   }
 }
@@ -416,19 +419,36 @@ Example: exercise minutes stats, at `/users/{uid}/stats/exercise-minutes`
 
 #### Cumulative metric stats document
 
-Example: step count stats document
+In the case of cumulative metrics (e.g., step count, exercise minutes, etc)
 
+Example: step count stats document, at `/users/{uid}/stats/steps`
 ```jsonc
 {
   "version": 0,
   "metric": "stepCount",
-  "data-raw": {
+  "data-com": {
     "com.apple.HealthKit": [
       { "value": 123, "unit": "count", "startDate": "2026-08-10T14:08:49-07:00", "endDate": "2026-08-10T14:12:52-07:00" },
       // additional samples
     ],
     "fitbit": [
       { "value": 125, "unit": "count", "startDate": "2026-08-10T14:05:00-07:00", "endDate": "2026-08-10T14:10:00-07:00" },
+      // additional samples
+    ]
+  }
+}
+```
+
+
+Example: exercise minutes stats, at `/users/{uid}/stats/exercise-time`
+```jsonc
+{
+  "version": 0,
+  "metric": "exercise-minutes",
+  "data-raw": {
+    "com.apple.HealthKit": [
+      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:55:00-07:00", "endDate": "2026-08-10T05:56:00-07:00" },
+      { "value": 1, "unit": "min", "startDate": "2026-08-10T05:56:00-07:00", "endDate": "2026-08-10T05:57:00-07:00" },
       // additional samples
     ]
   }
