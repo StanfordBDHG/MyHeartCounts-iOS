@@ -34,9 +34,10 @@ jobs:
       testplan: MyHeartCounts Unit Tests
       resultBundle: MHC-App-UnitTests.xcresult
       artifactname: MHC-App-UnitTests.xcresult
-  mhc_app_ui_tests:
-    name: App UI Tests
-    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild-or-fastlane.yml@v0.5
+  
+  mhc_app_ui_test_build:
+    name: App UI Tests (Build)
+    runs-on: [macOS, self-hosted]
     permissions:
       contents: read
     outputs:
