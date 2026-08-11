@@ -21,9 +21,9 @@ coverage:
 comment: false
 
 ignore:
-- ^MyHeartCountsUITests.*
-- ^MyHeartCountsTests.*
-- "MyHeartCounts/SensorKit/**"
-- "MyHeartCounts/Utils/Debug Stuff/**"
-- "MyHeartCountsShared/MyHeartCountsShared/PPGSample+SensorKit.swift"
-- "MyHeartCountsShared/Tests/**"
+  - ^MyHeartCountsUITests.*
+  - ^MyHeartCountsTests.*
+  - "MyHeartCounts/SensorKit/**"
+  - "MyHeartCounts/Utils/Debug Stuff/**"
+  - "MyHeartCountsShared/MyHeartCountsShared/PPGSample+SensorKit.swift"
+  - "MyHeartCountsShared/Tests/**"
