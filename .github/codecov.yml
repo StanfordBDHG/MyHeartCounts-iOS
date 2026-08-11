@@ -6,28 +6,20 @@
 # SPDX-License-Identifier: MIT
 #
 
-codecov:
-  branch: main
-  require_ci_to_pass: true
-comment:
-  behavior: default
-  layout: reach,diff,flags,files,footer
-  require_changes: false
 coverage:
-  precision: 2
-  range:
-  - 70.0
-  - 90.0
-  round: up
   status:
-    patch:
-      default:
-        target: auto
-        threshold: 5.0
+    # Never let overall coverage slip; the project is at 70.76% today.
     project:
       default:
         target: auto
-        threshold: 5.0
+        threshold: 0.5%
+    # New code is held above the current project average so coverage climbs.
+    patch:
+      default:
+        target: 80%
+
+comment: false
+
 ignore:
 - ^MyHeartCountsUITests.*
 - ^MyHeartCountsTests.*
@@ -35,10 +27,3 @@ ignore:
 - "MyHeartCounts/Utils/Debug Stuff/**"
 - "MyHeartCountsShared/MyHeartCountsShared/PPGSample+SensorKit.swift"
 - "MyHeartCountsShared/Tests/**"
-parsers:
-  gcov:
-    branch_detection:
-      conditional: true
-      loop: true
-      macro: false
-      method: false
