@@ -57,7 +57,8 @@ extension MHCSensorSampleUploadStrategy {
             // for anything above that, we set the size to nil.
             size: Int32(exactly: size).map { FHIRPrimitive(FHIRUnsignedInteger($0)) },
             // NOTE: we use a path relative to this user's storage directory here!
-            url: FHIRExtensionURL(ManagedFileUpload.Category(sensor).firebasePath).appending(component: url.lastPathComponent).r4
+//            url: FHIRExtensionURL(ManagedFileUpload.Category(sensor).firebasePath).appending(component: url.lastPathComponent).r4
+            url: ManagedFileUpload.Category(sensor).firebasePath.appending("/\(url.lastPathComponent)").asFHIRURIPrimitive()
         )
         let reference = DocumentReference(
             content: [.init(attachment: attachment)],
