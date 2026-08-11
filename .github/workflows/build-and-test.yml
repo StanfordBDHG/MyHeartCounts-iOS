@@ -1,5 +1,5 @@
 #
-# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+# This source file is part of the My Heart Counts iOS open-source project
 #
 # SPDX-FileCopyrightText: 2025 Stanford University and the project authors (see CONTRIBUTORS.md)
 #
@@ -25,7 +25,7 @@ env:
 jobs:
   mhc_app_unit_tests:
     name: App Unit Tests
-    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.3
+    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.5
     permissions:
       contents: read
     with:
@@ -34,10 +34,9 @@ jobs:
       testplan: MyHeartCounts Unit Tests
       resultBundle: MHC-App-UnitTests.xcresult
       artifactname: MHC-App-UnitTests.xcresult
-  
-  mhc_app_ui_test_build:
-    name: App UI Tests (Build)
-    runs-on: [macOS, self-hosted]
+  mhc_app_ui_tests:
+    name: App UI Tests
+    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild-or-fastlane.yml@v0.5
     permissions:
       contents: read
     outputs:
@@ -194,9 +193,22 @@ jobs:
           SHARD_RESULT: ${{ needs.mhc_app_ui_test_run.result }}
         run: test "$SHARD_RESULT" = "success"
 
+  # mhc_app_ui_tests:
+  #   name: App UI Tests
+  #   uses: SchmiedmayerLab/.github/.github/workflows/firebase-emulators-exec.yml@v0.5
+  #   permissions:
+  #     contents: read
+  #   with:
+  #     runs_on_labels: '["macOS", "self-hosted"]'
+  #     path: MyHeartCounts-Firebase
+  #     checkout_submodules: true
+  #     artifact: ../MHC-App-UITests.xcresult
+  #     command: npm run prepare && cd .. && fastlane uitest
+  #   secrets:
+  #     GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
   mhc_utils_unit_tests:
     name: Utils Unit Tests (${{ matrix.platform.name }} ${{ matrix.config }})
-    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.3
+    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.5
     permissions:
       contents: read
     strategy:
@@ -218,7 +230,7 @@ jobs:
       artifactname: ${{ format('MHC-Shared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   mhc_utils_unit_tests_linux:
     name: Utils Unit Tests (Linux ${{ matrix.config }})
-    uses: SchmiedmayerLab/.github/.github/workflows/swift-test.yml@v0.3
+    uses: SchmiedmayerLab/.github/.github/workflows/swift-test.yml@v0.5
     permissions:
       contents: read
     strategy:
@@ -233,7 +245,7 @@ jobs:
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [mhc_app_unit_tests, mhc_app_ui_tests, mhc_utils_unit_tests, mhc_utils_unit_tests_linux]
-    uses: SchmiedmayerLab/.github/.github/workflows/coverage.yml@v0.3
+    uses: SchmiedmayerLab/.github/.github/workflows/coverage.yml@v0.5
     permissions:
       actions: read
       contents: read
