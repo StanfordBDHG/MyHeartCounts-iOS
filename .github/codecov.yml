@@ -1,0 +1,29 @@
+#
+# This source file is part of the My Heart Counts iOS open-source project
+#
+# SPDX-FileCopyrightText: 2023 Stanford University
+#
+# SPDX-License-Identifier: MIT
+#
+
+coverage:
+  status:
+    # Never let overall coverage slip; the project is at 70.76% today.
+    project:
+      default:
+        target: auto
+        threshold: 0.5%
+    # New code is held above the current project average so coverage climbs.
+    patch:
+      default:
+        target: 80%
+
+comment: false
+
+ignore:
+  - ^MyHeartCountsUITests.*
+  - ^MyHeartCountsTests.*
+  - "MyHeartCounts/SensorKit/**"
+  - "MyHeartCounts/Utils/Debug Stuff/**"
+  - "MyHeartCountsShared/MyHeartCountsShared/PPGSample+SensorKit.swift"
+  - "MyHeartCountsShared/Tests/**"

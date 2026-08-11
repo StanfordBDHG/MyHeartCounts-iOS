@@ -1,14 +1,19 @@
 <!--
 
-This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+This source file is part of the My Heart Counts iOS open-source project
 
-SPDX-FileCopyrightText: 2025 Stanford University
+SPDX-FileCopyrightText: 2025 Stanford University and the project authors (see CONTRIBUTORS.md)
 
 SPDX-License-Identifier: MIT
 
 -->
 
 # My Heart Counts
+
+[![Build and Test](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/build-and-test.yml)
+[![Deployment](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/deployment.yml/badge.svg)](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/actions/workflows/deployment.yml)
+[![REUSE status](https://api.reuse.software/badge/github.com/SchmiedmayerLab/MyHeartCounts-iOS)](https://api.reuse.software/info/github.com/SchmiedmayerLab/MyHeartCounts-iOS)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 
 [My Heart Counts (MHC) application](https://myheartcounts.stanford.edu) is a [Spezi](https://github.com/StanfordSpezi)-based large-scale cardiovascular study application, developed at Stanford University.
 
@@ -116,15 +121,21 @@ In order to run and develop the My Heart Counts app locally, you'll need the fol
 > [!NOTE]  
 > Please make sure not to commit and push any of the SensorKit, Code Signing, and run argument changes listed above; these changes are only required for local development.
 
-
 ## Contributing
 
-Contributions to this project are welcome. Please make sure to read the [contribution guidelines](https://github.com/SchmiedmayerLab/.github/blob/main/CONTRIBUTING.md) and the [contributor covenant code of conduct](https://github.com/SchmiedmayerLab/.github/blob/main/CODE_OF_CONDUCT.md) first.
-
+Contributions to this project are welcome. Please make sure to read the [contribution guidelines](https://github.com/SchmiedmayerLab/.github/blob/main/CONTRIBUTING.md) and the [contributor covenant code of conduct](https://github.com/SchmiedmayerLab/.github/blob/main/CODE_OF_CONDUCT.md) first. You can find a list of contributors in the [CONTRIBUTORS.md](CONTRIBUTORS.md) file.
 
 ## License
 
-This project is licensed under the MIT License. See [Licenses](https://github.com/SchmiedmayerLab/MyHeartCounts-iOS/tree/main/LICENSES) for more information.
+This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for more information.
 
-![Stanford and Stanford Medicine logos](https://raw.githubusercontent.com/SchmiedmayerLab/.github/main/assets/stanford-footer-light.png#gh-light-mode-only)
-![Stanford and Stanford Medicine logos](https://raw.githubusercontent.com/SchmiedmayerLab/.github/main/assets/stanford-footer-dark.png#gh-dark-mode-only)
+## Citation
+
+If you use this software, please cite it using the metadata in [CITATION.cff](CITATION.cff), which GitHub surfaces through the [*Cite this repository*](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files) button.
+
+## Our Research
+
+For more information, visit the [Schmiedmayer Lab GitHub organization](https://github.com/SchmiedmayerLab).
+
+![Schmiedmayer Lab](https://raw.githubusercontent.com/SchmiedmayerLab/.github/main/assets/footer-light.png#gh-light-mode-only)
+![Schmiedmayer Lab](https://raw.githubusercontent.com/SchmiedmayerLab/.github/main/assets/footer-dark.png#gh-dark-mode-only)
