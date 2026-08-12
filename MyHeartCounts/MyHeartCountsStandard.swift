@@ -255,7 +255,7 @@ extension MyHeartCountsStandard {
 
 
 extension MyHeartCountsStandard {
-    func uploadSensorKitFile(at url: URL, for sensor: Sensor<some Any>) {
-        managedFileUpload.scheduleForUpload(url, category: ManagedFileUpload.Category(sensor))
+    func uploadSensorKitFile(at url: URL, for sensor: Sensor<some Any>) async throws {
+        try await managedFileUpload.scheduleForUpload(url, category: ManagedFileUpload.Category(sensor))
     }
 }

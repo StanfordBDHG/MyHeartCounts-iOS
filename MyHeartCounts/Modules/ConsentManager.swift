@@ -150,9 +150,6 @@ extension ConsentManager {
               let docVersion = documentMetadata.version else {
             throw UnableToDetermineShouldSignStatusError()
         }
-//        print("LSV", accountDetails)
-        print("LSV", accountDetails.lastSignedConsentVersion)
-        print("LSV", accountDetails.lastSignedConsentVersion.flatMap(Version.init))
         guard let lastSignedVersion = accountDetails.lastSignedConsentVersion.flatMap(Version.init) else {
             return .yes(.neverSigned)
         }

@@ -84,7 +84,18 @@ final class HistoricalHealthSamplesExportManager: Module, EnvironmentAccessible,
                 retryFailedBatches: true,
                 concurrencyLevel: .limit(ProcessInfo.isProDevice ? 4 : 2)
             )
-            managedFileUpload.scheduleForUpload(results.compactMap { $0 }, category: .historicalHealthUpload)
+            let exportedFileUrls = results.compactMap { $0 }
+            Task { [managedFileUpload, logger] in
+                for await url in exportedFileUrls {
+                    do {
+                        try await managedFileUpload.scheduleForUpload(url, category: .historicalHealthUpload)
+                    } catch {
+                        // NOTE: the exporter has already marked this file's batch as completed and will not re-export it;
+                        // a file we fail to schedule here is lost unless the session gets fully reset.
+                        logger.error("Unable to schedule exported file for upload; this batch's data will be missing: \(error)")
+                    }
+                }
+            }
             return true
         } catch {
             logger.error("Error starting session: \(error)")

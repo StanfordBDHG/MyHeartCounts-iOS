@@ -190,7 +190,7 @@ extension MyHeartCountsStandard {
             let url = URL.temporaryDirectory.appending(path: "\(sampleTypeIdentifier)_\(UUID().uuidString).json.zstd", directoryHint: .notDirectory)
             try (consume compressed).write(to: url)
             _Concurrency.Task {
-                try await managedFileUpload.upload(url, category: .liveHealthUpload)
+                try await managedFileUpload.scheduleForUpload(url, category: .liveHealthUpload)
                 await triggerDidUploadNotification()
             }
         case .directFirestore:

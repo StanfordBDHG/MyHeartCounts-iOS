@@ -96,7 +96,7 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
                     )
                     try (consume compressed).write(to: url)
                     Task {
-                        try await self.managedFileUpload.upload(url, category: .liveHealthUpload)
+                        try await self.managedFileUpload.scheduleForUpload(url, category: .liveHealthUpload)
                     }
                     await self.deleteDrainBatch(batch)
                 }
@@ -117,7 +117,7 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
                     )
                     try (consume csvData).compressed(using: Zstd.self).write(to: url)
                     Task {
-                        try await self.managedFileUpload.upload(url, category: .healthDeletions)
+                        try await self.managedFileUpload.scheduleForUpload(url, category: .healthDeletions)
                     }
                     await self.deleteDrainBatch(batch)
                 }

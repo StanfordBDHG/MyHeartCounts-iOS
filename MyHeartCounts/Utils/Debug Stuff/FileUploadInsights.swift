@@ -14,7 +14,7 @@ import SwiftUI
 struct FileUploadInsights: View {
     @Environment(ManagedFileUpload.self)
     private var managedFileUpload
-    
+
     private var inactiveCategories: [ManagedFileUpload.Category] {
         managedFileUpload.categories.filter { category in
             if let progress = managedFileUpload.progressByCategory[category] {
@@ -34,7 +34,7 @@ struct FileUploadInsights: View {
                     } header: {
                         Text(category.title)
                     } footer: {
-                        if let size = try? FileManager.default.directorySize(at: category.stagingDirUrl) {
+                        if let size = managedFileUpload.totalPendingFileSize(for: category) {
                             let size = size.formatted(.byteCount(style: .file))
                             Text("Total Size: \(size)" as String)
                         }
