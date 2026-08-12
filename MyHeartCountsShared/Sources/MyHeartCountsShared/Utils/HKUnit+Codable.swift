@@ -8,9 +8,7 @@
 
 #if canImport(HealthKit)
 
-public import Foundation
 public import class HealthKit.HKUnit
-public import SpeziHealthKit
 private import SpeziFoundation
 
 
@@ -41,6 +39,8 @@ extension _HKUnitCodableExtensionProtocol {
 
 extension HKUnit: _HKUnitCodableExtensionProtocol, @retroactive Codable {
     public static func parse(_ unitString: String) -> HKUnit? {
+        // ideally this would be a failing convenience init, but the language isn't able to express that.
+        // (we could define it as a category in ObjC, but this is good enough...)
         try? catchingNSException {
             HKUnit(from: unitString)
         }

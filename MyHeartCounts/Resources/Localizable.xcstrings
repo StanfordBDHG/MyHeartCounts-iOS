@@ -1361,6 +1361,12 @@
         }
       }
     },
+    "Blood Glucose (A1c)" : {
+
+    },
+    "Blood Glucose (Fasting)" : {
+
+    },
     "Blood Lipids" : {
       "localizations" : {
         "en" : {

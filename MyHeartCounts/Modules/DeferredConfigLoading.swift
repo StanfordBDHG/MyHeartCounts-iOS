@@ -281,6 +281,7 @@ enum DeferredConfigLoading {
                     FirebaseFunctions()
                 }
                 baseModules(preferredLocale: preferredLocale)
+                HealthKitStatsCalculator()
                 EnvironmentTracking()
                 LoadFirebaseTracking() // intentionally the very last thing!!!
             }
