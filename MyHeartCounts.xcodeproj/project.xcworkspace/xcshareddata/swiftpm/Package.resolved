@@ -1,5 +1,5 @@
 {
-  "originHash" : "c59e6754f6c5bfac19435d778ead45a30ea3306cb16443c5ea476ad9137f903e",
+  "originHash" : "0cf39e526cda782724dc79105d90a5faaac202e6d5dd23c78aa804a09ac8061a",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -31,9 +31,9 @@
     {
       "identity" : "fhirmodels",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/FHIRModels.git",
+      "location" : "https://github.com/SchmiedmayerLab/FHIRModels.git",
       "state" : {
-        "revision" : "3fdead0f6459d7d3480d12c514ae27da31974a41",
+        "revision" : "c8392ba94a1a71a3651104c0f1f717361e78903b",
         "version" : "0.9.3"
       }
     },
@@ -184,10 +184,10 @@
     {
       "identity" : "researchkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordBDHG/ResearchKit.git",
+      "location" : "https://github.com/SchmiedmayerLab/ResearchKit.git",
       "state" : {
-        "revision" : "d1d523e9e738b7ad9c97ca6101aada1c041ea9da",
-        "version" : "3.1.4"
+        "revision" : "b5d6883f0b3479480601b7e0649b377a35eb3eaa",
+        "version" : "3.1.5"
       }
     },
     {
@@ -268,6 +268,15 @@
       "state" : {
         "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
         "version" : "1.6.0"
+      }
+    },
+    {
+      "identity" : "swift-concurrency-extras",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
+      "state" : {
+        "revision" : "5fa253428866f2360c3754e88537f700ed2656b5",
+        "version" : "1.4.1"
       }
     },
     {
@@ -376,6 +385,24 @@
       "state" : {
         "revision" : "3292bab28e6e92000161348003fdef8edc4e582d",
         "version" : "0.65.0"
+      }
+    },
+    {
+      "identity" : "swiftui-math",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/swiftui-math",
+      "state" : {
+        "revision" : "0b5c2cfaaec8d6193db206f675048eeb5ce95f71",
+        "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "textual",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/textual.git",
+      "state" : {
+        "revision" : "5b06b811c0f5313b6b84bbef98c635a630638c38",
+        "version" : "0.3.1"
       }
     },
     {
