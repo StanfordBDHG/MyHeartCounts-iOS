@@ -89,7 +89,7 @@ extension QuestionnaireDataExtractor.Rule {
             case .quantity(let quantity):
                 guard let value = quantity.value?.value?.decimal.doubleValue,
                       let unit = quantity.unit?.value?.string,
-                      let unit = HKUnit.parse(unit) else {
+                      let unit = HKUnit.parse(unit, resolveFHIRUnits: true) else {
                     return nil
                 }
                 let date = (try? extractor.response.authored?.value?.asNSDate()) ?? .now
