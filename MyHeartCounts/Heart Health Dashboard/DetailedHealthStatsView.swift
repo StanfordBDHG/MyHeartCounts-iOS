@@ -446,12 +446,12 @@ private struct BrowseFirestoreSamplesView: View {
             List(samples) { sample in
                 NavigationLink {
                     Form {
-                        LabeledContent { Text(verbatim: "id") } label: { Text(sample.id.uuidString) }
-                        LabeledContent { Text(verbatim: "sampleType") } label: { Text(sample.sampleType.displayTitle) }
-                        LabeledContent { Text(verbatim: "unit") } label: { Text(sample.unit.unitString) }
-                        LabeledContent { Text(verbatim: "value") } label: { Text(sample.value, format: .number) }
-                        LabeledContent { Text(verbatim: "startDate") } label: { Text(sample.startDate, format: .dateTime) }
-                        LabeledContent { Text(verbatim: "endDate") } label: { Text(sample.endDate, format: .dateTime) }
+                        makeRow("id", value: sample.id.uuidString)
+                        makeRow("sampleType", value: sample.sampleType.displayTitle)
+                        makeRow("unit", value: sample.sampleType.canonicalUnit.unitString)
+                        makeRow("value", value: sample.value(as: sample.sampleType.canonicalUnit), format: .number)
+                        makeRow("startDate", value: sample.startDate, format: .dateTime)
+                        makeRow("endDate", value: sample.endDate, format: .dateTime)
                     }
                 } label: {
                     HStack {
@@ -469,5 +469,21 @@ private struct BrowseFirestoreSamplesView: View {
     init(sampleType: CustomQuantitySampleType) {
         self.sampleType = sampleType
         _samples = .init(sampleType: sampleType, timeRange: .ever)
+    }
+    
+    private func makeRow(_ title: String, value: some StringProtocol) -> some View {
+        LabeledContent {
+            Text(title)
+        } label: {
+            Text(value)
+        }
+    }
+    
+    private func makeRow<I: Equatable, F: FormatStyle<I, String>>(_ title: String, value: I, format: F) -> some View {
+        LabeledContent {
+            Text(title)
+        } label: {
+            Text(value, format: format)
+        }
     }
 }

@@ -67,7 +67,7 @@ extension HealthDashboardQuantityLabel {
             self.timeRange = timeRange
         }
         
-        init(value: Double, sampleType: MHCQuantitySampleType, timeRange: Range<Date>) {
+        init(value: Double, unit: HKUnit, sampleType: MHCQuantitySampleType, timeRange: Range<Date>) {
             let valueString = switch sampleType {
             case .healthKit(.bloodOxygen):
                 String(format: "%.1f", value / 100)
@@ -75,7 +75,7 @@ extension HealthDashboardQuantityLabel {
                 String(format: "%.2f", value / 100)
             case .healthKit(.bodyMassIndex):
                 String(format: "%.1f", value)
-            case _ where sampleType.displayUnit == .count():
+            case _ where unit == .count():
                 Int(value).formatted(.number)
             default:
                 if value.isWholeNumber {
@@ -87,7 +87,7 @@ extension HealthDashboardQuantityLabel {
             self.init(
                 value: value,
                 valueString: valueString,
-                unit: sampleType.displayUnit,
+                unit: unit,
                 timeRange: timeRange
             )
         }

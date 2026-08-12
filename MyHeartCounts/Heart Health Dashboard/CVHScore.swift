@@ -121,7 +121,7 @@ extension CVHScore {
             "Most Recent Score",
             sampleType: .custom(.dietMEPAScore),
             sample: dietScores.first,
-            value: \.value,
+            value: { $0.value(as: $0.sampleType.displayUnit) },
             definition: .cvhDiet
         )
     }
@@ -154,7 +154,7 @@ extension CVHScore {
             "Most Recent Response",
             sampleType: .custom(.nicotineExposure),
             sample: nicotineExposure.first,
-            value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
+            value: { NicotineExposureCategoryValues(rawValue: Int($0.value(as: $0.sampleType.displayUnit))) },
             definition: .cvhNicotine
         )
     }
@@ -164,7 +164,7 @@ extension CVHScore {
             "Most Recent Response",
             sampleType: .custom(.mentalWellbeingScore),
             sample: mentalWellbeingScores.first,
-            value: { $0.value * 4 },
+            value: { $0.value(as: $0.sampleType.displayUnit) * 4 },
             definition: .cvhMentalWellbeing
         )
     }
@@ -254,7 +254,7 @@ extension CVHScore {
             "Most Recent Sample",
             sampleType: .custom(.bloodLipids),
             sample: bloodLipids.first,
-            value: \.value,
+            value: { $0.value(as: $0.sampleType.displayUnit) },
             definition: .cvhBloodLipids
         )
     }

@@ -53,6 +53,7 @@ struct HealthStatsChartDataPoint: Hashable, Sendable {
                 primary: { () -> Text in
                     let labelInput = HealthDashboardQuantityLabel.Input(
                         value: dataPoint.value,
+                        unit: dataSet.sampleType.displayUnit,
                         sampleType: dataSet.sampleType,
                         timeRange: dataPoint.timeRange
                     )

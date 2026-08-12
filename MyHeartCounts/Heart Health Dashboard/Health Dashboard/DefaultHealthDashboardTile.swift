@@ -158,7 +158,10 @@ private struct TileImpl: View {
                     data: samples,
                     id: \.id
                 ) { (sample: QuantitySample) in
-                    HealthStatsChartDataPoint(timeRange: sample.startDate..<sample.endDate, value: sample.value)
+                    HealthStatsChartDataPoint(
+                        timeRange: sample.startDate..<sample.endDate,
+                        value: sample.value(as: sample.sampleType.displayUnit)
+                    )
                 } makeHighlightConfig: { dataSet, dataPoint in
                     .default(for: dataPoint, in: dataSet)
                 }
@@ -177,7 +180,7 @@ private struct TileImpl: View {
     @ViewBuilder private var progressDecoration: some View {
         if style.effectiveAggregationKind(for: sampleType) == .sum, let goal {
             let currentTotal = samples.reduce(into: 0) { total, sample in
-                total += sample.value
+                total += sample.value(as: sample.sampleType.displayUnit)
             }
             let progress = goal.evaluate(HKQuantity(unit: sampleType.displayUnit, doubleValue: currentTotal), unit: sampleType.displayUnit)
             CircularProgressView(progress, lineWidth: 3) // could also use the gauge here...
@@ -249,22 +252,25 @@ private struct TileImpl: View {
     
     
     private func singleValueInput(for samples: [QuantitySample]) -> HealthDashboardQuantityLabel.Input? {
+        assert(samples.allSatisfy { $0.sampleType == sampleType })
+        let unit = sampleType.displayUnit
         switch style.effectiveAggregationKind(for: sampleType) {
         case .sum:
             if let lastSample = samples.last {
-                let total = samples.reduce(0) { $0 + $1.value }
+                let total = samples.reduce(0) { $0 + $1.value(as: unit) }
                 switch sampleType {
                 case .healthKit(let sampleType):
                     return .init(
                         value: total,
+                        unit: unit,
                         sampleType: .healthKit(sampleType),
                         timeRange: lastSample.timeRange
                     )
-                case .custom(let sampleType):
+                case .custom:
                     return .init(
                         value: total,
                         valueString: "\(total)", // ideally we'd make this look nice; depending on the SampleType
-                        unit: sampleType.displayUnit,
+                        unit: unit,
                         timeRange: lastSample.timeRange
                     )
                 }
@@ -278,15 +284,16 @@ private struct TileImpl: View {
                 switch sampleType {
                 case .healthKit(let sampleType):
                     return .init(
-                        value: lastSample.value,
+                        value: lastSample.value(as: unit),
+                        unit: unit,
                         sampleType: .healthKit(sampleType),
                         timeRange: lastSample.timeRange
                     )
                 case .custom:
                     return .init(
-                        value: lastSample.value,
-                        valueString: "\(lastSample.value)",
-                        unit: lastSample.unit,
+                        value: lastSample.value(as: unit),
+                        valueString: "\(lastSample.value(as: unit))",
+                        unit: unit,
                         timeRange: lastSample.timeRange
                     )
                 }
