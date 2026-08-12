@@ -1,5 +1,5 @@
 {
-  "originHash" : "aec4e44cb485ad45250e1833612803e1a2ec620c20b2a1e7188353ff8c7e378d",
+  "originHash" : "12abef18b5f8356f27c4e4108bfa2552b584e59a0801f262422d7100d33204f8",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -128,6 +128,15 @@
       }
     },
     {
+      "identity" : "myheartcounts-studydefinitions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SchmiedmayerLab/MyHeartCounts-StudyDefinitions.git",
+      "state" : {
+        "branch" : "feature/zstd-study-bundle",
+        "revision" : "ef084bea0f31332571c6743d120713ac455cc101"
+      }
+    },
+    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",
@@ -188,6 +197,14 @@
       "state" : {
         "revision" : "e01b3d4f861412f8dcee8d93c417d2c2b0cdfd77",
         "version" : "7.0.0"
+      }
+    },
+    {
+      "identity" : "spezi",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SchmiedmayerLab/Spezi.git",
+      "state" : {
+        "revision" : "4a1240eff42fca1c94a5f495cfeb9b7e83db26ed"
       }
     },
     {

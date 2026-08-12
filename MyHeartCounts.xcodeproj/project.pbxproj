@@ -1306,8 +1306,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SchmiedmayerLab/Spezi.git";
 			requirement = {
-				branch = "feature/study-bundle-archive";
-				kind = branch;
+				kind = revision;
+				revision = 4a1240eff42fca1c94a5f495cfeb9b7e83db26ed;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
