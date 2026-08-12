@@ -198,17 +198,16 @@ extension ManagedFileUpload {
         guard let modelContext else {
             return
         }
-        var pendingMoves: [(srcUrl: URL, upload: ScheduledUpload)] = []
-        for category in categories {
+        let pendingMoves: [(srcUrl: URL, upload: ScheduledUpload)] = categories.reduce(into: []) { result, category in
             // construct the URL exactly the way the old module did, so that we look for the files where it put them.
             let legacyDir = Self.directory.appending(component: category.id, directoryHint: .isDirectory)
             guard fileManager.isDirectory(at: legacyDir) else {
-                continue
+                return
             }
             for url in (try? fileManager.contents(of: legacyDir)) ?? [] where !fileManager.isDirectory(at: url) {
                 let upload = ScheduledUpload(category: category, filename: url.lastPathComponent, metadata: [:])
                 modelContext.insert(upload)
-                pendingMoves.append((url, upload))
+                result.append((url, upload))
             }
         }
         if !pendingMoves.isEmpty {
@@ -322,9 +321,13 @@ extension ManagedFileUpload {
     
     /// The total on-disk size, in bytes, of all files pending upload within the specified category.
     func totalPendingFileSize(for category: Category) -> Int64? {
+        guard let modelContext else {
+            return nil
+        }
         let categoryId = category.id
-        guard let modelContext,
-              let uploads = try? modelContext.fetch(FetchDescriptor<ScheduledUpload>(predicate: #Predicate { $0.categoryId == categoryId })) else {
+        guard let uploads = try? modelContext.fetch(
+            FetchDescriptor<ScheduledUpload>(predicate: #Predicate { $0.categoryId == categoryId })
+        ) else {
             return nil
         }
         var total: Int64 = 0
@@ -430,7 +433,7 @@ extension ManagedFileUpload {
     }
     
     @concurrent
-    private func doUpload(_ uploadId: PersistentIdentifier) async throws(UploadError) { // swiftlint:disable:this function_body_length
+    private func doUpload(_ uploadId: PersistentIdentifier) async throws(UploadError) {
         guard await claimUpload(uploadId), let modelContainer else {
             return
         }
