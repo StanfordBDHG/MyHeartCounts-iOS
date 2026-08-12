@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2026 Stanford University
 //
@@ -132,6 +132,7 @@ final class TimedWalkTestTests: MHCTestCase {
         XCTAssert(app.staticTexts["Your 6-Minute Walk Test is in progress."].waitForExistence(timeout: 5))
         app.terminate()
         try launchAppAndEnrollIntoStudy(
+            testEnvironmentConfig: .init(resetExistingData: false, loginAndEnroll: .skip),
             skipGoingToHomeTab: true
         )
         XCTAssert(app.staticTexts["Your 6-Minute Walk Test is in progress."].waitForExistence(timeout: 5))

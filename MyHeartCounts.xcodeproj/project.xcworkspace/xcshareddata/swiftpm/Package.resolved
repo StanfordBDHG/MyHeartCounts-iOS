@@ -1,5 +1,5 @@
 {
-  "originHash" : "b39f9cf739aa1cf7193f7f9fbe1f935fc550fdcf54e4a7c4fdcfc3f14a737d6b",
+  "originHash" : "5952e07ba70403623a96d47cd4a1a7faf9883f3f193a5699329fff6329a698f0",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -31,10 +31,10 @@
     {
       "identity" : "fhirmodels",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/FHIRModels.git",
+      "location" : "https://github.com/SchmiedmayerLab/FHIRModels.git",
       "state" : {
-        "revision" : "a05392269b630a8d661bda720d149fee2f0257e2",
-        "version" : "0.8.0"
+        "revision" : "c8392ba94a1a71a3651104c0f1f717361e78903b",
+        "version" : "0.9.3"
       }
     },
     {
@@ -110,15 +110,6 @@
       }
     },
     {
-      "identity" : "gzipswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/1024jp/GzipSwift",
-      "state" : {
-        "revision" : "731037f6cc2be2ec01562f6597c1d0aa3fe6fd05",
-        "version" : "6.0.1"
-      }
-    },
-    {
       "identity" : "interop-ios-for-google-sdks",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
@@ -137,30 +128,12 @@
       }
     },
     {
-      "identity" : "mlx-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ml-explore/mlx-swift.git",
-      "state" : {
-        "revision" : "072b684acaae80b6a463abab3a103732f33774bf",
-        "version" : "0.29.1"
-      }
-    },
-    {
-      "identity" : "mlx-swift-examples",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ml-explore/mlx-swift-examples.git",
-      "state" : {
-        "revision" : "9bff95ca5f0b9e8c021acc4d71a2bbe4a7441631",
-        "version" : "2.29.1"
-      }
-    },
-    {
       "identity" : "myheartcounts-studydefinitions",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "93cc43abca414a1b1675b2829044eb410052212b",
-        "version" : "0.2.3"
+        "revision" : "44a658790d03b74a570e40eadba06ae5fa435b60",
+        "version" : "0.2.4"
       }
     },
     {
@@ -193,10 +166,10 @@
     {
       "identity" : "phonenumberkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/marmelroy/PhoneNumberKit.git",
+      "location" : "https://github.com/PhoneNumberKit/PhoneNumberKit.git",
       "state" : {
-        "revision" : "169ab10234347fb19b37441f2867ace896a284b0",
-        "version" : "4.3.0"
+        "revision" : "e18a029dbada1d8eb32e3f81a4eb72eba539ff75",
+        "version" : "5.0.6"
       }
     },
     {
@@ -211,10 +184,10 @@
     {
       "identity" : "researchkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordBDHG/ResearchKit.git",
+      "location" : "https://github.com/SchmiedmayerLab/ResearchKit.git",
       "state" : {
-        "revision" : "d1d523e9e738b7ad9c97ca6101aada1c041ea9da",
-        "version" : "3.1.4"
+        "revision" : "b5d6883f0b3479480601b7e0649b377a35eb3eaa",
+        "version" : "3.1.5"
       }
     },
     {
@@ -231,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/Spezi.git",
       "state" : {
-        "revision" : "5c27bec94adc52737574faaee79bcb5db3ed264d",
-        "version" : "0.1.6"
+        "revision" : "bf642cea187249cbcac3f7c3897cdbbf1156287b",
+        "version" : "0.2.0"
       }
     },
     {
@@ -317,21 +290,12 @@
       }
     },
     {
-      "identity" : "swift-jinja",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/huggingface/swift-jinja.git",
-      "state" : {
-        "revision" : "7d0b8880ef8e567dd4e0089f8b99fb354129017c",
-        "version" : "2.4.2"
-      }
-    },
-    {
       "identity" : "swift-log",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "a878e7f8f46cfc0e1125e565b5c08e7d5272dc9a",
-        "version" : "1.14.0"
+        "revision" : "3ffafb9722d5d918c614feb496c8789a3b59d222",
+        "version" : "1.15.0"
       }
     },
     {
@@ -416,15 +380,6 @@
       }
     },
     {
-      "identity" : "swift-transformers",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/huggingface/swift-transformers.git",
-      "state" : {
-        "revision" : "a2e184dddb4757bc943e77fbe99ac6786c53f0b2",
-        "version" : "1.0.0"
-      }
-    },
-    {
       "identity" : "swiftlintplugins",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SimplyDanny/SwiftLintPlugins.git",
@@ -452,15 +407,6 @@
       }
     },
     {
-      "identity" : "threadlocal",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SchmiedmayerLab/ThreadLocal.git",
-      "state" : {
-        "revision" : "7295e0c1042bb01e72db75b073ebdacb2e50fd41",
-        "version" : "0.1.4"
-      }
-    },
-    {
       "identity" : "tppdf",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/techprimate/TPPDF.git",
@@ -481,7 +427,7 @@
     {
       "identity" : "zstd",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/StanfordBDHG/zstd.git",
+      "location" : "https://github.com/SchmiedmayerLab/zstd.git",
       "state" : {
         "revision" : "ae9f20ca2716f2605822ca375995b7d876389b64",
         "version" : "1.5.8-beta.1"

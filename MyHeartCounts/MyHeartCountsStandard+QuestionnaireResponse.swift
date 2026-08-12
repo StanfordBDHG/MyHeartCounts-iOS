@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -22,6 +22,7 @@ extension MyHeartCountsStandard {
         for questionnaire: ModelsR4.Questionnaire
     ) async {
         // shouldn't be necessary, but we had some issues with these not being properly set
+        var response = response
         response.questionnaire = questionnaire.url?.value?.url.absoluteString.asFHIRCanonicalPrimitive()
         let logger = await self.logger
         let id = response.identifier?.value?.value?.string ?? UUID().uuidString

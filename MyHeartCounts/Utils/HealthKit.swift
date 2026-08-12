@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -8,8 +8,9 @@
 
 import Foundation
 import HealthKit
-import HealthKitOnFHIR
+import ModelsR4
 import SpeziFoundation
+import SpeziHealthKitFHIR
 
 
 extension HKUnit {
@@ -27,12 +28,12 @@ extension HKUnit {
 // MARK: FHIR
 extension HKUnit {
     private static let defaultFHIRUnitsMapping: [String: Set<HKUnit>] = {
-        HKSampleMapping.default.quantitySampleMapping.reduce(into: [:]) { acc, entry in
+        SampleTypesFHIRMapping.default.quantityTypesMapping.reduce(into: [:]) { acc, entry in
             let mappedUnit = entry.value.unit
-            if let code = mappedUnit.code {
-                acc[code, default: []].insert(mappedUnit.hkunit)
+            if let code = mappedUnit.code?.value?.string {
+                acc[code, default: []].insert(mappedUnit.hkUnit)
             }
-            acc[mappedUnit.unit, default: []].insert(mappedUnit.hkunit)
+            acc[mappedUnit.unit, default: []].insert(mappedUnit.hkUnit)
         }
     }()
     

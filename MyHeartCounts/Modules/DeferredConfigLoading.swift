@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -29,6 +29,7 @@ import SpeziLocalization
 import SpeziSensorKit
 import SpeziStudy
 import SwiftUI
+import Synchronization
 import UniformTypeIdentifiers
 
 
@@ -221,7 +222,6 @@ enum DeferredConfigLoading {
                 ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
                 firestore
                 FirestoreCacheCleanup()
-                LoadFirebaseTracking()
                 AccountConfiguration(
                     service: FirebaseAccountService(providers: [.emailAndPassword], emulatorSettings: accountEmulator),
                     storageProvider: FirestoreAccountStorage(storeIn: FirebaseConfiguration.usersCollection),
@@ -282,6 +282,7 @@ enum DeferredConfigLoading {
                 }
                 baseModules(preferredLocale: preferredLocale)
                 EnvironmentTracking()
+                LoadFirebaseTracking() // intentionally the very last thing!!!
             }
         } catch {
             logger.error("""
@@ -327,7 +328,21 @@ enum DeferredConfigLoading {
 
 
 extension Spezi {
-    @MainActor static var didLoadFirebase = false
+    fileprivate enum LoadState {
+        case loaded
+        case notLoaded(waiters: [CheckedContinuation<Void, Never>])
+    }
+    
+    fileprivate static let loadState = Mutex<LoadState>(.notLoaded(waiters: []))
+    
+    static var didLoadFirebase: Bool {
+        loadState.withLock {
+            switch $0 {
+            case .loaded: true
+            case .notLoaded: false
+            }
+        }
+    }
     
     @MainActor // IDEA maybe rename this? (here and elsewhere (it's not just firebase any more))
     static func loadFirebase(for region: Locale.Region) {
@@ -348,11 +363,41 @@ extension Spezi {
         guard !config.isEmpty else {
             return
         }
+        LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = .region(region)
         for module in config {
             self.loadModule(module)
         }
-        LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = .region(region)
         DeferredConfigLoading.logger.notice("Did load firebase")
+    }
+    
+    
+    // periphery:ignore - unused but important
+    /// Waits until firebase has been loaded.
+    ///
+    /// Suspends the caller until firebase has been loaded and configured.
+    /// If firebase is already loaded, the function returns immediately.
+    /// If firebase doesn't end up getting loaded, the function will never return.
+    static func waitForFirebaseLoaded() async {
+        guard !didLoadFirebase else {
+            // already loaded
+            return
+        }
+        await withCheckedContinuation { continuation in
+            let didLoad = Self.loadState.withLock { state in
+                switch state {
+                case .loaded:
+                    // firebase loaded in the time between the start of the function here
+                    // and the `withCheckedContinuation` body being executed
+                    return true
+                case .notLoaded(let waiters):
+                    state = .notLoaded(waiters: waiters + [continuation])
+                    return false
+                }
+            }
+            if didLoad {
+                continuation.resume()
+            }
+        }
     }
 }
 
@@ -373,7 +418,15 @@ private final class LoadFirebaseTracking: Module {
     private var studyLoader
     
     func configure() {
-        Spezi.didLoadFirebase = true
+        let waiters: [CheckedContinuation<Void, Never>] = Spezi.loadState.withLock { state in
+            switch exchange(&state, with: .loaded) {
+            case .loaded: []
+            case .notLoaded(let waiters): waiters
+            }
+        }
+        for waiter in waiters {
+            waiter.resume()
+        }
         Task {
             try await studyLoader.update()
         }
