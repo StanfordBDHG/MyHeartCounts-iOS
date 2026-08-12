@@ -1234,8 +1234,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SchmiedmayerLab/MyHeartCounts-StudyDefinitions.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.2.3;
+				branch = "feature/zstd-study-bundle";
+				kind = branch;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {
@@ -1291,7 +1291,7 @@
 			repositoryURL = "https://github.com/apple/FHIRModels.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.8.0;
+				minimumVersion = 0.9.3;
 			};
 		};
 		80BE064E2DCF3A2D00171114 /* XCRemoteSwiftPackageReference "swift-package-list" */ = {
@@ -1306,8 +1306,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SchmiedmayerLab/Spezi.git";
 			requirement = {
-				kind = exactVersion;
-				version = 0.1.6;
+				branch = "feature/study-bundle-archive";
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
