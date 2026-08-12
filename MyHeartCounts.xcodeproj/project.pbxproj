@@ -1307,7 +1307,7 @@
 			repositoryURL = "https://github.com/SchmiedmayerLab/Spezi.git";
 			requirement = {
 				kind = revision;
-				revision = 8ed550bc8c689743250cc493937686fcf6d1350c;
+				revision = b610a9a6018bf9fb431d4d483f88aead12d30eff;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
