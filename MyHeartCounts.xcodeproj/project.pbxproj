@@ -1230,8 +1230,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SchmiedmayerLab/MyHeartCounts-StudyDefinitions.git";
 			requirement = {
-				branch = "feature/zstd-study-bundle";
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.2.5;
 			};
 		};
 		805363752DB6997600D7E8A3 /* XCRemoteSwiftPackageReference "SpeziHealthKit" */ = {

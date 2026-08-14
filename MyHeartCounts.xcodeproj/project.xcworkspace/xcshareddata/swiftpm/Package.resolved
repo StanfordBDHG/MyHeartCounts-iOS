@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "branch" : "feature/zstd-study-bundle",
-        "revision" : "624e60b399f2ebdb0c9b92562abf9e97aba959c9"
+        "revision" : "06e410c9ded3727296961dc39526aa1c49905538",
+        "version" : "0.2.5"
       }
     },
     {
