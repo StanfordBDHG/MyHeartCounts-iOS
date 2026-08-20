@@ -54,7 +54,7 @@ extension QuantitySample: HealthObservation {
                 start: self.startDate,
                 end: self.endDate
             )
-            return try sample.resource(withMapping: mapping, issuedDate: issuedDate)
+            return try sample.resource(withMapping: mapping, issuedDate: issuedDate, extensions: extensions)
         case .custom(.bloodLipids):
             let code = "18262-6".asFHIRStringPrimitive() // "Cholesterol in LDL [Mass/volume] in Serum or Plasma by Direct assay"
             let system = "http://loinc.org".asFHIRURIPrimitive()
