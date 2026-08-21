@@ -29,7 +29,7 @@ SPDX-License-Identifier: MIT
 
 ### Demographics Data
 - Demographics data is collected from the user as part of the onboarding
-- The list of questions collected in the demographics (and their conditions) is defined in the google sheet
+- The list of questions collected in the demographics (and their conditions) is defined in the google sheet and implemented in the `demographicsLayout()` function
 - Responses to the demographcis fields are stored in the user document in firebase (see DemographicsAccountKeys.swift)
 
 
@@ -84,7 +84,7 @@ SPDX-License-Identifier: MIT
 ### Custom Quantity Samples
 - MHC supports data entry (via the dashboard) for quantity sample types not supported by HealthKit
   - (It also supports data entry for HealthKit-supported quantity sample types; in these cases the entered data simply gets saved into HealthKit and ptocessed via the pipeline described below)
-- Custom quantity values (i.e., blood lipids / LDL cholesterol, and A1c blood glusose) are encoded as FHIR [Observation][R4Observation]s and 
+- Custom quantity values (i.e., blood lipids / LDL cholesterol, and A1c blood glusose) are encoded as FHIR [Observation][R4Observation]s and uploaded using the same pipeline as regular HealthKit samples
 
 
 ### HealthKit
@@ -295,7 +295,7 @@ SPDX-License-Identifier: MIT
 
 
 ##### HKSample -> FHIR Observation mapping history
-- Prior to MHC build 
+- Prior to MHC build *todo*
 
 
 
