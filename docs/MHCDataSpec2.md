@@ -467,7 +467,8 @@ Not all data in the user's firestore tree is written by the app; the backend als
 - Conventions:
   - each metric has a well-known, stable, kebab-case identifier (e.g. `steps`, `heart-rate`; see the metrics table below), which is used both in the stats document paths and in the documents' `metric` field
     - note: these are deliberately *not* the HealthKit identifiers; the stats layer is source-agnostic
-  - all timestamps within stats documents are encoded as ISO8601 strings
+  - all timestamps within stats documents are encoded as ISO8601 strings (incl. the UTC offset of the device's local time zone, since the bucket boundaries are computed in local time)
+  - all numeric values are stored as plain (double) numbers
   - all values are stored in fixed, locale-independent units (SI, resp. the metric's canonical unit; e.g. `count`, `count/min`, `kg`, `mmHg`), denoted by the entries' `unit` field; the client converts into locale-appropriate units for display
 
 
@@ -525,25 +526,25 @@ Example: heart rate, at `/users/{uid}/stats/heart-rate/2026/08`
         "start": "2026-08-10T04:00:00-07:00",
         "end": "2026-08-10T05:00:00-07:00",
         "unit": "count/min",
-        "min": "49",
-        "max": "56",
-        "avg": "52.423825347707634"
+        "min": 49,
+        "max": 56,
+        "avg": 52.423825347707634
       },
       {
         "start": "2026-08-10T05:00:00-07:00",
         "end": "2026-08-10T06:00:00-07:00",
         "unit": "count/min",
-        "min": "47.83707809448242",
-        "max": "65",
-        "avg": "55.85580520629883"
+        "min": 47.83707809448242,
+        "max": 65,
+        "avg": 55.85580520629883
       },
       {
         "start": "2026-08-10T06:00:00-07:00",
         "end": "2026-08-10T07:00:00-07:00",
         "unit": "count/min",
-        "min": "50",
-        "max": "63",
-        "avg": "54.875"
+        "min": 50,
+        "max": 63,
+        "avg": 54.875
       },
       // ...
     ],
@@ -571,19 +572,19 @@ Example: step count stats document, at `/users/{uid}/stats/steps/2026/08`
         "start": "2026-08-10T07:00:00-07:00",
         "end": "2026-08-10T08:00:00-07:00",
         "unit": "count",
-        "sum": "2288"
+        "sum": 2288
       },
       {
         "start": "2026-08-10T08:00:00-07:00",
         "end": "2026-08-10T09:00:00-07:00",
         "unit": "count",
-        "sum": "350"
+        "sum": 350
       },
       {
         "start": "2026-08-10T09:00:00-07:00",
         "end": "2026-08-10T10:00:00-07:00",
         "unit": "count",
-        "sum": "34"
+        "sum": 34
       },
       // ...
     ],
@@ -610,8 +611,8 @@ Example: blood pressure, at `/users/{uid}/stats/blood-pressure/2026/08`
       {
         "date": "2026-08-10T08:41:00-07:00",
         "unit": "mmHg",
-        "systolic": "121",
-        "diastolic": "79"
+        "systolic": 121,
+        "diastolic": 79
       },
       // ...
     ]

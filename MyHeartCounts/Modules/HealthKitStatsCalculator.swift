@@ -31,8 +31,8 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
         let descriptors: [StatsRunDescriptor] = [
-            .init(sampleType: .stepCount, mode: .sum, aggregationInterval: .hour, timeRange: .currentMonth),
-            .init(sampleType: .heartRate, mode: .minMaxAvg, aggregationInterval: .hour, timeRange: .currentMonth)
+            .init(sampleType: .stepCount, metricId: "steps", mode: .sum, aggregationInterval: .hour, timeRange: .currentMonth),
+            .init(sampleType: .heartRate, metricId: "heart-rate", mode: .minMaxAvg, aggregationInterval: .hour, timeRange: .currentMonth)
         ]
         logger.notice("starting")
         await withDiscardingTaskGroup { taskGroup in // TODO parallalise over just sample type or also over months?
@@ -59,17 +59,17 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             .lazy
             .map { $0..<cal.startOfNextMonth(for: $0) }
         for monthRange in months {
-            logger.notice("\(descriptor.sampleType.id) \(monthRange)")
+            logger.notice("\(descriptor.metricId) \(monthRange)")
             let components = cal.dateComponents([.year, .month], from: monthRange.lowerBound)
             guard let year = components.year, let month = components.month else {
                 self.logger.notice("hmmm \(components)")
                 continue
             }
             let monthString = String(format: "%02d", month)
-            self.logger.notice("Computing stats for stats/\(descriptor.sampleType.id)/\(year)/\(monthString)")
+            self.logger.notice("Computing stats for stats/\(descriptor.metricId)/\(year)/\(monthString)")
             if let stats = try? await self.calculateStats(for: descriptor.withTimeRange(.init(monthRange))) {
                 let statsDoc = MonthlyStatsDocument(
-                    metric: descriptor.sampleType.id,
+                    metric: descriptor.metricId,
                     statsTimeInterval: .hourly,
                     statsBySourceId: [
                         "com.apple.HealthKit": stats
@@ -77,7 +77,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
                 )
                 let doc = accountDoc
                     .collection("stats")
-                    .document(descriptor.sampleType.id)
+                    .document(descriptor.metricId)
                     .collection(String(year))
                     .document(monthString)
                 do {
@@ -102,6 +102,8 @@ extension HealthKitStatsCalculator {
     
     private struct StatsRunDescriptor {
         let sampleType: SampleType<HKQuantitySample>
+        /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
+        let metricId: String
         let mode: AggregationMode
         let aggregationInterval: HealthKit.AggregationInterval
         private(set) var timeRange: HealthKitQueryTimeRange
@@ -115,7 +117,7 @@ extension HealthKitStatsCalculator {
     
     @concurrent
     private func calculateStats(for input: StatsRunDescriptor) async throws -> [MonthlyStatsDocument.StatEntry] {
-        let unit = input.sampleType.displayUnit // TODO switch to canonicalUnit once #183 is merged
+        let unit = input.sampleType.canonicalUnit
         switch input.mode {
         case .sum:
             let stats = try await healthKit.statisticsQuery(
@@ -177,8 +179,8 @@ extension HealthKitStatsCalculator {
                 case minMaxAvg(min: Double, max: Double, avg: Double)
                 
                 init(from container: KeyedDecodingContainer<CodingKeys>) throws {
-                    if let sum = try container.decodeIfPresent(Double.self, forKey: .sum) {
-                        self = .sum(sum)
+                    if container.contains(.sum) {
+                        self = .sum(try container.decode(Double.self, forKey: .sum))
                     } else {
                         let min = try container.decode(Double.self, forKey: .min)
                         let max = try container.decode(Double.self, forKey: .max)
@@ -186,7 +188,7 @@ extension HealthKitStatsCalculator {
                         self = .minMaxAvg(min: min, max: max, avg: avg)
                     }
                 }
-                
+
                 func encode(to container: inout KeyedEncodingContainer<CodingKeys>) throws {
                     switch self {
                     case .sum(let sum):
@@ -213,18 +215,30 @@ extension HealthKitStatsCalculator {
             
             init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
-                self.start = try container.decode(Date.self, forKey: .start)
-                self.end = try container.decode(Date.self, forKey: .end)
+                self.start = try Self.decodeDate(from: container, forKey: .start)
+                self.end = try Self.decodeDate(from: container, forKey: .end)
                 self.unit = try container.decode(HKUnit.self, forKey: .unit)
                 self.values = try .init(from: container)
             }
-            
+
             func encode(to encoder: any Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
-                try container.encode(start, forKey: .start)
-                try container.encode(end, forKey: .end)
+                try container.encode(start.formatted(Self.dateFormat), forKey: .start)
+                try container.encode(end.formatted(Self.dateFormat), forKey: .end)
                 try container.encode(unit, forKey: .unit)
                 try values.encode(to: &container)
+            }
+
+            /// spec: all timestamps in stats documents are ISO8601 strings; we include the device's local-time UTC offset (matching the bucket boundaries, which are computed in local time)
+            private static let dateFormat = Date.ISO8601FormatStyle(timeZone: .current).timeZone(separator: .colon)
+
+            private static func decodeDate(from container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> Date {
+                let string = try container.decode(String.self, forKey: key)
+                if let date = try? Date(string, strategy: dateFormat) {
+                    return date
+                }
+                // tolerate other ISO8601 offset spellings (e.g. "Z", or no colon in the offset)
+                return try Date(string, strategy: .iso8601)
             }
         }
         
