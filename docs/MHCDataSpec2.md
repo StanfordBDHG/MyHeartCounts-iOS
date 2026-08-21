@@ -20,7 +20,7 @@ SPDX-License-Identifier: MIT
 - demographics
 - user / account flags/settings/preferences
 - consent pdf
-- device environment data (time zone, heartbeat, etc)
+- device environment data (time zone, last-active date, etc)
 - automated data donation (healthkit, sensorkit)
 - user-provided data entered into the app (questionnaires, active tasks, custom quantity samples, etc)
 - scheduler state (*todo*)
@@ -61,6 +61,28 @@ SPDX-License-Identifier: MIT
 
 
 
+### Consent
+- At the end of the onboarding, the user signs the study consent document; the app exports the signed document as a PDF and uploads it to firebase storage
+- The upload goes directly to firebase storage (this is the only upload in the app that does not go through the `ManagedFileUpload` module), to `/users/{uid}/consent/{timestamp}.pdf`
+  - `{timestamp}` is the whole-second unix timestamp of the signing; the folder thereby acts as an append-only history of all consent documents the user has signed
+  - contentType is `application/pdf`
+- The uploaded object carries the following custom metadata fields:
+  - `consentFormMetadata`: JSON-encoded metadata of the consent document (i.e., the markdown file's frontmatter)
+  - `responses`: JSON-encoded responses the user entered into the consent form (toggles, selects, etc)
+  - `date`: ISO8601 timestamp of the signing
+  - `version`: the consent document's version (only present if the document declares one)
+- Signing also updates account keys in the user document: `lastSignedConsentVersion` and `lastSignedConsentDate`, as well as the consent-form-derived flags (`didOptInToTrial`, `futureStudies`)
+- Consent renewal: if the study's current consent document has a newer version than the user's `lastSignedConsentVersion`, the app prompts the user to re-sign; re-signing runs through the same flow as above (i.e., uploads an additional PDF and updates the account keys)
+- The account sheet lists the user's previously-signed consent documents, by fetching the contents of the storage folder
+
+
+### Device Environment Data
+- The app mirrors a small set of device-environment values into the user document, so that the backend knows the user's current context:
+  - `timeZone`, `language`, and `preferredMeasurementSystem` are updated when iOS notifies the app of a change (and when an account is associated)
+  - `lastActiveDate` is updated whenever the app is brought into the foreground (but not for background launches)
+- See the Internal Account Keys table above for the individual fields
+
+
 ### Active Tasks
 - MHC currently has the following kinds of active tasks:
   - Questionnaires we prompt the user to fill out and answer
@@ -84,7 +106,7 @@ SPDX-License-Identifier: MIT
 ### Custom Quantity Samples
 - MHC supports data entry (via the dashboard) for quantity sample types not supported by HealthKit
   - (It also supports data entry for HealthKit-supported quantity sample types; in these cases the entered data simply gets saved into HealthKit and ptocessed via the pipeline described below)
-- Custom quantity values (i.e., blood lipids / LDL cholesterol, and A1c blood glusose) are encoded as FHIR [Observation][R4Observation]s and uploaded using the same pipeline as regular HealthKit samples
+- Custom quantity values (i.e., blood lipids / LDL cholesterol, and A1c blood glusose) are encoded as FHIR [Observation][R4Observation]s and written directly into firestore, as individual documents at `/users/{uid}/HealthObservations_{sampleTypeId}/{uuid}` (with the document id being the observation's id)uploaded using the same pipeline as regular HealthKit samples
 
 
 ### HealthKit
@@ -137,9 +159,9 @@ SPDX-License-Identifier: MIT
 - Deletion records that have been in the buffer longer than the on-device retention period are also batched (into CSV files) and uploaded to the firebase storage backend
   - `/users/{uid}/healthDeletions/{sampleTypeId}_{uuid}.csv.zstd`
 - All HealthKit-related files uploaded to storage (both for ingestion of new samples as well as for deletion records) have the following metadata fields set:
-  - `batchStartDate`: the start date of the earliest sample in the batch
-  - `batchEndDate`: the end date of the latest sample in the batch
-  - `numSamples`: the number of samples in the batch
+  - `batchStartDate`: the start date of the earliest sample in the batch (ISO8601 string)
+  - `batchEndDate`: the end date of the latest sample in the batch (ISO8601 string)
+  - `numSamples`: the number of samples in the batch (integer)
 
 
 #### HealthKit Data Format
@@ -311,24 +333,24 @@ SPDX-License-Identifier: MIT
 - The uploading happens using the `ManagedFileUpload` module, to the following locations in firebase storage:
   - `/users/{uid}/SensorKit/{sensorId}/{uuid}.{fileExt}`
 - Each file uploaded by MHC's SensorKit data collection system sets the following metadata fields:
-  - `batchStartDate`: the start date of the earliest sample in the batch
-  - `batchEndDate`: the end date of the latest sample in the batch
-  - `numSamples`: the number of samples in the batch
+  - `batchStartDate`: the start date of the earliest sample in the batch (ISO8601 string)
+  - `batchEndDate`: the end date of the latest sample in the batch (ISO8601 string)
+  - `numSamples`: the number of samples in the batch (integer)
 
 
-| Sensor           | Rate   | Upload |
-| :--------------- | :----: | :----- |
-| visits           | *todo* | JSON file with FHIR observations (`.json.zstd`) |
-| onWrist          | *todo* | JSON file with FHIR observations (`.json.zstd`) |
-| deviceUsage      | *todo* | JSON file with FHIR observations (`.json.zstd`) |
-| ecg              | *todo* | JSON file with FHIR observations (`.json.zstd`) |
-| wristTemperature | *todo* | CSV file per sample (`.csv.zstd`) |
-| heartRate        | *todo* | CSV file per batch (`.csv.zstd`) |
-| pedometer        | *todo* | CSV file per batch (`.csv.zstd`) |
-| ambientLight     | *todo* | CSV file per batch (`.csv.zstd`) |
-| accelerometer    | *todo* | CSV file per batch (`.csv.zstd`) |
-| ambientPressure  | *todo* | CSV file per batch (`.csv.zstd`) |
-| ppg              | *todo* | custom binary format (`.mhcPPG`) |
+| Sensor           | Upload |
+| :--------------- | :----- |
+| visits           | JSON file with FHIR observations (`.json.zstd`) |
+| onWrist          | JSON file with FHIR observations (`.json.zstd`) |
+| deviceUsage      | JSON file with FHIR observations (`.json.zstd`) |
+| ecg              | JSON file with FHIR observations (`.json.zstd`) |
+| wristTemperature | CSV file per sample (`.csv.zstd`) |
+| heartRate        | CSV file per batch (`.csv.zstd`) |
+| pedometer        | CSV file per batch (`.csv.zstd`) |
+| ambientLight     | CSV file per batch (`.csv.zstd`) |
+| accelerometer    | CSV file per batch (`.csv.zstd`) |
+| ambientPressure  | CSV file per batch (`.csv.zstd`) |
+| ppg              | custom binary format (`.mhcPPG`) |
 
 - The `.mhcPPG` files used for the PPG data are a custom binary format
   - The reference implementation in the `MyHeartCountsShared` package serves as the format's definition (see also the `SensorKitCLI` target, which implements offline decoding of these files)
@@ -358,6 +380,52 @@ SPDX-License-Identifier: MIT
 
 
 
+## Data Lifecycle
+
+### Logout / Unenrollment
+- Logging out unenrolls the user from the study, and deletes the local study/scheduler state, the HealthKit upload buffer, and any pending (not-yet-uploaded) file uploads
+  - Note: this means that locally buffered health samples (and deletion records) that have not yet been uploaded at that point are discarded, not uploaded
+- The SensorKit query anchors are also reset; a subsequent re-login will therefore re-fetch (and re-upload) SensorKit data the server already has
+
+### Study Withdrawal
+- The user can withdraw from the study via the in-app button in the account sheet; this invokes the `markAccountForStudyWithdrawal` function (which sets `hasWithdrawnFromStudy` and appends to the user document's `studyEnrollmentHistory`), and then logs the user out
+- Withdrawal does not delete any data; all previously collected data remains on the server
+  - Its effects are: the user stops receiving nudge notifications, and the user's samples can no longer be marked as entered-in-error
+- Re-enrollment (via `markAccountForStudyReenrollment`) clears the flag again
+
+### Account Deletion
+- Account deletion is handled server-side: a `toBeDeleted` flag on the user document gets picked up by a periodic deletion sweep (running every 30 minutes), which recursively deletes the user's firestore document tree, the user's firebase storage prefix, and the auth user
+- There is currently no in-app UI for requesting account deletion
+- Note: data living outside the `/users/{uid}` trees survives deletion (e.g., submitted feedback documents, which live in a root-level `feedback` collection)
+
+### Individual Sample Deletion
+- HealthKit deletions are propagated via the deletions buffer and uploaded as CSV files (see the ingestion pipeline above)
+  - deletions that still find their matching sample in the local upload buffer are reconciled locally; neither the sample nor the deletion record reaches the server in that case
+- Server-side, samples are never physically deleted; the `deleteHealthSamples` function instead marks the affected FHIR resources as entered-in-error
+
+### Server-Side Retention
+- Every change to the user document is versioned server-side into `/users/{uid}/documentSnapshots` (excluding a handful of volatile fields, e.g. `fcmToken` and `lastActiveDate`); this history is retained indefinitely and is not client-accessible
+- Delivered (and failed) nudge notifications are retained in `/users/{uid}/notificationHistory`
+
+
+## Server-Written Data
+
+Not all data in the user's firestore tree is written by the app; the backend also produces data:
+
+- Questionnaire scoring: a cloud function triggers on every write to `/users/{uid}/questionnaireResponses/` and computes score observations for the supported questionnaires, writing them as FHIR [Observation][R4Observation]s into the corresponding collections:
+  - Diet (MEPA) score → `HealthObservations_MHCCustomSampleTypeDietMEPAScore`
+  - Mental Well-Being (WHO-5) score → `HealthObservations_MHCCustomSampleTypeWHO5Score`
+  - Nicotine Exposure score → `HealthObservations_MHCCustomSampleTypeNicotineExposure`
+  - LDL values parsed from the Heart Risk questionnaire → `HealthObservations_MHCCustomSampleTypeBloodLipidMeasurement`
+  - I.e.: the score collections the dashboard reads (see below) are populated by the server, not by the app
+  - Note: since the trigger runs on every write, re-writing a questionnaire response produces an additional score observation
+- Nudge notifications: the backend plans nudges into `/users/{uid}/notificationBacklog`, delivers them via FCM, and archives each result (incl. delivery status) into `/users/{uid}/notificationHistory`
+- User document fields: some fields on `/users/{uid}` are exclusively server-managed and not backed by any account key in the app (e.g., `disabled`, `participantGroup`, `toBeDeleted`, `studyEnrollmentHistory`, `lastUploadDate`)
+- `/users/{uid}/documentSnapshots`: server-maintained version history of the user document (see Data Lifecycle above)
+- Note: the server-side ingestion of the uploaded health-sample batch files (unpacking `liveHealthSamples` uploads into firestore observations) is currently disabled; uploaded batches accumulate in firebase storage until it is re-enabled
+
+
+
 
 ## Client data needs
 
@@ -375,13 +443,14 @@ SPDX-License-Identifier: MIT
 | Diet                      | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeDietMEPAScore/` |
 | Nicotine Exposure         | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeNicotineExposure/` |
 | Mental Well Being         | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeWHO5Score/` |
+| Heart Rate                | HHD | Stats doc (`/users/{uid}/stats/heart-rate`) |
 | Blood Pressure            | HHD | Stats doc (`/users/{uid}/stats/blood-pressure`) |
 | LDL cholesterol           | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodLipidMeasurement/`) |
 | Blood Glucose (Fasting)   | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodGlucoseFasting/`) |
 | Blood Glucose (A1c)       | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodGlucoseA1c/`) |
-| BMI                       | HHD | Individual samples (`/users/{uid}/HealthObservations_HKQuantityTypeIdentifierBodyMassIndex/`) |
-| Height                    | HHD | Individual samples (`/users/{uid}/HealthObservations_HKQuantityTypeIdentifierHeight/`) |
-| Weight                    | HHD | Individual samples (`/users/{uid}/HealthObservations_HKQuantityTypeIdentifierBodyMass/`) |
+| BMI                       | HHD | Stats doc (`/users/{uid}/stats/bmi`) |
+| Height                    | HHD | Stats doc (`/users/{uid}/stats/height`) |
+| Weight                    | HHD | Stats doc (`/users/{uid}/stats/weight`) |
 | Past Timed Walk/Run tests | App | Individual samples (`/users/{uid}/HealthObservations_MHCHealthObservationTimedWalkingTestResultIdentifier/`) |
 
 
@@ -392,10 +461,14 @@ SPDX-License-Identifier: MIT
 - In order to drive certain in-app functionality (e.g., the health dashboard), the app needs statistics computed/derived from the user's data
 - E.g.: the Heart Health Dashboard needs to know a bunch of data to compute its individual cardiovascular health scores
 - Since we have data sources beyond the on-device HealthKit data, we cannot implement this the easy/trivial way (by simply running a local on-device HKStatisticsQuery)
-- ...
 - Solution: we maintain a series of well-known statistics documents, which store precomputed statistical values, that can be used by the client (eg the app) to compute whatever final statistics it needs
 - The purpose of these documents is to enable the app to be able to fetch *all* of the data it displays to the user from the cloud backend, instead of performing local fetches from e.g. HalthKit.
 - As such, we only need these stats documents for data that is being added into the app by multiple sources, and/or is not written directly into the firestore.
+- Conventions:
+  - each metric has a well-known, stable, kebab-case identifier (e.g. `steps`, `heart-rate`; see the metrics table below), which is used both in the stats document paths and in the documents' `metric` field
+    - note: these are deliberately *not* the HealthKit identifiers; the stats layer is source-agnostic
+  - all timestamps within stats documents are encoded as ISO8601 strings
+  - all values are stored in fixed, locale-independent units (SI, resp. the metric's canonical unit; e.g. `count`, `count/min`, `kg`, `mmHg`), denoted by the entries' `unit` field; the client converts into locale-appropriate units for display
 
 
 ### What data do we need?
@@ -407,10 +480,13 @@ SPDX-License-Identifier: MIT
 | Sleep Stats | HHD | Daily number of hours slept |
 | Diet | HHD | Score computed from survey responses |
 | Mental Well Being | HHD | Score computed from survey responses |
+| Heart Rate | HHD | Hourly min/max/avg |
 | Blood Pressure | HHD | Individual samples for sys/dia |
 | LDL cholesterol | HHD | Individual samples |
 | Blood Glucose (Fasting + A1c) | HHD | Individual samples |
 | BMI | HHD | Individual samples |
+| Height | HHD | Individual samples |
+| Weight | HHD | Individual samples |
 | Noicotine Exposure | HHD | Score computed from survey responses |
 | Past Timed Walk/Run tests | App | Individual samples |
 
@@ -425,10 +501,11 @@ Constraints:
 - each statistics document contains the following:
   - a `version` so we can easily evolve the structure down the road
   - the `metric` of the values in the document
-  - `hourly`, containing the hourly stats
-- different metrics' stats documents have different shapes, based on the speficic metric's shape and needs:
-  - for non-cumulative metrics, the stats document is simply a list of individual samples
-  - for cumulative metrics, the stats document contains 
+  - the entries themselves, grouped by data source (under `hourly`/`daily` for bucketed metrics, resp. `samples` for individual-samples metrics; see below)
+- different metrics' stats documents have different shapes, based on the specific metric's shape and needs:
+  - cumulative metrics (e.g., step count) are stored as per-interval sums
+  - high-frequency non-cumulative metrics (e.g., heart rate) are stored as per-interval min/max/avg buckets
+  - sparse/discrete measurements (e.g., blood pressure, weight) are stored as individual samples
 
 
 #### Non-cumulative metric stats document
@@ -486,7 +563,7 @@ Example: step count stats document, at `/users/{uid}/stats/steps/2026/08`
 ```jsonc
 {
   "version": 0,
-  "metric": "stepCount",
+  "metric": "steps",
   "hourly": {
     "com.apple.HealthKit": [
       // ...
@@ -518,23 +595,45 @@ Example: step count stats document, at `/users/{uid}/stats/steps/2026/08`
 ```
 
 
+#### Individual-samples metric stats document
 
-| Sample Type             | Aggregation Mode | Aggregation Time Range |
-| :---------------------- | :--------------: | :--------------------- |
-| Step Count              | sum              | hourly                 |
-| Heart Rate              | min/max/avg      | hourly                 |
-| Exercise Minutes        | sum              | hourly                 |
-| Sleep Stats             | sum              | daily                  |
-| Diet                    | min/max/avg      | daily                  |
-| Nicotine Exposure       | min/max/avg      | daily                  |
-| Mental Well Being       | min/max/avg      | daily                  |
-| Blood Pressure          | min/max/avg      | hourly                 |
-| LDL cholesterol         | min/max/avg      | hourly                 |
-| Blood Glucose (Fasting) | min/max/avg      | hourly                 |
-| Blood Glucose (A1c)     | min/max/avg      | hourly                 |
-| BMI                     | min/max/avg      | daily                  |
-| Height                  | min/max/avg      | daily                  |
-| Weight                  | min/max/avg      | hourly                 |
+In the case of sparse/discrete metrics (e.g., blood pressure, weight), each month's document simply contains the individual readings.
+
+Example: blood pressure, at `/users/{uid}/stats/blood-pressure/2026/08`
+```jsonc
+{
+  "version": 0,
+  "metric": "blood-pressure",
+  "samples": {
+    "com.apple.HealthKit": [
+      // ...
+      {
+        "date": "2026-08-10T08:41:00-07:00",
+        "unit": "mmHg",
+        "systolic": "121",
+        "diastolic": "79"
+      },
+      // ...
+    ]
+  }
+}
+```
+
+
+### Metrics
+
+| Metric           | Id               | Shape              | Time Range |
+| :--------------- | :--------------- | :----------------- | :--------- |
+| Step Count       | `steps`          | sum                | hourly     |
+| Exercise Minutes | `exercise-time`  | sum                | hourly     |
+| Heart Rate       | `heart-rate`     | min/max/avg        | hourly     |
+| Sleep Stats      | `sleep`          | sum                | daily      |
+| Blood Pressure   | `blood-pressure` | individual samples | —          |
+| Weight           | `weight`         | individual samples | —          |
+| Height           | `height`         | individual samples | —          |
+| BMI              | `bmi`            | individual samples | —          |
+
+- Note: the survey-derived scores (Diet, Mental Well Being, Nicotine Exposure) and the custom quantity samples (LDL cholesterol, blood glucose) deliberately do *not* get stats documents: they are single-source data that is already stored directly in firestore, in queryable per-sample collections, so the app can simply fetch them from there (in line with the rule above)
 
 
 
