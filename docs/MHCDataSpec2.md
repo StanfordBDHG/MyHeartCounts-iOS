@@ -13,7 +13,7 @@ SPDX-License-Identifier: MIT
 - The app uses a firebase backend to store server-persisted data
   - Within that, it uses both firestore as well as firebase storage
 - This document mainly covers the iOS app's data flow/structure, but does also go a bit into server-relevant things
-- Data that does not need to persist across multiple installs of the app is stored as `UserDefaults`
+- Data that does not need to persist across multiple installs of the app is stored as `UserDefaults` and local sqlite databases.
 
 
 ## What data does the app produce/collect?
@@ -69,6 +69,13 @@ SPDX-License-Identifier: MIT
 - These data are collected as FHIR resources:
   - [QuestionnaireResponse][R4QuestionnaireResponse] for the questionnaires
   - [Observation][R4Observation] for the timed walk/run tests and the ECGs
+- Storage:
+  - Questionnaire responses are written directly into firestore, as individual documents at `/users/{uid}/questionnaireResponses/{id}`
+    - The document id is the response's FHIR `identifier`, if present; otherwise (in practice: always) a freshly-generated UUID
+    - The response's `questionnaire` field is set to the canonical url of the questionnaire it belongs to
+    - Note: these are direct firestore writes; there is no staging/retry (a failed write is logged and dropped)
+  - Timed Walk/Run Test results are written directly into firestore, as individual documents at `/users/{uid}/HealthObservations_MHCHealthObservationTimedWalkingTestResultIdentifier/{uuid}`, with the document id being the observation's id
+  - ECGs are not stored separately: they exist as `HKElectrocardiogram` samples in the Health database, and get collected and uploaded via the regular HealthKit ingestion pipeline (see below)
 - For questionnaires: in addition to creating a FHIR resource representing the questionnaire response as a whole, the app also extracts supported quantity values from questionnaire responses and writes them to HealthKit, triggering the regular HealthKit ingestion pipeline (see below)
   - This is currently the case for the "Heart Risk" questionnaire, which contains questions collecting values for blood pressure and blood glucose
   - The system is extensible and should be updated to cover additional questionnaires as well, where possible
@@ -142,6 +149,16 @@ SPDX-License-Identifier: MIT
   - This can be either a R4 resource or a DSTU2
   - It can be any of the following resource types: AllergyIntolerance, Condition, Coverage, Immunization, MedicationOrder, MedicationRequest, MedicationStatement, MedicationDispense, Observation, Procedure, DiagnosticReport, or DocumentReference
   - In contrast to all other `HKSample`s, `HKClinicalRecord` samples are wrapped in a `{"version": "R4"|"DSTU2", "resource": {...}}` envelope
+- Time zone handling:
+  - `HKSample` start/end dates are absolute points in time; HealthKit does not inherently associate samples with a time zone
+    - the app that created a sample *may* have stored the then-current time zone in the sample's metadata (`HKMetadataKeyTimeZone`), but this is optional and many sources don't
+  - when converting a sample into a FHIR Observation, the `effectiveDateTime` / `effectivePeriod` values are serialized using the sample's `HKMetadataKeyTimeZone` metadata entry, if present; otherwise using the device's current time zone at the time of the conversion
+    - i.e.: the UTC offset in these values tells us the user's local time at which the sample was recorded *only* for samples that carry a time zone in their metadata (in which case the time zone also shows up in the `metadata` FHIR extension); for all other samples, the offset is merely an artifact of the conversion and carries no information about the sample itself
+  - additionally, the `sampleUploadTimeZone` extension stores the device's time zone identifier as of when the sample was ingested/converted by MHC
+    - for live samples this happens when the sample is placed into the upload buffer (i.e., typically shortly after the sample was recorded, and up to several days before the actual upload; the name is slightly misleading)
+    - for historical samples this happens at export time, which can be years after the sample was recorded
+  - all `effective[x]` dates in FHIR resources created from HealthKit samples should be converted into UTC before downstream processing
+    - for samples where HealthKit explicitly records time zone information, a `HKMetadataKeyTimeZone` entry will be recorded as an extension
 
 
 <details>
@@ -313,6 +330,10 @@ SPDX-License-Identifier: MIT
 | ambientPressure  | *todo* | CSV file per batch (`.csv.zstd`) |
 | ppg              | *todo* | custom binary format (`.mhcPPG`) |
 
+- The `.mhcPPG` files used for the PPG data are a custom binary format
+  - The reference implementation in the `MyHeartCountsShared` package serves as the format's definition (see also the `SensorKitCLI` target, which implements offline decoding of these files)
+  - Note: in contrast to the other SensorKit upload formats, `.mhcPPG` files are not zstd-compressed
+
 
 
 ### Third-party wearable devices
@@ -325,9 +346,15 @@ SPDX-License-Identifier: MIT
 
 - The `ManagedFileUpload` module is responsible for uploading files from the app to the server
 - Other parts of the app (e.g., the HealthKit or SensorKit ingestion pipelines) hand files to `ManagedFileUpload`, which then schedules them for upload
-- Upload scheduling is done by placing the to-be-uploaded files into a staging directory within the app's Documents folder
-- The `ManagedFileUpload` module then simply works its way through these files, uploading each of them into firebase storage
-- Uploads are written to `users/{uid}\{category}/{filename}`
+- Every upload belongs to a `Category`, which defines the destination folder within the user's firebase storage prefix (e.g.: `liveHealthSamples`, `historicalHealthSamples`, `healthDeletions`, `SensorKit/{sensorId}`)
+- Scheduling is durable: each pending upload is tracked as an entry in a dedicated database (SwiftData; stored in the app's Application Support directory), and the to-be-uploaded file is moved into a staging directory within the app's Documents folder, where it is stored under the upload entry's UUID
+  - Scheduling a file for upload returns once the upload is durably registered (database entry created + file moved into the module's custody), i.e. before/independent of the actual upload happening
+- The module works its way through the pending entries (oldest first; several concurrently), uploading each file into firebase storage and deleting the entry + staged file upon success
+- Uploads are written to `users/{uid}/{category}/{filename}`, with contentType `application/octet-stream`
+- Failure/retry behavior:
+  - A failed upload remains scheduled and is retried on subsequent launches (at most one attempt per entry per launch; no retry cap)
+  - If the database cannot be accessed because the device hasn't yet been unlocked since boot (e.g., background launch before first unlock), the module is inert for that launch; pending uploads resume on the next launch
+  - If the database is corrupted, it is moved aside (not deleted) and recreated; uploads pending at that point are no longer tracked (their staged files are retained on disk, but won't be re-scheduled)
 
 
 

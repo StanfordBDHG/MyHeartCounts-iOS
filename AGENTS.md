@@ -20,6 +20,8 @@ The StudyBundle, consisting of a StudyDefinition and resources referenced by the
 - `MyHeartCounts/`: the iOS app
 - `MyHeartCountsWatchApp/`: the watch companion target
 - `MyHeartCountsShared/`: a small SPM package containing code that is shared between the iOS app and the watch app
+    - also ships the `SensorKitCLI` executable target (offline decoding of SensorKit payloads, e.g. `.mhcPPG` files)
+    - must remain buildable on Linux (CI runs `swift test` on Ubuntu); mind the `#if !os(Linux)` guards
     - `MyHeartCountsShared/Tests`: unit tests of the utils package
 - `MyHeartCountsTests/`: MHC unit tests
 - `MyHeartCountsUITests/`: MHC UI tests
@@ -31,15 +33,18 @@ The StudyBundle, consisting of a StudyDefinition and resources referenced by the
 ## Build / Test / Lint
 - MHC iOS app:
     - building the app: `fastlane build`
-    - running a specific UI test: `xcrun xcodebuild test -project MyHeartCounts.xcodeproj -scheme MyHeartCounts -testPlan "MyHeartCounts UI Tests" -only-testing:MyHeartCountsUITests/<TestClass>/<testMethod> -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max'`
+    - running a specific UI test: `xcrun xcodebuild test -project MyHeartCounts.xcodeproj -scheme MyHeartCounts -testPlan "MyHeartCounts UI Tests" -only-testing:MyHeartCountsUITests/<TestClass>/<testMethod> -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' -skipPackagePluginValidation -skipMacroValidation`
+        - (the two skip flags are required for non-interactive xcodebuild runs; all fastlane lanes and CI pass them as well)
 - MyHeartCountsShared SPM package:
     - in the `MyHeartCountsShared/` folder: `swift build` / `swift test`
+    - note: a plain host-macOS `swift build` may fail in the SFSafeSymbols dependency on newer toolchains; in that case build/test via the `MyHeartCountsShared-Package` xcodebuild scheme with an iOS Simulator destination (as CI does)
 - linting: `swiftlint`
 
 
 
 ## Architecture
-- MHC is implemented as a [Spezi](https://github.com/StanfordSpezi/Spezi) app
+- MHC is implemented as a [Spezi](https://github.com/SchmiedmayerLab/Spezi) app
+    - note: SchmiedmayerLab/Spezi is the canonical Spezi repo (a monorepo that also contains SpeziStudy, SpeziHealthKit, SpeziScheduler, etc); the old StanfordSpezi org is retired
 - core functionality within the app is decomposed into Spezi modules
     - some of these are loaded into the app directly at launch
     - the rest (i.e., those who depend on a firebase environment being present) are loaded dynamically when firebase is loaded
@@ -76,21 +81,23 @@ The StudyBundle, consisting of a StudyDefinition and resources referenced by the
         - the `SensorKitDataFetcher` module implements the automatic, anchored fetching, FHIR-converting, and uploading of SensorKit data
         - the module uses different upload strategies for different sensors, based on the sensor's expected amount of data, and the shape of the sensor's samples
 - background tasks:
-    - MHC registers several background tasks with iOS, which are triggered by the OS periodically and are given small amounts of background-execution time
+    - MHC registers several background tasks with iOS, which are triggered by the OS periodically and are given small amounts of background-execution time; the BGTask plumbing is owned by the `MHCBackgroundTasks` module
     - HealthKit: MHC uses HealthKit background delivery to be notified by iOS when new HealthKit data is available
     - AppRefresh: runs a couple of times per day to update the study definition
+    - stagedHealthSamplesUpload: a BGProcessingTask that drains the HealthUploadStaging buffer (see below)
+    - SensorKitProcessing: a BGHealthResearchTask that runs the SensorKit fetch+upload
+    - (additionally, SpeziScheduler registers its own notifications-scheduling task)
 - HealthUploadStaging:
     - the `HealthUploadStaging` module acts as a local persistence layer for buffering new/deleted HealthKit samples before they are persisted to the backend
     - the module obtains new samples and deletions from the MyHeartCountsStandard, and persists them into a small on-device SQLite database
-    - it then enforces a 3-day retention period, where the samples are kept locally, before uploading them to the backend
-    - this allows new deletion records that match existing samples currently in the pendingUpload state to be locally reconciled against the sample, allowing both the sample and the deletion record to be elided
-    - samples that have been in the local database longer than the retention period are batched and uploaded as compressed JSON files
+    - buffering allows new deletion records that match existing samples currently in the pendingUpload state to be locally reconciled against the sample, allowing both the sample and the deletion record to be elided
+    - the companion `HealthUploadStagingUploader` module enforces a 3-day retention period: samples that have been in the local database longer than that are drained, batched into compressed JSON files, and handed to `ManagedFileUpload` (at launch, and via the stagedHealthSamplesUpload background task)
 - File Upload:
     - the `ManagedFileUpload` module implements generic file upload support
-    - other parts of the app can submit files they wish to upload to a local queue mansged by the module
-    - it then works through that queue, whenever the app is running and also in the background, to ensure that everything gets uploaded eventually
+    - other parts of the app can submit files they wish to upload to a persistent local queue managed by the module (a SwiftData database tracking the pending uploads + a staging directory holding the files)
+    - it works through that queue while the app process is alive, and picks up whatever is left on subsequent launches — the guarantee is durable scheduling + eventual retry, not background execution (the module registers no background task of its own; it only runs in the background incidentally, when the app is woken for other modules' tasks)
     - the motivation here is not making other parts of the app (eg, HealthKit/SensorKit data collection) wait until the data they have collected has been uploaded
-        - for example, HealthKit background delivery typically is limited to 30 seconds, so the app needs to focus on fetching the new samples, and can defer the actual upload until a later, more generic background task
+        - for example, HealthKit background delivery typically is limited to 30 seconds, so the app needs to focus on fetching the new samples; the actual upload happens whenever the module next gets to it
 
 
 
@@ -103,7 +110,7 @@ The StudyBundle, consisting of a StudyDefinition and resources referenced by the
     - all entries containing text that is different in US vs UK english must have dedicated translations for both languages
 - Localization (study-level):
     - within a StudyBundle, localization is handled by providing multiple versions of each localized resource, and then dynamically selecting the best match
-    - for files, this means that a localized `PHQ0.json` questionnaire would actually exist as several files: `PHQ9+en-US.json`, `PHQ9+en-GB.json`, etc
+    - for files, this means that a localized `PHQ9.json` questionnaire would actually exist as several files: `PHQ9+en-US.json`, `PHQ9+es-US.json`, etc (these two locales are what the StudyBundle currently ships; there are no `+en-GB` resources)
 - Localization (Other)
     - The app is deployed to users in different regions of the world. No sssumptions should be made wrt region, and all user-visible elements should use appropriate iOS APIs that produce locale-aware output, e.g., when formatting numbers.
     - This also extends to units: the app should never assume that the user wants metric or US or imperial units; instead it should use appropriate locale-based units.
@@ -112,7 +119,7 @@ The StudyBundle, consisting of a StudyDefinition and resources referenced by the
     - SwiftLint warnings/errors are required to be fully resolved when code is actually about to be merged into the main branch
 - Prefer the Observation framework (`@Observable`, etc) over legacy Combine-based `@ObservedObject`, `ObservableObject`, etc
 - `Swift::Task` is valid Swift, as of Swift 6.3. It is a *module selector*; it allows referring to a symbol by explicitly specifying its parent module; it is typically used to resolve ambiguous lookups.
-- Read the app's deployment target from the xcodeproj file and take that constraint into account when dealing with availability-limited code.
+- Read the app's deployment target from the xcodeproj file and take that constraint into account when dealing with availability-limited code. (Currently: iOS 18.0 / watchOS 11.0.)
 
 
 NO YAPPING!!!!!!!
