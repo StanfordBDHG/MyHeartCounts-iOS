@@ -176,21 +176,30 @@ final class StudyBundleLoader: Module, Sendable {
         do {
             downloadUrl = try await download(studyBundleArchiveUrl)
         } catch {
-            throw LoadError.unableToFetchFromServer(error)
+            guard selector == .firebase else {
+                throw LoadError.unableToFetchFromServer(error)
+            }
+            return try await fallBackToBundledStudyBundle(after: .unableToFetchFromServer(error))
         }
         do {
             return try await openDownloadedStudyBundle(at: downloadUrl)
         } catch LoadError.unableToDecode(let underlyingDecodeError) where selector == .firebase {
-            // if we failed to decode the firebase-hosted study bundle, we try to use the bundled one as a fallback.
-            // (otherwise, we simply propagate the error up the call stack.)
-            do {
-                logger.error("Failed to decode firebase-hosted study bundle. falling back to the one bundled with the app. (error: \(underlyingDecodeError))")
-                return try await _update(using: .bundledWithApp)
-            } catch LoadError.unableToCreateLocalBundle {
-                // if the local bundle creation fails, we don't expose that error (since the local bundle thing here was an implicit fallback),
-                // and insead re-propagate the original error.
-                throw LoadError.unableToDecode(underlyingDecodeError)
-            }
+            return try await fallBackToBundledStudyBundle(after: .unableToDecode(underlyingDecodeError))
+        }
+    }
+    
+    
+    /// Loads the study bundle shipped with the app, after the firebase-hosted one could not be fetched or decoded.
+    ///
+    /// - parameter error: the error that made us fall back; re-thrown if the local bundle can't be created either.
+    private func fallBackToBundledStudyBundle(after error: LoadError) async throws(LoadError) -> StudyBundle {
+        logger.error("Unable to load the firebase-hosted study bundle. falling back to the one bundled with the app. (error: \(error))")
+        do {
+            return try await _update(using: .bundledWithApp)
+        } catch LoadError.unableToCreateLocalBundle {
+            // if the local bundle creation fails, we don't expose that error (since the local bundle thing here was an implicit fallback),
+            // and insead re-propagate the original error.
+            throw error
         }
     }
     
