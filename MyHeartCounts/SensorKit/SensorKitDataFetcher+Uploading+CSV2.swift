@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ModelsR4
 import SpeziFoundation
 import SpeziSensorKit
 
@@ -19,8 +18,8 @@ import SpeziSensorKit
 protocol CSVConvertibleSensorSample: Sendable {
     func csvData() throws -> Data
     
-    /// Gives the sample the opportunity to modify the `Observation` created from it (that points to the CSV file created from the sample).
-    func finalize(_ observation: inout Observation) throws
+    /// Gives the sample the opportunity to modify the wrapper resource created from it (that points to the CSV file created from the sample).
+    func finalize(_ resource: inout SensorKitRecordingResource) throws
 }
 
 
@@ -39,18 +38,15 @@ where Sample.SafeRepresentation: CSVConvertibleSensorSample & Identifiable, Samp
             let csvData = try sample.csvData()
             try await upload(
                 data: csvData,
-                fileExtension: "csv",
                 for: sensor,
-                deviceInfo: batchInfo.device,
+                batchInfo: batchInfo,
+                effectiveTimeRange: sample.timeRange,
+                recordID: sample.id,
                 to: standard,
-                observationDocName: sample.id.uuidString,
+                documentName: sample.id.uuidString,
                 activity: activity
-            ) { observation in
-                observation.effective = try .period(Period(
-                    end: FHIRPrimitive(DateTime(date: sample.timeRange.upperBound)),
-                    start: FHIRPrimitive(DateTime(date: sample.timeRange.lowerBound))
-                ))
-                try sample.finalize(&observation)
+            ) { resource in
+                try sample.finalize(&resource)
             }
         }
     }
@@ -62,7 +58,7 @@ extension DefaultSensorKitSampleSafeRepresentation: CSVConvertibleSensorSample w
         try sample.csvData()
     }
     
-    func finalize(_ observation: inout Observation) throws {
-        try sample.finalize(&observation)
+    func finalize(_ resource: inout SensorKitRecordingResource) throws {
+        try sample.finalize(&resource)
     }
 }

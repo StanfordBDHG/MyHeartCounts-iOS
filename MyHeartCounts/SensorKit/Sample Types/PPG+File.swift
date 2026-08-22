@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ModelsR4
 import MyHeartCountsShared
 import NIOCore
 import NIOFoundationCompat
@@ -37,24 +36,20 @@ extension SRPhotoplethysmogramSample {
                 assertionFailure("Failed to retrieve Data for encoded PPG samples")
                 return
             }
+            // it appears that SensorKit returns PPG samples ordered by startDate
+            // there are some cases, sometimes, where samples are out of order, but the largest discrepancy we've noticed was
+            // a sample at idx N+1 having a startDate that was ~0.008 seconds earlier than the sample at idx N.
+            let effectiveTimeRange = min(firstSample.startDate, lastSample.startDate)..<max(firstSample.startDate, lastSample.startDate)
             try await self.upload(
                 data: data,
-                fileExtension: "mhcPPG",
-                shouldCompress: false,
                 for: sensor,
-                deviceInfo: batchInfo.device,
+                batchInfo: batchInfo,
+                effectiveTimeRange: effectiveTimeRange,
+                shouldCompress: false,
                 to: standard,
-                observationDocName: "\(batchInfo.timeRange.lowerBound.ISO8601Format())_\(batchInfo.timeRange.upperBound.ISO8601Format())",
+                documentName: "\(batchInfo.timeRange.lowerBound.ISO8601Format())_\(batchInfo.timeRange.upperBound.ISO8601Format())",
                 activity: activity
-            ) { observation in
-                // it appears that SensorKit returns PPG samples ordered by startDate
-                // there are some cases, sometimes, where samples are out of order, but the largest discrepancy we've noticed was
-                // a sample at idx N+1 having a startDate that was ~0.008 seconds earlier than the sample at idx N.
-                observation.effective = try .period(Period(
-                    end: FHIRPrimitive(DateTime(date: lastSample.startDate)),
-                    start: FHIRPrimitive(DateTime(date: firstSample.startDate))
-                ))
-            }
+            )
         }
     }
 }

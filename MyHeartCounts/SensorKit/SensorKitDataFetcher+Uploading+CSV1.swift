@@ -8,7 +8,6 @@
 
 import Algorithms
 import Foundation
-import ModelsR4
 import MyHeartCountsShared
 import SpeziFoundation
 import SpeziSensorKit
@@ -40,31 +39,21 @@ where Sample.SafeRepresentation: CSVAppendableSensorSample {
         let writer = try CSVWriter(columns: Sample.SafeRepresentation.csvColumns + ["device"])
         activity.updateMessage("Writing to CSV")
         let deviceInfoCol = CollectionOfOne<any CSVWriter.FieldValue>(batchInfo.device.description)
+        var minDate = firstSample.timeRange.lowerBound
+        var maxDate = firstSample.timeRange.upperBound
         for sample in samples {
             try writer.appendRow(fields: chain(sample.csvFieldValues, deviceInfoCol))
+            minDate = min(minDate, sample.timeRange.lowerBound)
+            maxDate = max(maxDate, sample.timeRange.upperBound)
         }
         try await upload(
             data: writer.data(),
-            fileExtension: "csv",
             for: sensor,
-            deviceInfo: batchInfo.device,
+            batchInfo: batchInfo,
+            effectiveTimeRange: minDate..<maxDate,
             to: standard,
-            observationDocName: "\(batchInfo.timeRange.lowerBound.ISO8601Format())_\(batchInfo.timeRange.upperBound.ISO8601Format())",
+            documentName: "\(batchInfo.timeRange.lowerBound.ISO8601Format())_\(batchInfo.timeRange.upperBound.ISO8601Format())",
             activity: activity
-        ) { observation in
-            let (minDate, maxDate) = {
-                var minDate = firstSample.timeRange.lowerBound
-                var maxDate = firstSample.timeRange.upperBound
-                for sample in samples {
-                    minDate = min(minDate, sample.timeRange.lowerBound)
-                    maxDate = max(maxDate, sample.timeRange.upperBound)
-                }
-                return (minDate, maxDate)
-            }()
-            observation.effective = try .period(Period(
-                end: FHIRPrimitive(DateTime(date: maxDate)),
-                start: FHIRPrimitive(DateTime(date: minDate))
-            ))
-        }
+        )
     }
 }

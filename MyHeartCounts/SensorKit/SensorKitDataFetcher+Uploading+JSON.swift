@@ -42,28 +42,20 @@ where Sample.SafeRepresentation: HealthObservation {
             return AnyEncodable(resource)
         }
         let data = try JSONEncoder().encode(resources)
+        var minDate = firstSample.timeRange.lowerBound
+        var maxDate = firstSample.timeRange.upperBound
+        for sample in samples {
+            minDate = min(minDate, sample.timeRange.lowerBound)
+            maxDate = max(maxDate, sample.timeRange.upperBound)
+        }
         try await upload(
             data: data,
-            fileExtension: "json",
             for: sensor,
-            deviceInfo: batchInfo.device,
+            batchInfo: batchInfo,
+            effectiveTimeRange: minDate..<maxDate,
             to: standard,
-            observationDocName: "\(batchInfo.timeRange.lowerBound.ISO8601Format())_\(batchInfo.timeRange.upperBound.ISO8601Format())",
+            documentName: "\(batchInfo.timeRange.lowerBound.ISO8601Format())_\(batchInfo.timeRange.upperBound.ISO8601Format())",
             activity: activity
-        ) { observation in
-            let (minDate, maxDate) = {
-                var minDate = firstSample.timeRange.lowerBound
-                var maxDate = firstSample.timeRange.upperBound
-                for sample in samples {
-                    minDate = min(minDate, sample.timeRange.lowerBound)
-                    maxDate = max(maxDate, sample.timeRange.upperBound)
-                }
-                return (minDate, maxDate)
-            }()
-            observation.effective = try .period(Period(
-                end: FHIRPrimitive(DateTime(date: maxDate)),
-                start: FHIRPrimitive(DateTime(date: minDate))
-            ))
-        }
+        )
     }
 }

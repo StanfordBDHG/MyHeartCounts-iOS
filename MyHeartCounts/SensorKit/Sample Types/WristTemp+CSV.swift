@@ -29,9 +29,9 @@ extension SRWristTemperatureSession: CSVConvertibleSensorSample {
         return writer.data()
     }
     
-    func finalize(_ observation: inout Observation) throws {
-        observation.id = self.id.uuidString.asFHIRStringPrimitive()
-        observation.append(extensions: [
+    func finalize(_ resource: inout SensorKitRecordingResource) throws {
+        resource.id = self.id.uuidString.asFHIRStringPrimitive()
+        resource.append(extensions: [
             Extension(
                 url: FHIRExtensionURL.sensorKitWristTempAlgorithmVersion,
                 value: .string(self.version.asFHIRStringPrimitive())
