@@ -17,12 +17,12 @@ import ModelsR4
 /// Encoded into every FHIR resource the app uploads, under `FHIRExtensionURL.mhcAppRevision`:
 /// ```json
 /// {
-///   "url": "https://bdh.stanford.edu/fhir/defs/mhcAppRevision",
+///   "url": "https://myheartcounts.stanford.edu/fhir/core/mhcAppRevision",
 ///   "extension": [
-///     { "url": "https://bdh.stanford.edu/fhir/defs/mhcAppRevision/version", "valueString": "4.2.1" },
-///     { "url": "https://bdh.stanford.edu/fhir/defs/mhcAppRevision/build", "valueInteger": 123 },
-///     { "url": "https://bdh.stanford.edu/fhir/defs/mhcAppRevision/bundleIdentifier", "valueString": "edu.stanford.MyHeartCounts" },
-///     { "url": "https://bdh.stanford.edu/fhir/defs/mhcAppRevision/osVersion", "valueString": "26.5.0" }
+///     { "url": "https://myheartcounts.stanford.edu/fhir/core/mhcAppRevision/version", "valueString": "4.2.1" },
+///     { "url": "https://myheartcounts.stanford.edu/fhir/core/mhcAppRevision/build", "valueInteger": 123 },
+///     { "url": "https://myheartcounts.stanford.edu/fhir/core/mhcAppRevision/bundleIdentifier", "valueString": "edu.stanford.MyHeartCounts" },
+///     { "url": "https://myheartcounts.stanford.edu/fhir/core/mhcAppRevision/osVersion", "valueString": "26.5.0" }
 ///   ]
 /// }
 /// ```
@@ -78,7 +78,7 @@ extension FHIRExtensionURL {
     /// Url of a FHIR Extension identifying the My Heart Counts build which created the resource.
     ///
     /// See ``MHCAppRevision``.
-    static let mhcAppRevision = Self("https://bdh.stanford.edu/fhir/defs/mhcAppRevision")
+    static let mhcAppRevision = Self("https://myheartcounts.stanford.edu/fhir/core/mhcAppRevision")
 }
 
 
