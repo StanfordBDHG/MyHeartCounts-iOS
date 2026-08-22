@@ -79,11 +79,13 @@ extension HealthObservation {
             case .r4(let inner):
                 if var inner = inner as? any ModelsR4.DomainResource {
                     inner.addSourceRevisionExtensions(for: record.sourceRevision)
+                    inner.addMHCAppRevision()
                     resource = .r4(inner)
                 }
             case .dstu2(let inner):
                 if var inner = inner as? any ModelsDSTU2.DomainResource {
                     inner.addSourceRevisionExtensions(for: record.sourceRevision)
+                    inner.addMHCAppRevision()
                     resource = .dstu2(inner)
                 }
             }
