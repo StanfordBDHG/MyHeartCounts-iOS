@@ -51,6 +51,7 @@
 		801A66142FEC47BD009182AD /* SpeziStudyDefinition in Frameworks */ = {isa = PBXBuildFile; productRef = 80471E1D2E144A180049798B /* SpeziStudyDefinition */; };
 		801A66152FEC47BD009182AD /* SpeziSensorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80E0E3152EB27C4A00F445B6 /* SpeziSensorKit */; };
 		802118D1301663AA0088582C /* SpeziHealthKitFHIR in Frameworks */ = {isa = PBXBuildFile; productRef = 802118D0301663AA0088582C /* SpeziHealthKitFHIR */; };
+		80E7A1B12FEE310000A2C4D1 /* GroveSensorKitFHIR in Frameworks */ = {isa = PBXBuildFile; productRef = 80E7A1B02FEE310000A2C4D1 /* GroveSensorKitFHIR */; };
 		802CB63F2F85177A0011907F /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 802CB63E2F85177A0011907F /* AsyncAlgorithms */; };
 		8034CBE22DE6514700E7F9F6 /* SpeziHealthKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8034CBE12DE6514700E7F9F6 /* SpeziHealthKit */; };
 		80404B0A2EDC635900DEA429 /* MyHeartCountsShared in Frameworks */ = {isa = PBXBuildFile; productRef = 80404B092EDC635900DEA429 /* MyHeartCountsShared */; };
@@ -334,6 +335,7 @@
 				807669732D772C40001B980B /* Collections in Frameworks */,
 				80471E1A2E144A180049798B /* SpeziLocalization in Frameworks */,
 				802118D1301663AA0088582C /* SpeziHealthKitFHIR in Frameworks */,
+				80E7A1B12FEE310000A2C4D1 /* GroveSensorKitFHIR in Frameworks */,
 				2FB099B12A875DF100B20952 /* FirebaseFirestore in Frameworks */,
 				80D0321B2FE52D3D0090B041 /* SpeziLicense in Frameworks */,
 				80B8A2362EC1336F00F0E453 /* ModelsDSTU2 in Frameworks */,
@@ -544,6 +546,7 @@
 				802118D0301663AA0088582C /* SpeziHealthKitFHIR */,
 				80D8EE193027BA2800A76707 /* SpeziQuestionnaireLegacy */,
 				80D8EE1D3027BA3D00A76707 /* ResearchKitSwiftUI */,
+				80E7A1B02FEE310000A2C4D1 /* GroveSensorKitFHIR */,
 			);
 			productName = MyHeartCounts;
 			productReference = 653A254D283387FE005D4D48 /* MyHeartCounts.app */;
@@ -682,6 +685,7 @@
 				802CB63D2F85177A0011907F /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 				80B7F0622FADF2940040F247 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 				80D031F72FE52D3D0090B041 /* XCRemoteSwiftPackageReference "Spezi" */,
+				80E7A1AF2FEE310000A2C4D1 /* XCRemoteSwiftPackageReference "Grove" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 653A254E283387FE005D4D48 /* Products */;
@@ -1311,6 +1315,14 @@
 				default,
 			);
 		};
+		80E7A1AF2FEE310000A2C4D1 /* XCRemoteSwiftPackageReference "Grove" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SchmiedmayerLab/Grove.git";
+			requirement = {
+				branch = "feature/grove-fhir-0.2-sensorkit";
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1359,6 +1371,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 80D031F72FE52D3D0090B041 /* XCRemoteSwiftPackageReference "Spezi" */;
 			productName = SpeziHealthKitFHIR;
+		};
+		80E7A1B02FEE310000A2C4D1 /* GroveSensorKitFHIR */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80E7A1AF2FEE310000A2C4D1 /* XCRemoteSwiftPackageReference "Grove" */;
+			productName = GroveSensorKitFHIR;
 		};
 		802141582D81F14000BF5D35 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
