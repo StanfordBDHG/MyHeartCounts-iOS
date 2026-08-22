@@ -96,6 +96,7 @@ SPDX-License-Identifier: MIT
     - The document id is the response's FHIR `identifier`, if present; otherwise (in practice: always) a freshly-generated UUID
     - The response's `questionnaire` field is set to the canonical url of the questionnaire it belongs to
     - Note: these are direct firestore writes; there is no staging/retry (a failed write is logged and dropped)
+    - Since the migration from Spezi to Grove (Grove 0.3.0), a question the participant skipped or left unselected is omitted from `item` entirely. Documents written by earlier builds instead carry an `item` entry for it, with `"answer": [{}]` for a single-value question and `"answer": []` for a choice question. Consumers must treat a missing `linkId` as "not answered", rather than assuming every question appears exactly once per response.
   - Timed Walk/Run Test results are written directly into firestore, as individual documents at `/users/{uid}/HealthObservations_MHCHealthObservationTimedWalkingTestResultIdentifier/{uuid}`, with the document id being the observation's id
   - ECGs are not stored separately: they exist as `HKElectrocardiogram` samples in the Health database, and get collected and uploaded via the regular HealthKit ingestion pipeline (see below)
 - For questionnaires: in addition to creating a FHIR resource representing the questionnaire response as a whole, the app also extracts supported quantity values from questionnaire responses and writes them to HealthKit, triggering the regular HealthKit ingestion pipeline (see below)
