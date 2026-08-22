@@ -8,14 +8,13 @@
 
 @preconcurrency import FirebaseStorage
 import Foundation
+import Grove
+import GroveAccount
+import GroveHealthKit
+import GroveHealthKitBulkExport
+import GroveStudy
 import MyHeartCountsShared
 import OSLog
-import Spezi
-import SpeziAccount
-import SpeziFoundation
-import SpeziHealthKit
-import SpeziHealthKitBulkExport
-import SpeziStudy
 import UIKit
 
 

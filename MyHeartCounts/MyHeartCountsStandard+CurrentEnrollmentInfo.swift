@@ -6,8 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziFoundation
-import SpeziStudy
+import GroveFoundation
+import GroveStudy
 
 
 extension MyHeartCountsStandard {

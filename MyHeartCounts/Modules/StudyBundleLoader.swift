@@ -9,12 +9,12 @@
 import Algorithms
 import FirebaseCore
 import Foundation
+import Grove
+import GroveFoundation
+import GroveStudyDefinition
 import MHCStudyDefinitionExporter
 import MyHeartCountsShared
 import OSLog
-import Spezi
-import SpeziFoundation
-import SpeziStudyDefinition
 import Synchronization
 import UniformTypeIdentifiers
 
@@ -196,7 +196,7 @@ final class StudyBundleLoader: Module, Sendable {
     
     
     private func openDownloadedStudyBundle(at url: URL) async throws(LoadError) -> StudyBundle {
-        let dstUrl = self.studyBundlesUrl.appendingPathComponent(UUID().uuidString, conformingTo: .speziStudyBundle)
+        let dstUrl = self.studyBundlesUrl.appendingPathComponent(UUID().uuidString, conformingTo: .studyBundle)
         // Can we maybe elide the url -> tmpUrl copy here?(!)
         let tmpUrl = URL.temporaryDirectory.appending(component: UUID().uuidString).appendingPathExtension(StudyBundle.archiveFileExtension)
         do {
