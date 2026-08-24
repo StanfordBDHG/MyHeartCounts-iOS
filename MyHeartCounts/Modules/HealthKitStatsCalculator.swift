@@ -126,6 +126,10 @@ extension HealthKitStatsCalculator {
             // HealthKit read authorization was revoked, and we don't want that to wipe existing entries
             return
         }
+        // NOTE: writing to this document will mean that we implicitly end up creating an empty document
+        // at `users/{uid}/stats/{metricId}`, which won't be queryable (bc it's empty).
+        // this isn't a problem, as we currently don't need to query these docs, but we should at least
+        // be aware of this being a thing.
         let doc = accountDoc
             .collection("stats")
             .document(metricId)
