@@ -165,8 +165,6 @@ extension MyHeartCountsStandard {
         let uploadStrategy = uploadStrategy ?? Self.uploadStrategy(forSampleType: sampleTypeIdentifier)
         switch uploadStrategy {
         case .queueLocally:
-            let numObservations = observations.count
-            logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' to local health upload staging")
             try await healthUploadStaging.add(
                 observations,
                 commonSampleType: sampleTypeIdentifier,
