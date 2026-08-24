@@ -33,7 +33,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             return
         }
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
-        // one run per metric in the spec's Metrics table (docs/MHCDataSpec2.md)
+        // one run per metric in the spec's Metrics table (docs/MHCDataSpec.md)
         let bucketedDescriptors: [StatsRunDescriptor] = [
             .init(sampleType: .stepCount, metricId: "steps", mode: .sum, aggregationInterval: .hour, entriesKey: .hourly, timeRange: .currentMonth),
             .init(sampleType: .appleExerciseTime, metricId: "exercise-time", mode: .sum, aggregationInterval: .hour, entriesKey: .hourly, timeRange: .currentMonth),
@@ -45,40 +45,36 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             .init(sampleType: .bodyMassIndex, metricId: "bmi")
         ]
         logger.notice("starting")
-        await withDiscardingTaskGroup { taskGroup in // TODO parallalise over just sample type or also over months?
-            for descriptor in bucketedDescriptors {
+        // NOTE/IDEA: in addition to parallelising over sample type, we could additionally also parallelise over time?
+        // (i.e., process multiple months in parallel?)
+        await withDiscardingTaskGroup { taskGroup in
+            func schedule(_ operation: sending @escaping @isolated(any) () async throws -> Void) {
                 taskGroup.addTask {
                     do {
-                        try await self.runBucketedQuantityStats(descriptor, lastNMonths: 1, accountDoc: accountDoc)
+                        try await operation()
                     } catch {
-                        self.logger.notice("ERROR: \(error)")
+                        self.logger.error("error computing stats: \(error)")
                     }
+                }
+            }
+            for descriptor in bucketedDescriptors {
+                schedule {
+                    try await self.runBucketedQuantityStats(descriptor, lastNMonths: 1, accountDoc: accountDoc)
                 }
             }
             for descriptor in individualSamplesDescriptors {
-                taskGroup.addTask {
-                    do {
-                        try await self.runIndividualQuantitySampleStats(descriptor, lastNMonths: 1, accountDoc: accountDoc)
-                    } catch {
-                        self.logger.notice("ERROR: \(error)")
-                    }
+                schedule {
+                    try await self.runIndividualQuantitySampleStats(descriptor, lastNMonths: 1, accountDoc: accountDoc)
                 }
             }
-            taskGroup.addTask {
-                do {
-                    try await self.runSleepStats(lastNMonths: 1, accountDoc: accountDoc)
-                } catch {
-                    self.logger.notice("ERROR: \(error)")
-                }
+            schedule {
+                try await self.runSleepStats(lastNMonths: 1, accountDoc: accountDoc)
             }
-            taskGroup.addTask {
-                do {
-                    try await self.runBloodPressureStats(lastNMonths: 1, accountDoc: accountDoc)
-                } catch {
-                    self.logger.notice("ERROR: \(error)")
-                }
+            schedule {
+                try await self.runBloodPressureStats(lastNMonths: 1, accountDoc: accountDoc)
             }
         }
+        logger.notice("done")
     }
 }
 
@@ -103,7 +99,6 @@ extension HealthKitStatsCalculator {
             }
             let components = cal.dateComponents([.year, .month], from: monthStart)
             guard let year = components.year, let month = components.month else {
-                self.logger.notice("hmmm \(components)")
                 return nil
             }
             return StatsMonth(
@@ -246,79 +241,48 @@ extension HealthKitStatsCalculator {
 }
 
 
-// MARK: Sleep (daily hours-asleep sums)
+// MARK: Sleep (per-session time asleep)
 
 extension HealthKitStatsCalculator {
     @concurrent
     private func runSleepStats(lastNMonths: Int, accountDoc: DocumentReference) async throws {
-        let cal = Calendar.current
         for month in months(lastNMonths: lastNMonths) {
             self.logger.notice("Computing stats for stats/sleep/\(month.year)/\(month.monthString)")
             let samples: [HKCategorySample]
             do {
-                // query with a ±1 day margin: the underlying HK predicate only matches samples that both start
-                // AND end inside the range, which would otherwise drop sleep samples spanning the month boundary
+                // query with a ±1 day margin: sleep sessions typically span midnight, and the underlying HK
+                // predicate only matches samples that both start AND end inside the range, which would
+                // otherwise drop the sessions at the month boundaries
                 let paddedRange = month.range.lowerBound.addingTimeInterval(-86400)..<month.range.upperBound.addingTimeInterval(86400)
-                samples = try await healthKit.query(.sleepAnalysis, timeRange: .init(paddedRange))
+                samples = try await healthKit.query(
+                    .sleepAnalysis,
+                    timeRange: .init(paddedRange),
+                    source: CVHScore.sleepDataSourceFilter
+                )
             } catch {
                 self.logger.notice("ERROR: \(error)")
                 continue
             }
-            // collect the asleep intervals (only the actually-asleep stages, i.e. excluding inBed/awake),
-            // clamped to the month, and union them before summing, so that overlapping samples from
-            // multiple sources (e.g. phone + watch recording the same night) aren't double-counted
-            var intervals: [Range<Date>] = []
-            for sample in samples {
-                guard let value = HKCategoryValueSleepAnalysis(rawValue: sample.value),
-                      HKCategoryValueSleepAnalysis.allAsleepValues.contains(value) else {
-                    continue
-                }
-                let start = max(sample.startDate, month.range.lowerBound)
-                let end = min(sample.endDate, month.range.upperBound)
-                if start < end {
-                    intervals.append(start..<end)
-                }
+            // group the samples into sleep sessions, and keep the sessions belonging to this month.
+            // this matches how the dashboard (SleepSessionsQuery) turns sleep samples into the values it displays;
+            // in particular, `totalTimeSpentAsleep` accounts for overlapping samples (e.g. from a phone and a watch
+            // both tracking the same night), which we'd otherwise be double-counting.
+            let sessions = try samples.splitIntoSleepSessions().filter { session in
+                month.range.contains(session.timeRange.middle)
             }
-            intervals.sort { $0.lowerBound < $1.lowerBound }
-            var mergedIntervals: [Range<Date>] = []
-            for interval in intervals {
-                if let last = mergedIntervals.last, interval.lowerBound <= last.upperBound {
-                    if interval.upperBound > last.upperBound {
-                        mergedIntervals[mergedIntervals.count - 1] = last.lowerBound..<interval.upperBound
-                    }
-                } else {
-                    mergedIntervals.append(interval)
-                }
+            let entries = sessions.map { session in
+                StatEntry(
+                    start: session.startDate,
+                    end: session.endDate,
+                    unit: .hour(),
+                    values: .sum(session.totalTimeSpentAsleep / 60 / 60)
+                )
             }
-            // an interval can span multiple days; attribute each overlapping portion to its day
-            var secondsAsleepByDayStart: [Date: TimeInterval] = [:]
-            for interval in mergedIntervals {
-                var dayStart = cal.startOfDay(for: interval.lowerBound)
-                while dayStart < interval.upperBound {
-                    guard let nextDayStart = cal.date(byAdding: .day, value: 1, to: dayStart) else {
-                        break
-                    }
-                    let overlapStart = max(interval.lowerBound, dayStart)
-                    let overlapEnd = min(interval.upperBound, nextDayStart)
-                    if overlapStart < overlapEnd {
-                        secondsAsleepByDayStart[dayStart, default: 0] += overlapEnd.timeIntervalSince(overlapStart)
-                    }
-                    dayStart = nextDayStart
-                }
-            }
-            let entries: [StatEntry] = secondsAsleepByDayStart
-                .sorted { $0.key < $1.key }
-                .compactMap { dayStart, seconds in
-                    guard let nextDayStart = cal.date(byAdding: .day, value: 1, to: dayStart) else {
-                        return nil
-                    }
-                    return StatEntry(start: dayStart, end: nextDayStart, unit: .hour(), values: .sum(seconds / 3600))
-                }
             try await writeStatsDocument(
                 accountDoc: accountDoc,
                 metricId: "sleep",
                 month: month,
-                entriesKey: .daily,
+                entriesKey: .sessions,
                 entries: entries
             )
         }
@@ -554,7 +518,7 @@ extension HealthKitStatsCalculator {
 
 extension HealthKitStatsCalculator {
     fileprivate enum MonthlyStatsDocumentEntriesKey: String, CaseIterable {
-        case hourly, daily, samples
+        case hourly, daily, sessions, samples
     }
 
     fileprivate struct MonthlyStatsDocument<Entry: Codable>: Codable {

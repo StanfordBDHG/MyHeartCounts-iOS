@@ -479,7 +479,7 @@ Not all data in the user's firestore tree is written by the app; the backend als
 | :--- | :--- | :--- |
 | Exercise Minutes | HHD | Daily "number of active minutes" count |
 | Step Count | HHD | Daily step count |
-| Sleep Stats | HHD | Daily number of hours slept |
+| Sleep Stats | HHD | Time asleep, per sleep session |
 | Diet | HHD | Score computed from survey responses |
 | Mental Well Being | HHD | Score computed from survey responses |
 | Heart Rate | HHD | Hourly min/max/avg |
@@ -503,11 +503,14 @@ Constraints:
 - each statistics document contains the following:
   - a `version` so we can easily evolve the structure down the road
   - the `metric` of the values in the document
-  - the entries themselves, grouped by data source (under `hourly`/`daily` for bucketed metrics, resp. `samples` for individual-samples metrics; see below)
+  - the entries themselves, grouped by data source (under `hourly`/`daily` for bucketed metrics, `sessions` for sleep, resp. `samples` for individual-samples metrics; see below)
 - different metrics' stats documents have different shapes, based on the specific metric's shape and needs:
   - cumulative metrics (e.g., step count) are stored as per-interval sums
   - high-frequency non-cumulative metrics (e.g., heart rate) are stored as per-interval min/max/avg buckets
   - sparse/discrete measurements (e.g., blood pressure, weight) are stored as individual samples
+  - sleep is stored per sleep session, using the same shape as the interval sums, but with the entries' start/end being the session's bounds instead of a fixed interval
+    - the reason for this is that sleep sessions don't align with clock intervals (a night's sleep typically spans midnight); storing the individual sessions allows a consumer to derive whatever view it needs (incl. a per-day one), which wouldn't be possible if we split each session across the calendar days it overlaps
+    - the sessions are formed by grouping consecutive sleep analysis samples (the same way the app does it for the dashboard), and a session's value is the actual time spent asleep, which takes overlapping samples (e.g. from a phone and a watch tracking the same night) into account
 
 
 #### Non-cumulative metric stats document
@@ -629,7 +632,7 @@ Example: blood pressure, at `/users/{uid}/stats/blood-pressure/2026/08`
 | Step Count       | `steps`          | sum                | hourly     |
 | Exercise Minutes | `exercise-time`  | sum                | hourly     |
 | Heart Rate       | `heart-rate`     | min/max/avg        | hourly     |
-| Sleep Stats      | `sleep`          | sum                | daily      |
+| Sleep Stats      | `sleep`          | sum                | per sleep session |
 | Blood Pressure   | `blood-pressure` | individual samples | —          |
 | Weight           | `weight`         | individual samples | —          |
 | Height           | `height`         | individual samples | —          |
