@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import FHIRModelsExtensions
 @preconcurrency import FirebaseFirestore
 import ModelsR4
 import MyHeartCountsShared
@@ -24,6 +25,7 @@ extension MyHeartCountsStandard {
         // shouldn't be necessary, but we had some issues with these not being properly set
         var response = response
         response.questionnaire = questionnaire.url?.value?.url.absoluteString.asFHIRCanonicalPrimitive()
+        response.append(extension: .mhcAppRevision, behaviour: .replace)
         let logger = await self.logger
         let id = response.identifier?.value?.value?.string ?? UUID().uuidString
         do {

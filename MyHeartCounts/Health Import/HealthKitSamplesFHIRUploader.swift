@@ -36,7 +36,9 @@ struct HealthKitSamplesFHIRUploader: BatchProcessor {
     
     private func storeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
         let fileManager = FileManager.default
-        let resources = try (consume samples).mapIntoResourceProxies()
+        let resources = try (consume samples).mapIntoResourceProxies(
+            extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions
+        )
         let encoded = try JSONEncoder().encode(consume resources)
         
         let compressed = try (consume encoded).compressed(using: Zstd.self)

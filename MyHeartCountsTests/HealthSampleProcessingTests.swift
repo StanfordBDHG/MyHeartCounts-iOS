@@ -123,7 +123,44 @@ struct HealthSampleProcessingTests {
         }
     }
     
+
+    /// Every FHIR resource the app creates must identify the MHC build which created it.
+    @Test
+    func mhcAppRevisionIsPartOfTheDefaultExtensions() throws {
+        let sample = HKQuantitySample(
+            type: .init(.heartRate),
+            quantity: HKQuantity(unit: .count() / .minute(), doubleValue: 85),
+            start: .now,
+            end: .now
+        )
+        let resource = try sample.resource(extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions)
+        let observation = try #require(resource.get(if: Observation.self))
+        let ext = try #require(observation.extensions(for: FHIRExtensionURL.mhcAppRevision).first)
+        func value(ofChild component: String) throws -> ModelsR4.Extension.ValueX {
+            let url = FHIRExtensionURL.mhcAppRevision.appending(component: component).r4
+            let child = try #require(ext.extension?.first { $0.url == url }, "missing '\(component)' child extension")
+            return try #require(child.value)
+        }
+        guard case .string(let version) = try value(ofChild: "version") else {
+            Issue.record("'version' is not a valueString")
+            return
+        }
+        #expect(version.value?.string == MHCAppRevision.version)
+        guard case .string(let osVersion) = try value(ofChild: "osVersion") else {
+            Issue.record("'osVersion' is not a valueString")
+            return
+        }
+        #expect(osVersion.value?.string == MHCAppRevision.osVersion)
+        if let expectedBuild = MHCAppRevision.build {
+            guard case .integer(let build) = try value(ofChild: "build") else {
+                Issue.record("'build' is not a valueInteger")
+                return
+            }
+            #expect(build.value?.integer == Int32(expectedBuild))
+        }
+    }
     
+
     @Test
     func healthUploadStagingDuplicates() async throws {
         let healthUploadStaging = HealthUploadStaging(persistence: .inMemory)

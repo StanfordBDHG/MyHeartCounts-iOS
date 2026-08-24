@@ -94,7 +94,7 @@ extension MyHeartCountsStandard {
     
     
     static let defaultHealthObservationFHIRExtensions: [any FHIRExtensionBuilderProtocol] = [
-        .sampleUploadTimeZone, .mhcStudyRevision
+        .sampleUploadTimeZone, .mhcStudyRevision, .mhcAppRevision
     ]
     
     nonisolated private static let directFirestoreUploadDefaultBatchSize = 100
@@ -327,17 +327,4 @@ extension FHIRExtensionBuilderProtocol where Self == FHIRExtensionBuilder<Void> 
             resource.append(extension: ext, behaviour: .replace)
         }
     }
-    
-    static var mhcAppVersion: Self {
-        .init { resource in
-            try FHIRExtensionBuilder
-                .sourceRevision(url: .mhcAppRevision)
-                .apply(input: .mhc, to: &resource)
-        }
-    }
-}
-
-
-extension FHIRExtensionURL {
-    static let mhcAppRevision = Self("https://bdh.stanford.edu/fhir/defs/mhcAppRevision")
 }
