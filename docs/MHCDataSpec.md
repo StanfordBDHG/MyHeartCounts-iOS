@@ -438,20 +438,20 @@ Not all data in the user's firestore tree is written by the app; the backend als
 
 | Data | Needed By | Fetched From |
 | :--- | :--- | :--- |
-| Exercise Minutes          | HHD | Stats doc (`/users/{uid}/stats/exercise-time`) |
-| Step Count                | HHD | Stats doc (`/users/{uid}/stats/steps`) |
-| Sleep Stats               | HHD | Stats doc (`/users/{uid}/stats/sleep`) |
+| Exercise Minutes          | HHD | Stats doc |
+| Step Count                | HHD | Stats doc |
+| Sleep Stats               | HHD | Stats doc |
 | Diet                      | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeDietMEPAScore/` |
 | Nicotine Exposure         | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeNicotineExposure/` |
 | Mental Well Being         | HHD | `/users/{uid}/HealthObservations_MHCCustomSampleTypeWHO5Score/` |
-| Heart Rate                | HHD | Stats doc (`/users/{uid}/stats/heart-rate`) |
-| Blood Pressure            | HHD | Stats doc (`/users/{uid}/stats/blood-pressure`) |
+| Heart Rate                | HHD | Stats doc |
+| Blood Pressure            | HHD | Stats doc |
 | LDL cholesterol           | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodLipidMeasurement/`) |
 | Blood Glucose (Fasting)   | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodGlucoseFasting/`) |
 | Blood Glucose (A1c)       | HHD | Individual samples (`/users/{uid}/HealthObservations_MHCCustomSampleTypeBloodGlucoseA1c/`) |
-| BMI                       | HHD | Stats doc (`/users/{uid}/stats/bmi`) |
-| Height                    | HHD | Stats doc (`/users/{uid}/stats/height`) |
-| Weight                    | HHD | Stats doc (`/users/{uid}/stats/weight`) |
+| BMI                       | HHD | Stats doc |
+| Height                    | HHD | Stats doc |
+| Weight                    | HHD | Stats doc |
 | Past Timed Walk/Run tests | App | Individual samples (`/users/{uid}/HealthObservations_MHCHealthObservationTimedWalkingTestResultIdentifier/`) |
 
 
@@ -498,8 +498,9 @@ Constraints:
 
 
 ### High-level structure
-- we have special stats documents, at `/users/{uid}/stats/{metric}/{year}/{month}`, which contain hourly stats for a sample type for a month
-  - e.g. `/users/{uid}/stats/steps/2026/08`
+- we have special stats documents, at `/users/{uid}/stats/{metric}/months/{year}-{month}`, which contain hourly stats for a sample type for a month
+  - e.g. `/users/{uid}/stats/steps/months/2026-08`
+  - note: the path schema is intentionally `stats/{metric}/months/{year}-{month}` instead of e.g. `stats/{metric}/{year}/{month}`, since the iOS client SDK allows us to query all documents within a collection, but not to query all collections within a document. in the second schema, we would be unable to easily obtain a full list of all stats docs available for a metric, and would need to programmatically enumerate all possible years, to check within each year's collection. the first schema allows us to simply ask firestore for a list of all `year-month` documents within a metric.
 - each statistics document contains the following:
   - a `version` so we can easily evolve the structure down the road
   - the `metric` of the values in the document
@@ -517,7 +518,7 @@ Constraints:
 
 In the case of a non-cumulative sample type, each month's stats document contains a list of hourly min/max/avg readings.
 
-Example: heart rate, at `/users/{uid}/stats/heart-rate/2026/08`
+Example: heart rate, at `/users/{uid}/stats/heart-rate/months/2026-08`
 
 ```jsonc
 {
@@ -564,7 +565,7 @@ Example: heart rate, at `/users/{uid}/stats/heart-rate/2026/08`
 
 In the case of cumulative metrics (e.g., step count, exercise minutes, etc), each month's document simply contains a list of hourly sums.
 
-Example: step count stats document, at `/users/{uid}/stats/steps/2026/08`
+Example: step count stats document, at `/users/{uid}/stats/steps/months/2026-08`
 ```jsonc
 {
   "version": 0,
@@ -604,7 +605,7 @@ Example: step count stats document, at `/users/{uid}/stats/steps/2026/08`
 
 In the case of sparse/discrete metrics (e.g., blood pressure, weight), each month's document simply contains the individual readings.
 
-Example: blood pressure, at `/users/{uid}/stats/blood-pressure/2026/08`
+Example: blood pressure, at `/users/{uid}/stats/blood-pressure/months/2026-08`
 ```jsonc
 {
   "version": 0,
