@@ -22,7 +22,7 @@ import SwiftUI
 
 /// Fetches the entries of a metric's server-side stats documents, converted into ``QuantitySample``s.
 ///
-/// This is the read-side counterpart to ``HealthKitStatsCalculator``: it observes the `users/{uid}/stats/{metricId}/{year}`
+/// This is the read-side counterpart to ``HealthKitStatsCalculator``: it observes the `users/{uid}/stats/{metricId}/months`
 /// collections overlapping the query's time range, decodes the monthly documents, and flattens their entries
 /// (across all data sources contained in the documents) into a chronologically sorted list of samples.
 ///
@@ -142,24 +142,38 @@ extension StatsDocumentsQuery {
         let timeRange: Range<Date>
         let discriminator: String
         
-        /// The paths of the `users/{uid}/stats/{metricId}/{year}` collections overlapping the time range.
-        var collectionPaths: [String] {
+        /// The path of the metric's `months` collection, holding one document per month (with `yyyy-MM` document ids).
+        var collectionPath: String {
+            "users/\(accountId)/stats/\(metricId)/months"
+        }
+        
+        /// The `yyyy-MM` document-id bounds of the months overlapping the time range.
+        ///
+        /// Since the (zero-padded) month document ids sort lexicographically in chronologic order, these can be used
+        /// to restrict the query to the relevant months via a `FieldPath.documentID()` range filter.
+        /// `nil` if the time range doesn't overlap any month that could contain data.
+        var monthDocumentIdBounds: ClosedRange<String>? {
             let cal = Calendar.current
-            guard let currentYear = cal.dateComponents([.year], from: .now).year,
-                  let firstYear = cal.dateComponents([.year], from: timeRange.lowerBound).year,
-                  let lastYear = cal.dateComponents([.year], from: timeRange.upperBound).year,
-                  firstYear <= lastYear else {
-                return []
+            func monthId(for date: Date, addingMonths offset: Int) -> String? {
+                guard let date = cal.date(byAdding: .month, value: offset, to: date) else {
+                    return nil
+                }
+                let components = cal.dateComponents([.year, .month], from: date)
+                guard let year = components.year, let month = components.month else {
+                    return nil
+                }
+                return String(format: "%04d-%02d", year, month)
             }
-            // no stats documents exist for future years (this also handles open-ended time ranges, whose upper bound is `.distantFuture`)
-            let clampedLastYear = min(lastYear, currentYear)
-            // - the -1: the year a month's document is filed under is determined by the *writer's* time zone at computation time;
-            //   observing one extra year on the lower end makes sure we don't miss entries near a year boundary
-            // - the max(): safety valve, so we don't observe an unbounded number of collections for huge time ranges (e.g. `.ever`)
-            let clampedFirstYear = max(min(firstYear, clampedLastYear) - 1, clampedLastYear - 10)
-            return (clampedFirstYear...clampedLastYear).map { year in
-                "users/\(accountId)/stats/\(metricId)/\(year)"
+            // the month a document is filed under is determined by the *writer's* time zone at computation time;
+            // widening the bounds by one month on either end makes sure we don't miss entries near a month boundary.
+            // (the upper bound is additionally clamped to the current date: no stats documents exist for future months,
+            // which also handles open-ended time ranges, whose upper bound is `.distantFuture`.)
+            guard let lowerBound = monthId(for: timeRange.lowerBound, addingMonths: -1),
+                  let upperBound = monthId(for: min(timeRange.upperBound, .now), addingMonths: 1),
+                  lowerBound <= upperBound else {
+                return nil
             }
+            return lowerBound...upperBound
         }
     }
     
@@ -190,7 +204,7 @@ extension StatsDocumentsQuery {
         @ObservationIgnored private var input: QueryInput?
         @ObservationIgnored private let decodeDocument: DecodeDocumentFn
         @ObservationIgnored private let areInIncreasingOrder: @Sendable (Element, Element) -> Bool
-        /// the decoded elements, per collection path. (a time range can span multiple years, i.e. multiple collections.)
+        /// the decoded elements, per collection path
         @ObservationIgnored private var elementsByCollection: [String: [Element]] = [:]
         /// per-collection-path snapshot generation counters, so that out-of-order decode completions can't overwrite newer data with older data
         @ObservationIgnored private var snapshotGenerations: [String: Int] = [:]
@@ -210,21 +224,27 @@ extension StatsDocumentsQuery {
             elementsByCollection.removeAll()
             snapshotGenerations.removeAll()
             elements = []
-            for path in input.collectionPaths {
-                let listener = Firestore.firestore().collection(path).addSnapshotListener { @Sendable [weak self] snapshot, error in
-                    guard let self else {
-                        return
-                    }
-                    if let snapshot {
-                        Task {
-                            await self.process(snapshot, collectionPath: path, input: input, logger: logger)
-                        }
-                    } else if let error {
-                        logger.error("encountered error in firebase snapshot listener: \(error)")
-                    }
-                }
-                listeners.listeners.append(listener)
+            guard let documentIdBounds = input.monthDocumentIdBounds else {
+                return
             }
+            let path = input.collectionPath
+            let query = Firestore.firestore()
+                .collection(path)
+                .whereField(FieldPath.documentID(), isGreaterThanOrEqualTo: documentIdBounds.lowerBound)
+                .whereField(FieldPath.documentID(), isLessThanOrEqualTo: documentIdBounds.upperBound)
+            let listener = query.addSnapshotListener { @Sendable [weak self] snapshot, error in
+                guard let self else {
+                    return
+                }
+                if let snapshot {
+                    Task {
+                        await self.process(snapshot, collectionPath: path, input: input, logger: logger)
+                    }
+                } else if let error {
+                    logger.error("encountered error in firebase snapshot listener: \(error)")
+                }
+            }
+            listeners.listeners.append(listener)
         }
         
         private func process(_ snapshot: QuerySnapshot, collectionPath: String, input: QueryInput, logger: Logger) async {

@@ -15,7 +15,7 @@ import SpeziHealthKit
 import SpeziHealthKitUI
 
 
-/// A metric for which the server-side stats documents exist (at `users/{uid}/stats/{metricId}/{year}/{month}`),
+/// A metric for which the server-side stats documents exist (at `users/{uid}/stats/{metricId}/months/{yyyy-MM}`),
 /// and which maps onto a HealthKit quantity sample type displayed in the Health Dashboard.
 ///
 /// See `docs/MHCDataSpec.md` (§User Data Statistics / §Metrics) for the definition of the metrics and the documents' wire format;

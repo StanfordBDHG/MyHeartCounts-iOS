@@ -40,6 +40,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
         let months = self.months(since: enrollmentDate)
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
+        let startTS = ContinuousClock.now
         logger.notice("starting")
         // NOTE/IDEA: in addition to parallelising over sample type, we could additionally also parallelise over time?
         // (i.e., process multiple months in parallel?)
@@ -70,7 +71,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
                 try await self.runBloodPressureStats(months: months, accountDoc: accountDoc)
             }
         }
-        logger.notice("done")
+        logger.notice("Completed stats calculation. Took \(startTS.duration(to: .now))")
     }
 }
 
@@ -134,6 +135,12 @@ extension HealthKitStatsCalculator {
     fileprivate struct StatsMonth {
         let year: Int
         let monthString: String // zero-padded
+        
+        /// The id of the month's stats document (within the metric's `months` subcollection), e.g. `2026-08`.
+        /// Zero-padded so that the ids' lexicographic order matches their chronologic order.
+        var documentId: String {
+            "\(year)-\(monthString)"
+        }
         let range: Range<Date>
     }
 
@@ -193,8 +200,8 @@ extension HealthKitStatsCalculator {
         let doc = accountDoc
             .collection("stats")
             .document(metricId.rawValue)
-            .collection(String(month.year))
-            .document(month.monthString)
+            .collection("months")
+            .document(month.documentId)
         do {
             // we first try to update the doc in place.
             // (the explicit cast forces the FirestoreUtils overload, which pre-encodes the entries;
@@ -277,7 +284,7 @@ extension HealthKitStatsCalculator {
     @concurrent
     private func runBucketedQuantityStats(_ descriptor: StatsRunDescriptor, months: [StatsMonth], accountDoc: DocumentReference) async throws {
         for month in months {
-            self.logger.notice("Computing stats for stats/\(descriptor.metricId)/\(month.year)/\(month.monthString)")
+            self.logger.notice("Computing stats for stats/\(descriptor.metricId)/months/\(month.documentId)")
             if let stats = try? await self.calculateStats(for: descriptor.withTimeRange(.init(month.range))) {
                 try await writeStatsDocument(
                     accountDoc: accountDoc,
@@ -347,7 +354,7 @@ extension HealthKitStatsCalculator {
     @concurrent
     private func runSleepStats(months: [StatsMonth], accountDoc: DocumentReference) async throws {
         for month in months {
-            self.logger.notice("Computing stats for stats/sleep/\(month.year)/\(month.monthString)")
+            self.logger.notice("Computing stats for stats/sleep/months/\(month.documentId)")
             let samples: [HKCategorySample]
             do {
                 // query with a ±1 day margin: sleep sessions typically span midnight, and the underlying HK
@@ -407,7 +414,7 @@ extension HealthKitStatsCalculator {
     ) async throws {
         let unit = descriptor.sampleType.canonicalUnit
         for month in months {
-            self.logger.notice("Computing stats for stats/\(descriptor.metricId)/\(month.year)/\(month.monthString)")
+            self.logger.notice("Computing stats for stats/\(descriptor.metricId)/months/\(month.documentId)")
             let samples: [HKQuantitySample]
             do {
                 samples = try await healthKit.query(descriptor.sampleType, timeRange: .init(month.range))
@@ -432,7 +439,7 @@ extension HealthKitStatsCalculator {
     private func runBloodPressureStats(months: [StatsMonth], accountDoc: DocumentReference) async throws {
         let unit = SampleType.bloodPressureSystolic.canonicalUnit // mmHg
         for month in months {
-            self.logger.notice("Computing stats for stats/blood-pressure/\(month.year)/\(month.monthString)")
+            self.logger.notice("Computing stats for stats/blood-pressure/months/\(month.documentId)")
             let correlations: [HKCorrelation]
             do {
                 correlations = try await healthKit.query(.bloodPressure, timeRange: .init(month.range))
