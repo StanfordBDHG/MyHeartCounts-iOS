@@ -30,9 +30,7 @@ struct CVHScore: DynamicProperty {
     }
     
     var preferredExerciseMetric: PreferredExerciseMetric {
-        let haveExerciseTime = usesStatsDocuments ? !statsExerciseTime.isEmpty : !weeklyExerciseTime.isEmpty
-        let haveStepCount = usesStatsDocuments ? !statsStepCount.isEmpty : !dailyStepCount.isEmpty
-        switch (haveExerciseTime, haveStepCount) {
+        switch (!statsExerciseTime.isEmpty, !statsStepCount.isEmpty) {
         case (true, _), (false, false):
             return .exerciseMinutes
         case (false, true):
@@ -55,50 +53,13 @@ struct CVHScore: DynamicProperty {
     @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2))
     private var nicotineExposure
     
-    @HealthKitStatisticsQuery(
-        .appleExerciseTime,
-        aggregatedBy: [.sum],
-        over: .init(.init(day: 7)),
-        timeRange: .last(days: 7).offset(by: .init(day: -1))
-    )
-    private var weeklyExerciseTime
-    
-    @HealthKitStatisticsQuery(
-        .stepCount,
-        aggregatedBy: [.sum],
-        over: .day,
-        timeRange: .last(days: 7).offset(by: .init(day: -1))
-    )
-    private var dailyStepCount
-    
-    @SleepSessionsQuery(timeRange: .last(days: 14), source: Self.sleepDataSourceFilter)
-    private var sleepSessions
-    
-    @HealthKitQuery(.bodyMassIndex, timeRange: .last(days: 14))
-    private var bodyMassIndex
-    
-    @HealthKitQuery(.bodyMass, timeRange: .last(months: 3))
-    private var bodyWeight
-    
-    @HealthKitQuery(.height, timeRange: .last(years: 5))
-    private var height
-    
+    // NOTE: blood glucose is the one remaining HealthKit-queried score input: it has no stats-documents metric
+    // (it is planned to move to the custom fasting/A1c quantity sample types, which will live directly in firestore).
     @HealthKitQuery(.bloodGlucose, timeRange: .last(days: 14))
     private var bloodGlucose
     
-    @HealthKitQuery(.bloodPressure, timeRange: .last(months: 3))
-    private var bloodPressure
-    
-    // MARK: server-side stats documents as an alternative data source
-    // (selected via the `dashboardUsesStatsDocuments` preference; see `StatsDocumentsQuery`.)
-    // NOTE: for the time being, these queries are simply always active, in addition to the HealthKit-based ones above;
-    // the preference only decides which of the two each score reads from. this keeps the switching trivial,
-    // at the cost of some redundant fetching while the stats path is enabled.
-    // NOTE: blood glucose has no stats-documents metric (and the survey-derived scores are already server-fetched),
-    // so those always use their regular sources.
-    
-    @LocalPreference(.dashboardUsesStatsDocuments)
-    private var usesStatsDocuments
+    // MARK: server-side stats documents
+    // (the dashboard's sole data source for the HealthKit-derived metrics; see `StatsDocumentsQuery`.)
     
     @StatsDocumentsQuery<QuantitySample>(metric: .exerciseTime, timeRange: .last(days: 7).offset(by: .init(day: -1)), aggregationKind: .sum)
     private var statsExerciseTime
@@ -161,58 +122,37 @@ extension CVHScore {
     }
     
     var physicalExerciseScore: ScoreResult {
-        if usesStatsDocuments {
-            ScoreResult(
-                "Last \(7) Days",
-                sampleType: .healthKit(.quantity(.appleExerciseTime)),
-                timeRange: HealthKitQueryTimeRange.last(days: 7).offset(by: .init(day: -1)).range,
-                input: statsExerciseTime.isEmpty ? nil : statsExerciseTime,
-                value: { samples in samples.reduce(0) { $0 + $1.value(as: .minute()) } },
-                definition: .cvhPhysicalExercise
-            )
-        } else {
-            ScoreResult(
-                "Last \(7) Days",
-                sampleType: .healthKit(.quantity(.appleExerciseTime)),
-                sample: weeklyExerciseTime.last,
-                value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
-                definition: .cvhPhysicalExercise
-            )
-        }
+        ScoreResult(
+            "Last \(7) Days",
+            sampleType: .healthKit(.quantity(.appleExerciseTime)),
+            timeRange: HealthKitQueryTimeRange.last(days: 7).offset(by: .init(day: -1)).range,
+            input: statsExerciseTime.isEmpty ? nil : statsExerciseTime,
+            value: { samples in samples.reduce(0) { $0 + $1.value(as: .minute()) } },
+            definition: .cvhPhysicalExercise
+        )
     }
     
     var stepCountScore: ScoreResult {
         let avgText: LocalizedStringResource = "Daily Average"
         let timeRangeText: LocalizedStringResource = "Last \(7) Days"
-        if usesStatsDocuments {
-            // the stats documents store hourly sums; reduce them into daily sums, and average those
-            let timeRange = HealthKitQueryTimeRange.last(days: 7).offset(by: .init(day: -1)).range
-            let cal = Calendar.current
-            let dailySums = statsStepCount.reducedIntoIntervals(
-                using: .sum,
-                over: .day,
-                anchor: cal.startOfDay(for: timeRange.lowerBound),
-                overallTimeRange: timeRange,
-                calendar: cal
-            )
-            return ScoreResult(
-                "\(avgText), \(timeRangeText)",
-                sampleType: .healthKit(.quantity(.stepCount)),
-                timeRange: timeRange,
-                input: dailySums.isEmpty ? nil : dailySums,
-                value: { $0.map { $0.value(as: .count()) }.mean()?.rounded() },
-                definition: .cvhStepCount
-            )
-        } else {
-            return ScoreResult(
-                "\(avgText), \(timeRangeText)",
-                sampleType: .healthKit(.quantity(.stepCount)),
-                timeRange: $dailyStepCount.timeRange.range,
-                input: dailyStepCount,
-                value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.mean()?.rounded() },
-                definition: .cvhStepCount
-            )
-        }
+        // the stats documents store hourly sums; reduce them into daily sums, and average those
+        let timeRange = HealthKitQueryTimeRange.last(days: 7).offset(by: .init(day: -1)).range
+        let cal = Calendar.current
+        let dailySums = statsStepCount.reducedIntoIntervals(
+            using: .sum,
+            over: .day,
+            anchor: cal.startOfDay(for: timeRange.lowerBound),
+            overallTimeRange: timeRange,
+            calendar: cal
+        )
+        return ScoreResult(
+            "\(avgText), \(timeRangeText)",
+            sampleType: .healthKit(.quantity(.stepCount)),
+            timeRange: timeRange,
+            input: dailySums.isEmpty ? nil : dailySums,
+            value: { $0.map { $0.value(as: .count()) }.mean()?.rounded() },
+            definition: .cvhStepCount
+        )
     }
     
     var nicotineExposureScore: ScoreResult {
@@ -236,35 +176,19 @@ extension CVHScore {
     }
     
     var sleepHealthScore: ScoreResult {
-        if usesStatsDocuments {
-            // the sleep stats documents store one entry per sleep session, with the value being the time asleep in hours
-            if let mostRecentSession = statsSleepSessions.last {
-                return ScoreResult(
-                    "Most Recent Night",
-                    sampleType: .healthKit(.category(.sleepAnalysis)),
-                    sample: mostRecentSession,
-                    value: { $0.hoursAsleep },
-                    definition: .cvhSleep
-                )
-            } else {
-                return ScoreResult(
-                    "Last Night",
-                    sampleType: .healthKit(.category(.sleepAnalysis)),
-                    definition: .cvhSleep
-                )
-            }
-        } else if sleepSessions.isEmpty {
-            return ScoreResult(
-                "Last Night",
+        // the sleep stats documents store one entry per sleep session, with the value being the time asleep in hours
+        if let mostRecentSession = statsSleepSessions.last {
+            ScoreResult(
+                "Most Recent Night",
                 sampleType: .healthKit(.category(.sleepAnalysis)),
+                sample: mostRecentSession,
+                value: { $0.hoursAsleep },
                 definition: .cvhSleep
             )
         } else {
-            return ScoreResult(
-                "Most Recent Night",
+            ScoreResult(
+                "Last Night",
                 sampleType: .healthKit(.category(.sleepAnalysis)),
-                sample: sleepSessions.last,
-                value: { $0.totalTimeSpentAsleep / 60 / 60 },
                 definition: .cvhSleep
             )
         }
@@ -282,15 +206,11 @@ extension CVHScore {
         let sampleType = MHCSampleType.healthKit(.quantity(.bodyMassIndex))
         // when the stats-documents source is active, we convert its samples into (fake) HKQuantitySamples,
         // which lets the source-independent selection/fallback logic below stay unchanged
-        let bmiSample = usesStatsDocuments
-            ? statsBodyMassIndex.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.bodyMassIndex)
-            : bodyMassIndex.last
-        let weightSample = usesStatsDocuments
-            ? statsBodyWeight.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.bodyMass)
-            : bodyWeight.last
-        let heightSample = usesStatsDocuments
-            ? statsHeight.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.height)
-            : height.last
+        // the stats samples get converted into (fake) HKQuantitySamples, which lets the
+        // source-independent selection/fallback logic below operate on them directly
+        let bmiSample = statsBodyMassIndex.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.bodyMassIndex)
+        let weightSample = statsBodyWeight.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.bodyMass)
+        let heightSample = statsHeight.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.height)
         func calcBMI(weight: HKQuantity, height: HKQuantity) -> Double {
             weight.doubleValue(for: .gramUnit(with: .kilo)) / pow(height.doubleValue(for: .meter()), 2)
         }
@@ -361,35 +281,15 @@ extension CVHScore {
     }
     
     var bloodPressureScore: ScoreResult {
-        if usesStatsDocuments {
-            ScoreResult(
-                "Most Recent Sample",
-                sampleType: .healthKit(.correlation(.bloodPressure)),
-                sample: statsBloodPressure.last,
-                value: { sample in
-                    BloodPressureMeasurement(systolic: Int(sample.systolic), diastolic: Int(sample.diastolic))
-                },
-                definition: .cvhBloodPressure
-            )
-        } else {
-            ScoreResult(
-                "Most Recent Sample",
-                sampleType: .healthKit(.correlation(.bloodPressure)),
-                sample: bloodPressure.last,
-                value: { correlation in
-                    if let systolic = correlation.firstSample(ofType: .bloodPressureSystolic),
-                       let diastolic = correlation.firstSample(ofType: .bloodPressureDiastolic) {
-                        BloodPressureMeasurement(
-                            systolic: Int(systolic.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit)),
-                            diastolic: Int(diastolic.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit))
-                        )
-                    } else {
-                        nil
-                    }
-                },
-                definition: .cvhBloodPressure
-            )
-        }
+        ScoreResult(
+            "Most Recent Sample",
+            sampleType: .healthKit(.correlation(.bloodPressure)),
+            sample: statsBloodPressure.last,
+            value: { sample in
+                BloodPressureMeasurement(systolic: Int(sample.systolic), diastolic: Int(sample.diastolic))
+            },
+            definition: .cvhBloodPressure
+        )
     }
 }
 

@@ -22,7 +22,7 @@ import SwiftUI
 /// Grid Cell intended for usage in the ``HealthDashboard``, with support for most (quantity-based) sample types.
 struct DefaultHealthDashboardTile: View {
     enum QueryInput {
-        case healthKit(SampleType<HKQuantitySample>)
+        @available(*, deprecated)
         case firestore(CustomQuantitySampleType)
         /// fetch the data from the server-side stats documents (see ``StatsDocumentsQuery``)
         case statsDocuments(HealthStatsMetric)
@@ -46,8 +46,6 @@ struct DefaultHealthDashboardTile: View {
     
     var body: some View {
         switch queryInput {
-        case .healthKit(let sampleType):
-            view(for: sampleType)
         case .firestore(let sampleType):
             view(for: sampleType)
         case .statsDocuments(let metric):
@@ -74,23 +72,11 @@ struct DefaultHealthDashboardTile: View {
             }
         case .chart(let config):
             switch queryInput {
-            case .healthKit(let sampleType):
-                return .aggregate(.init(kind: .init(sampleType.hkSampleType.aggregationStyle), interval: config.aggregationInterval))
             case .statsDocuments(let metric):
                 return .aggregate(.init(kind: .init(metric.sampleType.hkSampleType.aggregationStyle), interval: config.aggregationInterval))
             case .firestore(let sampleType):
                 return .aggregate(.init(kind: sampleType.aggregationKind, interval: config.aggregationInterval))
             }
-        }
-    }
-    
-    private func view(for sampleType: SampleType<HKQuantitySample>) -> some View {
-        SamplesProviderView(
-            input: .healthKit(sampleType),
-            aggregationMode: self.aggregationMode,
-            timeRange: config.timeRange
-        ) { samples in
-            innerView(for: samples, sampleType: .healthKit(sampleType))
         }
     }
     
@@ -342,38 +328,6 @@ private struct SamplesProviderView<Content: View>: View {
     
     var body: some View {
         switch input {
-        case .healthKit(let sampleType):
-            switch aggregationMode {
-            case .none:
-                // if we're not supposed to aggregate anything, we simply perform a "normal" query that fetches all samples
-                HealthKitImpl_SamplesQuery(
-                    samples: HealthKitQuery(sampleType, timeRange: timeRange),
-                    aggregationMode: aggregationMode,
-                    content: content
-                )
-            case .mostRecentSample:
-                // if we're supposed to fetch only the most recent sample, we, for performance reasons, handle this as a statistics query and instruct the
-                // view to only return the most recent sample.
-                // this is significantly faster than using a HealthKitQuery over the same time range and looking at only the most recent result in there.
-                HealthKitImpl_StatisticsQuery(
-                    statistics: .init(
-                        sampleType,
-                        aggregatedBy: .init(sampleType.hkSampleType.aggregationStyle),
-                        over: .for(timeRange, in: calendar),
-                        timeRange: timeRange
-                    ),
-                    aggregationKind: .init(sampleType.hkSampleType.aggregationStyle),
-                    limitToMostRecentSample: true,
-                    content: content
-                )
-            case .aggregate(let strategy):
-                HealthKitImpl_StatisticsQuery(
-                    statistics: .init(sampleType, aggregatedBy: strategy.kind, over: strategy.interval, timeRange: timeRange),
-                    aggregationKind: strategy.kind,
-                    limitToMostRecentSample: false,
-                    content: content
-                )
-            }
         case .firestore(let sampleType):
             FirestoreImpl(
                 samples: .init(sampleType: sampleType, timeRange: timeRange),
@@ -408,93 +362,6 @@ private struct SamplesProviderView<Content: View>: View {
             strategy.kind
         case .none, .mostRecentSample:
             .init(metric.sampleType.hkSampleType.aggregationStyle)
-        }
-    }
-}
-
-
-extension SamplesProviderView {
-    private struct HealthKitImpl_SamplesQuery: View { // swiftlint:disable:this type_name
-        @HealthKitQuery<HKQuantitySample> var samples: Slice<OrderedArray<HKQuantitySample>>
-        let aggregationMode: QuantitySamplesQueryingViewAggregationMode
-        let content: @MainActor ([QuantitySample]) -> Content
-        
-        var body: some View {
-            switch aggregationMode {
-            case .none:
-                content(samples.map { QuantitySample($0) })
-            case .mostRecentSample:
-                if let sample = samples.last {
-                    content([QuantitySample(sample)])
-                } else {
-                    content([])
-                }
-            case .aggregate:
-                // swiftlint:disable:next redundant_discardable_let
-                let _ = fatalError("Unreachable. Should be using the '\(HealthKitImpl_StatisticsQuery.self)' in this case")
-            }
-        }
-    }
-}
-
-
-extension SamplesProviderView {
-    private struct HealthKitImpl_StatisticsQuery: View { // swiftlint:disable:this type_name
-        @HealthKitStatisticsQuery var statistics: [HKStatistics]
-        let aggregationKind: StatisticsAggregationOption
-        let limitToMostRecentSample: Bool
-        let content: @MainActor ([QuantitySample]) -> Content
-        
-        private var sampleType: SampleType<HKQuantitySample> {
-            $statistics.sampleType
-        }
-        
-        var body: some View {
-            let samples = { () -> [QuantitySample] in // swiftlint:disable:this closure_body_length
-                if limitToMostRecentSample {
-                    guard let statistics = statistics.last,
-                          let quantity = statistics.mostRecentQuantity(),
-                          let timeInterval = statistics.mostRecentQuantityDateInterval() else {
-                        return []
-                    }
-                    return [
-                        QuantitySample(
-                            id: UUID(), // aaaaarugh
-                            sampleType: .healthKit(sampleType),
-                            unit: sampleType.displayUnit,
-                            value: quantity.doubleValue(for: sampleType.displayUnit),
-                            startDate: timeInterval.start,
-                            endDate: timeInterval.end
-                        )
-                    ]
-                } else {
-                    return statistics.compactMap { statistics -> QuantitySample? in
-                        let quantity: HKQuantity?
-                        switch aggregationKind {
-                        case .sum:
-                            quantity = statistics.sumQuantity()
-                        case .avg:
-                            quantity = statistics.averageQuantity()
-                        case .min:
-                            quantity = statistics.minimumQuantity()
-                        case .max:
-                            quantity = statistics.maximumQuantity()
-                        }
-                        guard let quantity else {
-                            return nil
-                        }
-                        return QuantitySample(
-                            id: UUID(),
-                            sampleType: .healthKit(sampleType),
-                            unit: sampleType.displayUnit,
-                            value: quantity.doubleValue(for: sampleType.displayUnit),
-                            startDate: statistics.startDate,
-                            endDate: statistics.endDate
-                        )
-                    }
-                }
-            }()
-            content(samples)
         }
     }
 }

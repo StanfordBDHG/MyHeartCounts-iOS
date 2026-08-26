@@ -35,7 +35,6 @@ private struct DebugFormImpl: View {
     @Environment(DemoSetup.self) private var demoSetup
     @Environment(LocalNotifications.self) private var localNotifications
     @LocalPreference(.sendHealthSampleUploadNotifications) private var healthUploadNotifications
-    @LocalPreference(.dashboardUsesStatsDocuments) private var dashboardUsesStatsDocuments
     @LocalPreference(.rejectedHomeTabPromptedActions) private var rejectedHomeTabActions
     @PerformTask private var performTask
     @State private var viewState: ViewState = .idle
@@ -47,12 +46,6 @@ private struct DebugFormImpl: View {
             }
             Section {
                 MemoryUsageIndicator(style: .labeledContent)
-            }
-            Section("Heart Health Dashboard" as String) {
-                Toggle(isOn: $dashboardUsesStatsDocuments) {
-                    Label("Fetch Data from Stats Documents" as String, systemSymbol: .chartBarHorizontalPage)
-                        .foregroundStyle(.textLabel)
-                }
             }
             Section("Notifications") {
                 Toggle(isOn: $healthUploadNotifications) {
