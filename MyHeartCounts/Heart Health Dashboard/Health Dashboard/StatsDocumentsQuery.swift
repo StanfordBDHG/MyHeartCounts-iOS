@@ -20,14 +20,14 @@ import SpeziHealthKitUI
 import SwiftUI
 
 
-/// Fetches the entries of a metric's server-side stats documents, converted into ``QuantitySample``s.
+/// Fetches the entries of a metric's server-side stats documents.
 ///
-/// This is the read-side counterpart to ``HealthKitStatsCalculator``: it observes the `users/{uid}/stats/{metricId}/months`
-/// collections overlapping the query's time range, decodes the monthly documents, and flattens their entries
-/// (across all data sources contained in the documents) into a chronologically sorted list of samples.
+/// This is the read-side counterpart to ``HealthKitStatsCalculator``: it observes the metric's
+/// `users/{uid}/stats/{metricId}/months` collection (restricted to the months overlapping the query's time range),
+/// decodes the monthly documents, and flattens their entries into a chronologically sorted list of elements.
 ///
-/// - Note: the resolution of the returned samples is whatever the stats documents store (e.g. hourly buckets);
-///     consumers that need coarser aggregates can re-aggregate via `aggregated(using:over:anchor:overallTimeRange:calendar:)`.
+/// - Note: the resolution of the returned entries is whatever the stats documents store (e.g. hourly buckets);
+///     consumers that need coarser aggregates can re-aggregate via `reducedIntoIntervals(using:over:anchor:overallTimeRange:calendar:)`.
 @MainActor
 @propertyWrapper
 struct StatsDocumentsQuery<Element: Sendable>: DynamicProperty {
@@ -35,49 +35,77 @@ struct StatsDocumentsQuery<Element: Sendable>: DynamicProperty {
     /// Converts a decoded stats document into elements, keeping only those within the time range.
     fileprivate typealias DecodeDocumentFn = @Sendable (StatsDocument, _ timeRange: Range<Date>) -> [Element]
     
-    @Environment(Account.self)
-    private var account: Account?
-    
-    @State private var impl: Impl
-    private let metricId: MetricID
-    private let timeRange: HealthKitQueryTimeRange
-    /// distinguishes queries over the same metric+timeRange that decode differently (e.g. different aggregation kinds)
-    private let discriminator: String
-    private let logger = Logger(category: .init("StatsDocumentsQuery"))
+    /// The underlying query, fetching one `[Element]` chunk per month document.
+    @MHCFirestoreQuery<[Element]> private var monthChunks: [[Element]]
+    private let areInIncreasingOrder: @Sendable (Element, Element) -> Bool
     
     var wrappedValue: [Element] {
-        impl.elements
+        // NOTE: this flattens+sorts on every access (rather than once per snapshot);
+        // fine at the amounts of data involved here.
+        monthChunks.flatMap { $0 }.sorted(by: areInIncreasingOrder)
     }
     
     fileprivate init(
         metricId: MetricID,
         timeRange: HealthKitQueryTimeRange,
-        discriminator: String,
         decode: @escaping DecodeDocumentFn,
         areInIncreasingOrder: @escaping @Sendable (Element, Element) -> Bool
     ) {
-        self.metricId = metricId
-        self.timeRange = timeRange
-        self.discriminator = discriminator
-        self._impl = State(wrappedValue: Impl(decodeDocument: decode, areInIncreasingOrder: areInIncreasingOrder))
+        self.areInIncreasingOrder = areInIncreasingOrder
+        let timeRange = timeRange.range
+        // matches nothing; used when the time range doesn't overlap any month that could contain data
+        let bounds = Self.monthDocumentIdBounds(for: timeRange) ?? "0000-00"..."0000-00"
+        let logger = Logger(category: .init("StatsDocumentsQuery"))
+        self._monthChunks = MHCFirestoreQuery(
+            collection: .user(path: "stats/\(metricId.rawValue)/months"),
+            filter: .andFilter([
+                .whereField(FieldPath.documentID(), isGreaterOrEqualTo: bounds.lowerBound),
+                .whereField(FieldPath.documentID(), isLessThanOrEqualTo: bounds.upperBound)
+            ]),
+            decode: { document in
+                let statsDoc: StatsDocument
+                do {
+                    statsDoc = try document.data(as: StatsDocument.self)
+                } catch {
+                    logger.error("unable to decode stats document at '\(document.reference.path)': \(error)")
+                    return nil
+                }
+                guard statsDoc.version == 0 else {
+                    logger.error("skipping stats document at '\(document.reference.path)' with unsupported version \(statsDoc.version)")
+                    return nil
+                }
+                return decode(statsDoc, timeRange)
+            }
+        )
     }
     
-    nonisolated func update() {
-        Task { @MainActor in
-            guard let accountId = account?.details?.accountId else {
-                logger.error("Asked to query stats documents, but no user logged in.")
-                return
+    /// The `yyyy-MM` document-id bounds of the months overlapping the time range.
+    ///
+    /// Since the (zero-padded) month document ids sort lexicographically in chronologic order, these can be used
+    /// to restrict the query to the relevant months via a `FieldPath.documentID()` range filter.
+    /// `nil` if the time range doesn't overlap any month that could contain data.
+    private static func monthDocumentIdBounds(for timeRange: Range<Date>) -> ClosedRange<String>? {
+        let cal = Calendar.current
+        func monthId(for date: Date, addingMonths offset: Int) -> String? {
+            guard let date = cal.date(byAdding: .month, value: offset, to: date) else {
+                return nil
             }
-            impl.setup(
-                input: .init(
-                    accountId: accountId,
-                    metricId: metricId,
-                    timeRange: timeRange.range,
-                    discriminator: discriminator
-                ),
-                logger: logger
-            )
+            let components = cal.dateComponents([.year, .month], from: date)
+            guard let year = components.year, let month = components.month else {
+                return nil
+            }
+            return String(format: "%04d-%02d", year, month)
         }
+        // the month a document is filed under is determined by the *writer's* time zone at computation time;
+        // widening the bounds by one month on either end makes sure we don't miss entries near a month boundary.
+        // (the upper bound is additionally clamped to the current date: no stats documents exist for future months,
+        // which also handles open-ended time ranges, whose upper bound is `.distantFuture`.)
+        guard let lowerBound = monthId(for: timeRange.lowerBound, addingMonths: -1),
+              let upperBound = monthId(for: min(timeRange.upperBound, .now), addingMonths: 1),
+              lowerBound <= upperBound else {
+            return nil
+        }
+        return lowerBound...upperBound
     }
 }
 
@@ -91,7 +119,6 @@ extension StatsDocumentsQuery where Element == QuantitySample {
         self.init(
             metricId: metric.id,
             timeRange: timeRange,
-            discriminator: String(describing: aggregationKind),
             decode: { document, timeRange in
                 document.quantitySamples(for: metric, in: timeRange, aggregationKind: aggregationKind)
             },
@@ -108,7 +135,6 @@ extension StatsDocumentsQuery where Element == SleepSessionStatsSample {
         self.init(
             metricId: .sleep,
             timeRange: timeRange,
-            discriminator: "sleepSessions",
             decode: { document, timeRange in
                 document.sleepSessionSamples(in: timeRange)
             },
@@ -125,164 +151,11 @@ extension StatsDocumentsQuery where Element == BloodPressureStatsSample {
         self.init(
             metricId: .bloodPressure,
             timeRange: timeRange,
-            discriminator: "bloodPressure",
             decode: { document, timeRange in
                 document.bloodPressureSamples(in: timeRange)
             },
             areInIncreasingOrder: { $0.date < $1.date }
         )
-    }
-}
-
-
-extension StatsDocumentsQuery {
-    fileprivate struct QueryInput: Hashable, Sendable {
-        let accountId: String
-        let metricId: MetricID
-        let timeRange: Range<Date>
-        let discriminator: String
-        
-        /// The path of the metric's `months` collection, holding one document per month (with `yyyy-MM` document ids).
-        var collectionPath: String {
-            "users/\(accountId)/stats/\(metricId)/months"
-        }
-        
-        /// The `yyyy-MM` document-id bounds of the months overlapping the time range.
-        ///
-        /// Since the (zero-padded) month document ids sort lexicographically in chronologic order, these can be used
-        /// to restrict the query to the relevant months via a `FieldPath.documentID()` range filter.
-        /// `nil` if the time range doesn't overlap any month that could contain data.
-        var monthDocumentIdBounds: ClosedRange<String>? {
-            let cal = Calendar.current
-            func monthId(for date: Date, addingMonths offset: Int) -> String? {
-                guard let date = cal.date(byAdding: .month, value: offset, to: date) else {
-                    return nil
-                }
-                let components = cal.dateComponents([.year, .month], from: date)
-                guard let year = components.year, let month = components.month else {
-                    return nil
-                }
-                return String(format: "%04d-%02d", year, month)
-            }
-            // the month a document is filed under is determined by the *writer's* time zone at computation time;
-            // widening the bounds by one month on either end makes sure we don't miss entries near a month boundary.
-            // (the upper bound is additionally clamped to the current date: no stats documents exist for future months,
-            // which also handles open-ended time ranges, whose upper bound is `.distantFuture`.)
-            guard let lowerBound = monthId(for: timeRange.lowerBound, addingMonths: -1),
-                  let upperBound = monthId(for: min(timeRange.upperBound, .now), addingMonths: 1),
-                  lowerBound <= upperBound else {
-                return nil
-            }
-            return lowerBound...upperBound
-        }
-    }
-    
-    
-    /// Holds the active listener registrations, and removes them when it gets deallocated.
-    /// (Simply dropping a `ListenerRegistration` does not detach the listener; it needs an explicit `remove()` call.)
-    private final class ListenerBag: Sendable {
-        // SAFETY: only ever accessed from the main actor (and, in deinit, when no other references can exist).
-        nonisolated(unsafe) var listeners: [any ListenerRegistration] = []
-        
-        func removeAll() {
-            for listener in listeners {
-                listener.remove()
-            }
-            listeners.removeAll()
-        }
-        
-        deinit {
-            removeAll()
-        }
-    }
-    
-    
-    @Observable
-    @MainActor
-    fileprivate final class Impl: Sendable {
-        @ObservationIgnored private let listeners = ListenerBag()
-        @ObservationIgnored private var input: QueryInput?
-        @ObservationIgnored private let decodeDocument: DecodeDocumentFn
-        @ObservationIgnored private let areInIncreasingOrder: @Sendable (Element, Element) -> Bool
-        /// the decoded elements, per collection path
-        @ObservationIgnored private var elementsByCollection: [String: [Element]] = [:]
-        /// per-collection-path snapshot generation counters, so that out-of-order decode completions can't overwrite newer data with older data
-        @ObservationIgnored private var snapshotGenerations: [String: Int] = [:]
-        private(set) var elements: [Element] = []
-        
-        init(decodeDocument: @escaping DecodeDocumentFn, areInIncreasingOrder: @escaping @Sendable (Element, Element) -> Bool) {
-            self.decodeDocument = decodeDocument
-            self.areInIncreasingOrder = areInIncreasingOrder
-        }
-        
-        func setup(input: QueryInput, logger: Logger) {
-            guard input != self.input else {
-                return
-            }
-            self.input = input
-            listeners.removeAll()
-            elementsByCollection.removeAll()
-            snapshotGenerations.removeAll()
-            elements = []
-            guard let documentIdBounds = input.monthDocumentIdBounds else {
-                return
-            }
-            let path = input.collectionPath
-            let query = Firestore.firestore()
-                .collection(path)
-                .whereField(FieldPath.documentID(), isGreaterThanOrEqualTo: documentIdBounds.lowerBound)
-                .whereField(FieldPath.documentID(), isLessThanOrEqualTo: documentIdBounds.upperBound)
-            let listener = query.addSnapshotListener { @Sendable [weak self] snapshot, error in
-                guard let self else {
-                    return
-                }
-                if let snapshot {
-                    Task {
-                        await self.process(snapshot, collectionPath: path, input: input, logger: logger)
-                    }
-                } else if let error {
-                    logger.error("encountered error in firebase snapshot listener: \(error)")
-                }
-            }
-            listeners.listeners.append(listener)
-        }
-        
-        private func process(_ snapshot: QuerySnapshot, collectionPath: String, input: QueryInput, logger: Logger) async {
-            let generation = (snapshotGenerations[collectionPath] ?? 0) + 1
-            snapshotGenerations[collectionPath] = generation
-            let elements = await Self.decode(snapshot, input: input, decodeDocument: decodeDocument, logger: logger)
-            guard input == self.input, snapshotGenerations[collectionPath] == generation else {
-                // the query input changed, or a newer snapshot for this collection was already processed
-                return
-            }
-            self.elementsByCollection[collectionPath] = elements
-            self.elements = self.elementsByCollection.values.flatMap { $0 }.sorted(by: areInIncreasingOrder)
-        }
-        
-        @concurrent
-        private static func decode(
-            _ snapshot: QuerySnapshot,
-            input: QueryInput,
-            decodeDocument: DecodeDocumentFn,
-            logger: Logger
-        ) async -> [Element] {
-            var elements: [Element] = []
-            for document in snapshot.documents {
-                let statsDoc: StatsDocument
-                do {
-                    statsDoc = try document.data(as: StatsDocument.self)
-                } catch {
-                    logger.error("unable to decode stats document at '\(document.reference.path)': \(error)")
-                    continue
-                }
-                guard statsDoc.version == 0 else {
-                    logger.error("skipping stats document at '\(document.reference.path)' with unsupported version \(statsDoc.version)")
-                    continue
-                }
-                elements.append(contentsOf: decodeDocument(statsDoc, input.timeRange))
-            }
-            return elements
-        }
     }
 }
 
