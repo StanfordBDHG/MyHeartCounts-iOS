@@ -46,10 +46,6 @@ final class OtherTests {
     @Test
     func healthStatsCalculatorDataSourceCoding() throws {
         typealias DataSourceID = HealthKitStatsCalculator.DataSourceID
-        struct Wrapper: Codable {
-            let dataSource: DataSourceID
-            let value: Int
-        }
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         do {
@@ -57,8 +53,27 @@ final class OtherTests {
             #expect(String(decoding: encoded, as: UTF8.self) == #""com.apple.HealthKit""#)
         }
         do {
+            struct Wrapper: Codable {
+                let dataSource: DataSourceID
+                let value: Int
+            }
             let encoded = try encoder.encode(Wrapper(dataSource: .healthKit, value: 12))
             #expect(String(decoding: encoded, as: UTF8.self) == #"{"dataSource":"com.apple.HealthKit","value":12}"#)
         }
+        do {
+            let entries: [DataSourceID: [Int]] = [
+                .healthKit: [1, 2, 3],
+                .fitbit: [4, 5, 6]
+            ]
+            let encoded = try encoder.encode(entries)
+            #expect(String(decoding: encoded, as: UTF8.self) == #"{"com.apple.HealthKit":[1,2,3],"fitbit":[4,5,6]}"#)
+            let decoded = try JSONDecoder().decode(type(of: entries), from: encoded)
+            #expect(decoded == entries)
+        }
     }
+}
+
+
+extension HealthKitStatsCalculator.DataSourceID {
+    fileprivate static let fitbit = Self(rawValue: "fitbit")
 }

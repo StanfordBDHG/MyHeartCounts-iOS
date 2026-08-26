@@ -17,4 +17,11 @@ extension LocalPreferenceKeys {
         "shouldClearFirestoreCacheOnNextLaunch",
         default: true
     )
+    
+    /// Whether the Health Dashboard should fetch its data from the server-side stats documents
+    /// (`users/{uid}/stats/{metricId}/{year}/{month}`), instead of querying HealthKit locally.
+    ///
+    /// This only affects sample types for which a stats-documents metric exists (see `HealthStatsMetric`);
+    /// everything else always uses the regular data sources.
+    static let dashboardUsesStatsDocuments = LocalPreferenceKey<Bool>("dashboardUsesStatsDocuments", default: false)
 }

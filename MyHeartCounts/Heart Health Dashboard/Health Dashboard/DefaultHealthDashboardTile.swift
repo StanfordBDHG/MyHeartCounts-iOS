@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order file_length
 
 import Charts
 import Foundation
@@ -24,6 +24,8 @@ struct DefaultHealthDashboardTile: View {
     enum QueryInput {
         case healthKit(SampleType<HKQuantitySample>)
         case firestore(CustomQuantitySampleType)
+        /// fetch the data from the server-side stats documents (see ``StatsDocumentsQuery``)
+        case statsDocuments(HealthStatsMetric)
     }
     
     enum Accessory {
@@ -48,6 +50,8 @@ struct DefaultHealthDashboardTile: View {
             view(for: sampleType)
         case .firestore(let sampleType):
             view(for: sampleType)
+        case .statsDocuments(let metric):
+            view(for: metric)
         }
     }
     
@@ -72,6 +76,8 @@ struct DefaultHealthDashboardTile: View {
             switch queryInput {
             case .healthKit(let sampleType):
                 return .aggregate(.init(kind: .init(sampleType.hkSampleType.aggregationStyle), interval: config.aggregationInterval))
+            case .statsDocuments(let metric):
+                return .aggregate(.init(kind: .init(metric.sampleType.hkSampleType.aggregationStyle), interval: config.aggregationInterval))
             case .firestore(let sampleType):
                 return .aggregate(.init(kind: sampleType.aggregationKind, interval: config.aggregationInterval))
             }
@@ -85,6 +91,16 @@ struct DefaultHealthDashboardTile: View {
             timeRange: config.timeRange
         ) { samples in
             innerView(for: samples, sampleType: .healthKit(sampleType))
+        }
+    }
+    
+    private func view(for metric: HealthStatsMetric) -> some View {
+        SamplesProviderView(
+            input: .statsDocuments(metric),
+            aggregationMode: self.aggregationMode,
+            timeRange: config.timeRange
+        ) { samples in
+            innerView(for: samples, sampleType: .healthKit(metric.sampleType))
         }
     }
     
@@ -363,6 +379,13 @@ private struct SamplesProviderView<Content: View>: View {
                 samples: .init(sampleType: sampleType, timeRange: timeRange),
                 content: content
             )
+        case .statsDocuments(let metric):
+            StatsDocumentsImpl(
+                samples: .init(metric: metric, timeRange: timeRange, aggregationKind: aggregationKindForStatsDocuments(metric: metric)),
+                aggregationMode: aggregationMode,
+                timeRange: timeRange,
+                content: content
+            )
         }
     }
     
@@ -376,6 +399,16 @@ private struct SamplesProviderView<Content: View>: View {
         self.aggregationMode = aggregationMode
         self.timeRange = timeRange
         self.content = content
+    }
+    
+    /// which of a bucketed stats-document entry's values should become the resulting sample's value
+    private func aggregationKindForStatsDocuments(metric: HealthStatsMetric) -> StatisticsAggregationOption {
+        switch aggregationMode {
+        case .aggregate(let strategy):
+            strategy.kind
+        case .none, .mostRecentSample:
+            .init(metric.sampleType.hkSampleType.aggregationStyle)
+        }
     }
 }
 
@@ -468,6 +501,41 @@ extension SamplesProviderView {
 
 
 extension SamplesProviderView {
+    private struct StatsDocumentsImpl: View {
+        @Environment(\.calendar)
+        private var calendar
+        @StatsDocumentsQuery<QuantitySample> var samples: [QuantitySample]
+        let aggregationMode: QuantitySamplesQueryingViewAggregationMode
+        let timeRange: HealthKitQueryTimeRange
+        let content: @MainActor ([QuantitySample]) -> Content
+        
+        var body: some View {
+            switch aggregationMode {
+            case .none:
+                content(samples)
+            case .mostRecentSample:
+                // NOTE: for metrics whose stats documents store aggregated buckets (e.g. hourly), the "most recent sample"
+                // is the most recent *bucket* (with the bucket's time range), not the most recent raw reading.
+                if let sample = samples.max(by: \.endDate) {
+                    content([sample])
+                } else {
+                    content([])
+                }
+            case .aggregate(let strategy):
+                // reduce the stats documents' entries into one sample per aggregation interval,
+                // mirroring what the HKStatisticsQuery-based provider produces for the HealthKit path.
+                // note that the achievable resolution is limited by what the stats documents store (e.g., hourly buckets).
+                content(samples.reducedIntoIntervals(
+                    using: strategy.kind,
+                    over: strategy.interval,
+                    anchor: calendar.startOfDay(for: timeRange.range.lowerBound),
+                    overallTimeRange: timeRange.range,
+                    calendar: calendar
+                ))
+            }
+        }
+    }
+    
     private struct FirestoreImpl: View {
         @MHCFirestoreQuery<QuantitySample> var samples: [QuantitySample]
         let content: @MainActor ([QuantitySample]) -> Content

@@ -10,6 +10,8 @@
 
 import Charts
 import Foundation
+import HealthKit
+import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitUI
 import SwiftUI
@@ -40,7 +42,7 @@ func healthDashboardComponentView(
 ) -> some View {
     switch (size, config.dataSource) {
     case (_, .healthKit(.quantity(let sampleType))):
-        DefaultHealthDashboardTile(queryInput: .healthKit(sampleType), config: config, accessory: accessory)
+        HealthKitQuantityTileView(sampleType: sampleType, config: config, accessory: accessory)
     case (_, .firebase(let sampleType)):
         DefaultHealthDashboardTile(queryInput: .firestore(sampleType), config: config, accessory: accessory)
     case (.small, .healthKit(.category(.sleepAnalysis))):
@@ -54,6 +56,28 @@ func healthDashboardComponentView(
     case (_, .healthKit):
         // we shouldn't end up in here, since the GridComponent factory methods limit which HealthKit sample types are allowed here...
         EmptyView()
+    }
+}
+
+
+/// Displays a ``DefaultHealthDashboardTile`` for a HealthKit quantity sample type,
+/// selecting the underlying data source based on the "use stats documents" preference:
+/// if enabled, and a stats-documents metric exists for the sample type, the tile is driven by the
+/// server-side stats documents instead of querying HealthKit locally.
+private struct HealthKitQuantityTileView: View {
+    @LocalPreference(.dashboardUsesStatsDocuments)
+    private var usesStatsDocuments
+    
+    let sampleType: SampleType<HKQuantitySample>
+    let config: HealthDashboardLayout.GridComponent.ComponentDisplayConfig
+    let accessory: DefaultHealthDashboardTile.Accessory
+    
+    var body: some View {
+        if usesStatsDocuments, let metric = HealthStatsMetric(sampleType) {
+            DefaultHealthDashboardTile(queryInput: .statsDocuments(metric), config: config, accessory: accessory)
+        } else {
+            DefaultHealthDashboardTile(queryInput: .healthKit(sampleType), config: config, accessory: accessory)
+        }
     }
 }
 

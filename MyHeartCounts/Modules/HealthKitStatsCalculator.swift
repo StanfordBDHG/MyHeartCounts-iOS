@@ -22,16 +22,6 @@ import SpeziHealthKit
 
 @Observable
 final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
-    struct DataSourceID: RawRepresentable<String>, Hashable, Codable, Sendable {
-        static let healthKit = Self(rawValue: "com.apple.HealthKit")
-        
-        let rawValue: String
-        
-        init(rawValue: String) {
-            self.rawValue = rawValue
-        }
-    }
-    
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
@@ -84,6 +74,59 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
 }
 
 
+// MARK: Types
+
+extension HealthKitStatsCalculator {
+    protocol _IDType: RawRepresentable<String>, LosslessStringConvertible, Hashable, Codable, CodingKeyRepresentable, Sendable { // swiftlint:disable:this type_name line_length
+        var rawValue: String { get }
+        init(rawValue: String)
+    }
+    
+    struct DataSourceID: _IDType {
+        static let healthKit = Self(rawValue: "com.apple.HealthKit")
+        
+        let rawValue: String
+    }
+    
+    
+    struct MetricID: _IDType {
+        static let steps = Self(rawValue: "steps")
+        static let exerciseTime = Self(rawValue: "exercise-time")
+        static let heartRate = Self(rawValue: "heart-rate")
+        static let weight = Self(rawValue: "weight")
+        static let height = Self(rawValue: "height")
+        static let bmi = Self(rawValue: "bmi")
+        static let sleep = Self("sleep")
+        static let bloodPressure = Self("blood-pressure")
+        
+        let rawValue: String
+    }
+}
+
+
+extension HealthKitStatsCalculator._IDType {
+    var description: String {
+        rawValue
+    }
+    init(_ description: String) {
+        self.init(rawValue: description)
+    }
+}
+
+// Making these `CodingKeyRepresentable` means that we can use them as Dictionary keys and still get regular `key: value`
+// mappings as the encoded output; otherwise a dictionary `[key1: value1, key2: value2, ...]` would get turned into an array
+// of `[key1, value1, key2, value2, ...]` entries.
+extension HealthKitStatsCalculator._IDType {
+    var codingKey: any Swift.CodingKey {
+        AnyCodingKey(stringValue: rawValue)
+    }
+    
+    init?(codingKey: some Swift.CodingKey) {
+        self.init(rawValue: codingKey.stringValue)
+    }
+}
+
+
 // MARK: Month iteration & document writing
 
 extension HealthKitStatsCalculator {
@@ -102,8 +145,6 @@ extension HealthKitStatsCalculator {
             return []
         }
         let firstMonthStart = cal.startOfMonth(for: enrollmentDate)
-        // NOTE: the sequence returned by `Calendar.dates(byAdding:)` begins at `start` + 1 interval,
-        // i.e. it never yields the start date itself; hence the explicit prepending.
         return cal
             .dates(
                 byAdding: .month,
@@ -111,6 +152,8 @@ extension HealthKitStatsCalculator {
                 startingAt: firstMonthStart,
                 in: firstMonthStart..<cal.startOfNextMonth(for: now)
             )
+            // NOTE: the sequence returned by `Calendar.dates(byAdding:)` begins at `start` + 1 interval,
+            // i.e. it never yields the start date itself; hence the explicit prepending.
             .chaining(after: CollectionOfOne(firstMonthStart))
             .compactMap { monthStart in
                 let components = cal.dateComponents([.year, .month], from: monthStart)
@@ -132,7 +175,7 @@ extension HealthKitStatsCalculator {
 
     private func writeStatsDocument<Entry: Codable>(
         accountDoc: DocumentReference,
-        metricId: String,
+        metricId: MetricID,
         month: StatsMonth,
         entriesKey: MonthlyStatsDocumentEntriesKey,
         entries: [Entry]
@@ -148,7 +191,7 @@ extension HealthKitStatsCalculator {
         // be aware of this being a thing.
         let doc = accountDoc
             .collection("stats")
-            .document(metricId)
+            .document(metricId.rawValue)
             .collection(String(month.year))
             .document(month.monthString)
         do {
@@ -182,7 +225,7 @@ extension HealthKitStatsCalculator {
     private struct StatsRunDescriptor {
         let sampleType: SampleType<HKQuantitySample>
         /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
-        let metricId: String
+        let metricId: MetricID
         let mode: AggregationMode
         let aggregationInterval: HealthKit.AggregationInterval
         let entriesKey: MonthlyStatsDocumentEntriesKey
@@ -200,7 +243,7 @@ extension HealthKitStatsCalculator {
     private static let bucketedDescriptors: [StatsRunDescriptor] = [
         .init(
             sampleType: .stepCount,
-            metricId: "steps",
+            metricId: .steps,
             mode: .sum,
             aggregationInterval: .hour,
             entriesKey: .hourly,
@@ -208,7 +251,7 @@ extension HealthKitStatsCalculator {
         ),
         .init(
             sampleType: .appleExerciseTime,
-            metricId: "exercise-time",
+            metricId: .exerciseTime,
             mode: .sum,
             aggregationInterval: .hour,
             entriesKey: .hourly,
@@ -216,7 +259,7 @@ extension HealthKitStatsCalculator {
         ),
         .init(
             sampleType: .heartRate,
-            metricId: "heart-rate",
+            metricId: .heartRate,
             mode: .minMaxAvg,
             aggregationInterval: .hour,
             entriesKey: .hourly,
@@ -225,9 +268,9 @@ extension HealthKitStatsCalculator {
     ]
     
     private static let individualSamplesDescriptors: [IndividualSamplesRunDescriptor] = [
-        .init(sampleType: .bodyMass, metricId: "weight"),
-        .init(sampleType: .height, metricId: "height"),
-        .init(sampleType: .bodyMassIndex, metricId: "bmi")
+        .init(sampleType: .bodyMass, metricId: .weight),
+        .init(sampleType: .height, metricId: .height),
+        .init(sampleType: .bodyMassIndex, metricId: .bmi)
     ]
 
     @concurrent
@@ -336,7 +379,7 @@ extension HealthKitStatsCalculator {
             }
             try await writeStatsDocument(
                 accountDoc: accountDoc,
-                metricId: "sleep",
+                metricId: .sleep,
                 month: month,
                 entriesKey: .sessions,
                 entries: entries
@@ -352,7 +395,7 @@ extension HealthKitStatsCalculator {
     private struct IndividualSamplesRunDescriptor {
         let sampleType: SampleType<HKQuantitySample>
         /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
-        let metricId: String
+        let metricId: MetricID
     }
 
     @concurrent
@@ -410,7 +453,7 @@ extension HealthKitStatsCalculator {
             }
             try await writeStatsDocument(
                 accountDoc: accountDoc,
-                metricId: "blood-pressure",
+                metricId: .bloodPressure,
                 month: month,
                 entriesKey: .samples,
                 entries: entries
@@ -598,12 +641,12 @@ extension HealthKitStatsCalculator {
         }
 
         var version: Int
-        var metric: String
+        var metric: MetricID
         var entriesKey: MonthlyStatsDocumentEntriesKey
         var entriesBySourceId: [DataSourceID: [Entry]]
 
         init(
-            metric: String,
+            metric: MetricID,
             entriesKey: MonthlyStatsDocumentEntriesKey,
             entriesBySourceId: [DataSourceID: [Entry]]
         ) {
@@ -616,7 +659,7 @@ extension HealthKitStatsCalculator {
         init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKey.self)
             version = try container.decode(Int.self, forKey: .version)
-            metric = try container.decode(String.self, forKey: .metric)
+            metric = try container.decode(MetricID.self, forKey: .metric)
             let entriesByKey: [MonthlyStatsDocumentEntriesKey: [DataSourceID: [Entry]]] = try MonthlyStatsDocumentEntriesKey.allCases.reduce(
                 into: [:]
             ) { result, entriesKey in
