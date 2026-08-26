@@ -29,6 +29,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
     // swiftlint:enable attributes
 
     func run() async {
+        await account.waitForAccountDetailsReady()
         guard let accountId = await account.details?.accountId else {
             logger.error("no accountId")
             return
