@@ -42,4 +42,23 @@ final class OtherTests {
         #expect(task.identifier == nicotineQuestionnaire.url?.value?.url.absoluteString)
         #expect(task.identifier == "https://myheartcounts.stanford.edu/fhir/survey/nicotineExposure")
     }
+    
+    @Test
+    func healthStatsCalculatorDataSourceCoding() throws {
+        typealias DataSourceID = HealthKitStatsCalculator.DataSourceID
+        struct Wrapper: Codable {
+            let dataSource: DataSourceID
+            let value: Int
+        }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        do {
+            let encoded = try encoder.encode(DataSourceID.healthKit)
+            #expect(String(decoding: encoded, as: UTF8.self) == #""com.apple.HealthKit""#)
+        }
+        do {
+            let encoded = try encoder.encode(Wrapper(dataSource: .healthKit, value: 12))
+            #expect(String(decoding: encoded, as: UTF8.self) == #"{"dataSource":"com.apple.HealthKit","value":12}"#)
+        }
+    }
 }

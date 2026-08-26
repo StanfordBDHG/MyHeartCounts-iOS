@@ -6,44 +6,49 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable all
+// swiftlint:disable file_length
 
 import FirebaseFirestore
 import Foundation
 import HealthKit
+import MyHeartCountsShared
+import OSLog
 import Spezi
 import SpeziAccount
-import SpeziHealthKit
-import SpeziFoundation
 import SpeziFirestore
-import OSLog
+import SpeziFoundation
+import SpeziHealthKit
 
 
 @Observable
 final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
+    struct DataSourceID: RawRepresentable<String>, Hashable, Codable, Sendable {
+        static let healthKit = Self(rawValue: "com.apple.HealthKit")
+        
+        let rawValue: String
+        
+        init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+    }
+    
+    // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(Account.self) private var account
-
-    fileprivate static let healthKitSourceId = "com.apple.HealthKit"
+    // swiftlint:enable attributes
 
     func run() async {
         guard let accountId = await account.details?.accountId else {
             logger.error("no accountId")
             return
         }
+        guard let enrollmentDate = await account.details?.dateOfEnrollment else {
+            logger.error("no enrollment date")
+            return
+        }
+        let months = self.months(since: enrollmentDate)
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
-        // one run per metric in the spec's Metrics table (docs/MHCDataSpec.md)
-        let bucketedDescriptors: [StatsRunDescriptor] = [
-            .init(sampleType: .stepCount, metricId: "steps", mode: .sum, aggregationInterval: .hour, entriesKey: .hourly, timeRange: .currentMonth),
-            .init(sampleType: .appleExerciseTime, metricId: "exercise-time", mode: .sum, aggregationInterval: .hour, entriesKey: .hourly, timeRange: .currentMonth),
-            .init(sampleType: .heartRate, metricId: "heart-rate", mode: .minMaxAvg, aggregationInterval: .hour, entriesKey: .hourly, timeRange: .currentMonth)
-        ]
-        let individualSamplesDescriptors: [IndividualSamplesRunDescriptor] = [
-            .init(sampleType: .bodyMass, metricId: "weight"),
-            .init(sampleType: .height, metricId: "height"),
-            .init(sampleType: .bodyMassIndex, metricId: "bmi")
-        ]
         logger.notice("starting")
         // NOTE/IDEA: in addition to parallelising over sample type, we could additionally also parallelise over time?
         // (i.e., process multiple months in parallel?)
@@ -57,21 +62,21 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
                     }
                 }
             }
-            for descriptor in bucketedDescriptors {
+            for descriptor in Self.bucketedDescriptors {
                 schedule {
-                    try await self.runBucketedQuantityStats(descriptor, lastNMonths: 1, accountDoc: accountDoc)
+                    try await self.runBucketedQuantityStats(descriptor, months: months, accountDoc: accountDoc)
                 }
             }
-            for descriptor in individualSamplesDescriptors {
+            for descriptor in Self.individualSamplesDescriptors {
                 schedule {
-                    try await self.runIndividualQuantitySampleStats(descriptor, lastNMonths: 1, accountDoc: accountDoc)
+                    try await self.runIndividualQuantitySampleStats(descriptor, months: months, accountDoc: accountDoc)
                 }
             }
             schedule {
-                try await self.runSleepStats(lastNMonths: 1, accountDoc: accountDoc)
+                try await self.runSleepStats(months: months, accountDoc: accountDoc)
             }
             schedule {
-                try await self.runBloodPressureStats(lastNMonths: 1, accountDoc: accountDoc)
+                try await self.runBloodPressureStats(months: months, accountDoc: accountDoc)
             }
         }
         logger.notice("done")
@@ -88,25 +93,41 @@ extension HealthKitStatsCalculator {
         let range: Range<Date>
     }
 
-    /// the previous `numMonths` months, plus the current one.
-    /// - Note: deliberately not using `Calendar.dates(byAdding:startingAt:in:)` here: that sequence does not yield its start date, which would silently drop the earliest month.
-    private func months(lastNMonths numMonths: Int) -> [StatsMonth] {
+    /// The months the stats should cover, i.e. all months from the user's enrollment up to now.
+    /// The first and last month's ranges are clamped to the enrollment date resp. the current time.
+    private func months(since enrollmentDate: Date) -> [StatsMonth] {
         let cal = Calendar.current
-        let currentMonthStart = cal.startOfMonth(for: Date())
-        return (-numMonths...0).compactMap { offset in
-            guard let monthStart = cal.date(byAdding: .month, value: offset, to: currentMonthStart) else {
-                return nil
-            }
-            let components = cal.dateComponents([.year, .month], from: monthStart)
-            guard let year = components.year, let month = components.month else {
-                return nil
-            }
-            return StatsMonth(
-                year: year,
-                monthString: String(format: "%02d", month),
-                range: monthStart..<cal.startOfNextMonth(for: monthStart)
-            )
+        let now = Date()
+        guard enrollmentDate < now else {
+            return []
         }
+        let firstMonthStart = cal.startOfMonth(for: enrollmentDate)
+        // NOTE: the sequence returned by `Calendar.dates(byAdding:)` begins at `start` + 1 interval,
+        // i.e. it never yields the start date itself; hence the explicit prepending.
+        return cal
+            .dates(
+                byAdding: .month,
+                value: 1,
+                startingAt: firstMonthStart,
+                in: firstMonthStart..<cal.startOfNextMonth(for: now)
+            )
+            .chaining(after: CollectionOfOne(firstMonthStart))
+            .compactMap { monthStart in
+                let components = cal.dateComponents([.year, .month], from: monthStart)
+                guard let year = components.year, let month = components.month else {
+                    return nil
+                }
+                let lowerBound = max(monthStart, enrollmentDate)
+                let upperBound = min(cal.startOfNextMonth(for: monthStart), now)
+                guard lowerBound < upperBound else {
+                    return nil
+                }
+                return StatsMonth(
+                    year: year,
+                    monthString: String(format: "%02d", month),
+                    range: lowerBound..<upperBound
+                )
+            }
     }
 
     private func writeStatsDocument<Entry: Codable>(
@@ -135,14 +156,14 @@ extension HealthKitStatsCalculator {
             // (the explicit cast forces the FirestoreUtils overload, which pre-encodes the entries;
             // the plain Firestore updateData cannot handle Swift structs)
             try await doc.updateData([
-                FieldPath([entriesKey.rawValue, Self.healthKitSourceId]): entries
+                FieldPath([entriesKey.rawValue, DataSourceID.healthKit.rawValue]): entries
             ] as [AnyHashable: any Codable])
         } catch let error as NSError where error.code == FirestoreErrorCode.notFound.rawValue {
             // the document we're tryng to update doesn't exist yet, so we need to create it
             let statsDoc = MonthlyStatsDocument(
                 metric: metricId,
                 entriesKey: entriesKey,
-                entriesBySourceId: [Self.healthKitSourceId: entries]
+                entriesBySourceId: [.healthKit: entries]
             )
             try await doc.setData(from: statsDoc)
         }
@@ -173,10 +194,45 @@ extension HealthKitStatsCalculator {
             return copy
         }
     }
+    
+    
+    // one run per metric in the spec's Metrics table (docs/MHCDataSpec.md)
+    private static let bucketedDescriptors: [StatsRunDescriptor] = [
+        .init(
+            sampleType: .stepCount,
+            metricId: "steps",
+            mode: .sum,
+            aggregationInterval: .hour,
+            entriesKey: .hourly,
+            timeRange: .currentMonth
+        ),
+        .init(
+            sampleType: .appleExerciseTime,
+            metricId: "exercise-time",
+            mode: .sum,
+            aggregationInterval: .hour,
+            entriesKey: .hourly,
+            timeRange: .currentMonth
+        ),
+        .init(
+            sampleType: .heartRate,
+            metricId: "heart-rate",
+            mode: .minMaxAvg,
+            aggregationInterval: .hour,
+            entriesKey: .hourly,
+            timeRange: .currentMonth
+        )
+    ]
+    
+    private static let individualSamplesDescriptors: [IndividualSamplesRunDescriptor] = [
+        .init(sampleType: .bodyMass, metricId: "weight"),
+        .init(sampleType: .height, metricId: "height"),
+        .init(sampleType: .bodyMassIndex, metricId: "bmi")
+    ]
 
     @concurrent
-    private func runBucketedQuantityStats(_ descriptor: StatsRunDescriptor, lastNMonths: Int, accountDoc: DocumentReference) async throws {
-        for month in months(lastNMonths: lastNMonths) {
+    private func runBucketedQuantityStats(_ descriptor: StatsRunDescriptor, months: [StatsMonth], accountDoc: DocumentReference) async throws {
+        for month in months {
             self.logger.notice("Computing stats for stats/\(descriptor.metricId)/\(month.year)/\(month.monthString)")
             if let stats = try? await self.calculateStats(for: descriptor.withTimeRange(.init(month.range))) {
                 try await writeStatsDocument(
@@ -245,8 +301,8 @@ extension HealthKitStatsCalculator {
 
 extension HealthKitStatsCalculator {
     @concurrent
-    private func runSleepStats(lastNMonths: Int, accountDoc: DocumentReference) async throws {
-        for month in months(lastNMonths: lastNMonths) {
+    private func runSleepStats(months: [StatsMonth], accountDoc: DocumentReference) async throws {
+        for month in months {
             self.logger.notice("Computing stats for stats/sleep/\(month.year)/\(month.monthString)")
             let samples: [HKCategorySample]
             do {
@@ -300,9 +356,13 @@ extension HealthKitStatsCalculator {
     }
 
     @concurrent
-    private func runIndividualQuantitySampleStats(_ descriptor: IndividualSamplesRunDescriptor, lastNMonths: Int, accountDoc: DocumentReference) async throws {
+    private func runIndividualQuantitySampleStats(
+        _ descriptor: IndividualSamplesRunDescriptor,
+        months: [StatsMonth],
+        accountDoc: DocumentReference
+    ) async throws {
         let unit = descriptor.sampleType.canonicalUnit
-        for month in months(lastNMonths: lastNMonths) {
+        for month in months {
             self.logger.notice("Computing stats for stats/\(descriptor.metricId)/\(month.year)/\(month.monthString)")
             let samples: [HKQuantitySample]
             do {
@@ -325,9 +385,9 @@ extension HealthKitStatsCalculator {
     }
 
     @concurrent
-    private func runBloodPressureStats(lastNMonths: Int, accountDoc: DocumentReference) async throws {
+    private func runBloodPressureStats(months: [StatsMonth], accountDoc: DocumentReference) async throws {
         let unit = SampleType.bloodPressureSystolic.canonicalUnit // mmHg
-        for month in months(lastNMonths: lastNMonths) {
+        for month in months {
             self.logger.notice("Computing stats for stats/blood-pressure/\(month.year)/\(month.monthString)")
             let correlations: [HKCorrelation]
             do {
@@ -367,7 +427,7 @@ extension HealthKitStatsCalculator {
         /// spec: all timestamps in stats documents are ISO8601 strings; we include the device's local-time UTC offset (matching the bucket boundaries, which are computed in local time).
         /// - Note: the field modifiers must all be spelled out: calling any modifier on an `ISO8601FormatStyle` discards the default field set, so e.g. a bare `.timeZone(separator:)` style would format dates as just the offset.
         static let dateFormat = Date.ISO8601FormatStyle(timeZone: .current)
-            .year().month().day()
+            .year().month().day() // swiftlint:disable:this multiline_function_chains
             .dateTimeSeparator(.standard)
             .time(includingFractionalSeconds: false)
             .timeZone(separator: .colon)
@@ -533,19 +593,19 @@ extension HealthKitStatsCalculator {
                 self.stringValue = stringValue
             }
             init?(intValue: Int) {
-                return nil
+                nil
             }
         }
 
         var version: Int
         var metric: String
         var entriesKey: MonthlyStatsDocumentEntriesKey
-        var entriesBySourceId: [String: [Entry]]
+        var entriesBySourceId: [DataSourceID: [Entry]]
 
         init(
             metric: String,
             entriesKey: MonthlyStatsDocumentEntriesKey,
-            entriesBySourceId: [String: [Entry]]
+            entriesBySourceId: [DataSourceID: [Entry]]
         ) {
             self.version = 0
             self.metric = metric
@@ -557,16 +617,29 @@ extension HealthKitStatsCalculator {
             let container = try decoder.container(keyedBy: CodingKey.self)
             version = try container.decode(Int.self, forKey: .version)
             metric = try container.decode(String.self, forKey: .metric)
-            let entriesByKey: [MonthlyStatsDocumentEntriesKey: [String: [Entry]]] = try MonthlyStatsDocumentEntriesKey.allCases.reduce(into: [:]) { result, entriesKey in
+            let entriesByKey: [MonthlyStatsDocumentEntriesKey: [DataSourceID: [Entry]]] = try MonthlyStatsDocumentEntriesKey.allCases.reduce(
+                into: [:]
+            ) { result, entriesKey in
                 if let entries = try container.decodeIfPresent(
-                    [String: [Entry]].self,
+                    [DataSourceID: [Entry]].self,
                     forKey: CodingKey(stringValue: entriesKey.rawValue)
                 ) {
                     result[entriesKey] = entries
                 }
             }
-            guard entriesByKey.count == 1, let entry = entriesByKey.first else {
-                fatalError() // TODO
+            guard let entry = entriesByKey.first else { // there should be at least one entry
+                let allAllowedKeys = MonthlyStatsDocumentEntriesKey.allCases.map { "'\($0.rawValue)'" }.sorted()
+                throw DecodingError.dataCorrupted(.init(
+                    codingPath: [],
+                    debugDescription: "Expected exactly 1 entry; got none. (Expected one of \(allAllowedKeys))"
+                ))
+            }
+            guard entriesByKey.count == 1 else { // and there should not be any additional entries
+                let parsedEntryKeys = entriesByKey.keys.map { "'\($0.rawValue)'" }.sorted()
+                throw DecodingError.dataCorrupted(.init(
+                    codingPath: [],
+                    debugDescription: "Expected exactly 1 entry; got \(entriesByKey.count) (\(parsedEntryKeys))"
+                ))
             }
             (entriesKey, entriesBySourceId) = entry
         }
