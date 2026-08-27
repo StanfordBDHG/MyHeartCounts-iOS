@@ -120,7 +120,7 @@ struct DetailedHealthStatsView: View {
         case .disabled:
             EmptyView()
         case .enabled(let timeRange):
-            let dataSource = { () -> HealthDashboardLayout.DataSource? in
+            let dataSource = { () -> DefaultHealthDashboardTile.DataSource? in
                 switch sampleType {
                 case .healthKit(let proxy):
                     return .healthKit(proxy)
@@ -132,7 +132,7 @@ struct DetailedHealthStatsView: View {
                 if let dataSource {
                     // Note: we're creating a chart config here, but depending on the specific sample type it might end up getting discarded
                     // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
-                    let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
+                    let chartConfig = { () -> DefaultHealthDashboardTile.ChartConfig in
                         switch sampleType {
                         case .healthKit(.quantity(.stepCount)):
                             return .init(chartType: .bar, aggregationInterval: .day)

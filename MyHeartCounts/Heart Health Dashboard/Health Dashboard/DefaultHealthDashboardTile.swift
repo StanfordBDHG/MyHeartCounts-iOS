@@ -33,9 +33,9 @@ struct DefaultHealthDashboardTile: View {
     
     /// The config of a component that displays a Quantity fetched from eg HealthKit.
     struct DisplayConfig: Sendable {
-        let dataSource: HealthDashboardLayout.DataSource
+        let dataSource: DataSource
         let timeRange: HealthKitQueryTimeRange
-        let chartConfig: HealthDashboardLayout.ChartConfig
+        let chartConfig: ChartConfig
     }
     
     @Environment(\.calendar)
@@ -111,7 +111,7 @@ private struct TileImpl: View {
     private let sampleType: QuantitySample.SampleType
     private let samples: [QuantitySample]
     private let timeRange: HealthKitQueryTimeRange
-    private let chartConfig: HealthDashboardLayout.ChartConfig
+    private let chartConfig: DefaultHealthDashboardTile.ChartConfig
     private let accessory: DefaultHealthDashboardTile.Accessory
     
     var body: some View {
@@ -151,7 +151,7 @@ private struct TileImpl: View {
         sampleType: QuantitySample.SampleType,
         samples: [QuantitySample],
         timeRange: HealthKitQueryTimeRange,
-        chartConfig: HealthDashboardLayout.ChartConfig,
+        chartConfig: DefaultHealthDashboardTile.ChartConfig,
         accessory: DefaultHealthDashboardTile.Accessory
     ) {
         self.sampleType = sampleType

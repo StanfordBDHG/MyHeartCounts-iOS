@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-// periphery:ignore:all - parts of the API simply are unused, but we want to keep them around for the future.
-
 import Foundation
 import MyHeartCountsShared
 import SpeziFoundation
@@ -16,68 +14,128 @@ import SpeziHealthKitUI
 import SwiftUI
 
 
-struct HealthDashboardLayout: Sendable {
-    var blocks: [Block]
+// MARK: Dashboard Sections
+
+/// A dashboard section displaying arbitrary content, with an optional title and footer.
+struct HealthDashboardSection<Content: View>: View {
+    private let title: LocalizedStringResource?
+    private let footer: LocalizedStringResource?
+    private let content: Content
     
-    init(blocks: some Collection<Block> = []) {
-        self.blocks = Array(blocks)
+    var body: some View {
+        Section {
+            content
+        } header: {
+            if let title {
+                Text(title)
+                    .padding(.horizontal)
+                    .padding(.bottom, 7)
+            }
+        } footer: {
+            if let footer {
+                Text(footer)
+                    .padding()
+            }
+        }
+        .listRowInsets(.zero)
+        .listRowBackground(Color.clear)
     }
     
-    init(@ArrayBuilder<Block> blocks: () -> [Block]) {
-        self.init(blocks: blocks())
+    init(
+        _ title: LocalizedStringResource? = nil,
+        footer: LocalizedStringResource? = nil,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.footer = footer
+        self.content = content()
     }
 }
 
 
-extension HealthDashboardLayout {
-    struct Block: Sendable {
-        enum Content: Sendable {
-            case largeCustom(@MainActor () -> AnyView)
-            case grid([GridComponent])
+/// A dashboard section that lays its content out in a two-column grid, with an optional title and footer.
+///
+/// Intended to contain ``HealthDashboardGridTile``s.
+struct HealthDashboardGridSection<Content: View>: View {
+    private let title: LocalizedStringResource?
+    private let footer: LocalizedStringResource?
+    private let content: Content
+    
+    var body: some View {
+        HealthDashboardSection(title, footer: footer) {
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 12, alignment: .top),
+                    GridItem(.flexible(), alignment: .top)
+                ],
+                alignment: .center,
+                spacing: 12,
+                pinnedViews: .sectionHeaders
+            ) {
+                content
+            }
         }
-        
-        let title: LocalizedStringResource?
-        let footer: LocalizedStringResource?
-        let content: Content
-        
-        private init(title: LocalizedStringResource?, footer: LocalizedStringResource?, content: Content) {
-            self.title = title
-            self.footer = footer
-            self.content = content
-        }
-        
-        static func large(
-            sectionTitle: LocalizedStringResource? = nil,
-            footer: LocalizedStringResource? = nil,
-            @ViewBuilder content: @MainActor @escaping () -> some View
-        ) -> Self {
-            .init(title: sectionTitle, footer: footer, content: .largeCustom {
-                content().intoAnyView()
-            })
-        }
-        
-        static func grid(
-            sectionTitle: LocalizedStringResource? = nil,
-            footer: LocalizedStringResource? = nil,
-            components: [GridComponent]
-        ) -> Self {
-            .init(title: sectionTitle, footer: footer, content: .grid(components))
-        }
-        
-        static func grid(
-            sectionTitle: LocalizedStringResource? = nil,
-            footer: LocalizedStringResource? = nil,
-            @ArrayBuilder<GridComponent> components: () -> [GridComponent]
-        ) -> Self {
-            .init(title: sectionTitle, footer: footer, content: .grid(components()))
-        }
+    }
+    
+    init(
+        _ title: LocalizedStringResource? = nil,
+        footer: LocalizedStringResource? = nil,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.footer = footer
+        self.content = content()
     }
 }
 
 
-// MARK: Styles and related Configs
+/// A tile within a ``HealthDashboardGridSection``.
+struct HealthDashboardGridTile<Content: View>: View {
+    private let title: String
+    private let accessibilityIdentifier: String
+    private let headerInsets: EdgeInsets
+    private let tapAction: (@MainActor () -> Void)?
+    private let content: Content
+    
+    var body: some View {
+        Group {
+            let tile = HealthDashboardTile(title: title, headerInsets: headerInsets) {
+                content
+            }
+            if let tapAction {
+                Button(action: tapAction) {
+                    tile.contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(title)
+                .accessibilityIdentifier("MHC:DashboardTile:\(accessibilityIdentifier)")
+            } else {
+                tile
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: HealthDashboardConstants.gridComponentCornerRadius))
+        .frame(maxHeight: 178)
+    }
+    
+    init(
+        title: String,
+        accessibilityIdentifier: String? = nil,
+        headerInsets: EdgeInsets = .zero,
+        onTap tapAction: (@MainActor () -> Void)? = nil,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.accessibilityIdentifier = accessibilityIdentifier ?? title
+        self.headerInsets = headerInsets
+        self.tapAction = tapAction
+        self.content = content()
+    }
+}
 
-extension HealthDashboardLayout {
+
+// MARK: Tile Configs
+
+extension DefaultHealthDashboardTile {
     struct ChartConfig: Sendable {
         let chartType: ChartDataSetDrawingConfig.ChartType
         let aggregationInterval: HealthKitStatisticsQuery.AggregationInterval
@@ -133,35 +191,5 @@ extension HealthDashboardLayout {
     enum DataSource: Sendable {
         case healthKit(SampleTypeProxy)
         case firebase(CustomQuantitySampleType)
-    }
-    
-    /// A Component within a Grid Section
-    struct GridComponent: Sendable {
-        let title: String
-        let accessibilityIdentifier: String
-        let headerInsets: EdgeInsets
-        let content: @MainActor () -> AnyView
-        let tapAction: (@MainActor () -> Void)?
-        
-        init(
-            title: String,
-            accessibilityIdentifier: String?,
-            headerInsets: EdgeInsets = .zero,
-            @ViewBuilder _ content: @MainActor @escaping () -> some View,
-            onTap tapAction: (@MainActor () -> Void)? = nil
-        ) {
-            self.title = title
-            self.accessibilityIdentifier = accessibilityIdentifier ?? title
-            self.headerInsets = headerInsets
-            self.content = { content().intoAnyView() }
-            self.tapAction = tapAction
-        }
-    }
-}
-
-
-extension HealthDashboardLayout: ExpressibleByArrayLiteral {
-    init(arrayLiteral elements: Block...) {
-        self.init(blocks: elements)
     }
 }

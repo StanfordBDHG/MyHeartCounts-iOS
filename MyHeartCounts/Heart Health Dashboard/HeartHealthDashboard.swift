@@ -59,30 +59,30 @@ struct HeartHealthDashboard: View {
     }
     
     @ViewBuilder private var healthDashboard: some View {
-        HealthDashboard(layout: [
-            .large {
+        Group {
+            HealthDashboardSection {
                 topSection
-            },
-            .grid(
-                sectionTitle: "Score Components",
+            }
+            HealthDashboardGridSection(
+                "Score Components",
                 footer: "HHD_APPLE_WATCH_REQUIRED_FOOTER"
             ) {
                 switch $cvhScore.preferredExerciseMetric {
                 case .exerciseMinutes:
-                    makeGridComponent(for: \.physicalExerciseScore)
+                    makeGridTile(for: \.physicalExerciseScore)
                 case .stepCount:
-                    makeGridComponent(for: \.stepCountScore)
+                    makeGridTile(for: \.stepCountScore)
                 }
-                makeGridComponent(for: \.sleepHealthScore)
-                makeGridComponent(for: \.dietScore)
-                makeGridComponent(for: \.mentalHealthScore)
-                makeGridComponent(for: \.bloodPressureScore)
-                makeGridComponent(for: \.bloodLipidsScore)
-                makeGridComponent(for: \.bloodGlucoseScore)
-                makeGridComponent(for: \.bodyMassIndexScore)
-                makeGridComponent(for: \.nicotineExposureScore)
+                makeGridTile(for: \.sleepHealthScore)
+                makeGridTile(for: \.dietScore)
+                makeGridTile(for: \.mentalHealthScore)
+                makeGridTile(for: \.bloodPressureScore)
+                makeGridTile(for: \.bloodLipidsScore)
+                makeGridTile(for: \.bloodGlucoseScore)
+                makeGridTile(for: \.bodyMassIndexScore)
+                makeGridTile(for: \.nicotineExposureScore)
             }
-        ])
+        }
         .makeBackgroundMatchFormBackground()
         learnMoreSection
         pastDataSection
@@ -159,14 +159,17 @@ struct HeartHealthDashboard: View {
         }
     }
     
-    private func makeGridComponent(
+    private func makeGridTile(
         for scoreKeyPath: KeyPath<CVHScore, ScoreResult>
-    ) -> HealthDashboardLayout.GridComponent {
+    ) -> some View {
         let score = $cvhScore[keyPath: scoreKeyPath]
-        return HealthDashboardLayout.GridComponent(
+        return HealthDashboardGridTile(
             title: score.sampleType.displayTitle,
             accessibilityIdentifier: score.sampleType.displayTitle(in: .enUS),
-            headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
+            headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0),
+            onTap: {
+                scoreResultToExplain = .init(keyPath: scoreKeyPath)
+            }
         ) {
             VStack(spacing: 0) {
                 ScoreResultGauge(scoreResult: score)
@@ -187,8 +190,6 @@ struct HeartHealthDashboard: View {
                         .foregroundStyle(.secondary)
                 }
             }
-        } onTap: {
-            scoreResultToExplain = .init(keyPath: scoreKeyPath)
         }
     }
 }
