@@ -22,7 +22,7 @@ import Testing
 
 
 @Suite
-struct HealthSampleProcessingTests {
+struct HealthSampleProcessingTests { // swiftlint:disable:this type_body_length
     private actor FakeStandard: Standard, HealthKitConstraint {
         func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample> & Sendable, ofType sampleType: SampleType<Sample>) {}
         func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject> & Sendable, ofType sampleType: SampleType<Sample>) {}
