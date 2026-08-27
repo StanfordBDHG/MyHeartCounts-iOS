@@ -22,7 +22,7 @@ struct HKUnitCodableTests {
     
     @Test(arguments: [
         TestDescriptor(unitString: "L", unit: .liter()),
-        TestDescriptor(unitString: "L/min", unit: .liter() / .minute()),
+        TestDescriptor(unitString: "L/min", unit: .liter() / .minute())
     ])
     private func hkUnitCodable(_ descriptor: TestDescriptor) throws {
         let encoder = JSONEncoder()
