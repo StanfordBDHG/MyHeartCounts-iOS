@@ -263,14 +263,9 @@ extension MyHeartCountsStandard {
 
     @MainActor
     private func finishExplicitLogout() async {
-        switch context {
-        case .onLaunchCleanupBcNoUser:
-            return
-        case .explicitUserLogoutEvent:
-            // Schedule a firestore persistence cleanup for the nect launch.
-            // Ideally we'd have this run immediately, but it only works directly after firebase was loaded.
-            LocalPreferencesStore.standard[.shouldClearFirestoreCacheOnNextLaunch] = true
-        }
+        // Schedule a firestore persistence cleanup for the nect launch.
+        // Ideally we'd have this run immediately, but it only works directly after firebase was loaded.
+        LocalPreferencesStore.standard[.shouldClearFirestoreCacheOnNextLaunch] = true
         _Concurrency.Task {
             // it seems that the fact that the account sheet typically is still presented while logging out causes issues with us setting the
             // `onboardingFlowComplete` UserDefaults key being set to true (likely bc the other sheet still being presented prevents SwiftUI from presenting the
