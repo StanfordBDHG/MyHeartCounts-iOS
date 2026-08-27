@@ -90,7 +90,8 @@ extension MHCSensorSampleUploadStrategy {
         let batch = sensorCollection.firestore.batch()
         try batch.setData(from: reference, forDocument: sensorCollection.document(referenceDocName))
         try batch.setData(from: observation, forDocument: sensorCollection.document(observationDocName))
-        try _Concurrency.Task.checkCancellation()
+        // no cancellation check here: the file was durably staged above, and aborting now would
+        // permanently orphan it from its Firestore reference/observation documents.
         try await batch.commit()
     }
 }

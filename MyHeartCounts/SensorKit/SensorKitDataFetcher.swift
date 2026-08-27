@@ -27,7 +27,7 @@ private struct SensorKitActiveFetch: Sendable {
 
 
 @Observable
-final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
+final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @unchecked Sendable { // swiftlint:disable:this type_body_length
     @Observable
     final class InProgressActivity: Hashable, Identifiable, AnyObjectBasedDefaultImpls, Sendable {
         nonisolated let sensor: any AnySensor
@@ -233,16 +233,25 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         do {
             activity.updateMessage("Fetching Samples")
             var uploadedBatches = 0
+            let standard = standard
             for try await (batchInfo, batch) in try await sensorKit.fetchAnchored(sensor) {
-                try Task.checkCancellation()
-                guard await UIApplication.shared.isProtectedDataAvailable else {
-                    throw SensorKitProcessingError.protectedDataUnavailable
-                }
                 activity.updateTimeRange(batchInfo.timeRange)
-                try await uploadDefinition.strategy.upload(consume batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
+                // The anchored fetch persists its query anchor past a batch before yielding it to us;
+                // a yielded batch that doesn't get uploaded is therefore lost for good.
+                // Running the upload in an unstructured Task (which doesn't inherit cancellation) ensures that
+                // cancellation (eg BGTask expiration) and protected-data loss can only abort the fetch
+                // between batches, and never strand the batch we're currently holding.
+                let uploadTask = Task { @concurrent in
+                    try await uploadDefinition.strategy.upload(batch, batchInfo: batchInfo, for: sensor, to: standard, activity: activity)
+                }
+                try await uploadTask.value
                 uploadedBatches += 1
                 if maximumBatches.map({ uploadedBatches >= $0 }) ?? false {
                     break
+                }
+                try Task.checkCancellation()
+                guard await UIApplication.shared.isProtectedDataAvailable else {
+                    throw SensorKitProcessingError.protectedDataUnavailable
                 }
                 activity.updateMessage("Fetching Samples")
             }

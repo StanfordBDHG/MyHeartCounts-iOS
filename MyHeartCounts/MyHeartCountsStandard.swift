@@ -149,8 +149,8 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     func willLogOut(_ details: AccountDetails) async {
         logger.notice("account is being logged out")
-        LocalPreferencesStore.standard[.accountDataGeneration] += 1
         LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
+        LocalPreferencesStore.standard[.accountDataGeneration] += 1
         try? await notificationsManager.setFCMToken(nil)
     }
 }
@@ -208,7 +208,12 @@ extension MyHeartCountsStandard {
     @MainActor
     private func performLogoutCleanup(context: LogoutCleanupContext) async throws {
         await logger.notice("performing logout cleanup")
+        // bump the generation here as well (not just in willLogOut): account deletion and SDK-forced sign-outs
+        // never go through willLogOut, and an in-flight upload task holding the old generation must not be able
+        // to write into the freshly cleared staging state once the cleanup below completes.
+        // (flag first, then bump: a concurrent reader that snapshots the new generation must never see the flag still unset.)
         LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
+        LocalPreferencesStore.standard[.accountDataGeneration] += 1
         switch context {
         case .explicitUserLogoutEvent:
             await appState.setIsLoggingOut(true)

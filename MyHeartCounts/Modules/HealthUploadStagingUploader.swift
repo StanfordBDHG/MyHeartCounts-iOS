@@ -17,16 +17,11 @@ import OSLog
 import Spezi
 import SpeziFoundation
 import SpeziHealthKit
-import UIKit
 
 
 @Observable
 @MainActor
 final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, Sendable {
-    private enum ProcessingError: Error {
-        case protectedDataUnavailable
-    }
-
     private struct ActiveDrain: Sendable {
         let task: Task<Void, any Error>
         let allowance: DeviceBattery.WorkAllowance
@@ -120,9 +115,6 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
         guard !LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] else {
             return
         }
-        guard UIApplication.shared.isProtectedDataAvailable else {
-            throw ProcessingError.protectedDataUnavailable
-        }
         while true {
             let activeDrain: ActiveDrain
             if let existingDrain = self.activeDrain {
@@ -203,9 +195,6 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
             guard !ProcessInfo.processInfo.isLowPowerModeEnabled else {
                 return false
             }
-            guard await UIApplication.shared.isProtectedDataAvailable else {
-                throw ProcessingError.protectedDataUnavailable
-            }
             guard let chunkSize = Self.drainChunkSize else {
                 return false
             }
@@ -251,9 +240,6 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
             try Task.checkCancellation()
             guard !ProcessInfo.processInfo.isLowPowerModeEnabled else {
                 return false
-            }
-            guard await UIApplication.shared.isProtectedDataAvailable else {
-                throw ProcessingError.protectedDataUnavailable
             }
             guard let chunkSize = Self.drainChunkSize else {
                 return false
