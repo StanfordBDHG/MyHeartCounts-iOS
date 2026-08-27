@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import HealthKitOnFHIR
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
+import SpeziHealthKitFHIR
 
 
 struct HealthKitSamplesFHIRUploader: BatchProcessor {
@@ -42,7 +42,9 @@ struct HealthKitSamplesFHIRUploader: BatchProcessor {
     
     func encodeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
         let fileManager = FileManager.default
-        let resources = try (consume samples).mapIntoResourceProxies()
+        let resources = try (consume samples).mapIntoResourceProxies(
+            extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions
+        )
         let encoded = try JSONEncoder().encode(consume resources)
         
         let compressed = try (consume encoded).compressed(using: Zstd.self)

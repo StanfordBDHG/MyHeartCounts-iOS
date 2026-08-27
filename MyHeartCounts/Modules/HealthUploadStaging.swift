@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2026 Stanford University
 //
@@ -131,7 +131,7 @@ extension HealthUploadStaging {
         commonSampleType: String? = nil,
         ingestionTimestamp: Date = .now,
         accountDataGeneration: Int? = nil,
-        postprocessResource: @Sendable (FHIRResource) throws -> Void = { _ in }
+        postprocessResource: @Sendable (inout FHIRResource) throws -> Void = { _ in }
     ) async throws {
         guard !samples.isEmpty else {
             return
@@ -162,7 +162,7 @@ extension HealthUploadStaging {
     private func _add(
         _ samples: consuming some Collection<some HealthObservation> & Sendable,
         commonSampleType: String?,
-        postprocessResource: @Sendable (FHIRResource) throws -> Void,
+        postprocessResource: @Sendable (inout FHIRResource) throws -> Void,
         ingestionTimestamp: Date,
         writeContext: DatabaseWriteContext
     ) async throws {

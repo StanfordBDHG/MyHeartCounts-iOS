@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -9,6 +9,7 @@
 // swiftlint:disable attributes function_body_length closure_body_length cyclomatic_complexity
 
 import MHCStudyDefinition
+import ModelsR4
 import SpeziFoundation
 import SpeziScheduler
 import SpeziStudy

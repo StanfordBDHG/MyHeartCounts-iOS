@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -8,11 +8,10 @@
 
 import FirebaseFirestore
 import Foundation
-import HealthKitOnFHIR
 import struct ModelsR4.DateTime
 import struct ModelsR4.FHIRPrimitive
 import struct ModelsR4.FHIRURI
-import class ModelsR4.Period
+import struct ModelsR4.Period
 import enum ModelsR4.ResourceProxy
 import MyHeartCountsShared
 import OSLog

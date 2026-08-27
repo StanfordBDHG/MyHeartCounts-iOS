@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -20,7 +20,7 @@ protocol CSVConvertibleSensorSample: Sendable {
     func csvData() throws -> Data
     
     /// Gives the sample the opportunity to modify the `Observation` created from it (that points to the CSV file created from the sample).
-    func finalize(_ observation: Observation) throws
+    func finalize(_ observation: inout Observation) throws
 }
 
 
@@ -50,7 +50,7 @@ where Sample.SafeRepresentation: CSVConvertibleSensorSample & Identifiable, Samp
                     end: FHIRPrimitive(DateTime(date: sample.timeRange.upperBound)),
                     start: FHIRPrimitive(DateTime(date: sample.timeRange.lowerBound))
                 ))
-                try sample.finalize(observation)
+                try sample.finalize(&observation)
             }
         }
     }
@@ -62,7 +62,7 @@ extension DefaultSensorKitSampleSafeRepresentation: CSVConvertibleSensorSample w
         try sample.csvData()
     }
     
-    func finalize(_ observation: Observation) throws {
-        try sample.finalize(observation)
+    func finalize(_ observation: inout Observation) throws {
+        try sample.finalize(&observation)
     }
 }

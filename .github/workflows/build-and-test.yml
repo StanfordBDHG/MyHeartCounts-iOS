@@ -1,5 +1,5 @@
 #
-# This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+# This source file is part of the My Heart Counts iOS open-source project
 #
 # SPDX-FileCopyrightText: 2025 Stanford University and the project authors (see CONTRIBUTORS.md)
 #
@@ -20,12 +20,12 @@ concurrency:
 env:
   UI_TEST_DESTINATION: 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5'
   UI_TEST_PRODUCTS_PATH: .ci-cache/MHC-App-UITests.xctestproducts
-  UI_TEST_XCODE_VERSION: '26.5'
+  UI_TEST_XCODE_VERSION: '26.6'
 
 jobs:
   mhc_app_unit_tests:
     name: App Unit Tests
-    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.2
+    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.5
     permissions:
       contents: read
     with:
@@ -35,8 +35,8 @@ jobs:
       resultBundle: MHC-App-UnitTests.xcresult
       artifactname: MHC-App-UnitTests.xcresult
 
-  mhc_app_ui_test_products:
-    name: Build App UI Test Products
+  mhc_app_ui_test_build:
+    name: App UI Tests (Build)
     runs-on: [macOS, self-hosted]
     permissions:
       contents: read
@@ -74,6 +74,7 @@ jobs:
             -testPlan 'MyHeartCounts UI Tests' \
             -enableCodeCoverage YES \
             -testProductsPath "$UI_TEST_PRODUCTS_PATH" \
+            -derivedDataPath .derivedData \
             -skipPackagePluginValidation \
             -skipMacroValidation \
             build-for-testing \
@@ -101,16 +102,16 @@ jobs:
           path: ${{ env.UI_TEST_PRODUCTS_PATH }}
           key: ${{ steps.toolchain.outputs.cache-key }}
 
-  mhc_app_ui_test_shards:
-    name: App UI Tests (${{ matrix.name }})
-    needs: mhc_app_ui_test_products
+  mhc_app_ui_test_run:
+    name: App UI Tests (Run; ${{ matrix.name }})
+    needs: mhc_app_ui_test_build
     runs-on: [macOS, self-hosted]
     permissions:
       contents: read
     strategy:
       fail-fast: false
       max-parallel: 4
-      matrix: ${{ fromJSON(needs.mhc_app_ui_test_products.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.mhc_app_ui_test_build.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -176,7 +177,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: diagnostics-ui-shard-${{ matrix.shard }}-attempt-${{ github.run_attempt }}
+          name: diagnostics-ui-shard-${{ matrix.shard }}-attempt-${{ github.run_attempt }}.xcresult
           path: ${{ runner.temp }}/MHC-App-UITests-${{ matrix.shard }}-${{ github.run_attempt }}.xcresult
           if-no-files-found: warn
           retention-days: 7
@@ -184,19 +185,19 @@ jobs:
   mhc_app_ui_tests:
     name: App UI Tests / Test using xcodebuild or run fastlane
     if: always()
-    needs: mhc_app_ui_test_shards
+    needs: mhc_app_ui_test_run
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Check UI test shards
         env:
-          SHARD_RESULT: ${{ needs.mhc_app_ui_test_shards.result }}
+          SHARD_RESULT: ${{ needs.mhc_app_ui_test_run.result }}
         run: test "$SHARD_RESULT" = "success"
 
   mhc_utils_unit_tests:
     name: Utils Unit Tests (${{ matrix.platform.name }} ${{ matrix.config }})
-    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.2
+    uses: SchmiedmayerLab/.github/.github/workflows/xcodebuild.yml@v0.5
     permissions:
       contents: read
     strategy:
@@ -218,7 +219,7 @@ jobs:
       artifactname: ${{ format('MHC-Shared-UnitTests-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   mhc_utils_unit_tests_linux:
     name: Utils Unit Tests (Linux ${{ matrix.config }})
-    uses: SchmiedmayerLab/.github/.github/workflows/swift-test.yml@v0.2
+    uses: SchmiedmayerLab/.github/.github/workflows/swift-test.yml@v0.5
     permissions:
       contents: read
     strategy:
@@ -233,7 +234,7 @@ jobs:
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [mhc_app_unit_tests, mhc_app_ui_tests, mhc_utils_unit_tests, mhc_utils_unit_tests_linux]
-    uses: SchmiedmayerLab/.github/.github/workflows/coverage.yml@v0.2
+    uses: SchmiedmayerLab/.github/.github/workflows/coverage.yml@v0.5
     permissions:
       actions: read
       contents: read

@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -10,13 +10,13 @@ import AsyncAlgorithms
 import FHIRModelsExtensions
 import Foundation
 import HealthKit
-import HealthKitOnFHIR
 import ModelsR4
 @testable import MyHeartCounts
 @testable import MyHeartCountsShared
 import Spezi
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitFHIR
 import SpeziTesting
 import Testing
 
@@ -117,7 +117,7 @@ struct HealthSampleProcessingTests {
         )
         let resource = try sample.resource(extensions: [.sampleUploadTimeZone])
         let observation = try #require(resource.get(if: Observation.self))
-        let ext = try #require(observation.extensions(for: FHIRExtensionUrls.sampleUploadTimeZone).first)
+        let ext = try #require(observation.extensions(for: FHIRExtensionURL.sampleUploadTimeZone).first)
         switch try #require(ext.value) {
         case .string(let string):
             #expect(string.value?.string == TimeZone.current.identifier)
@@ -126,7 +126,44 @@ struct HealthSampleProcessingTests {
         }
     }
     
+
+    /// Every FHIR resource the app creates must identify the MHC build which created it.
+    @Test
+    func mhcAppRevisionIsPartOfTheDefaultExtensions() throws {
+        let sample = HKQuantitySample(
+            type: .init(.heartRate),
+            quantity: HKQuantity(unit: .count() / .minute(), doubleValue: 85),
+            start: .now,
+            end: .now
+        )
+        let resource = try sample.resource(extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions)
+        let observation = try #require(resource.get(if: Observation.self))
+        let ext = try #require(observation.extensions(for: FHIRExtensionURL.mhcAppRevision).first)
+        func value(ofChild component: String) throws -> ModelsR4.Extension.ValueX {
+            let url = FHIRExtensionURL.mhcAppRevision.appending(component: component).r4
+            let child = try #require(ext.extension?.first { $0.url == url }, "missing '\(component)' child extension")
+            return try #require(child.value)
+        }
+        guard case .string(let version) = try value(ofChild: "version") else {
+            Issue.record("'version' is not a valueString")
+            return
+        }
+        #expect(version.value?.string == MHCAppRevision.version)
+        guard case .string(let osVersion) = try value(ofChild: "osVersion") else {
+            Issue.record("'osVersion' is not a valueString")
+            return
+        }
+        #expect(osVersion.value?.string == MHCAppRevision.osVersion)
+        if let expectedBuild = MHCAppRevision.build {
+            guard case .integer(let build) = try value(ofChild: "build") else {
+                Issue.record("'build' is not a valueInteger")
+                return
+            }
+            #expect(build.value?.integer == Int32(expectedBuild))
+        }
+    }
     
+
     @Test
     func healthUploadStagingDuplicates() async throws {
         let healthUploadStaging = HealthUploadStaging(persistence: .inMemory)
@@ -255,7 +292,7 @@ struct HealthSampleProcessingTests {
             )
         ]
         let timestamp = Date()
-        nonisolated(unsafe) let issuedDate = try ModelsR4.FHIRPrimitive<ModelsR4.Instant>(.init(date: timestamp))
+        let issuedDate = try ModelsR4.FHIRPrimitive<ModelsR4.Instant>(.init(date: timestamp))
         let samplesAsFHIR: Set<ModelsR4.ResourceProxy> = try await newSamples.async.reduce(into: []) { @Sendable result, observation in
             // ISSUE: we get back an `AnyEncodable` (bc the return type might be a ResourceProxy or an Observation or a R4/DSTU2 FHIRResource)
             // but we need these as `ModelsR4.ResourceProxy`s, so we need to do a quick JSON roundtrip to turn them into ResourceProxies (will work for everything except ClinicalRecords, but we don't have any of these anyway...

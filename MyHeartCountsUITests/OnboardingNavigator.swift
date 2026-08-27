@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -73,13 +73,9 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
             consentPresenceCheck: consentPresenceCheck
         )
         navigateHealthKitAccess()
-        if app.staticTexts["Health Records"].waitForExistence(timeout: 2) { // only included if Health Records are actually available
-            navigateHealthRecords()
-        }
+        navigateHealthRecordsIfNecessary()
         navigateWorkoutPreferences()
-        if app.staticTexts["Notifications"].waitForExistence(timeout: 2) { // this step is skipped if sufficient permissions have already been granted
-            navigateNotifications()
-        }
+        navigateNotificationsIfNecessary()
         navigateDemographics()
         navigateFinalOnboardingStep(signUpForExtraTrial: signUpForExtraTrial)
     }
@@ -291,6 +287,13 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
+    func navigateHealthRecordsIfNecessary() {
+        // only included if Health Records are actually available
+        if app.staticTexts["Health Records"].waitForExistence(timeout: 2) {
+            navigateHealthRecords()
+        }
+    }
+    
     private func navigateHealthRecords() {
         let title = app.staticTexts["Health Records"]
         XCTAssert(title.waitForExistence(timeout: 2))
@@ -300,6 +303,13 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
+    func navigateNotificationsIfNecessary() {
+        // this step is skipped if sufficient permissions have already been granted
+        if app.staticTexts["Notifications"].waitForExistence(timeout: 2) {
+            navigateNotifications()
+        }
+    }
+    
     private func navigateNotifications() {
         XCTAssert(app.staticTexts["Notifications"].waitForExistence(timeout: 2))
         app.buttons["Allow Notifications"].tap()
@@ -307,7 +317,7 @@ struct OnboardingNavigator { // swiftlint:disable:this type_body_length
     }
     
     
-    private func navigateWorkoutPreferences() {
+    func navigateWorkoutPreferences() {
         XCTAssert(app.staticTexts["Workout Preference"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["Cycling"].waitForExistence(timeout: 2))
         app.staticTexts["Cycling"].tap()
