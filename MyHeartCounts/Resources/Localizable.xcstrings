@@ -2942,6 +2942,7 @@
       }
     },
     "Failed to process Sleep Sessions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -5127,6 +5128,7 @@
       }
     },
     "n/a" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -6704,6 +6706,7 @@
       }
     },
     "Processing Sleep Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {

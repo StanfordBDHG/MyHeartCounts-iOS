@@ -74,6 +74,10 @@ struct StatsDocumentsQuery<Element: Sendable>: DynamicProperty {
                     logger.error("skipping stats document at '\(document.reference.path)' with unsupported version \(statsDoc.version)")
                     return nil
                 }
+                guard statsDoc.metric == metricId.rawValue else {
+                    logger.error("skipping stats document at '\(document.reference.path)': its metric field ('\(statsDoc.metric)') doesn't match the queried metric ('\(metricId.rawValue)')")
+                    return nil
+                }
                 return decode(statsDoc, timeRange)
             }
         )

@@ -28,22 +28,17 @@ struct HeartHealthDashboard: View {
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
-    // swiftlint:disable attributes
-    @Environment(StudyManager.self) private var studyManager
-    // swiftlint:enable attributes
+    @Environment(StudyManager.self)
+    private var studyManager
     
     @CVHScore private var cvhScore
     
-    @State private var addNewSampleDescriptor: MetricDescriptor?
     @State private var scoreResultToExplain: MetricDescriptor?
     @State private var isPresentingPastTimedWalkTestResults = false
     
     var body: some View {
         Form {
             healthDashboard
-        }
-        .sheet(item: $addNewSampleDescriptor) { descriptor in
-            Self.addSampleSheet(for: descriptor.keyPath)
         }
         .sheet(item: $scoreResultToExplain) { descriptor in
             NavigationStack {
@@ -168,7 +163,7 @@ struct HeartHealthDashboard: View {
         for scoreKeyPath: KeyPath<CVHScore, ScoreResult>
     ) -> HealthDashboardLayout.GridComponent {
         let score = $cvhScore[keyPath: scoreKeyPath]
-        return .custom(
+        return HealthDashboardLayout.GridComponent(
             title: score.sampleType.displayTitle,
             accessibilityIdentifier: score.sampleType.displayTitle(in: .enUS),
             headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
@@ -196,17 +191,13 @@ struct HeartHealthDashboard: View {
             scoreResultToExplain = .init(keyPath: scoreKeyPath)
         }
     }
-    
-    // periphery:ignore - API
-    private func addNewSample(for keyPath: KeyPath<CVHScore, ScoreResult>) {
-        if Self.canAddSample(for: keyPath) {
-            addNewSampleDescriptor = .init(keyPath: keyPath)
-        }
-    }
 }
 
 
 extension HeartHealthDashboard {
+    /// The `KeyPaths` into the ``CVHScore`` where we allow manual in-app data entry.
+    ///
+    /// - Important: Must keep this list up to date with the dashboard config and app requirements!
     private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, ScoreResult>> = [
         \.dietScore,
         \.mentalHealthScore,

@@ -371,7 +371,7 @@ extension HealthKitStatsCalculator {
                 continue
             }
             // group the samples into sleep sessions, and keep the sessions belonging to this month.
-            // this matches how the dashboard (SleepSessionsQuery) turns sleep samples into the values it displays;
+            // this matches how the dashboard used to turn sleep samples into the values it displays;
             // in particular, `totalTimeSpentAsleep` accounts for overlapping samples (e.g. from a phone and a watch
             // both tracking the same night), which we'd otherwise be double-counting.
             let sessions = try samples.splitIntoSleepSessions().filter { session in

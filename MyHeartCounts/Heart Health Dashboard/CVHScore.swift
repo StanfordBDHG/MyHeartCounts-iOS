@@ -323,15 +323,6 @@ extension QuantitySample {
 }
 
 extension HKQuantitySample: CVHScore.ComponentSampleProtocol {}
-extension HKCorrelation: CVHScore.ComponentSampleProtocol {}
-
-extension SleepSession: CVHScore.ComponentSampleProtocol {}
-
-extension HKStatistics: CVHScore.ComponentSampleProtocol {
-    var timeRange: Range<Date> {
-        startDate..<endDate
-    }
-}
 
 
 extension HealthKit.SourceFilter {

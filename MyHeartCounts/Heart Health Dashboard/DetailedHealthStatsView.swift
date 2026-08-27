@@ -115,7 +115,7 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View { // swiftlint:disable:this function_body_length
+    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View {
         switch config {
         case .disabled:
             EmptyView()
@@ -140,8 +140,6 @@ struct DetailedHealthStatsView: View {
                             return .default(for: sampleType, in: timeRange)
                         case .healthKit:
                             return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure), .custom(.mentalWellbeingScore):
-                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
                         case .custom:
                             return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
                         }
@@ -150,10 +148,8 @@ struct DetailedHealthStatsView: View {
                         for: .init(
                             dataSource: dataSource,
                             timeRange: timeRange,
-                            style: .chart(chartConfig),
-                            enableSelection: false
+                            chartConfig: chartConfig
                         ),
-                        withSize: .large,
                         accessory: .timeRangeSelector($chartTimeRange)
                     )
                     .padding(.horizontal)

@@ -220,23 +220,6 @@ struct ScoreResult: Hashable, Sendable {
         self.timeRange = timeRange
     }
     
-    // periphery:ignore - API
-    init(
-        _ title: LocalizedStringResource,
-        sampleType: MHCSampleType,
-        definition: ScoreDefinition,
-        value: (any Hashable & Sendable)? = nil,
-        score: Double,
-        timeRange: Range<Date>
-    ) {
-        self.title = title
-        self.sampleType = sampleType
-        self.definition = definition
-        self._inputValue = .init(wrappedValue: nil)
-        self.score = score
-        self.timeRange = timeRange
-    }
-    
     init(
         _ title: LocalizedStringResource,
         sampleType: MHCSampleType,
