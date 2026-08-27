@@ -209,8 +209,11 @@ extension MyHeartCountsStandard {
     private func performLogoutCleanup(context: LogoutCleanupContext) async throws {
         await logger.notice("performing logout cleanup")
         LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
-        if case .explicitUserLogoutEvent = context {
+        switch context {
+        case .explicitUserLogoutEvent:
             await appState.setIsLoggingOut(true)
+        case .onLaunchCleanupBcNoUser:
+            break
         }
         // upon logging out, we want to throw the user back to the onboarding.
         // note that the onboarding flow, in this context, won't work 100% identical to when you've just launched the app in a non-logged-in state,
@@ -226,8 +229,11 @@ extension MyHeartCountsStandard {
             await logger.error("Local account-data cleanup remains pending: \(error)")
         }
         await resetLocalStudyState()
-        if case .explicitUserLogoutEvent = context {
+        switch context {
+        case .explicitUserLogoutEvent:
             await finishExplicitLogout()
+        case .onLaunchCleanupBcNoUser:
+            break
         }
         guard !cleanupFailed else {
             throw PendingAccountDataCleanupError.failed

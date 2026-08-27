@@ -71,9 +71,13 @@ final class HealthUploadStaging: Spezi::Module, EnvironmentAccessible, @unchecke
                 dbQueue = try DatabaseQueue()
             }
             try Self.applyMigrations(to: dbQueue)
-            if case .onDisk(let url) = persistence,
-               url.standardizedFileURL == Persistence.defaultDatabaseUrl.standardizedFileURL {
-                Self.excludeStoreFromBackup(at: url)
+            switch persistence {
+            case .inMemory:
+                break
+            case .onDisk(let url):
+                if url.standardizedFileURL == Persistence.defaultDatabaseUrl.standardizedFileURL {
+                    Self.excludeStoreFromBackup(at: url)
+                }
             }
             self.dbQueue = dbQueue
         } catch {
