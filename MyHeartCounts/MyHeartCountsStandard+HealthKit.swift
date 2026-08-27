@@ -153,7 +153,7 @@ extension MyHeartCountsStandard {
         _ observations: consuming some Collection<some HealthObservation & Sendable> & Sendable,
         accountDataGeneration: Int,
         uploadStrategy: HealthObservationUploadStrategy?,
-        postprocessResource: @escaping @Sendable (FHIRResource) throws -> Void
+        postprocessResource: @escaping @Sendable (inout FHIRResource) throws -> Void
     ) async throws {
         guard !observations.isEmpty, let sampleTypeIdentifier = observations.first?.sampleTypeIdentifier else {
             return
