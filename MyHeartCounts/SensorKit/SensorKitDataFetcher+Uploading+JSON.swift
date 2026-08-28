@@ -35,9 +35,12 @@ where Sample.SafeRepresentation: HealthObservation {
                 issuedDate: issuedDate,
                 extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions
             )
-            if case .observation(var observation) = resource {
+            switch resource {
+            case .observation(var observation):
                 try observation.apply(.sensorKitSourceDevice, input: batchInfo.device)
                 resource = .observation(observation)
+            default:
+                break
             }
             return AnyEncodable(resource)
         }

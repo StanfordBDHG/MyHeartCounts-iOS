@@ -121,17 +121,21 @@ In order to run and develop the My Heart Counts app locally, you'll need the fol
 > [!NOTE]  
 > Please make sure not to commit and push any of the SensorKit, Code Signing, and run argument changes listed above; these changes are only required for local development.
 
+
 ## Contributing
 
 Contributions to this project are welcome. Please make sure to read the [contribution guidelines](https://github.com/SchmiedmayerLab/.github/blob/main/CONTRIBUTING.md) and the [contributor covenant code of conduct](https://github.com/SchmiedmayerLab/.github/blob/main/CODE_OF_CONDUCT.md) first. You can find a list of contributors in the [CONTRIBUTORS.md](CONTRIBUTORS.md) file.
+
 
 ## License
 
 This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for more information.
 
+
 ## Citation
 
 If you use this software, please cite it using the metadata in [CITATION.cff](CITATION.cff), which GitHub surfaces through the [*Cite this repository*](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files) button.
+
 
 ## Our Research
 
