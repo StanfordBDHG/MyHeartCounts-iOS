@@ -300,14 +300,23 @@ extension MyHeartCountsStandard {
     private func clearPendingAccountData() async throws {
         await healthUploadStagingUploader.cancelAndWaitForQuiescence()
         await sensorKitFetcher.cancelAllActiveCollection()
-
-        let historicalDataCleared = await attemptAccountDataCleanup("historical HealthKit export state") {
+        
+        func attempt(_ name: String, _ operation: () async throws -> Void) async -> Bool {
+            do {
+                try await operation()
+                return true
+            } catch {
+                self.logger.error("Unable to clear \(name): \(error)")
+                return false
+            }
+        }
+        let historicalDataCleared = await attempt("historical HealthKit export state") {
             try await historicalUploadManager.fullyResetSession(restart: false, clearPendingUploads: false)
         }
-        let stagedFilesCleared = await attemptAccountDataCleanup("staged upload files") {
+        let stagedFilesCleared = await attempt("staged upload files") {
             try await managedFileUpload.clearPendingUploads()
         }
-        let stagedHealthDataCleared = await attemptAccountDataCleanup("staged health observations") {
+        let stagedHealthDataCleared = await attempt("staged health observations") {
             try healthUploadStaging.clear()
         }
         sensorKitFetcher.resetAllQueryAnchors()
@@ -317,19 +326,6 @@ extension MyHeartCountsStandard {
             throw PendingAccountDataCleanupError.failed
         }
         LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = false
-    }
-
-    private func attemptAccountDataCleanup(
-        _ description: String,
-        operation: () async throws -> Void
-    ) async -> Bool {
-        do {
-            try await operation()
-            return true
-        } catch {
-            logger.error("Unable to clear \(description): \(error)")
-            return false
-        }
     }
 }
 
