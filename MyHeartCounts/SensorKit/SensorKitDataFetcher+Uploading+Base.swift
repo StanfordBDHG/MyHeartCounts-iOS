@@ -38,6 +38,9 @@ extension MHCSensorSampleUploadStrategy {
             .appending(component: UUID().uuidString)
             .appendingPathExtension("\(fileExtension)\(shouldCompress ? ".zstd" : "")")
         try (consume data).write(to: url)
+        defer {
+            try? FileManager.default.removeItem(at: url)
+        }
         
         activity.updateMessage("Submitting for upload")
         // Note: this waits until the upload is durably scheduled (i.e., the file is in the upload module's custody),
@@ -87,7 +90,11 @@ extension MHCSensorSampleUploadStrategy {
         
         let sensorCollection = try await standard.firebaseConfiguration.userDocumentReference
             .collection("HealthObservations_\(sensor.id)")
-        try await sensorCollection.document(referenceDocName).setData(from: reference)
-        try await sensorCollection.document(observationDocName).setData(from: observation)
+        let batch = sensorCollection.firestore.batch()
+        try batch.setData(from: reference, forDocument: sensorCollection.document(referenceDocName))
+        try batch.setData(from: observation, forDocument: sensorCollection.document(observationDocName))
+        // no cancellation check here: the file was durably staged above, and aborting now would
+        // permanently orphan it from its Firestore reference/observation documents.
+        try await batch.commit()
     }
 }

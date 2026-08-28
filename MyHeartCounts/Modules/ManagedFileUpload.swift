@@ -6,16 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_length
-
-import FirebaseStorage
 import Foundation
 import OSLog
 import Spezi
 import SpeziAccount
 import SpeziFoundation
 import SwiftData
-import UIKit
 
 
 /// Uploads files into the current user's directory in the Firebase Storage.
@@ -24,77 +20,124 @@ import UIKit
 /// the files themselves are kept in a flat staging directory, named after their entry's ``ScheduledUpload/id``.
 /// Uploads are persistent: if an upload cannot be completed during the current launch of the app
 /// (e.g.: missing network connection, no logged-in user, app getting terminated), it will be retried on subsequent launches.
+///
+/// - Note: this is intentionally a plain ``Spezi/Module`` rather than a `ServiceModule`: a `ServiceModule`'s `run()` is
+///     only ever reached via `.task(spezi.run)` in Spezi's view modifier, which the app applies inside its `WindowGroup`.
+///     A launch that connects no scene — a `BGTask` wake, or HealthKit background delivery — would therefore never start it,
+///     i.e. exactly the situations this module exists to serve. `configure()` runs on every launch, so the drain starts there.
 @Observable
 @MainActor
-final class ManagedFileUpload: ServiceModule, EnvironmentAccessible, Sendable {
-    /// A pending upload, i.e. a file that has been handed to the module but hasn't been uploaded yet.
-    @Model
-    fileprivate final class ScheduledUpload {
-        @Attribute(.unique)
-        private(set) var id = UUID()
-        
-        /// The id of the ``ManagedFileUpload/Category`` within which the file should be uploaded.
-        private(set) var categoryId: String
-        /// The category's remote folder, denormalized into the entry so that the upload can still be
-        /// performed if the category isn't registered with the module anymore.
-        private(set) var categoryFirebasePath: String
-        /// The name under which the file should be uploaded, within the category's remote folder.
-        private(set) var filename: String
-        /// Custom metadata that should be associated with the file, via the firebase storage metadata API.
-        private(set) var metadata: [String: String]
-        /// When the upload was scheduled.
-        private(set) var creationDate = Date()
-        
-        /// The number of times the app already initiated an upload for this file.
-        var numAttempts = 0
-        
-        init(category: Category, filename: String, metadata: [String: String]) {
-            self.categoryId = category.id
-            self.categoryFirebasePath = category.firebasePath
-            self.filename = filename
-            self.metadata = metadata
+final class ManagedFileUpload: Spezi::Module, EnvironmentAccessible, Sendable {
+    /// Uploads a staged file on the module's behalf.
+    ///
+    /// `filename` is the name the file must be given remotely — always exactly the `lastPathComponent` the caller
+    /// handed to ``stage(_:category:accountDataGeneration:metadata:)``, never the (uniquified) on-disk staging name.
+    typealias UploadOperation = @Sendable (
+        _ fileUrl: URL,
+        _ category: Category,
+        _ accountId: String,
+        _ filename: String,
+        _ metadata: [String: String]
+    ) async throws -> Void
+
+    /// Where the module keeps its state, how it talks to the outside world, and how much work it does at once.
+    ///
+    /// The defaults are what the app uses; the injection points exist so that the upload path — the one part of the
+    /// app that handles participant data on its way off the device — can be tested without a Firebase environment.
+    struct Configuration: Sendable {
+        /// The directory holding the staged files (and any not-yet-migrated legacy per-category directories).
+        var directory: URL = ManagedFileUpload.defaultDirectory
+        /// The directory holding the pending-uploads database.
+        ///
+        /// Deliberately outside ``directory``, so that ``ManagedFileUpload/clearPendingUploads()`` cannot destroy
+        /// the index it is iterating.
+        var databaseDirectory: URL = ManagedFileUpload.defaultDatabaseDirectory
+        /// Whether to keep the database in memory instead of on disk.
+        var isStoredInMemoryOnly = false
+        /// How many files may be uploaded concurrently.
+        ///
+        /// Each in-flight upload retains its request body, and the module always spends someone else's background
+        /// execution budget, so this is kept deliberately small.
+        var maximumConcurrentUploads = 2
+        /// Resolves the currently signed-in account's id; `nil` to read it from the `Account` module.
+        var accountIdProvider: (@Sendable () async -> String?)?
+        /// Performs the actual upload; `nil` to upload into the Firebase Storage.
+        var uploadOperation: UploadOperation?
+        /// Whether data belonging to a previous account still needs to be cleared.
+        var isCleanupPending: @Sendable () -> Bool = {
+            LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired]
         }
     }
-    
-    
-    nonisolated private static let directory = URL.documentsDirectory.appending(component: "ManagedFileUploading", directoryHint: .isDirectory)
-    nonisolated private static let stagingDirectory = directory.appending(component: "staging", directoryHint: .isDirectory)
-    nonisolated private static let databaseDirectory = URL.applicationSupportDirectory.appending(
+
+    enum UploadError: Error, Sendable {
+        case databaseUnavailable
+        case noAccount
+        case cancelled
+    }
+
+    /// The outcome of a single upload attempt, as seen by the queue's bookkeeping.
+    enum UploadOutcome: Sendable {
+        /// The file was uploaded and its entry removed.
+        case completed
+        /// The attempt failed; the entry survives and will be retried on a later resume or launch.
+        case failed
+        /// The entry is gone (already cleared, its file was missing, or it belongs to a different account).
+        case discarded
+    }
+
+    nonisolated static let defaultDirectory = URL.documentsDirectory.appending(
+        component: "ManagedFileUploading",
+        directoryHint: .isDirectory
+    )
+    nonisolated static let defaultDatabaseDirectory = URL.applicationSupportDirectory.appending(
         component: "ManagedFileUpload",
         directoryHint: .isDirectory
     )
-    
+
     // swiftlint:disable attributes
-    @ObservationIgnored @Application(\.logger) private var logger
-    @ObservationIgnored @Dependency(Account.self) private var account: Account?
+    @ObservationIgnored @Application(\.logger) var logger
+    @ObservationIgnored @Dependency(Account.self) var account: Account?
     // swiftlint:enable attributes
-    
-    private let newUploads = AsyncStream.makeStream(of: PersistentIdentifier.self)
-    /// The uploads that have already been picked up for processing during the current launch of the app.
-    /// Used to guard against an upload getting processed twice, in case it somehow ends up in ``newUploads`` more than once.
-    private var processedUploads: Set<PersistentIdentifier> = []
-    
+
+    nonisolated let configuration: Configuration
+    nonisolated(unsafe) let fileManager = FileManager()
+
+    let newUploads = AsyncStream.makeStream(of: PersistentIdentifier.self)
+    /// Whether the queue currently accepts new work.
+    ///
+    /// Set to `false` by ``cancelAndWaitForQuiescence()`` and back to `true` as the unconditional first step of
+    /// ``resumePendingUploads()``, so that a failed or early-returning resume can never leave the queue closed.
+    var acceptsUploads = true
+    /// Uploads that have been handed to the queue and haven't finished yet, and the category each was counted into.
+    ///
+    /// Entries are removed again when the upload finishes, in any way — unlike a plain "already seen" set, a
+    /// failed upload therefore stays eligible for a later retry instead of being blacklisted for the launch.
+    var enqueuedUploads: [PersistentIdentifier: Category] = [:]
+    /// The currently in-flight uploads, so that they can be cancelled and awaited.
+    var activeUploads: [PersistentIdentifier: Swift::Task<UploadOutcome, Never>] = [:]
+    var quiescenceWaiters: [CheckedContinuation<Void, Never>] = []
+    var drainTask: Swift::Task<Void, Never>?
+
     private(set) var categories: Set<Category>
-    nonisolated(unsafe) private let fileManager = FileManager()
-    
+
     /// The database in which the module keeps track of its pending uploads.
     ///
-    /// `nil` if the database couldn't be opened during the current launch (see ``init(categories:)``);
+    /// `nil` if the database couldn't be opened during the current launch (see ``makeModelContainer(for:)``);
     /// in that case the module is inert until the next launch.
-    nonisolated private let modelContainer: ModelContainer?
-    private var modelContext: ModelContext? {
+    nonisolated let modelContainer: ModelContainer?
+    var modelContext: ModelContext? {
         modelContainer?.mainContext
     }
     /// Whether the database couldn't be opened and had to be moved aside and recreated during the current launch.
-    private var databaseWasRecreated = false
-    
+    let databaseWasRecreated: Bool
+
     /// A `Progress` instance representing each category's upload progress,
     /// i.e. the progress of uploading the category's submitted files into the Firebase Storage.
     ///
     /// A category is present in here iff it currently has uploads that are scheduled or being processed during this launch;
     /// uploads that failed (and are waiting to be retried on a subsequent launch) get removed from the progress upon failing.
     @MainActor private(set) var progressByCategory: [Category: Progress] = [:]
-    
+
     /// Creates a new instance of the `ManagedFileUpload` module.
     ///
     /// Even though it is allowed to schedule uploads for categories not specified when initially creating the module (via the `categories` parameter),
@@ -102,223 +145,47 @@ final class ManagedFileUpload: ServiceModule, EnvironmentAccessible, Sendable {
     /// The reason for this is that the module will use this initial list of categories to migrate any pending uploads
     /// that were created by the old, file-system-based version of this module.
     ///
+    /// - parameter configuration: Where the module keeps its state and how it performs its uploads.
     /// - parameter categories: A list of well-known ``Category`` definitions.
-    init(@ArrayBuilder<Category> categories: () -> [Category]) {
-        self.categories = Set(categories())
-        let fileManager = FileManager()
-        try? fileManager.createDirectory(at: Self.databaseDirectory, withIntermediateDirectories: true)
-        let schema = Schema([ScheduledUpload.self], version: Schema.Version(0, 0, 1))
-        let config = ModelConfiguration(
-            "ManagedFileUpload",
-            schema: schema,
-            url: Self.databaseDirectory.appending(component: "db.sqlite", directoryHint: .notDirectory)
-        )
-        do {
-            modelContainer = try ModelContainer(for: schema, configurations: [config])
-        } catch {
-            guard UIApplication.shared.isProtectedDataAvailable else {
-                // The device hasn't been unlocked since its last reboot (e.g.: a background launch before first unlock),
-                // in which case we simply cannot open the database. This is a transient condition (the database is fine,
-                // we just can't access it right now) so we must NOT treat it as corruption.
-                // The module stays inert for this launch; the next normal launch will pick the pending uploads back up.
-                modelContainer = nil
-                return
-            }
-            // The database exists but can't be opened; most likely it is corrupted or schema-incompatible.
-            // Rather than fatalError-ing on every subsequent launch, we move it aside and start over with a fresh database.
-            // (Moved aside, not deleted, so that the previously-pending uploads at least remain recoverable.)
-            for filename in ["db.sqlite", "db.sqlite-shm", "db.sqlite-wal"] {
-                let url = Self.databaseDirectory.appending(component: filename, directoryHint: .notDirectory)
-                let brokenUrl = Self.databaseDirectory.appending(component: "broken-\(filename)", directoryHint: .notDirectory)
-                try? fileManager.removeItem(at: brokenUrl)
-                try? fileManager.moveItem(at: url, to: brokenUrl)
-            }
-            modelContainer = try? ModelContainer(for: schema, configurations: [config])
-            databaseWasRecreated = true
-        }
+    convenience init( // swiftlint:disable:this function_default_parameter_at_end
+        configuration: Configuration = Configuration(),
+        @ArrayBuilder<Category> categories: () -> [Category]
+    ) {
+        self.init(categories: categories(), configuration: configuration)
     }
-    
-    nonisolated private static func stagingUrl(forUploadWithId id: UUID) -> URL {
-        stagingDirectory.appending(component: id.uuidString, directoryHint: .notDirectory)
+
+    init(categories: [Category], configuration: Configuration) {
+        self.categories = Set(categories)
+        self.configuration = configuration
+        Self.ensureDirectoriesExist(for: configuration, using: FileManager())
+        let (container, wasRecreated) = Self.makeModelContainer(for: configuration)
+        self.modelContainer = container
+        self.databaseWasRecreated = wasRecreated
     }
-    
+
     func configure() {
-        guard let modelContext else {
+        guard modelContainer != nil else {
             logger.warning("Unable to open pending-uploads database; file uploading is disabled for this launch.")
             return
         }
         if databaseWasRecreated {
             logger.warning("The pending-uploads database was unreadable and has been moved aside; previously-pending uploads were dropped.")
         }
-        do {
-            try fileManager.createDirectory(at: Self.stagingDirectory, withIntermediateDirectories: true)
-        } catch {
-            logger.error("Unable to create staging directory at \(Self.stagingDirectory)")
-        }
+        Self.ensureDirectoriesExist(for: configuration, using: fileManager)
         migrateLegacyFileBasedUploads()
         deleteOrphanedStagingFiles()
-        // schedule everything that's still pending from previous launches (incl. any just-migrated entries).
-        let descriptor = FetchDescriptor<ScheduledUpload>(sortBy: [SortDescriptor(\.creationDate)])
-        for upload in (try? modelContext.fetch(descriptor)) ?? [] {
-            addUploadToProgress(for: resolveCategory(id: upload.categoryId, firebasePath: upload.categoryFirebasePath))
-            newUploads.continuation.yield(upload.persistentModelID)
+        // Resume everything that's still pending from previous launches (incl. any just-migrated entries).
+        // Routed through `resumePendingUploads()` rather than a bare fetch-and-yield, so that the account-cleanup
+        // gate is applied on the one path where it matters most: a launch following a logout whose cleanup didn't finish.
+        Swift::Task { [weak self] in
+            await self?.resumePendingUploads()
         }
     }
-    
-    func run() async {
-        await withManagedTaskQueue(limit: 5) { taskQueue in
-            for await upload in self.newUploads.stream {
-                taskQueue.addTask {
-                    do {
-                        try await self.doUpload(upload)
-                    } catch {
-                        await self.logger.error("Upload failed: \(error). Will retry on next launch.")
-                    }
-                }
-            }
-        }
-    }
-    
+
     func isActive(_ category: Category) -> Bool {
         progressByCategory[category] != nil
     }
-}
 
-
-// MARK: Migration & Cleanup
-
-extension ManagedFileUpload {
-    /// Migrates pending uploads that were created by the old, file-system-based version of this module into the database.
-    ///
-    /// The old module tracked its pending uploads as files in one directory per category (within `Self.directory`), stored under their remote filenames.
-    /// We turn every such file into a ``ScheduledUpload`` entry and move it into the staging directory.
-    /// This is a one-time migration in the sense that it moves the files out of the legacy directories as it processes them;
-    /// on all subsequent launches there's simply nothing left to migrate.
-    private func migrateLegacyFileBasedUploads() {
-        guard let modelContext else {
-            return
-        }
-        let pendingMoves: [(srcUrl: URL, upload: ScheduledUpload)] = categories.reduce(into: []) { result, category in
-            // construct the URL exactly the way the old module did, so that we look for the files where it put them.
-            let legacyDir = Self.directory.appending(component: category.id, directoryHint: .isDirectory)
-            guard fileManager.isDirectory(at: legacyDir) else {
-                return
-            }
-            for url in (try? fileManager.contents(of: legacyDir)) ?? [] where !fileManager.isDirectory(at: url) {
-                let upload = ScheduledUpload(category: category, filename: url.lastPathComponent, metadata: [:])
-                modelContext.insert(upload)
-                result.append((url, upload))
-            }
-        }
-        if !pendingMoves.isEmpty {
-            do {
-                // save all entries in a single commit, before moving any files: a database entry without a file resolves itself
-                // (it simply gets discarded, and the still-in-place file gets re-migrated on the next launch),
-                // whereas a moved file without an entry would be deleted by the orphan sweep.
-                try modelContext.save()
-            } catch {
-                logger.error("Unable to migrate pending uploads: \(error)")
-                modelContext.rollback()
-                return
-            }
-            var anyMovesFailed = false
-            for (srcUrl, upload) in pendingMoves {
-                do {
-                    try fileManager.moveItem(at: srcUrl, to: Self.stagingUrl(forUploadWithId: upload.id))
-                } catch {
-                    logger.error("Unable to migrate pending upload at \(srcUrl): \(error)")
-                    modelContext.delete(upload)
-                    anyMovesFailed = true
-                }
-            }
-            if anyMovesFailed {
-                try? modelContext.save()
-            }
-        }
-        for category in categories {
-            let legacyDir = Self.directory.appending(component: category.id, directoryHint: .isDirectory)
-            if fileManager.isDirectory(at: legacyDir), (try? fileManager.contents(of: legacyDir))?.isEmpty == true {
-                try? fileManager.removeItem(at: legacyDir)
-            }
-        }
-        removeEmptyLegacyDirectories()
-    }
-    
-    /// Removes any (now-empty) directories left behind by the old file-system-based version of the module.
-    ///
-    /// Directories that still contain files (i.e., pending uploads belonging to categories that aren't registered with the module)
-    /// are intentionally left in place, so that the data can still be migrated in the future.
-    private func removeEmptyLegacyDirectories() {
-        let children = (try? fileManager.contents(of: Self.directory)) ?? []
-        for url in children where fileManager.isDirectory(at: url) && url.lastPathComponent != Self.stagingDirectory.lastPathComponent {
-            if directoryTreeContainsFiles(at: url) {
-                logger.warning("Found unmigrated pending uploads at \(url.path); leaving them in place.")
-            } else {
-                try? fileManager.removeItem(at: url)
-            }
-        }
-    }
-    
-    nonisolated private func directoryTreeContainsFiles(at url: URL) -> Bool {
-        guard let enumerator = fileManager.enumerator(at: url, includingPropertiesForKeys: [.isDirectoryKey]) else {
-            return false
-        }
-        return enumerator.lazy
-            .compactMap { $0 as? URL }
-            .contains { (try? $0.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory != true }
-    }
-    
-    /// Deletes any files in the staging directory that don't belong to a ``ScheduledUpload`` entry.
-    ///
-    /// Such files can come into existence when the app gets terminated after an upload's database entry was deleted, but before its file was.
-    private func deleteOrphanedStagingFiles() {
-        guard !databaseWasRecreated, let modelContext else {
-            // if the database was just recreated, the files' entries may have been lost rather than legitimately deleted;
-            // we leave the files in place (alongside the moved-aside database) instead of destroying them as well.
-            return
-        }
-        guard let uploads = try? modelContext.fetch(FetchDescriptor<ScheduledUpload>()) else {
-            // if we can't read the database, we can't tell which files are orphaned. leave everything in place.
-            return
-        }
-        let validNames = Set(uploads.map { $0.id.uuidString })
-        for url in (try? fileManager.contents(of: Self.stagingDirectory)) ?? [] where !validNames.contains(url.lastPathComponent) {
-            logger.notice("Deleting orphaned staging file at \(url.path)")
-            try? fileManager.removeItem(at: url)
-        }
-    }
-}
-
-
-// MARK: Clearing
-
-extension ManagedFileUpload {
-    /// Deletes all pending uploads, incl. their staged files.
-    func clearPendingUploads() throws {
-        if let modelContext {
-            try modelContext.delete(model: ScheduledUpload.self)
-            try modelContext.save()
-        }
-        progressByCategory.removeAll()
-        try fileManager.removeItem(at: Self.directory)
-        try fileManager.createDirectory(at: Self.stagingDirectory, withIntermediateDirectories: true)
-    }
-    
-    /// Deletes all pending uploads within the specified category, incl. their staged files.
-    func clearPendingUploads(for category: Category) throws {
-        guard let modelContext else {
-            return
-        }
-        let categoryId = category.id
-        let uploads = try modelContext.fetch(FetchDescriptor<ScheduledUpload>(predicate: #Predicate { $0.categoryId == categoryId }))
-        for upload in uploads {
-            try? fileManager.removeItem(at: Self.stagingUrl(forUploadWithId: upload.id))
-            modelContext.delete(upload)
-        }
-        try modelContext.save()
-        progressByCategory[category] = nil
-    }
-    
     /// The total on-disk size, in bytes, of all files pending upload within the specified category.
     func totalPendingFileSize(for category: Category) -> Int64? {
         guard let modelContext else {
@@ -332,10 +199,110 @@ extension ManagedFileUpload {
         }
         var total: Int64 = 0
         for upload in uploads {
-            let url = Self.stagingUrl(forUploadWithId: upload.id)
+            let url = stagingUrl(forUploadWithId: upload.id)
             total += Int64((try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0)
         }
         return total
+    }
+}
+
+
+// MARK: On-disk locations
+
+extension ManagedFileUpload {
+    nonisolated var stagingDirectory: URL {
+        configuration.directory.appending(component: "staging", directoryHint: .isDirectory)
+    }
+
+    /// Creates the module's directories if needed, and excludes them from device backups.
+    ///
+    /// Both directories hold un-uploaded participant data (the staged payloads themselves, and the index describing
+    /// them), which must not end up in an iCloud or Finder backup. Marking the *directories* rather than the individual
+    /// files means the flag also covers files created later, and survives SQLite recreating its `-wal`/`-shm` sidecars.
+    /// Re-stamping on every launch makes it self-healing.
+    nonisolated static func ensureDirectoriesExist(for configuration: Configuration, using fileManager: FileManager) {
+        for url in [configuration.directory, configuration.databaseDirectory] {
+            do {
+                try fileManager.createDirectory(at: url, withIntermediateDirectories: true)
+            } catch {
+                continue
+            }
+            var url = url
+            var resourceValues = URLResourceValues()
+            resourceValues.isExcludedFromBackup = true
+            try? url.setResourceValues(resourceValues)
+        }
+        let stagingDirectory = configuration.directory.appending(component: "staging", directoryHint: .isDirectory)
+        try? fileManager.createDirectory(at: stagingDirectory, withIntermediateDirectories: true)
+    }
+
+    /// Opens the pending-uploads store, moving a genuinely unreadable one aside rather than failing forever.
+    ///
+    /// - returns: the container (`nil` if it could not be opened at all), and whether an existing store had to be moved aside.
+    nonisolated private static func makeModelContainer(for configuration: Configuration) -> (ModelContainer?, Bool) {
+        let databaseUrl = configuration.databaseDirectory.appending(component: "db.sqlite", directoryHint: .notDirectory)
+        let makeConfiguration = {
+            configuration.isStoredInMemoryOnly
+                ? ModelConfiguration("ManagedFileUpload", schema: Schema(versionedSchema: SchemaV1.self), isStoredInMemoryOnly: true)
+                : ModelConfiguration("ManagedFileUpload", schema: Schema(versionedSchema: SchemaV1.self), url: databaseUrl)
+        }
+        do {
+            return (try makeModelContainer(with: makeConfiguration()), false)
+        } catch {
+            guard configuration.isStoredInMemoryOnly == false, storeLooksCorrupt(at: databaseUrl) else {
+                // Either there is no store to blame, or the failure is environmental (no free space, the file is
+                // momentarily unreadable, ...). Treating that as corruption would throw away a perfectly good queue,
+                // so the module simply stays inert for this launch and tries again on the next one.
+                return (nil, false)
+            }
+            // The store exists and is readable, but SwiftData still won't open it: most likely corrupt or
+            // schema-incompatible. Rather than failing on every subsequent launch, move it aside and start over.
+            // (Moved aside, not deleted, so that the previously-pending uploads at least remain recoverable.)
+            let fileManager = FileManager()
+            for filename in ["db.sqlite", "db.sqlite-shm", "db.sqlite-wal"] {
+                let url = configuration.databaseDirectory.appending(component: filename, directoryHint: .notDirectory)
+                let brokenUrl = configuration.databaseDirectory.appending(component: "broken-\(filename)", directoryHint: .notDirectory)
+                try? fileManager.removeItem(at: brokenUrl)
+                try? fileManager.moveItem(at: url, to: brokenUrl)
+            }
+            return (try? makeModelContainer(with: makeConfiguration()), true)
+        }
+    }
+
+    nonisolated private static func makeModelContainer(with configuration: ModelConfiguration) throws -> ModelContainer {
+        try ModelContainer(
+            for: Schema(versionedSchema: SchemaV1.self),
+            migrationPlan: MigrationPlan.self,
+            configurations: [configuration]
+        )
+    }
+
+    /// Whether an existing store file is present and readable, i.e. whether a failure to open it can fairly be
+    /// blamed on the store's contents rather than on the environment.
+    ///
+    /// The app declares no data-protection entitlement, so its files are `completeUntilFirstUserAuthentication` and
+    /// remain readable while the device is merely locked — which is exactly when the background drain runs. Testing
+    /// readability directly is therefore both more accurate and more specific than asking whether protected data is
+    /// currently available.
+    nonisolated private static func storeLooksCorrupt(at url: URL) -> Bool {
+        guard FileManager().fileExists(atPath: url.path(percentEncoded: false)) else {
+            return false
+        }
+        guard let handle = try? FileHandle(forReadingFrom: url) else {
+            return false
+        }
+        defer {
+            try? handle.close()
+        }
+        return true
+    }
+
+    /// Where the file belonging to a ``ScheduledUpload`` is staged.
+    ///
+    /// Named after the entry's id rather than the file's remote name, which is what makes local collisions
+    /// impossible without any locking or renaming; the remote name lives in the entry's `filename`.
+    nonisolated func stagingUrl(forUploadWithId id: UUID) -> URL {
+        stagingDirectory.appending(component: id.uuidString, directoryHint: .notDirectory)
     }
 }
 
@@ -347,7 +314,7 @@ extension ManagedFileUpload {
         let id: String
         let firebasePath: String
         let title: LocalizedStringResource
-        
+
         /// Creates a new Category
         ///
         /// - parameter id: Unique identifier for this category.
@@ -358,129 +325,24 @@ extension ManagedFileUpload {
             self.title = title
             self.firebasePath = firebasePath
         }
-        
+
         static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.id == rhs.id
         }
-        
+
         func hash(into hasher: inout Hasher) {
             hasher.combine(id)
         }
     }
-    
+
     /// Resolves a ``ScheduledUpload``'s category information into a ``Category``,
     /// preferring the matching currently-registered category, if it exists.
-    private func resolveCategory(id: String, firebasePath: String) -> Category {
+    func resolveCategory(id: String, firebasePath: String) -> Category {
         categories.first { $0.id == id } ?? Category(id: id, title: "\(id)", firebasePath: firebasePath)
     }
-}
 
-
-// MARK: Uploading
-
-extension ManagedFileUpload {
-    private enum UploadError: Error {
-        case databaseUnavailable
-        case noAccount
-        case uploadFailed(any Error)
-    }
-    
-    /// Schedules the file at `url` for upload, taking ownership of the file by moving it into the module's staging directory.
-    ///
-    /// The file will be uploaded to `users/{accountId}/{category.firebasePath}/{url.lastPathComponent}` in the Firebase Storage.
-    /// This function returns once the upload has been durably scheduled; the upload itself happens asynchronously,
-    /// and, if it cannot be completed during the current launch of the app, will be retried on subsequent launches.
-    @concurrent
-    func scheduleForUpload(_ url: URL, category: Category, metadata: [String: String] = [:]) async throws {
-        let (uploadId, persistentId) = try await registerUpload(filename: url.lastPathComponent, category: category, metadata: metadata)
-        do {
-            try fileManager.moveItem(at: url, to: Self.stagingUrl(forUploadWithId: uploadId))
-        } catch {
-            await discardUpload(persistentId)
-            throw error
-        }
-        newUploads.continuation.yield(persistentId)
-    }
-    
-    /// Creates and saves a ``ScheduledUpload`` entry for a new upload, and counts it into its category's progress.
-    private func registerUpload(filename: String, category: Category, metadata: [String: String]) throws -> (UUID, PersistentIdentifier) {
-        guard let modelContext else {
-            throw UploadError.databaseUnavailable
-        }
+    func register(_ category: Category) {
         categories.insert(category)
-        let upload = ScheduledUpload(category: category, filename: filename, metadata: metadata)
-        modelContext.insert(upload)
-        try modelContext.save()
-        addUploadToProgress(for: category)
-        return (upload.id, upload.persistentModelID)
-    }
-    
-    /// Deletes a ``ScheduledUpload`` entry again, in response to its file failing to get moved into the staging directory.
-    private func discardUpload(_ id: PersistentIdentifier) {
-        guard let modelContext, let upload: ScheduledUpload = modelContext.existingModel(for: id) else {
-            return
-        }
-        abortUploadProgress(for: resolveCategory(id: upload.categoryId, firebasePath: upload.categoryFirebasePath))
-        modelContext.delete(upload)
-        try? modelContext.save()
-    }
-    
-    /// Marks the upload as picked-up for processing.
-    ///
-    /// - returns: `true` if the caller should proceed with the upload; `false` if it was already picked up previously during this launch.
-    private func claimUpload(_ id: PersistentIdentifier) -> Bool {
-        processedUploads.insert(id).inserted
-    }
-    
-    @concurrent
-    private func doUpload(_ uploadId: PersistentIdentifier) async throws(UploadError) {
-        guard await claimUpload(uploadId), let modelContainer else {
-            return
-        }
-        let context = ModelContext(modelContainer)
-        guard let upload: ScheduledUpload = context.existingModel(for: uploadId) else {
-            // the upload got cleared inbetween getting scheduled and us getting to process it;
-            // its progress entry was reset by the clear operation.
-            return
-        }
-        let category = await resolveCategory(id: upload.categoryId, firebasePath: upload.categoryFirebasePath)
-        let fileUrl = Self.stagingUrl(forUploadWithId: upload.id)
-        guard fileManager.itemExists(at: fileUrl) else {
-            await logger.error("Discarding scheduled upload \(upload.id): its staged file is missing.")
-            context.delete(upload)
-            try? context.save()
-            await abortUploadProgress(for: category)
-            return
-        }
-        guard let accountId = await account?.details?.accountId else {
-            await abortUploadProgress(for: category)
-            throw .noAccount
-        }
-        let storageRef = Storage.storage().reference(withPath: "users/\(accountId)/\(category.firebasePath)/\(upload.filename)")
-        await logger.notice("uploading to \(storageRef.bucket):\(storageRef.fullPath)")
-        let metadata = StorageMetadata()
-        metadata.contentType = "application/octet-stream"
-        if !upload.metadata.isEmpty {
-            metadata.customMetadata = upload.metadata
-        }
-        upload.numAttempts += 1
-        try? context.save()
-        do {
-            _ = try await storageRef.putFileAsync(from: fileUrl, metadata: metadata)
-        } catch {
-            await logger.error("Upload to \(storageRef.fullPath) failed: \(error)")
-            await abortUploadProgress(for: category)
-            throw .uploadFailed(error)
-        }
-        context.delete(upload)
-        try? context.save()
-        do {
-            try fileManager.removeItem(at: fileUrl)
-        } catch {
-            // not a problem: the file is orphaned now that its entry is gone, and will get cleaned up on the next launch.
-            await logger.error("Unable to delete uploaded file at \(fileUrl): \(error)")
-        }
-        await completeUploadProgress(for: category)
     }
 }
 
@@ -492,7 +354,9 @@ extension ManagedFileUpload {
     ///
     /// This happens when the upload is enqueued (rather than when it starts getting processed),
     /// so that the progress' total reflects the full queue depth instead of just the currently-in-flight uploads.
-    private func addUploadToProgress(for category: Category) {
+    /// Every enqueued upload is matched by exactly one ``completeUploadProgress(for:)`` or
+    /// ``abortUploadProgress(for:)`` in `finishUpload(_:category:outcome:)`, on every path.
+    func addUploadToProgress(for category: Category) {
         if let progress = progressByCategory[category] {
             progress.totalUnitCount += 1
         } else {
@@ -501,8 +365,8 @@ extension ManagedFileUpload {
             progressByCategory[category] = progress
         }
     }
-    
-    private func completeUploadProgress(for category: Category) {
+
+    func completeUploadProgress(for category: Category) {
         guard let progress = progressByCategory[category] else {
             return
         }
@@ -511,9 +375,19 @@ extension ManagedFileUpload {
             progressByCategory[category] = nil
         }
     }
-    
+
+    /// Drops all recorded progress, e.g. because everything pending has just been cleared.
+    func resetAllProgress() {
+        progressByCategory.removeAll()
+    }
+
+    /// Drops the recorded progress for a single category.
+    func resetProgress(for category: Category) {
+        progressByCategory[category] = nil
+    }
+
     /// Un-counts a failed or discarded upload from its category's progress, so that the category doesn't appear active forever.
-    private func abortUploadProgress(for category: Category) {
+    func abortUploadProgress(for category: Category) {
         guard let progress = progressByCategory[category] else {
             return
         }
@@ -521,18 +395,5 @@ extension ManagedFileUpload {
         if progress.totalUnitCount <= 0 || progress.completedUnitCount >= progress.totalUnitCount {
             progressByCategory[category] = nil
         }
-    }
-}
-
-
-extension ModelContext {
-    func existingModel<T: PersistentModel>(for id: PersistentIdentifier) -> T? {
-        if let model: T = self.registeredModel(for: id) {
-            return model
-        }
-        let descriptor = FetchDescriptor<T>(
-            predicate: #Predicate { $0.persistentModelID == id }
-        )
-        return (try? self.fetch(descriptor))?.first
     }
 }

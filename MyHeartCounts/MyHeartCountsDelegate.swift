@@ -54,7 +54,9 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             AppState()
             AppRefresh()
             MHCBackgroundTasks()
-            ManagedFileUpload {
+            ManagedFileUpload(
+                configuration: .init(isStoredInMemoryOnly: ProcessInfo.isReallyRunningInXCTest)
+            ) {
                 ManagedFileUpload.Category.liveHealthUpload
                 ManagedFileUpload.Category.historicalHealthUpload
                 ManagedFileUpload.Category.healthDeletions
