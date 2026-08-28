@@ -16,7 +16,7 @@ import ModelsR4
 import MyHeartCountsShared
 
 
-extension QuantitySample: HealthObservation {
+extension QuantitySample: SelfModelledHealthObservation {
     enum FHIRObservationConversionError: Error {
         case notSupported
     }
@@ -27,7 +27,6 @@ extension QuantitySample: HealthObservation {
     
     // swiftlint:disable:next function_body_length
     func resource(
-        withMapping mapping: SampleTypesFHIRMapping,
         issuedDate: FHIRPrimitive<Instant>?,
         extensions: [any FHIRExtensionBuilderProtocol]
     ) throws -> ResourceProxy {
@@ -45,14 +44,11 @@ extension QuantitySample: HealthObservation {
             try observation.setIssued(on: .now)
         }
         switch sampleType {
-        case .healthKit(let sampleType):
-            let sample = HKQuantitySample(
-                type: sampleType.hkSampleType,
-                quantity: HKQuantity(unit: self.unit, doubleValue: self.value),
-                start: self.startDate,
-                end: self.endDate
-            )
-            return try sample.resource(withMapping: mapping, issuedDate: issuedDate, extensions: extensions)
+        case .healthKit:
+            // A HealthKit-typed entry is saved to HealthKit and converted from the stored sample by the
+            // Grove adapter. Converting this dashboard reconstruction instead would assert a recording
+            // device and provenance it never had.
+            throw FHIRObservationConversionError.notSupported
         case .custom(.bloodLipids):
             let code = "18262-6".asFHIRStringPrimitive() // "Cholesterol in LDL [Mass/volume] in Serum or Plasma by Direct assay"
             let system = "http://loinc.org".asFHIRURIPrimitive()

@@ -450,6 +450,8 @@
 			);
 			name = MyHeartCounts;
 			packageProductDependencies = (
+				802118D0301663AA0088582D /* GroveFHIRContract */,
+				802118D0301663AA0088582E /* GroveSensorKitFHIR */,
 				2FBD738B2A3BD150004228E7 /* GroveScheduler */,
 				2FB099AE2A875DF100B20952 /* FirebaseAuth */,
 				2FB099B02A875DF100B20952 /* FirebaseFirestore */,
@@ -1294,8 +1296,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SchmiedmayerLab/Grove.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = "0.3.0-beta.6";
+				kind = revision;
+				revision = 274a289839518271607663f2b4fedf7d531a77b1;
 			};
 			traits = (
 				ResearchKit,
@@ -1351,6 +1353,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 80D031F72FE52D3D0090B041 /* XCRemoteSwiftPackageReference "Grove" */;
 			productName = GroveHealthKitFHIR;
+		};
+		802118D0301663AA0088582D /* GroveFHIRContract */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80D031F72FE52D3D0090B041 /* XCRemoteSwiftPackageReference "Grove" */;
+			productName = GroveFHIRContract;
+		};
+		802118D0301663AA0088582E /* GroveSensorKitFHIR */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80D031F72FE52D3D0090B041 /* XCRemoteSwiftPackageReference "Grove" */;
+			productName = GroveSensorKitFHIR;
 		};
 		802141582D81F14000BF5D35 /* GroveOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
