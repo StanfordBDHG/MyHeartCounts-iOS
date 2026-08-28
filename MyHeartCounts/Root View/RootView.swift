@@ -10,7 +10,6 @@ import OSLog
 import SFSafeSymbols
 import Spezi
 import SpeziAccount
-import class SpeziConsent.ConsentDocument
 import SpeziFoundation
 import SpeziOnboarding
 import SpeziScheduler
@@ -26,12 +25,9 @@ struct RootView: View {
     // swiftlint:disable attributes
     @Environment(AppState.self) private var appState
     @Environment(Account.self) private var account: Account?
-    @Environment(ConsentManager.self) private var consentManager: ConsentManager?
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
     @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
     // swiftlint:enable attributes
-    
-    @State private var consentDocForRenewal: ConsentDocument?
     
     var body: some View {
         ZStack {
@@ -132,8 +128,6 @@ extension RootViewTab {
 
 extension LocalPreferenceKeys {
     static let rootTabSelection = LocalPreferenceKey<String>("rootTabSelection", default: HomeTab.tabId)
-    
-    static let rootTabViewCustomization = LocalPreferenceKey<TabViewCustomization>("rootTabViewCustomization", default: .init())
 }
 
 

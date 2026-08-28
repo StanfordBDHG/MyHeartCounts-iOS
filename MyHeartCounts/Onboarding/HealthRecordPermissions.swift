@@ -29,7 +29,6 @@ struct HealthRecordPermissions: View {
     
     private let title: LocalizedStringResource = "Health Records"
     
-    @Environment(StudyBundleLoader.self) private var studyLoader
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     

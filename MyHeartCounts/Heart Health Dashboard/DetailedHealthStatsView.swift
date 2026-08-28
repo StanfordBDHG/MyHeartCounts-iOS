@@ -211,9 +211,6 @@ private struct MostRecentValue: View {
         }
     }
     
-    @Environment(\.locale) private var locale
-    @Environment(\.calendar) private var cal
-    
     private let scoreResult: ScoreResult
     private let components: [Component]
     private let valueAccessibilityDesc: LocalizedStringResource

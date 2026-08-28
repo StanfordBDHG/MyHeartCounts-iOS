@@ -38,9 +38,6 @@ struct DefaultHealthDashboardTile: View {
         let chartConfig: ChartConfig
     }
     
-    @Environment(\.calendar)
-    private var calendar
-    
     let queryInput: QueryInput
     let config: DisplayConfig
     let accessory: Accessory
@@ -102,12 +99,6 @@ struct DefaultHealthDashboardTile: View {
 
 
 private struct TileImpl: View {
-    @Environment(\.locale)
-    private var locale
-    
-    @Environment(\.calendar)
-    private var cal
-    
     private let sampleType: QuantitySample.SampleType
     private let samples: [QuantitySample]
     private let timeRange: HealthKitQueryTimeRange
@@ -166,8 +157,6 @@ private struct TileImpl: View {
 // MARK: SamplesProviderView
 
 private struct SamplesProviderView<Content: View>: View {
-    @Environment(\.calendar)
-    private var calendar
     private let input: DefaultHealthDashboardTile.QueryInput
     private let aggregationMode: QuantitySamplesAggregationStrategy
     private let timeRange: HealthKitQueryTimeRange

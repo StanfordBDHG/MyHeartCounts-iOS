@@ -41,6 +41,7 @@ extension ManagedFileUpload {
     ///
     /// Ignored if the queue is closed, or if this upload is already in flight.
     func enqueue(_ uploadId: PersistentIdentifier, category: Category) {
+        // should prob remove the `category` param here and instead obtain via the PersistentIdentifier?
         guard acceptsUploads, enqueuedUploads[uploadId] == nil else {
             return
         }

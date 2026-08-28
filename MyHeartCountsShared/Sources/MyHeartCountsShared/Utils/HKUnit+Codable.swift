@@ -6,6 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 #if canImport(HealthKit)
 
 public import class HealthKit.HKUnit

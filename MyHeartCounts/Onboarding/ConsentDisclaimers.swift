@@ -121,6 +121,7 @@ extension ConsentDisclaimers {
 
 #if DEBUG
 extension ConsentDocument {
+    // periphery:ignore - dev
     /// Intended for use in SwiftUI `#Preview`s within MHC
     static let previewDoc = try! ConsentDocument(markdown: "Consent Text") // swiftlint:disable:this force_try
 }

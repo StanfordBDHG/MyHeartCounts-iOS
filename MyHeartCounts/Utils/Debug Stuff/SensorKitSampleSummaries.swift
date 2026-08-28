@@ -39,7 +39,6 @@ struct SensorKitSampleSummaries: View {
         }
     }
     
-    @Environment(SensorKit.self) private var sensorKit
     @State private var sensorInfos: [SensorInfo] = []
     @State private var viewState: ViewState = .idle
     

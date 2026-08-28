@@ -14,6 +14,7 @@ import Foundation
 private struct FirestoreEncodingWrapper<T: Encodable>: Encodable {
     /// The key the wrapper's `value` gets encoded into.
     fileprivate static var key: String { "value" }
+    // periphery:ignore - implicitly read when encoding
     let value: T
 }
 

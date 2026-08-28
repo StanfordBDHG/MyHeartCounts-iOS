@@ -35,7 +35,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
     @Dependency(StudyManager.self) var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?
-    @Dependency(LocalStorage.self) private var localStorage
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(EnvironmentTracking.self) private var environmentTracking: EnvironmentTracking?
     @Dependency(ManagedFileUpload.self) var managedFileUpload

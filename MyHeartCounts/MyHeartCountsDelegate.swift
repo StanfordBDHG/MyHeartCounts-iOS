@@ -74,7 +74,6 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
 
 
 extension ModuleBuilder {
-    // periphery:ignore - implicitly called
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
     }

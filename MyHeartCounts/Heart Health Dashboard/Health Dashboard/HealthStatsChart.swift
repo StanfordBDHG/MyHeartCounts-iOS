@@ -367,10 +367,10 @@ extension View {
 
 extension HealthStatsChartDataPoint {
     private struct QuantityValueInput {
-        let value: Double?
+        let value: Double? // periphery:ignore - API
         let valueString: String
         let unitString: String
-        let timeRange: Range<Date>
+        let timeRange: Range<Date> // periphery:ignore - API
         
         init(value: Double?, valueString: String, unit: HKUnit, timeRange: Range<Date>) {
             func unitString(for unit: HKUnit) -> String {

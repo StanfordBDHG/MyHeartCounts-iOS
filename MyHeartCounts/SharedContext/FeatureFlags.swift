@@ -44,11 +44,6 @@ enum FeatureFlags {
     static var enableHealthRecords: Bool {
         LaunchOptions.launchOptions[.enableHealthRecords]
     }
-    
-    @available(*, deprecated, renamed: "enableHealthRecords")
-    static var disableHealthRecords: Bool {
-        !enableHealthRecords
-    }
 }
 
 

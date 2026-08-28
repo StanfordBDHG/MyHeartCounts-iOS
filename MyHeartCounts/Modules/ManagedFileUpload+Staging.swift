@@ -49,7 +49,7 @@ extension ManagedFileUpload {
         do {
             try fileManager.moveItem(at: url, to: stagingUrl(forUploadWithId: upload.id))
         } catch {
-            await discardUpload(upload.persistentId, category: category)
+            await discardUpload(upload.persistentId)
             throw error
         }
         await finishStaging(upload.persistentId, category: category)
@@ -96,7 +96,7 @@ extension ManagedFileUpload {
     }
 
     /// Deletes a ``ScheduledUpload`` entry again, in response to its file failing to get moved into the staging directory.
-    private func discardUpload(_ uploadId: PersistentIdentifier, category: Category) {
+    private func discardUpload(_ uploadId: PersistentIdentifier) {
         guard let modelContext, let upload: ScheduledUpload = modelContext.existingModel(for: uploadId) else {
             return
         }

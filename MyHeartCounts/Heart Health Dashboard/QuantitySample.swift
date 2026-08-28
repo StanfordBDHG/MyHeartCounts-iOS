@@ -147,6 +147,7 @@ extension CustomQuantitySampleType {
         preferredTintColor: .gray
     )
     
+    // periphery:ignore - API
     static let bloodGlucoseFasting = Self(
         id: "MHCCustomSampleTypeBloodGlucoseFasting",
         canonicalUnit: .count(),
@@ -156,6 +157,7 @@ extension CustomQuantitySampleType {
         preferredTintColor: .red
     )
     
+    // periphery:ignore - API
     static let bloodGlucoseA1c = Self(
         id: "MHCCustomSampleTypeBloodGlucoseA1c",
         canonicalUnit: HKUnit(from: "mmol/L"),

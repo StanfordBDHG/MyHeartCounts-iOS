@@ -300,6 +300,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
 
 
 extension SampleTypesCollection {
+    // periphery:ignore - API
     func onlyClinicalRecordTypes() -> Self {
         filter(isKindOf: SampleType<HKClinicalRecord>.self)
     }
@@ -308,6 +309,7 @@ extension SampleTypesCollection {
         filter(isNotKindOf: SampleType<HKClinicalRecord>.self)
     }
     
+    // periphery:ignore - API
     func filter<Sample>(isKindOf _: SampleType<Sample>.Type) -> Self {
         Self(self.filter { $0 is SampleType<Sample> })
     }

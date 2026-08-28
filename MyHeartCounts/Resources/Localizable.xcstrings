@@ -1153,6 +1153,7 @@
       }
     },
     "Another test is already active" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -1202,6 +1203,7 @@
       }
     },
     "Answer Survey Again" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -1330,6 +1332,7 @@
       }
     },
     "Article" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -6754,6 +6757,7 @@
       }
     },
     "Processing Health Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -6770,6 +6774,7 @@
       }
     },
     "Processing SensorKit Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -7645,6 +7650,7 @@
       }
     },
     "Read Article Again" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -8989,6 +8995,7 @@
       }
     },
     "Take Test Again" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -9185,6 +9192,7 @@
       }
     },
     "There are missing Motion Sensor permissions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
