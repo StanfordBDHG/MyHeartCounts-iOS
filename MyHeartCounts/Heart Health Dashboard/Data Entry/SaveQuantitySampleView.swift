@@ -199,7 +199,7 @@ extension HKQuantity {
             return (0, totalInches)
         }
         let inches = totalInches.remainder(dividingBy: Double(feet) * oneFeetInInches).rounded()
-        precondition(inches != -1)
+        assert(inches != -1)
         return (feet, inches)
     }
 }

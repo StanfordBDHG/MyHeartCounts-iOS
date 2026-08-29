@@ -246,6 +246,12 @@ extension HealthKitStatsCalculator {
         }
     }
     
+    private struct IndividualSamplesRunDescriptor {
+        let sampleType: SampleType<HKQuantitySample>
+        /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
+        let metricId: MetricID
+    }
+    
     
     // one run per metric in the spec's Metrics table (docs/MHCDataSpec.md)
     private static let bucketedDescriptors: [StatsRunDescriptor] = [
@@ -400,12 +406,6 @@ extension HealthKitStatsCalculator {
 // MARK: Individual-samples metrics (weight/height/bmi, blood pressure)
 
 extension HealthKitStatsCalculator {
-    private struct IndividualSamplesRunDescriptor {
-        let sampleType: SampleType<HKQuantitySample>
-        /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
-        let metricId: MetricID
-    }
-
     @concurrent
     private func runIndividualQuantitySampleStats(
         _ descriptor: IndividualSamplesRunDescriptor,
