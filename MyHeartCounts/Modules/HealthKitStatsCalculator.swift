@@ -18,6 +18,7 @@ import SpeziAccount
 import SpeziFirestore
 import SpeziFoundation
 import SpeziHealthKit
+import Synchronization
 
 
 @Observable
@@ -26,9 +27,50 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(Account.self) private var account
+    @ObservationIgnored @Dependency(AccountNotifications.self) private var accountNotifications
     // swiftlint:enable attributes
+    
+    /// The currently-active long-lived stats processing task.
+    private let task: Mutex<Task<Void, Never>?> = .init(nil)
+    
+    var isActive: Bool {
+        task.withLock { $0 != nil }
+    }
 
     func run() async {
+        for await event in accountNotifications.events {
+            switch event {
+            case .associatedAccount:
+                start()
+            case .disassociatingAccount:
+                stop()
+                queryAnchors.resetAll()
+            case .detailsChanged, .deletingAccount:
+                break
+            }
+        }
+    }
+    
+    func start() {
+        task.withLock { task in
+            guard task == nil else {
+                return
+            }
+            task = Task {
+                await self._run()
+            }
+        }
+    }
+    
+    func stop() {
+        task.withLock { task in
+            exchange(&task, with: nil)?.cancel()
+        }
+    }
+    
+    
+    @concurrent
+    private func _run() async {
         await account.waitForAccountDetailsReady()
         guard let accountId = await account.details?.accountId else {
             logger.error("no accountId")
@@ -40,38 +82,62 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
         let months = self.months(since: enrollmentDate)
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
-        let startTS = ContinuousClock.now
-        logger.notice("starting")
-        // NOTE/IDEA: in addition to parallelising over sample type, we could additionally also parallelise over time?
-        // (i.e., process multiple months in parallel?)
         await withDiscardingTaskGroup { taskGroup in
-            func schedule(_ operation: sending @escaping @isolated(any) () async throws -> Void) {
-                taskGroup.addTask {
-                    do {
-                        try await operation()
-                    } catch {
-                        self.logger.error("error computing stats: \(error)")
-                    }
-                }
-            }
             for descriptor in Self.bucketedDescriptors {
-                schedule {
-                    try await self.runBucketedQuantityStats(descriptor, months: months, accountDoc: accountDoc)
+                taskGroup.addTask {
+                    await self.process(descriptor, months: months, accountDoc: accountDoc)
                 }
             }
             for descriptor in Self.individualSamplesDescriptors {
-                schedule {
-                    try await self.runIndividualQuantitySampleStats(descriptor, months: months, accountDoc: accountDoc)
+                taskGroup.addTask {
+                    await self.process(descriptor, months: months, accountDoc: accountDoc)
                 }
             }
-            schedule {
-                try await self.runSleepStats(months: months, accountDoc: accountDoc)
-            }
-            schedule {
-                try await self.runBloodPressureStats(months: months, accountDoc: accountDoc)
+            for descriptor in NonstandardSamplesRunDescriptor.allCases {
+                taskGroup.addTask {
+                    await self.process(descriptor, months: months, accountDoc: accountDoc)
+                }
             }
         }
-        logger.notice("Completed stats calculation. Took \(startTS.duration(to: .now))")
+        if !Task.isCancelled {
+            logger.warning("DONE???")
+            // should never reach here (the process functions above should all monitor for new data indefinitely),
+            // but if we do end up here, we clear out the task just in case
+            stop()
+        }
+    }
+}
+
+
+extension HealthKitStatsCalculator {
+    /* private but testable */ struct QueryAnchors {
+        // Since the API doesn't support nesting yet
+        // (needs to be added in Grove, but since MHC hasn't yet done the Spezi -> Grove migration, we wouldn't be able to use it),
+        // we instead hardcode the effective, nested, namespace.
+        // This namespace nesting allows us to be able to both delete all entries for these query anchors, while also still be able
+        // to to a scoped bulk-delete of all MHC entries.
+        static let namespace: LocalPreferenceKeys.Namespace = .custom("edu.stanford.MyHeartCounts:HealthKitStatsCalcQueryAnchors")
+        
+        private let prefs = LocalPreferencesStore.standard
+        
+        fileprivate init() {}
+        
+        private func prefKey(for sampleType: SampleType<some Any>) -> LocalPreferenceKey<QueryAnchor?> {
+            .init(.init(sampleType.id, in: Self.namespace), default: nil)
+        }
+        
+        func resetAll() {
+            prefs.removeAllEntries(in: Self.namespace)
+        }
+        
+        subscript(_ sampleType: SampleType<some Any>) -> QueryAnchor {
+            get { prefs[prefKey(for: sampleType)] ?? .init() }
+            nonmutating set { prefs[prefKey(for: sampleType)] = newValue }
+        }
+    }
+    
+    private var queryAnchors: QueryAnchors {
+        QueryAnchors()
     }
 }
 
@@ -142,10 +208,15 @@ extension HealthKitStatsCalculator {
             "\(year)-\(monthString)"
         }
         let range: Range<Date>
+        
+        init(year: Int, month: Int, range: Range<Date>) {
+            self.year = year
+            self.monthString = String(format: "%02d", month)
+            self.range = range
+        }
     }
 
-    /// The months the stats should cover, i.e. all months from the user's enrollment up to now.
-    /// The first and last month's ranges are clamped to the enrollment date resp. the current time.
+    /// The months the stats should cover, i.e. all months from the user's enrollment up to the end of the current month.
     private func months(since enrollmentDate: Date) -> [StatsMonth] {
         let cal = Calendar.current
         let now = Date()
@@ -169,13 +240,13 @@ extension HealthKitStatsCalculator {
                     return nil
                 }
                 let lowerBound = max(monthStart, enrollmentDate)
-                let upperBound = min(cal.startOfNextMonth(for: monthStart), now)
+                let upperBound = cal.startOfNextMonth(for: monthStart)
                 guard lowerBound < upperBound else {
                     return nil
                 }
                 return StatsMonth(
                     year: year,
-                    monthString: String(format: "%02d", month),
+                    month: month,
                     range: lowerBound..<upperBound
                 )
             }
@@ -188,6 +259,9 @@ extension HealthKitStatsCalculator {
         entriesKey: MonthlyStatsDocumentEntriesKey,
         entries: [Entry]
     ) async throws {
+        guard !Task.isCancelled else {
+            return
+        }
         guard !entries.isEmpty else {
             // don't touch the doc for months without any data: an empty query result can also mean that
             // HealthKit read authorization was revoked, and we don't want that to wipe existing entries
@@ -237,19 +311,17 @@ extension HealthKitStatsCalculator {
         let mode: AggregationMode
         let aggregationInterval: HealthKit.AggregationInterval
         let entriesKey: MonthlyStatsDocumentEntriesKey
-        private(set) var timeRange: HealthKitQueryTimeRange
-
-        func withTimeRange(_ newTimeRange: HealthKitQueryTimeRange) -> Self {
-            var copy = self
-            copy.timeRange = newTimeRange
-            return copy
-        }
     }
     
     private struct IndividualSamplesRunDescriptor {
         let sampleType: SampleType<HKQuantitySample>
         /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
         let metricId: MetricID
+    }
+    
+    private enum NonstandardSamplesRunDescriptor: CaseIterable {
+        case sleepSessions
+        case bloodPressure
     }
     
     
@@ -260,24 +332,21 @@ extension HealthKitStatsCalculator {
             metricId: .steps,
             mode: .sum,
             aggregationInterval: .hour,
-            entriesKey: .hourly,
-            timeRange: .currentMonth
+            entriesKey: .hourly
         ),
         .init(
             sampleType: .appleExerciseTime,
             metricId: .exerciseTime,
             mode: .sum,
             aggregationInterval: .hour,
-            entriesKey: .hourly,
-            timeRange: .currentMonth
+            entriesKey: .hourly
         ),
         .init(
             sampleType: .heartRate,
             metricId: .heartRate,
             mode: .minMaxAvg,
             aggregationInterval: .hour,
-            entriesKey: .hourly,
-            timeRange: .currentMonth
+            entriesKey: .hourly
         )
     ]
     
@@ -286,96 +355,153 @@ extension HealthKitStatsCalculator {
         .init(sampleType: .height, metricId: .height),
         .init(sampleType: .bodyMassIndex, metricId: .bmi)
     ]
-
-    @concurrent
-    private func runBucketedQuantityStats(_ descriptor: StatsRunDescriptor, months: [StatsMonth], accountDoc: DocumentReference) async throws {
-        for month in months {
-            self.logger.notice("Computing stats for stats/\(descriptor.metricId)/months/\(month.documentId)")
-            if let stats = try? await self.calculateStats(for: descriptor.withTimeRange(.init(month.range))) {
+    
+    
+    private func process( // swiftlint:disable:this function_body_length
+        _ input: StatsRunDescriptor,
+        months: [StatsMonth],
+        accountDoc: DocumentReference
+    ) async {
+        let unit = input.sampleType.canonicalUnit
+        func imp(month: StatsMonth) async throws { // swiftlint:disable:this function_body_length
+            let results = try await healthKit.continuousStatisticsQuery(
+                input.sampleType,
+                options: { () -> HKStatisticsOptions in
+                    switch input.mode {
+                    case .sum:
+                        [.cumulativeSum]
+                    case .minMaxAvg:
+                        [.discreteMin, .discreteMax, .discreteAverage]
+                    }
+                }(),
+                aggInterval: input.aggregationInterval,
+                timeRange: .init(month.range)
+            )
+            for try await stats in results {
+                logger.notice("[\(input.sampleType)] NEW STATS FOR \(month.range)")
+                let stats: [StatEntry] = switch input.mode {
+                case .sum:
+                    stats.compactMap { stats in
+                        guard let sum = stats.sumQuantity() else {
+                            return nil
+                        }
+                        return StatEntry(
+                            start: stats.startDate,
+                            end: stats.endDate,
+                            unit: unit,
+                            values: .sum(sum.doubleValue(for: unit))
+                        )
+                    }
+                case .minMaxAvg:
+                    stats.compactMap { stats in
+                        guard let min = stats.minimumQuantity(),
+                              let max = stats.maximumQuantity(),
+                              let avg = stats.averageQuantity() else {
+                            return nil
+                        }
+                        return StatEntry(
+                            start: stats.startDate,
+                            end: stats.endDate,
+                            unit: unit,
+                            values: .minMaxAvg(
+                                min: min.doubleValue(for: unit),
+                                max: max.doubleValue(for: unit),
+                                avg: avg.doubleValue(for: unit)
+                            )
+                        )
+                    }
+                }
                 try await writeStatsDocument(
                     accountDoc: accountDoc,
-                    metricId: descriptor.metricId,
+                    metricId: input.metricId,
                     month: month,
-                    entriesKey: descriptor.entriesKey,
+                    entriesKey: input.entriesKey,
                     entries: stats
                 )
             }
         }
-    }
-
-    @concurrent
-    private func calculateStats(for input: StatsRunDescriptor) async throws -> [StatEntry] {
-        let unit = input.sampleType.canonicalUnit
-        switch input.mode {
-        case .sum:
-            let stats = try await healthKit.statisticsQuery(
-                input.sampleType,
-                aggregatedBy: [.sum],
-                over: input.aggregationInterval,
-                timeRange: input.timeRange
-            )
-            return stats.compactMap { stats in
-                guard let sum = stats.sumQuantity() else {
-                    return nil
+        await withDiscardingTaskGroup { taskGroup in
+            for month in months {
+                taskGroup.addTask {
+                    do {
+                        try await imp(month: month)
+                    } catch {
+                        self.logger.error("Continuous stats processing failed: \(error)")
+                    }
                 }
-                return StatEntry(
-                    start: stats.startDate,
-                    end: stats.endDate,
-                    unit: unit,
-                    values: .sum(sum.doubleValue(for: unit))
-                )
-            }
-        case .minMaxAvg:
-            let stats = try await healthKit.statisticsQuery(
-                input.sampleType,
-                aggregatedBy: [.min, .max, .average],
-                over: input.aggregationInterval,
-                timeRange: input.timeRange
-            )
-            return stats.compactMap { stats in
-                guard let min = stats.minimumQuantity(),
-                      let max = stats.maximumQuantity(),
-                      let avg = stats.averageQuantity() else {
-                    return nil
-                }
-                return StatEntry(
-                    start: stats.startDate,
-                    end: stats.endDate,
-                    unit: unit,
-                    values: .minMaxAvg(
-                        min: min.doubleValue(for: unit),
-                        max: max.doubleValue(for: unit),
-                        avg: avg.doubleValue(for: unit)
-                    )
-                )
             }
         }
     }
-}
-
-
-// MARK: Sleep (per-session time asleep)
-
-extension HealthKitStatsCalculator {
-    @concurrent
-    private func runSleepStats(months: [StatsMonth], accountDoc: DocumentReference) async throws {
-        for month in months {
-            self.logger.notice("Computing stats for stats/sleep/months/\(month.documentId)")
-            let samples: [HKCategorySample]
-            do {
-                // query with a ±1 day margin: sleep sessions typically span midnight, and the underlying HK
-                // predicate only matches samples that both start AND end inside the range, which would
-                // otherwise drop the sessions at the month boundaries
-                let paddedRange = month.range.lowerBound.addingTimeInterval(-86400)..<month.range.upperBound.addingTimeInterval(86400)
-                samples = try await healthKit.query(
-                    .sleepAnalysis,
-                    timeRange: .init(paddedRange),
-                    source: CVHScore.sleepDataSourceFilter
+    
+    
+    private func process(
+        _ input: IndividualSamplesRunDescriptor,
+        months: [StatsMonth],
+        accountDoc: DocumentReference
+    ) async {
+        func imp(month: StatsMonth) async throws {
+            let unit = input.sampleType.canonicalUnit
+            let results = healthKit.continuousQuery(
+                input.sampleType,
+                timeRange: .init(month.range),
+                anchor: queryAnchors[input.sampleType]
+            )
+            for try await result in results {
+                queryAnchors[input.sampleType] = result.newAnchor
+                let samples = try await healthKit.query(input.sampleType, timeRange: .init(month.range))
+                logger.notice("new results for \(input.sampleType): \(samples.count) in \(month.documentId)")
+                let entries = samples.map { sample in
+                    QuantitySampleEntry(
+                        date: sample.startDate,
+                        unit: unit,
+                        value: sample.quantity.doubleValue(for: unit)
+                    )
+                }
+                try await writeStatsDocument(
+                    accountDoc: accountDoc,
+                    metricId: input.metricId,
+                    month: month,
+                    entriesKey: .samples,
+                    entries: entries
                 )
-            } catch {
-                self.logger.notice("ERROR: \(error)")
-                continue
             }
+        }
+        await withDiscardingTaskGroup { taskGroup in
+            for month in months {
+                taskGroup.addTask {
+                    do {
+                        try await imp(month: month)
+                    } catch {
+                        self.logger.error("\(error)")
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    private func process(_ descriptor: NonstandardSamplesRunDescriptor, months: [StatsMonth], accountDoc: DocumentReference) async {
+        switch descriptor {
+        case .sleepSessions:
+            await runSleepStats(months: months, accountDoc: accountDoc)
+        case .bloodPressure:
+            await runBloodPressureStats(months: months, accountDoc: accountDoc)
+        }
+    }
+    
+    
+    @concurrent
+    private func runSleepStats(months: [StatsMonth], accountDoc: DocumentReference) async {
+        func imp(month: StatsMonth) async throws {
+            // query with a ±1 day margin: sleep sessions typically span midnight, and the underlying HK
+            // predicate only matches samples that both start AND end inside the range, which would
+            // otherwise drop the sessions at the month boundaries
+            let paddedRange = month.range.lowerBound.addingTimeInterval(-86400)..<month.range.upperBound.addingTimeInterval(86400)
+            let samples = try await healthKit.query(
+                .sleepAnalysis,
+                timeRange: .init(paddedRange),
+                source: CVHScore.sleepDataSourceFilter
+            )
             // group the samples into sleep sessions, and keep the sessions belonging to this month.
             // this matches how the dashboard used to turn sleep samples into the values it displays;
             // in particular, `totalTimeSpentAsleep` accounts for overlapping samples (e.g. from a phone and a watch
@@ -399,73 +525,62 @@ extension HealthKitStatsCalculator {
                 entries: entries
             )
         }
-    }
-}
-
-
-// MARK: Individual-samples metrics (weight/height/bmi, blood pressure)
-
-extension HealthKitStatsCalculator {
-    @concurrent
-    private func runIndividualQuantitySampleStats(
-        _ descriptor: IndividualSamplesRunDescriptor,
-        months: [StatsMonth],
-        accountDoc: DocumentReference
-    ) async throws {
-        let unit = descriptor.sampleType.canonicalUnit
-        for month in months {
-            self.logger.notice("Computing stats for stats/\(descriptor.metricId)/months/\(month.documentId)")
-            let samples: [HKQuantitySample]
-            do {
-                samples = try await healthKit.query(descriptor.sampleType, timeRange: .init(month.range))
-            } catch {
-                self.logger.notice("ERROR: \(error)")
-                continue
+        await withDiscardingTaskGroup { taskGroup in
+            for month in months {
+                taskGroup.addTask {
+                    do {
+                        try await imp(month: month)
+                    } catch {
+                        self.logger.error("\(error)")
+                    }
+                }
             }
-            let entries = samples.map { sample in
-                QuantitySampleEntry(date: sample.startDate, unit: unit, value: sample.quantity.doubleValue(for: unit))
-            }
-            try await writeStatsDocument(
-                accountDoc: accountDoc,
-                metricId: descriptor.metricId,
-                month: month,
-                entriesKey: .samples,
-                entries: entries
-            )
         }
     }
-
+    
     @concurrent
-    private func runBloodPressureStats(months: [StatsMonth], accountDoc: DocumentReference) async throws {
+    private func runBloodPressureStats(months: [StatsMonth], accountDoc: DocumentReference) async {
         let unit = SampleType.bloodPressureSystolic.canonicalUnit // mmHg
-        for month in months {
-            self.logger.notice("Computing stats for stats/blood-pressure/months/\(month.documentId)")
-            let correlations: [HKCorrelation]
-            do {
-                correlations = try await healthKit.query(.bloodPressure, timeRange: .init(month.range))
-            } catch {
-                self.logger.notice("ERROR: \(error)")
-                continue
-            }
-            let entries = correlations.compactMap { correlation -> BloodPressureSampleEntry? in
-                guard let systolic = correlation.objects(for: SampleType.bloodPressureSystolic.hkSampleType).first as? HKQuantitySample,
-                      let diastolic = correlation.objects(for: SampleType.bloodPressureDiastolic.hkSampleType).first as? HKQuantitySample else {
-                    return nil
+        func imp(month: StatsMonth) async throws {
+            let results = self.healthKit.continuousQuery(
+                .bloodPressure,
+                timeRange: .init(month.range),
+                anchor: queryAnchors[.bloodPressure]
+            )
+            for try await result in results {
+                queryAnchors[.bloodPressure] = result.newAnchor
+                let samples = try await self.healthKit.query(.bloodPressure, timeRange: .init(month.range))
+                let entries = samples.compactMap { correlation -> BloodPressureSampleEntry? in
+                    guard let systolic = correlation.objects(for: .bloodPressureSystolic).first,
+                          let diastolic = correlation.objects(for: .bloodPressureDiastolic).first else {
+                        return nil
+                    }
+                    return BloodPressureSampleEntry(
+                        date: correlation.startDate,
+                        unit: unit,
+                        systolic: systolic.quantity.doubleValue(for: unit),
+                        diastolic: diastolic.quantity.doubleValue(for: unit)
+                    )
                 }
-                return BloodPressureSampleEntry(
-                    date: correlation.startDate,
-                    unit: unit,
-                    systolic: systolic.quantity.doubleValue(for: unit),
-                    diastolic: diastolic.quantity.doubleValue(for: unit)
+                try await writeStatsDocument(
+                    accountDoc: accountDoc,
+                    metricId: .bloodPressure,
+                    month: month,
+                    entriesKey: .samples,
+                    entries: entries
                 )
             }
-            try await writeStatsDocument(
-                accountDoc: accountDoc,
-                metricId: .bloodPressure,
-                month: month,
-                entriesKey: .samples,
-                entries: entries
-            )
+        }
+        await withDiscardingTaskGroup { taskGroup in
+            for month in months {
+                taskGroup.addTask {
+                    do {
+                        try await imp(month: month)
+                    } catch {
+                        self.logger.error("\(error)")
+                    }
+                }
+            }
         }
     }
 }
@@ -701,5 +816,12 @@ extension HealthKitStatsCalculator {
             try container.encode(metric, forKey: .metric)
             try container.encode(entriesBySourceId, forKey: .init(stringValue: entriesKey.rawValue))
         }
+    }
+}
+
+
+extension HKCorrelation {
+    func objects<T>(for sampleType: SampleType<T>) -> Set<T> {
+        self.objects(for: sampleType.hkSampleType) as? Set<T> ?? []
     }
 }
