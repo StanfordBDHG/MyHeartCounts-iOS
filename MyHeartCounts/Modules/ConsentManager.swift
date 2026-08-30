@@ -64,7 +64,6 @@ final class ConsentManager: Module, EnvironmentAccessible, Sendable {
             return
         }
         if let shouldSign = try? shouldSign(doc.metadata) {
-            print("shouldSign? \(shouldSign)")
             switch shouldSign {
             case .no:
                 setPendingDoc(nil)

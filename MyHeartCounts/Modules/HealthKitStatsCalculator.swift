@@ -71,6 +71,15 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
     
     @concurrent
     private func _run() async {
+        logger.notice("Starting HKStats collection")
+        defer {
+            if !Task.isCancelled {
+                logger.warning("done")
+                // should never reach here (the process functions below should all monitor for new data indefinitely),
+                // but if we do end up here, we clear out the task just in case
+                stop()
+            }
+        }
         await account.waitForAccountDetailsReady()
         guard let accountId = await account.details?.accountId else {
             logger.error("no accountId")
@@ -98,12 +107,6 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
                     await self.process(descriptor, months: months, accountDoc: accountDoc)
                 }
             }
-        }
-        if !Task.isCancelled {
-            logger.warning("DONE???")
-            // should never reach here (the process functions above should all monitor for new data indefinitely),
-            // but if we do end up here, we clear out the task just in case
-            stop()
         }
     }
 }

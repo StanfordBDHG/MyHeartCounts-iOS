@@ -225,6 +225,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
+        await account.waitForAccountDetailsReady()
         desc = "\(#function) will update study bundle loader"
         // this is important, bc if we're developing locally the study bundle might've been updated since the last time the app was launched.
         let studyBundle = try await studyBundleLoader.update()
@@ -236,6 +237,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await healthKit.askForAuthorization(for: accessReqs)
         desc = "\(#function) will enroll"
         try await standard.enroll(in: studyBundle)
+        precondition(account.details?.dateOfEnrollment != nil)
         if ClinicalRecordPermissions.isAvailable {
             desc = "\(#function) will ask for clinical access"
             try await _Concurrency.Task.sleep(for: .seconds(1))

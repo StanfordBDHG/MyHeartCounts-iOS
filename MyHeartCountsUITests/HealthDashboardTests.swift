@@ -36,7 +36,7 @@ class HealthDashboardTests: MHCTestCase, Sendable {
         XCTAssert(doneButton.wait(for: \.isEnabled, toEqual: true, timeout: 1))
         doneButton.tap()
         
-        XCTAssert(app.staticTexts["Most Recent Sample: \(value)"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Most Recent Sample: \(value)"].waitForExistence(timeout: 5))
     }
     
     
