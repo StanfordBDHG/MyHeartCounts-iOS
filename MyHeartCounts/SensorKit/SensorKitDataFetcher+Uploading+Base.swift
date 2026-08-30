@@ -13,74 +13,62 @@ import GroveSensorKit
 import GroveSensorKitFHIR
 
 
+struct SensorKitUploadSidecar: Sendable {
+    let data: Data
+    let format: RegisteredRecordingFormat
+}
+
+
 extension MHCSensorSampleUploadStrategy {
-    func upload( // swiftlint:disable:this function_body_length function_parameter_count
-        data: Data,
+    /// Publishes one Grove-prepared SensorKit record through MHC's storage backend.
+    ///
+    /// Grove owns the exact payload bytes and FHIR projection. MHC owns the durable sidecar upload,
+    /// Firestore destination, and retry acknowledgement boundary.
+    func upload( // swiftlint:disable:this function_parameter_count
+        sidecar: SensorKitUploadSidecar?,
+        retryEvidence: Data,
         for sensor: Sensor<Sample>,
-        effectiveTimeRange: Swift.Range<Date>,
         publication: SensorKitBatchPublication,
         to standard: MyHeartCountsStandard,
         activity: SensorKitDataFetcher.InProgressActivity,
         recordOrdinal: Int = 0,
-        retryEvidence: Data? = nil,
-        makeStructuredRecord: (
-            (SensorKitSourceRecordID, SensorKitNativeRecording) throws -> SensorKitRecord?
-        )? = nil
+        makeRecord: (
+            _ sourceRecordID: SensorKitSourceRecordID,
+            _ title: String,
+            _ sidecarPath: String?
+        ) throws -> SensorKitRecord
     ) async throws {
         let reservation = try publication.reserve(
             recordOrdinal: recordOrdinal,
-            evidence: retryEvidence ?? data
+            evidence: retryEvidence
         )
-        let filename = "\(reservation.sourceRecordID.value).\(try publication.stream.fileExtension)"
-        let title = "\(sensor.displayName) "
-            + "\(effectiveTimeRange.lowerBound.ISO8601Format())_\(effectiveTimeRange.upperBound.ISO8601Format())"
-        let sidecarPath = ManagedFileUpload.Category(sensor).remotePath(for: filename)
-        activity.updateMessage("Creating Recording Document")
-        let conversion: SensorKitConversion
-        if let makeStructuredRecord {
-            let recording = try SensorKitNativeRecording(
-                title: title,
-                format: try publication.stream.recordingFormat,
-                payload: .sidecar(path: sidecarPath, bytes: data),
-                admission: .callerAuthorizedOpaquePayload
-            )
-            if let record = try makeStructuredRecord(reservation.sourceRecordID, recording) {
-                conversion = try SensorKitGroveRecording.convert(record, reservation: reservation)
-            } else {
-                conversion = try SensorKitGroveRecording.raw(
-                    payload: data,
-                    reservation: reservation,
-                    stream: publication.stream,
-                    sidecarPath: sidecarPath,
-                    title: title,
-                    effectiveTimeRange: effectiveTimeRange
-                )
-            }
-        } else {
-            conversion = try SensorKitGroveRecording.raw(
-                payload: data,
-                reservation: reservation,
-                stream: publication.stream,
-                sidecarPath: sidecarPath,
-                title: title,
-                effectiveTimeRange: effectiveTimeRange
-            )
+        let title = "\(sensor.displayName) \(reservation.sourceRecordID.value)"
+        let filename = sidecar.map {
+            "\(reservation.sourceRecordID.value).\($0.format.fileExtension)"
         }
-        // Conversion validates the complete graph before its referenced exact bytes become durably staged.
-        // The registered format describes these bytes, so the sidecar remains uncompressed.
-        let url = URL.temporaryDirectory.appending(component: filename)
-        try data.write(to: url, options: .atomic)
-        defer {
-            try? FileManager.default.removeItem(at: url)
+        let sidecarPath = filename.map {
+            ManagedFileUpload.Category(sensor).remotePath(for: $0)
         }
-        activity.updateMessage("Submitting for upload")
-        try await standard.uploadSensorKitFile(
-            at: url,
-            for: sensor,
-            accountDataGeneration: publication.destination.accountDataGeneration
-        )
+        let record = try makeRecord(reservation.sourceRecordID, title, sidecarPath)
+        let conversion = try SensorKitConverter().convert(record, context: reservation.context)
 
-        // Do not introduce a cancellation point here: the sidecar is now durably staged, so its one
+        if let sidecar, let filename {
+            // Conversion validates the complete graph before the referenced exact bytes become
+            // durably staged. Registered SensorKit payloads remain uncompressed.
+            let url = URL.temporaryDirectory.appending(component: filename)
+            try sidecar.data.write(to: url, options: .atomic)
+            defer {
+                try? FileManager.default.removeItem(at: url)
+            }
+            activity.updateMessage("Submitting for upload")
+            try await standard.uploadSensorKitFile(
+                at: url,
+                for: sensor,
+                accountDataGeneration: publication.destination.accountDataGeneration
+            )
+        }
+
+        // Do not introduce a cancellation point here: once a sidecar is durably staged, its one
         // complete Bundle must be persisted before the anchored batch may be acknowledged.
         try publication.destination.validateCurrentAccount()
         let document = FirebaseConfiguration.usersCollection

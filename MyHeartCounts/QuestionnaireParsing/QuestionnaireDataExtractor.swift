@@ -45,6 +45,8 @@ enum QuestionnaireDataExtractionError: Error, Equatable {
     case missingAuthoredDate
     case incompleteQuantity(linkID: String)
     case unsupportedQuantitySystem(linkID: String, system: String?)
+    case unsupportedQuantityCode(linkID: String, code: String)
+    case incompatibleQuantityUnit(linkID: String, code: String)
 }
 
 
@@ -140,23 +142,22 @@ extension QuestionnaireDataExtractor {
               let value = quantity.value?.value?.decimal.doubleValue else {
             throw QuestionnaireDataExtractionError.incompleteQuantity(linkID: linkID)
         }
-        let code = quantity.code?.value?.string
-        let displayUnit = quantity.unit?.value?.string
-        let unit: HKUnit?
-        if let code {
-            let system = quantity.system?.value?.url.absoluteString
-            guard system == "http://unitsofmeasure.org" else {
-                throw QuestionnaireDataExtractionError.unsupportedQuantitySystem(
-                    linkID: linkID,
-                    system: system
-                )
-            }
-            unit = HealthKitCatalog.unit(forUCUMCode: code) ?? HKUnit.parse(code)
-        } else {
-            unit = displayUnit.flatMap(HKUnit.parse)
-        }
-        guard let unit else {
+        guard let code = quantity.code?.value?.string else {
             throw QuestionnaireDataExtractionError.incompleteQuantity(linkID: linkID)
+        }
+        let system = quantity.system?.value?.url.absoluteString
+        guard system == "http://unitsofmeasure.org" else {
+            throw QuestionnaireDataExtractionError.unsupportedQuantitySystem(
+                linkID: linkID,
+                system: system
+            )
+        }
+        guard let unit = HealthKitCatalog.unit(forUCUMCode: code) else {
+            throw QuestionnaireDataExtractionError.unsupportedQuantityCode(linkID: linkID, code: code)
+        }
+        let healthKitQuantity = HKQuantity(unit: unit, doubleValue: value)
+        guard healthKitQuantity.is(compatibleWith: sampleType.canonicalUnit) else {
+            throw QuestionnaireDataExtractionError.incompatibleQuantityUnit(linkID: linkID, code: code)
         }
         guard let authoredDateTime = response.authored?.value else {
             throw QuestionnaireDataExtractionError.missingAuthoredDate
@@ -164,7 +165,7 @@ extension QuestionnaireDataExtractor {
         let authored = try authoredDateTime.asNSDate() as Date
         return HKQuantitySample(
             type: sampleType.hkSampleType,
-            quantity: HKQuantity(unit: unit, doubleValue: value),
+            quantity: healthKitQuantity,
             start: authored,
             end: authored
         )

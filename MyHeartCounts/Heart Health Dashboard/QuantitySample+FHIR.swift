@@ -17,8 +17,15 @@ import MyHeartCountsShared
 
 
 extension QuantitySample: SelfModelledHealthObservation {
-    enum FHIRObservationConversionError: Error {
+    enum FHIRObservationConversionError: Error, Equatable {
+        case incompatibleUnit(sampleTypeIdentifier: String)
         case notSupported
+    }
+
+    private struct FHIRQuantityBinding {
+        let code: String
+        let display: String
+        let unit: HKUnit
     }
     
     var sampleTypeIdentifier: String {
@@ -36,7 +43,6 @@ extension QuantitySample: SelfModelledHealthObservation {
         )
         // Set basic elements applicable to all observations
         observation.id = self.id.uuidString.asFHIRStringPrimitive()
-        observation.append(identifier: Identifier(id: observation.id))
         try observation.setEffective(startDate: self.startDate, endDate: self.endDate, timeZone: .current)
         if let issuedDate {
             observation.issued = issuedDate
@@ -50,21 +56,22 @@ extension QuantitySample: SelfModelledHealthObservation {
             // device and provenance it never had.
             throw FHIRObservationConversionError.notSupported
         case .custom(.bloodLipids):
-            let code = "18262-6".asFHIRStringPrimitive() // "Cholesterol in LDL [Mass/volume] in Serum or Plasma by Direct assay"
-            let system = "http://loinc.org".asFHIRURIPrimitive()
+            let observationCode = "18262-6".asFHIRStringPrimitive()
+            let observationSystem = "http://loinc.org".asFHIRURIPrimitive()
             observation.append(codings: [
-                Coding(code: code, system: system),
+                Coding(code: observationCode, system: observationSystem),
                 Coding(
                     code: sampleType.id.asFHIRStringPrimitive(),
                     display: sampleType.displayTitle.asFHIRStringPrimitive(),
                     system: MHCCodingSystem.system
                 )
             ])
-            observation.value = .quantity(Quantity(
-                code: code,
-                system: system,
-                unit: "mg/dL".asFHIRStringPrimitive(),
-                value: value.asFHIRDecimalPrimitive()
+            observation.value = .quantity(try fhirQuantity(
+                binding: .init(
+                    code: "mg/dL",
+                    display: "mg/dL",
+                    unit: .gramUnit(with: .milli) / .literUnit(with: .deci)
+                )
             ))
         case .custom(.nicotineExposure), .custom(.dietMEPAScore), .custom(.mentalWellbeingScore):
             let code = sampleType.id.asFHIRStringPrimitive()
@@ -73,12 +80,11 @@ extension QuantitySample: SelfModelledHealthObservation {
                 display: sampleType.displayTitle.asFHIRStringPrimitive(),
                 system: MHCCodingSystem.system
             ))
-            observation.value = .quantity(Quantity(
-                code: code,
-                system: MHCCodingSystem.system,
-                unit: "count",
-                value: value.asFHIRDecimalPrimitive()
-            ))
+            observation.value = .quantity(try fhirQuantity(binding: .init(
+                code: "{score}",
+                display: "score",
+                unit: .count()
+            )))
         default:
             throw FHIRObservationConversionError.notSupported
         }
@@ -86,6 +92,19 @@ extension QuantitySample: SelfModelledHealthObservation {
             try builder.apply(typeErasedInput: self, to: &observation)
         }
         return .observation(observation)
+    }
+
+    private func fhirQuantity(binding: FHIRQuantityBinding) throws -> Quantity {
+        let quantity = HKQuantity(unit: unit, doubleValue: value)
+        guard quantity.is(compatibleWith: binding.unit) else {
+            throw FHIRObservationConversionError.incompatibleUnit(sampleTypeIdentifier: sampleTypeIdentifier)
+        }
+        return Quantity(
+            code: binding.code.asFHIRStringPrimitive(),
+            system: UCUM.system,
+            unit: binding.display.asFHIRStringPrimitive(),
+            value: quantity.doubleValue(for: binding.unit).asFHIRDecimalPrimitive()
+        )
     }
 }
 
@@ -112,10 +131,11 @@ extension QuantitySample {
     /// - parameter sampleTypeHint: the expected sample type. if you specify `nil`, the function will attempt to determine the sample type automatically, based on the Observation.
     init?(_ observation: ModelsR4.Observation, sampleTypeHint: MHCQuantitySampleType? = nil) {
         // swiftlint:disable:previous function_body_length cyclomatic_complexity
-        guard let id = (observation.id?.value?.string).flatMap({ UUID(uuidString: $0) }),
+        guard observation.status.value == .final,
+              let id = (observation.id?.value?.string).flatMap({ UUID(uuidString: $0) }),
               case .quantity(let quantity) = observation.value,
-              let rawUnit = quantity.unit?.value?.string,
-              let unit = try? catchingNSException({ HKUnit(from: rawUnit) }),
+              quantity.system == UCUM.system,
+              let ucumCode = quantity.code?.value?.string,
               let value = (quantity.value?.value?.decimal).map({ Double($0) }),
               let effective = observation.effective,
               let coding = observation.code.coding else {
@@ -155,14 +175,28 @@ extension QuantitySample {
                 return nil
             }
             sampleType = .healthKit(healthKitSampleType)
-        } else if let mhcCustomTypeCoding = coding.first(where: { coding in
-            MHCCodingSystem.allSystems.contains { $0 == coding.system }
-        }),
+        } else if let mhcCustomTypeCoding = coding.first(where: { $0.system == MHCCodingSystem.system }),
                   let identifier = mhcCustomTypeCoding.code?.value?.string,
                   let mhcSampleType = CustomQuantitySampleType(identifier: identifier) {
             sampleType = .custom(mhcSampleType)
         } else {
             // no hint and also we were unable to extract smth we know / can handle
+            return nil
+        }
+        let unit: HKUnit?
+        switch sampleType {
+        case .custom(.nicotineExposure), .custom(.dietMEPAScore), .custom(.mentalWellbeingScore):
+            // MHC scores predate a Grove profile. Keep their one explicit coded binding local;
+            // every shared clinical unit is resolved only through Grove's generated catalog.
+            guard ucumCode == "{score}" else {
+                return nil
+            }
+            unit = .count()
+        default:
+            unit = HealthKitCatalog.unit(forUCUMCode: ucumCode)
+        }
+        guard let unit,
+              HKQuantity(unit: unit, doubleValue: value).is(compatibleWith: sampleType.displayUnit) else {
             return nil
         }
         self.init(
