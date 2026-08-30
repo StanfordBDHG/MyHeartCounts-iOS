@@ -65,8 +65,8 @@ final class StudyBundleLoader: Module, Sendable {
             try? await cleanupOldStudyBundles()
         }
     }
-    
-    
+
+
     private func _storeStudyBundleResult(
         _ newValue: Result<StudyBundle, LoadError>,
         preferCachedBundleOnError: Bool
@@ -118,7 +118,7 @@ final class StudyBundleLoader: Module, Sendable {
             return result
         }
     }
-    
+
     /// Updates the study bundle.
     ///
     /// - parameter returnCachedBundleOnError: Whether, if the update fails, and there still exists an old stucy bundle that was fetched earlier, that one should be returned, instead of the update failing. Defaults to `true`.
