@@ -122,10 +122,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     // MARK: Account Stuff
     
-    func respondToEvent(_ event: AccountNotifications.Event) async {
+    func handleAccountEvent(_ event: AccountNotifications.Event) async {
         let logger = logger
         switch event {
-        case .associatedAccount(let details):
+        case .didAssociate(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
             if LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] {
                 do {
@@ -140,25 +140,23 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 await environmentTracking?.triggerAll()
                 _ = try? await registerRemoteNotifications()
             }
-        case .deletingAccount:
+        case .willDelete:
             logger.notice("account is being deleted")
-        case .disassociatingAccount:
+        case .didDisassociate:
             logger.notice("account did disassociate")
             do {
                 try await performLogoutCleanup(context: .explicitUserLogoutEvent)
             } catch {
                 logger.error("Unable to clear all local account data during logout: \(error)")
             }
+        case .willLogOut:
+            logger.notice("account is being logged out")
+            LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
+            LocalPreferencesStore.standard[.accountDataGeneration] += 1
+            try? await notificationsManager.setFCMToken(nil)
         case .detailsChanged:
             break
         }
-    }
-    
-    func willLogOut(_ details: AccountDetails) async {
-        logger.notice("account is being logged out")
-        LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
-        LocalPreferencesStore.standard[.accountDataGeneration] += 1
-        try? await notificationsManager.setFCMToken(nil)
     }
 }
 
