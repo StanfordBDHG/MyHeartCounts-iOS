@@ -1,5 +1,5 @@
 {
-  "originHash" : "2403aaf4c2e4246fb4e3a07215ab2300de5e0bf29d2d918afdb1a99fdf2c657c",
+  "originHash" : "e0ea2930d9b089be571307c3fb342139992ca3eee7e7508eb8b36d53cee02bdb",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -96,7 +96,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/Grove.git",
       "state" : {
-        "revision" : "274a289839518271607663f2b4fedf7d531a77b1"
+        "revision" : "d0b3ceb475c934c07ac08c9ea0678de22b74829d"
       }
     },
     {
@@ -140,7 +140,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SchmiedmayerLab/MyHeartCounts-StudyDefinitions.git",
       "state" : {
-        "revision" : "68b2e08015287fb29bb3ddd312598a79bfe23f48"
+        "revision" : "7a9488f7d704afdb2764fcb4edf3b2e9e994983b"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PhoneNumberKit/PhoneNumberKit.git",
       "state" : {
-        "revision" : "e18a029dbada1d8eb32e3f81a4eb72eba539ff75",
-        "version" : "5.0.6"
+        "revision" : "cf2f1df6f2fe8b49701f4b43f0e97c7bd113d034",
+        "version" : "5.0.8"
       }
     },
     {
@@ -364,8 +364,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
-        "version" : "602.0.0"
+        "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
+        "version" : "603.0.2"
       }
     },
     {

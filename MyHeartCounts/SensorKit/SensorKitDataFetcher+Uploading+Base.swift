@@ -14,8 +14,8 @@ import GroveSensorKitFHIR
 
 
 extension MHCSensorSampleUploadStrategy {
-    func upload( // swiftlint:disable:this function_parameter_count
-        data: consuming Data,
+    func upload( // swiftlint:disable:this function_body_length function_parameter_count
+        data: Data,
         for sensor: Sensor<Sample>,
         effectiveTimeRange: Swift.Range<Date>,
         publication: SensorKitBatchPublication,
@@ -34,7 +34,7 @@ extension MHCSensorSampleUploadStrategy {
         let filename = "\(reservation.sourceRecordID.value).\(try publication.stream.fileExtension)"
         let title = "\(sensor.displayName) "
             + "\(effectiveTimeRange.lowerBound.ISO8601Format())_\(effectiveTimeRange.upperBound.ISO8601Format())"
-        let sidecarPath = "\(ManagedFileUpload.Category(sensor).firebasePath)/\(filename)"
+        let sidecarPath = ManagedFileUpload.Category(sensor).remotePath(for: filename)
         activity.updateMessage("Creating Recording Document")
         let conversion: SensorKitConversion
         if let makeStructuredRecord {
@@ -66,19 +66,28 @@ extension MHCSensorSampleUploadStrategy {
                 effectiveTimeRange: effectiveTimeRange
             )
         }
-
         // Conversion validates the complete graph before its referenced exact bytes become durably staged.
         // The registered format describes these bytes, so the sidecar remains uncompressed.
         let url = URL.temporaryDirectory.appending(component: filename)
         try data.write(to: url, options: .atomic)
+        defer {
+            try? FileManager.default.removeItem(at: url)
+        }
         activity.updateMessage("Submitting for upload")
-        try await standard.uploadSensorKitFile(at: url, for: sensor)
+        try await standard.uploadSensorKitFile(
+            at: url,
+            for: sensor,
+            accountDataGeneration: publication.destination.accountDataGeneration
+        )
 
         // Do not introduce a cancellation point here: the sidecar is now durably staged, so its one
         // complete Bundle must be persisted before the anchored batch may be acknowledged.
-        try await standard.firebaseConfiguration.userDocumentReference
+        try publication.destination.validateCurrentAccount()
+        let document = FirebaseConfiguration.usersCollection
+            .document(publication.destination.accountID)
             .collection("HealthObservations_\(sensor.id)")
             .document(reservation.sourceRecordID.value)
-            .setData(from: conversion.bundle)
+        let encoded = try Firestore.Encoder().encode(conversion.bundle)
+        try await document.setData(encoded)
     }
 }

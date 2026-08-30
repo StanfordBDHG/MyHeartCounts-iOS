@@ -11,33 +11,40 @@
 import FHIRModelsExtensions
 import Foundation
 import GroveHealthKit
+import GroveHealthKitFHIR
 import ModelsR4
 
 
 struct QuestionnaireDataExtractor {
     let response: QuestionnaireResponse
-    private let allResponses: Set<QuestionnaireResponseItem>
-    
+
     init(response: QuestionnaireResponse) {
         self.response = response
-        self.allResponses = response.allResponses
     }
-    
-    func answer(to questionLinkId: String) -> QuestionnaireResponseItemAnswer? {
-        let responses = allResponses.filter { $0.linkId.value?.string == questionLinkId }
+
+    func answer(to questionLinkId: String) throws -> QuestionnaireResponseItemAnswer? {
+        let responses = response.allItems.filter { $0.linkId.value?.string == questionLinkId }
         guard responses.count <= 1 else {
-            print("Found multiple responses for question \(questionLinkId)")
+            throw QuestionnaireDataExtractionError.ambiguousAnswer(linkID: questionLinkId)
+        }
+        guard let answers = responses.first?.answer, !answers.isEmpty else {
             return nil
         }
-        guard let answers = responses.first?.answer else {
-            return nil
-        }
-        guard answers.count <= 1 else {
-            print("Found multiple answers in response for question \(questionLinkId)")
-            return nil
+        guard answers.count == 1 else {
+            throw QuestionnaireDataExtractionError.ambiguousAnswer(linkID: questionLinkId)
         }
         return answers.first
     }
+}
+
+
+enum QuestionnaireDataExtractionError: Error, Equatable {
+    case ambiguousAnswer(linkID: String)
+    case ambiguousBloodPressure(systolicLinkID: String, diastolicLinkID: String)
+    case uncorrelatedBloodPressure(systolicLinkID: String, diastolicLinkID: String)
+    case missingAuthoredDate
+    case incompleteQuantity(linkID: String)
+    case unsupportedQuantitySystem(linkID: String, system: String?)
 }
 
 
@@ -85,25 +92,11 @@ extension QuestionnaireDataExtractor.Rule {
         linkId: String
     ) -> Self where Context == HealthKit, Output == HKQuantitySample? {
         Self { _, extractor, healthKit in
-            switch extractor.answer(to: linkId)?.value {
-            case .quantity(let quantity):
-                guard let value = quantity.value?.value?.decimal.doubleValue,
-                      let unit = quantity.unit?.value?.string,
-                      let unit = HKUnit.parse(unit) else {
-                    return nil
-                }
-                let date = (try? extractor.response.authored?.value?.asNSDate()) ?? .now
-                let sample = HKQuantitySample(
-                    type: sampleType.hkSampleType,
-                    quantity: HKQuantity(unit: unit, doubleValue: value),
-                    start: date,
-                    end: date
-                )
-                try await healthKit.save(sample)
-                return sample
-            default:
+            guard let sample = try extractor.quantitySample(sampleType, linkID: linkId) else {
                 return nil
             }
+            try await healthKit.save(sample)
+            return sample
         }
     }
     
@@ -112,25 +105,152 @@ extension QuestionnaireDataExtractor.Rule {
         systolicLinkId: String,
         diastolicLinkId: String
     ) -> Self where Context == HealthKit, Output == Void {
-        Self { isolation, extractor, healthKit in
-            let systolic = try? await QuestionnaireDataExtractor.Rule.quantitySample(
-                .bloodPressureSystolic,
-                linkId: systolicLinkId
-            )(isolation: isolation, extractor: extractor, context: healthKit)
-            let diastolic = try? await QuestionnaireDataExtractor.Rule.quantitySample(
-                .bloodPressureDiastolic,
-                linkId: diastolicLinkId
-            )(isolation: isolation, extractor: extractor, context: healthKit)
-            if let systolic, let diastolic {
-                let correlation = HKCorrelation(
-                    type: SampleType.bloodPressure.hkSampleType,
-                    start: min(systolic.startDate, diastolic.startDate),
-                    end: max(systolic.endDate, diastolic.endDate),
-                    objects: [systolic, diastolic]
-                )
-                try await healthKit.save(correlation)
+        Self { _, extractor, healthKit in
+            guard let correlation = try extractor.bloodPressureCorrelation(
+                systolicLinkID: systolicLinkId,
+                diastolicLinkID: diastolicLinkId
+            ) else {
+                return
             }
+            // Save only the correlation. Saving the components individually first creates three
+            // HealthKit records for one blood-pressure answer and breaks their shared identity.
+            try await healthKit.save(correlation)
         }
+    }
+}
+
+
+extension QuestionnaireDataExtractor {
+    func quantitySample(
+        _ sampleType: SampleType<HKQuantitySample>,
+        linkID: String
+    ) throws -> HKQuantitySample? {
+        guard let answer = try answer(to: linkID) else {
+            return nil
+        }
+        return try quantitySample(sampleType, answer: answer, linkID: linkID)
+    }
+
+    private func quantitySample(
+        _ sampleType: SampleType<HKQuantitySample>,
+        answer: QuestionnaireResponseItemAnswer,
+        linkID: String
+    ) throws -> HKQuantitySample {
+        guard case .quantity(let quantity) = answer.value,
+              let value = quantity.value?.value?.decimal.doubleValue else {
+            throw QuestionnaireDataExtractionError.incompleteQuantity(linkID: linkID)
+        }
+        let code = quantity.code?.value?.string
+        let displayUnit = quantity.unit?.value?.string
+        let unit: HKUnit?
+        if let code {
+            let system = quantity.system?.value?.url.absoluteString
+            guard system == "http://unitsofmeasure.org" else {
+                throw QuestionnaireDataExtractionError.unsupportedQuantitySystem(
+                    linkID: linkID,
+                    system: system
+                )
+            }
+            unit = HealthKitCatalog.unit(forUCUMCode: code) ?? HKUnit.parse(code)
+        } else {
+            unit = displayUnit.flatMap(HKUnit.parse)
+        }
+        guard let unit else {
+            throw QuestionnaireDataExtractionError.incompleteQuantity(linkID: linkID)
+        }
+        guard let authoredDateTime = response.authored?.value else {
+            throw QuestionnaireDataExtractionError.missingAuthoredDate
+        }
+        let authored = try authoredDateTime.asNSDate() as Date
+        return HKQuantitySample(
+            type: sampleType.hkSampleType,
+            quantity: HKQuantity(unit: unit, doubleValue: value),
+            start: authored,
+            end: authored
+        )
+    }
+
+    func bloodPressureCorrelation(
+        systolicLinkID: String,
+        diastolicLinkID: String
+    ) throws -> HKCorrelation? {
+        guard let items = try bloodPressureItems(
+            systolicLinkID: systolicLinkID,
+            diastolicLinkID: diastolicLinkID
+        ) else {
+            return nil
+        }
+        guard let systolicAnswer = try answer(in: items.systolic, linkID: systolicLinkID),
+              let diastolicAnswer = try answer(in: items.diastolic, linkID: diastolicLinkID) else {
+            return nil
+        }
+        let systolic = try quantitySample(
+            SampleType<HKQuantitySample>.bloodPressureSystolic,
+            answer: systolicAnswer,
+            linkID: systolicLinkID
+        )
+        let diastolic = try quantitySample(
+            SampleType<HKQuantitySample>.bloodPressureDiastolic,
+            answer: diastolicAnswer,
+            linkID: diastolicLinkID
+        )
+        return HKCorrelation(
+            type: SampleType.bloodPressure.hkSampleType,
+            start: min(systolic.startDate, diastolic.startDate),
+            end: max(systolic.endDate, diastolic.endDate),
+            objects: [systolic, diastolic]
+        )
+    }
+
+    private func bloodPressureItems(
+        systolicLinkID: String,
+        diastolicLinkID: String
+    ) throws -> (systolic: QuestionnaireResponseItem, diastolic: QuestionnaireResponseItem)? {
+        let scopes = response.itemScopes
+        let systolicItems = response.allItems.filter { $0.linkId.value?.string == systolicLinkID }
+        let diastolicItems = response.allItems.filter { $0.linkId.value?.string == diastolicLinkID }
+        let pairedScopes = scopes.filter { scope in
+            scope.contains { $0.linkId.value?.string == systolicLinkID }
+                && scope.contains { $0.linkId.value?.string == diastolicLinkID }
+        }
+        guard !pairedScopes.isEmpty else {
+            if !systolicItems.isEmpty, !diastolicItems.isEmpty {
+                throw QuestionnaireDataExtractionError.uncorrelatedBloodPressure(
+                    systolicLinkID: systolicLinkID,
+                    diastolicLinkID: diastolicLinkID
+                )
+            }
+            return nil
+        }
+        guard pairedScopes.count == 1 else {
+            throw QuestionnaireDataExtractionError.ambiguousBloodPressure(
+                systolicLinkID: systolicLinkID,
+                diastolicLinkID: diastolicLinkID
+            )
+        }
+        let scope = pairedScopes[0]
+        let matchingSystolic = scope.filter { $0.linkId.value?.string == systolicLinkID }
+        let matchingDiastolic = scope.filter { $0.linkId.value?.string == diastolicLinkID }
+        guard matchingSystolic.count == 1, matchingDiastolic.count == 1 else {
+            throw QuestionnaireDataExtractionError.ambiguousBloodPressure(
+                systolicLinkID: systolicLinkID,
+                diastolicLinkID: diastolicLinkID
+            )
+        }
+        return (matchingSystolic[0], matchingDiastolic[0])
+    }
+
+    private func answer(
+        in item: QuestionnaireResponseItem,
+        linkID: String
+    ) throws -> QuestionnaireResponseItemAnswer? {
+        guard let answers = item.answer, !answers.isEmpty else {
+            return nil
+        }
+        guard answers.count == 1 else {
+            throw QuestionnaireDataExtractionError.ambiguousAnswer(linkID: linkID)
+        }
+        return answers[0]
     }
 }
 
@@ -144,11 +264,16 @@ extension QuestionnaireResponseItem: QuestionnaireResponseItemContainer {}
 extension QuestionnaireResponseItemAnswer: QuestionnaireResponseItemContainer {}
 
 extension QuestionnaireResponseItemContainer {
-    var allResponses: Set<QuestionnaireResponseItem> {
-        var responses = Set(self.item ?? [])
-        for response in responses {
-            responses.formUnion(response.allResponses)
+    var allItems: [QuestionnaireResponseItem] {
+        itemScopes.flatMap { $0 }
+    }
+
+    var itemScopes: [[QuestionnaireResponseItem]] {
+        guard let item, !item.isEmpty else {
+            return []
         }
-        return responses
+        return [item] + item.flatMap { responseItem in
+            responseItem.itemScopes + (responseItem.answer ?? []).flatMap(\.itemScopes)
+        }
     }
 }

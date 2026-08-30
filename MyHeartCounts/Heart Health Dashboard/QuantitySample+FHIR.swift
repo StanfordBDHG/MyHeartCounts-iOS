@@ -85,7 +85,6 @@ extension QuantitySample: SelfModelledHealthObservation {
         for builder in extensions {
             try builder.apply(typeErasedInput: self, to: &observation)
         }
-        observation.addMHCAppAsSource()
         return .observation(observation)
     }
 }
