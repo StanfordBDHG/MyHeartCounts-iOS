@@ -125,17 +125,17 @@ extension HealthKitStatsCalculator {
         
         fileprivate init() {}
         
-        private func prefKey(for sampleType: SampleType<some Any>) -> LocalPreferenceKey<QueryAnchor?> {
-            .init(.init(sampleType.id, in: Self.namespace), default: nil)
+        private func prefKey(_ sampleType: SampleType<some Any>, _ month: StatsMonth) -> LocalPreferenceKey<QueryAnchor?> {
+            .init(.init("\(sampleType.id)_\(month.documentId)", in: Self.namespace), default: nil)
         }
         
-        func resetAll() {
+        fileprivate func resetAll() {
             prefs.removeAllEntries(in: Self.namespace)
         }
         
-        subscript(_ sampleType: SampleType<some Any>) -> QueryAnchor {
-            get { prefs[prefKey(for: sampleType)] ?? .init() }
-            nonmutating set { prefs[prefKey(for: sampleType)] = newValue }
+        fileprivate subscript(sampleType: SampleType<some Any>, month: StatsMonth) -> QueryAnchor {
+            get { prefs[prefKey(sampleType, month)] ?? .init() }
+            nonmutating set { prefs[prefKey(sampleType, month)] = newValue }
         }
     }
     
@@ -242,7 +242,7 @@ extension HealthKitStatsCalculator {
                 guard let year = components.year, let month = components.month else {
                     return nil
                 }
-                let lowerBound = max(monthStart, enrollmentDate)
+                let lowerBound = monthStart
                 let upperBound = cal.startOfNextMonth(for: monthStart)
                 guard lowerBound < upperBound else {
                     return nil
@@ -447,10 +447,12 @@ extension HealthKitStatsCalculator {
             let results = healthKit.continuousQuery(
                 input.sampleType,
                 timeRange: .init(month.range),
-                anchor: queryAnchors[input.sampleType]
+                anchor: queryAnchors[input.sampleType, month]
             )
             for try await result in results {
-                queryAnchors[input.sampleType] = result.newAnchor
+                defer {
+                    queryAnchors[input.sampleType, month] = result.newAnchor
+                }
                 let samples = try await healthKit.query(input.sampleType, timeRange: .init(month.range))
                 logger.notice("new results for \(input.sampleType): \(samples.count) in \(month.documentId)")
                 let entries = samples.map { sample in
@@ -500,33 +502,46 @@ extension HealthKitStatsCalculator {
             // predicate only matches samples that both start AND end inside the range, which would
             // otherwise drop the sessions at the month boundaries
             let paddedRange = month.range.lowerBound.addingTimeInterval(-86400)..<month.range.upperBound.addingTimeInterval(86400)
-            let samples = try await healthKit.query(
+            let results = try await healthKit.continuousQuery(
                 .sleepAnalysis,
                 timeRange: .init(paddedRange),
+                anchor: queryAnchors[.sleepAnalysis, month],
                 source: CVHScore.sleepDataSourceFilter
             )
-            // group the samples into sleep sessions, and keep the sessions belonging to this month.
-            // this matches how the dashboard used to turn sleep samples into the values it displays;
-            // in particular, `totalTimeSpentAsleep` accounts for overlapping samples (e.g. from a phone and a watch
-            // both tracking the same night), which we'd otherwise be double-counting.
-            let sessions = try samples.splitIntoSleepSessions().filter { session in
-                month.range.contains(session.timeRange.middle)
-            }
-            let entries = sessions.map { session in
-                StatEntry(
-                    start: session.startDate,
-                    end: session.endDate,
-                    unit: .hour(),
-                    values: .sum(session.totalTimeSpentAsleep / 60 / 60)
+            for try await result in results {
+                defer {
+                    queryAnchors[.sleepAnalysis, month] = result.newAnchor
+                }
+                let samples = try await healthKit.query(
+                    .sleepAnalysis,
+                    timeRange: .init(paddedRange),
+                    source: CVHScore.sleepDataSourceFilter
+                )
+                logger.notice("NEW SLEEP DATA FOR \(month.documentId) (#samples: \(samples.count))")
+                // group the samples into sleep sessions, and keep the sessions belonging to this month.
+                // this matches how the dashboard used to turn sleep samples into the values it displays;
+                // in particular, `totalTimeSpentAsleep` accounts for overlapping samples (e.g. from a phone and a watch
+                // both tracking the same night), which we'd otherwise be double-counting.
+                let sessions = try samples.splitIntoSleepSessions().filter { session in
+                    month.range.contains(session.timeRange.middle)
+                }
+                logger.notice(" -> SESSIONS: \(sessions)")
+                let entries = sessions.map { session in
+                    StatEntry(
+                        start: session.startDate,
+                        end: session.endDate,
+                        unit: .hour(),
+                        values: .sum(session.totalTimeSpentAsleep / 60 / 60)
+                    )
+                }
+                try await writeStatsDocument(
+                    accountDoc: accountDoc,
+                    metricId: .sleep,
+                    month: month,
+                    entriesKey: .sessions,
+                    entries: entries
                 )
             }
-            try await writeStatsDocument(
-                accountDoc: accountDoc,
-                metricId: .sleep,
-                month: month,
-                entriesKey: .sessions,
-                entries: entries
-            )
         }
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
@@ -548,10 +563,12 @@ extension HealthKitStatsCalculator {
             let results = self.healthKit.continuousQuery(
                 .bloodPressure,
                 timeRange: .init(month.range),
-                anchor: queryAnchors[.bloodPressure]
+                anchor: queryAnchors[.bloodPressure, month]
             )
             for try await result in results {
-                queryAnchors[.bloodPressure] = result.newAnchor
+                defer {
+                    queryAnchors[.bloodPressure, month] = result.newAnchor
+                }
                 let samples = try await self.healthKit.query(.bloodPressure, timeRange: .init(month.range))
                 let entries = samples.compactMap { correlation -> BloodPressureSampleEntry? in
                     guard let systolic = correlation.objects(for: .bloodPressureSystolic).first,
