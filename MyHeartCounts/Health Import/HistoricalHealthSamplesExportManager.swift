@@ -10,6 +10,7 @@
 import Foundation
 import Grove
 import GroveAccount
+import GroveFoundation
 import GroveHealthKit
 import GroveHealthKitBulkExport
 import GroveStudy

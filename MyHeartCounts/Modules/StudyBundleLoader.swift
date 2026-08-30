@@ -187,8 +187,8 @@ final class StudyBundleLoader: Module, Sendable {
             return try await fallBackToBundledStudyBundle(after: .unableToDecode(underlyingDecodeError))
         }
     }
-    
-    
+
+
     /// Loads the study bundle shipped with the app, after the firebase-hosted one could not be fetched or decoded.
     ///
     /// - parameter error: the error that made us fall back; re-thrown if the local bundle can't be created either.
