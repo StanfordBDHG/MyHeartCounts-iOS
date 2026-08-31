@@ -175,7 +175,9 @@ extension QuantitySample {
                 return nil
             }
             sampleType = .healthKit(healthKitSampleType)
-        } else if let mhcCustomTypeCoding = coding.first(where: { $0.system == MHCCodingSystem.system }),
+        } else if let mhcCustomTypeCoding = coding.first(where: { coding in
+            MHCCodingSystem.allSystems.contains { $0 == coding.system }
+        }),
                   let identifier = mhcCustomTypeCoding.code?.value?.string,
                   let mhcSampleType = CustomQuantitySampleType(identifier: identifier) {
             sampleType = .custom(mhcSampleType)
@@ -186,9 +188,10 @@ extension QuantitySample {
         let unit: HKUnit?
         switch sampleType {
         case .custom(.nicotineExposure), .custom(.dietMEPAScore), .custom(.mentalWellbeingScore):
-            // MHC scores predate a Grove profile. Keep their one explicit coded binding local;
-            // every shared clinical unit is resolved only through Grove's generated catalog.
-            guard ucumCode == "{score}" else {
+            // MHC scores predate a Grove profile, so their unit bindings stay local; every shared
+            // clinical unit is resolved only through Grove's generated catalog. The app writes
+            // `{score}`, the backend scoring functions write `{count}`, as every stored score does.
+            guard ucumCode == "{score}" || ucumCode == "{count}" else {
                 return nil
             }
             unit = .count()
