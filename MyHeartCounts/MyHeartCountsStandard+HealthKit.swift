@@ -94,8 +94,7 @@ extension MyHeartCountsStandard: HealthKitConstraint {
         let receipt = try await uploadHealthObservations(
             addedSamples,
             accountDataGeneration: LocalPreferencesStore.standard[.accountDataGeneration],
-            uploadStrategy: nil,
-            postprocessResource: { _ in }
+            uploadStrategy: nil
         )
         return receipt.anchorCommitAction
     }
@@ -116,7 +115,6 @@ extension MyHeartCountsStandard: HealthKitConstraint {
 
 extension MyHeartCountsStandard {
     private enum HealthObservationUploadError: Error {
-        case accountDataCleanupPending
         case healthDataCollectionUnavailable
     }
 
@@ -148,44 +146,50 @@ extension MyHeartCountsStandard {
         }
     }
     
-    func uploadHealthObservation(
-        _ observation: some HealthObservation & Sendable,
-        postprocessResource: @escaping @Sendable (inout FHIRResource) throws -> Void = { _ in }
-    ) async throws {
-        try await uploadHealthObservations(
-            CollectionOfOne(observation),
-            postprocessResource: postprocessResource
-        )
+    /// The one document address every health observation is written to, validated before use.
+    static func healthObservationDocument(
+        forSampleType sampleTypeIdentifier: String,
+        id: String,
+        destination: FHIRExchangeDestination
+    ) throws -> FirebaseFirestore.DocumentReference {
+        try destination.validateCurrentAccount()
+        return FirebaseConfiguration.usersCollection
+            .document(destination.accountID)
+            .collection("HealthObservations_\(sampleTypeIdentifier)")
+            .document(id)
+    }
+
+    func uploadHealthObservation(_ observation: some HealthObservation & Sendable) async throws {
+        try await uploadHealthObservations(CollectionOfOne(observation))
     }
     
     /// Uploads ``HealthObservation``s to the backend.
     ///
     /// - parameter observations: The health observations that should be uploaded.
     /// - parameter uploadStrategy: How the observations should be uploaded. Specify `nil` (the default) to have the function determine a suitable upload destination.
-    /// - parameter postprocessResource: Closure that is invoked with each observation's resulting ``FHIRResource``, giving the caller the opportunity to make final adjustments at FHIR-level before the resource is being persisted.
     func uploadHealthObservations(
         _ observations: consuming some Collection<some HealthObservation & Sendable> & Sendable,
-        uploadStrategy: HealthObservationUploadStrategy? = nil,
-        postprocessResource: @escaping @Sendable (inout FHIRResource) throws -> Void = { _ in }
+        uploadStrategy: HealthObservationUploadStrategy? = nil
     ) async throws {
-        _ = try await uploadHealthObservations(
+        // Every public caller passes self-modelled observations, which reserve no exchange events.
+        let receipt = try await uploadHealthObservations(
             consume observations,
             accountDataGeneration: LocalPreferencesStore.standard[.accountDataGeneration],
-            uploadStrategy: uploadStrategy,
-            postprocessResource: postprocessResource
+            uploadStrategy: uploadStrategy
         )
+        assert(receipt.eventKeys.isEmpty, "public upload path left \(receipt.eventKeys.count) reservations")
     }
 
     private func uploadHealthObservations( // swiftlint:disable:this function_body_length cyclomatic_complexity
         _ observations: consuming some Collection<some HealthObservation & Sendable> & Sendable,
         accountDataGeneration: Int,
-        uploadStrategy: HealthObservationUploadStrategy?,
-        postprocessResource: @escaping @Sendable (inout FHIRResource) throws -> Void
+        uploadStrategy: HealthObservationUploadStrategy?
     ) async throws -> HealthKitFHIRReservationReceipt {
         guard !observations.isEmpty, let sampleTypeIdentifier = observations.first?.sampleTypeIdentifier else {
             return HealthKitFHIRReservationReceipt()
         }
-        try ensureAccountUploadIsAllowed(accountDataGeneration)
+        try _Concurrency.Task.checkCancellation()
+        try FHIRExchangeDestination.validateWrites(for: accountDataGeneration)
         guard observations.allSatisfy({ $0.sampleTypeIdentifier == sampleTypeIdentifier }) else {
             // in the unlikely case of the caller passing in heterogeneous health observations, we process each sample type individually
             return try await withThrowingTaskGroup(
@@ -198,8 +202,7 @@ extension MyHeartCountsStandard {
                         try await self.uploadHealthObservations(
                             observations,
                             accountDataGeneration: accountDataGeneration,
-                            uploadStrategy: uploadStrategy,
-                            postprocessResource: postprocessResource
+                            uploadStrategy: uploadStrategy
                         )
                     }
                 }
@@ -217,11 +220,10 @@ extension MyHeartCountsStandard {
         }
         let conversionInstant = Date.now
         let subject = try await firebaseConfiguration.fhirExchangeSubject
-        let destination = FHIRExchangeDestination(
-            accountDataGeneration: accountDataGeneration,
-            accountID: subject.identity.value
+        let destination = try FHIRExchangeDestination.capture(
+            accountID: subject.identity.value,
+            accountDataGeneration: accountDataGeneration
         )
-        try destination.validateCurrentAccount()
         let stateStore = fhirExchangeStateStore(accountDataGeneration: accountDataGeneration)
         func prepareFHIRPayload(
             _ observation: some HealthObservation
@@ -230,8 +232,7 @@ extension MyHeartCountsStandard {
                 conversionInstant: conversionInstant,
                 subject: subject,
                 stateStore: stateStore,
-                using: healthKit,
-                postprocess: postprocessResource
+                using: healthKit
             )
         }
         let uploadStrategy = uploadStrategy ?? Self.uploadStrategy(forSampleType: sampleTypeIdentifier)
@@ -240,8 +241,7 @@ extension MyHeartCountsStandard {
             return try await healthUploadStaging.add(
                 observations,
                 commonSampleType: sampleTypeIdentifier,
-                accountDataGeneration: accountDataGeneration,
-                postprocessResource: postprocessResource
+                accountDataGeneration: accountDataGeneration
             )
         case .firebaseStorage:
             let numObservations = observations.count
@@ -251,31 +251,20 @@ extension MyHeartCountsStandard {
             )
             var entries: [PreparedHealthObservationFHIRPayload.Entry] = []
             for observation in consume observations {
-                try ensureAccountUploadIsAllowed(accountDataGeneration)
+                try _Concurrency.Task.checkCancellation()
+                try destination.validateCurrentAccount()
                 let payload = try await prepareFHIRPayload(observation)
                 entries.append(contentsOf: payload.entries)
             }
             guard !entries.isEmpty else {
                 return HealthKitFHIRReservationReceipt(stateStore: stateStore, entries: entries)
             }
-            entries.sort(by: healthUploadEntryPrecedes)
-            let sourceIDs = entries.map(\.sourceID)
-            let resources = entries.map(\.resource)
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-            let encoded = try encoder.encode(consume resources)
-            let compressed = try (consume encoded).compressed(using: Zstd.self)
-            let filename = HealthUploadBatchFilename.make(
-                typePrefix: sampleTypeIdentifier,
-                identifiers: sourceIDs,
-                fileExtension: "json.zstd"
-            )
-            let url = URL.temporaryDirectory.appending(path: filename, directoryHint: .notDirectory)
-            try (consume compressed).write(to: url, options: .atomic)
+            let url = try HealthUploadBatch.write(entries, typePrefix: sampleTypeIdentifier)
             defer {
                 try? FileManager.default.removeItem(at: url)
             }
-            try ensureAccountUploadIsAllowed(accountDataGeneration)
+            try _Concurrency.Task.checkCancellation()
+            try destination.validateCurrentAccount()
             try await managedFileUpload.stage(
                 url,
                 category: .liveHealthUpload,
@@ -286,7 +275,8 @@ extension MyHeartCountsStandard {
         case .directFirestore:
             var acknowledgedEventKeys = Set<String>()
             for chunk in (consume observations).chunks(ofCount: Self.directFirestoreUploadDefaultBatchSize) {
-                try ensureAccountUploadIsAllowed(accountDataGeneration)
+                try _Concurrency.Task.checkCancellation()
+                try destination.validateCurrentAccount()
                 let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
                     for: .new(sampleTypeTitle: sampleTypeIdentifier, count: chunk.count, uploadStrategy: uploadStrategy)
                 )
@@ -298,16 +288,17 @@ extension MyHeartCountsStandard {
                         if let eventKey = entry.eventKey {
                             chunkEventKeys.insert(eventKey)
                         }
-                        let document = try healthObservationDocument(
+                        let document = try Self.healthObservationDocument(
                             forSampleType: entry.sourceTypeIdentifier,
-                            id: entry.sourceID,
+                            id: entry.sourceID.uuidString,
                             destination: destination
                         )
                         logger.notice("Uploading Health Resource to \(document.path)")
                         try batch.setData(from: entry.resource, forDocument: document)
                     }
                 }
-                try ensureAccountUploadIsAllowed(accountDataGeneration)
+                try _Concurrency.Task.checkCancellation()
+                try destination.validateCurrentAccount()
                 try await batch.commit()
                 acknowledgedEventKeys.formUnion(chunkEventKeys)
                 await triggerDidUploadNotification()
@@ -317,27 +308,6 @@ extension MyHeartCountsStandard {
                 eventKeys: acknowledgedEventKeys
             )
         }
-    }
-
-    private func ensureAccountUploadIsAllowed(_ accountDataGeneration: Int) throws {
-        try _Concurrency.Task.checkCancellation()
-        let preferences = LocalPreferencesStore.standard
-        guard preferences[.accountDataGeneration] == accountDataGeneration,
-              !preferences[.pendingAccountDataCleanupRequired] else {
-            throw HealthObservationUploadError.accountDataCleanupPending
-        }
-    }
-
-    private func healthObservationDocument(
-        forSampleType sampleTypeIdentifier: String,
-        id: UUID,
-        destination: FHIRExchangeDestination
-    ) throws -> FirebaseFirestore.DocumentReference {
-        try destination.validateCurrentAccount()
-        return FirebaseConfiguration.usersCollection
-            .document(destination.accountID)
-            .collection("HealthObservations_\(sampleTypeIdentifier)")
-            .document(id.uuidString)
     }
 }
 

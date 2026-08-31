@@ -8,6 +8,7 @@
 
 @preconcurrency import FirebaseFirestore
 import Foundation
+import GroveFHIRContract
 import GroveFirestore
 import GroveSensorKit
 import GroveSensorKitFHIR
@@ -42,7 +43,8 @@ extension MHCSensorSampleUploadStrategy {
             recordOrdinal: recordOrdinal,
             evidence: retryEvidence
         )
-        let title = "\(sensor.displayName) \(reservation.sourceRecordID.value)"
+        // Presentation only: the record's identity travels as the typed Identifier, never a label.
+        let title = sensor.displayName
         let filename = sidecar.map {
             "\(reservation.sourceRecordID.value).\($0.format.fileExtension)"
         }
@@ -70,11 +72,11 @@ extension MHCSensorSampleUploadStrategy {
 
         // Do not introduce a cancellation point here: once a sidecar is durably staged, its one
         // complete Bundle must be persisted before the anchored batch may be acknowledged.
-        try publication.destination.validateCurrentAccount()
-        let document = FirebaseConfiguration.usersCollection
-            .document(publication.destination.accountID)
-            .collection("HealthObservations_\(sensor.id)")
-            .document(reservation.sourceRecordID.value)
+        let document = try MyHeartCountsStandard.healthObservationDocument(
+            forSampleType: sensor.id,
+            id: reservation.sourceRecordID.value,
+            destination: publication.destination
+        )
         let encoded = try Firestore.Encoder().encode(conversion.bundle)
         try await document.setData(encoded)
     }
