@@ -14,7 +14,8 @@ import SpeziAccount
 import SpeziConsent
 import SpeziFirebaseAccount
 import SpeziFoundation
-@_spi(TestingSupport) import SpeziHealthKit
+@_spi(TestingSupport)
+import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziLocalStorage
 import SpeziStudy
