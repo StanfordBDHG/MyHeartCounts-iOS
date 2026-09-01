@@ -103,7 +103,7 @@ final class ManagedFileUpload: Spezi::Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     // swiftlint:enable attributes
 
-    nonisolated private let configuration: Configuration
+    nonisolated let configuration: Configuration
     nonisolated(unsafe) private let fileManager = FileManager()
 
     private let newUploads = AsyncStream.makeStream(of: PersistentIdentifier.self)
