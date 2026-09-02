@@ -43,6 +43,9 @@ extension MHCSensorSampleUploadStrategy {
         }
         
         activity.updateMessage("Submitting for upload")
+        // Note: this waits until the upload is durably scheduled (i.e., the file is in the upload module's custody),
+        // not until the file has actually been uploaded. If the scheduling fails, we abort (and in particular don't
+        // write the reference doc below, which would otherwise point to a file that will never exist).
         try await standard.uploadSensorKitFile(at: url, for: sensor)
         
         let referenceDocName = observationDocName + "_Ref"

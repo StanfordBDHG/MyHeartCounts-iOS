@@ -33,7 +33,7 @@ final class PromptedAction: nonisolated Identifiable, Sendable {
     
     struct CurrentStateContext: Sendable {
         /// When the participant first enrolled into the study.
-        let enrollmentDate: Date
+        let enrollmentDate: Date // periphery:ignore - API
         /// When the participant activated the current local study enrollment within the on-device context of the My Heart Counts app.
         ///
         /// - Note: This is not necessarily equivalent to the ``enrollmentDate``.

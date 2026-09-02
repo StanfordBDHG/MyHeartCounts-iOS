@@ -373,7 +373,7 @@ private struct BodyMeasurementRow: DemographicsComponent {
             .sheet(isPresented: $isShowingDataEntry) {
                 NavigationStack {
                     SaveQuantitySampleView(sampleType: sampleType, isDefaultSaveAllowedToFail: true) { sample in
-                        data[descriptor.fieldKeyPath] = HKQuantity(unit: sample.unit, doubleValue: sample.value)
+                        data[descriptor.fieldKeyPath] = sample.hkQuantity()
                     }
                 }
             }

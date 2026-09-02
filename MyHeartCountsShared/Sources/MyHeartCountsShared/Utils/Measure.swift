@@ -6,9 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-#if canImport(OSLog) && canImport(QuartzCore)
+// periphery:ignore:all - debugging
 
-// periphery:ignore:all - API
+#if canImport(OSLog) && canImport(QuartzCore)
 
 import Foundation
 import OSLog

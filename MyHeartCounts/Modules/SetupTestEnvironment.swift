@@ -14,6 +14,7 @@ import SpeziAccount
 import SpeziConsent
 import SpeziFirebaseAccount
 import SpeziFoundation
+@_spi(TestingSupport)
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziLocalStorage
@@ -52,6 +53,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(ConsentManager.self) private var consentManager: ConsentManager?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @ObservationIgnored @Dependency(HealthKitStatsCalculator.self) private var healthKitStats: HealthKitStatsCalculator?
     // swiftlint:enable attributes
     
     @ObservationIgnored private let config: Config = LaunchOptions.launchOptions[.setupTestEnvironment]
@@ -225,6 +227,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
+        await account.waitForAccountDetailsReady()
         desc = "\(#function) will update study bundle loader"
         // this is important, bc if we're developing locally the study bundle might've been updated since the last time the app was launched.
         let studyBundle = try await studyBundleLoader.update()
@@ -236,6 +239,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await healthKit.askForAuthorization(for: accessReqs)
         desc = "\(#function) will enroll"
         try await standard.enroll(in: studyBundle)
+        precondition(account.details?.dateOfEnrollment != nil)
         if ClinicalRecordPermissions.isAvailable {
             desc = "\(#function) will ask for clinical access"
             try await _Concurrency.Task.sleep(for: .seconds(1))
@@ -294,12 +298,20 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
         
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
+        if HealthKit.needsBloodPressureAuthFlowFix {
+            // the blood pressure auth issue in 26.5/6 causes the HealthKitStatsCalc's initial run to not correctly cancel despite all sample types being undetermined
+            // (blood pressure simply returns empty results; all others throw an error indicating that the fetch failed).
+            // we could alternatively also solve this by unconditionally forcing a hard cancel-and-restart upon study enrollment.
+            healthKitStats?.stop()
+            healthKitStats?.start()
+        }
         desc = "\(#function) DONE"
     }
 }
 
 
 extension SampleTypesCollection {
+    // periphery:ignore - API
     func onlyClinicalRecordTypes() -> Self {
         filter(isKindOf: SampleType<HKClinicalRecord>.self)
     }
@@ -308,6 +320,7 @@ extension SampleTypesCollection {
         filter(isNotKindOf: SampleType<HKClinicalRecord>.self)
     }
     
+    // periphery:ignore - API
     func filter<Sample>(isKindOf _: SampleType<Sample>.Type) -> Self {
         Self(self.filter { $0 is SampleType<Sample> })
     }

@@ -44,7 +44,6 @@ final class HealthUploadStaging: Spezi::Module, EnvironmentAccessible, @unchecke
     static let databaseWriteChunkSize = 500
     
     // swiftlint:disable attributes
-    @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored private let dbQueue: DatabaseQueue?
     @ObservationIgnored private let jsonEncoder = JSONEncoder()

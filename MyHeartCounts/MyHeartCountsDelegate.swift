@@ -54,7 +54,9 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             AppState()
             AppRefresh()
             MHCBackgroundTasks()
-            ManagedFileUpload {
+            ManagedFileUpload(
+                configuration: .init(isStoredInMemoryOnly: ProcessInfo.isReallyRunningInXCTest)
+            ) {
                 ManagedFileUpload.Category.liveHealthUpload
                 ManagedFileUpload.Category.historicalHealthUpload
                 ManagedFileUpload.Category.healthDeletions
@@ -72,7 +74,6 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
 
 
 extension ModuleBuilder {
-    // periphery:ignore - implicitly called
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
     }

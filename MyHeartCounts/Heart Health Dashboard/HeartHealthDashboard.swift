@@ -28,22 +28,17 @@ struct HeartHealthDashboard: View {
         var id: ObjectIdentifier { .init(keyPath) }
     }
     
-    // swiftlint:disable attributes
-    @Environment(StudyManager.self) private var studyManager
-    // swiftlint:enable attributes
+    @Environment(StudyManager.self)
+    private var studyManager
     
     @CVHScore private var cvhScore
     
-    @State private var addNewSampleDescriptor: MetricDescriptor?
     @State private var scoreResultToExplain: MetricDescriptor?
     @State private var isPresentingPastTimedWalkTestResults = false
     
     var body: some View {
         Form {
             healthDashboard
-        }
-        .sheet(item: $addNewSampleDescriptor) { descriptor in
-            Self.addSampleSheet(for: descriptor.keyPath)
         }
         .sheet(item: $scoreResultToExplain) { descriptor in
             NavigationStack {
@@ -64,30 +59,30 @@ struct HeartHealthDashboard: View {
     }
     
     @ViewBuilder private var healthDashboard: some View {
-        HealthDashboard(layout: [
-            .large {
+        Group {
+            HealthDashboardSection {
                 topSection
-            },
-            .grid(
-                sectionTitle: "Score Components",
+            }
+            HealthDashboardGridSection(
+                "Score Components",
                 footer: "HHD_APPLE_WATCH_REQUIRED_FOOTER"
             ) {
                 switch $cvhScore.preferredExerciseMetric {
                 case .exerciseMinutes:
-                    makeGridComponent(for: \.physicalExerciseScore)
+                    makeGridTile(for: \.physicalExerciseScore)
                 case .stepCount:
-                    makeGridComponent(for: \.stepCountScore)
+                    makeGridTile(for: \.stepCountScore)
                 }
-                makeGridComponent(for: \.sleepHealthScore)
-                makeGridComponent(for: \.dietScore)
-                makeGridComponent(for: \.mentalHealthScore)
-                makeGridComponent(for: \.bloodPressureScore)
-                makeGridComponent(for: \.bloodLipidsScore)
-                makeGridComponent(for: \.bloodGlucoseScore)
-                makeGridComponent(for: \.bodyMassIndexScore)
-                makeGridComponent(for: \.nicotineExposureScore)
+                makeGridTile(for: \.sleepHealthScore)
+                makeGridTile(for: \.dietScore)
+                makeGridTile(for: \.mentalHealthScore)
+                makeGridTile(for: \.bloodPressureScore)
+                makeGridTile(for: \.bloodLipidsScore)
+                makeGridTile(for: \.bloodGlucoseScore)
+                makeGridTile(for: \.bodyMassIndexScore)
+                makeGridTile(for: \.nicotineExposureScore)
             }
-        ])
+        }
         .makeBackgroundMatchFormBackground()
         learnMoreSection
         pastDataSection
@@ -164,14 +159,17 @@ struct HeartHealthDashboard: View {
         }
     }
     
-    private func makeGridComponent(
+    private func makeGridTile(
         for scoreKeyPath: KeyPath<CVHScore, ScoreResult>
-    ) -> HealthDashboardLayout.GridComponent {
+    ) -> some View {
         let score = $cvhScore[keyPath: scoreKeyPath]
-        return .custom(
+        return HealthDashboardGridTile(
             title: score.sampleType.displayTitle,
             accessibilityIdentifier: score.sampleType.displayTitle(in: .enUS),
-            headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0)
+            headerInsets: .init(top: 0, leading: 8, bottom: 0, trailing: 0),
+            onTap: {
+                scoreResultToExplain = .init(keyPath: scoreKeyPath)
+            }
         ) {
             VStack(spacing: 0) {
                 ScoreResultGauge(scoreResult: score)
@@ -192,21 +190,15 @@ struct HeartHealthDashboard: View {
                         .foregroundStyle(.secondary)
                 }
             }
-        } onTap: {
-            scoreResultToExplain = .init(keyPath: scoreKeyPath)
-        }
-    }
-    
-    // periphery:ignore - API
-    private func addNewSample(for keyPath: KeyPath<CVHScore, ScoreResult>) {
-        if Self.canAddSample(for: keyPath) {
-            addNewSampleDescriptor = .init(keyPath: keyPath)
         }
     }
 }
 
 
 extension HeartHealthDashboard {
+    /// The `KeyPaths` into the ``CVHScore`` where we allow manual in-app data entry.
+    ///
+    /// - Important: Must keep this list up to date with the dashboard config and app requirements!
     private static let cvhKeyPathsWithDataEntryEnabled: Set<KeyPath<CVHScore, ScoreResult>> = [
         \.dietScore,
         \.mentalHealthScore,

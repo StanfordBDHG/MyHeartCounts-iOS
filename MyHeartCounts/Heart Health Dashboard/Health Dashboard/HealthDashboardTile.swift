@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SpeziHealthKit
 import SpeziViews
 import SwiftUI
 
@@ -58,21 +57,6 @@ struct HealthDashboardTile<Content: View, Accessory: View>: View {
         .frame(minHeight: 129)
     }
     
-    init(
-        title: LocalizedStringResource,
-        subtitle: LocalizedStringResource? = nil,
-        headerInsets: EdgeInsets = .zero,
-        @ViewBuilder accessory: () -> Accessory = { EmptyView() },
-        @ViewBuilder content: () -> Content
-    ) {
-        self.title = Text(title)
-        self.headerInsets = headerInsets
-        self.subtitle = subtitle.map(Text.init)
-        self.accessory = accessory()
-        self.content = content()
-    }
-    
-    @_disfavoredOverload
     init(
         title: some StringProtocol,
         subtitle: (some StringProtocol & SendableMetatype)? = String?.none,

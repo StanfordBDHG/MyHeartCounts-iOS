@@ -50,7 +50,7 @@ extension QuantitySample: HealthObservation {
         case .healthKit(let sampleType):
             let sample = HKQuantitySample(
                 type: sampleType.hkSampleType,
-                quantity: HKQuantity(unit: self.unit, doubleValue: self.value),
+                quantity: self.hkQuantity(),
                 start: self.startDate,
                 end: self.endDate
             )
@@ -69,8 +69,8 @@ extension QuantitySample: HealthObservation {
             observation.value = .quantity(Quantity(
                 code: code,
                 system: system,
-                unit: "mg/dL".asFHIRStringPrimitive(),
-                value: value.asFHIRDecimalPrimitive()
+                unit: self.sampleType.canonicalUnit.unitString.asFHIRStringPrimitive(),
+                value: self.value(as: self.sampleType.canonicalUnit).asFHIRDecimalPrimitive()
             ))
         case .custom(.nicotineExposure), .custom(.dietMEPAScore), .custom(.mentalWellbeingScore):
             let code = sampleType.id.asFHIRStringPrimitive()
@@ -82,8 +82,8 @@ extension QuantitySample: HealthObservation {
             observation.value = .quantity(Quantity(
                 code: code,
                 system: Self.speziSystem,
-                unit: "count",
-                value: value.asFHIRDecimalPrimitive()
+                unit: self.sampleType.canonicalUnit.unitString.asFHIRStringPrimitive(),
+                value: self.value(as: self.sampleType.canonicalUnit).asFHIRDecimalPrimitive()
             ))
         default:
             throw FHIRObservationConversionError.notSupported

@@ -197,6 +197,9 @@ extension MyHeartCountsStandard {
         case .firebaseStorage:
             let numObservations = observations.count
             logger.notice("Uploading \(numObservations) observations of type '\(sampleTypeIdentifier)' via zstd upload")
+            let triggerDidUploadNotification = await showDebugWillUploadHealthDataUploadEventNotification(
+                for: .new(sampleTypeTitle: sampleTypeIdentifier, count: numObservations, uploadStrategy: uploadStrategy)
+            )
             let resources: [AnyEncodable] = try await (consume observations).async.reduce(into: []) { resources, observation in
                 if let resource = try await turnIntoFHIRResource(observation) {
                     resources.append(resource)
@@ -218,6 +221,9 @@ extension MyHeartCountsStandard {
                 category: .liveHealthUpload,
                 accountDataGeneration: accountDataGeneration
             )
+            // Fired once the file is durably in the upload module's custody, rather than once it has reached the
+            // backend: that is the point at which this code path is done with it.
+            await triggerDidUploadNotification()
         case .directFirestore:
             for chunk in (consume observations).chunks(ofCount: Self.directFirestoreUploadDefaultBatchSize) {
                 try ensureAccountUploadIsAllowed(accountDataGeneration)

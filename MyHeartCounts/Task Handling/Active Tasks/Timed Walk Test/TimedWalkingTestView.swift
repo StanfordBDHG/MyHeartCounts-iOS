@@ -115,6 +115,7 @@ private struct TimedWalkingTestView: View {
         }
     }
     
+    // periphery:ignore - ???
     private var watchParticipatesInTest: Bool {
         // intentionally not checking whether the watch app is reachable, since it might not have been launched yet.
         watchManager.userHasWatch && watchManager.isWatchAppInstalled

@@ -44,7 +44,6 @@ final class EnvironmentTracking: ServiceModule, @unchecked Sendable {
     }
     
     // swiftlint:disable attributes
-    @Application(\.logger) private var logger
     @Dependency(Lifecycle.self) private var lifecycle
     @Dependency(Account.self) private var account: Account?
     @MainActor private var entries: [Entry] = []
