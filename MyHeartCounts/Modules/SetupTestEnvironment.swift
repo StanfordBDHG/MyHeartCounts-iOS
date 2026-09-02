@@ -14,6 +14,7 @@ import SpeziAccount
 import SpeziConsent
 import SpeziFirebaseAccount
 import SpeziFoundation
+@_spi(TestingSupport)
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziLocalStorage
@@ -52,6 +53,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(ConsentManager.self) private var consentManager: ConsentManager?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @ObservationIgnored @Dependency(HealthKitStatsCalculator.self) private var healthKitStats: HealthKitStatsCalculator?
     // swiftlint:enable attributes
     
     @ObservationIgnored private let config: Config = LaunchOptions.launchOptions[.setupTestEnvironment]
@@ -296,6 +298,13 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
         
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
+        if HealthKit.needsBloodPressureAuthFlowFix {
+            // the blood pressure auth issue in 26.5/6 causes the HealthKitStatsCalc's initial run to not correctly cancel despite all sample types being undetermined
+            // (blood pressure simply returns empty results; all others throw an error indicating that the fetch failed).
+            // we could alternatively also solve this by unconditionally forcing a hard cancel-and-restart upon study enrollment.
+            healthKitStats?.stop()
+            healthKitStats?.start()
+        }
         desc = "\(#function) DONE"
     }
 }
