@@ -77,10 +77,8 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
     
     @concurrent
     private func _run() async {
-        logger.notice("Starting HKStats collection")
         defer {
             if !Task.isCancelled {
-                logger.warning("done")
                 // should never reach here (the process functions below should all monitor for new data indefinitely),
                 // but if we do end up here, we clear out the task just in case
                 stop()
@@ -387,7 +385,6 @@ extension HealthKitStatsCalculator {
                 timeRange: .init(month.range)
             )
             for try await stats in results {
-                logger.notice("[\(input.sampleType)] NEW STATS FOR \(month.range)")
                 let stats: [StatEntry] = switch input.mode {
                 case .sum:
                     stats.compactMap { stats in
@@ -460,7 +457,6 @@ extension HealthKitStatsCalculator {
                     queryAnchors[input.sampleType, month] = result.newAnchor
                 }
                 let samples = try await healthKit.query(input.sampleType, timeRange: .init(month.range))
-                logger.notice("new results for \(input.sampleType): \(samples.count) in \(month.documentId)")
                 let entries = samples.map { sample in
                     QuantitySampleEntry(
                         date: sample.startDate,
@@ -523,7 +519,6 @@ extension HealthKitStatsCalculator {
                     timeRange: .init(paddedRange),
                     source: CVHScore.sleepDataSourceFilter
                 )
-                logger.notice("NEW SLEEP DATA FOR \(month.documentId) (#samples: \(samples.count))")
                 // group the samples into sleep sessions, and keep the sessions belonging to this month.
                 // this matches how the dashboard used to turn sleep samples into the values it displays;
                 // in particular, `totalTimeSpentAsleep` accounts for overlapping samples (e.g. from a phone and a watch
@@ -531,7 +526,6 @@ extension HealthKitStatsCalculator {
                 let sessions = try samples.splitIntoSleepSessions().filter { session in
                     month.range.contains(session.timeRange.middle)
                 }
-                logger.notice(" -> SESSIONS: \(sessions)")
                 let entries = sessions.map { session in
                     StatEntry(
                         start: session.startDate,
