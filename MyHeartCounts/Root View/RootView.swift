@@ -45,8 +45,8 @@ struct RootView: View {
                 }
             case .pending, .settingUp:
                 FullScreenProgressView(
-                    title: "Setting Up Test Environment",
-                    subtitle: "\(setupTestEnvironment.desc)"
+                    title: "Setting Up Test Environment" as String,
+                    subtitle: setupTestEnvironment.desc
                 )
             case .failure(let error):
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
