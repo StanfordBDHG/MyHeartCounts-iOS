@@ -28,6 +28,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(Account.self) private var account
     @ObservationIgnored @Dependency(AccountNotifications.self) private var accountNotifications
+    @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
     // swiftlint:enable attributes
     
     /// The currently-active long-lived stats processing task.
@@ -36,9 +37,32 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
     var isActive: Bool {
         task.withLock { $0 != nil }
     }
+    
+    func configure() {
+        do {
+            try backgroundTasks.register(.healthResearch(
+                id: .healthStatsRefresh,
+                nextTriggerDate: .after(TimeConstants.hour * 12),
+                options: [.requiresNetworkConnectivity],
+                protectionTypeOfRequiredData: .complete
+            ) {
+                // rather crude but since we're using anchor-based live updating queries below
+                // and would like to avoid having to add a second non-live-query-based implementation,
+                // simply starting the module, giving it a couple of seconds to do its work and then
+                // stopping it again seems like the best approach.
+                self.start()
+                try await Task.sleep(for: .seconds(20))
+                self.stop()
+            })
+        } catch {
+            logger.error("failed to register bg task: \(error)")
+        }
+    }
 
+    // run when the app is actually launched in foreground.
+    // NOT run during background launches, which is ok.
     func run() async {
-        if account.details != nil {
+        if await account.details != nil {
             // currently already signed in. issue here is that the account events don't replay,
             // so if the initial `associatedAccount` event fired before this module's `run()`
             // function was called we'd miss it.
@@ -113,6 +137,11 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             }
         }
     }
+}
+
+
+extension MHCBackgroundTasks.TaskIdentifier {
+    static let healthStatsRefresh = Self("edu.stanford.MyHeartCounts.healthStatsRefresh")
 }
 
 

@@ -12,6 +12,7 @@ import BackgroundTasks
 import Foundation
 import OSLog
 import Spezi
+import SpeziFoundation
 import SwiftUI
 import Synchronization
 
@@ -24,33 +25,36 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
         case missingTaskRegistration
         /// Attempted to register a ``MHCBackgroundTasks/TaskDefinition`` whose identifier is not in the `Info.plist`'s list of permitted task identifiers.
         case invalidTaskIdentifier
+        /// The app's launch sequence has already completed, and no further tasks can be registered.
+        case tooLateForRegistration
     }
     
-    @Application(\.logger)
-    private var logger
-    
-    @Dependency(Lifecycle.self)
-    private var lifecycle
+    // swiftlint:disable attributes
+    @Application(\.logger) private var logger
+    @Application(\.spezi) private var spezi
+    @Dependency(Lifecycle.self) private var lifecycle
+    @Dependency(LocalNotifications.self) private var localNotifications
+    // swiftlint:enable attributes
     
     private let registeredTasks = Mutex<[TaskIdentifier: TaskDefinition]>([:])
 
     @concurrent
     static func execute(
         handler: @escaping TaskDefinition.Handler,
-        completion: @escaping @Sendable (Bool) -> Void,
+        completion: @escaping @Sendable (Result<Void, any Error>) async -> Void,
         reschedule: @escaping @Sendable () -> Void
     ) async {
-        let success: Bool
+        let result: Result<Void, any Error>
         do {
             try Task.checkCancellation()
             try await handler()
             try Task.checkCancellation()
-            success = true
+            result = .success(())
         } catch {
-            success = false
+            result = .failure(error)
         }
         reschedule()
-        completion(success)
+        await completion(result)
     }
 
     func configure() {
@@ -70,18 +74,38 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
     }
     
     func register(_ definition: TaskDefinition) throws {
-        try registeredTasks.withLock { registeredTasks in
+        /// The `BGTaskScheduler` docs state that "Registration of all launch handlers must be complete before the end of `applicationDidFinishLaunching(_:)`."
+        /// Testing reveals that on at least iOS 26.4+, registering tasks after the app has finished launching still works fine; on iOS 18, in contrast, this reliably crashes the app.
+        /// Since the docs still mention the app launch sequence requirement even in the 26.x SDKs, we still enforce this as a limitation.
+        /// The issue here is that during all launches prior to completing the onboarding, some key modules will not get loaded as part of the app launch
+        /// (because they depend on Firebase / Account being present), which in turn means that when the user does enroll and complete the onboarding, these modules
+        /// will attempt to register their tasks way after the app's launch sequence has already completed. (Which is explicitly not allowed by the `BGTask` API.)
+        /// So what we do instead is that we try to be proactive here and flat-out reject all task registrations that take place after the app's launch has completed.
+        /// Since the AppRefresh background task is always registered unconditionally, and that triggers the app to launch and load all of its modules
+        /// (launches after the user has logged in and enrolled will always immediately load all modules as part of the initial load), we can be sure that
+        /// all tasks will get registered eventually.
+        let canRegister = !MyHeartCountsDelegate.didFinishLaunching
+        guard canRegister else {
+            throw TaskHandlingError.tooLateForRegistration
+        }
+        try registeredTasks.withLock { registeredTasks in // swiftlint:disable:this closure_body_length
             guard !registeredTasks.keys.contains(definition.id) else {
                 throw TaskHandlingError.alreadyRegistered
             }
             let didRegister = BGTaskScheduler.shared.register(forTaskWithIdentifier: definition.id.rawValue, using: nil) { task in
                 let asyncTask = Task { @concurrent in
-                    MHCBackgroundTasks.track(.start, for: definition.id)
+                    await self.track(.start, for: definition.id)
                     await Self.execute(
                         handler: definition.handler,
-                        completion: { success in
-                            MHCBackgroundTasks.track(.stop, for: definition.id)
-                            task.setTaskCompleted(success: success)
+                        completion: { result in
+                            switch result {
+                            case .success:
+                                await self.track(.succeeded, for: definition.id)
+                                task.setTaskCompleted(success: true)
+                            case .failure(let error):
+                                await self.track(.failed(error: "\(error)"), for: definition.id)
+                                task.setTaskCompleted(success: false)
+                            }
                         },
                         reschedule: {
                             do {
@@ -93,7 +117,9 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
                     )
                 }
                 task.expirationHandler = {
-                    MHCBackgroundTasks.track(.expiration, for: definition.id)
+                    Task {
+                        await self.track(.expiration, for: definition.id)
+                    }
                     asyncTask.cancel()
                 }
             }
@@ -248,3 +274,87 @@ extension MHCBackgroundTasks {
 
 
 extension BGTask: @retroactive @unchecked Sendable {}
+
+
+// MARK: Tracking
+
+extension MHCBackgroundTasks {
+    struct Event: Hashable, Codable {
+        enum Kind: Hashable, Codable, RawRepresentable<String> {
+            case start
+            case succeeded
+            case failed(error: String)
+            case expiration
+            
+            var rawValue: String {
+                switch self {
+                case .start:
+                    "start"
+                case .succeeded:
+                    "succeeded"
+                case .failed(let error):
+                    "failed(\(error))"
+                case .expiration:
+                    "expired"
+                }
+            }
+            
+            init?(rawValue: String) {
+                switch rawValue {
+                case "start":
+                    self = .start
+                case "succeeded", "stop": // we (incorrectly) parse all past `"stop"` results as successes.
+                    self = .succeeded
+                case "expired", "expiration":
+                    self = .expiration
+                default:
+                    guard rawValue.starts(with: "failed("), rawValue.ends(with: ")") else {
+                        return nil
+                    }
+                    let errorMsg = rawValue.dropFirst("failed(".count).dropLast()
+                    self = .failed(error: String(errorMsg))
+                }
+            }
+            
+            init(from decoder: any Decoder) throws {
+                let container = try decoder.singleValueContainer()
+                let rawValue = try container.decode(String.self)
+                if let value = Self(rawValue: rawValue) {
+                    self = value
+                } else {
+                    throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "invalid rawValue '\(rawValue)'"))
+                }
+            }
+            
+            func encode(to encoder: any Encoder) throws {
+                var container = encoder.singleValueContainer()
+                try container.encode(rawValue)
+            }
+        }
+        
+        let date: Date
+        let taskId: MHCBackgroundTasks.TaskIdentifier
+        let kind: Kind
+    }
+    
+    private func track(_ kind: Event.Kind, for taskId: TaskIdentifier) async {
+        let prefs = LocalPreferencesStore.standard
+        prefs[.backgroundTaskEvents].append(.init(date: .now, taskId: taskId, kind: kind))
+        if prefs[.backgroundTaskNotifications] {
+            let event: String = switch kind {
+            case .start:
+                "start"
+            case .succeeded:
+                "success"
+            case .failed(let error):
+                "failed: \(error)"
+            case .expiration:
+                "expiration"
+            }
+            try? await localNotifications.send(
+                title: "[dbg] backgruond task \(taskId)",
+                body: "\(event) at \(Date.now)"
+            )
+        }
+    }
+}

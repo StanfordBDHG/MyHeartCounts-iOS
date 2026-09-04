@@ -67,7 +67,7 @@ final class HealthUploadStagingUploader: Spezi::Module, EnvironmentAccessible, S
     
     func configure() {
         do {
-            try backgroundTasks.register(.processing(
+            try backgroundTasks.register(.processing( // might wanna use a healthResearch task here instead!
                 id: .stagedHealthUpload,
                 nextTriggerDate: .after(TimeConstants.hour * 6),
                 options: [.requiresExternalPower, .requiresNetworkConnectivity]

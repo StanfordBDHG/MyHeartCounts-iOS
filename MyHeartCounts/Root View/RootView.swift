@@ -129,19 +129,3 @@ extension RootViewTab {
 extension LocalPreferenceKeys {
     static let rootTabSelection = LocalPreferenceKey<String>("rootTabSelection", default: HomeTab.tabId)
 }
-
-
-extension ScenePhase: @retroactive CustomDebugStringConvertible {
-    public var debugDescription: String {
-        switch self {
-        case .background:
-            "background"
-        case .inactive:
-            "inactive"
-        case .active:
-            "active"
-        @unknown default:
-            "unknown"
-        }
-    }
-}
