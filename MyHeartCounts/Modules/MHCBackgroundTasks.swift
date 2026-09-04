@@ -31,7 +31,6 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
     
     // swiftlint:disable attributes
     @Application(\.logger) private var logger
-    @Application(\.spezi) private var spezi
     @Dependency(Lifecycle.self) private var lifecycle
     @Dependency(LocalNotifications.self) private var localNotifications
     // swiftlint:enable attributes
@@ -74,16 +73,17 @@ final class MHCBackgroundTasks: Module, EnvironmentAccessible, @unchecked Sendab
     }
     
     func register(_ definition: TaskDefinition) throws {
-        /// The `BGTaskScheduler` docs state that "Registration of all launch handlers must be complete before the end of `applicationDidFinishLaunching(_:)`."
-        /// Testing reveals that on at least iOS 26.4+, registering tasks after the app has finished launching still works fine; on iOS 18, in contrast, this reliably crashes the app.
-        /// Since the docs still mention the app launch sequence requirement even in the 26.x SDKs, we still enforce this as a limitation.
-        /// The issue here is that during all launches prior to completing the onboarding, some key modules will not get loaded as part of the app launch
-        /// (because they depend on Firebase / Account being present), which in turn means that when the user does enroll and complete the onboarding, these modules
-        /// will attempt to register their tasks way after the app's launch sequence has already completed. (Which is explicitly not allowed by the `BGTask` API.)
-        /// So what we do instead is that we try to be proactive here and flat-out reject all task registrations that take place after the app's launch has completed.
-        /// Since the AppRefresh background task is always registered unconditionally, and that triggers the app to launch and load all of its modules
-        /// (launches after the user has logged in and enrolled will always immediately load all modules as part of the initial load), we can be sure that
-        /// all tasks will get registered eventually.
+        // The `BGTaskScheduler` docs state that "Registration of all launch handlers must be complete before the end of
+        // `applicationDidFinishLaunching(_:)`". On iOS 18, registering later reliably crashes the app (an `NSInternalInconsistencyException`
+        // that no Swift `catch` can see); iOS 26.4+ silently accepts it. Since the docs still state the requirement, we enforce it everywhere.
+        //
+        // This matters because the Firebase-dependent modules are deferred-loaded: on the launch during which the user picks a region,
+        // they get configured well after the launch sequence completed, so their registrations would be exactly the too-late kind.
+        // Rejecting them is safe. `lastUsedFirebaseConfig` is set from then on, so every subsequent launch — foreground or background —
+        // loads these modules as part of the launch sequence, registers their tasks during `willFinishLaunching`, and submits them
+        // the first time the scene phase becomes `.background` (which, via `Lifecycle`'s `initial: true` tracking, also happens on
+        // background launches). The only cost is that these tasks stay unregistered for the rest of the one session in which the
+        // region was picked.
         let canRegister = !MyHeartCountsDelegate.didFinishLaunching
         guard canRegister else {
             throw TaskHandlingError.tooLateForRegistration
@@ -352,7 +352,7 @@ extension MHCBackgroundTasks {
                 "expiration"
             }
             try? await localNotifications.send(
-                title: "[dbg] backgruond task \(taskId)",
+                title: "[dbg] background task \(taskId)",
                 body: "\(event) at \(Date.now)"
             )
         }

@@ -50,9 +50,15 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
                 // and would like to avoid having to add a second non-live-query-based implementation,
                 // simply starting the module, giving it a couple of seconds to do its work and then
                 // stopping it again seems like the best approach.
-                self.start()
+                // If the module is already running (e.g. because the task fired into a process that also has
+                // a foreground session), we only lend it our execution time and leave it running afterwards.
+                let didStart = self.start()
+                defer {
+                    if didStart {
+                        self.stop()
+                    }
+                }
                 try await Task.sleep(for: .seconds(20))
-                self.stop()
             })
         } catch {
             logger.error("failed to register bg task: \(error)")
@@ -81,14 +87,19 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
     }
     
-    func start() {
+    /// Starts the calculator, unless it is already running.
+    ///
+    /// - returns: whether this call is the one that started it.
+    @discardableResult
+    func start() -> Bool {
         task.withLock { task in
             guard task == nil else {
-                return
+                return false
             }
             task = Task {
                 await self._run()
             }
+            return true
         }
     }
     

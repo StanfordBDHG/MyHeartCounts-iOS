@@ -8,6 +8,7 @@
 		<string>edu.stanford.MyHeartCounts.AppRefresh</string>
 		<string>edu.stanford.MyHeartCounts.stagedHealthSamplesUpload</string>
 		<string>edu.stanford.MyHeartCounts.SensorKitProcessing</string>
+		<string>edu.stanford.MyHeartCounts.fileUpload</string>
 		<string>edu.stanford.spezi.scheduler.notifications-scheduling</string>
 	</array>
 	<key>CFBundleAllowMixedLocalizations</key>
