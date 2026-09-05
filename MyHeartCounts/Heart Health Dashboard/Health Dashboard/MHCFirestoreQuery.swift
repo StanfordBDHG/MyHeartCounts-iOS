@@ -28,6 +28,10 @@ import SwiftUI
 /// Differences to the `@FirestoreQuery` API:
 /// - ability to not only transform the documents into a custom `Decodable` type, but then (optionally) also implicitly project into a different type from that
 ///     (required bc we don't want to have to operate directly on FHIR Observations and eg want to turn them into our ``QuantitySample``s instead)
+///
+/// - Note: The ``MHCFirestoreQuery`` APIs intentionally use `ValueTransformer`s instead of regular closures to customize decoding;
+///     the reason being that closures cannot be `Equatable`, which is important for the query to be able to skip unnecessary updates
+///     if it is recreated with identical inputs (in which case the previously-created underlying firestore query can be kept around).
 @MainActor
 @propertyWrapper
 struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
@@ -65,8 +69,11 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
     private var account: Account?
     
     @State private var impl = Impl()
+    /// The firebase side of the query
     private let querySpec: FirebaseQuerySpec
+    /// The client side of the query
     private let queryPostProcessingSpec: PostQueryProcessingSpec
+    
     private let logger = Logger(category: .init("MHCFirestoreQuery<\(Element.self)>"))
     
     var wrappedValue: [Element] {
@@ -137,14 +144,14 @@ struct MHCFirestoreQuery<Element: Sendable>: DynamicProperty {
         )
     }
     
-    nonisolated mutating func update() {
+    nonisolated func update() {
         MainActor.assumeIsolated {
             self._update()
         }
     }
     
     @MainActor
-    private mutating func _update() {
+    private func _update() {
         var querySpec = querySpec
         switch querySpec.collection {
         case .user(let path):
@@ -182,9 +189,6 @@ extension MHCFirestoreQuery {
     
     
     /// The client-side half of a query: how the received documents are turned into elements.
-    ///
-    /// Carries its own decode parameters, so that a decode always runs with the parameters it was created alongside.
-    /// Not `Equatable` (the closure can't be); ``decodeParams`` is the part that can be compared across view updates.
     fileprivate struct PostQueryProcessingSpec: Equatable, Sendable {
         private let decoder: any ValueTransformer<QueryDocumentSnapshot, Element>
         let postDecodeSort: [any SortComparator<Element>]
