@@ -398,7 +398,6 @@ extension MHCFirestoreQuery {
     }
     
     
-    @available(*, deprecated, message: "HMMMM")
     init(
         sampleTypeIdentifier: String,
         timeRange: HealthKitQueryTimeRange,

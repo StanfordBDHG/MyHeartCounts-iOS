@@ -35,11 +35,6 @@ class MHCTestCase: XCTestCase, Sendable {
         case yes
         case no
         case auto
-        
-        @available(*, deprecated)
-        init(booleanLiteral value: BooleanLiteralType) {
-            self = value ? .yes : .no
-        }
     }
     
     static let enableHealthRecords = false // temporarily disabled
