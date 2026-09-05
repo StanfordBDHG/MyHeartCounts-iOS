@@ -102,7 +102,8 @@ extension MHCFirestoreQuery {
             sampleTypeIdentifier: TimedWalkingTestResult.sampleTypeIdentifier,
             timeRange: timeRange,
             sorted: [sortComparator],
-            limit: limit, transform: ResourceProxyToTWTResult()
+            limit: limit,
+            transform: ResourceProxyToTWTResult()
         )
     }
 }
