@@ -1216,30 +1216,32 @@ extension ManagedFileUpload {
     /// Deletes all pending uploads within the specified category, incl. their staged files.
     func clearPendingUploads(for category: Category) async throws {
         await cancelAndWaitForQuiescence()
-        defer {
-            acceptsUploads = true
-            Self.ensureDirectoriesExist(for: configuration, using: fileManager)
-        }
-        guard let modelContext else {
-            return
-        }
-        let categoryId = category.id
-        let uploads = try modelContext.fetch(FetchDescriptor<ScheduledUpload>(predicate: #Predicate { $0.categoryId == categoryId }))
-        for upload in uploads {
-            let url = stagingUrl(forUploadWithId: upload.id)
-            if fileManager.fileExists(atPath: url.path(percentEncoded: false)) {
-                try fileManager.removeItem(at: url)
+        let result = Result {
+            guard let modelContext else {
+                return
             }
-            enqueuedUploads.removeValue(forKey: upload.persistentModelID)
-            failedAttempts.removeValue(forKey: upload.persistentModelID)
-            modelContext.delete(upload)
+            let categoryId = category.id
+            let uploads = try modelContext.fetch(FetchDescriptor<ScheduledUpload>(predicate: #Predicate { $0.categoryId == categoryId }))
+            for upload in uploads {
+                let url = stagingUrl(forUploadWithId: upload.id)
+                if fileManager.fileExists(atPath: url.path(percentEncoded: false)) {
+                    try fileManager.removeItem(at: url)
+                }
+                enqueuedUploads.removeValue(forKey: upload.persistentModelID)
+                failedAttempts.removeValue(forKey: upload.persistentModelID)
+                modelContext.delete(upload)
+            }
+            try modelContext.save()
+            resetProgress(for: category)
+            let legacyDirectory = configuration.directory.appending(component: category.id, directoryHint: .isDirectory)
+            if fileManager.isDirectory(at: legacyDirectory) {
+                try fileManager.removeItem(at: legacyDirectory)
+            }
         }
-        try modelContext.save()
-        resetProgress(for: category)
-        let legacyDirectory = configuration.directory.appending(component: category.id, directoryHint: .isDirectory)
-        if fileManager.isDirectory(at: legacyDirectory) {
-            try fileManager.removeItem(at: legacyDirectory)
-        }
+        // The cancellation also stopped other categories. Requeue every survivor before returning, even if the clear failed.
+        Self.ensureDirectoriesExist(for: configuration, using: fileManager)
+        await resumePendingUploads()
+        try result.get()
     }
 
     /// Empties a directory entry-by-entry, rather than removing and recreating the directory itself.

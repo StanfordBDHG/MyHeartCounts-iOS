@@ -25,17 +25,19 @@ private actor UploadProbe {
     private(set) var startedCount = 0
     /// The remote names the module asked for, in the order the uploads started.
     private(set) var requestedFilenames: [String] = []
+    private(set) var requestedCategoryIds: [String] = []
     /// The account directories the module wanted to upload into.
     private(set) var requestedAccountIds: Set<String> = []
 
     private var isReleased = false
     private var startedWaiters: [Int: [CheckedContinuation<Void, Never>]] = [:]
 
-    func upload(filename: String, accountId: String) async throws {
+    func upload(categoryId: String, filename: String, accountId: String) async throws {
         activeCount += 1
         maximumActiveCount = max(maximumActiveCount, activeCount)
         startedCount += 1
         requestedFilenames.append(filename)
+        requestedCategoryIds.append(categoryId)
         requestedAccountIds.insert(accountId)
         resumeStartedWaiters()
         do {
@@ -304,8 +306,8 @@ struct ManagedFileUploadTests {
         isCleanupPending: @escaping @Sendable () -> Bool = { false }
     ) -> ManagedFileUpload {
         var configuration = makeConfiguration(root: root, accountId: accountId)
-        configuration.uploadOperation = { _, _, accountId, filename, _ in
-            try await probe.upload(filename: filename, accountId: accountId)
+        configuration.uploadOperation = { _, category, accountId, filename, _ in
+            try await probe.upload(categoryId: category.id, filename: filename, accountId: accountId)
         }
         configuration.isCleanupPending = isCleanupPending
         return ManagedFileUpload(categories: [category], configuration: configuration)
@@ -340,5 +342,73 @@ struct ManagedFileUploadTests {
         return enumerator.compactMap { $0 as? URL }.filter { url in
             (try? url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true
         }
+    }
+}
+
+
+extension ManagedFileUploadTests {
+    /// Clearing a category also resumes unrelated uploads that were active or still waiting in the queue,
+    /// even when the cleared category has no pending uploads of its own.
+    @Test(arguments: [false, true])
+    func clearingOneCategoryResumesOtherUploads(hasUploadsInClearedCategory: Bool) async throws {
+        let root = try makeTemporaryDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: root)
+        }
+        let probe = UploadProbe()
+        let uploader = makeUploader(root: root, accountId: "account-a", probe: probe)
+        resolveDependencies(of: uploader)
+        let clearedCategory = ManagedFileUpload.Category(id: "Historical", title: "Historical", firebasePath: "historical")
+        if hasUploadsInClearedCategory {
+            try await uploader.stage(try makeSourceFile(index: 99, in: root), category: clearedCategory)
+            await probe.waitUntilStarted(1)
+        }
+        for index in 0..<3 {
+            try await uploader.stage(try makeSourceFile(index: index, in: root), category: category)
+        }
+        await probe.waitUntilStarted(2)
+
+        try await uploader.clearPendingUploads(for: clearedCategory)
+        #expect(await probe.cancelledCount == 2)
+        #expect(regularFiles(in: uploader.stagingDirectory).count == 3)
+        await probe.releaseUploads()
+        await uploader.waitUntilQuiescent()
+
+        #expect(await probe.startedCount == 5)
+        let clearedCategoryAttempts = await probe.requestedCategoryIds.filter { $0 == clearedCategory.id }
+        #expect(clearedCategoryAttempts.count == (hasUploadsInClearedCategory ? 1 : 0))
+        #expect(regularFiles(in: uploader.stagingDirectory).isEmpty)
+    }
+
+    /// A filesystem error is still reported, but does not strand uploads in other categories.
+    @Test
+    func failedCategoryClearResumesOtherUploads() async throws {
+        let root = try makeTemporaryDirectory()
+        defer {
+            try? FileManager.default.removeItem(at: root)
+        }
+        let probe = UploadProbe()
+        let uploader = makeUploader(root: root, accountId: "account-a", probe: probe)
+        resolveDependencies(of: uploader)
+        try await uploader.stage(try makeSourceFile(index: 0, in: root), category: category)
+        await probe.waitUntilStarted(1)
+
+        let clearedCategory = ManagedFileUpload.Category(id: "Historical", title: "Historical", firebasePath: "historical")
+        let legacyDirectory = uploader.configuration.directory.appending(component: clearedCategory.id, directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: legacyDirectory, withIntermediateDirectories: true)
+        try Data("pending".utf8).write(to: legacyDirectory.appending(path: "pending.dat"))
+        try FileManager.default.setAttributes([.posixPermissions: 0o500], ofItemAtPath: legacyDirectory.path)
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: legacyDirectory.path)
+        }
+
+        await #expect(throws: CocoaError.self) {
+            try await uploader.clearPendingUploads(for: clearedCategory)
+        }
+        await probe.releaseUploads()
+        await uploader.waitUntilQuiescent()
+        #expect(await probe.cancelledCount == 1)
+        #expect(await probe.startedCount == 2)
+        #expect(regularFiles(in: uploader.stagingDirectory).isEmpty)
     }
 }
