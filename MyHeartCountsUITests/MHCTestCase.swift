@@ -31,7 +31,7 @@ import XCTSpeziNotifications
 /// It does not contain any actual tests itself. All UI test classes should inherit from `MHCTestCase`.
 @MainActor
 class MHCTestCase: XCTestCase, Sendable {
-    enum HandlePermissionPrompts: ExpressibleByBooleanLiteral {
+    enum HandlePermissionPrompts {
         case yes
         case no
         case auto
