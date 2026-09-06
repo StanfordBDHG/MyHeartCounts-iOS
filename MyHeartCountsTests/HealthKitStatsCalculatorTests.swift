@@ -8,6 +8,7 @@
 
 import Foundation
 @testable import MyHeartCounts
+import Synchronization
 import Testing
 
 
@@ -20,11 +21,22 @@ private actor StatsWriterProbe: HealthKitStatsCalculator.StatsDocumentWriting {
     private(set) var writes = 0
     private var failNextWrite: Bool
     private let cancelDuringWrite: Bool
+    private let acknowledgesImmediately: Bool
+    private var completions: [@Sendable ((any Error)?) -> Void] = []
+    nonisolated let writeCounts: AsyncStream<Int>
+    private let writeCountContinuation: AsyncStream<Int>.Continuation
 
-    init(storedEntries: [Int] = [], failNextWrite: Bool = false, cancelDuringWrite: Bool = false) {
+    init(
+        storedEntries: [Int] = [],
+        failNextWrite: Bool = false,
+        cancelDuringWrite: Bool = false,
+        acknowledgesImmediately: Bool = true
+    ) {
         self.storedEntries = storedEntries
         self.failNextWrite = failNextWrite
         self.cancelDuringWrite = cancelDuringWrite
+        self.acknowledgesImmediately = acknowledgesImmediately
+        (writeCounts, writeCountContinuation) = AsyncStream.makeStream()
     }
 
     func writeStatsDocument<Entry: Codable & Sendable>(
@@ -40,6 +52,20 @@ private actor StatsWriterProbe: HealthKitStatsCalculator.StatsDocumentWriting {
         if cancelDuringWrite {
             withUnsafeCurrentTask { $0?.cancel() }
         }
+        let (result, continuation) = AsyncThrowingStream<Void, any Error>.makeStream()
+        if acknowledgesImmediately {
+            continuation.finish()
+        } else {
+            completions.append { continuation.finish(throwing: $0) }
+        }
+        writeCountContinuation.yield(writes)
+        for try await _ in result { }
+        try Task.checkCancellation()
+    }
+
+    func completeNextWrite(error: (any Error)? = nil) throws {
+        try #require(!completions.isEmpty)
+        completions.removeFirst()(error)
     }
 }
 
@@ -127,64 +153,152 @@ extension HealthKitStatsCalculatorTests {
     @Test(arguments: [false, true])
     func emptySnapshotsRequireDeletionEvidence(hasDeletions: Bool) async throws {
         let writer = StatsWriterProbe()
-        let persistence = HealthKitStatsCalculator.StatsPersistence(writer: writer)
+        let persistence = makePersistence(for: writer)
         let destination = try statsDestination()
-        var anchor = 0
+        let anchor = Mutex(0)
         try await persistence.persistStatsUpdate(
-            [73], for: destination, hasDeletions: false, commitAnchor: { anchor = 1 }
+            [73], for: destination, hasDeletions: false, commitAnchor: { anchor.withLock { $0 = 1 } }
         )
         try await persistence.persistStatsUpdate(
-            [Int](), for: destination, hasDeletions: hasDeletions, commitAnchor: { anchor = 2 }
+            [Int](), for: destination, hasDeletions: hasDeletions, commitAnchor: { anchor.withLock { $0 = 2 } }
         )
         #expect(await writer.storedEntries == (hasDeletions ? [] : [73]))
         #expect(await writer.writes == (hasDeletions ? 2 : 1))
-        #expect(anchor == 2)
+        #expect(anchor.withLock { $0 } == 2)
     }
 
     /// A rejected deletion write must leave its anchor available for the next run to replay.
     @Test
     func failedDeletionWriteCanBeReplayed() async throws {
         let writer = StatsWriterProbe(storedEntries: [73], failNextWrite: true)
-        let persistence = HealthKitStatsCalculator.StatsPersistence(writer: writer)
+        let persistence = makePersistence(for: writer)
         let destination = try statsDestination()
-        var anchor = 0
+        let anchor = Mutex(0)
         await #expect(throws: StatsWriterProbe.Failure.self) {
             try await persistence.persistStatsUpdate(
-                [Int](), for: destination, hasDeletions: true, commitAnchor: { anchor = 1 }
+                [Int](), for: destination, hasDeletions: true, commitAnchor: { anchor.withLock { $0 = 1 } }
             )
         }
         #expect(await writer.storedEntries == [73])
-        #expect(anchor == 0)
+        #expect(anchor.withLock { $0 } == 0)
 
         try await persistence.persistStatsUpdate(
-            [Int](), for: destination, hasDeletions: true, commitAnchor: { anchor = 1 }
+            [Int](), for: destination, hasDeletions: true, commitAnchor: { anchor.withLock { $0 = 1 } }
         )
         #expect(await writer.storedEntries.isEmpty)
         #expect(await writer.writes == 1)
-        #expect(anchor == 1)
+        #expect(anchor.withLock { $0 } == 1)
     }
 
-    /// Cancellation before or during a write must not acknowledge the deletion, even if the writer itself ignores cancellation.
+    /// A producer cannot enqueue its next snapshot before the previous one is acknowledged.
+    @Test(.timeLimit(.minutes(1)))
+    func writesWaitForServerAcknowledgement() async throws {
+        let writer = StatsWriterProbe(acknowledgesImmediately: false)
+        let persistence = makePersistence(for: writer)
+        let destination = try statsDestination()
+        let anchor = Mutex(0)
+        var writeCounts = writer.writeCounts.makeAsyncIterator()
+        let task = Swift::Task {
+            try await persistence.persistStatsUpdate(
+                [73], for: destination, hasDeletions: false, commitAnchor: { anchor.withLock { $0 = 1 } }
+            )
+            try await persistence.persistStatsUpdate(
+                [74], for: destination, hasDeletions: false, commitAnchor: { anchor.withLock { $0 = 2 } }
+            )
+        }
+        defer { task.cancel() }
+        #expect(await writeCounts.next() == 1)
+        #expect(await writer.writes == 1)
+        #expect(anchor.withLock { $0 } == 0)
+
+        try await writer.completeNextWrite()
+        #expect(await writeCounts.next() == 2)
+        #expect(anchor.withLock { $0 } == 1)
+        try await writer.completeNextWrite()
+        try await task.value
+        #expect(anchor.withLock { $0 } == 2)
+    }
+
+    /// A server rejection arriving after enqueue leaves the deletion replayable until a later write succeeds.
+    @Test(.timeLimit(.minutes(1)))
+    func delayedDeletionRejectionCanBeReplayed() async throws {
+        let writer = StatsWriterProbe(storedEntries: [73], acknowledgesImmediately: false)
+        let persistence = makePersistence(for: writer)
+        let destination = try statsDestination()
+        let anchor = Mutex(0)
+        var writeCounts = writer.writeCounts.makeAsyncIterator()
+        let first = Swift::Task { @Sendable in
+            try await persistence.persistStatsUpdate(
+                [Int](), for: destination, hasDeletions: true, commitAnchor: { anchor.withLock { $0 = 1 } }
+            )
+        }
+        defer { first.cancel() }
+        #expect(await writeCounts.next() == 1)
+        #expect(anchor.withLock { $0 } == 0)
+        try await writer.completeNextWrite(error: StatsWriterProbe.Failure.rejected)
+        await #expect(throws: StatsWriterProbe.Failure.self) { try await first.value }
+        #expect(anchor.withLock { $0 } == 0)
+
+        let replay = Swift::Task { @Sendable in
+            try await persistence.persistStatsUpdate(
+                [Int](), for: destination, hasDeletions: true, commitAnchor: { anchor.withLock { $0 = 1 } }
+            )
+        }
+        defer { replay.cancel() }
+        #expect(await writeCounts.next() == 2)
+        try await writer.completeNextWrite()
+        try await replay.value
+        #expect(await writer.writes == 2)
+        #expect(anchor.withLock { $0 } == 1)
+    }
+
+    /// Cancellation before or during enqueue must not acknowledge the deletion.
     @Test(arguments: [false, true])
     func cancellationPreservesTheAnchor(cancelDuringWrite: Bool) async throws {
         let destination = try statsDestination()
         let task = Swift::Task {
             let writer = StatsWriterProbe(cancelDuringWrite: cancelDuringWrite)
-            let persistence = HealthKitStatsCalculator.StatsPersistence(writer: writer)
-            var didCommitAnchor = false
+            let persistence = makePersistence(for: writer)
+            let didCommitAnchor = Mutex(false)
             if !cancelDuringWrite {
                 withUnsafeCurrentTask { $0?.cancel() }
             }
             await #expect(throws: CancellationError.self) {
                 try await persistence.persistStatsUpdate(
-                    [Int](), for: destination, hasDeletions: true, commitAnchor: { didCommitAnchor = true }
+                    [Int](), for: destination, hasDeletions: true, commitAnchor: { didCommitAnchor.withLock { $0 = true } }
                 )
             }
-            return (await writer.writes > 0, didCommitAnchor)
+            return (await writer.writes > 0, didCommitAnchor.withLock { $0 })
         }
         let (didWrite, didCommitAnchor) = await task.value
         #expect(didWrite == cancelDuringWrite)
         #expect(!didCommitAnchor)
+    }
+
+    /// Cancelling a pending acknowledgement returns promptly and a late success cannot advance its anchor.
+    @Test(.timeLimit(.minutes(1)))
+    func cancellationBeforeAcknowledgementIgnoresLateCompletion() async throws {
+        let writer = StatsWriterProbe(acknowledgesImmediately: false)
+        let persistence = makePersistence(for: writer)
+        let destination = try statsDestination()
+        let anchor = Mutex(0)
+        var writeCounts = writer.writeCounts.makeAsyncIterator()
+        let task = Swift::Task {
+            try await persistence.persistStatsUpdate(
+                [Int](), for: destination, hasDeletions: true, commitAnchor: { anchor.withLock { $0 = 1 } }
+            )
+        }
+        defer { task.cancel() }
+        #expect(await writeCounts.next() == 1)
+        task.cancel()
+        await #expect(throws: CancellationError.self) { try await task.value }
+        #expect(anchor.withLock { $0 } == 0)
+        try await writer.completeNextWrite()
+        #expect(anchor.withLock { $0 } == 0)
+    }
+
+    private func makePersistence(for writer: StatsWriterProbe) -> HealthKitStatsCalculator.StatsPersistence {
+        .init(writer: writer)
     }
 
     private func statsDestination() throws -> HealthKitStatsCalculator.StatsDocumentDestination {

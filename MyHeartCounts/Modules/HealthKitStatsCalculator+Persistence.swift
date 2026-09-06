@@ -8,7 +8,6 @@
 
 import FirebaseFirestore
 import Foundation
-import SpeziFirestore
 
 
 extension HealthKitStatsCalculator {
@@ -19,7 +18,10 @@ extension HealthKitStatsCalculator {
     }
 
     protocol StatsDocumentWriting: Sendable {
-        func writeStatsDocument<Entry: Codable & Sendable>(_ entries: [Entry], to destination: StatsDocumentDestination) async throws
+        func writeStatsDocument<Entry: Codable & Sendable>(
+            _ entries: [Entry],
+            to destination: StatsDocumentDestination
+        ) async throws
     }
 
     /// Shared by a calculator run; tests supply an in-memory writer instead of Firestore.
@@ -37,7 +39,6 @@ extension HealthKitStatsCalculator {
             if !entries.isEmpty || hasDeletions {
                 try await writer.writeStatsDocument(entries, to: destination)
             }
-            // The writer may finish successfully even after this task was canceled while awaiting its response.
             try Task.checkCancellation()
             commitAnchor()
         }
@@ -47,29 +48,56 @@ extension HealthKitStatsCalculator {
         /// Capture the account's reference for the run, rather than resolving the current account during each write.
         let accountDoc: DocumentReference
 
-        func writeStatsDocument<Entry: Codable & Sendable>(_ entries: [Entry], to destination: StatsDocumentDestination) async throws {
+        /// Firestore's completion waits for the server; cancel only our wait, leaving the SDK's queued write intact.
+        private static func waitForCompletion(
+            _ start: (@escaping @Sendable ((any Error)?) -> Void) throws -> Void
+        ) async throws {
+            try Task.checkCancellation()
+            let (result, continuation) = AsyncThrowingStream<Void, any Error>.makeStream()
+            try start { error in
+                continuation.finish(throwing: error)
+            }
+            for try await _ in result { }
+            // AsyncThrowingStream ends promptly on cancellation; a late server callback cannot resume this operation.
+            try Task.checkCancellation()
+        }
+
+        func writeStatsDocument<Entry: Codable & Sendable>(
+            _ entries: [Entry],
+            to destination: StatsDocumentDestination
+        ) async throws {
             try Task.checkCancellation()
             let doc = accountDoc
                 .collection("stats")
                 .document(destination.metricId.rawValue)
                 .collection("months")
                 .document(destination.month.documentId)
-            do {
-                // The explicit cast selects the Codable-encoding overload. Only replace this source's contribution.
-                try await doc.updateData([
-                    FieldPath([destination.entriesKey.rawValue, DataSourceID.healthKit.rawValue]): entries
-                ] as [AnyHashable: any Codable])
-            } catch let error as NSError where error.code == FirestoreErrorCode.notFound.rawValue {
-                guard !entries.isEmpty else {
-                    // No old contribution exists to clear, so an empty document need not be created.
-                    return
+            let sourceField = FieldPath([destination.entriesKey.rawValue, DataSourceID.healthKit.rawValue])
+            if entries.isEmpty {
+                // Clear only an existing contribution; a deletion must not create an empty month document.
+                try await Self.waitForCompletion { completion in
+                    doc.updateData([sourceField: [Any]()]) { error in
+                        completion((error as NSError?)?.code == FirestoreErrorCode.notFound.rawValue ? nil : error)
+                    }
                 }
-                let statsDoc = MonthlyStatsDocument(
-                    metric: destination.metricId,
-                    entriesKey: destination.entriesKey,
-                    entriesBySourceId: [.healthKit: entries]
-                )
-                try await doc.setData(from: statsDoc)
+                return
+            }
+            let statsDoc = MonthlyStatsDocument(
+                metric: destination.metricId,
+                entriesKey: destination.entriesKey,
+                entriesBySourceId: [.healthKit: entries]
+            )
+            // Only replace HealthKit's source, and wait for acknowledgement before producing another full snapshot.
+            try await Self.waitForCompletion { completion in
+                try doc.setData(from: statsDoc, mergeFields: ["version", "metric", sourceField], completion: completion)
+            }
+        }
+
+        /// Drain writes queued before cancellation or a previous launch before producing more snapshots.
+        /// Firestore's barrier covers all pending writes for the current user, including other collections.
+        func waitForPendingWrites() async throws {
+            try await Self.waitForCompletion { completion in
+                accountDoc.firestore.waitForPendingWrites(completion: completion)
             }
         }
     }

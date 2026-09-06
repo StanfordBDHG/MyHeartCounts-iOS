@@ -27,7 +27,7 @@ import UIKit
 final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
     private struct Run {
         let id: UUID
-        let month: DateComponents
+        var month: DateComponents
         let task: Task<Void, Never>
         var needsRestart = false
     }
@@ -44,6 +44,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
     /// The active run, or its canceled task while shutdown is finishing.
     private let currentRun: Mutex<Run?> = .init(nil)
     
+    /// Whether calculation is enabled, including while waiting for a network connection.
     var isActive: Bool {
         currentRun.withLock { $0.map { !$0.task.isCancelled } ?? false }
     }
@@ -159,7 +160,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             guard !Task.isCancelled else {
                 return
             }
-            await self._run(id: id, now: now, calendar: calendar)
+            await self.runWhenConnected(id: id)
         }
         run = Run(id: id, month: month, task: task)
         // Refreshing an existing run does not transfer ownership to a background caller.
@@ -174,8 +175,20 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
     }
 
+    private func commitStatsAnchor(runId: UUID, _ commit: () -> Void) {
+        currentRun.withLock { run in
+            // Serialize anchor updates with stop/logout so a finishing write cannot undo an anchor reset.
+            guard !Task.isCancelled, run?.id == runId, run?.task.isCancelled == false else {
+                return
+            }
+            commit()
+        }
+    }
+
     @concurrent
-    private func _run(id: UUID, now: Date, calendar: Calendar) async {
+    func runQueries(id: UUID) async {
+        // The connection monitor outlives this attempt. Allow enroll/foreground refresh to retry an early exit.
+        defer { workerDidExit(runId: id) }
         await account.waitForAccountDetailsReady()
         guard !Task.isCancelled else {
             return
@@ -189,7 +202,33 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             return
         }
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
-        let persistence = StatsPersistence(writer: FirestoreStatsWriter(accountDoc: accountDoc))
+        let writer = FirestoreStatsWriter(accountDoc: accountDoc)
+        do {
+            // Cancellation cannot retract writes already queued by Firestore. Drain them before a new run
+            // submits more, including after reconnects and app restarts while the backend is unreachable.
+            try await writer.waitForPendingWrites()
+        } catch {
+            if !Task.isCancelled {
+                logger.error("Unable to finish pending Firestore writes: \(error)")
+            }
+            return
+        }
+        await processMetrics(since: enrollmentDate, persistence: StatsPersistence(writer: writer), runId: id)
+    }
+
+    private func processMetrics(since enrollmentDate: Date, persistence: StatsPersistence, runId id: UUID) async {
+        guard !Task.isCancelled else {
+            return
+        }
+        // A run can spend days waiting for connectivity or pending writes. Select its months only now.
+        let now = Date.now
+        let calendar = Calendar.current
+        currentRun.withLock { run in
+            if run?.id == id {
+                run?.month = calendar.dateComponents([.era, .year, .month], from: now)
+                run?.needsRestart = false
+            }
+        }
         await withDiscardingTaskGroup { taskGroup in
             taskGroup.addTask {
                 for await _ in NotificationCenter.default.notifications(named: UIApplication.significantTimeChangeNotification) {
@@ -582,7 +621,7 @@ extension HealthKitStatsCalculator {
                     entries,
                     for: .init(metricId: input.metricId, month: month, entriesKey: input.entriesKey),
                     hasDeletions: !changes.deleted.isEmpty && changes.added.isEmpty,
-                    commitAnchor: { self.queryAnchors[input.sampleType, month] = anchor }
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[input.sampleType, month] = anchor } }
                 )
             }
         }
@@ -627,7 +666,7 @@ extension HealthKitStatsCalculator {
                     entries,
                     for: .init(metricId: input.metricId, month: month, entriesKey: .samples),
                     hasDeletions: !result.deletedObjects.isEmpty,
-                    commitAnchor: { self.queryAnchors[input.sampleType, month] = result.newAnchor }
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[input.sampleType, month] = result.newAnchor } }
                 )
             }
         }
@@ -694,7 +733,7 @@ extension HealthKitStatsCalculator {
                     entries,
                     for: .init(metricId: .sleep, month: month, entriesKey: .sessions),
                     hasDeletions: !result.deletedObjects.isEmpty,
-                    commitAnchor: { self.queryAnchors[.sleepAnalysis, month] = result.newAnchor }
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[.sleepAnalysis, month] = result.newAnchor } }
                 )
             }
         }
@@ -739,7 +778,7 @@ extension HealthKitStatsCalculator {
                     entries,
                     for: .init(metricId: .bloodPressure, month: month, entriesKey: .samples),
                     hasDeletions: !result.deletedObjects.isEmpty,
-                    commitAnchor: { self.queryAnchors[.bloodPressure, month] = result.newAnchor }
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[.bloodPressure, month] = result.newAnchor } }
                 )
             }
         }
