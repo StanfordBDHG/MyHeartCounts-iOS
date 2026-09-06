@@ -77,7 +77,7 @@ struct CVHScore: DynamicProperty {
     private var statsBodyWeight
     
     // the most recent height, however old: adults don't grow, and the stats documents cover the month of the latest
-    // height sample regardless of when the participant enrolled (see `HealthKitStatsCalculator.Coverage`).
+    // height sample even when it predates both enrollment and the chart history.
     @StatsDocumentsQuery<QuantitySample>(metric: .height, timeRange: .ever, aggregationKind: .avg)
     private var statsHeight
     

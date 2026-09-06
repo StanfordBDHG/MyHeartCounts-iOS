@@ -72,8 +72,6 @@ private actor StatsWriterProbe: HealthKitStatsCalculator.StatsDocumentWriting {
 
 @Suite
 struct HealthKitStatsCalculatorTests {
-    private typealias Coverage = HealthKitStatsCalculator.Coverage
-    
     private let calendar: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Europe/Berlin")! // swiftlint:disable:this force_unwrapping
@@ -88,53 +86,67 @@ struct HealthKitStatsCalculatorTests {
     /// A fresh run after suspension covers every missed month, including across New Year.
     @Test(arguments: [1, 3])
     func restartedCoverageIncludesMissedMonths(monthsElapsed: Int) throws {
-        let enrollment = try date(2026, 12, 15)
-        let initialDate = try date(2026, 12, 31)
+        let initialDate = try date(2026, 12, 15)
         let resumedDate = try #require(calendar.date(byAdding: .month, value: monthsElapsed, to: initialDate))
-        let months = HealthKitStatsCalculator.months(since: enrollment, coverage: .sinceEnrollment, now: resumedDate, calendar: calendar)
-        let expected = monthsElapsed == 1 ? ["2026-12", "2027-01"] : ["2026-12", "2027-01", "2027-02", "2027-03"]
+        let months = HealthKitStatsCalculator.months(since: initialDate, now: resumedDate, calendar: calendar)
+        let expected = (monthsElapsed...12).map { String(format: "2026-%02d", $0) }
+            + (1...monthsElapsed).map { String(format: "2027-%02d", $0) }
         #expect(months.map(\.documentId) == expected)
         for (previous, next) in zip(months, months.dropFirst()) {
             #expect(previous.range.upperBound == next.range.lowerBound)
         }
     }
     
-    /// A fresh enrollee's coverage reaches back the requested number of months before the current one.
-    @Test
-    func coverageReachesBackBeforeTheEnrollment() throws {
+    /// All metrics cover the full chart window, including both partially displayed months, in the local calendar.
+    @Test(arguments: ["GMT", "Europe/Berlin", "Asia/Kathmandu"])
+    func coverageIncludesTheFullYear(timeZone: String) throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: timeZone))
+        let now = try #require(calendar.date(from: DateComponents(year: 2026, month: 9, day: 4)))
         let months = HealthKitStatsCalculator.months(
-            since: try date(2026, 9, 2),
-            coverage: Coverage(precedingMonths: 3),
-            now: try date(2026, 9, 4),
+            since: now.addingTimeInterval(-86400),
+            now: now,
             calendar: calendar
         )
-        #expect(months.map(\.documentId) == ["2026-06", "2026-07", "2026-08", "2026-09"])
+        #expect(months.count == 13)
+        #expect(months.first?.documentId == "2025-09")
+        #expect(months.last?.documentId == "2026-09")
+        #expect(months.first?.range.lowerBound == calendar.date(from: DateComponents(year: 2025, month: 9, day: 1)))
+        #expect(months.last?.range.upperBound == calendar.date(from: DateComponents(year: 2026, month: 10, day: 1)))
+        for (previous, next) in zip(months, months.dropFirst()) {
+            #expect(previous.range.upperBound == next.range.lowerBound)
+        }
     }
     
-    /// `.sinceEnrollment` covers the enrollment month onwards, and nothing before it.
-    @Test
-    func sinceEnrollmentCoversOnlyTheEnrollmentMonthOnwards() throws {
+    /// On the last day, the chart starts at a month boundary and needs only twelve complete months.
+    @Test(arguments: [
+        (2026, 9, 30, "2025-10", "2026-09"),
+        (2024, 2, 29, "2023-03", "2024-02"),
+        (2025, 2, 28, "2024-03", "2025-02"),
+        (2026, 12, 31, "2026-01", "2026-12")
+    ])
+    func coverageAtMonthEnd(year: Int, month: Int, day: Int, firstMonth: String, lastMonth: String) throws {
         let months = HealthKitStatsCalculator.months(
-            since: try date(2026, 9, 2),
-            coverage: .sinceEnrollment,
-            now: try date(2026, 9, 4),
+            since: try date(year, month, 1),
+            now: try date(year, month, day),
             calendar: calendar
         )
-        #expect(months.map(\.documentId) == ["2026-09"])
+        #expect(months.count == 12)
+        #expect(months.first?.documentId == firstMonth)
+        #expect(months.last?.documentId == lastMonth)
     }
     
-    /// For a participant who enrolled long ago, the coverage floor doesn't shorten the months since the enrollment.
-    @Test
-    func coverageDoesNotShortenTheMonthsSinceTheEnrollment() throws {
+    /// Earlier enrollment extends the window beyond the minimum chart history.
+    @Test(arguments: [(2026, 21), (2036, 141)])
+    func coverageIncludesEarlierEnrollment(year: Int, expectedCount: Int) throws {
         let months = HealthKitStatsCalculator.months(
             since: try date(2025, 1, 15),
-            coverage: Coverage(precedingMonths: 3),
-            now: try date(2026, 9, 4),
+            now: try date(year, 9, 4),
             calendar: calendar
         )
-        #expect(months.count == 21)
+        #expect(months.count == expectedCount)
         #expect(months.first?.documentId == "2025-01")
-        #expect(months.last?.documentId == "2026-09")
+        #expect(months.last?.documentId == "\(year)-09")
     }
     
     /// A month's range spans exactly that month, in the calendar's time zone.

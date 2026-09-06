@@ -197,7 +197,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             logger.error("no accountId")
             return
         }
-        guard let enrollmentDate = await account.details?.dateOfEnrollment else {
+        guard let enrollmentDate = await account.details?.dateOfEnrollment, enrollmentDate < .now else {
             logger.error("no enrollment date")
             return
         }
@@ -223,6 +223,7 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         // A run can spend days waiting for connectivity or pending writes. Select its months only now.
         let now = Date.now
         let calendar = Calendar.current
+        let months = Self.months(since: enrollmentDate, now: now, calendar: calendar)
         currentRun.withLock { run in
             if run?.id == id {
                 run?.month = calendar.dateComponents([.era, .year, .month], from: now)
@@ -237,19 +238,17 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             }
             for descriptor in Self.bucketedDescriptors {
                 taskGroup.addTask {
-                    let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage, now: now, calendar: calendar)
                     await self.process(descriptor, months: months, persistence: persistence, runId: id)
                 }
             }
             for descriptor in Self.individualSamplesDescriptors {
                 taskGroup.addTask {
-                    let months = await self.months(since: enrollmentDate, descriptor: descriptor, now: now, calendar: calendar, runId: id)
-                    await self.process(descriptor, months: months, persistence: persistence, runId: id)
+                    let individualMonths = await self.months(for: descriptor, extending: months, calendar: calendar, runId: id)
+                    await self.process(descriptor, months: individualMonths, persistence: persistence, runId: id)
                 }
             }
             for descriptor in NonstandardSamplesRunDescriptor.allCases {
                 taskGroup.addTask {
-                    let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage, now: now, calendar: calendar)
                     await self.process(descriptor, months: months, persistence: persistence, runId: id)
                 }
             }
@@ -396,40 +395,20 @@ extension HealthKitStatsCalculator {
     }
 
     // private but testable
-    /// How far back a metric's stats documents reach, independently of when the participant enrolled.
+    /// The stats history to maintain for app and server consumers: all enrollment months, with at least twelve months of history.
     ///
-    /// Sized after the widest window the metric's readers (the CVH score, the dashboard tiles) ask for: without this,
-    /// a freshly enrolled participant's dashboard would stay empty for those metrics until enough of the study has passed,
-    /// and for slow-moving values such as weight a reading taken shortly before enrolling would never show up at all.
-    struct Coverage {
-        /// Covers the months since the enrollment, and nothing before that.
-        static let sinceEnrollment = Self(precedingMonths: 0)
-        
-        /// The number of months before the current one that must be covered, regardless of the enrollment date.
-        let precedingMonths: Int
-        /// Whether the month of the metric's most recent sample must be covered as well, however old that sample is.
-        ///
-        /// For values that are entered once and then stay valid (height), the readers want the latest sample rather than
-        /// a window, so covering a fixed number of months would miss it for everyone whose sample is older than that.
-        var includesLatestSample = false
-    }
-    
-    // private but testable
-    /// The months a metric's stats should cover: every month from the participant's enrollment up to the current one,
-    /// extended backwards so that at least the coverage's preceding months are included as well.
+    /// Starts at the earlier of the enrollment month and the month containing twelve months before the end of today.
+    /// Participants enrolled longer ago retain live updates for their full enrollment history.
     static func months(
         since enrollmentDate: Date,
-        coverage: Coverage,
         now: Date = .now,
         calendar cal: Calendar = .current
     ) -> [StatsMonth] {
-        guard enrollmentDate < now else {
+        let end = cal.startOfNextDay(for: now)
+        guard let start = cal.date(byAdding: .month, value: -12, to: end) else {
             return []
         }
-        var firstMonthStart = cal.startOfMonth(for: enrollmentDate)
-        if coverage.precedingMonths > 0, let coverageStart = cal.date(byAdding: .month, value: -coverage.precedingMonths, to: now) {
-            firstMonthStart = min(firstMonthStart, cal.startOfMonth(for: coverageStart))
-        }
+        let firstMonthStart = min(cal.startOfMonth(for: enrollmentDate), cal.startOfMonth(for: start))
         return cal
             .dates(
                 byAdding: .month,
@@ -458,19 +437,17 @@ extension HealthKitStatsCalculator {
         return StatsMonth(year: year, month: month, range: monthStart..<upperBound)
     }
 
-    /// The months an individual-samples metric's stats should cover, additionally including the month of the metric's
-    /// most recent sample if its coverage asks for that — however long ago that sample was recorded.
+    /// Height also covers the month of its latest measurement, however long ago it was recorded.
     private func months(
-        since enrollmentDate: Date,
-        descriptor: IndividualSamplesRunDescriptor,
-        now: Date,
+        for descriptor: IndividualSamplesRunDescriptor,
+        extending months: [StatsMonth],
         calendar: Calendar,
         runId: UUID
     ) async -> [StatsMonth] {
-        var months = Self.months(since: enrollmentDate, coverage: descriptor.coverage, now: now, calendar: calendar)
-        guard descriptor.coverage.includesLatestSample else {
+        guard descriptor.sampleType == .height else {
             return months
         }
+        var months = months
         do {
             let latestSample = try await healthKit.query(
                 descriptor.sampleType,
@@ -507,69 +484,49 @@ extension HealthKitStatsCalculator {
         let mode: AggregationMode
         let aggregationInterval: HealthKit.AggregationInterval
         let entriesKey: MonthlyStatsDocumentEntriesKey
-        let coverage: Coverage
     }
     
     private struct IndividualSamplesRunDescriptor {
         let sampleType: SampleType<HKQuantitySample>
         /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
         let metricId: MetricID
-        let coverage: Coverage
     }
     
     private enum NonstandardSamplesRunDescriptor: CaseIterable {
         case sleepSessions
         case bloodPressure
-        
-        var coverage: Coverage {
-            switch self {
-            case .sleepSessions:
-                // the CVH score reads the last two weeks of sleep sessions
-                Coverage(precedingMonths: 1)
-            case .bloodPressure:
-                // the CVH score reads the last three months of blood pressure readings
-                Coverage(precedingMonths: 3)
-            }
-        }
     }
     
     
     // one run per metric in the spec's Metrics table (docs/MHCDataSpec.md)
-    // the bucketed metrics' readers only look back a week, and every covered month gets rewritten in full whenever its
-    // statistics change, so these deliberately don't reach back before the enrollment.
     private static let bucketedDescriptors: [StatsRunDescriptor] = [
         .init(
             sampleType: .stepCount,
             metricId: .steps,
             mode: .sum,
             aggregationInterval: .hour,
-            entriesKey: .hourly,
-            coverage: .sinceEnrollment
+            entriesKey: .hourly
         ),
         .init(
             sampleType: .appleExerciseTime,
             metricId: .exerciseTime,
             mode: .sum,
             aggregationInterval: .hour,
-            entriesKey: .hourly,
-            coverage: .sinceEnrollment
+            entriesKey: .hourly
         ),
         .init(
             sampleType: .heartRate,
             metricId: .heartRate,
             mode: .minMaxAvg,
             aggregationInterval: .hour,
-            entriesKey: .hourly,
-            coverage: .sinceEnrollment
+            entriesKey: .hourly
         )
     ]
     
-    // the CVH score reads the last three months of weight, the last two weeks of BMI, and the most recent height
-    // regardless of its age (adults don't grow, and a height is typically entered once, long before enrolling).
     private static let individualSamplesDescriptors: [IndividualSamplesRunDescriptor] = [
-        .init(sampleType: .bodyMass, metricId: .weight, coverage: Coverage(precedingMonths: 3)),
-        .init(sampleType: .height, metricId: .height, coverage: Coverage(precedingMonths: 0, includesLatestSample: true)),
-        .init(sampleType: .bodyMassIndex, metricId: .bmi, coverage: Coverage(precedingMonths: 1))
+        .init(sampleType: .bodyMass, metricId: .weight),
+        .init(sampleType: .height, metricId: .height),
+        .init(sampleType: .bodyMassIndex, metricId: .bmi)
     ]
     
     
