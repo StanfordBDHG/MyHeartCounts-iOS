@@ -58,6 +58,20 @@ struct HealthKitStatsCalculatorTests {
     private func date(_ year: Int, _ month: Int, _ day: Int) throws -> Date {
         try #require(calendar.date(from: DateComponents(year: year, month: month, day: day)))
     }
+
+    /// A fresh run after suspension covers every missed month, including across New Year.
+    @Test(arguments: [1, 3])
+    func restartedCoverageIncludesMissedMonths(monthsElapsed: Int) throws {
+        let enrollment = try date(2026, 12, 15)
+        let initialDate = try date(2026, 12, 31)
+        let resumedDate = try #require(calendar.date(byAdding: .month, value: monthsElapsed, to: initialDate))
+        let months = HealthKitStatsCalculator.months(since: enrollment, coverage: .sinceEnrollment, now: resumedDate, calendar: calendar)
+        let expected = monthsElapsed == 1 ? ["2026-12", "2027-01"] : ["2026-12", "2027-01", "2027-02", "2027-03"]
+        #expect(months.map(\.documentId) == expected)
+        for (previous, next) in zip(months, months.dropFirst()) {
+            #expect(previous.range.upperBound == next.range.lowerBound)
+        }
+    }
     
     /// A fresh enrollee's coverage reaches back the requested number of months before the current one.
     @Test

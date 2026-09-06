@@ -18,27 +18,42 @@ import SpeziAccount
 import SpeziFirestore
 import SpeziFoundation
 import SpeziHealthKit
+import SwiftUI
 import Synchronization
+import UIKit
 
 
 @Observable
 final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
+    private struct Run {
+        let id: UUID
+        let month: DateComponents
+        let task: Task<Void, Never>
+        var needsRestart = false
+    }
+
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(Account.self) private var account
     @ObservationIgnored @Dependency(AccountNotifications.self) private var accountNotifications
     @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
+    @ObservationIgnored @Dependency(Lifecycle.self) private var lifecycle
     // swiftlint:enable attributes
     
-    /// The currently-active long-lived stats processing task.
-    private let task: Mutex<Task<Void, Never>?> = .init(nil)
+    /// The active run, or its canceled task while shutdown is finishing.
+    private let currentRun: Mutex<Run?> = .init(nil)
     
     var isActive: Bool {
-        task.withLock { $0 != nil }
+        currentRun.withLock { $0.map { !$0.task.isCancelled } ?? false }
     }
     
     func configure() {
+        lifecycle.onChange(of: \.scenePhase) { [weak self] oldValue, newValue in
+            if oldValue != .active, newValue == .active {
+                self?.refreshIfNeeded()
+            }
+        }
         do {
             try backgroundTasks.register(.healthResearch(
                 id: .healthStatsRefresh,
@@ -87,39 +102,84 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
     }
     
-    /// Starts the calculator, unless it is already running.
+    /// Starts the calculator, or replaces a run whose month changed or whose queries exited.
     ///
     /// - returns: whether this call is the one that started it.
     @discardableResult
     func start() -> Bool {
-        task.withLock { task in
-            guard task == nil else {
-                return false
-            }
-            task = Task {
-                await self._run()
-            }
-            return true
-        }
+        currentRun.withLock { start(&$0) }
     }
     
     func stop() {
-        task.withLock { task in
-            exchange(&task, with: nil)?.cancel()
+        // Retain the task until it finishes so a later start can wait for its writes and queries to stop.
+        currentRun.withLock { $0?.task.cancel() }
+    }
+
+    private func refreshIfNeeded() {
+        currentRun.withLock { run in
+            guard run?.task.isCancelled == false else {
+                return
+            }
+            _ = start(&run)
         }
     }
-    
-    
-    @concurrent
-    private func _run() async {
-        defer {
-            if !Task.isCancelled {
-                // should never reach here (the process functions below should all monitor for new data indefinitely),
-                // but if we do end up here, we clear out the task just in case
-                stop()
+
+    private func restartIfMonthChanged(runId: UUID) {
+        currentRun.withLock { run in
+            let month = Calendar.current.dateComponents([.era, .year, .month], from: .now)
+            guard run?.id == runId, run?.task.isCancelled == false, run?.month != month else {
+                return
+            }
+            run?.needsRestart = true
+            _ = start(&run)
+        }
+    }
+
+    private func start(_ run: inout Run?) -> Bool {
+        let now = Date.now
+        let calendar = Calendar.current
+        let month = calendar.dateComponents([.era, .year, .month], from: now)
+        let wasActive = run.map { !$0.task.isCancelled } ?? false
+        guard !wasActive || run?.month != month || run?.needsRestart == true else {
+            return false
+        }
+        let previousTask = run?.task
+        previousTask?.cancel()
+        let id = UUID()
+        let task = Task {
+            defer {
+                self.currentRun.withLock { run in
+                    if run?.id == id {
+                        run = nil
+                    }
+                }
+            }
+            // Finish the previous run before starting queries that could write the same stats documents.
+            await previousTask?.value
+            guard !Task.isCancelled else {
+                return
+            }
+            await self._run(id: id, now: now, calendar: calendar)
+        }
+        run = Run(id: id, month: month, task: task)
+        // Refreshing an existing run does not transfer ownership to a background caller.
+        return !wasActive
+    }
+
+    private func workerDidExit(runId: UUID) {
+        currentRun.withLock { run in
+            if !Task.isCancelled, run?.id == runId {
+                run?.needsRestart = true
             }
         }
+    }
+
+    @concurrent
+    private func _run(id: UUID, now: Date, calendar: Calendar) async {
         await account.waitForAccountDetailsReady()
+        guard !Task.isCancelled else {
+            return
+        }
         guard let accountId = await account.details?.accountId else {
             logger.error("no accountId")
             return
@@ -131,22 +191,27 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
         let persistence = StatsPersistence(writer: FirestoreStatsWriter(accountDoc: accountDoc))
         await withDiscardingTaskGroup { taskGroup in
+            taskGroup.addTask {
+                for await _ in NotificationCenter.default.notifications(named: UIApplication.significantTimeChangeNotification) {
+                    self.restartIfMonthChanged(runId: id)
+                }
+            }
             for descriptor in Self.bucketedDescriptors {
                 taskGroup.addTask {
-                    let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage)
-                    await self.process(descriptor, months: months, persistence: persistence)
+                    let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage, now: now, calendar: calendar)
+                    await self.process(descriptor, months: months, persistence: persistence, runId: id)
                 }
             }
             for descriptor in Self.individualSamplesDescriptors {
                 taskGroup.addTask {
-                    let months = await self.months(since: enrollmentDate, coverage: descriptor.coverage, latestSampleOf: descriptor.sampleType)
-                    await self.process(descriptor, months: months, persistence: persistence)
+                    let months = await self.months(since: enrollmentDate, descriptor: descriptor, now: now, calendar: calendar, runId: id)
+                    await self.process(descriptor, months: months, persistence: persistence, runId: id)
                 }
             }
             for descriptor in NonstandardSamplesRunDescriptor.allCases {
                 taskGroup.addTask {
-                    let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage)
-                    await self.process(descriptor, months: months, persistence: persistence)
+                    let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage, now: now, calendar: calendar)
+                    await self.process(descriptor, months: months, persistence: persistence, runId: id)
                 }
             }
         }
@@ -333,27 +398,30 @@ extension HealthKitStatsCalculator {
     /// most recent sample if its coverage asks for that — however long ago that sample was recorded.
     private func months(
         since enrollmentDate: Date,
-        coverage: Coverage,
-        latestSampleOf sampleType: SampleType<HKQuantitySample>
+        descriptor: IndividualSamplesRunDescriptor,
+        now: Date,
+        calendar: Calendar,
+        runId: UUID
     ) async -> [StatsMonth] {
-        var months = Self.months(since: enrollmentDate, coverage: coverage)
-        guard coverage.includesLatestSample else {
+        var months = Self.months(since: enrollmentDate, coverage: descriptor.coverage, now: now, calendar: calendar)
+        guard descriptor.coverage.includesLatestSample else {
             return months
         }
         do {
             let latestSample = try await healthKit.query(
-                sampleType,
+                descriptor.sampleType,
                 timeRange: .ever,
                 limit: 1,
                 sortedBy: [SortDescriptor(\.startDate, order: .reverse)]
             ).first
             if let latestSample,
-               let month = Self.month(containing: latestSample.startDate),
+               let month = Self.month(containing: latestSample.startDate, calendar: calendar),
                !months.contains(where: { $0.documentId == month.documentId }) {
                 months.insert(month, at: 0)
             }
         } catch {
-            logger.error("Unable to look up the most recent \(sampleType) sample: \(error)")
+            logger.error("Unable to look up the most recent \(descriptor.sampleType) sample: \(error)")
+            workerDidExit(runId: runId)
         }
         return months
     }
@@ -444,7 +512,8 @@ extension HealthKitStatsCalculator {
     private func process( // swiftlint:disable:this function_body_length
         _ input: StatsRunDescriptor,
         months: [StatsMonth],
-        persistence: StatsPersistence
+        persistence: StatsPersistence,
+        runId: UUID
     ) async {
         let unit = input.sampleType.canonicalUnit
         func imp(month: StatsMonth) async throws { // swiftlint:disable:this function_body_length
@@ -520,6 +589,7 @@ extension HealthKitStatsCalculator {
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
@@ -534,7 +604,8 @@ extension HealthKitStatsCalculator {
     private func process(
         _ input: IndividualSamplesRunDescriptor,
         months: [StatsMonth],
-        persistence: StatsPersistence
+        persistence: StatsPersistence,
+        runId: UUID
     ) async {
         func imp(month: StatsMonth) async throws {
             let unit = input.sampleType.canonicalUnit
@@ -563,6 +634,7 @@ extension HealthKitStatsCalculator {
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
@@ -574,18 +646,18 @@ extension HealthKitStatsCalculator {
     }
     
     
-    private func process(_ descriptor: NonstandardSamplesRunDescriptor, months: [StatsMonth], persistence: StatsPersistence) async {
+    private func process(_ descriptor: NonstandardSamplesRunDescriptor, months: [StatsMonth], persistence: StatsPersistence, runId: UUID) async {
         switch descriptor {
         case .sleepSessions:
-            await runSleepStats(months: months, persistence: persistence)
+            await runSleepStats(months: months, persistence: persistence, runId: runId)
         case .bloodPressure:
-            await runBloodPressureStats(months: months, persistence: persistence)
+            await runBloodPressureStats(months: months, persistence: persistence, runId: runId)
         }
     }
     
     
     @concurrent
-    private func runSleepStats(months: [StatsMonth], persistence: StatsPersistence) async {
+    private func runSleepStats(months: [StatsMonth], persistence: StatsPersistence, runId: UUID) async {
         func imp(month: StatsMonth) async throws {
             // query with a ±1 day margin: sleep sessions typically span midnight, and the underlying HK
             // predicate only matches samples that both start AND end inside the range, which would
@@ -629,6 +701,7 @@ extension HealthKitStatsCalculator {
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
@@ -640,7 +713,7 @@ extension HealthKitStatsCalculator {
     }
     
     @concurrent
-    private func runBloodPressureStats(months: [StatsMonth], persistence: StatsPersistence) async {
+    private func runBloodPressureStats(months: [StatsMonth], persistence: StatsPersistence, runId: UUID) async {
         let unit = SampleType.bloodPressureSystolic.canonicalUnit // mmHg
         func imp(month: StatsMonth) async throws {
             let results = self.healthKit.continuousQuery(
@@ -673,6 +746,7 @@ extension HealthKitStatsCalculator {
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
