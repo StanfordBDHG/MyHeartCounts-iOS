@@ -559,7 +559,7 @@ extension AchievementsManager {
                         .dailyStepCount,
                         value: stepCount,
                         // using start of day here.
-                        timestamp: stats.timeRange.lowerBound
+                        timestamp: stats.startDate
                     )
                 }
             }

@@ -102,7 +102,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--setupTestEnvironment reset"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--setupTestEnvironment login-and-enroll"
@@ -114,19 +114,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--forceEnableDebugMode"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--useFirebaseEmulator"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--overrideFirebaseConfig plist=/Users/lukas/Desktop/MHC.plist"
+            argument = "--useFirebaseEmulator"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--overrideFirebaseConfig plist=GoogleService-Info-Override"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--studyBundle &apos;/Users/lukas/Desktop/MHC StudyDefs/mhcStudyBundle.spezistudybundle.aar&apos;"

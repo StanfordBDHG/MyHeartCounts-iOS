@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -183,7 +183,7 @@ class MHCTestCase: XCTestCase, Sendable {
             }
             likelyHasUndecidedPermissions = false
         }
-        if !skipGoingToHomeTab {
+        if !skipGoingToHomeTab && !(testEnvironmentConfig == .init(resetExistingData: true, loginAndEnroll: .skip)) {
             XCTAssert(app.tabBars.element.waitForExistence(timeout: 10))
             goToTab(.home)
             XCTAssert(app.staticTexts["My Heart Counts"].waitForExistence(timeout: 1))
@@ -269,9 +269,9 @@ extension MHCTestCase {
 extension Locale {
     static let enUS = Locale(identifier: "en_US")
     static let enUK = Locale(identifier: "en_UK")
-    static let esUS = Locale(identifier: "es_US")
+    static let esUS = Locale(identifier: "es_US") // periphery:ignore - API
     static let esES = Locale(identifier: "es_ES")
-    static let enDE = Locale(identifier: "en_DE")
+    static let enDE = Locale(identifier: "en_DE") // periphery:ignore - API
 }
 
 

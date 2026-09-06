@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -70,7 +70,6 @@ struct DemographicsForm<Footer: View>: View {
 
 private struct Impl<Footer: View>: View {
     @Environment(\.locale) private var locale
-    @Environment(HealthKit.self) private var healthKit
     @Environment(StudyManager.self) private var studyManager
     @Environment(DemographicsData.self) private var data
     

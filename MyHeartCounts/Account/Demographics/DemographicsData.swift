@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -120,6 +120,14 @@ final class DemographicsData {
     func populate(from account: Account) {
         self.account = account
         populate(from: account.details ?? AccountDetails())
+    }
+    
+    /// Populates the instance, unless it already has been populated before.
+    func populateIfEmpty(from account: Account) {
+        guard self.account == nil else {
+            return
+        }
+        populate(from: account)
     }
     
     private func populate(from details: AccountDetails) {

@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -8,50 +8,47 @@
 
 import FHIRModelsExtensions
 import Foundation
-import HealthKitOnFHIR
 import ModelsR4
 import SpeziSensorKit
 
 
 extension FHIRExtensionBuilder where Input == SensorKit.DeviceInfo {
     static var sensorKitSourceDevice: Self {
-        Self { (deviceInfo: SensorKit.DeviceInfo, observation) in
-            observation.appendExtension(
-                Extension(
+        Self { (deviceInfo: SensorKit.DeviceInfo, resource) in
+            resource.append(
+                extension: Extension(
                     extension: [
                         Extension(
-                            url: FHIRExtensionUrls.sensorKitSourceDevice.appending(component: "model"),
+                            url: FHIRExtensionURL.sensorKitSourceDevice.appending(component: "model"),
                             value: .string(deviceInfo.model.asFHIRStringPrimitive())
                         ),
                         Extension(
-                            url: FHIRExtensionUrls.sensorKitSourceDevice.appending(component: "name"),
+                            url: FHIRExtensionURL.sensorKitSourceDevice.appending(component: "name"),
                             value: .string(deviceInfo.name.asFHIRStringPrimitive())
                         ),
                         Extension(
-                            url: FHIRExtensionUrls.sensorKitSourceDevice.appending(component: "systemName"),
+                            url: FHIRExtensionURL.sensorKitSourceDevice.appending(component: "systemName"),
                             value: .string(deviceInfo.systemName.asFHIRStringPrimitive())
                         ),
                         Extension(
-                            url: FHIRExtensionUrls.sensorKitSourceDevice.appending(component: "systemVersion"),
+                            url: FHIRExtensionURL.sensorKitSourceDevice.appending(component: "systemVersion"),
                             value: .string(deviceInfo.systemVersion.asFHIRStringPrimitive())
                         ),
                         Extension(
-                            url: FHIRExtensionUrls.sensorKitSourceDevice.appending(component: "productType"),
+                            url: FHIRExtensionURL.sensorKitSourceDevice.appending(component: "productType"),
                             value: .string(deviceInfo.productType.asFHIRStringPrimitive())
                         )
                     ],
-                    url: FHIRExtensionUrls.sensorKitSourceDevice
+                    url: FHIRExtensionURL.sensorKitSourceDevice
                 ),
-                replaceAllExistingWithSameUrl: true
+                behaviour: .replace
             )
         }
     }
 }
 
 
-extension FHIRExtensionUrls {
-    // swiftlint:disable force_unwrapping
-    nonisolated(unsafe) static let sensorKitDomain = "https://bdh.stanford.edu/fhir/defs/SensorKit".asFHIRURIPrimitive()!
-    nonisolated(unsafe) static let sensorKitSourceDevice = "https://bdh.stanford.edu/fhir/defs/SensorKit/sourceDevice".asFHIRURIPrimitive()!
-    // swiftlint:enable force_unwrapping
+extension FHIRExtensionURL {
+    static let sensorKitDomain = Self("https://bdh.stanford.edu/fhir/defs/SensorKit")
+    static let sensorKitSourceDevice = Self("https://bdh.stanford.edu/fhir/defs/SensorKit/sourceDevice")
 }

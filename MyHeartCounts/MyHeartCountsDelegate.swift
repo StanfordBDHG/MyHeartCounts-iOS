@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -54,7 +54,9 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
             AppState()
             AppRefresh()
             MHCBackgroundTasks()
-            ManagedFileUpload {
+            ManagedFileUpload(
+                configuration: .init(isStoredInMemoryOnly: ProcessInfo.isReallyRunningInXCTest)
+            ) {
                 ManagedFileUpload.Category.liveHealthUpload
                 ManagedFileUpload.Category.historicalHealthUpload
                 ManagedFileUpload.Category.healthDeletions
@@ -76,7 +78,6 @@ final class MyHeartCountsDelegate: SpeziAppDelegate {
 
 
 extension ModuleBuilder {
-    // periphery:ignore - implicitly called
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
     }

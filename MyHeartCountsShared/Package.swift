@@ -1,6 +1,6 @@
 // swift-tools-version: 6.2
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -11,7 +11,7 @@ import PackageDescription
 
 
 var packageDeps: [Package.Dependency] = [
-    .package(url: "https://github.com/SchmiedmayerLab/Spezi.git", "0.1.1"..<"0.1.7"),
+    .package(url: "https://github.com/SchmiedmayerLab/Spezi.git", .upToNextMinor(from: "0.2.1")),
     .package(url: "https://github.com/apple/swift-nio.git", from: "2.93.0"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.7.0")
 ]

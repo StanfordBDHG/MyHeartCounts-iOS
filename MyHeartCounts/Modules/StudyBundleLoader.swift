@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -158,7 +158,7 @@ final class StudyBundleLoader: Module, Sendable {
             if let selector = FeatureFlags.overrideFirebaseConfig ?? LocalPreferencesStore.standard[.lastUsedFirebaseConfig],
                let options = try? DeferredConfigLoading.firebaseOptions(for: selector),
                let bucket = options.storageBucket {
-                studyBundleArchiveUrl = Self.url(ofFile: "mhcStudyBundle.\(StudyBundle.fileExtension).aar", inBucket: bucket)
+                studyBundleArchiveUrl = Self.url(ofFile: "mhcStudyBundle.\(StudyBundle.archiveFileExtension)", inBucket: bucket)
             } else {
                 logger.error("No last-used firebase config.")
                 throw .noLastUsedFirebaseConfig
@@ -167,7 +167,7 @@ final class StudyBundleLoader: Module, Sendable {
             studyBundleArchiveUrl = url
         case .bundledWithApp:
             do {
-                studyBundleArchiveUrl = try export(to: .temporaryDirectory, as: .archive)
+                studyBundleArchiveUrl = try export(to: .temporaryDirectory, as: .zstd)
             } catch {
                 throw .unableToCreateLocalBundle(error)
             }
@@ -198,18 +198,17 @@ final class StudyBundleLoader: Module, Sendable {
     private func openDownloadedStudyBundle(at url: URL) async throws(LoadError) -> StudyBundle {
         let dstUrl = self.studyBundlesUrl.appendingPathComponent(UUID().uuidString, conformingTo: .speziStudyBundle)
         // Can we maybe elide the url -> tmpUrl copy here?(!)
-        let tmpUrl = URL.temporaryDirectory.appending(component: UUID().uuidString).appendingPathExtension("\(StudyBundle.fileExtension).aar")
+        let tmpUrl = URL.temporaryDirectory.appending(component: UUID().uuidString).appendingPathExtension(StudyBundle.archiveFileExtension)
         do {
             try fileManager.copyItem(at: url, to: tmpUrl, overwriteExisting: true)
-            defer {
-                try? fileManager.removeItem(at: tmpUrl)
-            }
-            try fileManager.unarchiveDirectory(at: tmpUrl, to: dstUrl)
         } catch {
             throw .unableToFetchFromServer(error)
         }
+        defer {
+            try? fileManager.removeItem(at: tmpUrl)
+        }
         do {
-            return try StudyBundle(bundleUrl: dstUrl)
+            return try StudyBundle.unarchive(tmpUrl, to: dstUrl)
         } catch {
             logger.error("Error opening StudyBundle: \(error)")
             throw .unableToDecode(error)
@@ -236,8 +235,8 @@ final class StudyBundleLoader: Module, Sendable {
                 // we're given a package-style input, rather than an archive.
                 // we simply turn it into an archive, and pass that url on.
                 let dstUrl: URL = .temporaryDirectory
-                    .appending(component: UUID().uuidString).appendingPathExtension("\(StudyBundle.fileExtension).aar")
-                try fileManager.archiveDirectory(at: url, to: dstUrl)
+                    .appending(component: UUID().uuidString).appendingPathExtension(StudyBundle.archiveFileExtension)
+                try StudyBundle(bundleUrl: url).archive(to: dstUrl)
                 return dstUrl
             } else {
                 throw error
@@ -294,29 +293,5 @@ final class StudyBundleLoader: Module, Sendable {
 extension StudyBundleLoader {
     private static func url(ofFile filename: String, inBucket bucketName: String) -> URL {
         "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2F\(filename)?alt=media"
-    }
-}
-
-
-extension URL {
-    fileprivate enum StudyBundleResourceType {
-        case archive
-        case package
-    }
-    
-    fileprivate func studyBundleResourceType() -> StudyBundleResourceType? {
-        guard let values = try? self.resourceValues(forKeys: [.isRegularFileKey, .isDirectoryKey, .isPackageKey]) else {
-            return nil
-        }
-        if values.isRegularFile == true, hasExtension("spezistudybundle.aar") {
-            return .archive
-        } else if values.isDirectory == true, hasExtension("spezistudybundle") {
-            return .package
-        }
-        return nil
-    }
-    
-    private func hasExtension(_ ext: String) -> Bool {
-        lastPathComponent.ends(with: chain(".", ext))
     }
 }

@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -8,11 +8,10 @@
 
 import FirebaseFirestore
 import Foundation
-import HealthKitOnFHIR
 import struct ModelsR4.DateTime
 import struct ModelsR4.FHIRPrimitive
 import struct ModelsR4.FHIRURI
-import class ModelsR4.Period
+import struct ModelsR4.Period
 import enum ModelsR4.ResourceProxy
 import MyHeartCountsShared
 import OSLog
@@ -159,6 +158,8 @@ extension MHCFirestoreQuery {
         typealias QueryInput = MHCFirestoreQuery<Element>.QueryInput
         
         @ObservationIgnored private var listener: (any ListenerRegistration)?
+        /// snapshot generation counter, so that out-of-order decode completions can't overwrite newer data with older data
+        @ObservationIgnored private var snapshotGeneration = 0
         private(set) var elements: [Element] = []
         
         func setup(input: QueryInput, logger: Logger) {
@@ -190,7 +191,7 @@ extension MHCFirestoreQuery {
                 }
                 if let snapshot {
                     Task {
-                        await self.handleSnapshot(snapshot, input: input)
+                        await self.process(snapshot, input: input)
                     }
                 } else if let error {
                     logger.error("encountered error in firebase snapshot listener: \(error)")
@@ -198,22 +199,37 @@ extension MHCFirestoreQuery {
             }
         }
         
+        private func process(_ snapshot: QuerySnapshot, input: QueryInput) async {
+            snapshotGeneration += 1
+            let generation = snapshotGeneration
+            let elements = await decode(snapshot, input: input)
+            guard generation == snapshotGeneration else {
+                // a newer snapshot was already processed
+                return
+            }
+            self.elements = elements
+        }
+        
         @concurrent
-        private func handleSnapshot(_ snapshot: QuerySnapshot, input: QueryInput) async {
-            var elements = await self.elements
-            elements.removeAll(keepingCapacity: true)
+        private func decode(_ snapshot: QuerySnapshot, input: QueryInput) async -> [Element] {
+            var elements: [Element] = []
+            elements.reserveCapacity(snapshot.documents.count)
             for document in snapshot.documents {
                 if let element = input.decode(document) {
                     elements.append(element)
                 }
             }
             elements.sort(using: input.postDecodeSort)
-            if let limit = input.postDecodeLimit, limit > elements.count {
+            if let limit = input.postDecodeLimit, limit < elements.count {
                 elements.removeFirst(elements.count - limit)
             }
-            await MainActor.run {
-                self.elements = elements
-            }
+            return elements
+        }
+        
+        // dropping a `ListenerRegistration` does not detach the listener; it needs an explicit `remove()` call.
+        // (the deinit needs to be isolated so that it can access the non-Sendable `listener` property.)
+        isolated deinit {
+            listener?.remove()
         }
     }
 }

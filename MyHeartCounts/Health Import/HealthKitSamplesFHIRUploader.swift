@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -7,14 +7,14 @@
 //
 
 import Foundation
-import HealthKitOnFHIR
 import SpeziFoundation
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
+import SpeziHealthKitFHIR
 
 
 struct HealthKitSamplesFHIRUploader: BatchProcessor {
-    typealias Output = URL?
+    typealias Output = Void
     
     enum ProcessingError: Error {
         case missingStandard
@@ -22,21 +22,29 @@ struct HealthKitSamplesFHIRUploader: BatchProcessor {
     
     let standard: MyHeartCountsStandard?
     
-    func process<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) async throws -> URL? {
+    func process<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) async throws {
         guard !samples.isEmpty else {
-            return nil
+            return
         }
         if let samples = samples as? [HKClinicalRecord] {
             try await storeSamples(samples)
-            return nil
         } else {
-            return try storeSamples(samples, of: sampleType)
+            guard let standard else {
+                throw ProcessingError.missingStandard
+            }
+            let url = try encodeSamples(samples, of: sampleType)
+            defer {
+                try? FileManager.default.removeItem(at: url)
+            }
+            try await standard.stageHistoricalHealthKitFile(at: url)
         }
     }
     
-    private func storeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
+    func encodeSamples<Sample>(_ samples: consuming [Sample], of sampleType: SampleType<Sample>) throws -> URL {
         let fileManager = FileManager.default
-        let resources = try (consume samples).mapIntoResourceProxies()
+        let resources = try (consume samples).mapIntoResourceProxies(
+            extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions
+        )
         let encoded = try JSONEncoder().encode(consume resources)
         
         let compressed = try (consume encoded).compressed(using: Zstd.self)
@@ -50,6 +58,7 @@ struct HealthKitSamplesFHIRUploader: BatchProcessor {
             throw ProcessingError.missingStandard
         }
         for sample in samples {
+            try Task.checkCancellation()
             try await standard.uploadHealthObservation(sample)
         }
     }

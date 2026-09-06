@@ -31,14 +31,6 @@ Build and Test UI Tests
 
 Screenshots
 
-### ios codeql
-
-```sh
-[bundle exec] fastlane ios codeql
-```
-
-CodeQL
-
 ### ios build
 
 ```sh

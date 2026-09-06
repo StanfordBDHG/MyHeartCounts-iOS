@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -23,7 +23,7 @@ struct QuantityInputRow: View {
     private let limits: Range<Double>?
     private let sampleType: MHCQuantitySampleType
     @Binding private var value: Double?
-    private let unit: HKUnit?
+    private let displayUnit: HKUnit?
     private let allowsDecimalEntry: Bool
     // Note: using a NumberFormatter() instead of the new `FloatingPointFormatStyle<Double>.number` API,
     // because of https://github.com/swiftlang/swift-foundation/issues/135
@@ -40,8 +40,8 @@ struct QuantityInputRow: View {
                 .multilineTextAlignment(.trailing)
                 .keyboardType(allowsDecimalEntry ? .decimalPad : .numberPad)
                 .preference(key: ContainsInvalidInputPreferenceKey.self, value: inputIsOutOfLimits)
-                if let unit, unit != .count() {
-                    Text(unit.unitString)
+                if let displayUnit, displayUnit != .count() {
+                    Text(displayUnit.unitString)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -74,14 +74,14 @@ struct QuantityInputRow: View {
         value: Binding<Double?>,
         limits: Range<Double>?,
         sampleType: MHCQuantitySampleType,
-        unit: HKUnit? = nil,
+        displayUnit: HKUnit? = nil,
         allowsDecimalEntry: AllowsDecimalEntry = .automatic
     ) {
         self.title = title
         self.limits = limits
         self._value = value
         self.sampleType = sampleType
-        self.unit = unit ?? sampleType.displayUnit
+        self.displayUnit = displayUnit ?? sampleType.displayUnit
         self.allowsDecimalEntry = switch allowsDecimalEntry {
         case .automatic:
             !sampleType.prefersNonDecimalValues
@@ -102,7 +102,7 @@ struct QuantityInputRow: View {
         value: Binding<Int?>,
         limits: Range<Double>?,
         sampleType: MHCQuantitySampleType,
-        unit: HKUnit? = nil,
+        displayUnit: HKUnit? = nil,
         allowsDecimalEntry: AllowsDecimalEntry = .automatic
     ) {
         self.title = title
@@ -113,7 +113,7 @@ struct QuantityInputRow: View {
             value.wrappedValue = newValue.flatMap { $0.isNaN ? nil : Int($0) }
         }
         self.sampleType = sampleType
-        self.unit = unit ?? sampleType.displayUnit
+        self.displayUnit = displayUnit ?? sampleType.displayUnit
         self.allowsDecimalEntry = switch allowsDecimalEntry {
         case .automatic:
             !sampleType.prefersNonDecimalValues

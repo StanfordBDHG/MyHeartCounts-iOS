@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -21,7 +21,6 @@ struct AccountOnboarding: View {
     // swiftlint:disable attributes
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(MyHeartCountsStandard.self) private var standard
-    @Environment(Account.self) private var account
     @Environment(ConsentManager.self) private var consentManager
     // swiftlint:enable attributes
     

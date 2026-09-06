@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import HealthKitOnFHIR
 import MyHeartCountsShared
 import OSLog
 import Spezi
@@ -15,6 +14,7 @@ import SpeziAccount
 import SpeziConsent
 import SpeziFirebaseAccount
 import SpeziFoundation
+@_spi(TestingSupport)
 import SpeziHealthKit
 import SpeziHealthKitBulkExport
 import SpeziLocalStorage
@@ -53,6 +53,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(ConsentManager.self) private var consentManager: ConsentManager?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
+    @ObservationIgnored @Dependency(HealthKitStatsCalculator.self) private var healthKitStats: HealthKitStatsCalculator?
     // swiftlint:enable attributes
     
     @ObservationIgnored private let config: Config = LaunchOptions.launchOptions[.setupTestEnvironment]
@@ -125,10 +126,21 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
     }
     
     
+    /// Finalizes the reset of existing data.
+    ///
+    /// The destructive part of the reset will already have happened by the time this function is called.
+    /// In order to preempt various Spezi modules from performing on-load setup work (in their `configure()` functions),
+    /// the app runs ``SetupTestEnvironment/performEarlyResetIfNeeded()`` directly on launch, which deletes all
+    /// on-disk data and resets as much other stuff as it can get its hands on.
+    ///
+    /// This function merely will clean up any remaining state that somehow still exists, or somehow got recreated, or needs live
+    /// Spezi modules to run.
+    /// It also ensures the user is fully logged out, an operation we cannot achieve in ``performEarlyResetIfNeeded()``
+    /// as it requires Firebase being loaded.
     private func resetExistingData() async throws {
         logger.notice("Resetting existing data")
         try await bulkHealthExporter.deleteSessionRestorationInfo(for: .mhcHistoricalDataExport)
-        try fileUploader.clearPendingUploads()
+        try await fileUploader.clearPendingUploads()
         if let studyManager {
             for enrollment in studyManager.studyEnrollments {
                 try await studyManager.unenroll(from: enrollment)
@@ -141,7 +153,13 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
                 // ok
             }
         }
-        LocalPreferencesStore.standard.removeAllEntries(in: .app)
+        do {
+            // we need to carry this over, as the firebase load will already have happened at this point,
+            // and we need this value to exist afterwards.
+            let lastUsedFirebaseConfig = LocalPreferencesStore.standard[.lastUsedFirebaseConfig]
+            LocalPreferencesStore.standard.removeAllEntries(in: .app)
+            LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = lastUsedFirebaseConfig
+        }
         switch config.loginAndEnroll {
         case .skip:
             break
@@ -150,16 +168,24 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             LocalPreferencesStore.standard[.onboardingFlowComplete] = true
         }
         try await Task.sleep(for: .seconds(0.5))
-        do {
-            try localStorage.deleteAll()
-        } catch {
-            try await Task.sleep(for: .seconds(2))
-            try localStorage.deleteAll()
+        // Failure here is non-fatal: `deleteAll()` is documented as not being synchronized against reads or
+        // writes on individual storage keys, so it can lose a race with launch-time module work. Previously an
+        // unrecoverable failure propagated out of `setUp()` and aborted the entire test-environment setup
+        // (including login-and-enroll) -- which is far worse than leaving a stale key behind, especially now
+        // that the directory was already deleted wholesale before any module was initialized.
+        for attempt in 1...3 {
+            do {
+                try localStorage.deleteAll()
+                break
+            } catch {
+                logger.error("localStorage.deleteAll() failed (attempt \(attempt)/3): \(error)")
+                try? await Task.sleep(for: .seconds(2))
+            }
         }
     }
     
     
-    private func loginAndEnroll( // swiftlint:disable:this function_body_length
+    private func loginAndEnroll( // swiftlint:disable:this function_body_length cyclomatic_complexity
         _ credentials: SetupTestEnvironmentConfig.Credentials
     ) async throws {
         logger.notice("Logging in and enrolling into Study using credentials \(String(describing: credentials))")
@@ -201,6 +227,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
             // an error occurred logging in to the test account, and it's not because the account doesn't exist.
             throw error
         }
+        await account.waitForAccountDetailsReady()
         desc = "\(#function) will update study bundle loader"
         // this is important, bc if we're developing locally the study bundle might've been updated since the last time the app was launched.
         let studyBundle = try await studyBundleLoader.update()
@@ -212,6 +239,7 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         try await healthKit.askForAuthorization(for: accessReqs)
         desc = "\(#function) will enroll"
         try await standard.enroll(in: studyBundle)
+        precondition(account.details?.dateOfEnrollment != nil)
         if ClinicalRecordPermissions.isAvailable {
             desc = "\(#function) will ask for clinical access"
             try await _Concurrency.Task.sleep(for: .seconds(1))
@@ -245,7 +273,16 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
                 newDetails.weightInKG = 67
                 newDetails.raceEthnicity = .white
                 newDetails.latinoStatus = LatinoStatusOption.options[0]
-                newDetails.comorbidities = Comorbidities()
+                newDetails.comorbidities = { () -> Comorbidities in
+                    var value = Comorbidities()
+                    guard let heartFailureOption = Comorbidities.Comorbidity.primaryComorbidities.first(where: {
+                        $0.title.localizedString(for: .enUS).contains("Heart Failure")
+                    }) else {
+                        return value
+                    }
+                    value[heartFailureOption] = .selected(startDate: DateComponents())
+                    return value
+                }()
                 newDetails.usRegion = .dc
                 newDetails.householdIncomeUS = HouseholdIncomeUS.options[0]
                 newDetails.educationUS = EducationStatusUS.options[0]
@@ -261,12 +298,20 @@ final class SetupTestEnvironment: Module, EnvironmentAccessible, Sendable {
         }
         
         LocalPreferencesStore.standard[.onboardingFlowComplete] = true
+        if HealthKit.needsBloodPressureAuthFlowFix {
+            // the blood pressure auth issue in 26.5/6 causes the HealthKitStatsCalc's initial run to not correctly cancel despite all sample types being undetermined
+            // (blood pressure simply returns empty results; all others throw an error indicating that the fetch failed).
+            // we could alternatively also solve this by unconditionally forcing a hard cancel-and-restart upon study enrollment.
+            healthKitStats?.stop()
+            healthKitStats?.start()
+        }
         desc = "\(#function) DONE"
     }
 }
 
 
 extension SampleTypesCollection {
+    // periphery:ignore - API
     func onlyClinicalRecordTypes() -> Self {
         filter(isKindOf: SampleType<HKClinicalRecord>.self)
     }
@@ -275,6 +320,7 @@ extension SampleTypesCollection {
         filter(isNotKindOf: SampleType<HKClinicalRecord>.self)
     }
     
+    // periphery:ignore - API
     func filter<Sample>(isKindOf _: SampleType<Sample>.Type) -> Self {
         Self(self.filter { $0 is SampleType<Sample> })
     }

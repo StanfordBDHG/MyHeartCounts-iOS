@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -10,7 +10,6 @@
 @preconcurrency import FirebaseCore
 @preconcurrency import FirebaseFirestore
 @preconcurrency import FirebaseStorage
-import HealthKitOnFHIR
 import OSLog
 @preconcurrency import PDFKit.PDFDocument
 import Spezi
@@ -36,7 +35,6 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
     @Dependency(StudyManager.self) var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?
-    @Dependency(LocalStorage.self) private var localStorage
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(EnvironmentTracking.self) private var environmentTracking: EnvironmentTracking?
     @Dependency(ManagedFileUpload.self) var managedFileUpload
@@ -46,10 +44,12 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(Scheduler.self) var scheduler
     @Dependency(SensorKitDataFetcher.self) private var sensorKitFetcher
     @Dependency(HealthUploadStaging.self) var healthUploadStaging
+    @Dependency(HealthUploadStagingUploader.self) private var healthUploadStagingUploader
     @Dependency(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     @Dependency(NotificationsManager.self) private var notificationsManager
     @Dependency(AppState.self) private var appState
     @Dependency(AchievementsManager.self) var achievementsManager: AchievementsManager?
+    @Dependency(HealthKitStatsCalculator.self) private var healthKitStatsCalc: HealthKitStatsCalculator?
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
     
@@ -100,9 +100,13 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                     try await account.accountService.updateAccountDetails(modifications)
                 }
             }
+            await MainActor.run {
+                precondition(account.details?.dateOfEnrollment != nil)
+            }
             LocalPreferencesStore.standard[.studyActivationDate] = .now
             Swift::Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
+                healthKitStatsCalc?.start()
                 // the .associatedAccount event below will already have called this, but it likely will have failed,
                 // since there was an account logged in, but the enrollment didn't exist yet at that point.
                 // so we call it again after creating the enrollment.
@@ -126,6 +130,15 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
         switch event {
         case .associatedAccount(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
+            if LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] {
+                do {
+                    try await clearPendingAccountData()
+                } catch {
+                    logger.error("Unable to finish cleanup from the previous account: \(error)")
+                    return
+                }
+            }
+            await managedFileUpload.resumePendingUploads()
             Swift::Task {
                 async let updateEnvTracking = environmentTracking?.triggerAll()
                 async let registerNotifications = try? registerRemoteNotifications()
@@ -137,18 +150,20 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
             // not really doing anything in here since each deletion should also trigger an account disassociation, which will then be handled below
         case .disassociatingAccount:
             logger.notice("account did disassociate")
-            try? await performLogoutCleanup(context: .explicitUserLogoutEvent)
-        case let .detailsChanged(old, new):
-            let diff = new.debugDescOfDifference(from: old)
-            if !diff.isEmpty {
-                let text = "Account Details Changed:\n\(new.debugDescOfDifference(from: old))"
-                logger.notice("\(text)")
+            do {
+                try await performLogoutCleanup(context: .explicitUserLogoutEvent)
+            } catch {
+                logger.error("Unable to clear all local account data during logout: \(error)")
             }
+        case .detailsChanged:
+            break
         }
     }
     
     func willLogOut(_ details: AccountDetails) async {
         logger.notice("account is being logged out")
+        LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
+        LocalPreferencesStore.standard[.accountDataGeneration] += 1
         async let updateFCMToken = try? notificationsManager.setFCMToken(nil)
         async let syncAchievements = try? achievementsManager?.syncNow()
         _ = await (updateFCMToken, syncAchievements)
@@ -194,6 +209,10 @@ extension MyHeartCountsStandard {
 
 
 extension MyHeartCountsStandard {
+    private enum PendingAccountDataCleanupError: Error {
+        case failed
+    }
+
     private enum LogoutCleanupContext {
         /// The cleanup is triggered as part of the app's internal on-launch cleanup handling, bc the app noticed that no user is logged in.
         case onLaunchCleanupBcNoUser
@@ -202,11 +221,17 @@ extension MyHeartCountsStandard {
     }
     
     
-    /// - parameter isInternalCleanup: Whether this call is part of the app's internal on-lauch cleanup routine (for the event that no user is logged in),
-    ///     as opposed to in response to the user explicitly logging out of the app.
     @MainActor
     private func performLogoutCleanup(context: LogoutCleanupContext) async throws {
         await logger.notice("performing logout cleanup")
+        // bump the generation here as well (not just in willLogOut): account deletion and SDK-forced sign-outs
+        // never go through willLogOut, and an in-flight upload task holding the old generation must not be able
+        // to write into the freshly cleared staging state once the cleanup below completes.
+        // (flag first, then bump: a concurrent reader that snapshots the new generation must never see the flag still unset.)
+        LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
+        LocalPreferencesStore.standard[.accountDataGeneration] += 1
+        // Account deletion and forced sign-outs bypass the achievement teardown in willLogOut.
+        await achievementsManager?.disassociateFromAccount()
         switch context {
         case .explicitUserLogoutEvent:
             await appState.setIsLoggingOut(true)
@@ -219,11 +244,27 @@ extension MyHeartCountsStandard {
         // we could look into using the `FirebaseApp.deleteApp(_:)` API in combination with attempting to unload the related Spezi modules, but that
         // would be anything but trivial.
         // if the user wants to switch to a different region, the easiest approach currently is to just kill and relaunch the app.
-        try? await managedFileUpload.clearPendingUploads()
-        try? await historicalUploadManager.fullyResetSession(restart: false)
-        try? await healthUploadStaging.clear()
-        await sensorKitFetcher.resetAllQueryAnchors()
-        await clinicalRecordPermissions.resetTracking()
+        var cleanupFailed = false
+        do {
+            try await clearPendingAccountData()
+        } catch {
+            cleanupFailed = true
+            await logger.error("Local account-data cleanup remains pending: \(error)")
+        }
+        await resetLocalStudyState()
+        switch context {
+        case .explicitUserLogoutEvent:
+            await finishExplicitLogout()
+        case .onLaunchCleanupBcNoUser:
+            break
+        }
+        guard !cleanupFailed else {
+            throw PendingAccountDataCleanupError.failed
+        }
+    }
+
+    @MainActor
+    private func resetLocalStudyState() async {
         LocalPreferencesStore.standard[.rejectedHomeTabPromptedActions] = nil
         LocalPreferencesStore.standard[.studyActivationDate] = nil
         let studyManager = await studyManager
@@ -241,37 +282,78 @@ extension MyHeartCountsStandard {
                 }
             }
         }.result
-        switch context {
-        case .onLaunchCleanupBcNoUser:
-            return
-        case .explicitUserLogoutEvent:
-            // Schedule a firestore persistence cleanup for the nect launch.
-            // Ideally we'd have this run immediately, but it only works directly after firebase was loaded.
-            LocalPreferencesStore.standard[.shouldClearFirestoreCacheOnNextLaunch] = true
-        }
-        let isInTestEnvSetup = await setupTestEnvironment.isInSetup
+    }
+
+    @MainActor
+    private func finishExplicitLogout() async {
+        // Schedule a firestore persistence cleanup for the nect launch.
+        // Ideally we'd have this run immediately, but it only works directly after firebase was loaded.
+        LocalPreferencesStore.standard[.shouldClearFirestoreCacheOnNextLaunch] = true
         _Concurrency.Task {
-            guard /*!ProcessInfo.isBeingUITested,*/ !isInTestEnvSetup else {
-                // ^we potentially log out and in as part of the test env setup; we want to skip this
-                await appState.setIsLoggingOut(false)
-                return
-            }
             // it seems that the fact that the account sheet typically is still presented while logging out causes issues with us setting the
             // `onboardingFlowComplete` UserDefaults key being set to true (likely bc the other sheet still being presented prevents SwiftUI from presenting the
             // onboarding sheet, thereby causing it to set the UserDefaults key (which, via a Binding, is used as the onboarding sheet's `isPresented` value)
             // back to false.
             // We try to work around this by waiting a bit, to give the account sheet a chance to dismiss itself.
             try await _Concurrency.Task.sleep(for: .seconds(2))
+            // NOTE: the guard is evaluated *after* the sleep, deliberately. A logout triggered at launch (from a
+            // keychain-restored Firebase session) resolves `isInSetup == false`, because SetupTestEnvironment
+            // hasn't entered `setUp()` yet -- it is still behind `Spezi.loadFirebase` + its 1s sleep. Snapshotting
+            // the guard before the sleep therefore let this task clobber `onboardingFlowComplete` two seconds
+            // later, potentially in the middle of the reset's own login-and-enroll. Re-reading it here, and
+            // bailing if somebody signed in during the window, keeps that from happening.
+            let isInTestEnvSetup = await setupTestEnvironment.isInSetup
+            let isSignedIn = (await account?.signedIn) ?? false
+            guard /*!ProcessInfo.isBeingUITested,*/ !isInTestEnvSetup, !isSignedIn else {
+                // ^we potentially log out and in as part of the test env setup; we want to skip this
+                await appState.setIsLoggingOut(false)
+                return
+            }
             await logger.notice("Triggering Onboarding Flow")
             LocalPreferencesStore.standard[.onboardingFlowComplete] = false
             await appState.setIsLoggingOut(false)
         }
     }
+
+    private func clearPendingAccountData() async throws {
+        await healthUploadStagingUploader.cancelAndWaitForQuiescence()
+        await sensorKitFetcher.cancelAllActiveCollection()
+
+        func attempt(_ name: String, _ operation: () async throws -> Void) async -> Bool {
+            do {
+                try await operation()
+                return true
+            } catch {
+                self.logger.error("Unable to clear \(name): \(error)")
+                return false
+            }
+        }
+        let historicalDataCleared = await attempt("historical HealthKit export state") {
+            try await historicalUploadManager.fullyResetSession(restart: false, clearPendingUploads: false)
+        }
+        let stagedFilesCleared = await attempt("staged upload files") {
+            try await managedFileUpload.clearPendingUploads()
+        }
+        let stagedHealthDataCleared = await attempt("staged health observations") {
+            try healthUploadStaging.clear()
+        }
+        sensorKitFetcher.resetAllQueryAnchors()
+        await clinicalRecordPermissions.resetTracking()
+
+        guard historicalDataCleared, stagedFilesCleared, stagedHealthDataCleared else {
+            throw PendingAccountDataCleanupError.failed
+        }
+        LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = false
+    }
 }
 
 
 extension MyHeartCountsStandard {
-    func uploadSensorKitFile(at url: URL, for sensor: Sensor<some Any>) {
-        managedFileUpload.scheduleForUpload(url, category: ManagedFileUpload.Category(sensor))
+    func stageHistoricalHealthKitFile(at url: URL) async throws {
+        try await managedFileUpload.stage(url, category: .historicalHealthUpload)
+    }
+
+    func uploadSensorKitFile(at url: URL, for sensor: Sensor<some Any>) async throws {
+        try await managedFileUpload.stage(url, category: ManagedFileUpload.Category(sensor))
     }
 }

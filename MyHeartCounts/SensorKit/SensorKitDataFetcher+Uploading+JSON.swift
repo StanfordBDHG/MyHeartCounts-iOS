@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2026 Stanford University
 //
@@ -8,9 +8,9 @@
 
 import FHIRModelsExtensions
 import Foundation
-import HealthKitOnFHIR
 import ModelsR4
 import MyHeartCountsShared
+import SpeziHealthKitFHIR
 import SpeziSensorKit
 
 
@@ -30,13 +30,17 @@ where Sample.SafeRepresentation: HealthObservation {
         activity.updateMessage("Encoding FHIR resources to JSON")
         let issuedDate = FHIRPrimitive<ModelsR4.Instant>(try .init(date: .now))
         let resources: [AnyEncodable] = try samples.map { sample in
-            let resource = try sample.resource(
+            var resource = try sample.resource(
                 withMapping: .default,
                 issuedDate: issuedDate,
                 extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions
             )
-            if case .observation(let observation) = resource {
+            switch resource {
+            case .observation(var observation):
                 try observation.apply(.sensorKitSourceDevice, input: batchInfo.device)
+                resource = .observation(observation)
+            default:
+                break
             }
             return AnyEncodable(resource)
         }

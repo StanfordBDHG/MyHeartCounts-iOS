@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2026 Stanford University
 //
@@ -97,6 +97,7 @@ private final class SensorAuthStatusMonitor: NSObject, SRSensorReaderDelegate {
 
 
 extension AnySensor {
+    // periphery:ignore - API
     var authStatusChanges: AsyncStream<SRAuthorizationStatus> {
         AsyncStream { continuation in
             nonisolated(unsafe) let reader = SRSensorReader(sensor: self.srSensor)

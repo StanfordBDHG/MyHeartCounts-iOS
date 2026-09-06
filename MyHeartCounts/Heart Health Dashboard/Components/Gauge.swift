@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -18,8 +18,8 @@ struct Gauge: View {
         
         fileprivate let value: Double
         
-        /// Creates a `LineWidth` my multiplying a fraction onto the default line width.
-        static func relative(_ multiplier: Double) -> Self { // periphery:ignore - API
+        /// Creates a `LineWidth` by multiplying a fraction onto the default line width.
+        static func relative(_ multiplier: Double) -> Self {
             Self(value: Self.default.value * multiplier)
         }
         

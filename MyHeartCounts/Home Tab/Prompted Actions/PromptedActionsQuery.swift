@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -27,7 +27,6 @@ struct PromptedActions: DynamicProperty {
     }
     
     // swiftlint:disable attributes
-    @Environment(\.calendar) private var cal
     @StudyManagerQuery private var studyEnrollments: [StudyEnrollment]
     @LocalPreference(.studyActivationDate) private var studyActivationDate
     @LocalPreference(.rejectedHomeTabPromptedActions) private var rejectedActionIds
@@ -44,6 +43,7 @@ struct PromptedActions: DynamicProperty {
         self
     }
     
+    // periphery:ignore - false positive
     /// - parameter inclusionCriterion: selects which actions should be included in the list
     init(inclusionCriterion: InclusionCriterion = .only(.pending, includeRejected: false)) {
         self.inclusionCriterion = inclusionCriterion

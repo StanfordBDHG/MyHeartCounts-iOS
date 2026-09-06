@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -60,6 +60,9 @@ extension FeedbackManager {
         }
         
         
+        /// The version of the `FeedbackItem` data structure.
+        /// Used to enable backward compatibility in case of potential future changes here.
+        let version: Int
         let accountId: String
         let message: String
         let date: Date
@@ -70,6 +73,7 @@ extension FeedbackManager {
         
         @MainActor
         init(accountId: String, message: String) {
+            self.version = 1
             self.accountId = accountId
             self.message = message
             self.date = .now

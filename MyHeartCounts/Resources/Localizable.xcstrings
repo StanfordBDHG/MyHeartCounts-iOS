@@ -268,6 +268,38 @@
       },
       "shouldTranslate" : false
     },
+    "%@+ (Obesity class II)" : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesity class II)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesidad clase II)"
+          }
+        }
+      }
+    },
+    "%@+ (Obesity class III)" : {
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesity class III)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@+ (Obesidad clase III)"
+          }
+        }
+      }
+    },
     "%lld" : {
       "shouldTranslate" : false
     },
@@ -515,52 +547,17 @@
         }
       }
     },
-    "< 7" : {
-      "shouldTranslate" : false
+    "< 5" : {
+
+    },
+    "< 55" : {
+
     },
     "< 85" : {
       "shouldTranslate" : false
     },
-    "< 130" : {
-      "shouldTranslate" : false
-    },
     "<120 / <80" : {
       "shouldTranslate" : false
-    },
-    "> 140" : {
-      "shouldTranslate" : false
-    },
-    "≥ %@ (Obesity class II)" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesity class II)"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesidad clase II)"
-          }
-        }
-      }
-    },
-    "≥ %@ (Obesity class III)" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesity class III)"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "≥ %@ (Obesidad clase III)"
-          }
-        }
-      }
     },
     "$15,000 – $24,999" : {
       "shouldTranslate" : false
@@ -786,8 +783,14 @@
     "30 – 59" : {
       "shouldTranslate" : false
     },
+    "55 – 69" : {
+
+    },
     "60 – 89" : {
       "shouldTranslate" : false
+    },
+    "70 – 99" : {
+
     },
     "85 – 99" : {
       "shouldTranslate" : false
@@ -801,6 +804,9 @@
     "100 – 109" : {
       "shouldTranslate" : false
     },
+    "100 – 129" : {
+
+    },
     "110 – 125" : {
       "shouldTranslate" : false
     },
@@ -810,14 +816,17 @@
     "120–129 / 80–89" : {
       "shouldTranslate" : false
     },
-    "126 – 140" : {
-      "shouldTranslate" : false
+    "126 – 139" : {
+
     },
-    "130 – 159" : {
-      "shouldTranslate" : false
+    "130 – 159" : {
+
     },
     "130–139 / 90–99" : {
       "shouldTranslate" : false
+    },
+    "140+" : {
+
     },
     "140+ / 90+" : {
       "shouldTranslate" : false
@@ -828,11 +837,8 @@
     "160 – 189" : {
       "shouldTranslate" : false
     },
-    "190 – 219" : {
-      "shouldTranslate" : false
-    },
-    "220+" : {
-      "shouldTranslate" : false
+    "190+" : {
+
     },
     "Abdominal Aortic Aneurysm" : {
       "localizations" : {
@@ -1209,6 +1215,23 @@
         }
       }
     },
+    "Another test is already active" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another test is already active"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya hay otra prueba en curso"
+          }
+        }
+      }
+    },
     "Answer Questionnaire" : {
       "localizations" : {
         "en-GB" : {
@@ -1238,6 +1261,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Responder al cuestionario"
+          }
+        }
+      }
+    },
+    "Answer Survey Again" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answer Survey Again"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a responder al cuestionario"
           }
         }
       }
@@ -1354,6 +1394,23 @@
         }
       }
     },
+    "Article" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Article"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artículo"
+          }
+        }
+      }
+    },
     "Articles Read" : {
       "localizations" : {
         "es" : {
@@ -1447,6 +1504,12 @@
           }
         }
       }
+    },
+    "Blood Glucose (A1c)" : {
+
+    },
+    "Blood Glucose (Fasting)" : {
+
     },
     "Blood Lipids" : {
       "localizations" : {
@@ -2550,22 +2613,6 @@
         }
       }
     },
-    "Disclosure Indicator" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disclosure Indicator"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indicador de Divulgación"
-          }
-        }
-      }
-    },
     "Distance" : {
       "localizations" : {
         "en-GB" : {
@@ -3012,22 +3059,6 @@
         }
       }
     },
-    "End" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "End"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar"
-          }
-        }
-      }
-    },
     "Engagement" : {
       "localizations" : {
         "es" : {
@@ -3277,6 +3308,7 @@
       }
     },
     "Failed to process Sleep Sessions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -5652,6 +5684,7 @@
       }
     },
     "n/a" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -6432,22 +6465,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notifícame"
-          }
-        }
-      }
-    },
-    "Number of Steps" : {
-      "localizations" : {
-        "en-GB" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Number of Steps"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Número de pasos"
           }
         }
       }
@@ -7337,7 +7354,42 @@
         }
       }
     },
+    "Processing Health Data…" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing Health Data…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procesando datos de salud..."
+          }
+        }
+      }
+    },
+    "Processing SensorKit Data…" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing SensorKit Data…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procesando datos de SensorKit..."
+          }
+        }
+      }
+    },
     "Processing Sleep Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -8201,6 +8253,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leer artículo"
+          }
+        }
+      }
+    },
+    "Read Article Again" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Article Again"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a leer el artículo"
           }
         }
       }
@@ -9673,6 +9742,23 @@
         }
       }
     },
+    "Take Test Again" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take Test Again"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a realizar la prueba"
+          }
+        }
+      }
+    },
     "Tap the link in the email to complete the verification, then return here." : {
       "localizations" : {
         "es" : {
@@ -9879,6 +9965,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Prueba de Caminata cronometrada requiere acceso de lectura a los Datos de Movimiento y Fitness."
+          }
+        }
+      }
+    },
+    "There are missing Motion Sensor permissions" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are missing Motion Sensor permissions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faltan permisos para acceder a los sensores de movimiento"
           }
         }
       }
@@ -10229,6 +10332,28 @@
         }
       }
     },
+    "UPDATE_COMORBIDITIES_BUTTON_TITLE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Health Conditions"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update Health Conditions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar afecciones médicas"
+          }
+        }
+      }
+    },
     "US State / Region" : {
       "localizations" : {
         "en-GB" : {
@@ -10376,6 +10501,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Virginia"
+          }
+        }
+      }
+    },
+    "VO2MAX_ESTIMATE_LABEL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO₂ max (estimate)"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VO₂ max (estimate)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "VO₂ máx. (estimación)"
           }
         }
       }

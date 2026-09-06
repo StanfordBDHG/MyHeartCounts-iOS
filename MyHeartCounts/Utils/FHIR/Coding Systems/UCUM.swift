@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -13,11 +13,11 @@ import ModelsR4
 
 
 struct UCUM: CodingProtocol {
-    nonisolated(unsafe) static let system: FHIRPrimitive<FHIRURI> = "http://unitsofmeasure.org"
+    static let system: FHIRPrimitive<FHIRURI> = "http://unitsofmeasure.org"
     
-    nonisolated(unsafe) let code: FHIRPrimitive<FHIRString>
-    nonisolated(unsafe) let unit: FHIRPrimitive<FHIRString>
-    nonisolated(unsafe) let display: FHIRPrimitive<FHIRString>?
+    let code: FHIRPrimitive<FHIRString>
+    let unit: FHIRPrimitive<FHIRString>
+    let display: FHIRPrimitive<FHIRString>?
     
     init(code: FHIRPrimitive<FHIRString>, unit: FHIRPrimitive<FHIRString>, display: FHIRPrimitive<FHIRString>? = nil) {
         self.code = code
@@ -34,7 +34,7 @@ extension UCUM {
 
 
 extension Quantity {
-    convenience init(unit: UCUM, value: Double?) {
+    init(unit: UCUM, value: Double?) {
         self.init(
             code: unit.code,
             system: unit.system,

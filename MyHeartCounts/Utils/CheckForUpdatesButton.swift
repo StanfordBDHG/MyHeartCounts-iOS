@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2026 Stanford University
 //
@@ -11,8 +11,6 @@ import SwiftUI
 
 
 struct CheckForUpdateButton<Label: View>: View {
-    @Environment(\.openURL)
-    private var openUrl
     private let label: Label
     
     @State private var url: URL = Self.url(for: .production)

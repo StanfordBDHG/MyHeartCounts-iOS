@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -115,6 +115,7 @@ private struct TimedWalkingTestView: View {
         }
     }
     
+    // periphery:ignore - ???
     private var watchParticipatesInTest: Bool {
         // intentionally not checking whether the watch app is reachable, since it might not have been launched yet.
         watchManager.userHasWatch && watchManager.isWatchAppInstalled
@@ -197,13 +198,7 @@ private struct TimedWalkingTestView: View {
     @ViewBuilder private var resultsSection: some View {
         if !testIsRunning, let result = mostRecentResult {
             Section("Test Complete") {
-                LabeledContent("Date", value: result.startDate, format: .dateTime)
-                LabeledContent("Steps", value: result.numberOfSteps, format: .number)
-                LabeledContent(
-                    "Distance",
-                    value: Measurement<UnitLength>(value: result.distanceCovered, unit: .meters),
-                    format: .measurement(width: .abbreviated)
-                )
+                TimedWalkRunTestResultInfo(result: result)
             }
         }
     }

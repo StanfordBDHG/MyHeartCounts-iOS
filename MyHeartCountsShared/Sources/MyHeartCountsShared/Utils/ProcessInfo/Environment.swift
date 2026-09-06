@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -28,6 +28,7 @@ extension ProcessInfo {
         ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
     }
     
+    // periphery:ignore - debugging
     /// Determines if a debgger is currently attached to the process.
     ///
     /// Source: https://stackoverflow.com/a/33177600

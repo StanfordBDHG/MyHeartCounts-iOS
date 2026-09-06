@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2026 Stanford University
 //
@@ -121,6 +121,7 @@ extension ConsentDisclaimers {
 
 #if DEBUG
 extension ConsentDocument {
+    // periphery:ignore - dev
     /// Intended for use in SwiftUI `#Preview`s within MHC
     static let previewDoc = try! ConsentDocument(markdown: "Consent Text") // swiftlint:disable:this force_try
 }

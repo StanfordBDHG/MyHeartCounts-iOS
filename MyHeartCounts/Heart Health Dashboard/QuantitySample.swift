@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -90,6 +90,7 @@ extension MHCSampleType {
 
 struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     let id: String
+    let canonicalUnit: HKUnit
     let displayTitle: LocalizedStringResource
     let displayUnit: HKUnit
     let aggregationKind: StatisticsAggregationOption
@@ -97,14 +98,16 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
     
     init(
         id: String,
+        canonicalUnit: HKUnit,
         displayTitle: LocalizedStringResource,
-        displayUnit: HKUnit,
+        displayUnit: HKUnit? = nil,
         aggregationKind: StatisticsAggregationOption,
         preferredTintColor: Color
     ) {
         self.id = id
+        self.canonicalUnit = canonicalUnit
         self.displayTitle = displayTitle
-        self.displayUnit = displayUnit
+        self.displayUnit = displayUnit ?? canonicalUnit
         self.aggregationKind = aggregationKind
         self.preferredTintColor = preferredTintColor
     }
@@ -114,34 +117,59 @@ struct CustomQuantitySampleType: Hashable, Identifiable, Sendable {
 extension CustomQuantitySampleType {
     static let bloodLipids = Self(
         id: "MHCCustomSampleTypeBloodLipidMeasurement",
+        canonicalUnit: .gramUnit(with: .milli) / .literUnit(with: .deci),
         displayTitle: "Blood Lipids",
-        displayUnit: .gramUnit(with: .milli) / .literUnit(with: .deci),
         aggregationKind: .avg,
-        preferredTintColor: .yellow // ???
+        preferredTintColor: .red
     )
     
     static let dietMEPAScore = Self(
         id: "MHCCustomSampleTypeDietMEPAScore",
+        canonicalUnit: .count(),
         displayTitle: "Diet",
-        displayUnit: .count(),
         aggregationKind: .avg,
-        preferredTintColor: .blue // ???
+        preferredTintColor: .green
     )
     
     static let mentalWellbeingScore = Self(
         id: "MHCCustomSampleTypeWHO5Score",
+        canonicalUnit: .count(), // percentage???
         displayTitle: "Mental Well Being",
-        displayUnit: .count(), // percentage???
         aggregationKind: .avg,
-        preferredTintColor: .blue // ???
+        preferredTintColor: .blue
     )
     
     static let nicotineExposure = Self(
         id: "MHCCustomSampleTypeNicotineExposure",
+        canonicalUnit: .count(),
         displayTitle: "Nicotine Exposure",
+        aggregationKind: .avg,
+        preferredTintColor: .gray
+    )
+    
+    // periphery:ignore - API
+    static let bloodGlucoseFasting = Self(
+        id: "MHCCustomSampleTypeBloodGlucoseFasting",
+        canonicalUnit: .count(),
+        displayTitle: "Blood Glucose (Fasting)",
         displayUnit: .count(),
         aggregationKind: .avg,
-        preferredTintColor: .brown // ???
+        preferredTintColor: .red
+    )
+    
+    // periphery:ignore - API
+    static let bloodGlucoseA1c = Self(
+        id: "MHCCustomSampleTypeBloodGlucoseA1c",
+        canonicalUnit: HKUnit(from: "mmol/L"),
+        displayTitle: "Blood Glucose (A1c)",
+        displayUnit: { () -> HKUnit in
+            switch Locale.current.measurementSystem {
+            case .us: HKUnit(from: "mg/dL")
+            default: HKUnit(from: "mmol/L")
+            }
+        }(),
+        aggregationKind: .avg,
+        preferredTintColor: .red
     )
     
     init?(identifier: String) {
@@ -177,6 +205,15 @@ enum MHCQuantitySampleType: Hashable, Identifiable, Sendable {
         }
     }
     
+    var canonicalUnit: HKUnit {
+        switch self {
+        case .healthKit(let sampleType):
+            sampleType.canonicalUnit
+        case .custom(let sampleType):
+            sampleType.canonicalUnit
+        }
+    }
+    
     var displayUnit: HKUnit {
         switch self {
         case .healthKit(let sampleType):
@@ -204,8 +241,8 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
     
     let id: UUID
     let sampleType: SampleType
-    let unit: HKUnit
-    let value: Double
+    /// The quantity's value, in `sampleType.canonicalUnit`
+    private let value: Double
     let startDate: Date
     let endDate: Date
     
@@ -214,13 +251,13 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
     }
     
     init(id: UUID, sampleType: SampleType, unit: HKUnit, value: Double, startDate: Date, endDate: Date) {
-        self.id = id
-        self.sampleType = sampleType
-        self.unit = unit
-        self.value = value
-        self.startDate = startDate
-        self.endDate = endDate
-        checkDateRangeValid()
+        self.init(
+            id: id,
+            sampleType: sampleType,
+            quantity: HKQuantity(unit: unit, doubleValue: value),
+            startDate: startDate,
+            endDate: endDate
+        )
     }
     
     init(id: UUID, sampleType: SampleType, unit: HKUnit, value: Double, date: Date) {
@@ -228,14 +265,12 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
     }
     
     init(id: UUID, sampleType: SampleType, quantity: HKQuantity, startDate: Date, endDate: Date) {
-        self.init(
-            id: id,
-            sampleType: sampleType,
-            unit: sampleType.displayUnit,
-            value: quantity.doubleValue(for: sampleType.displayUnit),
-            startDate: startDate,
-            endDate: endDate
-        )
+        self.id = id
+        self.sampleType = sampleType
+        self.value = quantity.doubleValue(for: sampleType.canonicalUnit)
+        self.startDate = startDate
+        self.endDate = endDate
+        checkDateRangeValid()
     }
     
     init(_ other: HKQuantitySample) {
@@ -255,139 +290,22 @@ struct QuantitySample: Hashable, Identifiable, Sendable {
         precondition(endDate >= startDate)
     }
     
-    // periphery:ignore - API
     func value(as unit: HKUnit) -> Double {
-        self.unit == unit ? value : HKQuantity(unit: self.unit, doubleValue: value).doubleValue(for: unit)
+        unit == sampleType.canonicalUnit ? value : hkQuantity().doubleValue(for: unit)
+    }
+    
+    func hkQuantity() -> HKQuantity {
+        HKQuantity(unit: sampleType.canonicalUnit, doubleValue: value)
     }
     
     func valueAndUnitDescription(for unit: HKUnit? = nil) -> String {
-        let unit = unit ?? self.unit
-        let quantity = HKQuantity(unit: self.unit, doubleValue: self.value)
+        let unit = unit ?? sampleType.canonicalUnit
+        let quantity = hkQuantity()
         if unit == HKUnit.foot() && sampleType == .healthKit(.height) {
             let (feet, inches) = quantity.valuesForFeetAndInches()
             return "\(feet)‘ \(Int(inches))“"
         } else {
             return "\(quantity.doubleValue(for: unit).formatted(.number.precision(.fractionLength(0...2)))) \(unit.unitString)"
-        }
-    }
-}
-
-
-extension Collection where Element == QuantitySample {
-    func aggregated(
-        using kind: StatisticsAggregationOption,
-        over timeInterval: HealthKitStatisticsQuery.AggregationInterval,
-        anchor: Date,
-        overallTimeRange: Range<Date>,
-        calendar: Calendar
-    ) -> [QuantitySample] {
-        calendar
-            .dates(
-                byAdding: timeInterval.intervalComponents,
-                startingAt: anchor,
-                in: anchor..<overallTimeRange.upperBound
-            )
-            // `Calendar.dates(byAdding:startingAt:in:)` doesn't include the start date, so we need to manually prepend it to the sequence.
-            .chaining(after: CollectionOfOne(anchor))
-            .lazy
-            .compactMap { date -> Range<Date>? in
-                calendar.date(byAdding: timeInterval.intervalComponents, to: date).map { date..<$0 }
-            }
-            .flatMap { (range: Range<Date>) in
-                self.lazy.filter { sample in
-                    if sample.startDate == sample.endDate {
-                        // if the sample represents a single point in time, we simply check whether the range contains that instant
-                        range.contains(sample.startDate)
-                    } else {
-                        // otherwise (if the sample represents a time period), we check for overlap
-                        range.overlaps(sample.timeRange)
-                    }
-                }
-                .map { sample in
-                    switch kind {
-                    case .avg, .min, .max:
-                        // for the non-cumulative options, we can simply pass the data on unchanged.
-                        return sample
-                    case .sum:
-                        if sample.startDate == sample.endDate || (range.contains(sample.startDate) && range.contains(sample.endDate)) {
-                            // if the sample is fully contained w/in the range, we pass it on unchanged
-                            return sample
-                        } else {
-                            // otherwise, we determine how much of the sample falls into this time range, and return that
-                            let overlapAmount = sample.endDate.timeIntervalSince(sample.startDate) / range.timeInterval
-                            return QuantitySample(
-                                id: sample.id,
-                                sampleType: sample.sampleType,
-                                unit: sample.unit,
-                                value: sample.value * overlapAmount,
-                                startDate: Swift.max(sample.startDate, range.lowerBound),
-                                endDate: Swift.min(sample.endDate, range.upperBound)
-                            )
-                        }
-                    }
-                }
-            }
-    }
-    
-    
-    func aggregated( // swiftlint:disable:this cyclomatic_complexity
-        using input: HealthDashboardLayout.SingleValueConfig._Variant,
-        overallTimeRange: Range<Date>,
-        calendar: Calendar
-    ) -> [QuantitySample] {
-        guard let firstSample = first else {
-            return []
-        }
-        let sampleType = firstSample.sampleType
-        switch input {
-        case .mostRecentSample:
-            if let sample = self.max(by: \.endDate) {
-                return [sample]
-            } else {
-                return []
-            }
-        case let .aggregated(steps, final):
-            var samples = Array(self)
-            for step in steps {
-                samples = samples.aggregated(
-                    using: step.kind,
-                    over: step.interval,
-                    anchor: calendar.startOfDay(for: overallTimeRange.lowerBound),
-                    overallTimeRange: overallTimeRange,
-                    calendar: calendar
-                )
-            }
-            guard !samples.isEmpty else {
-                return samples // de-facto unreachable, but we wanna be safe
-            }
-            guard let final else {
-                return samples
-            }
-            return [
-                QuantitySample(
-                    id: UUID(), // ???
-                    sampleType: sampleType,
-                    unit: sampleType.displayUnit,
-                    value: { () -> Double in
-                        switch final {
-                        case .sum:
-                            samples.reduce(0) { $0 + $1.value }
-                        case .avg:
-                            samples.reduce(0) { $0 + $1.value } / Double(samples.count)
-                        case .min:
-                            // SAFETY: we know that samples is non-empty
-                            samples.min(of: \.value)! // swiftlint:disable:this force_unwrapping
-                        case .max:
-                            // SAFETY: we know that samples is non-empty
-                            samples.max(of: \.value)! // swiftlint:disable:this force_unwrapping
-                        }
-                    }(),
-                    // SAFETY: we know that samples is non-empty
-                    startDate: samples.min(of: \.startDate)!, // swiftlint:disable:this force_unwrapping
-                    // SAFETY: we know that samples is non-empty
-                    endDate: samples.max(of: \.endDate)! // swiftlint:disable:this force_unwrapping
-                )
-            ]
         }
     }
 }

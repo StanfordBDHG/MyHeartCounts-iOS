@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -10,19 +10,19 @@ import AsyncAlgorithms
 import FHIRModelsExtensions
 import Foundation
 import HealthKit
-import HealthKitOnFHIR
 import ModelsR4
 @testable import MyHeartCounts
 @testable import MyHeartCountsShared
 import Spezi
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitFHIR
 import SpeziTesting
 import Testing
 
 
 @Suite
-struct HealthSampleProcessingTests {
+struct HealthSampleProcessingTests { // swiftlint:disable:this type_body_length
     private actor FakeStandard: Standard, HealthKitConstraint {
         func handleNewSamples<Sample>(_ addedSamples: some Collection<Sample> & Sendable, ofType sampleType: SampleType<Sample>) {}
         func handleDeletedObjects<Sample>(_ deletedObjects: some Collection<HKDeletedObject> & Sendable, ofType sampleType: SampleType<Sample>) {}
@@ -48,7 +48,10 @@ struct HealthSampleProcessingTests {
             makeSample(numSteps: 9, startOffset: 27, duration: 12)
         ]
         let processor = HealthKitSamplesFHIRUploader(standard: nil)
-        let compressedUrl = try #require(await processor.process(samples, of: .stepCount))
+        let compressedUrl = try processor.encodeSamples(samples, of: .stepCount)
+        defer {
+            try? FileManager.default.removeItem(at: compressedUrl)
+        }
         let decompressed = try Data(contentsOf: compressedUrl).decompressed(using: Zstd.self)
         let observations = try JSONDecoder().decode([Observation].self, from: decompressed)
         #expect(observations.count == 3)
@@ -74,8 +77,8 @@ struct HealthSampleProcessingTests {
     @Test
     func hkUnitParsing() {
         #expect(HKUnit.parse("degC") == .degreeCelsius())
-        #expect(HKUnit.parse("Cel") == .degreeCelsius())
-        #expect(HKUnit.parse("C") == .degreeCelsius())
+        #expect(HKUnit.parse("Cel") == nil)
+        #expect(HKUnit.parse("C") == nil)
     }
     
     
@@ -114,7 +117,7 @@ struct HealthSampleProcessingTests {
         )
         let resource = try sample.resource(extensions: [.sampleUploadTimeZone])
         let observation = try #require(resource.get(if: Observation.self))
-        let ext = try #require(observation.extensions(for: FHIRExtensionUrls.sampleUploadTimeZone).first)
+        let ext = try #require(observation.extensions(for: FHIRExtensionURL.sampleUploadTimeZone).first)
         switch try #require(ext.value) {
         case .string(let string):
             #expect(string.value?.string == TimeZone.current.identifier)
@@ -123,7 +126,44 @@ struct HealthSampleProcessingTests {
         }
     }
     
+
+    /// Every FHIR resource the app creates must identify the MHC build which created it.
+    @Test
+    func mhcAppRevisionIsPartOfTheDefaultExtensions() throws {
+        let sample = HKQuantitySample(
+            type: .init(.heartRate),
+            quantity: HKQuantity(unit: .count() / .minute(), doubleValue: 85),
+            start: .now,
+            end: .now
+        )
+        let resource = try sample.resource(extensions: MyHeartCountsStandard.defaultHealthObservationFHIRExtensions)
+        let observation = try #require(resource.get(if: Observation.self))
+        let ext = try #require(observation.extensions(for: FHIRExtensionURL.mhcAppRevision).first)
+        func value(ofChild component: String) throws -> ModelsR4.Extension.ValueX {
+            let url = FHIRExtensionURL.mhcAppRevision.appending(component: component).r4
+            let child = try #require(ext.extension?.first { $0.url == url }, "missing '\(component)' child extension")
+            return try #require(child.value)
+        }
+        guard case .string(let version) = try value(ofChild: "version") else {
+            Issue.record("'version' is not a valueString")
+            return
+        }
+        #expect(version.value?.string == MHCAppRevision.version)
+        guard case .string(let osVersion) = try value(ofChild: "osVersion") else {
+            Issue.record("'osVersion' is not a valueString")
+            return
+        }
+        #expect(osVersion.value?.string == MHCAppRevision.osVersion)
+        if let expectedBuild = MHCAppRevision.build {
+            guard case .integer(let build) = try value(ofChild: "build") else {
+                Issue.record("'build' is not a valueInteger")
+                return
+            }
+            #expect(build.value?.integer == Int32(expectedBuild))
+        }
+    }
     
+
     @Test
     func healthUploadStagingDuplicates() async throws {
         let healthUploadStaging = HealthUploadStaging(persistence: .inMemory)
@@ -137,7 +177,6 @@ struct HealthSampleProcessingTests {
         let samplesStartDate = try #require(cal.date(from: .init(year: 2026, month: 5, day: 9, hour: 17, minute: 52)))
         let samplesEndDate = try #require(cal.date(from: .init(year: 2026, month: 5, day: 9, hour: 17, minute: 57)))
         
-        #expect(try healthUploadStaging.isEmpty == true)
         let newSamples: [HKQuantitySample] = [
             HKQuantitySample(
                 type: .init(.stepCount),
@@ -164,20 +203,21 @@ struct HealthSampleProcessingTests {
     
     
     @Test
-    func healthUploadStagingSanpleElision() async throws {
-        let healthUploadStaging = HealthUploadStaging(persistence: .inMemory)
+    func healthUploadStagingBacklogElision() async throws {
+        let healthUploadStaging = HealthUploadStaging(
+            persistence: .inMemory,
+            autoElideUploadsWhenInsertingDeletions: false
+        )
         await withDependencyResolution(standard: FakeStandard()) {
             healthUploadStaging
             HealthKit()
         }
-        #expect(try healthUploadStaging.isEmpty)
         #expect(try healthUploadStaging.isEmpty)
         
         let cal = Calendar.current
         let samplesStartDate = try #require(cal.date(from: .init(year: 2026, month: 5, day: 9, hour: 17, minute: 52)))
         let samplesEndDate = try #require(cal.date(from: .init(year: 2026, month: 5, day: 9, hour: 17, minute: 57)))
         
-        #expect(try healthUploadStaging.isEmpty == true)
         let newSamples: [HKQuantitySample] = [
             HKQuantitySample(
                 type: .init(.stepCount),
@@ -195,22 +235,36 @@ struct HealthSampleProcessingTests {
         
         try await healthUploadStaging.add(newSamples)
         #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingSampleRecord.self) == 2)
-        #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingDeletionRecord.self) == 0)
         
-        try healthUploadStaging.add([try HKDeletedObject.make(uuid: newSamples[0].uuid)], ofType: .stepCount)
-        try healthUploadStaging.elidePendingUploadsWherePossible(dryRun: false)
-        #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingSampleRecord.self) == 1)
-        #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingDeletionRecord.self) == 0)
-        
-        try healthUploadStaging.add([try HKDeletedObject.make(uuid: UUID())], ofType: .bodyMass)
-        try healthUploadStaging.elidePendingUploadsWherePossible(dryRun: false)
+        let unmatchedDeletionId = UUID()
+        try healthUploadStaging.add(
+            [
+                try HKDeletedObject.make(uuid: newSamples[0].uuid),
+                try HKDeletedObject.make(uuid: unmatchedDeletionId)
+            ],
+            ofType: .stepCount
+        )
+
+        let expectedSummary = [SampleType.stepCount.id: 1]
+        #expect(try healthUploadStaging.elidePendingUploadsWherePossible(dryRun: true) == expectedSummary)
+        #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingSampleRecord.self) == 2)
+        #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingDeletionRecord.self) == 2)
+
+        #expect(try healthUploadStaging.elidePendingUploadsWherePossible(dryRun: false) == expectedSummary)
         #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingSampleRecord.self) == 1)
         #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingDeletionRecord.self) == 1)
+        let deletionChunk = try #require(try healthUploadStaging.fetchNextDrainChunk(
+            of: HealthUploadStaging.PendingDeletionRecord.self,
+            before: .now,
+            limit: 10
+        ))
+        #expect(deletionChunk.sampleType == SampleType.stepCount.id)
+        #expect(deletionChunk.rows.map(\.sampleId) == [unmatchedDeletionId])
     }
     
     
     @Test
-    func healthUploadStagingJSONPersistence() async throws {
+    func healthUploadStagingJSONPersistence() async throws { // swiftlint:disable:this function_body_length
         let healthKit = HealthKit()
         let healthUploadStaging = HealthUploadStaging(persistence: .inMemory)
         await withDependencyResolution(standard: FakeStandard()) {
@@ -238,7 +292,7 @@ struct HealthSampleProcessingTests {
             )
         ]
         let timestamp = Date()
-        nonisolated(unsafe) let issuedDate = try ModelsR4.FHIRPrimitive<ModelsR4.Instant>(.init(date: timestamp))
+        let issuedDate = try ModelsR4.FHIRPrimitive<ModelsR4.Instant>(.init(date: timestamp))
         let samplesAsFHIR: Set<ModelsR4.ResourceProxy> = try await newSamples.async.reduce(into: []) { @Sendable result, observation in
             // ISSUE: we get back an `AnyEncodable` (bc the return type might be a ResourceProxy or an Observation or a R4/DSTU2 FHIRResource)
             // but we need these as `ModelsR4.ResourceProxy`s, so we need to do a quick JSON roundtrip to turn them into ResourceProxies (will work for everything except ClinicalRecords, but we don't have any of these anyway...
@@ -250,16 +304,27 @@ struct HealthSampleProcessingTests {
         try await healthUploadStaging.add(newSamples, ingestionTimestamp: timestamp)
         #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingSampleRecord.self) == 2)
         #expect(try healthUploadStaging.fetchCount(of: HealthUploadStaging.PendingDeletionRecord.self) == 0)
-        let drainFetchResult = try healthUploadStaging.drainData(in: ..<(.now))
-        #expect(drainFetchResult.deletions.isEmpty)
-        #expect(drainFetchResult.samples.count == 2)
-        #expect(drainFetchResult.samples.mapIntoSet(\.sampleType) == [SampleType.stepCount.id, SampleType.heartRate.id])
-        let allDecodedSamples: Set<ModelsR4.ResourceProxy> = try drainFetchResult.samples.reduce(into: []) { result, batch in
-            let jsonArray = try batch.rows.jsonArray()
+        var drainedSampleTypes: Set<String> = []
+        var allDecodedSamples: Set<ModelsR4.ResourceProxy> = []
+        while let chunk = try healthUploadStaging.fetchNextDrainChunk(
+            of: HealthUploadStaging.PendingSampleRecord.self,
+            before: .now,
+            limit: 100
+        ) {
+            drainedSampleTypes.insert(chunk.sampleType)
+            let jsonArray = try chunk.rows.jsonArrayData()
             let resources = try JSONDecoder().decode(Set<ModelsR4.ResourceProxy>.self, from: jsonArray)
-            result.formUnion(resources)
+            allDecodedSamples.formUnion(resources)
+            try healthUploadStaging.remove(chunk)
         }
+        #expect(try healthUploadStaging.fetchNextDrainChunk(
+            of: HealthUploadStaging.PendingDeletionRecord.self,
+            before: .now,
+            limit: 100
+        ) == nil)
+        #expect(drainedSampleTypes == [SampleType.stepCount.id, SampleType.heartRate.id])
         #expect(allDecodedSamples == samplesAsFHIR)
+        #expect(try healthUploadStaging.isEmpty)
     }
 }
 

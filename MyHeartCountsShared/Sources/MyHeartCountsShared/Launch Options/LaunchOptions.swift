@@ -1,15 +1,16 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 #if !os(Linux)
 
 // swiftlint:disable file_types_order
-// periphery:ignore:all
 
 public import Foundation
 private import os

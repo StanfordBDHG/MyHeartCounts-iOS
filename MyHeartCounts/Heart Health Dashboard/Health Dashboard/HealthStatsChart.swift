@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -10,10 +10,9 @@
 
 import Charts
 import Foundation
-import HealthKit
 import MyHeartCountsShared
 import SpeziFoundation
-import SpeziHealthKitUI
+import SpeziHealthKit
 import SpeziViews
 import SwiftUI
 
@@ -51,8 +50,9 @@ struct HealthStatsChartDataPoint: Hashable, Sendable {
         ) -> Self {
             Self(
                 primary: { () -> Text in
-                    let labelInput = HealthDashboardQuantityLabel.Input(
+                    let labelInput = QuantityValueInput(
                         value: dataPoint.value,
+                        unit: dataSet.sampleType.displayUnit,
                         sampleType: dataSet.sampleType,
                         timeRange: dataPoint.timeRange
                     )
@@ -361,5 +361,54 @@ private struct ChartXAxisModifier: ViewModifier {
 extension View {
     func configureChartXAxis(for timeRange: Range<Date>) -> some View {
         self.modifier(ChartXAxisModifier(timeRange: timeRange))
+    }
+}
+
+
+extension HealthStatsChartDataPoint {
+    private struct QuantityValueInput {
+        let value: Double? // periphery:ignore - API
+        let valueString: String
+        let unitString: String
+        let timeRange: Range<Date> // periphery:ignore - API
+        
+        init(value: Double?, valueString: String, unit: HKUnit, timeRange: Range<Date>) {
+            func unitString(for unit: HKUnit) -> String {
+                if unit == .count() {
+                    ""
+                } else {
+                    unit.unitString
+                }
+            }
+            self.value = value
+            self.valueString = valueString
+            self.unitString = unitString(for: unit)
+            self.timeRange = timeRange
+        }
+        
+        init(value: Double, unit: HKUnit, sampleType: MHCQuantitySampleType, timeRange: Range<Date>) {
+            let valueString = switch sampleType {
+            case .healthKit(.bloodOxygen):
+                String(format: "%.1f", value / 100)
+            case .healthKit(.walkingAsymmetryPercentage), .healthKit(.walkingDoubleSupportPercentage):
+                String(format: "%.2f", value / 100)
+            case .healthKit(.bodyMassIndex):
+                String(format: "%.1f", value)
+            case _ where unit == .count():
+                Int(value).formatted(.number)
+            default:
+                if value.isWholeNumber {
+                    Int(value).formatted(.number)
+                } else {
+                    String(format: "%.2f", value)
+                }
+            }
+            self.init(
+                value: value,
+                valueString: valueString,
+                unit: unit,
+                timeRange: timeRange
+            )
+        }
     }
 }

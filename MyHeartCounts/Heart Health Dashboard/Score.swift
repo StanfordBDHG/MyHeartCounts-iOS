@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -46,7 +46,7 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
                 self.trailingText = trailingText
                 self.background = background
             }
-            // periphery:ignore - API
+            
             @_disfavoredOverload
             init(
                 leadingText: LocalizedStringResource? = nil,
@@ -133,7 +133,6 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
     
     let variant: Variant
     
-    // periphery:ignore:parameters `default` - false positive
     init(
         `default`: Double,
         scoringBands: [ScoringBand],
@@ -146,7 +145,6 @@ final class ScoreDefinition: Hashable, Sendable, AnyObjectBasedDefaultImpls {
         )
     }
     
-    // periphery:ignore:parameters `default` - false positive
     /// Creates a ``ScoreDefinition`` that uses a custom closure to calculate score values.
     ///
     /// - parameter default: the score value that should be used for inputs that aren't compatible with the closure's input type.
@@ -217,23 +215,6 @@ struct ScoreResult: Hashable, Sendable {
         self.sampleType = sampleType
         self._inputValue = .init(wrappedValue: nil)
         self.score = nil
-        self.timeRange = timeRange
-    }
-    
-    // periphery:ignore - API
-    init(
-        _ title: LocalizedStringResource,
-        sampleType: MHCSampleType,
-        definition: ScoreDefinition,
-        value: (any Hashable & Sendable)? = nil,
-        score: Double,
-        timeRange: Range<Date>
-    ) {
-        self.title = title
-        self.sampleType = sampleType
-        self.definition = definition
-        self._inputValue = .init(wrappedValue: nil)
-        self.score = score
         self.timeRange = timeRange
     }
     
@@ -356,7 +337,7 @@ extension ClosedRange: ScoreDefinitionPatternRange {
 
 extension PartialRangeFrom: ScoreDefinitionPatternRange {
     var textualDescription: String {
-        "≥ \(lowerBound)"
+        "\(lowerBound)+"
     }
     
     func map<NewBound: Comparable>(_ transform: (Bound) -> NewBound) -> any ScoreDefinitionPatternRange<NewBound> {

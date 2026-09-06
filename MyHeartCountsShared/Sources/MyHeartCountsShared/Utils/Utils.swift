@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -85,7 +85,7 @@ extension Sequence {
 extension Sequence {
     /// Returns a new sequence that chains the sequence onto the end of the `other` sequence.
     @inlinable
-    public func chaining<Other: Sequence<Element>>(after other: Other) -> some Sequence<Element> {
+    public func chaining(after other: some Sequence<Element>) -> some Sequence<Element> {
         chain(other, self)
     }
 }

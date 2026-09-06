@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -10,10 +10,11 @@ import CryptoKit
 import FHIRModelsExtensions
 @preconcurrency import FirebaseFirestore
 import Foundation
-import HealthKitOnFHIR
 import ModelsR4
+import SpeziFHIR
 import SpeziFirestore
 import SpeziFoundation
+import SpeziHealthKitFHIR
 import SpeziSensorKit
 
 
@@ -27,7 +28,7 @@ extension MHCSensorSampleUploadStrategy {
         to standard: MyHeartCountsStandard,
         observationDocName: String,
         activity: SensorKitDataFetcher.InProgressActivity,
-        postprocessObservation: (Observation) throws -> Void
+        postprocessObservation: (inout Observation) throws -> Void
     ) async throws {
         activity.updateMessage("Compressing Data")
         let data = shouldCompress ? try (consume data).compressed(using: Zstd.self) : consume data
@@ -37,11 +38,15 @@ extension MHCSensorSampleUploadStrategy {
             .appending(component: UUID().uuidString)
             .appendingPathExtension("\(fileExtension)\(shouldCompress ? ".zstd" : "")")
         try (consume data).write(to: url)
+        defer {
+            try? FileManager.default.removeItem(at: url)
+        }
         
         activity.updateMessage("Submitting for upload")
-        // Note: this call does not wait for the upload to get completed;
-        // it just looks like it bc the standard is an actor...
-        await standard.uploadSensorKitFile(at: url, for: sensor)
+        // Note: this waits until the upload is durably scheduled (i.e., the file is in the upload module's custody),
+        // not until the file has actually been uploaded. If the scheduling fails, we abort (and in particular don't
+        // write the reference doc below, which would otherwise point to a file that will never exist).
+        try await standard.uploadSensorKitFile(at: url, for: sensor)
         
         let referenceDocName = observationDocName + "_Ref"
         
@@ -56,22 +61,21 @@ extension MHCSensorSampleUploadStrategy {
             // for anything above that, we set the size to nil.
             size: Int32(exactly: size).map { FHIRPrimitive(FHIRUnsignedInteger($0)) },
             // NOTE: we use a path relative to this user's storage directory here!
-            url: ManagedFileUpload.Category(sensor).firebasePath.asFHIRURIPrimitive()!.appending(component: url.lastPathComponent)
-            // swiftlint:disable:previous force_unwrapping
+            url: ManagedFileUpload.Category(sensor).firebasePath.appending("/\(url.lastPathComponent)").asFHIRURIPrimitive()
         )
         let reference = DocumentReference(
             content: [.init(attachment: attachment)],
+            extension: [.mhcAppRevision],
             status: FHIRPrimitive(.current)
         )
-        
-        let observation = Observation(
+        var observation = Observation(
             code: CodeableConcept(),
             status: FHIRPrimitive(.final)
         )
         observation.id = observationDocName.asFHIRStringPrimitive()
-        observation.appendCoding(Coding(code: SensorKitCodingSystem(sensor)))
+        observation.append(coding: Coding(code: SensorKitCodingSystem(sensor)))
         try observation.setIssued(on: .now)
-        observation.appendElement(
+        observation.append(
             // Note: the value here has to match the firestore document used to upload the reference!
             Reference(reference: "HealthObservations_\(sensor.id)/\(referenceDocName)".asFHIRStringPrimitive()),
             to: \.derivedFrom
@@ -80,13 +84,17 @@ extension MHCSensorSampleUploadStrategy {
         observation.addMHCAppAsSource()
         try observation.apply(.sensorKitSourceDevice, input: deviceInfo)
         for builder in MyHeartCountsStandard.defaultHealthObservationFHIRExtensions {
-            try builder.apply(typeErasedInput: self, to: observation)
+            try builder.apply(typeErasedInput: self, to: &observation)
         }
-        try postprocessObservation(observation)
+        try postprocessObservation(&observation)
         
         let sensorCollection = try await standard.firebaseConfiguration.userDocumentReference
             .collection("HealthObservations_\(sensor.id)")
-        try await sensorCollection.document(referenceDocName).setData(from: reference)
-        try await sensorCollection.document(observationDocName).setData(from: observation)
+        let batch = sensorCollection.firestore.batch()
+        try batch.setData(from: reference, forDocument: sensorCollection.document(referenceDocName))
+        try batch.setData(from: observation, forDocument: sensorCollection.document(observationDocName))
+        // no cancellation check here: the file was durably staged above, and aborting now would
+        // permanently orphan it from its Firestore reference/observation documents.
+        try await batch.commit()
     }
 }

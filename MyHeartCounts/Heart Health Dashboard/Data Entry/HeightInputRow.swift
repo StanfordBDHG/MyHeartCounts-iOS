@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -41,7 +41,7 @@ struct HeightInputRow: View {
                 value: binding,
                 limits: MHCQuantitySampleType.healthKit(.height).inputLimits(in: cmUnit),
                 sampleType: .healthKit(.height),
-                unit: cmUnit
+                displayUnit: cmUnit
             )
         case .feetAndInches:
             // no need to perform input validation here; that's handled via the wheel-styled picker

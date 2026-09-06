@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2026 Stanford University
 //
@@ -89,6 +89,7 @@ extension View {
         modifier(AdaptiveSheet(isPresented: isPresented, sheetContent: content))
     }
 
+    // periphery:ignore - API
     /// Drop-in replacement for `.sheet(item:content:)`.
     func adaptiveSheet<Item: Identifiable>(
         item: Binding<Item?>,

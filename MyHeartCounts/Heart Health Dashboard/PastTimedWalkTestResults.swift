@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -70,14 +70,7 @@ struct PastTimedWalkTestResults: View {
     @ViewBuilder
     private func makeDetailsView(for result: TimedWalkingTestResult) -> some View {
         Form {
-            LabeledContent("Start", value: result.startDate, format: .dateTime)
-            LabeledContent("End", value: result.endDate, format: .dateTime)
-            LabeledContent("Number of Steps", value: result.numberOfSteps, format: .number)
-            LabeledContent(
-                "Distance",
-                value: Measurement<UnitLength>(value: result.distanceCovered, unit: .meters),
-                format: .measurement(width: .abbreviated)
-            )
+            TimedWalkRunTestResultInfo(result: result)
         }
         .navigationTitle(result.test.displayTitle.localizedString())
         .navigationBarTitleDisplayMode(.inline)

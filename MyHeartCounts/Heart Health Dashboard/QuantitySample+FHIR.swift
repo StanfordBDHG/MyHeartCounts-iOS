@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -9,11 +9,11 @@
 import FHIRModelsExtensions
 import Foundation
 import HealthKit
-import HealthKitOnFHIR
 import ModelsR4
 import MyHeartCountsShared
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitFHIR
 
 
 extension QuantitySample: HealthObservation {
@@ -21,10 +21,7 @@ extension QuantitySample: HealthObservation {
         case notSupported
     }
     
-    // SAFETY: this is in fact safe, since the FHIRPrimitive's `extension` property is empty.
-    // As a result, the actual instance doesn't contain any mutable state, and since this is a let,
-    // it also never can be mutated to contain any.
-    nonisolated(unsafe) private static let speziSystem = "https://spezi.stanford.edu".asFHIRURIPrimitive()! // swiftlint:disable:this force_unwrapping
+    private static let speziSystem = "https://spezi.stanford.edu".asFHIRURIPrimitive()! // swiftlint:disable:this force_unwrapping
     
     var sampleTypeIdentifier: String {
         self.sampleType.id
@@ -32,17 +29,17 @@ extension QuantitySample: HealthObservation {
     
     // swiftlint:disable:next function_body_length
     func resource(
-        withMapping mapping: HKSampleMapping,
+        withMapping mapping: SampleTypesFHIRMapping,
         issuedDate: FHIRPrimitive<Instant>?,
         extensions: [any FHIRExtensionBuilderProtocol]
     ) throws -> ResourceProxy {
-        let observation = Observation(
+        var observation = Observation(
             code: CodeableConcept(),
             status: FHIRPrimitive(.final)
         )
         // Set basic elements applicable to all observations
         observation.id = self.id.uuidString.asFHIRStringPrimitive()
-        observation.appendIdentifier(Identifier(id: observation.id))
+        observation.append(identifier: Identifier(id: observation.id))
         try observation.setEffective(startDate: self.startDate, endDate: self.endDate, timeZone: .current)
         if let issuedDate {
             observation.issued = issuedDate
@@ -53,15 +50,15 @@ extension QuantitySample: HealthObservation {
         case .healthKit(let sampleType):
             let sample = HKQuantitySample(
                 type: sampleType.hkSampleType,
-                quantity: HKQuantity(unit: self.unit, doubleValue: self.value),
+                quantity: self.hkQuantity(),
                 start: self.startDate,
                 end: self.endDate
             )
-            return try sample.resource(withMapping: mapping, issuedDate: issuedDate)
+            return try sample.resource(withMapping: mapping, issuedDate: issuedDate, extensions: extensions)
         case .custom(.bloodLipids):
             let code = "18262-6".asFHIRStringPrimitive() // "Cholesterol in LDL [Mass/volume] in Serum or Plasma by Direct assay"
             let system = "http://loinc.org".asFHIRURIPrimitive()
-            observation.appendCodings([
+            observation.append(codings: [
                 Coding(code: code, system: system),
                 Coding(
                     code: sampleType.id.asFHIRStringPrimitive(),
@@ -72,12 +69,12 @@ extension QuantitySample: HealthObservation {
             observation.value = .quantity(Quantity(
                 code: code,
                 system: system,
-                unit: "mg/dL".asFHIRStringPrimitive(),
-                value: value.asFHIRDecimalPrimitive()
+                unit: self.sampleType.canonicalUnit.unitString.asFHIRStringPrimitive(),
+                value: self.value(as: self.sampleType.canonicalUnit).asFHIRDecimalPrimitive()
             ))
         case .custom(.nicotineExposure), .custom(.dietMEPAScore), .custom(.mentalWellbeingScore):
             let code = sampleType.id.asFHIRStringPrimitive()
-            observation.appendCoding(Coding(
+            observation.append(coding: Coding(
                 code: code,
                 display: sampleType.displayTitle.asFHIRStringPrimitive(),
                 system: Self.speziSystem
@@ -85,14 +82,14 @@ extension QuantitySample: HealthObservation {
             observation.value = .quantity(Quantity(
                 code: code,
                 system: Self.speziSystem,
-                unit: "count",
-                value: value.asFHIRDecimalPrimitive()
+                unit: self.sampleType.canonicalUnit.unitString.asFHIRStringPrimitive(),
+                value: self.value(as: self.sampleType.canonicalUnit).asFHIRDecimalPrimitive()
             ))
         default:
             throw FHIRObservationConversionError.notSupported
         }
         for builder in extensions {
-            try builder.apply(typeErasedInput: self, to: observation)
+            try builder.apply(typeErasedInput: self, to: &observation)
         }
         observation.addMHCAppAsSource()
         return .observation(observation)

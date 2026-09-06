@@ -1,5 +1,5 @@
 //
-// This source file is part of the My Heart Counts iOS application based on the Stanford Spezi Template Application project
+// This source file is part of the My Heart Counts iOS open-source project
 //
 // SPDX-FileCopyrightText: 2025 Stanford University
 //
@@ -28,6 +28,8 @@ struct SaveQuantitySampleView: View {
     private let title: LocalizedStringKey
     private let sampleType: MHCQuantitySampleType
     private let unit: HKUnit
+    /// whether the default "save" operation is allowed to fail; in this case a failure will be silently ignored.
+    private let isDefaultSaveAllowedToFail: Bool
     private let completionHandler: (@MainActor (QuantitySample) -> Void)?
     @State private var date: Date = .now
     @State private var value: Double?
@@ -54,7 +56,7 @@ struct SaveQuantitySampleView: View {
                         value: $value,
                         limits: sampleType.inputLimits(in: unit),
                         sampleType: sampleType,
-                        unit: unit
+                        displayUnit: unit
                     )
                     .focused($valueFieldIsFocused)
                 }
@@ -87,13 +89,15 @@ struct SaveQuantitySampleView: View {
         }
     }
     
-    init(
-        _ title: LocalizedStringKey? = nil,
+    private init(
+        title: LocalizedStringKey?,
         sampleType: MHCQuantitySampleType,
-        completionHandler: (@MainActor (QuantitySample) -> Void)? = nil
+        isDefaultSaveAllowedToFail: Bool,
+        completionHandler: (@MainActor (QuantitySample) -> Void)?
     ) {
         self.title = title ?? "Enter \(sampleType.displayTitle)"
         self.sampleType = sampleType
+        self.isDefaultSaveAllowedToFail = isDefaultSaveAllowedToFail
         self.completionHandler = completionHandler
         self.unit = switch sampleType {
         case .healthKit(.height):
@@ -114,6 +118,35 @@ struct SaveQuantitySampleView: View {
     }
     
     
+    init(
+        _ title: LocalizedStringKey? = nil,
+        sampleType: MHCQuantitySampleType
+    ) {
+        self.init(
+            title: title,
+            sampleType: sampleType,
+            // if we do not have a custom completion handler (that might do stuff with the value entered by the user),
+            // the default save operation *must* succeed.
+            isDefaultSaveAllowedToFail: false,
+            completionHandler: nil
+        )
+    }
+    
+    init(
+        _ title: LocalizedStringKey? = nil,
+        sampleType: MHCQuantitySampleType,
+        isDefaultSaveAllowedToFail: Bool,
+        completionHandler: @MainActor @escaping (QuantitySample) -> Void
+    ) {
+        self.init(
+            title: title,
+            sampleType: sampleType,
+            isDefaultSaveAllowedToFail: isDefaultSaveAllowedToFail,
+            completionHandler: completionHandler
+        )
+    }
+    
+    
     private func save() async throws {
         guard let value = self.value, !containsInvalidInput else {
             return
@@ -126,7 +159,13 @@ struct SaveQuantitySampleView: View {
                 start: self.date,
                 end: self.date
             )
-            try await self.healthKit.save(sample)
+            do {
+                try await self.healthKit.save(sample)
+            } catch {
+                if !isDefaultSaveAllowedToFail {
+                    throw error
+                }
+            }
             completionHandler?(.init(sample))
         case .custom(let sampleType):
             let sample = QuantitySample(
@@ -137,7 +176,13 @@ struct SaveQuantitySampleView: View {
                 startDate: self.date,
                 endDate: self.date
             )
-            try await self.standard.uploadHealthObservation(sample)
+            do {
+                try await self.standard.uploadHealthObservation(sample)
+            } catch {
+                if !isDefaultSaveAllowedToFail {
+                    throw error
+                }
+            }
             completionHandler?(sample)
         }
     }
@@ -154,7 +199,7 @@ extension HKQuantity {
             return (0, totalInches)
         }
         let inches = totalInches.remainder(dividingBy: Double(feet) * oneFeetInInches).rounded()
-        precondition(inches != -1)
+        assert(inches != -1)
         return (feet, inches)
     }
 }

@@ -308,7 +308,7 @@ extension ParticipationStatsProvider {
             guard let bpm = stat.averageQuantity()?.doubleValue(for: .count() / .minute()) else {
                 return acc
             }
-            let clamped = stat.timeRange.clamped(to: timeRange)
+            let clamped = (stat.startDate..<stat.endDate).clamped(to: timeRange)
             let minutes = clamped.timeInterval / 60
             return acc + bpm * minutes
         }
