@@ -362,11 +362,36 @@ extension HealthKitStatsCalculator {
             "\(year)-\(monthString)"
         }
         let range: Range<Date>
+
+        /// Include samples crossing either boundary; HealthKit aggregates them into time buckets.
+        var overlappingSamplesPredicate: NSPredicate {
+            HKQuery.predicateForSamples(withStart: range.lowerBound, end: range.upperBound, options: [])
+        }
+
+        /// Individual readings are stored at their start date, so each reading belongs to exactly one month.
+        var samplesStartingInMonthPredicate: NSPredicate {
+            HKQuery.predicateForSamples(withStart: range.lowerBound, end: range.upperBound, options: .strictStartDate)
+        }
         
         init(year: Int, month: Int, range: Range<Date>) {
             self.year = year
             self.monthString = String(format: "%02d", month)
             self.range = range
+        }
+
+        func statisticsQuery(
+            for sampleType: HKQuantityType,
+            options: HKStatisticsOptions,
+            intervalComponents: DateComponents
+        ) -> HKStatisticsCollectionQueryDescriptor {
+            // Spezi's time-range wrapper requires both sample endpoints to be inside the month.
+            // Use a native descriptor to select overlapping samples while keeping the month as the bucket anchor.
+            HKStatisticsCollectionQueryDescriptor(
+                predicate: .quantitySample(type: sampleType, predicate: overlappingSamplesPredicate),
+                options: options,
+                anchorDate: range.lowerBound,
+                intervalComponents: intervalComponents
+            )
         }
     }
 
@@ -555,9 +580,10 @@ extension HealthKitStatsCalculator {
         runId: UUID
     ) async {
         let unit = input.sampleType.canonicalUnit
+        @concurrent
         func imp(month: StatsMonth) async throws { // swiftlint:disable:this function_body_length
-            let results = try await healthKit.continuousStatisticsQuery(
-                input.sampleType,
+            let query = month.statisticsQuery(
+                for: input.sampleType.hkSampleType,
                 options: { () -> HKStatisticsOptions in
                     switch input.mode {
                     case .sum:
@@ -566,25 +592,21 @@ extension HealthKitStatsCalculator {
                         [.discreteMin, .discreteMax, .discreteAverage]
                     }
                 }(),
-                aggInterval: input.aggregationInterval,
-                timeRange: .init(month.range)
+                intervalComponents: input.aggregationInterval.intervalComponents
             )
+            let results = query.results(for: healthKit.healthStore)
             for try await _ in results {
                 // Statistics updates contain no deletion information. A one-record probe establishes/advances an
                 // anchor without loading the month's raw samples. Always reread the aggregate after the probe:
                 // a queued statistics payload may predate a deletion that this probe is about to acknowledge.
                 var anchor = queryAnchors[input.sampleType, month]
-                let changes = try await healthKit.query(input.sampleType, timeRange: .init(month.range), anchor: &anchor, limit: 1)
-                let stats: [HKStatistics] = switch input.mode {
-                case .sum:
-                    try await healthKit.statisticsQuery(
-                        input.sampleType, aggregatedBy: [.sum], over: input.aggregationInterval, timeRange: .init(month.range)
-                    )
-                case .minMaxAvg:
-                    try await healthKit.statisticsQuery(
-                        input.sampleType, aggregatedBy: [.min, .max, .average], over: input.aggregationInterval, timeRange: .init(month.range)
-                    )
-                }
+                let changes = try await healthKit.query(
+                    input.sampleType, timeRange: .ever, anchor: &anchor, limit: 1, predicate: month.overlappingSamplesPredicate
+                )
+                let collection = try await query.result(for: healthKit.healthStore)
+                // An overlapping sample can produce buckets on both sides of the boundary. Store each bucket
+                // only in its own month, leaving HealthKit to aggregate samples and reconcile their sources.
+                let stats = collection.statistics().filter { month.range.contains($0.startDate) }
                 let entries: [StatEntry] = switch input.mode {
                 case .sum:
                     stats.compactMap { stats in
@@ -650,11 +672,12 @@ extension HealthKitStatsCalculator {
             let unit = input.sampleType.canonicalUnit
             let results = healthKit.continuousQuery(
                 input.sampleType,
-                timeRange: .init(month.range),
-                anchor: queryAnchors[input.sampleType, month]
+                timeRange: .ever,
+                anchor: queryAnchors[input.sampleType, month],
+                predicate: month.samplesStartingInMonthPredicate
             )
             for try await result in results {
-                let samples = try await healthKit.query(input.sampleType, timeRange: .init(month.range))
+                let samples = try await healthKit.query(input.sampleType, timeRange: .ever, predicate: month.samplesStartingInMonthPredicate)
                 let entries = samples.map { sample in
                     QuantitySampleEntry(
                         date: sample.startDate,
@@ -757,11 +780,12 @@ extension HealthKitStatsCalculator {
         func imp(month: StatsMonth) async throws {
             let results = self.healthKit.continuousQuery(
                 .bloodPressure,
-                timeRange: .init(month.range),
-                anchor: queryAnchors[.bloodPressure, month]
+                timeRange: .ever,
+                anchor: queryAnchors[.bloodPressure, month],
+                predicate: month.samplesStartingInMonthPredicate
             )
             for try await result in results {
-                let samples = try await self.healthKit.query(.bloodPressure, timeRange: .init(month.range))
+                let samples = try await self.healthKit.query(.bloodPressure, timeRange: .ever, predicate: month.samplesStartingInMonthPredicate)
                 let entries = samples.compactMap { correlation -> BloodPressureSampleEntry? in
                     guard let systolic = correlation.objects(for: .bloodPressureSystolic).first,
                           let diastolic = correlation.objects(for: .bloodPressureDiastolic).first else {
