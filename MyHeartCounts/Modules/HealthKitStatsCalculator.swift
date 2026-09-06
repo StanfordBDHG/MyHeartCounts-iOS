@@ -129,23 +129,24 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
             return
         }
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
+        let persistence = StatsPersistence(writer: FirestoreStatsWriter(accountDoc: accountDoc))
         await withDiscardingTaskGroup { taskGroup in
             for descriptor in Self.bucketedDescriptors {
                 taskGroup.addTask {
                     let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage)
-                    await self.process(descriptor, months: months, accountDoc: accountDoc)
+                    await self.process(descriptor, months: months, persistence: persistence)
                 }
             }
             for descriptor in Self.individualSamplesDescriptors {
                 taskGroup.addTask {
                     let months = await self.months(since: enrollmentDate, coverage: descriptor.coverage, latestSampleOf: descriptor.sampleType)
-                    await self.process(descriptor, months: months, accountDoc: accountDoc)
+                    await self.process(descriptor, months: months, persistence: persistence)
                 }
             }
             for descriptor in NonstandardSamplesRunDescriptor.allCases {
                 taskGroup.addTask {
                     let months = Self.months(since: enrollmentDate, coverage: descriptor.coverage)
-                    await self.process(descriptor, months: months, accountDoc: accountDoc)
+                    await self.process(descriptor, months: months, persistence: persistence)
                 }
             }
         }
@@ -327,7 +328,7 @@ extension HealthKitStatsCalculator {
         }
         return StatsMonth(year: year, month: month, range: monthStart..<upperBound)
     }
-    
+
     /// The months an individual-samples metric's stats should cover, additionally including the month of the metric's
     /// most recent sample if its coverage asks for that — however long ago that sample was recorded.
     private func months(
@@ -355,48 +356,6 @@ extension HealthKitStatsCalculator {
             logger.error("Unable to look up the most recent \(sampleType) sample: \(error)")
         }
         return months
-    }
-
-    private func writeStatsDocument<Entry: Codable>(
-        accountDoc: DocumentReference,
-        metricId: MetricID,
-        month: StatsMonth,
-        entriesKey: MonthlyStatsDocumentEntriesKey,
-        entries: [Entry]
-    ) async throws {
-        guard !Task.isCancelled else {
-            return
-        }
-        guard !entries.isEmpty else {
-            // don't touch the doc for months without any data: an empty query result can also mean that
-            // HealthKit read authorization was revoked, and we don't want that to wipe existing entries
-            return
-        }
-        // NOTE: writing to this document will mean that we implicitly end up creating an empty document
-        // at `users/{uid}/stats/{metricId}`, which won't be queryable (bc it's empty).
-        // this isn't a problem, as we currently don't need to query these docs, but we should at least
-        // be aware of this being a thing.
-        let doc = accountDoc
-            .collection("stats")
-            .document(metricId.rawValue)
-            .collection("months")
-            .document(month.documentId)
-        do {
-            // we first try to update the doc in place.
-            // (the explicit cast forces the FirestoreUtils overload, which pre-encodes the entries;
-            // the plain Firestore updateData cannot handle Swift structs)
-            try await doc.updateData([
-                FieldPath([entriesKey.rawValue, DataSourceID.healthKit.rawValue]): entries
-            ] as [AnyHashable: any Codable])
-        } catch let error as NSError where error.code == FirestoreErrorCode.notFound.rawValue {
-            // the document we're tryng to update doesn't exist yet, so we need to create it
-            let statsDoc = MonthlyStatsDocument(
-                metric: metricId,
-                entriesKey: entriesKey,
-                entriesBySourceId: [.healthKit: entries]
-            )
-            try await doc.setData(from: statsDoc)
-        }
     }
 }
 
@@ -485,7 +444,7 @@ extension HealthKitStatsCalculator {
     private func process( // swiftlint:disable:this function_body_length
         _ input: StatsRunDescriptor,
         months: [StatsMonth],
-        accountDoc: DocumentReference
+        persistence: StatsPersistence
     ) async {
         let unit = input.sampleType.canonicalUnit
         func imp(month: StatsMonth) async throws { // swiftlint:disable:this function_body_length
@@ -502,8 +461,23 @@ extension HealthKitStatsCalculator {
                 aggInterval: input.aggregationInterval,
                 timeRange: .init(month.range)
             )
-            for try await stats in results {
-                let stats: [StatEntry] = switch input.mode {
+            for try await _ in results {
+                // Statistics updates contain no deletion information. A one-record probe establishes/advances an
+                // anchor without loading the month's raw samples. Always reread the aggregate after the probe:
+                // a queued statistics payload may predate a deletion that this probe is about to acknowledge.
+                var anchor = queryAnchors[input.sampleType, month]
+                let changes = try await healthKit.query(input.sampleType, timeRange: .init(month.range), anchor: &anchor, limit: 1)
+                let stats: [HKStatistics] = switch input.mode {
+                case .sum:
+                    try await healthKit.statisticsQuery(
+                        input.sampleType, aggregatedBy: [.sum], over: input.aggregationInterval, timeRange: .init(month.range)
+                    )
+                case .minMaxAvg:
+                    try await healthKit.statisticsQuery(
+                        input.sampleType, aggregatedBy: [.min, .max, .average], over: input.aggregationInterval, timeRange: .init(month.range)
+                    )
+                }
+                let entries: [StatEntry] = switch input.mode {
                 case .sum:
                     stats.compactMap { stats in
                         guard let sum = stats.sumQuantity() else {
@@ -535,12 +509,11 @@ extension HealthKitStatsCalculator {
                         )
                     }
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: input.metricId,
-                    month: month,
-                    entriesKey: input.entriesKey,
-                    entries: stats
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: input.metricId, month: month, entriesKey: input.entriesKey),
+                    hasDeletions: !changes.deleted.isEmpty && changes.added.isEmpty,
+                    commitAnchor: { self.queryAnchors[input.sampleType, month] = anchor }
                 )
             }
         }
@@ -561,7 +534,7 @@ extension HealthKitStatsCalculator {
     private func process(
         _ input: IndividualSamplesRunDescriptor,
         months: [StatsMonth],
-        accountDoc: DocumentReference
+        persistence: StatsPersistence
     ) async {
         func imp(month: StatsMonth) async throws {
             let unit = input.sampleType.canonicalUnit
@@ -571,9 +544,6 @@ extension HealthKitStatsCalculator {
                 anchor: queryAnchors[input.sampleType, month]
             )
             for try await result in results {
-                defer {
-                    queryAnchors[input.sampleType, month] = result.newAnchor
-                }
                 let samples = try await healthKit.query(input.sampleType, timeRange: .init(month.range))
                 let entries = samples.map { sample in
                     QuantitySampleEntry(
@@ -582,12 +552,11 @@ extension HealthKitStatsCalculator {
                         value: sample.quantity.doubleValue(for: unit)
                     )
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: input.metricId,
-                    month: month,
-                    entriesKey: .samples,
-                    entries: entries
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: input.metricId, month: month, entriesKey: .samples),
+                    hasDeletions: !result.deletedObjects.isEmpty,
+                    commitAnchor: { self.queryAnchors[input.sampleType, month] = result.newAnchor }
                 )
             }
         }
@@ -605,18 +574,18 @@ extension HealthKitStatsCalculator {
     }
     
     
-    private func process(_ descriptor: NonstandardSamplesRunDescriptor, months: [StatsMonth], accountDoc: DocumentReference) async {
+    private func process(_ descriptor: NonstandardSamplesRunDescriptor, months: [StatsMonth], persistence: StatsPersistence) async {
         switch descriptor {
         case .sleepSessions:
-            await runSleepStats(months: months, accountDoc: accountDoc)
+            await runSleepStats(months: months, persistence: persistence)
         case .bloodPressure:
-            await runBloodPressureStats(months: months, accountDoc: accountDoc)
+            await runBloodPressureStats(months: months, persistence: persistence)
         }
     }
     
     
     @concurrent
-    private func runSleepStats(months: [StatsMonth], accountDoc: DocumentReference) async {
+    private func runSleepStats(months: [StatsMonth], persistence: StatsPersistence) async {
         func imp(month: StatsMonth) async throws {
             // query with a ±1 day margin: sleep sessions typically span midnight, and the underlying HK
             // predicate only matches samples that both start AND end inside the range, which would
@@ -629,9 +598,6 @@ extension HealthKitStatsCalculator {
                 source: CVHScore.sleepDataSourceFilter
             )
             for try await result in results {
-                defer {
-                    queryAnchors[.sleepAnalysis, month] = result.newAnchor
-                }
                 let samples = try await healthKit.query(
                     .sleepAnalysis,
                     timeRange: .init(paddedRange),
@@ -652,12 +618,11 @@ extension HealthKitStatsCalculator {
                         values: .sum(session.totalTimeSpentAsleep / 60 / 60)
                     )
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: .sleep,
-                    month: month,
-                    entriesKey: .sessions,
-                    entries: entries
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: .sleep, month: month, entriesKey: .sessions),
+                    hasDeletions: !result.deletedObjects.isEmpty,
+                    commitAnchor: { self.queryAnchors[.sleepAnalysis, month] = result.newAnchor }
                 )
             }
         }
@@ -675,7 +640,7 @@ extension HealthKitStatsCalculator {
     }
     
     @concurrent
-    private func runBloodPressureStats(months: [StatsMonth], accountDoc: DocumentReference) async {
+    private func runBloodPressureStats(months: [StatsMonth], persistence: StatsPersistence) async {
         let unit = SampleType.bloodPressureSystolic.canonicalUnit // mmHg
         func imp(month: StatsMonth) async throws {
             let results = self.healthKit.continuousQuery(
@@ -684,9 +649,6 @@ extension HealthKitStatsCalculator {
                 anchor: queryAnchors[.bloodPressure, month]
             )
             for try await result in results {
-                defer {
-                    queryAnchors[.bloodPressure, month] = result.newAnchor
-                }
                 let samples = try await self.healthKit.query(.bloodPressure, timeRange: .init(month.range))
                 let entries = samples.compactMap { correlation -> BloodPressureSampleEntry? in
                     guard let systolic = correlation.objects(for: .bloodPressureSystolic).first,
@@ -700,12 +662,11 @@ extension HealthKitStatsCalculator {
                         diastolic: diastolic.quantity.doubleValue(for: unit)
                     )
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: .bloodPressure,
-                    month: month,
-                    entriesKey: .samples,
-                    entries: entries
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: .bloodPressure, month: month, entriesKey: .samples),
+                    hasDeletions: !result.deletedObjects.isEmpty,
+                    commitAnchor: { self.queryAnchors[.bloodPressure, month] = result.newAnchor }
                 )
             }
         }
@@ -881,11 +842,11 @@ extension HealthKitStatsCalculator {
 // MARK: Stats document
 
 extension HealthKitStatsCalculator {
-    fileprivate enum MonthlyStatsDocumentEntriesKey: String, CaseIterable {
+    enum MonthlyStatsDocumentEntriesKey: String, CaseIterable {
         case hourly, daily, sessions, samples
     }
 
-    fileprivate struct MonthlyStatsDocument<Entry: Codable>: Codable {
+    struct MonthlyStatsDocument<Entry: Codable>: Codable {
         private struct CodingKey: Swift.CodingKey {
             fileprivate static var version: Self { Self(stringValue: "version") }
             fileprivate static var metric: Self { Self(stringValue: "metric") }
