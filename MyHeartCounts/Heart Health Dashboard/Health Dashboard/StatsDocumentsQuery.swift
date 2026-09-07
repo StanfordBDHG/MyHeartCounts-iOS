@@ -10,13 +10,13 @@
 
 import FirebaseFirestore
 import Foundation
+import GroveAccount
+import GroveFoundation
+import GroveHealthKit
+import GroveHealthKitUI
 import HealthKit
 import MyHeartCountsShared
 import OSLog
-import SpeziAccount
-import SpeziFoundation
-import SpeziHealthKit
-import SpeziHealthKitUI
 import SwiftUI
 
 
