@@ -9032,6 +9032,7 @@
       }
     },
     "Setting Up Test Environment" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {

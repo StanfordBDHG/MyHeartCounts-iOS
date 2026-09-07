@@ -10,6 +10,7 @@
 
 import Charts
 import Foundation
+import HealthKit
 import MyHeartCountsShared
 import SpeziFoundation
 import SpeziHealthKit
@@ -21,6 +22,8 @@ import SwiftUI
 /// Grid Cell intended for usage in the ``HealthDashboard``, with support for most (quantity-based) sample types.
 struct DefaultHealthDashboardTile: View {
     enum QueryInput {
+        /// Temporary HealthKit-backed history until blood glucose moves to the fasting/A1c sample types.
+        case bloodGlucose
         case firestore(CustomQuantitySampleType)
         /// fetch the data from the server-side stats documents (see ``StatsDocumentsQuery``)
         case statsDocuments(HealthStatsMetric)
@@ -44,6 +47,8 @@ struct DefaultHealthDashboardTile: View {
     
     var body: some View {
         switch queryInput {
+        case .bloodGlucose:
+            bloodGlucoseView
         case .firestore(let sampleType):
             view(for: sampleType)
         case .statsDocuments(let metric):
@@ -53,6 +58,11 @@ struct DefaultHealthDashboardTile: View {
     
     private var aggregationStrategy: QuantitySamplesAggregationStrategy {
         switch queryInput {
+        case .bloodGlucose:
+            return .init(
+                kind: .avg,
+                interval: config.chartConfig.aggregationInterval
+            )
         case .statsDocuments(let metric):
             return .init(
                 kind: .init(metric.sampleType.hkSampleType.aggregationStyle),
@@ -66,6 +76,16 @@ struct DefaultHealthDashboardTile: View {
         }
     }
     
+    private var bloodGlucoseView: some View {
+        SamplesProviderView(
+            input: .bloodGlucose,
+            aggregationMode: aggregationStrategy,
+            timeRange: config.timeRange
+        ) { samples in
+            innerView(for: samples, sampleType: .healthKit(.bloodGlucose))
+        }
+    }
+
     private func view(for metric: HealthStatsMetric) -> some View {
         SamplesProviderView(
             input: .statsDocuments(metric),
@@ -164,6 +184,11 @@ private struct SamplesProviderView<Content: View>: View {
     
     var body: some View {
         switch input {
+        case .bloodGlucose:
+            BloodGlucoseImpl(
+                statistics: .init(.bloodGlucose, aggregatedBy: [.average], over: aggregationMode.interval, timeRange: timeRange),
+                content: content
+            )
         case .firestore(let sampleType):
             FirestoreImpl(
                 samples: .init(sampleType: sampleType, timeRange: timeRange),
@@ -194,6 +219,25 @@ private struct SamplesProviderView<Content: View>: View {
 
 
 extension SamplesProviderView {
+    private struct BloodGlucoseImpl: View {
+        @HealthKitStatisticsQuery var statistics: [HKStatistics]
+        let content: @MainActor ([QuantitySample]) -> Content
+
+        var body: some View {
+            content(statistics.compactMap { statistics in
+                statistics.averageQuantity().map { quantity in
+                    QuantitySample(
+                        id: UUID(),
+                        sampleType: .healthKit(.bloodGlucose),
+                        quantity: quantity,
+                        startDate: statistics.startDate,
+                        endDate: statistics.endDate
+                    )
+                }
+            })
+        }
+    }
+
     private struct StatsDocumentsImpl: View {
         @Environment(\.calendar)
         private var calendar

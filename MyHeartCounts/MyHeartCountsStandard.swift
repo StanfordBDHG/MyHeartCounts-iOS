@@ -101,7 +101,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 }
             }
             await MainActor.run {
-                precondition(account.details?.dateOfEnrollment != nil)
+                assert(account.details?.dateOfEnrollment != nil)
             }
             LocalPreferencesStore.standard[.studyActivationDate] = .now
             Swift::Task(priority: .background) {

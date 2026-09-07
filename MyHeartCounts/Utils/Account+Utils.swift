@@ -35,13 +35,14 @@ extension Account {
             }
             // The condition check above and the observation registration below run contiguously on the main actor
             // (no `await` between them), so `details` cannot change in the gap and no update can be missed.
-            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-                withObservationTracking {
-                    _ = detailsAreReady
-                } onChange: {
-                    continuation.resume()
-                }
+            let (changes, continuation) = AsyncStream<Void>.makeStream()
+            withObservationTracking {
+                _ = detailsAreReady
+            } onChange: {
+                continuation.finish()
             }
+            // Cancellation must also release this wait if loading cannot finish while offline.
+            for await _ in changes { }
         }
     }
 }

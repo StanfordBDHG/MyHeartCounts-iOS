@@ -39,12 +39,12 @@ func healthDashboardComponentView(
     accessory: DefaultHealthDashboardTile.Accessory = .none
 ) -> some View {
     switch config.dataSource {
+    case .healthKit(.quantity(.bloodGlucose)):
+        DefaultHealthDashboardTile(queryInput: .bloodGlucose, config: config, accessory: accessory)
     case .healthKit(.quantity(let sampleType)):
         if let metric = HealthStatsMetric(sampleType) {
             DefaultHealthDashboardTile(queryInput: .statsDocuments(metric), config: config, accessory: accessory)
         } else {
-            // a quantity type without a stats-documents metric has no data source
-            // (currently only blood glucose, which is planned to move to the custom fasting/A1c sample types)
             EmptyView()
         }
     case .firebase(let sampleType):

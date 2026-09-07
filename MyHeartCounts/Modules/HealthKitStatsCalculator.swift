@@ -18,26 +18,78 @@ import SpeziAccount
 import SpeziFirestore
 import SpeziFoundation
 import SpeziHealthKit
+import SwiftUI
 import Synchronization
+import UIKit
 
 
 @Observable
 final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unchecked Sendable {
+    private struct Run {
+        let id: UUID
+        var month: DateComponents
+        let task: Task<Void, Never>
+        var needsRestart = false
+    }
+
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(Account.self) private var account
     @ObservationIgnored @Dependency(AccountNotifications.self) private var accountNotifications
+    @ObservationIgnored @Dependency(MHCBackgroundTasks.self) private var backgroundTasks
+    @ObservationIgnored @Dependency(Lifecycle.self) private var lifecycle
     // swiftlint:enable attributes
     
-    /// The currently-active long-lived stats processing task.
-    private let task: Mutex<Task<Void, Never>?> = .init(nil)
+    /// The active run, or its canceled task while shutdown is finishing.
+    private let currentRun: Mutex<Run?> = .init(nil)
     
+    /// Whether calculation is enabled, including while waiting for a network connection.
     var isActive: Bool {
-        task.withLock { $0 != nil }
+        currentRun.withLock { $0.map { !$0.task.isCancelled } ?? false }
+    }
+    
+    func configure() {
+        lifecycle.onChange(of: \.scenePhase) { [weak self] oldValue, newValue in
+            if oldValue != .active, newValue == .active {
+                self?.refreshIfNeeded()
+            }
+        }
+        do {
+            try backgroundTasks.register(.healthResearch(
+                id: .healthStatsRefresh,
+                nextTriggerDate: .after(TimeConstants.hour * 12),
+                options: [.requiresNetworkConnectivity],
+                protectionTypeOfRequiredData: .complete
+            ) {
+                // rather crude but since we're using anchor-based live updating queries below
+                // and would like to avoid having to add a second non-live-query-based implementation,
+                // simply starting the module, giving it a couple of seconds to do its work and then
+                // stopping it again seems like the best approach.
+                // If the module is already running (e.g. because the task fired into a process that also has
+                // a foreground session), we only lend it our execution time and leave it running afterwards.
+                let didStart = self.start()
+                defer {
+                    if didStart {
+                        self.stop()
+                    }
+                }
+                try await Task.sleep(for: .seconds(20))
+            })
+        } catch {
+            logger.error("failed to register bg task: \(error)")
+        }
     }
 
+    // run when the app is actually launched in foreground.
+    // NOT run during background launches, which is ok.
     func run() async {
+        if await account.details != nil {
+            // currently already signed in. issue here is that the account events don't replay,
+            // so if the initial `associatedAccount` event fired before this module's `run()`
+            // function was called we'd miss it.
+            start()
+        }
         for await event in accountNotifications.events {
             switch event {
             case .associatedAccount:
@@ -51,64 +103,162 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
     }
     
-    func start() {
-        task.withLock { task in
-            guard task == nil else {
-                return
-            }
-            task = Task {
-                await self._run()
-            }
-        }
+    /// Starts the calculator, or replaces a run whose month changed or whose queries exited.
+    ///
+    /// - returns: whether this call is the one that started it.
+    @discardableResult
+    func start() -> Bool {
+        currentRun.withLock { start(&$0) }
     }
     
     func stop() {
-        task.withLock { task in
-            exchange(&task, with: nil)?.cancel()
+        // Retain the task until it finishes so a later start can wait for its writes and queries to stop.
+        currentRun.withLock { $0?.task.cancel() }
+    }
+
+    private func refreshIfNeeded() {
+        currentRun.withLock { run in
+            guard run?.task.isCancelled == false else {
+                return
+            }
+            _ = start(&run)
         }
     }
-    
-    
-    @concurrent
-    private func _run() async {
-        logger.notice("Starting HKStats collection")
-        defer {
-            if !Task.isCancelled {
-                logger.warning("done")
-                // should never reach here (the process functions below should all monitor for new data indefinitely),
-                // but if we do end up here, we clear out the task just in case
-                stop()
+
+    private func restartIfMonthChanged(runId: UUID) {
+        currentRun.withLock { run in
+            let month = Calendar.current.dateComponents([.era, .year, .month], from: .now)
+            guard run?.id == runId, run?.task.isCancelled == false, run?.month != month else {
+                return
+            }
+            run?.needsRestart = true
+            _ = start(&run)
+        }
+    }
+
+    private func start(_ run: inout Run?) -> Bool {
+        let now = Date.now
+        let calendar = Calendar.current
+        let month = calendar.dateComponents([.era, .year, .month], from: now)
+        let wasActive = run.map { !$0.task.isCancelled } ?? false
+        guard !wasActive || run?.month != month || run?.needsRestart == true else {
+            return false
+        }
+        let previousTask = run?.task
+        previousTask?.cancel()
+        let id = UUID()
+        let task = Task {
+            defer {
+                self.currentRun.withLock { run in
+                    if run?.id == id {
+                        run = nil
+                    }
+                }
+            }
+            // Finish the previous run before starting queries that could write the same stats documents.
+            await previousTask?.value
+            guard !Task.isCancelled else {
+                return
+            }
+            await self.runWhenConnected(id: id)
+        }
+        run = Run(id: id, month: month, task: task)
+        // Refreshing an existing run does not transfer ownership to a background caller.
+        return !wasActive
+    }
+
+    private func workerDidExit(runId: UUID) {
+        currentRun.withLock { run in
+            if !Task.isCancelled, run?.id == runId {
+                run?.needsRestart = true
             }
         }
+    }
+
+    private func commitStatsAnchor(runId: UUID, _ commit: () -> Void) {
+        currentRun.withLock { run in
+            // Serialize anchor updates with stop/logout so a finishing write cannot undo an anchor reset.
+            guard !Task.isCancelled, run?.id == runId, run?.task.isCancelled == false else {
+                return
+            }
+            commit()
+        }
+    }
+
+    @concurrent
+    func runQueries(id: UUID) async {
+        // The connection monitor outlives this attempt. Allow enroll/foreground refresh to retry an early exit.
+        defer { workerDidExit(runId: id) }
         await account.waitForAccountDetailsReady()
+        guard !Task.isCancelled else {
+            return
+        }
         guard let accountId = await account.details?.accountId else {
             logger.error("no accountId")
             return
         }
-        guard let enrollmentDate = await account.details?.dateOfEnrollment else {
+        guard let enrollmentDate = await account.details?.dateOfEnrollment, enrollmentDate < .now else {
             logger.error("no enrollment date")
             return
         }
-        let months = self.months(since: enrollmentDate)
         let accountDoc = FirebaseFirestore.Firestore.firestore().document("/users/\(accountId)")
+        let writer = FirestoreStatsWriter(accountDoc: accountDoc)
+        do {
+            // Cancellation cannot retract writes already queued by Firestore. Drain them before a new run
+            // submits more, including after reconnects and app restarts while the backend is unreachable.
+            try await writer.waitForPendingWrites()
+        } catch {
+            if !Task.isCancelled {
+                logger.error("Unable to finish pending Firestore writes: \(error)")
+            }
+            return
+        }
+        await processMetrics(since: enrollmentDate, persistence: StatsPersistence(writer: writer), runId: id)
+    }
+
+    private func processMetrics(since enrollmentDate: Date, persistence: StatsPersistence, runId id: UUID) async {
+        guard !Task.isCancelled else {
+            return
+        }
+        // A run can spend days waiting for connectivity or pending writes. Select its months only now.
+        let now = Date.now
+        let calendar = Calendar.current
+        let months = Self.months(since: enrollmentDate, now: now, calendar: calendar)
+        currentRun.withLock { run in
+            if run?.id == id {
+                run?.month = calendar.dateComponents([.era, .year, .month], from: now)
+                run?.needsRestart = false
+            }
+        }
         await withDiscardingTaskGroup { taskGroup in
+            taskGroup.addTask {
+                for await _ in NotificationCenter.default.notifications(named: UIApplication.significantTimeChangeNotification) {
+                    self.restartIfMonthChanged(runId: id)
+                }
+            }
             for descriptor in Self.bucketedDescriptors {
                 taskGroup.addTask {
-                    await self.process(descriptor, months: months, accountDoc: accountDoc)
+                    await self.process(descriptor, months: months, persistence: persistence, runId: id)
                 }
             }
             for descriptor in Self.individualSamplesDescriptors {
                 taskGroup.addTask {
-                    await self.process(descriptor, months: months, accountDoc: accountDoc)
+                    let individualMonths = await self.months(for: descriptor, extending: months, calendar: calendar, runId: id)
+                    await self.process(descriptor, months: individualMonths, persistence: persistence, runId: id)
                 }
             }
             for descriptor in NonstandardSamplesRunDescriptor.allCases {
                 taskGroup.addTask {
-                    await self.process(descriptor, months: months, accountDoc: accountDoc)
+                    await self.process(descriptor, months: months, persistence: persistence, runId: id)
                 }
             }
         }
     }
+}
+
+
+extension MHCBackgroundTasks.TaskIdentifier {
+    static let healthStatsRefresh = Self("edu.stanford.MyHeartCounts.healthStatsRefresh")
 }
 
 
@@ -201,7 +351,7 @@ extension HealthKitStatsCalculator._IDType {
 // MARK: Month iteration & document writing
 
 extension HealthKitStatsCalculator {
-    fileprivate struct StatsMonth {
+    /* private but testable */ struct StatsMonth {
         let year: Int
         let monthString: String // zero-padded
         
@@ -211,22 +361,54 @@ extension HealthKitStatsCalculator {
             "\(year)-\(monthString)"
         }
         let range: Range<Date>
+
+        /// Include samples crossing either boundary; HealthKit aggregates them into time buckets.
+        var overlappingSamplesPredicate: NSPredicate {
+            HKQuery.predicateForSamples(withStart: range.lowerBound, end: range.upperBound, options: [])
+        }
+
+        /// Individual readings are stored at their start date, so each reading belongs to exactly one month.
+        var samplesStartingInMonthPredicate: NSPredicate {
+            HKQuery.predicateForSamples(withStart: range.lowerBound, end: range.upperBound, options: .strictStartDate)
+        }
         
         init(year: Int, month: Int, range: Range<Date>) {
             self.year = year
             self.monthString = String(format: "%02d", month)
             self.range = range
         }
+
+        func statisticsQuery(
+            for sampleType: HKQuantityType,
+            options: HKStatisticsOptions,
+            intervalComponents: DateComponents
+        ) -> HKStatisticsCollectionQueryDescriptor {
+            // Spezi's time-range wrapper requires both sample endpoints to be inside the month.
+            // Use a native descriptor to select overlapping samples while keeping the month as the bucket anchor.
+            HKStatisticsCollectionQueryDescriptor(
+                predicate: .quantitySample(type: sampleType, predicate: overlappingSamplesPredicate),
+                options: options,
+                anchorDate: range.lowerBound,
+                intervalComponents: intervalComponents
+            )
+        }
     }
 
-    /// The months the stats should cover, i.e. all months from the user's enrollment up to the end of the current month.
-    private func months(since enrollmentDate: Date) -> [StatsMonth] {
-        let cal = Calendar.current
-        let now = Date()
-        guard enrollmentDate < now else {
+    // private but testable
+    /// The stats history to maintain for app and server consumers: all enrollment months, with at least twelve months of history.
+    ///
+    /// Starts at the earlier of the enrollment month and the month containing twelve months before the end of today.
+    /// Participants enrolled longer ago retain live updates for their full enrollment history.
+    static func months(
+        since enrollmentDate: Date,
+        now: Date = .now,
+        calendar cal: Calendar = .current
+    ) -> [StatsMonth] {
+        let end = cal.startOfNextDay(for: now)
+        guard let start = cal.date(byAdding: .month, value: -12, to: end) else {
             return []
         }
-        let firstMonthStart = cal.startOfMonth(for: enrollmentDate)
+        let firstMonthStart = min(cal.startOfMonth(for: enrollmentDate), cal.startOfMonth(for: start))
         return cal
             .dates(
                 byAdding: .month,
@@ -237,64 +419,52 @@ extension HealthKitStatsCalculator {
             // NOTE: the sequence returned by `Calendar.dates(byAdding:)` begins at `start` + 1 interval,
             // i.e. it never yields the start date itself; hence the explicit prepending.
             .chaining(after: CollectionOfOne(firstMonthStart))
-            .compactMap { monthStart in
-                let components = cal.dateComponents([.year, .month], from: monthStart)
-                guard let year = components.year, let month = components.month else {
-                    return nil
-                }
-                let lowerBound = monthStart
-                let upperBound = cal.startOfNextMonth(for: monthStart)
-                guard lowerBound < upperBound else {
-                    return nil
-                }
-                return StatsMonth(
-                    year: year,
-                    month: month,
-                    range: lowerBound..<upperBound
-                )
-            }
+            .compactMap { Self.month(containing: $0, calendar: cal) }
+    }
+    
+    // private but testable
+    /// The month containing `date`.
+    static func month(containing date: Date, calendar cal: Calendar = .current) -> StatsMonth? {
+        let monthStart = cal.startOfMonth(for: date)
+        let components = cal.dateComponents([.year, .month], from: monthStart)
+        guard let year = components.year, let month = components.month else {
+            return nil
+        }
+        let upperBound = cal.startOfNextMonth(for: monthStart)
+        guard monthStart < upperBound else {
+            return nil
+        }
+        return StatsMonth(year: year, month: month, range: monthStart..<upperBound)
     }
 
-    private func writeStatsDocument<Entry: Codable>(
-        accountDoc: DocumentReference,
-        metricId: MetricID,
-        month: StatsMonth,
-        entriesKey: MonthlyStatsDocumentEntriesKey,
-        entries: [Entry]
-    ) async throws {
-        guard !Task.isCancelled else {
-            return
+    /// Height also covers the month of its latest measurement, however long ago it was recorded.
+    private func months(
+        for descriptor: IndividualSamplesRunDescriptor,
+        extending months: [StatsMonth],
+        calendar: Calendar,
+        runId: UUID
+    ) async -> [StatsMonth] {
+        guard descriptor.sampleType == .height else {
+            return months
         }
-        guard !entries.isEmpty else {
-            // don't touch the doc for months without any data: an empty query result can also mean that
-            // HealthKit read authorization was revoked, and we don't want that to wipe existing entries
-            return
-        }
-        // NOTE: writing to this document will mean that we implicitly end up creating an empty document
-        // at `users/{uid}/stats/{metricId}`, which won't be queryable (bc it's empty).
-        // this isn't a problem, as we currently don't need to query these docs, but we should at least
-        // be aware of this being a thing.
-        let doc = accountDoc
-            .collection("stats")
-            .document(metricId.rawValue)
-            .collection("months")
-            .document(month.documentId)
+        var months = months
         do {
-            // we first try to update the doc in place.
-            // (the explicit cast forces the FirestoreUtils overload, which pre-encodes the entries;
-            // the plain Firestore updateData cannot handle Swift structs)
-            try await doc.updateData([
-                FieldPath([entriesKey.rawValue, DataSourceID.healthKit.rawValue]): entries
-            ] as [AnyHashable: any Codable])
-        } catch let error as NSError where error.code == FirestoreErrorCode.notFound.rawValue {
-            // the document we're tryng to update doesn't exist yet, so we need to create it
-            let statsDoc = MonthlyStatsDocument(
-                metric: metricId,
-                entriesKey: entriesKey,
-                entriesBySourceId: [.healthKit: entries]
-            )
-            try await doc.setData(from: statsDoc)
+            let latestSample = try await healthKit.query(
+                descriptor.sampleType,
+                timeRange: .ever,
+                limit: 1,
+                sortedBy: [SortDescriptor(\.startDate, order: .reverse)]
+            ).first
+            if let latestSample,
+               let month = Self.month(containing: latestSample.startDate, calendar: calendar),
+               !months.contains(where: { $0.documentId == month.documentId }) {
+                months.insert(month, at: 0)
+            }
+        } catch {
+            logger.error("Unable to look up the most recent \(descriptor.sampleType) sample: \(error)")
+            workerDidExit(runId: runId)
         }
+        return months
     }
 }
 
@@ -363,12 +533,14 @@ extension HealthKitStatsCalculator {
     private func process( // swiftlint:disable:this function_body_length
         _ input: StatsRunDescriptor,
         months: [StatsMonth],
-        accountDoc: DocumentReference
+        persistence: StatsPersistence,
+        runId: UUID
     ) async {
         let unit = input.sampleType.canonicalUnit
+        @concurrent
         func imp(month: StatsMonth) async throws { // swiftlint:disable:this function_body_length
-            let results = try await healthKit.continuousStatisticsQuery(
-                input.sampleType,
+            let query = month.statisticsQuery(
+                for: input.sampleType.hkSampleType,
                 options: { () -> HKStatisticsOptions in
                     switch input.mode {
                     case .sum:
@@ -377,12 +549,22 @@ extension HealthKitStatsCalculator {
                         [.discreteMin, .discreteMax, .discreteAverage]
                     }
                 }(),
-                aggInterval: input.aggregationInterval,
-                timeRange: .init(month.range)
+                intervalComponents: input.aggregationInterval.intervalComponents
             )
-            for try await stats in results {
-                logger.notice("[\(input.sampleType)] NEW STATS FOR \(month.range)")
-                let stats: [StatEntry] = switch input.mode {
+            let results = query.results(for: healthKit.healthStore)
+            for try await _ in results {
+                // Statistics updates contain no deletion information. A one-record probe establishes/advances an
+                // anchor without loading the month's raw samples. Always reread the aggregate after the probe:
+                // a queued statistics payload may predate a deletion that this probe is about to acknowledge.
+                var anchor = queryAnchors[input.sampleType, month]
+                let changes = try await healthKit.query(
+                    input.sampleType, timeRange: .ever, anchor: &anchor, limit: 1, predicate: month.overlappingSamplesPredicate
+                )
+                let collection = try await query.result(for: healthKit.healthStore)
+                // An overlapping sample can produce buckets on both sides of the boundary. Store each bucket
+                // only in its own month, leaving HealthKit to aggregate samples and reconcile their sources.
+                let stats = collection.statistics().filter { month.range.contains($0.startDate) }
+                let entries: [StatEntry] = switch input.mode {
                 case .sum:
                     stats.compactMap { stats in
                         guard let sum = stats.sumQuantity() else {
@@ -414,18 +596,18 @@ extension HealthKitStatsCalculator {
                         )
                     }
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: input.metricId,
-                    month: month,
-                    entriesKey: input.entriesKey,
-                    entries: stats
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: input.metricId, month: month, entriesKey: input.entriesKey),
+                    hasDeletions: !changes.deleted.isEmpty && changes.added.isEmpty,
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[input.sampleType, month] = anchor } }
                 )
             }
         }
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
@@ -440,21 +622,19 @@ extension HealthKitStatsCalculator {
     private func process(
         _ input: IndividualSamplesRunDescriptor,
         months: [StatsMonth],
-        accountDoc: DocumentReference
+        persistence: StatsPersistence,
+        runId: UUID
     ) async {
         func imp(month: StatsMonth) async throws {
             let unit = input.sampleType.canonicalUnit
             let results = healthKit.continuousQuery(
                 input.sampleType,
-                timeRange: .init(month.range),
-                anchor: queryAnchors[input.sampleType, month]
+                timeRange: .ever,
+                anchor: queryAnchors[input.sampleType, month],
+                predicate: month.samplesStartingInMonthPredicate
             )
             for try await result in results {
-                defer {
-                    queryAnchors[input.sampleType, month] = result.newAnchor
-                }
-                let samples = try await healthKit.query(input.sampleType, timeRange: .init(month.range))
-                logger.notice("new results for \(input.sampleType): \(samples.count) in \(month.documentId)")
+                let samples = try await healthKit.query(input.sampleType, timeRange: .ever, predicate: month.samplesStartingInMonthPredicate)
                 let entries = samples.map { sample in
                     QuantitySampleEntry(
                         date: sample.startDate,
@@ -462,18 +642,18 @@ extension HealthKitStatsCalculator {
                         value: sample.quantity.doubleValue(for: unit)
                     )
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: input.metricId,
-                    month: month,
-                    entriesKey: .samples,
-                    entries: entries
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: input.metricId, month: month, entriesKey: .samples),
+                    hasDeletions: !result.deletedObjects.isEmpty,
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[input.sampleType, month] = result.newAnchor } }
                 )
             }
         }
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
@@ -485,18 +665,18 @@ extension HealthKitStatsCalculator {
     }
     
     
-    private func process(_ descriptor: NonstandardSamplesRunDescriptor, months: [StatsMonth], accountDoc: DocumentReference) async {
+    private func process(_ descriptor: NonstandardSamplesRunDescriptor, months: [StatsMonth], persistence: StatsPersistence, runId: UUID) async {
         switch descriptor {
         case .sleepSessions:
-            await runSleepStats(months: months, accountDoc: accountDoc)
+            await runSleepStats(months: months, persistence: persistence, runId: runId)
         case .bloodPressure:
-            await runBloodPressureStats(months: months, accountDoc: accountDoc)
+            await runBloodPressureStats(months: months, persistence: persistence, runId: runId)
         }
     }
     
     
     @concurrent
-    private func runSleepStats(months: [StatsMonth], accountDoc: DocumentReference) async {
+    private func runSleepStats(months: [StatsMonth], persistence: StatsPersistence, runId: UUID) async {
         func imp(month: StatsMonth) async throws {
             // query with a ±1 day margin: sleep sessions typically span midnight, and the underlying HK
             // predicate only matches samples that both start AND end inside the range, which would
@@ -509,15 +689,11 @@ extension HealthKitStatsCalculator {
                 source: CVHScore.sleepDataSourceFilter
             )
             for try await result in results {
-                defer {
-                    queryAnchors[.sleepAnalysis, month] = result.newAnchor
-                }
                 let samples = try await healthKit.query(
                     .sleepAnalysis,
                     timeRange: .init(paddedRange),
                     source: CVHScore.sleepDataSourceFilter
                 )
-                logger.notice("NEW SLEEP DATA FOR \(month.documentId) (#samples: \(samples.count))")
                 // group the samples into sleep sessions, and keep the sessions belonging to this month.
                 // this matches how the dashboard used to turn sleep samples into the values it displays;
                 // in particular, `totalTimeSpentAsleep` accounts for overlapping samples (e.g. from a phone and a watch
@@ -525,7 +701,6 @@ extension HealthKitStatsCalculator {
                 let sessions = try samples.splitIntoSleepSessions().filter { session in
                     month.range.contains(session.timeRange.middle)
                 }
-                logger.notice(" -> SESSIONS: \(sessions)")
                 let entries = sessions.map { session in
                     StatEntry(
                         start: session.startDate,
@@ -534,18 +709,18 @@ extension HealthKitStatsCalculator {
                         values: .sum(session.totalTimeSpentAsleep / 60 / 60)
                     )
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: .sleep,
-                    month: month,
-                    entriesKey: .sessions,
-                    entries: entries
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: .sleep, month: month, entriesKey: .sessions),
+                    hasDeletions: !result.deletedObjects.isEmpty,
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[.sleepAnalysis, month] = result.newAnchor } }
                 )
             }
         }
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
@@ -557,19 +732,17 @@ extension HealthKitStatsCalculator {
     }
     
     @concurrent
-    private func runBloodPressureStats(months: [StatsMonth], accountDoc: DocumentReference) async {
+    private func runBloodPressureStats(months: [StatsMonth], persistence: StatsPersistence, runId: UUID) async {
         let unit = SampleType.bloodPressureSystolic.canonicalUnit // mmHg
         func imp(month: StatsMonth) async throws {
             let results = self.healthKit.continuousQuery(
                 .bloodPressure,
-                timeRange: .init(month.range),
-                anchor: queryAnchors[.bloodPressure, month]
+                timeRange: .ever,
+                anchor: queryAnchors[.bloodPressure, month],
+                predicate: month.samplesStartingInMonthPredicate
             )
             for try await result in results {
-                defer {
-                    queryAnchors[.bloodPressure, month] = result.newAnchor
-                }
-                let samples = try await self.healthKit.query(.bloodPressure, timeRange: .init(month.range))
+                let samples = try await self.healthKit.query(.bloodPressure, timeRange: .ever, predicate: month.samplesStartingInMonthPredicate)
                 let entries = samples.compactMap { correlation -> BloodPressureSampleEntry? in
                     guard let systolic = correlation.objects(for: .bloodPressureSystolic).first,
                           let diastolic = correlation.objects(for: .bloodPressureDiastolic).first else {
@@ -582,18 +755,18 @@ extension HealthKitStatsCalculator {
                         diastolic: diastolic.quantity.doubleValue(for: unit)
                     )
                 }
-                try await writeStatsDocument(
-                    accountDoc: accountDoc,
-                    metricId: .bloodPressure,
-                    month: month,
-                    entriesKey: .samples,
-                    entries: entries
+                try await persistence.persistStatsUpdate(
+                    entries,
+                    for: .init(metricId: .bloodPressure, month: month, entriesKey: .samples),
+                    hasDeletions: !result.deletedObjects.isEmpty,
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[.bloodPressure, month] = result.newAnchor } }
                 )
             }
         }
         await withDiscardingTaskGroup { taskGroup in
             for month in months {
                 taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
                     do {
                         try await imp(month: month)
                     } catch {
@@ -763,11 +936,11 @@ extension HealthKitStatsCalculator {
 // MARK: Stats document
 
 extension HealthKitStatsCalculator {
-    fileprivate enum MonthlyStatsDocumentEntriesKey: String, CaseIterable {
+    enum MonthlyStatsDocumentEntriesKey: String, CaseIterable {
         case hourly, daily, sessions, samples
     }
 
-    fileprivate struct MonthlyStatsDocument<Entry: Codable>: Codable {
+    struct MonthlyStatsDocument<Entry: Codable>: Codable {
         private struct CodingKey: Swift.CodingKey {
             fileprivate static var version: Self { Self(stringValue: "version") }
             fileprivate static var metric: Self { Self(stringValue: "metric") }
