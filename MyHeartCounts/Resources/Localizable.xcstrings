@@ -1153,6 +1153,7 @@
       }
     },
     "Another test is already active" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -1202,6 +1203,7 @@
       }
     },
     "Answer Survey Again" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -1330,6 +1332,7 @@
       }
     },
     "Article" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -1408,6 +1411,12 @@
           }
         }
       }
+    },
+    "Blood Glucose (A1c)" : {
+
+    },
+    "Blood Glucose (Fasting)" : {
+
     },
     "Blood Lipids" : {
       "localizations" : {
@@ -2984,6 +2993,7 @@
       }
     },
     "Failed to process Sleep Sessions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -4901,7 +4911,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MHC Salud cardiovascular"
+            "value" : "MHC Salud Cardíaca"
           }
         }
       }
@@ -5169,6 +5179,7 @@
       }
     },
     "n/a" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -6746,6 +6757,7 @@
       }
     },
     "Processing Health Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -6762,6 +6774,7 @@
       }
     },
     "Processing SensorKit Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -6778,6 +6791,7 @@
       }
     },
     "Processing Sleep Data…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -7636,6 +7650,7 @@
       }
     },
     "Read Article Again" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -8339,6 +8354,7 @@
       }
     },
     "Setting Up Test Environment" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -8980,6 +8996,7 @@
       }
     },
     "Take Test Again" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {
@@ -9176,6 +9193,7 @@
       }
     },
     "There are missing Motion Sensor permissions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en-GB" : {
           "stringUnit" : {

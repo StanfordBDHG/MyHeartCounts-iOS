@@ -6,12 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - somehow a false positive but if we add a line-specific ignore comment it doesnt get picked up correctly
+
 import FHIRModelsExtensions
 import GroveSensorKit
 import ModelsR4
 
 
-// periphery:ignore - retained for future use; live SensorKit upload uses ``UploadStrategyJSONFile``.
 /// An upload strategy that uploads each sample as a FHIR observation.
 struct UploadStrategyFHIRObservations<Sample: SensorKitSampleProtocol>: MHCSensorSampleUploadStrategy
 where Sample.SafeRepresentation: HealthObservation {

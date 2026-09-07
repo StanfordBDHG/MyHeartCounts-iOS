@@ -30,11 +30,11 @@ struct CVHScore: DynamicProperty {
     }
     
     var preferredExerciseMetric: PreferredExerciseMetric {
-        switch (weeklyExerciseTime.isEmpty, dailyStepCount.isEmpty) {
-        case (false, _), (true, true):
-            .exerciseMinutes
-        case (true, false):
-            .stepCount
+        switch (!statsExerciseTime.isEmpty, !statsStepCount.isEmpty) {
+        case (true, _), (false, false):
+            return .exerciseMinutes
+        case (false, true):
+            return .stepCount
         }
     }
     
@@ -53,39 +53,36 @@ struct CVHScore: DynamicProperty {
     @MHCFirestoreQuery(sampleType: .nicotineExposure, timeRange: .last(months: 2))
     private var nicotineExposure
     
-    @HealthKitStatisticsQuery(
-        .appleExerciseTime,
-        aggregatedBy: [.sum],
-        over: .init(.init(day: 7)),
-        timeRange: .last(days: 7).offset(by: .init(day: -1))
-    )
-    private var weeklyExerciseTime
-    
-    @HealthKitStatisticsQuery(
-        .stepCount,
-        aggregatedBy: [.sum],
-        over: .day,
-        timeRange: .last(days: 7).offset(by: .init(day: -1))
-    )
-    private var dailyStepCount
-    
-    @SleepSessionsQuery(timeRange: .last(days: 14), source: Self.sleepDataSourceFilter)
-    private var sleepSessions
-    
-    @HealthKitQuery(.bodyMassIndex, timeRange: .last(days: 14))
-    private var bodyMassIndex
-    
-    @HealthKitQuery(.bodyMass, timeRange: .last(months: 3))
-    private var bodyWeight
-    
-    @HealthKitQuery(.height, timeRange: .last(years: 5))
-    private var height
-    
+    // NOTE: blood glucose is the one remaining HealthKit-queried score input: it has no stats-documents metric
+    // (it is planned to move to the custom fasting/A1c quantity sample types, which will live directly in firestore).
     @HealthKitQuery(.bloodGlucose, timeRange: .last(days: 14))
     private var bloodGlucose
     
-    @HealthKitQuery(.bloodPressure, timeRange: .last(months: 3))
-    private var bloodPressure
+    // MARK: server-side stats documents
+    // (the dashboard's sole data source for the HealthKit-derived metrics; see `StatsDocumentsQuery`.)
+    
+    @StatsDocumentsQuery<QuantitySample>(metric: .exerciseTime, timeRange: .last(days: 7).offset(by: .init(day: -1)), aggregationKind: .sum)
+    private var statsExerciseTime
+    
+    @StatsDocumentsQuery<QuantitySample>(metric: .steps, timeRange: .last(days: 7).offset(by: .init(day: -1)), aggregationKind: .sum)
+    private var statsStepCount
+    
+    @StatsDocumentsQuery<SleepSessionStatsSample>(sleepSessionsIn: .last(days: 14))
+    private var statsSleepSessions
+    
+    @StatsDocumentsQuery<QuantitySample>(metric: .bmi, timeRange: .last(days: 14), aggregationKind: .avg)
+    private var statsBodyMassIndex
+    
+    @StatsDocumentsQuery<QuantitySample>(metric: .weight, timeRange: .last(months: 3), aggregationKind: .avg)
+    private var statsBodyWeight
+    
+    // the most recent height, however old: adults don't grow, and the stats documents cover the month of the latest
+    // height sample even when it predates both enrollment and the chart history.
+    @StatsDocumentsQuery<QuantitySample>(metric: .height, timeRange: .ever, aggregationKind: .avg)
+    private var statsHeight
+    
+    @StatsDocumentsQuery<BloodPressureStatsSample>(bloodPressureIn: .last(months: 3))
+    private var statsBloodPressure
     
     
     /// the composite CVH score, in the range of `0...1`. `nil` if there aren't enough input values to compute a score
@@ -121,7 +118,7 @@ extension CVHScore {
             "Most Recent Score",
             sampleType: .custom(.dietMEPAScore),
             sample: dietScores.first,
-            value: \.value,
+            value: { $0.value(as: $0.sampleType.displayUnit) },
             definition: .cvhDiet
         )
     }
@@ -130,8 +127,9 @@ extension CVHScore {
         ScoreResult(
             "Last \(7) Days",
             sampleType: .healthKit(.quantity(.appleExerciseTime)),
-            sample: weeklyExerciseTime.last,
-            value: { $0.sumQuantity()?.doubleValue(for: .minute()) ?? 0 },
+            timeRange: HealthKitQueryTimeRange.last(days: 7).offset(by: .init(day: -1)).range,
+            input: statsExerciseTime.isEmpty ? nil : statsExerciseTime,
+            value: { samples in samples.reduce(0) { $0 + $1.value(as: .minute()) } },
             definition: .cvhPhysicalExercise
         )
     }
@@ -139,12 +137,22 @@ extension CVHScore {
     var stepCountScore: ScoreResult {
         let avgText: LocalizedStringResource = "Daily Average"
         let timeRangeText: LocalizedStringResource = "Last \(7) Days"
+        // the stats documents store hourly sums; reduce them into daily sums, and average those
+        let timeRange = HealthKitQueryTimeRange.last(days: 7).offset(by: .init(day: -1)).range
+        let cal = Calendar.current
+        let dailySums = statsStepCount.reducedIntoIntervals(
+            using: .sum,
+            over: .day,
+            anchor: cal.startOfDay(for: timeRange.lowerBound),
+            overallTimeRange: timeRange,
+            calendar: cal
+        )
         return ScoreResult(
             "\(avgText), \(timeRangeText)",
             sampleType: .healthKit(.quantity(.stepCount)),
-            timeRange: $dailyStepCount.timeRange.range,
-            input: dailyStepCount,
-            value: { $0.compactMap { $0.sumQuantity()?.doubleValue(for: .count()) }.mean()?.rounded() },
+            timeRange: timeRange,
+            input: dailySums.isEmpty ? nil : dailySums,
+            value: { $0.map { $0.value(as: .count()) }.mean()?.rounded() },
             definition: .cvhStepCount
         )
     }
@@ -154,7 +162,7 @@ extension CVHScore {
             "Most Recent Response",
             sampleType: .custom(.nicotineExposure),
             sample: nicotineExposure.first,
-            value: { NicotineExposureCategoryValues(rawValue: Int($0.value)) },
+            value: { NicotineExposureCategoryValues(rawValue: Int($0.value(as: $0.sampleType.displayUnit))) },
             definition: .cvhNicotine
         )
     }
@@ -164,24 +172,25 @@ extension CVHScore {
             "Most Recent Response",
             sampleType: .custom(.mentalWellbeingScore),
             sample: mentalWellbeingScores.first,
-            value: { $0.value * 4 },
+            value: { $0.value(as: $0.sampleType.displayUnit) * 4 },
             definition: .cvhMentalWellbeing
         )
     }
     
     var sleepHealthScore: ScoreResult {
-        if sleepSessions.isEmpty {
+        // the sleep stats documents store one entry per sleep session, with the value being the time asleep in hours
+        if let mostRecentSession = statsSleepSessions.last {
             ScoreResult(
-                "Last Night",
+                "Most Recent Night",
                 sampleType: .healthKit(.category(.sleepAnalysis)),
+                sample: mostRecentSession,
+                value: { $0.hoursAsleep },
                 definition: .cvhSleep
             )
         } else {
             ScoreResult(
-                "Most Recent Night",
+                "Last Night",
                 sampleType: .healthKit(.category(.sleepAnalysis)),
-                sample: sleepSessions.last,
-                value: { $0.totalTimeSpentAsleep / 60 / 60 },
                 definition: .cvhSleep
             )
         }
@@ -197,9 +206,13 @@ extension CVHScore {
         }()
         let title: LocalizedStringResource = "Most Recent Sample"
         let sampleType = MHCSampleType.healthKit(.quantity(.bodyMassIndex))
-        let bmiSample = bodyMassIndex.last
-        let weightSample = bodyWeight.last
-        let heightSample = height.last
+        // when the stats-documents source is active, we convert its samples into (fake) HKQuantitySamples,
+        // which lets the source-independent selection/fallback logic below stay unchanged
+        // the stats samples get converted into (fake) HKQuantitySamples, which lets the
+        // source-independent selection/fallback logic below operate on them directly
+        let bmiSample = statsBodyMassIndex.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.bodyMassIndex)
+        let weightSample = statsBodyWeight.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.bodyMass)
+        let heightSample = statsHeight.max(by: \.endDate)?.asHKQuantitySample(of: SampleType.height)
         func calcBMI(weight: HKQuantity, height: HKQuantity) -> Double {
             weight.doubleValue(for: .gramUnit(with: .kilo)) / pow(height.doubleValue(for: .meter()), 2)
         }
@@ -233,7 +246,7 @@ extension CVHScore {
             return makeScore(bmiSample: sample)
         case let (nil, .some(weight), .some(height)):
             // if we have no BMI sample, but weight and height samples, compute BMI from that
-            guard weight.endDate.timeIntervalSinceNow < TimeConstants.year / 2 else {
+            guard Date.now.timeIntervalSince(weight.endDate) < TimeConstants.year / 2 else {
                 // if the weight is from too long ago, we don't use it.
                 // we don't have the same check for height, since that doesn't flucuate as much as weight, for adults.
                 return .init(title, sampleType: sampleType, definition: def)
@@ -254,7 +267,7 @@ extension CVHScore {
             "Most Recent Sample",
             sampleType: .custom(.bloodLipids),
             sample: bloodLipids.first,
-            value: \.value,
+            value: { $0.value(as: $0.sampleType.displayUnit) },
             definition: .cvhBloodLipids
         )
     }
@@ -273,180 +286,12 @@ extension CVHScore {
         ScoreResult(
             "Most Recent Sample",
             sampleType: .healthKit(.correlation(.bloodPressure)),
-            sample: bloodPressure.last,
-            value: { correlation in
-                if let systolic = correlation.firstSample(ofType: .bloodPressureSystolic),
-                   let diastolic = correlation.firstSample(ofType: .bloodPressureDiastolic) {
-                    BloodPressureMeasurement(
-                        systolic: Int(systolic.quantity.doubleValue(for: SampleType.bloodPressureSystolic.displayUnit)),
-                        diastolic: Int(diastolic.quantity.doubleValue(for: SampleType.bloodPressureDiastolic.displayUnit))
-                    )
-                } else {
-                    nil
-                }
+            sample: statsBloodPressure.last,
+            value: { sample in
+                BloodPressureMeasurement(systolic: Int(sample.systolic), diastolic: Int(sample.diastolic))
             },
             definition: .cvhBloodPressure
         )
-    }
-}
-
-
-extension ScoreDefinition {
-    static let cvhDiet = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(17...21, score: 1, explainer: "17 – 21"),
-        .inRange(14...16, score: 0.85, explainer: "14 – 16"),
-        .inRange(11...13, score: 0.7, explainer: "11 – 13"),
-        .inRange(8...10, score: 0.5, explainer: "8 – 10"),
-        .inRange(5...7, score: 0.25, explainer: "5 – 7"),
-        .inRange(..<5, score: 0, explainer: "< 5")
-    ])
-    
-    static let cvhMentalWellbeing = ScoreDefinition(
-        range: 0...100,
-        explainer: .init(footerText: nil, bands: [
-            .init(
-                leadingText: "\(0)",
-                trailingText: "\(100)",
-                background: .gradient(
-                    // same colors as Gradient.redToGreen, but with different distribution
-                    Gradient(stops: [
-                        Gradient.Stop(color: .red, location: 0),
-                        Gradient.Stop(color: .orange, location: 0.2),
-                        Gradient.Stop(color: .yellow, location: 0.5),
-                        Gradient.Stop(color: .green, location: 0.8)
-                    ])
-                )
-            )
-        ])
-    )
-    
-    static let cvhPhysicalExercise = ScoreDefinition(
-        default: 0,
-        scoringBands: [
-            .inRange(150..., score: 1, explainer: "150 +"),
-            .inRange(120..<150, score: 0.9, explainer: "120 – 149"),
-            .inRange(90..<120, score: 0.8, explainer: "90 – 119"),
-            .inRange(60..<90, score: 0.6, explainer: "60 – 89"),
-            .inRange(30..<60, score: 0.4, explainer: "30 – 59"),
-            .inRange(1..<30, score: 0.2, explainer: "1 – 29")
-        ],
-        explainerFooterText: "EXERCISE_MINUTES_SCORE_EXPLAINER"
-    )
-    
-    static let cvhStepCount: ScoreDefinition = {
-        let fmtInt = { ($0 as Int).formatted(.number) }
-        return ScoreDefinition(default: 0, scoringBands: [
-            .inRange(10_000..., score: 1, explainer: "\(fmtInt(10000)) +"),
-            .inRange(8_000..<10_000, score: 0.9, explainer: "\(fmtInt(8000)) – \(fmtInt(9999))"),
-            .inRange(6_000..<8_000, score: 0.8, explainer: "\(fmtInt(6000)) – \(fmtInt(7999))"),
-            .inRange(4_000..<6_000, score: 0.6, explainer: "\(fmtInt(4000)) – \(fmtInt(5999))"),
-            .inRange(2_000..<4_000, score: 0.4, explainer: "\(fmtInt(2000)) – \(fmtInt(3999))"),
-            .inRange(0..<2_000, score: 0.2, explainer: "< \(fmtInt(2000))")
-        ])
-    }()
-    
-    static let cvhNicotine: ScoreDefinition = {
-        let makeEntry = { (value: NicotineExposureCategoryValues, score: Double) -> ScoreDefinition.ScoringBand in
-            ScoreDefinition.ScoringBand.equal(
-                to: value,
-                score: score,
-                explainerBand: .init(
-                    leadingText: value.localizedStringResource,
-                    trailingText: "\(Int(score * 100))",
-                    background: .color(Gradient.redToGreen.color(at: score))
-                )
-            )
-        }
-        return ScoreDefinition(default: 0, scoringBands: [
-            makeEntry(.neverSmoked, 1),
-            makeEntry(.quitMoreThan5YearsAgo, 0.75),
-            makeEntry(.quitWithin1To5Years, 0.5),
-            makeEntry(.quitWithinLastYearOrIsUsingNDS, 0.25),
-            makeEntry(.activelySmoking, 0)
-        ])
-    }()
-    
-    static let cvhSleep = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(7..<9, score: 1, explainer: "7 to 9 hours"),
-        .inRange(9..<10, score: 0.9, explainer: "9 to 10 hours"),
-        .inRange(6..<7, score: 0.7, explainer: "6 to 7 hours"),
-        .inRange(5..<6, score: 0.4, explainer: "5 to 6 hours"),
-        .inRange(10..., score: 0.4, explainer: "10+ hours"),
-        .inRange(4..<5, score: 0.2, explainer: "4 to 5 hours")
-    ])
-    
-    static let cvhBMI: ScoreDefinition = {
-        let fmt = { ($0 as Double).formatted(.number.precision(.fractionLength(0...1))) }
-        return ScoreDefinition(default: 0, scoringBands: [
-            .inRange(..<16, score: 0.4, explainer: "< \(fmt(16)) (Severely underweight)"),
-            .inRange(16..<18.5, score: 0.6, explainer: "\(fmt(16)) – \(fmt(18.4)) (Underweight)"),
-            .inRange(18.5..<25, score: 1, explainer: "\(fmt(18.5)) – \(fmt(24.9)) (Normal weight)"),
-            .inRange(25..<30, score: 0.7, explainer: "\(fmt(25)) – \(fmt(29.9)) (Overweight)"),
-            .inRange(30..<35, score: 0.5, explainer: "\(fmt(30)) – \(fmt(34.9)) (Obesity class I)"),
-            .inRange(35..<40, score: 0.3, explainer: "\(fmt(35)) – \(fmt(39.9)) (Obesity class II)"),
-            .inRange(40..., score: 0.1, explainer: "\(fmt(40))+ (Obesity class III)")
-        ])
-    }()
-    
-    static let cvhBMIAsian: ScoreDefinition = {
-        let fmt = { ($0 as Double).formatted(.number.precision(.fractionLength(0...1))) }
-        return ScoreDefinition(default: 0, scoringBands: [
-            .inRange(..<16, score: 0.4, explainer: "< \(fmt(16)) (Severely underweight)"),
-            .inRange(16..<18.5, score: 0.6, explainer: "\(fmt(16)) – \(fmt(18.4)) (Underweight)"),
-            .inRange(18.5..<23, score: 1, explainer: "\(fmt(18.5)) – \(fmt(22.9)) (Normal weight)"),
-            .inRange(23..<25, score: 0.75, explainer: "\(fmt(23)) – \(fmt(24.9)) (Overweight / At risk)"),
-            .inRange(25..<30, score: 0.5, explainer: "\(fmt(25)) – \(fmt(29.9)) (Obesity class I)"),
-            .inRange(30..., score: 0.2, explainer: "\(fmt(30))+ (Obesity class II)")
-        ])
-    }()
-    
-    /// LDL Cholesterol
-    static let cvhBloodLipids = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<55, score: 1, explainer: "< 55"),
-        .inRange(55..<70, score: 0.9, explainer: "55 – 69"),
-        .inRange(70..<100, score: 0.8, explainer: "70 – 99"),
-        .inRange(100..<130, score: 0.6, explainer: "100 – 129"),
-        .inRange(130..<160, score: 0.4, explainer: "130 – 159"),
-        .inRange(160..<190, score: 0.2, explainer: "160 – 189"),
-        .inRange(190..., score: 0, explainer: "190+")
-    ])
-    
-    static let cvhBloodGlucose = ScoreDefinition(default: 0, scoringBands: [
-        .inRange(..<85, score: 1, explainer: "< 85"),
-        .inRange(85..<100, score: 0.9, explainer: "85 – 99"),
-        .inRange(100..<110, score: 0.75, explainer: "100 – 109"),
-        .inRange(110..<126, score: 0.5, explainer: "110 – 125"),
-        .inRange(126..<140, score: 0.25, explainer: "126 – 139"),
-        .inRange(140..., score: 0, explainer: "140+")
-    ])
-    
-    static let cvhBloodPressure = ScoreDefinition(
-        default: 0,
-        // ideally we'd simply put the explanation directly into the ScoreDefinition, and have it work in a way that
-        // the UI gets created based on that; but for the time being we simply have this ScoreDefinition hardcoded.
-        explainer: .init(footerText: nil, bands: [
-            .init(leadingText: "<120 / <80", background: .color(Gradient.redToGreen.color(at: 1))),
-            .init(leadingText: "120–129 / 80–89", background: .color(Gradient.redToGreen.color(at: 0.8))),
-            .init(leadingText: "130–139 / 90–99", background: .color(Gradient.redToGreen.color(at: 0.5))),
-            .init(leadingText: "140+ / 90+", background: .color(Gradient.redToGreen.color(at: 0.1)))
-        ])
-    ) { (measurement: BloodPressureMeasurement) in
-        let systolicScore: Double = switch measurement.systolic as Int {
-        case ..<121: 0.75
-        case 121...129: 0.65
-        case 130...139: 0.5
-        case 140...159: 0.25
-        case 160...: 0
-        default: 0 // unreachable
-        }
-        let diastolicScore: Double = switch measurement.diastolic as Int {
-        case ..<81: 0.25
-        case 81...89: 0.15
-        case 90...99: 0.05
-        case 100...: 0
-        default: 0 // unreachable
-        }
-        return systolicScore + diastolicScore
     }
 }
 
@@ -463,17 +308,23 @@ extension HealthKitQueryTimeRange {
 
 
 extension QuantitySample: CVHScore.ComponentSampleProtocol {}
+extension BloodPressureStatsSample: CVHScore.ComponentSampleProtocol {}
+extension SleepSessionStatsSample: CVHScore.ComponentSampleProtocol {}
 
-extension HKQuantitySample: CVHScore.ComponentSampleProtocol {}
-extension HKCorrelation: CVHScore.ComponentSampleProtocol {}
-
-extension SleepSession: CVHScore.ComponentSampleProtocol {}
-
-extension HKStatistics: CVHScore.ComponentSampleProtocol {
-    var timeRange: Range<Date> {
-        startDate..<endDate
+extension QuantitySample {
+    /// Converts the sample into an (unsaved) `HKQuantitySample` of the specified type.
+    /// (NOTE: `SampleType` needs to be qualified here: in this extension's scope, it'd otherwise resolve to `QuantitySample.SampleType`.)
+    fileprivate func asHKQuantitySample(of sampleType: GroveHealthKit.SampleType<HKQuantitySample>) -> HKQuantitySample {
+        HKQuantitySample(
+            type: sampleType.hkSampleType,
+            quantity: hkQuantity(),
+            start: startDate,
+            end: endDate
+        )
     }
 }
+
+extension HKQuantitySample: CVHScore.ComponentSampleProtocol {}
 
 
 extension HealthKit.SourceFilter {

@@ -18,8 +18,8 @@ struct Gauge: View {
         
         fileprivate let value: Double
         
-        /// Creates a `LineWidth` my multiplying a fraction onto the default line width.
-        static func relative(_ multiplier: Double) -> Self { // periphery:ignore - API
+        /// Creates a `LineWidth` by multiplying a fraction onto the default line width.
+        static func relative(_ multiplier: Double) -> Self {
             Self(value: Self.default.value * multiplier)
         }
         

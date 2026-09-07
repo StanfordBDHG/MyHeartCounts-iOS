@@ -279,7 +279,6 @@ extension TasksList {
 
 
 extension StudyDefinition.CustomActiveTaskComponent.ActiveTask {
-    // periphery:ignore - implicitly called
     static func ~= (pattern: Self, value: Self) -> Bool {
         pattern.identifier == value.identifier
     }

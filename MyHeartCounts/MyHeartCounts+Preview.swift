@@ -13,6 +13,7 @@ import GroveStudy
 
 
 extension MyHeartCounts {
+    // periphery:ignore - testing
     @MainActor @ModuleBuilder static var previewModels: ModuleCollection {
         DeferredConfigLoading.baseModules(preferredLocale: .autoupdatingCurrent)
         FirebaseConfiguration()

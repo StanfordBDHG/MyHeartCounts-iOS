@@ -97,6 +97,7 @@ private final class SensorAuthStatusMonitor: NSObject, SRSensorReaderDelegate {
 
 
 extension AnySensor {
+    // periphery:ignore - API
     var authStatusChanges: AsyncStream<SRAuthorizationStatus> {
         AsyncStream { continuation in
             nonisolated(unsafe) let reader = SRSensorReader(sensor: self.srSensor)

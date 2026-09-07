@@ -41,7 +41,7 @@ struct HeightInputRow: View {
                 value: binding,
                 limits: MHCQuantitySampleType.healthKit(.height).inputLimits(in: cmUnit),
                 sampleType: .healthKit(.height),
-                unit: cmUnit
+                displayUnit: cmUnit
             )
         case .feetAndInches:
             // no need to perform input validation here; that's handled via the wheel-styled picker

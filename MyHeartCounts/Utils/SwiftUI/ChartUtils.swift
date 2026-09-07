@@ -9,6 +9,7 @@
 import Charts
 
 
+// periphery:ignore - API
 struct EmptyChartContent: ChartContent {
     var body: some ChartContent { }
 }

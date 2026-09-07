@@ -31,15 +31,10 @@ import XCTHealthKit
 /// It does not contain any actual tests itself. All UI test classes should inherit from `MHCTestCase`.
 @MainActor
 class MHCTestCase: XCTestCase, Sendable {
-    enum HandlePermissionPrompts: ExpressibleByBooleanLiteral {
+    enum HandlePermissionPrompts {
         case yes
         case no
         case auto
-        
-        @available(*, deprecated)
-        init(booleanLiteral value: BooleanLiteralType) {
-            self = value ? .yes : .no
-        }
     }
     
     static let enableHealthRecords = false // temporarily disabled
@@ -269,9 +264,9 @@ extension MHCTestCase {
 extension Locale {
     static let enUS = Locale(identifier: "en_US")
     static let enUK = Locale(identifier: "en_UK")
-    static let esUS = Locale(identifier: "es_US")
+    static let esUS = Locale(identifier: "es_US") // periphery:ignore - API
     static let esES = Locale(identifier: "es_ES")
-    static let enDE = Locale(identifier: "en_DE")
+    static let enDE = Locale(identifier: "en_DE") // periphery:ignore - API
 }
 
 

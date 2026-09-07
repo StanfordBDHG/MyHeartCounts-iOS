@@ -10,32 +10,8 @@ import Charts
 import Foundation
 import GroveFoundation
 import GroveHealthKit
-import GroveHealthKitUI
-import HealthKit
 import MyHeartCountsShared
 import SwiftUI
-
-
-struct SmallSleepAnalysisTile: View {
-    @SleepSessionsQuery(timeRange: .last(days: 4), source: CVHScore.sleepDataSourceFilter)
-    private var sleepSessions
-    
-    var body: some View {
-        HealthDashboardTile(title: SampleType.sleepAnalysis.mhcDisplayTitle) {
-            EmptyView() // ?
-        } content: {
-            if let session = sleepSessions.last {
-                let value = session.totalTimeSpentAsleep / 60 / 60
-                HealthDashboardQuantityLabel(input: .init(
-                    value: value,
-                    valueString: String(format: "%.1f", value), // have "Xhrs Ymin" instead?
-                    unit: .hour(),
-                    timeRange: session.timeRange
-                ))
-            }
-        }
-    }
-}
 
 
 struct LargeSleepAnalysisTile: View {
@@ -45,7 +21,7 @@ struct LargeSleepAnalysisTile: View {
         
         init(_ other: DefaultHealthDashboardTile.Accessory) {
             switch other {
-            case .none, .progress:
+            case .none:
                 self = .none
             case .timeRangeSelector(let binding):
                 self = .timeRangeSelector(binding)
@@ -57,11 +33,19 @@ struct LargeSleepAnalysisTile: View {
     private var cal
     
     private let accessory: Accessory
-    @SleepSessionsQuery private var sleepSessions: [SleepSession]
+    private let queryTimeRange: HealthKitQueryTimeRange
+    @StatsDocumentsQuery<SleepSessionStatsSample> private var sleepSessions: [SleepSessionStatsSample]
     @State private var xSelection: Date?
     
     private var timeRange: Range<Date> {
-        $sleepSessions.timeRange
+        queryTimeRange.range
+    }
+    
+    /// the total time asleep (in seconds) per day, with the sessions attributed to the day they ended on
+    private var timeAsleepByDay: [Date: TimeInterval] {
+        sleepSessions.reduce(into: [:]) { acc, session in
+            acc[cal.makeNoon(session.timeRange.upperBound), default: 0] += session.hoursAsleep * TimeConstants.hour
+        }
     }
     
     var body: some View {
@@ -82,13 +66,8 @@ struct LargeSleepAnalysisTile: View {
             chartContent
         }
         .chartOverlay { _ in
-            switch $sleepSessions.processingState {
-            case .processing:
-                ProgressView("Processing Sleep Data…")
-            case .done:
-                EmptyView()
-            case .failed:
-                Text("Failed to process Sleep Sessions")
+            if sleepSessions.isEmpty {
+                Text("No Data")
             }
         }
         .chartXScale(domain: [
@@ -100,36 +79,16 @@ struct LargeSleepAnalysisTile: View {
     }
     
     @ChartContentBuilder private var chartContent: some ChartContent {
-        switch $sleepSessions.processingState {
-        case .processing, .failed:
-            EmptyChartContent()
-        case .done(let data):
-            if !data.sessions.isEmpty {
-                chartContent(for: data)
-            } else {
-                // ???
-            }
-        }
-    }
-    
-    init(timeRange: HealthKitQueryTimeRange, accessory: Accessory) {
-        self.accessory = accessory
-        self._sleepSessions = .init(timeRange: timeRange, source: CVHScore.sleepDataSourceFilter)
-    }
-    
-    /// - precondition: `sleepSessions` may not be empty.
-    @ChartContentBuilder
-    private func chartContent(for sleepData: SleepSessionsQuery.ProcessingResult) -> some ChartContent {
-        ForEach(sleepData.sessions, id: \.self) { session in
+        ForEach(sleepSessions, id: \.self) { session in
             BarMark(
-                x: .value("Date", cal.makeNoon(session.endDate)),
-                y: .value("Time Asleep", session.totalTimeSpentAsleep / TimeConstants.hour),
+                x: .value("Date", cal.makeNoon(session.timeRange.upperBound)),
+                y: .value("Time Asleep", session.hoursAsleep),
                 width: .automatic
             )
             .foregroundStyle(Color.blue)
         }
         if let xSelection,
-           case let timeAsleepInDay = sleepData.timeAsleepByDay[cal.makeNoon(xSelection)] ?? 0 {
+           case let timeAsleepInDay = timeAsleepByDay[cal.makeNoon(xSelection)] ?? 0 {
             ChartHighlightRuleMark(
                 x: .value("Selected", xSelection, unit: .day, calendar: cal),
                 config: .init(
@@ -138,6 +97,12 @@ struct LargeSleepAnalysisTile: View {
                 )
             )
         }
+    }
+    
+    init(timeRange: HealthKitQueryTimeRange, accessory: Accessory) {
+        self.accessory = accessory
+        self.queryTimeRange = timeRange
+        self._sleepSessions = .init(sleepSessionsIn: timeRange)
     }
     
     private func formatDuration(_ duration: TimeInterval) -> Text {

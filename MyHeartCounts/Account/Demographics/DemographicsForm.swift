@@ -70,7 +70,6 @@ struct DemographicsForm<Footer: View>: View {
 
 private struct Impl<Footer: View>: View {
     @Environment(\.locale) private var locale
-    @Environment(HealthKit.self) private var healthKit
     @Environment(StudyManager.self) private var studyManager
     @Environment(DemographicsData.self) private var data
     
