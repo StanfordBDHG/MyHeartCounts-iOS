@@ -18,9 +18,9 @@ extension HealthUploadStaging {
         static var timestampColumn: Column { get }
         static var sampleTypeColumn: Column { get }
 
-        var timestamp: Date { get }
-        var sampleType: String { get }
-        var sampleId: UUID { get }
+        var timestamp: Date { get } // periphery:ignore - API
+        var sampleType: String { get } // periphery:ignore - API
+        var sampleId: UUID { get } // periphery:ignore - API
     }
 
     struct PendingSampleRecord: _PendingEntityRecord {

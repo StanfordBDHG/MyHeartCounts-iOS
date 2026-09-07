@@ -115,12 +115,12 @@ struct DetailedHealthStatsView: View {
     
     
     @ViewBuilder
-    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View { // swiftlint:disable:this function_body_length
+    private func recentValuesChart(_ config: RecentValuesChartConfig) -> some View {
         switch config {
         case .disabled:
             EmptyView()
         case .enabled(let timeRange):
-            let dataSource = { () -> HealthDashboardLayout.DataSource? in
+            let dataSource = { () -> DefaultHealthDashboardTile.DataSource? in
                 switch sampleType {
                 case .healthKit(let proxy):
                     return .healthKit(proxy)
@@ -132,15 +132,13 @@ struct DetailedHealthStatsView: View {
                 if let dataSource {
                     // Note: we're creating a chart config here, but depending on the specific sample type it might end up getting discarded
                     // (eg: if the sample type is sleepAnalyis, in which case it's not something we display via the normal chart)
-                    let chartConfig = { () -> HealthDashboardLayout.ChartConfig in
+                    let chartConfig = { () -> DefaultHealthDashboardTile.ChartConfig in
                         switch sampleType {
                         case .healthKit(.quantity(.stepCount)):
                             return .init(chartType: .bar, aggregationInterval: .day)
                         case .healthKit(.quantity(let sampleType)):
                             return .default(for: sampleType, in: timeRange)
                         case .healthKit:
-                            return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
-                        case .custom(.bloodLipids), .custom(.dietMEPAScore), .custom(.nicotineExposure), .custom(.mentalWellbeingScore):
                             return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
                         case .custom:
                             return .init(chartType: .line(), defaultAggregationIntervalFor: timeRange)
@@ -150,10 +148,8 @@ struct DetailedHealthStatsView: View {
                         for: .init(
                             dataSource: dataSource,
                             timeRange: timeRange,
-                            style: .chart(chartConfig),
-                            enableSelection: false
+                            chartConfig: chartConfig
                         ),
-                        withSize: .large,
                         accessory: .timeRangeSelector($chartTimeRange)
                     )
                     .padding(.horizontal)
@@ -214,9 +210,6 @@ private struct MostRecentValue: View {
             self.init(value: value, unit: unit == .count() ? nil : unit?.unitString)
         }
     }
-    
-    @Environment(\.locale) private var locale
-    @Environment(\.calendar) private var cal
     
     private let scoreResult: ScoreResult
     private let components: [Component]
@@ -446,12 +439,12 @@ private struct BrowseFirestoreSamplesView: View {
             List(samples) { sample in
                 NavigationLink {
                     Form {
-                        LabeledContent { Text(verbatim: "id") } label: { Text(sample.id.uuidString) }
-                        LabeledContent { Text(verbatim: "sampleType") } label: { Text(sample.sampleType.displayTitle) }
-                        LabeledContent { Text(verbatim: "unit") } label: { Text(sample.unit.unitString) }
-                        LabeledContent { Text(verbatim: "value") } label: { Text(sample.value, format: .number) }
-                        LabeledContent { Text(verbatim: "startDate") } label: { Text(sample.startDate, format: .dateTime) }
-                        LabeledContent { Text(verbatim: "endDate") } label: { Text(sample.endDate, format: .dateTime) }
+                        makeRow("id", value: sample.id.uuidString)
+                        makeRow("sampleType", value: sample.sampleType.displayTitle)
+                        makeRow("unit", value: sample.sampleType.canonicalUnit.unitString)
+                        makeRow("value", value: sample.value(as: sample.sampleType.canonicalUnit), format: .number)
+                        makeRow("startDate", value: sample.startDate, format: .dateTime)
+                        makeRow("endDate", value: sample.endDate, format: .dateTime)
                     }
                 } label: {
                     HStack {
@@ -469,5 +462,21 @@ private struct BrowseFirestoreSamplesView: View {
     init(sampleType: CustomQuantitySampleType) {
         self.sampleType = sampleType
         _samples = .init(sampleType: sampleType, timeRange: .ever)
+    }
+    
+    private func makeRow(_ title: String, value: some StringProtocol) -> some View {
+        LabeledContent {
+            Text(title)
+        } label: {
+            Text(value)
+        }
+    }
+    
+    private func makeRow<I: Equatable, F: FormatStyle<I, String>>(_ title: String, value: I, format: F) -> some View {
+        LabeledContent {
+            Text(title)
+        } label: {
+            Text(value, format: format)
+        }
     }
 }

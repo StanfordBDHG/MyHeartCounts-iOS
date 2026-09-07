@@ -217,6 +217,7 @@ enum DeferredConfigLoading {
                 logger.notice("FirebaseOptions fetch returned nil. Not initializing anything.")
                 return []
             }
+            logger.notice("Created FirebaseOptions for project '\(firebaseOptions.projectID ?? "")'")
             return Array { // swiftlint:disable:this closure_body_length
                 ConfigureFirebaseApp(/*name: "My Heart Counts", */options: firebaseOptions)
                 firestore
@@ -280,6 +281,7 @@ enum DeferredConfigLoading {
                     FirebaseFunctions()
                 }
                 baseModules(preferredLocale: preferredLocale)
+                HealthKitStatsCalculator()
                 EnvironmentTracking()
                 LoadFirebaseTracking() // intentionally the very last thing!!!
             }

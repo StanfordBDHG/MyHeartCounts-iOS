@@ -56,10 +56,10 @@ struct SelfModelledQuantityFHIRTests {
         )
 
         let sample = try #require(QuantitySample(observation))
-        #expect(HKQuantity(unit: sample.unit, doubleValue: sample.value).is(
+        #expect(sample.hkQuantity().is(
             compatibleWith: HKUnit.gramUnit(with: .milli) / .literUnit(with: .deci)
         ))
-        #expect(sample.value == 50)
+        #expect(sample.value(as: sample.sampleType.canonicalUnit) == 50)
     }
 
     @Test

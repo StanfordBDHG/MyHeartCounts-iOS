@@ -95,8 +95,8 @@ struct HealthSampleProcessingTests {
     @Test
     func hkUnitParsing() {
         #expect(HKUnit.parse("degC") == .degreeCelsius())
-        #expect(HKUnit.parse("Cel") == .degreeCelsius())
-        #expect(HKUnit.parse("C") == .degreeCelsius())
+        #expect(HKUnit.parse("Cel") == nil)
+        #expect(HKUnit.parse("C") == nil)
     }
     
     

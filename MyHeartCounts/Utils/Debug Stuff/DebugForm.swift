@@ -96,6 +96,9 @@ private struct DebugFormImpl: View {
                 NavigationLink("File Browser" as String) {
                     FileBrowser(url: .documentsDirectory)
                 }
+                NavigationLink("HealthKit Stats Calc" as String) {
+                    HealthKitStatsCalculator.DebugControlView()
+                }
             }
             Section("Other" as String) {
                 LabeledContent("size(AS/firestore)" as String, value: { () -> String in

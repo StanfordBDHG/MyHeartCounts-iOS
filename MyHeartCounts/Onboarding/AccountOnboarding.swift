@@ -21,7 +21,6 @@ struct AccountOnboarding: View {
     // swiftlint:disable attributes
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(MyHeartCountsStandard.self) private var standard
-    @Environment(Account.self) private var account
     @Environment(ConsentManager.self) private var consentManager
     // swiftlint:enable attributes
     

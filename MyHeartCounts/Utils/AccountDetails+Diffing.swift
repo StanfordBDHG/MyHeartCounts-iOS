@@ -13,6 +13,7 @@ import Observation
 
 
 extension AccountDetails {
+    // periphery:ignore - debugging
     /// Creates a `String` intended for debugging, describing the changes that exist between some other value and these `AccountDetails`.
     func debugDescOfDifference(from other: AccountDetails) -> String {
         // we perform a JSON roundtrip in order to turn the AccountDetails into a `JSONObject` (ie a `[String: JSONValue]`) which we then run the diff on.
@@ -47,6 +48,7 @@ extension Dictionary where Value: Equatable {
         var mutated: [(key: Key, old: Value, new: Value)] = [] // swiftlint:disable:this large_tuple
     }
     
+    // periphery:ignore - debugging
     func difference(from prev: Self) -> DictDifference {
         var diff = DictDifference()
         diff.removed = prev.filter { self[$0.key] == nil }

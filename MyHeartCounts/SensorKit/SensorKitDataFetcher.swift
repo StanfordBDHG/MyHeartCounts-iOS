@@ -128,8 +128,8 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
             logger.error("Failed to fetch and upload SensorKit data: \(error)")
         }
     }
-
-    // periphery:ignore - API
+    
+    
     /// Does not await cancellation because SensorKit may leave a read suspended indefinitely.
     @MainActor
     func cancelAllActiveCollection() {
@@ -304,7 +304,7 @@ final class SensorKitDataFetcher: ServiceModule, EnvironmentAccessible, @uncheck
         logger.notice("Anchored fetch for '\(sensor.id)' is complete.")
     }
     
-    // periphery:ignore
+    
     /// Fetches all SensorKit samples for the specified sensor, and uploads them all into the Firestore.
     ///
     /// Primarily intended for testing purposes.

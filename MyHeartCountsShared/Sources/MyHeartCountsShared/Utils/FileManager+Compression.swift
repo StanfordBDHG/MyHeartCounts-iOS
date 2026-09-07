@@ -83,6 +83,7 @@ extension FileManager {
     }
     
     
+    // periphery:ignore - API
     /// Unarchives a directory archive that was created with `-lk_archiveDirectory`.
     ///
     /// - Warning: this function will unconditionally override the contents of the destination folder.

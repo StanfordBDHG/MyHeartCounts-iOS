@@ -95,7 +95,7 @@ extension QuantitySample: SelfModelledHealthObservation {
     }
 
     private func fhirQuantity(binding: FHIRQuantityBinding) throws -> Quantity {
-        let quantity = HKQuantity(unit: unit, doubleValue: value)
+        let quantity = hkQuantity()
         guard quantity.is(compatibleWith: binding.unit) else {
             throw FHIRObservationConversionError.incompatibleUnit(sampleTypeIdentifier: sampleTypeIdentifier)
         }

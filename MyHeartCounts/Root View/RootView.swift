@@ -8,7 +8,6 @@
 
 import Grove
 import GroveAccount
-import class GroveConsent.ConsentDocument
 import GroveFoundation
 import GroveOnboarding
 import GroveScheduler
@@ -26,12 +25,9 @@ struct RootView: View {
     // swiftlint:disable attributes
     @Environment(AppState.self) private var appState
     @Environment(Account.self) private var account: Account?
-    @Environment(ConsentManager.self) private var consentManager: ConsentManager?
     @Environment(SetupTestEnvironment.self) private var setupTestEnvironment
     @LocalPreference(.onboardingFlowComplete) private var didCompleteOnboarding
     // swiftlint:enable attributes
-    
-    @State private var consentDocForRenewal: ConsentDocument?
     
     var body: some View {
         ZStack {
@@ -49,8 +45,8 @@ struct RootView: View {
                 }
             case .pending, .settingUp:
                 FullScreenProgressView(
-                    title: "Setting Up Test Environment",
-                    subtitle: "\(setupTestEnvironment.desc)"
+                    title: "Setting Up Test Environment" as String,
+                    subtitle: setupTestEnvironment.desc
                 )
             case .failure(let error):
                 ContentUnavailableView("Error", systemSymbol: .exclamationmarkOctagon, description: Text(error.localizedDescription))
@@ -132,22 +128,4 @@ extension RootViewTab {
 
 extension LocalPreferenceKeys {
     static let rootTabSelection = LocalPreferenceKey<String>("rootTabSelection", default: HomeTab.tabId)
-    
-    static let rootTabViewCustomization = LocalPreferenceKey<TabViewCustomization>("rootTabViewCustomization", default: .init())
-}
-
-
-extension ScenePhase: @retroactive CustomDebugStringConvertible {
-    public var debugDescription: String {
-        switch self {
-        case .background:
-            "background"
-        case .inactive:
-            "inactive"
-        case .active:
-            "active"
-        @unknown default:
-            "unknown"
-        }
-    }
 }

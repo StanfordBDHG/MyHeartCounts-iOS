@@ -304,27 +304,3 @@ extension StudyBundleLoader {
         "https://firebasestorage.googleapis.com/v0/b/\(bucketName)/o/public%2F\(filename)?alt=media"
     }
 }
-
-
-extension URL {
-    fileprivate enum StudyBundleResourceType {
-        case archive
-        case package
-    }
-    
-    fileprivate func studyBundleResourceType() -> StudyBundleResourceType? {
-        guard let values = try? self.resourceValues(forKeys: [.isRegularFileKey, .isDirectoryKey, .isPackageKey]) else {
-            return nil
-        }
-        if values.isRegularFile == true, hasExtension(StudyBundle.archiveFileExtension) {
-            return .archive
-        } else if values.isDirectory == true, hasExtension(StudyBundle.fileExtension) {
-            return .package
-        }
-        return nil
-    }
-    
-    private func hasExtension(_ ext: String) -> Bool {
-        lastPathComponent.ends(with: chain(".", ext))
-    }
-}

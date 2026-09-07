@@ -23,6 +23,9 @@ import UserNotifications
 
 @Observable
 final class MyHeartCountsDelegate: GroveAppDelegate {
+    // mutated only once, from the main actor, when the app's launch sequence is finishing up.
+    nonisolated(unsafe) private(set) static var didFinishLaunching = false
+    
     override var configuration: Configuration {
         if let selector = FeatureFlags.overrideFirebaseConfig {
             LocalPreferencesStore.standard[.lastUsedFirebaseConfig] = selector
@@ -54,7 +57,9 @@ final class MyHeartCountsDelegate: GroveAppDelegate {
             AppState()
             AppRefresh()
             MHCBackgroundTasks()
-            ManagedFileUpload {
+            ManagedFileUpload(
+                configuration: .init(isStoredInMemoryOnly: ProcessInfo.isReallyRunningInXCTest)
+            ) {
                 ManagedFileUpload.Category.liveHealthUpload
                 ManagedFileUpload.Category.historicalHealthUpload
                 ManagedFileUpload.Category.healthDeletions
@@ -68,11 +73,18 @@ final class MyHeartCountsDelegate: GroveAppDelegate {
             DemoSetup()
         }
     }
+    
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? // swiftlint:disable:this discouraged_optional_collection
+    ) -> Bool {
+        Self.didFinishLaunching = true
+        return true
+    }
 }
 
 
 extension ModuleBuilder {
-    // periphery:ignore - implicitly called
     static func buildExpression(_ modules: some Sequence<any Module>) -> [any Module] {
         Array(modules)
     }

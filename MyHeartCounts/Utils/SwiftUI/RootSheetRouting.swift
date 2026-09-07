@@ -89,6 +89,7 @@ extension View {
         modifier(AdaptiveSheet(isPresented: isPresented, sheetContent: content))
     }
 
+    // periphery:ignore - API
     /// Drop-in replacement for `.sheet(item:content:)`.
     func adaptiveSheet<Item: Identifiable>(
         item: Binding<Item?>,

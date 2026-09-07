@@ -11,16 +11,17 @@ import GroveFoundation
 import GroveHealthKitFHIR
 import HealthKit
 import ModelsR4
+import MyHeartCountsShared
 
 
 extension HKUnit {
     /// Attempts to create a `HKUnit` from a unit string.
-    static func parse(_ unitString: String) -> HKUnit? {
-        // ideally this would be a failing convenience init, but the language isn't able to express that.
-        // (we could define it as a category in ObjC, but this is good enough...)
-        (try? catchingNSException {
-            HKUnit(from: unitString)
-        }) ?? .parseFromFHIRUnit(unitString)
+    static func parse(_ unitString: String, resolveFHIRUnits: Bool) -> HKUnit? {
+        if let unit = Self.parse(unitString) {
+            unit
+        } else {
+            resolveFHIRUnits ? .parseFromFHIRUnit(unitString) : nil
+        }
     }
 }
 

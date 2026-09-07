@@ -34,6 +34,7 @@ enum FHIRResource {
         }
     }
     
+    // periphery:ignore - API
     func get<T: ModelsR4.Resource>(as _: T.Type) -> T? {
         switch self {
         case .dstu2:

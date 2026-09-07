@@ -28,6 +28,7 @@ extension ProcessInfo {
         ProcessInfo.processInfo.environment["MHC_IS_BEING_UI_TESTED"] == "1"
     }
     
+    // periphery:ignore - debugging
     /// Determines if a debgger is currently attached to the process.
     ///
     /// Source: https://stackoverflow.com/a/33177600

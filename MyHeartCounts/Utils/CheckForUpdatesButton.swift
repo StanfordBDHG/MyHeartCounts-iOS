@@ -11,8 +11,6 @@ import SwiftUI
 
 
 struct CheckForUpdateButton<Label: View>: View {
-    @Environment(\.openURL)
-    private var openUrl
     private let label: Label
     
     @State private var url: URL = Self.url(for: .production)

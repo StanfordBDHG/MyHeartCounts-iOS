@@ -6,10 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
+// periphery:ignore:all - API
+
 #if !os(Linux)
 
 // swiftlint:disable file_types_order
-// periphery:ignore:all
 
 public import Foundation
 private import os

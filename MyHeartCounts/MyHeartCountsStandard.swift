@@ -48,6 +48,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(ClinicalRecordPermissions.self) private var clinicalRecordPermissions
     @Dependency(NotificationsManager.self) private var notificationsManager
     @Dependency(AppState.self) private var appState
+    @Dependency(HealthKitStatsCalculator.self) private var healthKitStatsCalc: HealthKitStatsCalculator?
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
 
@@ -108,9 +109,13 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                     try await account.accountService.updateAccountDetails(modifications)
                 }
             }
+            await MainActor.run {
+                assert(account.details?.dateOfEnrollment != nil)
+            }
             LocalPreferencesStore.standard[.studyActivationDate] = .now
             _Concurrency.Task(priority: .background) {
                 historicalUploadManager.startAutomaticExportingIfNeeded()
+                healthKitStatsCalc?.start()
             }
             await Self._updateCurrentEnrollmentInfo(studyManager)
         } catch StudyManager.StudyEnrollmentError.alreadyEnrolledInNewerStudyRevision {

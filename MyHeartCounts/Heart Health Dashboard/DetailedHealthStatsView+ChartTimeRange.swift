@@ -15,7 +15,7 @@ extension DetailedHealthStatsView {
     /// A user-selectable time range for what should be displayed in the chart on a metric's page.
     ///
     /// - Note: We need to use this, instead of using `HealthKitQueryTimeRange` directly, since that stores absolute time ranges, but we're interested in relative ones.
-    enum ChartTimeRange: Hashable, Codable {
+    enum ChartTimeRange: Hashable {
         /// The time range representing the entirety the most last `N` days, starting at the end of today.
         case lastNumDays(Int)
         /// The time range representing the entirety the most last `N` weeks, starting at the end of today.

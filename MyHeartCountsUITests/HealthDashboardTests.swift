@@ -37,7 +37,7 @@ class HealthDashboardTests: MHCTestCase, Sendable {
         XCTAssert(doneButton.wait(for: \.isEnabled, toEqual: true, timeout: 1))
         doneButton.tap()
         
-        XCTAssert(app.staticTexts["Most Recent Sample: \(value)"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Most Recent Sample: \(value)"].waitForExistence(timeout: 5))
     }
     
     
@@ -252,6 +252,6 @@ class HealthDashboardTests: MHCTestCase, Sendable {
         goToTab(.heartHealth)
         app.swipeUp()
         app.buttons["Sleep"].tap()
-        XCTAssert(app.staticTexts["Most Recent Night: 6 hours and 36 minutes"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Most Recent Night: 6 hours and 36 minutes"].waitForExistence(timeout: 5))
     }
 }

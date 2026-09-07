@@ -49,7 +49,6 @@ final class HealthUploadStaging: Grove::Module, EnvironmentAccessible, @unchecke
     static let databaseWriteChunkSize = 500
     
     // swiftlint:disable attributes
-    @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
     @ObservationIgnored @Dependency(LocalStorage.self) private var localStorage
     @ObservationIgnored @Dependency(FirebaseConfiguration.self) private var firebaseConfiguration
