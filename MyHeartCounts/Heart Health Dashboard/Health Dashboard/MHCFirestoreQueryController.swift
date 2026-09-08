@@ -56,7 +56,7 @@ final class MHCFirestoreQueryController<Element: Sendable> {
     /// Metadata delivery is fixed for the lifetime of the controller, independently of decoder behavior.
     nonisolated init(includeMetadataChanges: Bool = true) {
         subscribe = { query, receive in
-            query.addSnapshotListener(includeMetadataChanges: includeMetadataChanges) { snapshot, error in
+            query.addSnapshotListener(includeMetadataChanges: includeMetadataChanges) { @Sendable snapshot, error in
                 Task { @MainActor in
                     if let snapshot {
                         receive(.success(MHCFirestoreQueryInput(snapshot)))
