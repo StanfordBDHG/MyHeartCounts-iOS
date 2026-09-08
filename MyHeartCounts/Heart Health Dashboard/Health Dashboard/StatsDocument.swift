@@ -46,6 +46,9 @@ struct StatsDocument: Decodable, Sendable {
         let unit: String
         var average: Average?
         var provenance: Provenance?
+        var endDate: String?
+        var duration: Double?
+        var activityType: UInt?
 
         /// Empty ranges represent individual observations.
         var timeRange: Range<Date>? {
@@ -58,7 +61,7 @@ struct StatsDocument: Decodable, Sendable {
             return start..<end
         }
 
-        private static func parseDate(_ string: String) -> Date? {
+        static func parseDate(_ string: String) -> Date? {
             (try? Date(string, strategy: .iso8601))
                 ?? (try? Date(string, strategy: .iso8601.time(includingFractionalSeconds: true)))
         }

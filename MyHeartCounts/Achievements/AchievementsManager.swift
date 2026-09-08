@@ -18,12 +18,15 @@ import SpeziAccount
 import SpeziFirestore
 import SpeziFoundation
 import SpeziHealthKit
+import SpeziHealthKitUI
 import SpeziStudy
+import SwiftUI
+import UIKit
 
 
 /// Manages tracked achievements and syncs them with Firebase.
 @Observable
-final class AchievementsManager: Module, EnvironmentAccessible, @unchecked Sendable { // call it just Achievements?
+final class AchievementsManager: ServiceModule, EnvironmentAccessible, @unchecked Sendable { // call it just Achievements?
     struct State: Hashable, Codable, Sendable {
         /// An error that indicates that decoding a `State` failed because the version (i.e., schema) was incompatible.
         struct IncompatibleVersionDecodingError: Error {
@@ -168,7 +171,7 @@ final class AchievementsManager: Module, EnvironmentAccessible, @unchecked Senda
         /// Keeps track of recorded unlock events.
         fileprivate var unlocks: AchievementUnlocks
         
-        fileprivate init() {
+        init() {
             version = 1
             triggerEvents = []
             metricObservations = [:]
@@ -208,12 +211,20 @@ final class AchievementsManager: Module, EnvironmentAccessible, @unchecked Senda
         case notEnrolled
     }
     
+    private struct TrackingSession: Equatable, Sendable {
+        let generation: Int
+        let documentPath: String
+        let backendID: ObjectIdentifier
+        let enrollmentDate: Date
+    }
+
     // swiftlint:disable attributes
     @ObservationIgnored @Application(\.logger) private var logger
     @ObservationIgnored @Dependency(Account.self) private var account: Account?
     @ObservationIgnored @Dependency(StudyManager.self) private var studyManager: StudyManager?
     @ObservationIgnored @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
-    @ObservationIgnored @Dependency(HealthKit.self) private var healthKit
+    @ObservationIgnored @Dependency(StatsStore.self) private var statsStore: StatsStore?
+    @ObservationIgnored @Dependency(Lifecycle.self) private var lifecycle
     // swiftlint:enable attributes
     
     /// Protects ``_achievements``
@@ -242,6 +253,11 @@ final class AchievementsManager: Module, EnvironmentAccessible, @unchecked Senda
     /// and are not planning on making any changes to that anytime soon...
     @MainActor private(set) var systemAvailability: SystemAvailability = .available
     
+    @MainActor private var associationGeneration = 0
+    @MainActor private var associatedSession: TrackingSession?
+    @MainActor private var healthMetricsObserver: Task<Void, Never>?
+    @MainActor private var healthMetricsTimeRange: Range<Date>?
+
     /// The single in-flight sync. All sync funnels through this one task, so two syncs can never
     /// interleave their read-merge-write. Cleared by the task itself (via `defer`) on completion.
     @MainActor private var runningSync: Task<Void, any Error>?
@@ -280,6 +296,14 @@ final class AchievementsManager: Module, EnvironmentAccessible, @unchecked Senda
     
     func configure() {
         Achievement.registerDefaultAchievements(with: self)
+        lifecycle.onChange(of: \.scenePhase) { [weak self] oldValue, newValue in
+            guard oldValue != .active, newValue == .active else {
+                return
+            }
+            Task { @MainActor in
+                self?.refreshForDateChange()
+            }
+        }
         Task {
             do {
                 // try to connect the manager w/ the account. this will fail if no user is logged in, in which case we fall back
@@ -292,6 +316,25 @@ final class AchievementsManager: Module, EnvironmentAccessible, @unchecked Senda
     }
     
     
+    @MainActor
+    private func trackingSession() throws -> TrackingSession {
+        guard let enrollmentDate = studyManager?.studyEnrollments.first?.enrollmentDate else {
+            throw SyncError.notEnrolled
+        }
+        let document = try achievementTrackingDoc
+        return TrackingSession(
+            generation: associationGeneration,
+            documentPath: document.path,
+            backendID: ObjectIdentifier(document.firestore),
+            enrollmentDate: enrollmentDate
+        )
+    }
+
+    @MainActor
+    private func isCurrent(_ session: TrackingSession) -> Bool {
+        systemAvailability == .available && (try? trackingSession()) == session
+    }
+
     func register(achievement: Achievement) {
         register(achievements: CollectionOfOne(achievement))
     }
@@ -310,13 +353,49 @@ final class AchievementsManager: Module, EnvironmentAccessible, @unchecked Senda
     }
     
     
+    @MainActor
     func refresh() async throws {
-        // make sure the local version is up-to-date
-        try await syncNow()
-        if let enrollmentDate = await MainActor.run(body: { studyManager?.studyEnrollments.first?.enrollmentDate }) {
-            await updateEnrollmentStats(enrollmentDate: enrollmentDate)
-            await updateHealthMetrics(enrollmentDate: enrollmentDate)
+        let session = try trackingSession()
+        if let associatedSession, associatedSession != session {
+            try await associateWithAccount()
+            return
         }
+        try await syncNow()
+        try Task.checkCancellation()
+        guard isCurrent(session) else {
+            return
+        }
+        updateEnrollmentStats(enrollmentDate: session.enrollmentDate)
+        observeHealthMetrics(session: session)
+    }
+}
+
+
+// MARK: Lifecycle
+
+extension AchievementsManager {
+    func run() async {
+        await withDiscardingTaskGroup { group in
+            for name in [UIApplication.significantTimeChangeNotification, Notification.Name.NSCalendarDayChanged] {
+                group.addTask { [weak self] in
+                    for await _ in NotificationCenter.default.notifications(named: name) {
+                        guard !Task.isCancelled else {
+                            return
+                        }
+                        await self?.refreshForDateChange()
+                    }
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func refreshForDateChange() {
+        guard let session = associatedSession, isCurrent(session) else {
+            return
+        }
+        updateEnrollmentStats(enrollmentDate: session.enrollmentDate)
+        observeHealthMetrics(session: session)
     }
 }
 
@@ -336,8 +415,12 @@ extension AchievementsManager {
         guard runningSync == nil, debounceTask == nil else {
             return
         }
+        let generation = associationGeneration
         debounceTask = Task { @MainActor in
             try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled, generation == self.associationGeneration else {
+                return
+            }
             self.debounceTask = nil
             do {
                 try await self._runSync()
@@ -362,7 +445,8 @@ extension AchievementsManager {
     /// It also is safe to mutate ``achievementsState`` while a sync is in progress; the changes will be picked up and synced as well.
     @MainActor
     private func _runSync() async throws { // swiftlint:disable:this function_body_length cyclomatic_complexity
-        guard systemAvailability == .available else {
+        guard systemAvailability == .available,
+              associatedSession.map(isCurrent) ?? true else {
             return
         }
         if let runningSync {
@@ -370,6 +454,7 @@ extension AchievementsManager {
             return
         }
         /// Performs a single read-merge-write pass against the cloud document
+        let generation = associationGeneration
         let syncImpl = { @MainActor () async throws in // swiftlint:disable:this closure_body_length
             let doc: DocumentReference
             do {
@@ -386,8 +471,12 @@ extension AchievementsManager {
             }
             // would ideally use a firestore transaction here to wrap all interactions with `doc`,
             // but that isn't possible as the API does not support async transactions.
+            let session = try self.trackingSession()
             let snapshot = try await doc.getDocument()
             try Task.checkCancellation()
+            guard self.isCurrent(session) else {
+                throw CancellationError()
+            }
             // Capture the state this pass commits and clear the dirty flag in the SAME synchronous turn.
             // Anything recorded after this line re-sets `syncDirty` (handled by the next pass); anything
             // recorded before (including during the fetch above) is included in `local`.
@@ -403,7 +492,9 @@ extension AchievementsManager {
                     try await doc.setData(from: local)
                     try Task.checkCancellation()
                 } catch {
-                    self.syncDirty = true // upload failed: keep the change pending so runSync re-arms
+                    if self.isCurrent(session) {
+                        self.syncDirty = true // upload failed: keep the change pending so runSync re-arms
+                    }
                     throw error
                 }
                 return
@@ -434,7 +525,9 @@ extension AchievementsManager {
             do {
                 try await doc.setData(from: merged)
             } catch {
-                self.syncDirty = true // upload failed: keep the change pending so runSync re-arms
+                if self.isCurrent(session) {
+                    self.syncDirty = true // upload failed: keep the change pending so runSync re-arms
+                }
                 throw error
             }
         }
@@ -442,9 +535,15 @@ extension AchievementsManager {
             // Cleared synchronously with the loop's exit decision: on the serial executor no `record()`
             // can interleave between the final `while self.syncDirty` read and this assignment.
             defer {
-                runningSync = nil
+                if generation == associationGeneration {
+                    runningSync = nil
+                }
             }
             repeat {
+                try Task.checkCancellation()
+                guard generation == associationGeneration else {
+                    throw CancellationError()
+                }
                 try await syncImpl()
             } while syncDirty
         }
@@ -454,7 +553,7 @@ extension AchievementsManager {
             // If a change is still pending (a `record(...)` that landed in the teardown gap, or a pass
             // that threw with `syncDirty` still set), re-arm a debounced retry now that we are no
             // longer the runner (so `scheduleSync`'s `runningSync == nil` guard lets it through).
-            if syncDirty {
+            if generation == associationGeneration, syncDirty {
                 scheduleSync()
             }
         }
@@ -470,19 +569,30 @@ extension AchievementsManager {
     /// Call  ``disassociateFromAccount()`` to clear the association (e.g., in response to user logout), in which case the next call to this function will set up a new one.
     @MainActor
     func associateWithAccount() async throws {
-        guard remoteChangesObserver == nil else {
+        let requestedSession = try trackingSession()
+        guard associatedSession != requestedSession || remoteChangesObserver == nil else {
             return
         }
+        if let associatedSession, associatedSession != requestedSession {
+            disassociateFromAccount()
+        }
         let doc = try achievementTrackingDoc
+        let session = try trackingSession()
+        associatedSession = session
         // if we can obtain the doc, there must be a user.
         systemAvailability = .available
         let snapshots = doc.snapshots
         remoteChangesObserver = Task {
             defer {
-                self.remoteChangesObserver = nil
+                if self.associatedSession == session {
+                    self.remoteChangesObserver = nil
+                }
             }
             do {
                 for try await snapshot: DocumentSnapshot in snapshots {
+                    guard !Task.isCancelled, self.isCurrent(session) else {
+                        return
+                    }
                     guard !snapshot.metadata.hasPendingWrites else {
                         // if `snapshot.metadata.hasPendingWrites` is true, we're being informed about a client-side mutation
                         // (which obv we want to skip)
@@ -512,10 +622,15 @@ extension AchievementsManager {
             task?.cancel()
             task = nil
         }
+        associationGeneration += 1
+        associatedSession = nil
         systemAvailability = .unavailable(.noUser)
+        cancel(&healthMetricsObserver)
+        healthMetricsTimeRange = nil
         cancel(&remoteChangesObserver)
         cancel(&debounceTask)
         cancel(&runningSync)
+        syncDirty = false
         achievementsState = .init()
     }
 }
@@ -524,8 +639,28 @@ extension AchievementsManager {
 // MARK: Mutations
 
 extension AchievementsManager {
+    /// Daily achievement thresholds require exact calendar-day totals. Include the current day's full
+    /// bucket range so an unfinished hourly bucket is not clipped at the current time.
+    static func dailyStepsRequest(
+        since enrollmentDate: Date,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> StatsStore.Request<QuantitySample>? {
+        let start = calendar.startOfDay(for: enrollmentDate)
+        guard enrollmentDate <= now,
+              let end = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)), start < end else {
+            return nil
+        }
+        return .quantity(
+            metric: .steps,
+            timeRange: HealthKitQueryTimeRange(start..<end),
+            aggregationKind: .sum,
+            interval: .init(interval: .day, anchor: start, calendar: calendar, alignmentPolicy: .requireExact)
+        )
+    }
+
     @MainActor
-    private func updateEnrollmentStats(enrollmentDate: Date) async {
+    private func updateEnrollmentStats(enrollmentDate: Date) {
         record(.completeEnrollment, timestamp: enrollmentDate)
         let now = Date()
         let cal = Calendar.current
@@ -541,39 +676,67 @@ extension AchievementsManager {
         record(.enrollmentDurationInYears, value: numYears, timestamp: now)
     }
     
+    /// Keep listening after the initial refresh so historical stats uploaded later can unlock achievements.
     @MainActor
-    private func updateHealthMetrics(enrollmentDate: Date) async {
-        await withDiscardingTaskGroup { taskGroup in
-            let queryTimeRange = HealthKitQueryTimeRange(Calendar.current.startOfDay(for: enrollmentDate)..<Date.now)
-            taskGroup.addTask {
-                for stats in (try? await self.healthKit.statisticsQuery(
-                    .stepCount,
-                    aggregatedBy: [.sum],
-                    over: .day,
-                    timeRange: queryTimeRange
-                )) ?? [] {
-                    guard let stepCount = stats.sumQuantity()?.doubleValue(for: .count()) else {
-                        continue
+    private func observeHealthMetrics(session: TrackingSession) {
+        guard let statsStore else {
+            return
+        }
+        guard let steps = Self.dailyStepsRequest(since: session.enrollmentDate) else {
+            return
+        }
+        let range = steps.timeRange
+        guard healthMetricsObserver == nil || healthMetricsTimeRange != range else {
+            return
+        }
+        healthMetricsObserver?.cancel()
+        healthMetricsTimeRange = range
+        let ecgs: StatsStore.Request<ElectrocardiogramStatsSample> = .electrocardiograms(in: HealthKitQueryTimeRange(range))
+        healthMetricsObserver = Task { @MainActor in
+            await withDiscardingTaskGroup { group in
+                group.addTask { @MainActor @Sendable in
+                    await self.consumeHealthStats(steps, store: statsStore, session: session) { samples in
+                        self.achievementsState.recordDailySteps(samples, allAchievements: self.achievements)
                     }
-                    await self.record(
-                        .dailyStepCount,
-                        value: stepCount,
-                        // using start of day here.
-                        timestamp: stats.startDate
-                    )
+                }
+                group.addTask { @MainActor @Sendable in
+                    await self.consumeHealthStats(ecgs, store: statsStore, session: session) { samples in
+                        self.achievementsState.recordElectrocardiograms(samples, allAchievements: self.achievements)
+                    }
                 }
             }
-            taskGroup.addTask {
-                guard let ecgs = try? await self.healthKit.query(.electrocardiogram, timeRange: queryTimeRange), !ecgs.isEmpty else {
-                    return
-                }
-                // SAFETY: we know that `ecgs` has at least one element, so `max(of:)` will never be nil.
-                let newestECGDate = ecgs.max(of: \.endDate)! // swiftlint:disable:this force_unwrapping
-                await self.record(.numRecordedECGs, value: ecgs.count, timestamp: newestECGDate)
+            if !Task.isCancelled, self.isCurrent(session) {
+                self.healthMetricsObserver = nil
+                self.healthMetricsTimeRange = nil
             }
         }
     }
-    
+
+    @MainActor
+    private func consumeHealthStats<Element>(
+        _ request: StatsStore.Request<Element>,
+        store: StatsStore,
+        session: TrackingSession,
+        apply: @MainActor @Sendable ([Element]) -> Void
+    ) async {
+        do {
+            for try await snapshot in store.updates(for: request) {
+                guard !Task.isCancelled, isCurrent(session) else {
+                    return
+                }
+                apply(snapshot.elements)
+            }
+        } catch {
+            if !Task.isCancelled, isCurrent(session) {
+                logger.error("Achievement stats observation failed for \(request.metricId.rawValue): \(error)")
+            }
+        }
+        if !Task.isCancelled, isCurrent(session) {
+            // Allow the next refresh to restart either listener if one ended or failed.
+            healthMetricsTimeRange = nil
+        }
+    }
+
     @MainActor
     func record(_ trigger: Achievement.Trigger, timestamp: Date) {
         guard systemAvailability == .available else {
@@ -602,6 +765,19 @@ extension AchievementsManager.State {
         triggerEvents.isEmpty && metricObservations.isEmpty && unlocks.isEmpty
     }
     
+    mutating func recordDailySteps(_ samples: [QuantitySample], allAchievements: some Collection<Achievement>) {
+        for sample in samples {
+            record(.dailyStepCount, value: sample.value(as: .count()), timestamp: sample.startDate, allAchievements: allAchievements)
+        }
+    }
+
+    mutating func recordElectrocardiograms(_ samples: [ElectrocardiogramStatsSample], allAchievements: some Collection<Achievement>) {
+        // Each threshold unlocks when its Nth recording finished, including late/backfilled history.
+        for (index, sample) in samples.sorted(using: KeyPathComparator(\.endDate)).enumerated() {
+            record(.numRecordedECGs, value: Double(index + 1), timestamp: sample.endDate, allAchievements: allAchievements)
+        }
+    }
+
     /// Least-upper-bound merge of two states (commutative, idempotent, monotone).
     ///
     /// - `triggerEvents` are unioned, except `.recordOnce` triggers (identified by `recordOnceTriggerIDs`),
@@ -704,33 +880,34 @@ extension AchievementsManager.State {
         }
     }
     
-    fileprivate mutating func record(
+    mutating func record(
         _ metric: Achievement.Metric,
         value: Double,
         timestamp: Date,
         allAchievements: some Collection<Achievement>
     ) {
+        guard value.isFinite else {
+            return
+        }
+        recordUnlocks(metric: metric, value: value, timestamp: timestamp, allAchievements: allAchievements)
         guard let oldEntry = metricObservations[metric.id] else {
             metricObservations[metric.id] = .init(timestamp: timestamp, value: value)
-            evaluateUnlocks(trigger: .updatedMetricObservation(metric: metric), allAchievements: allAchievements)
             return
         }
         switch metric.rule {
         case .atLeast: // tracking upwards: keep the max value, earliest timestamp on a tie
             if value > oldEntry.value || (value == oldEntry.value && timestamp < oldEntry.timestamp) {
                 metricObservations[metric.id] = .init(timestamp: timestamp, value: value)
-                evaluateUnlocks(trigger: .updatedMetricObservation(metric: metric), allAchievements: allAchievements)
             }
         case .atMost: // tracking downwards: keep the min value, earliest timestamp on a tie
             if value < oldEntry.value || (value == oldEntry.value && timestamp < oldEntry.timestamp) {
                 metricObservations[metric.id] = .init(timestamp: timestamp, value: value)
-                evaluateUnlocks(trigger: .updatedMetricObservation(metric: metric), allAchievements: allAchievements)
             }
         }
     }
     
     
-    fileprivate func state(of achievement: Achievement) -> AchievementsManager.AchievementState {
+    func state(of achievement: Achievement) -> AchievementsManager.AchievementState {
         if let unlockDate = unlocks[achievement.id] {
             return .unlocked(unlockDate: unlockDate)
         }
@@ -770,42 +947,24 @@ extension AchievementsManager.State {
 
 
 extension AchievementsManager.State {
-    /// Info about the specific thing that caused the evaluation to be performed.
-    private enum UnlocksEvalTrigger {
-        case updatedMetricObservation(metric: Achievement.Metric)
-        case unknown
-    }
-    
-    private mutating func evaluateUnlocks(
-        trigger: UnlocksEvalTrigger,
+    /// Unlock dates are independent of the retained best observation: a lower historical value may
+    /// still prove that an earlier threshold was reached sooner. Unlocks remain sticky after deletions.
+    private mutating func recordUnlocks(
+        metric: Achievement.Metric,
+        value: Double,
+        timestamp: Date,
         allAchievements: some Collection<Achievement>
     ) {
         for achievement in allAchievements {
-            switch achievement.kind {
-            case .event:
-                // currently not covered by `AchievementUnlocks`.
-                break
-            case .threshold(let metric, _):
-                switch trigger {
-                case .updatedMetricObservation(let updatedMetric):
-                    guard metric == updatedMetric else {
-                        continue
-                    }
-                case .unknown:
-                    break
-                }
-                guard self.unlocks[achievement.id] == nil else {
-                    // already unlocked
-                    break
-                }
-                switch state(of: achievement) {
-                case .locked:
-                    // still unlocked
-                    break
-                case .unlocked(let unlockDate):
-                    // previously locked, now unlocked
-                    unlocks[achievement.id] = unlockDate
-                }
+            guard case let .threshold(achievementMetric, target) = achievement.kind, achievementMetric == metric else {
+                continue
+            }
+            let qualifies: Bool = switch metric.rule {
+            case .atLeast: value >= target
+            case .atMost: value <= target
+            }
+            if qualifies {
+                unlocks[achievement.id] = unlocks[achievement.id].map { min($0, timestamp) } ?? timestamp
             }
         }
     }
@@ -975,7 +1134,7 @@ extension AchievementsManager {
                 case .always, .secretUnlessNextInLadder:
                     break
                 }
-                guard case .locked(let progress, let lastUpdate) = self.state(of: achievement) else {
+                guard case let .locked(progress, lastUpdate) = self.state(of: achievement) else {
                     return nil
                 }
                 return UpcomingAchievement(achievement: achievement, progress: progress, lastUpdate: lastUpdate)

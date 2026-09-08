@@ -24,6 +24,8 @@ extension StatsStore {
             var origins: Set<String>
             var observationID: String?
             var sources: Set<StatsDocument.SourceID>
+            var eventEndDate: Date?
+            var activityType: UInt?
         }
 
         private struct Selection {
@@ -159,7 +161,7 @@ extension StatsStore.Processor {
                         malformedEntries += 1
                         continue
                     }
-                    guard overlaps(range, input.timeRange) else {
+                    guard overlaps(range, input.timeRange), value.eventEndDate.map({ $0 < input.timeRange.upperBound }) ?? true else {
                         continue
                     }
                     values.append(value)
@@ -234,7 +236,7 @@ extension StatsStore.Processor {
                 weighting: average.weighting
             )
         }
-        return Value(
+        let value = Value(
             range: range,
             amount: converted(amount),
             secondaryAmount: entry.diastolic.map(converted),
@@ -243,6 +245,31 @@ extension StatsStore.Processor {
             observationID: entry.provenance?.observationID,
             sources: [source]
         )
+        return validatedEvent(value, entry: entry, input: input)
+    }
+
+    /// Event metadata stays attached while the shared source selector deduplicates observations.
+    private static func validatedEvent(_ value: Value, entry: StatsDocument.Entry, input: Input) -> Value? {
+        guard input.metricID == "workouts" || input.metricID == "electrocardiograms" else {
+            return value
+        }
+        guard value.range.isEmpty, let identity = value.observationID, !identity.isEmpty,
+              let end = entry.endDate.flatMap(StatsDocument.Entry.parseDate), end >= value.range.lowerBound else {
+            return nil
+        }
+        var value = value
+        value.eventEndDate = end
+        if input.metricID == "workouts" {
+            guard let duration = entry.duration, duration.isFinite, duration >= 0,
+                  abs(duration - value.amount) <= Swift.max(1, duration) * 1e-9,
+                  let activityType = entry.activityType, HKWorkoutActivityType(rawValue: activityType) != nil else {
+                return nil
+            }
+            value.activityType = activityType
+        } else if value.amount != 1 {
+            return nil
+        }
+        return value
     }
 
     private static func sourceOrder(_ sources: Set<StatsDocument.SourceID>, policy: StatsStore.SourcePolicy) -> [StatsDocument.SourceID] {
@@ -269,7 +296,7 @@ extension StatsStore.Processor {
 // MARK: Source Selection
 
 extension StatsStore.Processor {
-    private static func selectedValues(documents: [StatsDocument], input: Input, diagnostics: inout [StatsStore.Diagnostic]) throws -> [Value] {
+    static func selectedValues(documents: [StatsDocument], input: Input, diagnostics: inout [StatsStore.Diagnostic]) throws -> [Value] {
         var selected = Selection()
         for value in values(documents: documents, input: input, diagnostics: &diagnostics) {
             if let identity = value.observationID, !identity.isEmpty, selected.identities.contains(identity) {

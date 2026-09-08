@@ -14,18 +14,38 @@ import SpeziFoundation
 import SpeziStudy
 import SpeziViews
 import SwiftUI
+import UIKit
 
 
 /// Displays interesting (though not necessarily scientificaly useful) statisics about the user's participation in the study.
 struct ParticipationStatsView: View {
+    private struct LoadedStats {
+        let identity: ParticipationStatsProvider.RefreshIdentity
+        let value: ParticipationStatsProvider.Stats
+    }
+
+    private struct ObservationIdentity: Hashable {
+        let query: ParticipationStatsProvider.RefreshIdentity
+        let refreshID: UUID
+    }
+
     @Environment(\.calendar) private var cal
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(ParticipationStatsProvider.self) private var statsProvider
     @Environment(AchievementsManager.self) private var achievementsManager
     
     private let enrollment: StudyEnrollment
-    @State private var stats: ParticipationStatsProvider.Stats?
+    @State private var loadedStats: LoadedStats?
+    @State private var refreshID = UUID()
     @State private var isShowingExplainerSheet = false
     
+    private var stats: ParticipationStatsProvider.Stats? {
+        guard let loadedStats, loadedStats.identity == statsProvider.refreshIdentity(for: enrollment) else {
+            return nil
+        }
+        return loadedStats.value
+    }
+
     var body: some View {
         Form {
             EnrollmentStatsSection(enrollmentDate: enrollment.enrollmentDate)
@@ -42,11 +62,25 @@ struct ParticipationStatsView: View {
         }
         .navigationTitle("Stats and Achievements")
         .navigationBarTitleDisplayMode(.inline)
+        .task(id: ObservationIdentity(query: statsProvider.refreshIdentity(for: enrollment), refreshID: refreshID)) {
+            await observeStats()
+        }
         .task {
-            await updateStats()
+            try? await achievementsManager.refresh()
+        }
+        .task {
+            for await _ in NotificationCenter.default.notifications(named: UIApplication.significantTimeChangeNotification) {
+                refreshID = UUID()
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                refreshID = UUID()
+            }
         }
         .refreshable {
-            await updateStats()
+            refreshID = UUID()
+            try? await achievementsManager.refresh()
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -81,9 +115,23 @@ struct ParticipationStatsView: View {
         self.enrollment = enrollment
     }
     
-    private func updateStats() async {
-        stats = await statsProvider.computeStats(for: enrollment)
-        try? await achievementsManager.refresh()
+    private func observeStats() async {
+        let identity = statsProvider.refreshIdentity(for: enrollment)
+        let refreshID = self.refreshID
+        do {
+            for try await stats in statsProvider.updates(for: enrollment) {
+                guard !Swift::Task.isCancelled, self.refreshID == refreshID,
+                      identity == statsProvider.refreshIdentity(for: enrollment) else {
+                    return
+                }
+                loadedStats = LoadedStats(identity: identity, value: stats)
+            }
+        } catch {
+            if !Swift::Task.isCancelled, self.refreshID == refreshID,
+               identity == statsProvider.refreshIdentity(for: enrollment) {
+                loadedStats = nil
+            }
+        }
     }
 }
 
@@ -103,7 +151,6 @@ extension ParticipationStatsView {
             accentColor: .accentColor
         )
         if let appEngagement = stats?.appEngagement {
-            // TODO verify that this starts counting at 1, ie even if the user only has had the app installed for like 2-3 days!!
             StatCard(
                 title: "Current Streak",
                 value: appEngagement.currentLaunchAppStreak,
@@ -296,13 +343,13 @@ extension ParticipationStatsView {
                 text: "Your heart has beaten about \(beats, format: .number.notation(.compactName)) times since you enrolled — roughly \(lifetimePercent, format: .percent.precision(.fractionLength(0...2))) of an average lifetime."
             ))
         }
-        if let kcal = healthStats.totalActiveEnergyKcal, kcal > 0 {
+        if let kcal = healthStats.totalActiveEnergyKcal, let wholeCalories = Int(exactly: kcal.rounded(.towardZero)), wholeCalories > 0 {
             let pizzaSlices = Int((kcal / 285).rounded())
             if pizzaSlices > 0 {
                 facts.append(.init(
                     symbol: .flameFill,
                     color: .orange,
-                    text: "You've burned \(Int(kcal), format: .number) active calories — the equivalent of \(pizzaSlices, format: .number) slices of pizza."
+                    text: "You've burned \(wholeCalories, format: .number) active calories — the equivalent of \(pizzaSlices, format: .number) slices of pizza."
                 ))
             }
         }
@@ -529,7 +576,7 @@ private struct StatCard: View {
                 Spacer()
             }
             Group {
-                if let value {
+                if let value, Int(exactly: value.rounded(.towardZero)) != nil {
                     formattedValue(value)
                 } else {
                     Text("—")
