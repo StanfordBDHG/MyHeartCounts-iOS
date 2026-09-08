@@ -18,7 +18,6 @@ import GroveFoundation
 import GroveHealthKit
 import GroveLocalStorage
 import GroveNotifications
-import GroveQuestionnaire
 import GroveScheduler
 import GroveSensorKit
 import GroveStudy
@@ -35,6 +34,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(FirebaseConfiguration.self) var firebaseConfiguration
     @Dependency(StudyManager.self) var studyManager: StudyManager?
     @Dependency(Account.self) var account: Account?
+    @Dependency(LocalStorage.self) private var localStorage
     @Dependency(StudyBundleLoader.self) private var studyLoader
     @Dependency(EnvironmentTracking.self) private var environmentTracking: EnvironmentTracking?
     @Dependency(ManagedFileUpload.self) var managedFileUpload
@@ -51,8 +51,16 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(HealthKitStatsCalculator.self) private var healthKitStatsCalc: HealthKitStatsCalculator?
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
-    
+
     init() {}
+
+    /// The encrypted, installation-scoped ledger shared by every FHIR publication path.
+    func fhirExchangeStateStore(accountDataGeneration: Int) -> FHIRExchangeStateStore {
+        FHIRExchangeStateStore(
+            localStorage: localStorage,
+            accountDataGeneration: accountDataGeneration
+        )
+    }
     
     @MainActor
     func configure() {
@@ -119,10 +127,10 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     
     // MARK: Account Stuff
     
-    func respondToEvent(_ event: AccountNotifications.Event) async {
+    func handleAccountEvent(_ event: AccountNotifications.Event) async {
         let logger = logger
         switch event {
-        case .associatedAccount(let details):
+        case .didAssociate(let details):
             logger.notice("account was associated (account id: \(details.accountId))")
             if LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] {
                 do {
@@ -137,25 +145,23 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
                 await environmentTracking?.triggerAll()
                 _ = try? await registerRemoteNotifications()
             }
-        case .deletingAccount:
+        case .willDelete:
             logger.notice("account is being deleted")
-        case .disassociatingAccount:
+        case .didDisassociate:
             logger.notice("account did disassociate")
             do {
                 try await performLogoutCleanup(context: .explicitUserLogoutEvent)
             } catch {
                 logger.error("Unable to clear all local account data during logout: \(error)")
             }
+        case .willLogOut:
+            logger.notice("account is being logged out")
+            LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
+            LocalPreferencesStore.standard[.accountDataGeneration] += 1
+            try? await notificationsManager.setFCMToken(nil)
         case .detailsChanged:
             break
         }
-    }
-    
-    func willLogOut(_ details: AccountDetails) async {
-        logger.notice("account is being logged out")
-        LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
-        LocalPreferencesStore.standard[.accountDataGeneration] += 1
-        try? await notificationsManager.setFCMToken(nil)
     }
 }
 
@@ -304,7 +310,7 @@ extension MyHeartCountsStandard {
     private func clearPendingAccountData() async throws {
         await healthUploadStagingUploader.cancelAndWaitForQuiescence()
         await sensorKitFetcher.cancelAllActiveCollection()
-        
+
         func attempt(_ name: String, _ operation: () async throws -> Void) async -> Bool {
             do {
                 try await operation()
@@ -323,10 +329,18 @@ extension MyHeartCountsStandard {
         let stagedHealthDataCleared = await attempt("staged health observations") {
             try healthUploadStaging.clear()
         }
-        sensorKitFetcher.resetAllQueryAnchors()
+        let exchangeStateCleared = await attempt("FHIR exchange identity and retry state") {
+            try fhirExchangeStateStore(
+                accountDataGeneration: LocalPreferencesStore.standard[.accountDataGeneration]
+            ).reset()
+        }
+        await sensorKitFetcher.resetAllQueryAnchors()
         await clinicalRecordPermissions.resetTracking()
 
-        guard historicalDataCleared, stagedFilesCleared, stagedHealthDataCleared else {
+        guard historicalDataCleared,
+              stagedFilesCleared,
+              stagedHealthDataCleared,
+              exchangeStateCleared else {
             throw PendingAccountDataCleanupError.failed
         }
         LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = false
@@ -335,11 +349,26 @@ extension MyHeartCountsStandard {
 
 
 extension MyHeartCountsStandard {
-    func stageHistoricalHealthKitFile(at url: URL) async throws {
-        try await managedFileUpload.stage(url, category: .historicalHealthUpload)
+    func stageHistoricalHealthKitFile(
+        at url: URL,
+        accountDataGeneration: Int
+    ) async throws {
+        try await managedFileUpload.stage(
+            url,
+            category: .historicalHealthUpload,
+            accountDataGeneration: accountDataGeneration
+        )
     }
 
-    func uploadSensorKitFile(at url: URL, for sensor: Sensor<some Any>) async throws {
-        try await managedFileUpload.stage(url, category: ManagedFileUpload.Category(sensor))
+    func uploadSensorKitFile(
+        at url: URL,
+        for sensor: Sensor<some Any>,
+        accountDataGeneration: Int
+    ) async throws {
+        try await managedFileUpload.stage(
+            url,
+            category: ManagedFileUpload.Category(sensor),
+            accountDataGeneration: accountDataGeneration
+        )
     }
 }

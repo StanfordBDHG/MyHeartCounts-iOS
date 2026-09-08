@@ -92,12 +92,12 @@ final class HealthKitStatsCalculator: ServiceModule, EnvironmentAccessible, @unc
         }
         for await event in accountNotifications.events {
             switch event {
-            case .associatedAccount:
+            case .didAssociate:
                 start()
-            case .disassociatingAccount:
+            case .didDisassociate:
                 stop()
                 queryAnchors.resetAll()
-            case .detailsChanged, .deletingAccount:
+            case .detailsChanged, .willDelete, .willLogOut:
                 break
             }
         }
