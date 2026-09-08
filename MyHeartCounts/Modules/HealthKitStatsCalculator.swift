@@ -584,6 +584,9 @@ extension HealthKitStatsCalculator {
                               let avg = stats.averageQuantity() else {
                             return nil
                         }
+                        // Heart rate uses HealthKit's temporally weighted average. Neither the public
+                        // statistics API nor duration() supplies its averaging denominator, so we must not
+                        // manufacture merge weights from sample count, bucket length, or covered duration.
                         return StatEntry(
                             start: stats.startDate,
                             end: stats.endDate,
@@ -639,7 +642,8 @@ extension HealthKitStatsCalculator {
                     QuantitySampleEntry(
                         date: sample.startDate,
                         unit: unit,
-                        value: sample.quantity.doubleValue(for: unit)
+                        value: sample.quantity.doubleValue(for: unit),
+                        provenance: Self.provenance(for: sample)
                     )
                 }
                 try await persistence.persistStatsUpdate(
@@ -752,7 +756,8 @@ extension HealthKitStatsCalculator {
                         date: correlation.startDate,
                         unit: unit,
                         systolic: systolic.quantity.doubleValue(for: unit),
-                        diastolic: diastolic.quantity.doubleValue(for: unit)
+                        diastolic: diastolic.quantity.doubleValue(for: unit),
+                        provenance: Self.provenance(for: correlation)
                     )
                 }
                 try await persistence.persistStatsUpdate(
@@ -775,6 +780,15 @@ extension HealthKitStatsCalculator {
                 }
             }
         }
+    }
+}
+
+
+extension HealthKitStatsCalculator {
+    /// Preserve identity across recomputations without claiming independence from an external integration.
+    /// HealthKit's immediate source may itself have imported the reading from another provider.
+    static func provenance(for sample: HKObject) -> StatsDocument.Provenance {
+        StatsDocument.Provenance(origins: [], observationID: "healthkit:\(sample.uuid.uuidString.lowercased())")
     }
 }
 
@@ -865,19 +879,21 @@ extension HealthKitStatsCalculator {
 
 
     /// A single reading in an individual-samples single-month stats document
-    fileprivate struct QuantitySampleEntry: Codable {
+    struct QuantitySampleEntry: Codable {
         enum CodingKeys: String, Swift.CodingKey {
-            case date, unit, value
+            case date, unit, value, provenance
         }
 
         let date: Date
         let unit: HKUnit
         let value: Double
+        let provenance: StatsDocument.Provenance?
 
-        init(date: Date, unit: HKUnit, value: Double) {
+        init(date: Date, unit: HKUnit, value: Double, provenance: StatsDocument.Provenance? = nil) {
             self.date = date
             self.unit = unit
             self.value = value
+            self.provenance = provenance
         }
 
         init(from decoder: any Decoder) throws {
@@ -885,6 +901,7 @@ extension HealthKitStatsCalculator {
             self.date = try StatsWireFormat.parseDate(container.decode(String.self, forKey: .date))
             self.unit = try container.decode(HKUnit.self, forKey: .unit)
             self.value = try container.decode(Double.self, forKey: .value)
+            self.provenance = try container.decodeIfPresent(StatsDocument.Provenance.self, forKey: .provenance)
         }
 
         func encode(to encoder: any Encoder) throws {
@@ -892,26 +909,29 @@ extension HealthKitStatsCalculator {
             try container.encode(date.formatted(StatsWireFormat.dateFormat), forKey: .date)
             try container.encode(unit, forKey: .unit)
             try container.encode(value, forKey: .value)
+            try container.encodeIfPresent(provenance, forKey: .provenance)
         }
     }
 
 
     /// A single sys/dia reading pair in the blood-pressure single-month stats document
-    fileprivate struct BloodPressureSampleEntry: Codable {
+    struct BloodPressureSampleEntry: Codable {
         enum CodingKeys: String, Swift.CodingKey {
-            case date, unit, systolic, diastolic
+            case date, unit, systolic, diastolic, provenance
         }
 
         let date: Date
         let unit: HKUnit
         let systolic: Double
         let diastolic: Double
+        let provenance: StatsDocument.Provenance?
 
-        init(date: Date, unit: HKUnit, systolic: Double, diastolic: Double) {
+        init(date: Date, unit: HKUnit, systolic: Double, diastolic: Double, provenance: StatsDocument.Provenance? = nil) {
             self.date = date
             self.unit = unit
             self.systolic = systolic
             self.diastolic = diastolic
+            self.provenance = provenance
         }
 
         init(from decoder: any Decoder) throws {
@@ -920,6 +940,7 @@ extension HealthKitStatsCalculator {
             self.unit = try container.decode(HKUnit.self, forKey: .unit)
             self.systolic = try container.decode(Double.self, forKey: .systolic)
             self.diastolic = try container.decode(Double.self, forKey: .diastolic)
+            self.provenance = try container.decodeIfPresent(StatsDocument.Provenance.self, forKey: .provenance)
         }
 
         func encode(to encoder: any Encoder) throws {
@@ -928,6 +949,7 @@ extension HealthKitStatsCalculator {
             try container.encode(unit, forKey: .unit)
             try container.encode(systolic, forKey: .systolic)
             try container.encode(diastolic, forKey: .diastolic)
+            try container.encodeIfPresent(provenance, forKey: .provenance)
         }
     }
 }
