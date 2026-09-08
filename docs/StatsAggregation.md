@@ -1,3 +1,13 @@
+<!--
+
+This source file is part of the My Heart Counts iOS open-source project
+
+SPDX-FileCopyrightText: 2026 Stanford University and the project authors (see CONTRIBUTORS.md)
+
+SPDX-License-Identifier: MIT
+
+-->
+
 # Stats aggregation metadata
 
 Monthly stats entries may carry the optional `average` and `provenance` fields below. These fields are additive: existing entries remain readable, and writers should omit metadata they cannot establish accurately.

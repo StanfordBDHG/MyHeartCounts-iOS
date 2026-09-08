@@ -1,3 +1,13 @@
+<!--
+
+This source file is part of the My Heart Counts iOS open-source project
+
+SPDX-FileCopyrightText: 2026 Stanford University and the project authors (see CONTRIBUTORS.md)
+
+SPDX-License-Identifier: MIT
+
+-->
+
 # Reading stats
 
 `StatsStore` provides the same stats processing to SwiftUI views, Spezi modules, and background tasks. It is loaded with the Firebase modules. Query construction and result values do not require SwiftUI; the store coordinates account state on the main actor, and document processing runs off the main actor.
