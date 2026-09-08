@@ -313,12 +313,18 @@ extension HealthKitStatsCalculator {
     struct MetricID: _IDType {
         static let steps = Self(rawValue: "steps")
         static let exerciseTime = Self(rawValue: "exercise-time")
+        static let activeEnergy = Self(rawValue: "active-energy")
+        static let walkingRunningDistance = Self(rawValue: "walking-running-distance")
+        static let flightsClimbed = Self(rawValue: "flights-climbed")
         static let heartRate = Self(rawValue: "heart-rate")
+        static let restingHeartRate = Self(rawValue: "resting-heart-rate")
         static let weight = Self(rawValue: "weight")
         static let height = Self(rawValue: "height")
         static let bmi = Self(rawValue: "bmi")
         static let sleep = Self("sleep")
         static let bloodPressure = Self("blood-pressure")
+        static let workouts = Self("workouts")
+        static let electrocardiograms = Self("electrocardiograms")
         
         let rawValue: String
     }
@@ -491,14 +497,22 @@ extension HealthKitStatsCalculator {
         /// the metric's well-known identifier per the data spec; used for the stats doc path and `metric` field. deliberately not the HK identifier.
         let metricId: MetricID
     }
+
+    private struct EventSamplesRunDescriptor<Sample: _HKSampleWithSampleType> {
+        let sampleType: SampleType<Sample>
+        let metricId: MetricID
+        let entry: @Sendable (Sample) -> EventSampleEntry
+    }
     
     private enum NonstandardSamplesRunDescriptor: CaseIterable {
         case sleepSessions
         case bloodPressure
+        case workouts
+        case electrocardiograms
     }
     
     
-    // one run per metric in the spec's Metrics table (docs/MHCDataSpec.md)
+    // One run per bucketed quantity metric; participation additions are documented in docs/ParticipationStats.md.
     private static let bucketedDescriptors: [StatsRunDescriptor] = [
         .init(
             sampleType: .stepCount,
@@ -515,6 +529,27 @@ extension HealthKitStatsCalculator {
             entriesKey: .hourly
         ),
         .init(
+            sampleType: .activeEnergyBurned,
+            metricId: .activeEnergy,
+            mode: .sum,
+            aggregationInterval: .hour,
+            entriesKey: .hourly
+        ),
+        .init(
+            sampleType: .distanceWalkingRunning,
+            metricId: .walkingRunningDistance,
+            mode: .sum,
+            aggregationInterval: .hour,
+            entriesKey: .hourly
+        ),
+        .init(
+            sampleType: .flightsClimbed,
+            metricId: .flightsClimbed,
+            mode: .sum,
+            aggregationInterval: .hour,
+            entriesKey: .hourly
+        ),
+        .init(
             sampleType: .heartRate,
             metricId: .heartRate,
             mode: .minMaxAvg,
@@ -526,7 +561,8 @@ extension HealthKitStatsCalculator {
     private static let individualSamplesDescriptors: [IndividualSamplesRunDescriptor] = [
         .init(sampleType: .bodyMass, metricId: .weight),
         .init(sampleType: .height, metricId: .height),
-        .init(sampleType: .bodyMassIndex, metricId: .bmi)
+        .init(sampleType: .bodyMassIndex, metricId: .bmi),
+        .init(sampleType: .restingHeartRate, metricId: .restingHeartRate)
     ]
     
     
@@ -675,6 +711,62 @@ extension HealthKitStatsCalculator {
             await runSleepStats(months: months, persistence: persistence, runId: runId)
         case .bloodPressure:
             await runBloodPressureStats(months: months, persistence: persistence, runId: runId)
+        case .workouts:
+            await process(
+                EventSamplesRunDescriptor(sampleType: .workout, metricId: .workouts, entry: EventSampleEntry.init(workout:)),
+                months: months,
+                persistence: persistence,
+                runId: runId
+            )
+        case .electrocardiograms:
+            await process(
+                EventSamplesRunDescriptor(
+                    sampleType: .electrocardiogram, metricId: .electrocardiograms, entry: EventSampleEntry.init(electrocardiogram:)
+                ),
+                months: months,
+                persistence: persistence,
+                runId: runId
+            )
+        }
+    }
+
+    private func process<Sample>(
+        _ descriptor: EventSamplesRunDescriptor<Sample>,
+        months: [StatsMonth],
+        persistence: StatsPersistence,
+        runId: UUID
+    ) async {
+        func imp(month: StatsMonth) async throws {
+            let results = healthKit.continuousQuery(
+                descriptor.sampleType,
+                timeRange: .ever,
+                anchor: queryAnchors[descriptor.sampleType, month],
+                predicate: month.samplesStartingInMonthPredicate
+            )
+            for try await result in results {
+                // Reread the full month so replacements and deletions never accumulate duplicate events.
+                let samples = try await healthKit.query(
+                    descriptor.sampleType, timeRange: .ever, predicate: month.samplesStartingInMonthPredicate
+                )
+                try await persistence.persistStatsUpdate(
+                    samples.map(descriptor.entry),
+                    for: .init(metricId: descriptor.metricId, month: month, entriesKey: .samples),
+                    hasDeletions: !result.deletedObjects.isEmpty,
+                    commitAnchor: { self.commitStatsAnchor(runId: runId) { self.queryAnchors[descriptor.sampleType, month] = result.newAnchor } }
+                )
+            }
+        }
+        await withDiscardingTaskGroup { taskGroup in
+            for month in months {
+                taskGroup.addTask {
+                    defer { self.workerDidExit(runId: runId) }
+                    do {
+                        try await imp(month: month)
+                    } catch {
+                        self.logger.error("\(error)")
+                    }
+                }
+            }
         }
     }
     
@@ -796,7 +888,7 @@ extension HealthKitStatsCalculator {
 // MARK: Wire format
 
 extension HealthKitStatsCalculator {
-    fileprivate enum StatsWireFormat {
+    enum StatsWireFormat {
         /// spec: all timestamps in stats documents are ISO8601 strings; we include the device's local-time UTC offset (matching the bucket boundaries, which are computed in local time).
         /// - Note: the field modifiers must all be spelled out: calling any modifier on an `ISO8601FormatStyle` discards the default field set, so e.g. a bare `.timeZone(separator:)` style would format dates as just the offset.
         static let dateFormat = Date.ISO8601FormatStyle(timeZone: .current)
