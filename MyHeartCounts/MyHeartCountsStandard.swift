@@ -50,6 +50,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     @Dependency(AppState.self) private var appState
     @Dependency(AchievementsManager.self) var achievementsManager: AchievementsManager?
     @Dependency(HealthKitStatsCalculator.self) private var healthKitStatsCalc: HealthKitStatsCalculator?
+    @Dependency(StatsStore.self) private var statsStore: StatsStore?
     @Application(\.registerRemoteNotifications) private var registerRemoteNotifications
     // swiftlint:disable attributes
     
@@ -126,6 +127,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     // MARK: Account Stuff
     
     func respondToEvent(_ event: AccountNotifications.Event) async {
+        await statsStore?.handleAccountEvent(event)
         let logger = logger
         switch event {
         case .associatedAccount(let details):
@@ -161,6 +163,7 @@ actor MyHeartCountsStandard: Standard, EnvironmentAccessible, AccountNotifyConst
     }
     
     func willLogOut(_ details: AccountDetails) async {
+        await statsStore?.prepareForLogout()
         logger.notice("account is being logged out")
         LocalPreferencesStore.standard[.pendingAccountDataCleanupRequired] = true
         LocalPreferencesStore.standard[.accountDataGeneration] += 1
